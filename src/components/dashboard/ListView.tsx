@@ -276,7 +276,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 pb-4">{filteredEntreprises.map((item) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-4 pb-4">{filteredEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
                 const categoryInfo = getCategoryInfo(item.activite);
                 const crm = crmData[item.id];
@@ -307,34 +307,23 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                     className="glass-card rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 w-full overflow-hidden cursor-pointer"
                     onClick={() => onEntrepriseSelect?.(item)}
                   >
-                    <div className="space-y-2.5 md:space-y-3 mb-3 md:mb-4">
-                      <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
-                          {item.nom}
-                        </h4>
-                        <div className="flex gap-1 flex-shrink-0">
-                          {crm?.hasUpcomingAction && (
-                            <Badge variant="outline" className="h-6 px-2">
-                              <Bell className="h-3 w-3" />
-                            </Badge>
-                          )}
-                          {crm?.interactionCount > 0 && (
-                            <Badge variant="secondary" className="h-6 px-2 flex items-center gap-1">
-                              <MessageSquare className="h-3 w-3" />
-                              {crm.interactionCount}
-                            </Badge>
-                          )}
-                        </div>
+                    <div className="flex items-start justify-between gap-2 mb-4">
+                      <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
+                        {item.nom}
+                      </h4>
+                      <div className="flex gap-1 flex-shrink-0">
+                        {crm?.hasUpcomingAction && (
+                          <Badge variant="outline" className="h-6 px-2">
+                            <Bell className="h-3 w-3" />
+                          </Badge>
+                        )}
+                        {crm?.interactionCount > 0 && (
+                          <Badge variant="secondary" className="h-6 px-2 flex items-center gap-1">
+                            <MessageSquare className="h-3 w-3" />
+                            {crm.interactionCount}
+                          </Badge>
+                        )}
                       </div>
-                      
-                      {fullAddress && (
-                        <div className="flex items-start gap-2 text-sm">
-                          <MapPin className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-                          <span className="text-muted-foreground line-clamp-2">
-                            {fullAddress}
-                          </span>
-                        </div>
-                      )}
                     </div>
 
                     <div className="flex gap-2 flex-wrap sm:flex-nowrap">
