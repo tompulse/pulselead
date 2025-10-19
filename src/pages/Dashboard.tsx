@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [selectedEntreprise, setSelectedEntreprise] = useState<any>(null);
   const [crmPanelOpen, setCrmPanelOpen] = useState(false);
+  const [fullEntrepriseData, setFullEntrepriseData] = useState<any>(null);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -41,6 +42,25 @@ const Dashboard = () => {
     (filters.departments?.length || 0) + 
     (filters.dateFrom ? 1 : 0) + 
     (filters.dateTo ? 1 : 0);
+
+  const handleEntrepriseSelect = async (entreprise: any) => {
+    setSelectedEntreprise(entreprise);
+    
+    // Fetch full entreprise data if needed
+    if (entreprise.id) {
+      const { data } = await supabase
+        .from('entreprises')
+        .select('*')
+        .eq('id', entreprise.id)
+        .single();
+      
+      if (data) {
+        setFullEntrepriseData(data);
+      }
+    }
+    
+    setCrmPanelOpen(true);
+  };
 
   useEffect(() => {
     // Check authentication and admin role
@@ -225,19 +245,13 @@ const Dashboard = () => {
             {view === "map" ? (
               <MapView 
                 filters={filters} 
-                onEntrepriseSelect={(entreprise) => {
-                  setSelectedEntreprise(entreprise);
-                  setCrmPanelOpen(true);
-                }}
+                onEntrepriseSelect={handleEntrepriseSelect}
               />
             ) : (
               <div className="h-full">
                 <ListView 
                   filters={filters}
-                  onEntrepriseSelect={(entreprise) => {
-                    setSelectedEntreprise(entreprise);
-                    setCrmPanelOpen(true);
-                  }}
+                  onEntrepriseSelect={handleEntrepriseSelect}
                 />
               </div>
             )}
@@ -247,8 +261,11 @@ const Dashboard = () => {
         {/* CRM Side Panel - Desktop only */}
         {!isMobile && crmPanelOpen && (
           <CRMSidePanel 
-            entreprise={selectedEntreprise}
-            onClose={() => setCrmPanelOpen(false)}
+            entreprise={fullEntrepriseData || selectedEntreprise}
+            onClose={() => {
+              setCrmPanelOpen(false);
+              setFullEntrepriseData(null);
+            }}
           />
         )}
 
@@ -256,13 +273,15 @@ const Dashboard = () => {
         {isMobile && (
           <Sheet open={crmPanelOpen} onOpenChange={setCrmPanelOpen}>
             <SheetContent side="bottom" className="h-[90vh] p-0">
-              {selectedEntreprise && (
+              {(fullEntrepriseData || selectedEntreprise) && (
                 <div className="h-full flex flex-col">
                   <SheetHeader className="px-6 py-4 border-b border-accent/20">
-                    <SheetTitle className="text-xl gradient-text">{selectedEntreprise.nom}</SheetTitle>
+                    <SheetTitle className="text-xl gradient-text">
+                      {(fullEntrepriseData || selectedEntreprise).nom}
+                    </SheetTitle>
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
-                      {selectedEntreprise.ville || selectedEntreprise.code_postal}
+                      {(fullEntrepriseData || selectedEntreprise).ville || (fullEntrepriseData || selectedEntreprise).code_postal}
                     </p>
                   </SheetHeader>
                   <ScrollArea className="flex-1 px-6 py-4">
@@ -276,7 +295,7 @@ const Dashboard = () => {
                             <h4 className="font-semibold">Actions rapides</h4>
                           </div>
                           <QuickActionButtons 
-                            entrepriseId={selectedEntreprise.id} 
+                            entrepriseId={(fullEntrepriseData || selectedEntreprise).id} 
                             onInteractionAdded={() => {
                               /* Refresh logic would go here */
                             }}
