@@ -84,34 +84,40 @@ export const InteractionTimeline = ({ interactions }: InteractionTimelineProps) 
     <ScrollArea className="h-[400px] pr-4">
       <div className="space-y-4">
         {interactions.map((interaction, index) => (
-          <div key={interaction.id} className="relative pl-8 pb-4 border-l-2 border-muted last:border-0">
-            <div className="absolute left-[-9px] top-0 bg-background border-2 border-primary rounded-full p-1">
+          <div key={interaction.id} className="relative pl-8 pb-4 border-l-2 border-accent/30 last:border-0 group">
+            <div className="absolute left-[-9px] top-0 bg-background border-2 border-accent rounded-full p-1.5 shadow-lg group-hover:scale-110 transition-transform">
               {getTypeIcon(interaction.type)}
             </div>
             
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-sm">
+                <span className="font-semibold text-sm gradient-text">
                   {getTypeLabel(interaction.type)}
                 </span>
-                <Badge variant={getStatutVariant(interaction.statut)}>
+                <Badge variant={getStatutVariant(interaction.statut)} className="shadow-sm">
                   {getStatutLabel(interaction.statut)}
                 </Badge>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
                   {format(new Date(interaction.created_at), 'dd MMM yyyy à HH:mm', { locale: fr })}
                 </span>
               </div>
 
               {interaction.notes && (
-                <p className="text-sm bg-muted/50 p-2 rounded-md">{interaction.notes}</p>
+                <div className="text-sm bg-accent/5 border border-accent/20 p-3 rounded-lg">
+                  <p className="leading-relaxed">{interaction.notes}</p>
+                </div>
               )}
 
               {interaction.prochaine_action && (
-                <div className="text-sm space-y-1">
-                  <p className="font-medium text-primary">Prochaine action :</p>
-                  <p className="text-muted-foreground">{interaction.prochaine_action}</p>
+                <div className="text-sm space-y-1 bg-muted/30 p-3 rounded-lg border border-muted">
+                  <p className="font-semibold text-accent flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
+                    Prochaine action
+                  </p>
+                  <p className="text-foreground/90">{interaction.prochaine_action}</p>
                   {interaction.date_prochaine_action && (
-                    <p className="text-xs flex items-center gap-1">
+                    <p className="text-xs flex items-center gap-1.5 text-muted-foreground mt-1">
                       <Calendar className="h-3 w-3" />
                       {format(new Date(interaction.date_prochaine_action), "dd MMM yyyy à HH:mm", { locale: fr })}
                     </p>

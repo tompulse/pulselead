@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { InteractionTimeline } from "@/components/dashboard/InteractionTimeline";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
+import { DailyActionsWidget } from "@/components/dashboard/DailyActionsWidget";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -299,6 +300,30 @@ const Dashboard = () => {
       
       {/* Compact Stats */}
       {userId && !isMobile && <CompactStats userId={userId} />}
+      
+      {/* Daily Actions Widget - Desktop only */}
+      {userId && !isMobile && (
+        <div className="px-4 md:px-6 pt-4">
+          <DailyActionsWidget 
+            userId={userId} 
+            onEntrepriseClick={(entrepriseId) => {
+              // Find and select the entreprise
+              const findAndSelectEntreprise = async () => {
+                const { data } = await supabase
+                  .from('entreprises')
+                  .select('*')
+                  .eq('id', entrepriseId)
+                  .single();
+                
+                if (data) {
+                  handleEntrepriseSelect(data);
+                }
+              };
+              findAndSelectEntreprise();
+            }}
+          />
+        </div>
+      )}
 
       {/* Mobile Filter Button */}
       {isMobile && (

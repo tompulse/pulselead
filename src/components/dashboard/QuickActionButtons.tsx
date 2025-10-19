@@ -63,9 +63,19 @@ export const QuickActionButtons = ({
 
       if (error) throw error;
 
+      const actionMessages = {
+        appel: { title: "📞 Appel enregistré !", description: "L'interaction téléphonique a été sauvegardée" },
+        email: { title: "✉️ Email enregistré !", description: "Votre échange par email a été enregistré" },
+        visite: { title: "🚗 Visite enregistrée !", description: "Votre visite sur site a été documentée" },
+        rdv: { title: "📅 Rendez-vous confirmé !", description: "Le rendez-vous a été ajouté à votre suivi" },
+        autre: { title: "✅ Note enregistrée !", description: "Votre note a été ajoutée avec succès" },
+      };
+
+      const message = actionMessages[selectedType] || actionMessages.autre;
+
       toast({
-        title: "Interaction enregistrée",
-        description: "L'interaction a été ajoutée avec succès",
+        title: message.title,
+        description: message.description,
       });
 
       // Reset form
@@ -95,37 +105,41 @@ export const QuickActionButtons = ({
           variant="outline"
           size="lg"
           onClick={() => handleQuickAction('appel')}
-          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group"
+          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group relative overflow-hidden"
         >
-          <Phone className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
-          <span className="text-sm font-medium">Appel</span>
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/5 to-accent/0 group-hover:from-accent/5 group-hover:to-accent/10 transition-all" />
+          <Phone className="h-6 w-6 text-accent group-hover:scale-110 transition-transform relative z-10" />
+          <span className="text-sm font-medium relative z-10">Appeler</span>
         </Button>
         <Button
           variant="outline"
           size="lg"
-          onClick={() => handleQuickAction('email')}
-          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group"
+          onClick={() => handleQuickAction('autre')}
+          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group relative overflow-hidden"
         >
-          <Mail className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
-          <span className="text-sm font-medium">Email</span>
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/5 to-accent/0 group-hover:from-accent/5 group-hover:to-accent/10 transition-all" />
+          <MessageSquare className="h-6 w-6 text-accent group-hover:scale-110 transition-transform relative z-10" />
+          <span className="text-sm font-medium relative z-10">Note</span>
         </Button>
         <Button
           variant="outline"
           size="lg"
           onClick={() => handleQuickAction('visite')}
-          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group"
+          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group relative overflow-hidden"
         >
-          <MapPin className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
-          <span className="text-sm font-medium">Visite</span>
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/5 to-accent/0 group-hover:from-accent/5 group-hover:to-accent/10 transition-all" />
+          <MapPin className="h-6 w-6 text-accent group-hover:scale-110 transition-transform relative z-10" />
+          <span className="text-sm font-medium relative z-10">Visiter</span>
         </Button>
         <Button
           variant="outline"
           size="lg"
           onClick={() => handleQuickAction('rdv')}
-          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group"
+          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group relative overflow-hidden"
         >
-          <Calendar className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
-          <span className="text-sm font-medium">RDV</span>
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/5 to-accent/0 group-hover:from-accent/5 group-hover:to-accent/10 transition-all" />
+          <Calendar className="h-6 w-6 text-accent group-hover:scale-110 transition-transform relative z-10" />
+          <span className="text-sm font-medium relative z-10">Rendez-vous</span>
         </Button>
       </div>
 

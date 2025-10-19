@@ -199,9 +199,16 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
         notes: actionLabels[actionType]
       }]);
 
+      const actionEmojis = {
+        appeler: '📞',
+        visite: '🚗',
+        rdv: '📅',
+        note: '📝'
+      };
+
       toast({
-        title: "Action enregistrée",
-        description: actionLabels[actionType],
+        title: `${actionEmojis[actionType]} ${actionLabels[actionType]} !`,
+        description: `L'action a été enregistrée pour cette entreprise`,
       });
     } catch (error) {
       console.error('Error adding CRM action:', error);
