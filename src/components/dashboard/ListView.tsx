@@ -326,66 +326,15 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           )}
                         </div>
                       </div>
-
-                      {crm?.status && (
-                        <div className="flex items-center gap-2">
-                          <LeadStatusBadge 
-                            statut={crm.status.statut_actuel} 
-                            probabilite={crm.status.probabilite}
-                            showTooltip={false}
-                          />
+                      
+                      {fullAddress && (
+                        <div className="flex items-start gap-2 text-sm">
+                          <MapPin className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+                          <span className="text-muted-foreground line-clamp-2">
+                            {fullAddress}
+                          </span>
                         </div>
                       )}
-                      
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="text-base flex-shrink-0">{categoryInfo.emoji}</span>
-                          <span className="text-muted-foreground truncate">{categoryInfo.label}</span>
-                        </div>
-                        
-                        {gerant && (
-                          <div className="flex items-start gap-2 text-sm">
-                            <User className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-                            <span className="text-muted-foreground truncate">
-                              {gerant}
-                            </span>
-                          </div>
-                        )}
-                        
-                        {item.activite && (
-                          <div className="flex items-start gap-2 text-xs">
-                            <Building2 className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" />
-                            <p className="text-muted-foreground/90 line-clamp-3 leading-relaxed">
-                              {item.activite}
-                            </p>
-                          </div>
-                        )}
-                        
-                        {fullAddress && (
-                          <div className="flex items-start gap-2 text-sm">
-                            <MapPin className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-                            <span className="text-muted-foreground line-clamp-2">
-                              {fullAddress}
-                            </span>
-                          </div>
-                        )}
-                        
-                        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground/80">
-                          {item.date_demarrage && (
-                            <div className="flex items-center gap-1.5">
-                              <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                              <span>{new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
-                            </div>
-                          )}
-                          
-                          {item.capital && (
-                            <div className="flex items-center gap-1.5">
-                              <Briefcase className="w-3.5 h-3.5 flex-shrink-0" />
-                              <span>{item.capital.toLocaleString('fr-FR')} €</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
                     </div>
 
                     <div className="flex gap-2 flex-wrap sm:flex-nowrap">
