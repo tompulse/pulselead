@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Zap, Loader2 } from "lucide-react";
+import { Lightbulb, Loader2 } from "lucide-react";
 import { z } from "zod";
 
 const Auth = () => {
@@ -108,7 +108,7 @@ const Auth = () => {
           <div className="inline-flex items-center gap-3 mb-4">
             <div className="relative">
               <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
-              <Zap className="w-10 h-10 text-accent relative" />
+              <Lightbulb className="w-10 h-10 text-accent relative" />
             </div>
             <span className="text-3xl font-bold gradient-text">LUMA</span>
           </div>

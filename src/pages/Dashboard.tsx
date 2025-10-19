@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Zap, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare, Building2, Calendar, DollarSign, User, Navigation, Map as MapIconLucide } from "lucide-react";
+import { Lightbulb, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare, Building2, Calendar, DollarSign, User, Navigation, Map as MapIconLucide } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
@@ -179,7 +179,7 @@ const Dashboard = () => {
         <div className="text-center space-y-4">
           <div className="relative inline-block">
             <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
-            <Zap className="w-12 h-12 text-accent mx-auto relative" />
+            <Lightbulb className="w-12 h-12 text-accent mx-auto relative" />
           </div>
           <p className="text-muted-foreground text-base">Chargement...</p>
         </div>
@@ -196,7 +196,7 @@ const Dashboard = () => {
               <div className="flex items-center gap-2 md:gap-3">
                 <div className="relative">
                   <div className="absolute inset-0 bg-accent/30 blur-lg animate-pulse" />
-                  <Zap className="w-6 h-6 md:w-7 md:h-7 text-accent relative" />
+                  <Lightbulb className="w-6 h-6 md:w-7 md:h-7 text-accent relative" />
                 </div>
                 <span className="text-lg md:text-xl font-bold gradient-text">LUMA</span>
               </div>
