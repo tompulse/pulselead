@@ -29,6 +29,7 @@ export type Database = {
           enrichi: boolean | null
           forme_juridique: string | null
           id: string
+          interlocuteur: string | null
           latitude: number | null
           longitude: number | null
           nom: string
@@ -53,6 +54,7 @@ export type Database = {
           enrichi?: boolean | null
           forme_juridique?: string | null
           id?: string
+          interlocuteur?: string | null
           latitude?: number | null
           longitude?: number | null
           nom: string
@@ -77,6 +79,7 @@ export type Database = {
           enrichi?: boolean | null
           forme_juridique?: string | null
           id?: string
+          interlocuteur?: string | null
           latitude?: number | null
           longitude?: number | null
           nom?: string

@@ -16,9 +16,8 @@ interface Entreprise {
   latitude: number;
   longitude: number;
   siret: string;
-  code_naf: string;
-  statut: string;
   date_demarrage: string;
+  interlocuteur?: string;
 }
 
 export const MapView = ({ filters }: MapViewProps) => {
@@ -82,14 +81,59 @@ export const MapView = ({ filters }: MapViewProps) => {
 
     // Add new markers
     entreprises.forEach((entreprise) => {
-      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-        <div class="p-2">
-          <h3 class="font-bold text-sm mb-1">${entreprise.nom}</h3>
-          <p class="text-xs text-muted-foreground mb-1">${entreprise.adresse || "Adresse non disponible"}</p>
-          <p class="text-xs"><strong>SIRET:</strong> ${entreprise.siret}</p>
-          <p class="text-xs"><strong>Code NAF:</strong> ${entreprise.code_naf || "N/A"}</p>
-          <p class="text-xs"><strong>Statut:</strong> ${entreprise.statut || "N/A"}</p>
-          <p class="text-xs"><strong>Démarrage:</strong> ${entreprise.date_demarrage || "N/A"}</p>
+      const popup = new mapboxgl.Popup({ 
+        offset: 25,
+        className: 'lead-popup'
+      }).setHTML(`
+        <div style="
+          background: linear-gradient(135deg, hsl(220 40% 10% / 0.95), hsl(220 20% 5% / 0.95));
+          backdrop-filter: blur(20px);
+          border: 1px solid hsl(190 95% 60% / 0.3);
+          border-radius: 12px;
+          padding: 16px;
+          min-width: 280px;
+          box-shadow: 0 8px 32px hsl(0 0% 0% / 0.6), 0 0 20px hsl(190 95% 60% / 0.2);
+        ">
+          <h3 style="
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: hsl(0 0% 98%);
+            background: linear-gradient(135deg, hsl(190 95% 60%), hsl(190 95% 70%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          ">${entreprise.nom}</h3>
+          
+          <div style="
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+            color: hsl(0 0% 90%);
+          ">
+            <div style="display: flex; align-items: start; gap: 8px;">
+              <span style="color: hsl(190 95% 60%);">📍</span>
+              <span style="color: hsl(0 0% 75%);">${entreprise.adresse || "Adresse non disponible"}</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="color: hsl(190 95% 60%);">🏢</span>
+              <span><strong style="color: hsl(190 95% 60%);">SIRET:</strong> ${entreprise.siret}</span>
+            </div>
+            
+            ${entreprise.interlocuteur ? `
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="color: hsl(190 95% 60%);">👤</span>
+              <span><strong style="color: hsl(190 95% 60%);">Interlocuteur:</strong> ${entreprise.interlocuteur}</span>
+            </div>
+            ` : ''}
+            
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="color: hsl(190 95% 60%);">📅</span>
+              <span><strong style="color: hsl(190 95% 60%);">Démarrage:</strong> ${entreprise.date_demarrage || "N/A"}</span>
+            </div>
+          </div>
         </div>
       `);
 
