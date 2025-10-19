@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, Lightbulb } from "lucide-react";
+import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, ChevronDown } from "lucide-react";
 import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
 
@@ -19,6 +19,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+  const [expandedRegions, setExpandedRegions] = useState<string[]>([]);
 
   const handleCategoryToggle = (categoryKey: string) => {
     setSelectedCategories(prev =>
@@ -43,6 +44,38 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         return [...prev, ...newDepts];
       });
     }
+  };
+
+  const handleDepartmentToggle = (deptCode: string, regionKey: string) => {
+    const regionDepts = REGIONS_DATA[regionKey].departments;
+    
+    if (selectedDepartments.includes(deptCode)) {
+      // Déselectionner le département
+      setSelectedDepartments(prev => prev.filter(d => d !== deptCode));
+      // Déselectionner la région si c'était le dernier département
+      const remainingDepts = selectedDepartments.filter(d => d !== deptCode && regionDepts.includes(d));
+      if (remainingDepts.length === 0) {
+        setSelectedRegions(prev => prev.filter(r => r !== regionKey));
+      }
+    } else {
+      // Sélectionner le département
+      setSelectedDepartments(prev => [...prev, deptCode]);
+      // Vérifier si tous les départements de la région sont sélectionnés
+      const allSelected = regionDepts.every(d => 
+        d === deptCode || selectedDepartments.includes(d)
+      );
+      if (allSelected && !selectedRegions.includes(regionKey)) {
+        setSelectedRegions(prev => [...prev, regionKey]);
+      }
+    }
+  };
+
+  const toggleRegionExpansion = (regionKey: string) => {
+    setExpandedRegions(prev => 
+      prev.includes(regionKey) 
+        ? prev.filter(r => r !== regionKey)
+        : [...prev, regionKey]
+    );
   };
 
   const handleFinish = () => {
@@ -110,40 +143,68 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                 <div className="space-y-2">
                   {Object.entries(REGIONS_DATA).map(([regionKey, regionData]) => {
                     const isSelected = selectedRegions.includes(regionKey);
+                    const isExpanded = expandedRegions.includes(regionKey);
                     const selectedDeptCount = regionData.departments.filter(d => 
                       selectedDepartments.includes(d)
                     ).length;
                     
                     return (
-                      <label
+                      <div
                         key={regionKey}
-                        className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40"
+                        className="rounded-lg border-2 transition-all"
                         style={{
                           borderColor: isSelected 
                             ? 'hsl(var(--accent))' 
                             : 'hsl(var(--accent) / 0.2)',
                           backgroundColor: isSelected 
-                            ? 'hsl(var(--accent) / 0.1)' 
+                            ? 'hsl(var(--accent) / 0.05)' 
                             : 'transparent'
                         }}
                       >
-                        <Checkbox
-                          checked={isSelected}
-                          onCheckedChange={() => handleRegionToggle(regionKey)}
-                          className="border-accent/50"
-                        />
-                        <div className="flex-1">
-                          <span className="font-medium">{regionKey}</span>
-                          {selectedDeptCount > 0 && (
-                            <span className="ml-2 text-sm text-muted-foreground">
-                              ({selectedDeptCount} département{selectedDeptCount > 1 ? 's' : ''})
-                            </span>
-                          )}
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {regionData.departments.join(', ')}
+                        <div className="flex items-center gap-3 p-4">
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => handleRegionToggle(regionKey)}
+                            className="border-accent/50 shrink-0"
+                          />
+                          <div 
+                            className="flex-1 cursor-pointer"
+                            onClick={() => toggleRegionExpansion(regionKey)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium">{regionKey}</span>
+                              <ChevronDown 
+                                className={`w-4 h-4 text-accent transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                              />
+                            </div>
+                            {selectedDeptCount > 0 && (
+                              <span className="text-sm text-muted-foreground">
+                                {selectedDeptCount} département{selectedDeptCount > 1 ? 's' : ''} sélectionné{selectedDeptCount > 1 ? 's' : ''}
+                              </span>
+                            )}
                           </div>
                         </div>
-                      </label>
+                        
+                        {isExpanded && (
+                          <div className="px-4 pb-4 grid grid-cols-2 md:grid-cols-3 gap-2 border-t border-accent/20 pt-3">
+                            {regionData.departments.map((deptCode) => (
+                              <label
+                                key={deptCode}
+                                className="flex items-center gap-2 p-2 rounded hover:bg-accent/5 cursor-pointer"
+                              >
+                                <Checkbox
+                                  checked={selectedDepartments.includes(deptCode)}
+                                  onCheckedChange={() => handleDepartmentToggle(deptCode, regionKey)}
+                                  className="border-accent/50 h-4 w-4"
+                                />
+                                <span className="text-sm font-medium">
+                                  {deptCode} - {DEPARTMENT_NAMES[deptCode]}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
@@ -155,32 +216,22 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   <div>
                     <h2 className="text-xl font-semibold mb-2">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-sm">(optionnel)</span></h2>
                     <p className="text-muted-foreground">
-                      Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche. Vous pouvez aussi voir tous les secteurs.
+                      Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche.
                     </p>
                   </div>
                 </div>
 
-                <Button
-                  variant="outline"
-                  onClick={handleFinish}
-                  className="w-full border-accent/50 hover:bg-accent/10 h-12 text-base font-medium"
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Voir tous les secteurs d'activité
-                </Button>
-
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-accent/20" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                      ou sélectionnez des secteurs spécifiques
-                    </span>
-                  </div>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Option "Tous les secteurs" */}
+                  <button
+                    onClick={handleFinish}
+                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40 bg-accent/10 border-accent"
+                  >
+                    <Sparkles className="w-5 h-5 text-accent shrink-0" />
+                    <span className="font-medium text-left">✨ Tous les secteurs m'intéressent</span>
+                  </button>
+
+                  {/* Secteurs spécifiques */}
                   {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
                     <label
                       key={key}
