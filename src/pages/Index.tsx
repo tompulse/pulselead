@@ -2,9 +2,25 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Zap, Sparkles, TrendingUp, Shield } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
+import { trackCTAClick } from "@/utils/analytics";
 
 const Index = () => {
   const navigate = useNavigate();
+
+  const handleExplorerClick = () => {
+    trackCTAClick('Explorer LUMA', 'hero');
+    navigate("/auth");
+  };
+
+  const handleConnexionClick = () => {
+    trackCTAClick('Connexion', 'header');
+    navigate("/auth");
+  };
+
+  const handleCreerCompteClick = () => {
+    trackCTAClick('Créer un compte', 'header');
+    navigate("/auth");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-navy-deep via-black-deep to-background relative overflow-hidden">
@@ -30,14 +46,14 @@ const Index = () => {
             {/* Boutons d'action */}
             <div className="flex items-center gap-2 sm:gap-4">
               <Button 
-                onClick={() => navigate("/auth")}
+                onClick={handleConnexionClick}
                 variant="outline"
                 className="border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent/50 transition-all duration-300 px-4 sm:px-6 h-9 sm:h-10 text-sm sm:text-base"
               >
                 Connexion
               </Button>
               <Button 
-                onClick={() => navigate("/auth")}
+                onClick={handleCreerCompteClick}
                 className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-4 sm:px-8 h-9 sm:h-10 text-sm sm:text-base rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-accent/50 hover:-translate-y-0.5"
               >
                 Créer un compte
@@ -67,7 +83,7 @@ const Index = () => {
             {/* Boutons CTA */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 sm:pt-8">
               <Button 
-                onClick={() => navigate("/auth")}
+                onClick={handleExplorerClick}
                 size="lg"
                 className="btn-hero w-full sm:w-auto min-w-[200px] sm:min-w-[240px] h-12 sm:h-14 text-base sm:text-lg"
               >

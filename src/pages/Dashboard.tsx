@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { trackViewChange, trackEntrepriseView } from "@/utils/analytics";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -52,6 +53,11 @@ const Dashboard = () => {
 
   const handleEntrepriseSelect = async (entreprise: any) => {
     setSelectedEntreprise(entreprise);
+    
+    // Track entreprise view
+    if (entreprise.id && entreprise.nom) {
+      trackEntrepriseView(entreprise.id, entreprise.nom, view);
+    }
     
     // Fetch full entreprise data if needed
     if (entreprise.id) {
@@ -200,7 +206,10 @@ const Dashboard = () => {
                 <Button
                   variant={view === "map" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setView("map")}
+                  onClick={() => {
+                    setView("map");
+                    trackViewChange("map");
+                  }}
                   className={`h-7 px-2 text-xs ${view === "map" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
                 >
                   <MapIcon className="w-3.5 h-3.5 mr-1" />
@@ -209,7 +218,10 @@ const Dashboard = () => {
                 <Button
                   variant={view === "list" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setView("list")}
+                  onClick={() => {
+                    setView("list");
+                    trackViewChange("list");
+                  }}
                   className={`h-7 px-2 text-xs ${view === "list" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
                 >
                   <List className="w-3.5 h-3.5 mr-1" />
