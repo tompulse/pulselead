@@ -91,58 +91,60 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
-      {/* Header - Responsive */}
-      <header className="glass-card border-b border-accent/20 px-3 md:px-4 py-2 md:py-3 z-10 backdrop-blur-xl shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 md:gap-4">
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <div className="absolute inset-0 bg-accent blur-lg opacity-30 animate-pulse" />
-                <Target className="w-6 h-6 md:w-7 md:h-7 text-accent relative" />
+      {/* Header - Responsive - Hidden when filter sheet is open on mobile */}
+      {!(isMobile && filterSheetOpen) && (
+        <header className="glass-card border-b border-accent/20 px-3 md:px-4 py-2 md:py-3 z-10 backdrop-blur-xl shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 md:gap-4">
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-accent blur-lg opacity-30 animate-pulse" />
+                  <Target className="w-6 h-6 md:w-7 md:h-7 text-accent relative" />
+                </div>
+                <span className="text-lg md:text-xl font-bold gradient-text">LeadMagnet</span>
               </div>
-              <span className="text-lg md:text-xl font-bold gradient-text">LeadMagnet</span>
+              
+              {/* View Toggle */}
+              <div className="flex gap-1 p-0.5 bg-card/50 rounded-lg border border-accent/20">
+                <Button
+                  variant={view === "map" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setView("map")}
+                  className={`h-7 px-2 text-xs ${view === "map" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+                >
+                  <MapIcon className="w-3.5 h-3.5 mr-1" />
+                  <span className="hidden sm:inline">Carte</span>
+                </Button>
+                <Button
+                  variant={view === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setView("list")}
+                  className={`h-7 px-2 text-xs ${view === "list" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+                >
+                  <List className="w-3.5 h-3.5 mr-1" />
+                  <span className="hidden sm:inline">Liste</span>
+                </Button>
+              </div>
             </div>
-            
-            {/* View Toggle */}
-            <div className="flex gap-1 p-0.5 bg-card/50 rounded-lg border border-accent/20">
+
+            <div className="flex items-center gap-2">
+              {isAdmin && !isMobile && <SyncButton />}
               <Button
-                variant={view === "map" ? "default" : "ghost"}
+                variant="outline"
                 size="sm"
-                onClick={() => setView("map")}
-                className={`h-7 px-2 text-xs ${view === "map" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+                onClick={handleLogout}
+                className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10 hover:border-accent transition-all"
               >
-                <MapIcon className="w-3.5 h-3.5 mr-1" />
-                <span className="hidden sm:inline">Carte</span>
-              </Button>
-              <Button
-                variant={view === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setView("list")}
-                className={`h-7 px-2 text-xs ${view === "list" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
-              >
-                <List className="w-3.5 h-3.5 mr-1" />
-                <span className="hidden sm:inline">Liste</span>
+                <LogOut className="w-3.5 h-3.5 sm:mr-1" />
+                <span className="hidden sm:inline">Déconnexion</span>
               </Button>
             </div>
           </div>
+        </header>
+      )}
 
-          <div className="flex items-center gap-2">
-            {isAdmin && !isMobile && <SyncButton />}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-              className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10 hover:border-accent transition-all"
-            >
-              <LogOut className="w-3.5 h-3.5 sm:mr-1" />
-              <span className="hidden sm:inline">Déconnexion</span>
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile Filter Button Bar */}
-      {isMobile && (
+      {/* Mobile Filter Button Bar - Hidden when filter sheet is open */}
+      {isMobile && !filterSheetOpen && (
         <div className="glass-card border-b border-accent/20 px-3 py-2 shrink-0">
           <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
             <SheetTrigger asChild>
@@ -162,7 +164,7 @@ const Dashboard = () => {
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[85vh] p-0">
+            <SheetContent side="bottom" className="h-screen p-0">
               <SheetHeader className="px-6 py-4 border-b border-accent/20 bg-gradient-to-b from-accent/5 to-transparent">
                 <SheetTitle className="flex items-center gap-3 text-xl">
                   <div className="p-2 bg-accent/10 rounded-lg">
@@ -171,7 +173,7 @@ const Dashboard = () => {
                   Filtrer les résultats
                 </SheetTitle>
               </SheetHeader>
-              <div className="h-[calc(85vh-72px)] overflow-hidden">
+              <div className="h-[calc(100vh-72px)] overflow-hidden">
                 <Sidebar 
                   filters={filters} 
                   setFilters={setFilters}
@@ -182,6 +184,30 @@ const Dashboard = () => {
             </SheetContent>
           </Sheet>
         </div>
+      )}
+
+      {/* Sheet for mobile when open - Full screen */}
+      {isMobile && filterSheetOpen && (
+        <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
+          <SheetContent side="bottom" className="h-screen p-0">
+            <SheetHeader className="px-6 py-4 border-b border-accent/20 bg-gradient-to-b from-accent/5 to-transparent">
+              <SheetTitle className="flex items-center gap-3 text-xl">
+                <div className="p-2 bg-accent/10 rounded-lg">
+                  <Filter className="w-5 h-5 text-accent" />
+                </div>
+                Filtrer les résultats
+              </SheetTitle>
+            </SheetHeader>
+            <div className="h-[calc(100vh-72px)] overflow-hidden">
+              <Sidebar 
+                filters={filters} 
+                setFilters={setFilters}
+                onFilterChange={() => setFilterSheetOpen(false)}
+                isMobileSheet={true}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
       )}
 
       {/* Content Area with Sidebar */}
