@@ -22,17 +22,17 @@ export const HeroSection = () => {
         
         {/* Main Headline */}
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight tracking-tight">
-          Identifiez vos
+          Structurez votre
           <br />
-          <span className="gradient-text inline-block animate-gradient">prochains leads</span>
+          <span className="gradient-text inline-block animate-gradient">prospection commerciale</span>
           <br />
-          avant la concurrence
+          sur les créations d'entreprises
         </h1>
         
         {/* Subheadline */}
         <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          Visualisez en temps réel les <span className="text-accent font-semibold">nouvelles entreprises</span> créées en France. 
-          Cartographie interactive, filtres intelligents, données officielles.
+          Repérez les <span className="text-accent font-semibold">nouvelles créations</span> dans votre secteur. 
+          Contactez-les en premier et développez votre portefeuille client.
         </p>
 
         {/* CTA Buttons */}
@@ -58,16 +58,16 @@ export const HeroSection = () => {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-8 pt-16 max-w-3xl mx-auto">
           <div className="space-y-2">
-            <div className="text-4xl md:text-5xl font-bold gradient-text">500K+</div>
-            <div className="text-sm text-muted-foreground">Entreprises référencées</div>
+            <div className="text-4xl md:text-5xl font-bold gradient-text">Temps réel</div>
+            <div className="text-sm text-muted-foreground">Nouvelles créations</div>
           </div>
           <div className="space-y-2">
-            <div className="text-4xl md:text-5xl font-bold gradient-text">98%</div>
-            <div className="text-sm text-muted-foreground">Précision des données</div>
+            <div className="text-4xl md:text-5xl font-bold gradient-text">Données officielles</div>
+            <div className="text-sm text-muted-foreground">Sources vérifiées</div>
           </div>
           <div className="space-y-2">
-            <div className="text-4xl md:text-5xl font-bold gradient-text">24/7</div>
-            <div className="text-sm text-muted-foreground">Mise à jour continue</div>
+            <div className="text-4xl md:text-5xl font-bold gradient-text">Ciblage précis</div>
+            <div className="text-sm text-muted-foreground">Par secteur et zone</div>
           </div>
         </div>
       </div>

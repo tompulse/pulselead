@@ -23,13 +23,13 @@ export const CTASection = () => {
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-            Prêt à transformer votre
+            Ne laissez plus vos concurrents
             <br />
-            <span className="gradient-text">prospection commerciale ?</span>
+            <span className="gradient-text">prospecter avant vous</span>
           </h2>
           
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-            Rejoignez les commerciaux qui utilisent LeadMagnet pour identifier et contacter leurs prochains clients
+            Structurez votre prospection et soyez le premier à contacter les nouvelles entreprises de votre secteur
           </p>
 
           {/* Benefits */}
@@ -57,7 +57,7 @@ export const CTASection = () => {
           </div>
 
           <p className="text-sm text-muted-foreground pt-4">
-            Plus de <span className="text-accent font-semibold">500 000 entreprises</span> déjà référencées
+            Toutes les <span className="text-accent font-semibold">créations d'entreprises</span> en France accessibles
           </p>
         </div>
       </div>

@@ -48,12 +48,12 @@ export const FeaturesSection = () => {
     <section className="container mx-auto px-6 py-32">
       <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
         <h2 className="text-4xl md:text-5xl font-bold">
-          Tout ce dont vous avez besoin
+          Maîtrisez votre territoire
           <br />
-          <span className="gradient-text">pour réussir votre prospection</span>
+          <span className="gradient-text">et développez votre portefeuille</span>
         </h2>
         <p className="text-xl text-muted-foreground">
-          Une suite complète d'outils professionnels pour transformer votre approche commerciale
+          Des outils conçus pour les commerciaux qui veulent structurer leur prospection et connaître leur secteur
         </p>
       </div>
 
