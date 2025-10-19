@@ -219,11 +219,13 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden">
-          <div className="h-full">
+          <div className="h-full p-4 md:p-6">
             {view === "map" ? (
               <MapView filters={filters} />
             ) : (
-              <ListView filters={filters} />
+              <div className="h-full">
+                <ListView filters={filters} />
+              </div>
             )}
           </div>
         </main>

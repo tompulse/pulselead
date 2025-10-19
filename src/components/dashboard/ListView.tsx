@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ACTIVITY_CATEGORIES, categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -121,10 +121,14 @@ export const ListView = ({ filters }: ListViewProps) => {
     );
   });
 
-  const getCategoryEmoji = (activity: string | null): string => {
+  const getCategoryInfo = (activity: string | null): { emoji: string; label: string } => {
     const category = categorizeActivity(activity);
-    const label = getCategoryLabel(category);
-    return label.split(' ')[0]; // Extract emoji from label
+    const fullLabel = getCategoryLabel(category);
+    const parts = fullLabel.split(' ');
+    return {
+      emoji: parts[0],
+      label: parts.slice(1).join(' ')
+    };
   };
 
   const handleCardClick = (entreprise: Entreprise) => {
@@ -145,9 +149,9 @@ export const ListView = ({ filters }: ListViewProps) => {
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="space-y-4 h-full flex flex-col overflow-hidden">
         {/* Header with search */}
-        <div className="glass-card rounded-2xl p-6 shadow-2xl border border-accent/20">
+        <div className="glass-card rounded-2xl p-6 shadow-2xl border border-accent/20 flex-shrink-0">
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-accent/10 rounded-lg">
@@ -174,80 +178,90 @@ export const ListView = ({ filters }: ListViewProps) => {
           </div>
         </div>
 
-        {/* Cards Grid */}
-        {filteredEntreprises.length === 0 ? (
-          <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
-            <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
-              <Building2 className="w-20 h-20 text-accent opacity-50" />
+        {/* Cards Grid - Scrollable */}
+        <div className="flex-1 overflow-y-auto">
+          {filteredEntreprises.length === 0 ? (
+            <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
+              <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
+                <Building2 className="w-20 h-20 text-accent opacity-50" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">Aucune entreprise trouvée</h3>
+              <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                {searchQuery ? "Essayez de modifier votre recherche" : "Cliquez sur 'Synchroniser les données' pour importer vos entreprises"}
+              </p>
             </div>
-            <h3 className="text-2xl font-bold mb-3">Aucune entreprise trouvée</h3>
-            <p className="text-muted-foreground text-lg max-w-md mx-auto">
-              {searchQuery ? "Essayez de modifier votre recherche" : "Cliquez sur 'Synchroniser les données' pour importer vos entreprises"}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredEntreprises.map((item) => {
-              const hasCoordinates = item.latitude && item.longitude;
-              const emoji = getCategoryEmoji(item.activite);
-              
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => handleCardClick(item)}
-                  className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-card/80 to-card/40"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-lg mb-1 truncate" title={item.nom}>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+              {filteredEntreprises.map((item) => {
+                const hasCoordinates = item.latitude && item.longitude;
+                const categoryInfo = getCategoryInfo(item.activite);
+                
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => handleCardClick(item)}
+                    className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-card/80 to-card/40"
+                  >
+                    <div className="space-y-3 mb-4">
+                      <h4 className="font-bold text-lg truncate" title={item.nom}>
                         {item.nom}
                       </h4>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <span className="text-base">{emoji}</span>
-                        <span className="truncate">{item.ville || item.code_postal || "Ville non disponible"}</span>
-                      </p>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-base flex-shrink-0">{categoryInfo.emoji}</span>
+                          <span className="text-muted-foreground truncate">{categoryInfo.label}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 text-sm">
+                          <MapPin className="w-4 h-4 text-accent flex-shrink-0" />
+                          <span className="text-muted-foreground truncate">
+                            {item.ville || item.code_postal || "Ville non disponible"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (hasCoordinates) {
+                            window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank');
+                          }
+                        }}
+                        disabled={!hasCoordinates}
+                        title={hasCoordinates ? "Ouvrir dans Google Maps" : "Coordonnées non disponibles"}
+                      >
+                        <Map className="w-4 h-4 mr-1" />
+                        Maps
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (hasCoordinates) {
+                            window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank');
+                          }
+                        }}
+                        disabled={!hasCoordinates}
+                        title={hasCoordinates ? "Naviguer avec Waze" : "Coordonnées non disponibles"}
+                      >
+                        <Navigation className="w-4 h-4 mr-1" />
+                        Waze
+                      </Button>
                     </div>
                   </div>
-
-                  <div className="flex gap-2 mt-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (hasCoordinates) {
-                          window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank');
-                        }
-                      }}
-                      disabled={!hasCoordinates}
-                      title={hasCoordinates ? "Ouvrir dans Google Maps" : "Coordonnées non disponibles"}
-                    >
-                      <Map className="w-4 h-4 mr-1" />
-                      Maps
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (hasCoordinates) {
-                          window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank');
-                        }
-                      }}
-                      disabled={!hasCoordinates}
-                      title={hasCoordinates ? "Naviguer avec Waze" : "Coordonnées non disponibles"}
-                    >
-                      <Navigation className="w-4 h-4 mr-1" />
-                      Waze
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       <EntrepriseDetails
