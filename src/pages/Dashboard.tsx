@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { InteractionTimeline } from "@/components/dashboard/InteractionTimeline";
+import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,7 @@ const Dashboard = () => {
   const [mobileInteractions, setMobileInteractions] = useState<any[]>([]);
   const [mobileLeadStatus, setMobileLeadStatus] = useState<any>(null);
   const [mobileActiveTab, setMobileActiveTab] = useState<'info' | 'crm'>('info');
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -151,6 +153,26 @@ const Dashboard = () => {
       
       console.log('Vérification admin pour:', session.user.email, 'Résultat:', adminCheck);
       setIsAdmin(adminCheck === true);
+      
+      // Check if onboarding is needed
+      const onboardingComplete = localStorage.getItem('luma_onboarding_complete');
+      const savedFilters = localStorage.getItem('luma_initial_filters');
+      
+      if (!onboardingComplete) {
+        setShowOnboarding(true);
+      } else if (savedFilters) {
+        try {
+          const parsed = JSON.parse(savedFilters);
+          setFilters(prev => ({
+            ...prev,
+            categories: parsed.categories || [],
+            departments: parsed.departments || []
+          }));
+        } catch (e) {
+          console.error('Error parsing saved filters:', e);
+        }
+      }
+      
       setLoading(false);
     };
 
@@ -174,6 +196,20 @@ const Dashboard = () => {
     navigate("/");
   };
 
+  const handleOnboardingComplete = (newFilters: { categories: string[]; departments: string[] }) => {
+    setFilters(prev => ({
+      ...prev,
+      categories: newFilters.categories,
+      departments: newFilters.departments
+    }));
+    setShowOnboarding(false);
+    
+    toast({
+      title: "Configuration terminée !",
+      description: "Vous allez maintenant voir les entreprises qui correspondent à vos critères.",
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -186,6 +222,10 @@ const Dashboard = () => {
         </div>
       </div>
     );
+  }
+
+  if (showOnboarding) {
+    return <FilterOnboarding onComplete={handleOnboardingComplete} />;
   }
 
   return (
