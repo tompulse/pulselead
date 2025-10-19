@@ -16,7 +16,10 @@ export type Database = {
     Tables: {
       entreprises: {
         Row: {
+          activite: string | null
+          administration: string | null
           adresse: string | null
+          capital: number | null
           chiffre_affaires: number | null
           code_naf: string | null
           code_postal: string | null
@@ -33,15 +36,21 @@ export type Database = {
           latitude: number | null
           longitude: number | null
           nom: string
+          nom_voie: string | null
+          numero_voie: string | null
           score_lead: number | null
           siret: string
           site_web: string | null
           statut: string | null
           telephone: string | null
+          type_voie: string | null
           updated_at: string | null
         }
         Insert: {
+          activite?: string | null
+          administration?: string | null
           adresse?: string | null
+          capital?: number | null
           chiffre_affaires?: number | null
           code_naf?: string | null
           code_postal?: string | null
@@ -58,15 +67,21 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           nom: string
+          nom_voie?: string | null
+          numero_voie?: string | null
           score_lead?: number | null
           siret: string
           site_web?: string | null
           statut?: string | null
           telephone?: string | null
+          type_voie?: string | null
           updated_at?: string | null
         }
         Update: {
+          activite?: string | null
+          administration?: string | null
           adresse?: string | null
+          capital?: number | null
           chiffre_affaires?: number | null
           code_naf?: string | null
           code_postal?: string | null
@@ -83,11 +98,14 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           nom?: string
+          nom_voie?: string | null
+          numero_voie?: string | null
           score_lead?: number | null
           siret?: string
           site_web?: string | null
           statut?: string | null
           telephone?: string | null
+          type_voie?: string | null
           updated_at?: string | null
         }
         Relationships: []

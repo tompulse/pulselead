@@ -18,6 +18,12 @@ interface Entreprise {
   siret: string;
   date_demarrage: string;
   interlocuteur?: string;
+  numero_voie?: string;
+  type_voie?: string;
+  nom_voie?: string;
+  administration?: string;
+  capital?: number;
+  activite?: string;
 }
 
 export const MapView = ({ filters }: MapViewProps) => {
@@ -81,61 +87,150 @@ export const MapView = ({ filters }: MapViewProps) => {
 
     // Add new markers
     entreprises.forEach((entreprise) => {
+      // Format address from separate fields
+      const formattedAddress = [
+        entreprise.numero_voie,
+        entreprise.type_voie,
+        entreprise.nom_voie,
+        entreprise.code_postal
+      ].filter(Boolean).join(' ') || entreprise.adresse || "Adresse non disponible";
+
+      // Format capital with € and thousands separator
+      const formattedCapital = entreprise.capital 
+        ? `${entreprise.capital.toLocaleString('fr-FR')} €`
+        : null;
+
       const popup = new mapboxgl.Popup({ 
         offset: 25,
         className: 'lead-popup'
-      }).setHTML(`
-        <div style="
-          background: linear-gradient(135deg, hsl(220 40% 10% / 0.95), hsl(220 20% 5% / 0.95));
-          backdrop-filter: blur(20px);
-          border: 1px solid hsl(190 95% 60% / 0.3);
-          border-radius: 12px;
-          padding: 16px;
-          min-width: 280px;
-          box-shadow: 0 8px 32px hsl(0 0% 0% / 0.6), 0 0 20px hsl(190 95% 60% / 0.2);
-        ">
-          <h3 style="
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: hsl(0 0% 98%);
-            background: linear-gradient(135deg, hsl(190 95% 60%), hsl(190 95% 70%));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-          ">${entreprise.nom}</h3>
-          
+      });
+
+      // Create the popup content
+      const createPopupContent = async () => {
+        let formattedAdmin = entreprise.administration;
+        let formattedActivite = entreprise.activite;
+
+        // Call AI to format administration and activite if they exist
+        if (entreprise.administration || entreprise.activite) {
+          try {
+            const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/format-lead-details`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: JSON.stringify({
+                administration: entreprise.administration,
+                activite: entreprise.activite,
+              }),
+            });
+
+            if (response.ok) {
+              const formatted = await response.json();
+              formattedAdmin = formatted.administration || formattedAdmin;
+              formattedActivite = formatted.activite || formattedActivite;
+            }
+          } catch (error) {
+            console.error("Error formatting lead details:", error);
+          }
+        }
+
+        return `
           <div style="
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 13px;
-            color: hsl(0 0% 90%);
+            background: linear-gradient(135deg, hsl(220 40% 10% / 0.95), hsl(220 20% 5% / 0.95));
+            backdrop-filter: blur(20px);
+            border: 1px solid hsl(190 95% 60% / 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 8px 32px hsl(0 0% 0% / 0.6), 0 0 20px hsl(190 95% 60% / 0.2);
           ">
-            <div style="display: flex; align-items: start; gap: 8px;">
-              <span style="color: hsl(190 95% 60%);">📍</span>
-              <span style="color: hsl(0 0% 75%);">${entreprise.adresse || "Adresse non disponible"}</span>
-            </div>
+            <h3 style="
+              font-size: 16px;
+              font-weight: 700;
+              margin-bottom: 12px;
+              color: hsl(0 0% 98%);
+              background: linear-gradient(135deg, hsl(190 95% 60%), hsl(190 95% 70%));
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+            ">${entreprise.nom}</h3>
             
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="color: hsl(190 95% 60%);">🏢</span>
-              <span><strong style="color: hsl(190 95% 60%);">SIRET:</strong> ${entreprise.siret}</span>
-            </div>
-            
-            ${entreprise.interlocuteur ? `
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="color: hsl(190 95% 60%);">👤</span>
-              <span><strong style="color: hsl(190 95% 60%);">Interlocuteur:</strong> ${entreprise.interlocuteur}</span>
-            </div>
-            ` : ''}
-            
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="color: hsl(190 95% 60%);">📅</span>
-              <span><strong style="color: hsl(190 95% 60%);">Démarrage:</strong> ${entreprise.date_demarrage || "N/A"}</span>
+            <div style="
+              display: flex;
+              flex-direction: column;
+              gap: 8px;
+              font-size: 13px;
+              color: hsl(0 0% 90%);
+            ">
+              <div style="display: flex; align-items: start; gap: 8px;">
+                <span style="color: hsl(190 95% 60%); font-size: 16px;">📍</span>
+                <span style="color: hsl(0 0% 75%); line-height: 1.4;">${formattedAddress}</span>
+              </div>
+              
+              ${formattedActivite ? `
+              <div style="display: flex; align-items: start; gap: 8px;">
+                <span style="color: hsl(190 95% 60%); font-size: 16px;">💼</span>
+                <span style="color: hsl(0 0% 85%); line-height: 1.4;">${formattedActivite}</span>
+              </div>
+              ` : ''}
+              
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: hsl(190 95% 60%); font-size: 16px;">🏢</span>
+                <span><strong style="color: hsl(190 95% 60%);">SIRET:</strong> ${entreprise.siret}</span>
+              </div>
+              
+              ${formattedAdmin ? `
+              <div style="display: flex; align-items: start; gap: 8px;">
+                <span style="color: hsl(190 95% 60%); font-size: 16px;">👤</span>
+                <span style="line-height: 1.4;"><strong style="color: hsl(190 95% 60%);">Contact:</strong> ${formattedAdmin}</span>
+              </div>
+              ` : ''}
+              
+              ${formattedCapital ? `
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: hsl(190 95% 60%); font-size: 16px;">💰</span>
+                <span><strong style="color: hsl(190 95% 60%);">Capital:</strong> ${formattedCapital}</span>
+              </div>
+              ` : ''}
+              
+              ${entreprise.date_demarrage ? `
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: hsl(190 95% 60%); font-size: 16px;">📅</span>
+                <span><strong style="color: hsl(190 95% 60%);">Démarrage:</strong> ${entreprise.date_demarrage}</span>
+              </div>
+              ` : ''}
             </div>
           </div>
+        `;
+      };
+
+      // Set initial loading content
+      popup.setHTML(`
+        <div style="padding: 20px; text-align: center;">
+          <div style="
+            width: 24px;
+            height: 24px;
+            border: 2px solid hsl(190 95% 60%);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+          "></div>
+          <style>
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+          </style>
         </div>
       `);
+
+      // Update content when popup opens
+      popup.on('open', async () => {
+        const content = await createPopupContent();
+        popup.setHTML(content);
+      });
 
       const marker = new mapboxgl.Marker({ color: "#00FFF0" })
         .setLngLat([entreprise.longitude, entreprise.latitude])
