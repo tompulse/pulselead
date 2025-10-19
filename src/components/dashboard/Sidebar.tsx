@@ -96,20 +96,6 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
           </CollapsibleTrigger>
           <CollapsibleContent className={isMobileSheet ? "mt-2 space-y-2 px-2" : "mt-1.5 space-y-1 px-1"}>
             <Button
-              variant={filters.crmFilter === 'mes_leads' ? 'default' : 'outline'}
-              size="sm"
-              className="w-full justify-start"
-              onClick={() => {
-                setFilters((prev: any) => ({
-                  ...prev,
-                  crmFilter: filters.crmFilter === 'mes_leads' ? undefined : 'mes_leads'
-                }));
-                onFilterChange?.();
-              }}
-            >
-              📋 Mes leads en cours
-            </Button>
-            <Button
               variant={filters.crmFilter === 'a_rappeler' ? 'default' : 'outline'}
               size="sm"
               className="w-full justify-start"

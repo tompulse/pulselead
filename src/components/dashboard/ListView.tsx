@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -242,6 +242,17 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 const categoryInfo = getCategoryInfo(item.activite);
                 const crm = crmData[item.id];
                 
+                // Format address
+                const addressParts = [
+                  item.numero_voie,
+                  item.type_voie,
+                  item.nom_voie
+                ].filter(Boolean).join(' ');
+                
+                const fullAddress = addressParts 
+                  ? `${addressParts}, ${item.code_postal} ${item.ville || ''}`
+                  : `${item.code_postal || ''} ${item.ville || ''}`.trim();
+                
                 return (
                   <div
                     key={item.id}
@@ -284,12 +295,35 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           <span className="text-muted-foreground truncate">{categoryInfo.label}</span>
                         </div>
                         
-                        <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="w-4 h-4 text-accent flex-shrink-0" />
-                          <span className="text-muted-foreground truncate">
-                            {item.ville || item.code_postal || "Ville non disponible"}
-                          </span>
-                        </div>
+                        {fullAddress && (
+                          <div className="flex items-start gap-2 text-sm">
+                            <MapPin className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+                            <span className="text-muted-foreground line-clamp-2">
+                              {fullAddress}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {item.date_demarrage && (
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground/80">
+                            <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span>Créée le {new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
+                          </div>
+                        )}
+                        
+                        {item.capital && (
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground/80">
+                            <DollarSign className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span>Capital: {item.capital.toLocaleString('fr-FR')} €</span>
+                          </div>
+                        )}
+                        
+                        {item.forme_juridique && (
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground/80">
+                            <Building2 className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span className="truncate">{item.forme_juridique}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
