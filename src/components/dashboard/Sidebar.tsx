@@ -17,9 +17,10 @@ interface SidebarProps {
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   onFilterChange?: () => void;
+  isMobileSheet?: boolean;
 }
 
-export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) => {
+export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = false }: SidebarProps) => {
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
@@ -62,41 +63,65 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
   };
 
   return (
-    <aside className="w-56 md:w-60 glass-card border-r border-accent/20 p-3 space-y-2 flex flex-col h-full overflow-hidden">
-      <div className="flex items-center gap-2 mb-2 shrink-0">
-        <Filter className="w-4 h-4 text-accent" />
-        <h2 className="text-base font-semibold">Filtres</h2>
-      </div>
+    <aside className={isMobileSheet 
+      ? "w-full h-full flex flex-col p-4 space-y-4" 
+      : "w-56 md:w-60 glass-card border-r border-accent/20 p-3 space-y-2 flex flex-col h-full overflow-hidden"
+    }>
+      {!isMobileSheet && (
+        <div className="flex items-center gap-2 mb-2 shrink-0">
+          <Filter className="w-4 h-4 text-accent" />
+          <h2 className="text-base font-semibold">Filtres</h2>
+        </div>
+      )}
 
-      <div className="space-y-2 overflow-y-auto flex-1 pr-1 custom-scrollbar">
+      <div className={isMobileSheet 
+        ? "space-y-3 overflow-y-auto flex-1 pr-2 custom-scrollbar"
+        : "space-y-2 overflow-y-auto flex-1 pr-1 custom-scrollbar"
+      }>
         {/* Geographic Filters - Departments Only */}
         <Collapsible open={isDepartmentsOpen} onOpenChange={setIsDepartmentsOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className="flex items-center justify-between p-2 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
-              <div className="flex items-center gap-1.5">
-                <Label className="text-xs font-semibold cursor-pointer">Départements</Label>
+            <div className={`flex items-center justify-between rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors ${
+              isMobileSheet ? "p-4 bg-accent/5" : "p-2 bg-accent/5"
+            }`}>
+              <div className="flex items-center gap-2">
+                <Label className={`font-semibold cursor-pointer ${isMobileSheet ? "text-base" : "text-xs"}`}>
+                  Départements
+                </Label>
                 {filters.departments.length > 0 && (
-                  <span className="text-[10px] bg-accent/20 text-accent px-1.5 py-0.5 rounded-full">
+                  <span className={`bg-accent/20 text-accent rounded-full font-medium ${
+                    isMobileSheet ? "text-xs px-2 py-1" : "text-[10px] px-1.5 py-0.5"
+                  }`}>
                     {filters.departments.length}
                   </span>
                 )}
               </div>
-              <ChevronDown className={`w-3.5 h-3.5 text-accent transition-transform ${isDepartmentsOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`text-accent transition-transform ${
+                isDepartmentsOpen ? 'rotate-180' : ''
+              } ${isMobileSheet ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-1.5 space-y-1 px-1">
-            <div className="max-h-40 overflow-y-auto pr-1 custom-scrollbar space-y-1">
+          <CollapsibleContent className={isMobileSheet ? "mt-2 space-y-2 px-2" : "mt-1.5 space-y-1 px-1"}>
+            <div className={`overflow-y-auto pr-1 custom-scrollbar ${
+              isMobileSheet ? "max-h-48 space-y-2" : "max-h-40 space-y-1"
+            }`}>
               {allDepartments.map((deptCode) => (
-                <div key={deptCode} className="flex items-center space-x-1.5 p-1 rounded hover:bg-accent/5">
+                <div key={deptCode} className={`flex items-center rounded hover:bg-accent/5 ${
+                  isMobileSheet ? "space-x-3 p-2.5" : "space-x-1.5 p-1"
+                }`}>
                   <Checkbox
                     id={`dept-${deptCode}`}
                     checked={filters.departments?.includes(deptCode)}
                     onCheckedChange={() => handleDepartmentToggle(deptCode)}
-                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-3.5 w-3.5"
+                    className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary ${
+                      isMobileSheet ? "h-5 w-5" : "h-3.5 w-3.5"
+                    }`}
                   />
                   <label
                     htmlFor={`dept-${deptCode}`}
-                    className="text-[11px] font-medium leading-none cursor-pointer flex-1"
+                    className={`font-medium leading-none cursor-pointer flex-1 ${
+                      isMobileSheet ? "text-sm" : "text-[11px]"
+                    }`}
                   >
                     {deptCode} - {DEPARTMENT_NAMES[deptCode]}
                   </label>
@@ -109,24 +134,38 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
         {/* Categories - Collapsible */}
         <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className="flex items-center justify-between p-2 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
-              <Label className="text-xs font-semibold cursor-pointer">Catégories d'activité</Label>
-              <ChevronDown className={`w-3.5 h-3.5 text-accent transition-transform ${isCategoriesOpen ? 'rotate-180' : ''}`} />
+            <div className={`flex items-center justify-between rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors ${
+              isMobileSheet ? "p-4 bg-accent/5" : "p-2 bg-accent/5"
+            }`}>
+              <Label className={`font-semibold cursor-pointer ${isMobileSheet ? "text-base" : "text-xs"}`}>
+                Catégories d'activité
+              </Label>
+              <ChevronDown className={`text-accent transition-transform ${
+                isCategoriesOpen ? 'rotate-180' : ''
+              } ${isMobileSheet ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-1.5">
-            <div className="space-y-1 max-h-40 overflow-y-auto pr-1 px-1 custom-scrollbar">
+          <CollapsibleContent className={isMobileSheet ? "mt-2" : "mt-1.5"}>
+            <div className={`overflow-y-auto pr-1 custom-scrollbar ${
+              isMobileSheet ? "space-y-2 max-h-48 px-2" : "space-y-1 max-h-40 px-1"
+            }`}>
               {allCategories.map((categoryKey) => (
-                <div key={categoryKey} className="flex items-center space-x-1.5 p-1 rounded hover:bg-accent/5">
+                <div key={categoryKey} className={`flex items-center rounded hover:bg-accent/5 ${
+                  isMobileSheet ? "space-x-3 p-2.5" : "space-x-1.5 p-1"
+                }`}>
                   <Checkbox
                     id={`cat-${categoryKey}`}
                     checked={filters.categories?.includes(categoryKey)}
                     onCheckedChange={() => handleCategoryToggle(categoryKey)}
-                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-3.5 w-3.5"
+                    className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary ${
+                      isMobileSheet ? "h-5 w-5" : "h-3.5 w-3.5"
+                    }`}
                   />
                   <label
                     htmlFor={`cat-${categoryKey}`}
-                    className="text-[11px] font-medium leading-none cursor-pointer flex-1"
+                    className={`font-medium leading-none cursor-pointer flex-1 ${
+                      isMobileSheet ? "text-sm" : "text-[11px]"
+                    }`}
                   >
                     {getCategoryLabel(categoryKey)}
                   </label>
@@ -139,31 +178,45 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
         {/* Dates - Collapsible */}
         <Collapsible open={isDatesOpen} onOpenChange={setIsDatesOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className="flex items-center justify-between p-2 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
-              <Label className="text-xs font-semibold cursor-pointer">Dates</Label>
-              <ChevronDown className={`w-3.5 h-3.5 text-accent transition-transform ${isDatesOpen ? 'rotate-180' : ''}`} />
+            <div className={`flex items-center justify-between rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors ${
+              isMobileSheet ? "p-4 bg-accent/5" : "p-2 bg-accent/5"
+            }`}>
+              <Label className={`font-semibold cursor-pointer ${isMobileSheet ? "text-base" : "text-xs"}`}>
+                Dates
+              </Label>
+              <ChevronDown className={`text-accent transition-transform ${
+                isDatesOpen ? 'rotate-180' : ''
+              } ${isMobileSheet ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-1.5 space-y-2 px-1">
-            <div className="space-y-1">
-              <Label htmlFor="dateFrom" className="text-[10px]">Date de début</Label>
+          <CollapsibleContent className={isMobileSheet ? "mt-2 space-y-3 px-2" : "mt-1.5 space-y-2 px-1"}>
+            <div className={isMobileSheet ? "space-y-2" : "space-y-1"}>
+              <Label htmlFor="dateFrom" className={isMobileSheet ? "text-sm" : "text-[10px]"}>
+                Date de début
+              </Label>
               <Input
                 id="dateFrom"
                 type="date"
                 value={filters.dateFrom}
                 onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
-                className="h-7 bg-background/50 border-border focus:border-accent text-xs"
+                className={`bg-background/50 border-border focus:border-accent ${
+                  isMobileSheet ? "h-10 text-sm" : "h-7 text-xs"
+                }`}
               />
             </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="dateTo" className="text-[10px]">Date de fin</Label>
+            <div className={isMobileSheet ? "space-y-2" : "space-y-1"}>
+              <Label htmlFor="dateTo" className={isMobileSheet ? "text-sm" : "text-[10px]"}>
+                Date de fin
+              </Label>
               <Input
                 id="dateTo"
                 type="date"
                 value={filters.dateTo}
                 onChange={(e) => handleFilterChange("dateTo", e.target.value)}
-                className="h-7 bg-background/50 border-border focus:border-accent text-xs"
+                className={`bg-background/50 border-border focus:border-accent ${
+                  isMobileSheet ? "h-10 text-sm" : "h-7 text-xs"
+                }`}
               />
             </div>
           </CollapsibleContent>
@@ -175,7 +228,9 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
       <Button
         variant="outline"
         size="sm"
-        className="w-full h-7 text-xs border-accent/50 hover:bg-accent/10 mt-2 shrink-0"
+        className={`w-full border-accent/50 hover:bg-accent/10 shrink-0 ${
+          isMobileSheet ? "h-11 text-sm mt-3" : "h-7 text-xs mt-2"
+        }`}
         onClick={() => {
           setFilters({
             dateFrom: "",
@@ -186,7 +241,7 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
           onFilterChange?.();
         }}
       >
-        Réinitialiser
+        Réinitialiser les filtres
       </Button>
     </aside>
   );

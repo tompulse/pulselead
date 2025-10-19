@@ -163,17 +163,20 @@ const Dashboard = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[85vh] p-0">
-              <SheetHeader className="px-4 py-3 border-b border-accent/20">
-                <SheetTitle className="flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-accent" />
-                  Filtres
+              <SheetHeader className="px-6 py-4 border-b border-accent/20 bg-gradient-to-b from-accent/5 to-transparent">
+                <SheetTitle className="flex items-center gap-3 text-xl">
+                  <div className="p-2 bg-accent/10 rounded-lg">
+                    <Filter className="w-5 h-5 text-accent" />
+                  </div>
+                  Filtrer les résultats
                 </SheetTitle>
               </SheetHeader>
-              <div className="h-[calc(85vh-60px)] overflow-hidden">
+              <div className="h-[calc(85vh-72px)] overflow-hidden">
                 <Sidebar 
                   filters={filters} 
                   setFilters={setFilters}
                   onFilterChange={() => setFilterSheetOpen(false)}
+                  isMobileSheet={true}
                 />
               </div>
             </SheetContent>
