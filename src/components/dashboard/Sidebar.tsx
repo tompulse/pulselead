@@ -16,9 +16,10 @@ interface SidebarProps {
     departments: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
+  onFilterChange?: () => void;
 }
 
-export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
+export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) => {
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
@@ -39,6 +40,7 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
           : [...currentCategories, categoryKey]
       };
     });
+    onFilterChange?.();
   };
 
   const allCategories = Object.keys(ACTIVITY_CATEGORIES);
@@ -56,6 +58,7 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
           : [...currentDepartments, deptCode]
       };
     });
+    onFilterChange?.();
   };
 
   return (
@@ -180,6 +183,7 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
             categories: [],
             departments: [],
           });
+          onFilterChange?.();
         }}
       >
         Réinitialiser
