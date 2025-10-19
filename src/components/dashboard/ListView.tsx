@@ -97,13 +97,12 @@ export const ListView = ({ filters }: ListViewProps) => {
           <Table>
             <TableHeader>
               <TableRow className="border-accent/20 hover:bg-accent/5">
-                <TableHead className="text-accent">Nom</TableHead>
-                <TableHead className="text-accent">SIRET</TableHead>
-                <TableHead className="text-accent">Adresse</TableHead>
-                <TableHead className="text-accent">Contact</TableHead>
-                <TableHead className="text-accent">Activité</TableHead>
-                <TableHead className="text-accent">Capital</TableHead>
-                <TableHead className="text-accent">Forme</TableHead>
+                <TableHead className="text-accent w-[180px]">Nom</TableHead>
+                <TableHead className="text-accent w-[110px]">SIRET</TableHead>
+                <TableHead className="text-accent w-[200px]">Adresse</TableHead>
+                <TableHead className="text-accent w-[200px]">Contact</TableHead>
+                <TableHead className="text-accent w-[280px]">Activité</TableHead>
+                <TableHead className="text-accent w-[100px]">Capital</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -124,24 +123,19 @@ export const ListView = ({ filters }: ListViewProps) => {
                     key={item.id}
                     className="border-accent/20 hover:bg-accent/5 cursor-pointer transition-colors"
                   >
-                    <TableCell className="font-medium">{item.nom}</TableCell>
+                    <TableCell className="font-medium text-sm">{item.nom}</TableCell>
                     <TableCell className="text-muted-foreground font-mono text-xs">{item.siret}</TableCell>
-                    <TableCell className="text-muted-foreground max-w-xs truncate" title={formattedAddress}>
-                      {formattedAddress}
+                    <TableCell className="text-muted-foreground text-xs" title={formattedAddress}>
+                      <div className="truncate max-w-[200px]">{formattedAddress}</div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground max-w-xs truncate" title={item.administration || undefined}>
-                      {item.administration || "N/A"}
+                    <TableCell className="text-muted-foreground text-xs" title={item.administration || undefined}>
+                      <div className="truncate max-w-[200px]">{item.administration || "N/A"}</div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground max-w-xs truncate" title={item.activite || undefined}>
-                      {item.activite || "N/A"}
+                    <TableCell className="text-muted-foreground text-xs" title={item.activite || undefined}>
+                      <div className="truncate max-w-[280px]">{item.activite || "N/A"}</div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground font-medium">
+                    <TableCell className="text-muted-foreground font-medium text-xs whitespace-nowrap">
                       {formattedCapital}
-                    </TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-accent">
-                        {item.forme_juridique || "N/A"}
-                      </span>
                     </TableCell>
                   </TableRow>
                 );

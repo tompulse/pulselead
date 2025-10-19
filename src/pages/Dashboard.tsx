@@ -78,8 +78,8 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
-      <Sidebar filters={filters} setFilters={setFilters} />
+      {/* Sidebar - Only show in map view */}
+      {view === "map" && <Sidebar filters={filters} setFilters={setFilters} />}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
