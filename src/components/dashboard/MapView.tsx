@@ -18,6 +18,7 @@ interface Entreprise {
   nom: string;
   adresse: string;
   code_postal: string;
+  ville?: string;
   latitude: number;
   longitude: number;
   siret: string;
@@ -108,12 +109,20 @@ export const MapView = ({ filters }: MapViewProps) => {
     // Add new markers
     entreprises.forEach((entreprise) => {
       // Format address from separate fields
-      const formattedAddress = [
+      const addressParts = [
         entreprise.numero_voie,
         entreprise.type_voie,
-        entreprise.nom_voie,
-        entreprise.code_postal
-      ].filter(Boolean).join(' ') || entreprise.adresse || "Adresse non disponible";
+        entreprise.nom_voie
+      ].filter(Boolean).join(' ');
+      
+      const locationParts = [
+        entreprise.code_postal,
+        entreprise.ville
+      ].filter(Boolean).join(' ');
+      
+      const formattedAddress = addressParts && locationParts 
+        ? `${addressParts}, ${locationParts}`
+        : addressParts || locationParts || entreprise.adresse || "Adresse non disponible";
 
       // Format capital with € and thousands separator
       const formattedCapital = entreprise.capital 

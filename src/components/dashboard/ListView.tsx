@@ -24,6 +24,7 @@ interface Entreprise {
   siret: string;
   adresse: string;
   code_postal: string;
+  ville?: string;
   code_naf: string;
   statut: string;
   date_demarrage: string;
@@ -111,12 +112,20 @@ export const ListView = ({ filters }: ListViewProps) => {
             </TableHeader>
             <TableBody>
               {entreprises.map((item) => {
-                const formattedAddress = [
+                const addressParts = [
                   item.numero_voie,
                   item.type_voie,
-                  item.nom_voie,
-                  item.code_postal
-                ].filter(Boolean).join(' ') || item.adresse || "N/A";
+                  item.nom_voie
+                ].filter(Boolean).join(' ');
+                
+                const locationParts = [
+                  item.code_postal,
+                  item.ville
+                ].filter(Boolean).join(' ');
+                
+                const formattedAddress = addressParts && locationParts 
+                  ? `${addressParts}, ${locationParts}`
+                  : addressParts || locationParts || item.adresse || "N/A";
                 
                 const formattedCapital = typeof item.capital === 'number' 
                   ? `${item.capital.toLocaleString('fr-FR')} €`
