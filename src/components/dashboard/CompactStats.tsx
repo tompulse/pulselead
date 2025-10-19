@@ -39,7 +39,6 @@ export const CompactStats = ({ userId }: CompactStatsProps) => {
         qualifie: statuts?.filter(s => s.statut_actuel === 'qualifie').length || 0,
         proposition: statuts?.filter(s => s.statut_actuel === 'proposition').length || 0,
         negociation: statuts?.filter(s => s.statut_actuel === 'negociation').length || 0,
-        gagne: statuts?.filter(s => s.statut_actuel === 'gagne').length || 0,
       };
 
       setStats({ 
@@ -70,9 +69,6 @@ export const CompactStats = ({ userId }: CompactStatsProps) => {
                   Pipeline: {stats.leads_by_status.qualifie + stats.leads_by_status.proposition + stats.leads_by_status.negociation}
                 </span>
               </div>
-              <Badge variant="default" className="bg-green-600">
-                {stats.leads_by_status.gagne} gagnés
-              </Badge>
             </div>
             <ChevronDown className={`h-4 w-4 text-accent transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </div>
