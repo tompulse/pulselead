@@ -139,6 +139,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                               ({selectedDeptCount} département{selectedDeptCount > 1 ? 's' : ''})
                             </span>
                           )}
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {regionData.departments.join(', ')}
+                          </div>
                         </div>
                       </label>
                     );
@@ -152,8 +155,28 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   <div>
                     <h2 className="text-xl font-semibold mb-2">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-sm">(optionnel)</span></h2>
                     <p className="text-muted-foreground">
-                      Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche. Vous pouvez aussi passer cette étape.
+                      Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche. Vous pouvez aussi voir tous les secteurs.
                     </p>
+                  </div>
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={handleFinish}
+                  className="w-full border-accent/50 hover:bg-accent/10 h-12 text-base font-medium"
+                >
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Voir tous les secteurs d'activité
+                </Button>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-accent/20" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      ou sélectionnez des secteurs spécifiques
+                    </span>
                   </div>
                 </div>
 
@@ -231,12 +254,12 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   Suivant
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </>
-              ) : (
+              ) : selectedCategories.length > 0 ? (
                 <>
                   <Sparkles className="w-4 h-4 mr-2" />
                   Découvrir les entreprises
                 </>
-              )}
+              ) : null}
             </Button>
           </div>
         </div>
