@@ -66,20 +66,35 @@ serve(async (req) => {
       );
     }
 
-    // Mapper les données de la source vers le format destination
-    const mappedData = sourceData.map((item: any) => ({
-      nom: item.entreprise || '',
-      siret: item.siret?.toString() || '',
-      adresse: null,
-      code_postal: null,
-      code_naf: null,
-      statut: null,
-      latitude: item.latitude,
-      longitude: item.longitude,
-      date_demarrage: item.lancement_activite,
-    }));
+    // Mapper et nettoyer les données (SIRET obligatoire et unique)
+    const mappedDataRaw = (sourceData || []).map((item: any) => {
+      const rawSiret = (item.siret ?? '').toString();
+      // Garder uniquement les chiffres dans le SIRET
+      const siret = rawSiret.replace(/\D/g, '').trim();
+      return {
+        nom: item.entreprise || '',
+        siret, // texte numérique normalisé
+        adresse: null,
+        code_postal: null,
+        code_naf: null,
+        statut: null,
+        latitude: item.latitude,
+        longitude: item.longitude,
+        date_demarrage: item.lancement_activite,
+      };
+    });
 
-    console.log(`🔄 ${mappedData.length} entreprises mappées pour l'insertion`);
+    // Filtrer les entrées sans SIRET valide
+    const filteredData = mappedDataRaw.filter((d: any) => d.siret && d.siret.length > 0);
+
+    // Dédupliquer par SIRET (on garde la première occurrence)
+    const uniqueMap = new Map<string, any>();
+    for (const row of filteredData) {
+      if (!uniqueMap.has(row.siret)) uniqueMap.set(row.siret, row);
+    }
+    const mappedData = Array.from(uniqueMap.values());
+
+    console.log(`🔄 ${mappedData.length} entreprises prêtes après nettoyage (source=${sourceData?.length || 0}, invalides=${mappedDataRaw.length - filteredData.length}, doublons=${filteredData.length - mappedData.length})`);
 
     // Suppression des anciennes données (pour une synchronisation complète)
     const { error: deleteError } = await destDb
