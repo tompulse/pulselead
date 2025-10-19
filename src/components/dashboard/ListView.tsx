@@ -20,7 +20,6 @@ interface Entreprise {
   siret: string;
   adresse: string;
   code_postal: string;
-  ville?: string;
   code_naf: string;
   statut: string;
   date_demarrage: string;
@@ -109,25 +108,15 @@ export const ListView = ({ filters }: ListViewProps) => {
             </TableHeader>
             <TableBody>
               {entreprises.map((item) => {
-                const addressParts = [
+                const formattedAddress = [
                   item.numero_voie,
                   item.type_voie,
-                  item.nom_voie
-                ].filter(Boolean).join(' ');
+                  item.nom_voie,
+                  item.code_postal
+                ].filter(Boolean).join(' ') || item.adresse || "N/A";
                 
-                const locationParts = [
-                  item.code_postal,
-                  item.ville
-                ].filter(Boolean).join(' ');
-                
-                const formattedAddress = addressParts && locationParts 
-                  ? `${addressParts}, ${locationParts}`
-                  : addressParts || locationParts || item.adresse || "N/A";
-                
-                const formattedCapital = item.capital 
-                  ? (typeof item.capital === 'string' 
-                      ? item.capital 
-                      : `${item.capital.toLocaleString('fr-FR')} €`)
+                const formattedCapital = typeof item.capital === 'number' 
+                  ? `${item.capital.toLocaleString('fr-FR')} €`
                   : "N/A";
                 
                 return (
@@ -140,10 +129,8 @@ export const ListView = ({ filters }: ListViewProps) => {
                     <TableCell className="text-muted-foreground max-w-xs truncate" title={formattedAddress}>
                       {formattedAddress}
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-xs">
-                      {item.telephone && <div>📞 {item.telephone}</div>}
-                      {item.email && <div>✉️ {item.email}</div>}
-                      {!item.telephone && !item.email && "N/A"}
+                    <TableCell className="text-muted-foreground max-w-xs truncate" title={item.administration || undefined}>
+                      {item.administration || "N/A"}
                     </TableCell>
                     <TableCell className="text-muted-foreground max-w-xs truncate" title={item.activite || undefined}>
                       {item.activite || "N/A"}

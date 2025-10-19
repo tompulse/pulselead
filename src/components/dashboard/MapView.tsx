@@ -13,7 +13,6 @@ interface Entreprise {
   nom: string;
   adresse: string;
   code_postal: string;
-  ville?: string;
   latitude: number;
   longitude: number;
   siret: string;
@@ -94,26 +93,16 @@ export const MapView = ({ filters }: MapViewProps) => {
     // Add new markers
     entreprises.forEach((entreprise) => {
       // Format address from separate fields
-      const addressParts = [
+      const formattedAddress = [
         entreprise.numero_voie,
         entreprise.type_voie,
-        entreprise.nom_voie
-      ].filter(Boolean).join(' ');
-      
-      const locationParts = [
-        entreprise.code_postal,
-        entreprise.ville
-      ].filter(Boolean).join(' ');
-      
-      const formattedAddress = addressParts && locationParts 
-        ? `${addressParts}, ${locationParts}`
-        : addressParts || locationParts || entreprise.adresse || "Adresse non disponible";
+        entreprise.nom_voie,
+        entreprise.code_postal
+      ].filter(Boolean).join(' ') || entreprise.adresse || "Adresse non disponible";
 
-      // Format capital - handle both numeric and string with EUR
+      // Format capital with € and thousands separator
       const formattedCapital = entreprise.capital 
-        ? (typeof entreprise.capital === 'string' 
-            ? entreprise.capital 
-            : `${entreprise.capital.toLocaleString('fr-FR')} €`)
+        ? `${entreprise.capital.toLocaleString('fr-FR')} €`
         : null;
 
       const popup = new mapboxgl.Popup({ 

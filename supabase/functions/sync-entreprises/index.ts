@@ -123,6 +123,16 @@ serve(async (req) => {
           console.warn('⚠️ Date invalide pour SIRET', siret, ':', item.lancement);
         }
       }
+
+      // Parser le capital en nombre (ex: "10 000.00 EUR" -> 10000)
+      const capitalStr = (item.capital ?? '').toString();
+      const capitalParsed = capitalStr
+        ? (() => {
+            const cleaned = capitalStr.replace(/\s/g, '').replace(/[^\d,.-]/g, '').replace(',', '.');
+            const num = parseFloat(cleaned);
+            return Number.isFinite(num) ? num : null;
+          })()
+        : null;
       
       return {
         nom: item.entreprise || '',
@@ -131,12 +141,11 @@ serve(async (req) => {
         type_voie: item.type_voie || null,
         nom_voie: item.nom_voie || null,
         code_postal: item.code_postal?.toString() || null,
-        ville: item.ville || null,
         adresse: null, // On utilise les champs séparés
         latitude: item.latitude,
         longitude: item.longitude,
         date_demarrage: dateDemarrage,
-        capital: item.capital,
+        capital: capitalParsed,
         activite: item.activite || null,
         administration: item.interlocuteurs || null,
         code_naf: null,
