@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -276,8 +276,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4 max-w-full">
-              {filteredEntreprises.map((item) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 pb-4">{filteredEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
                 const categoryInfo = getCategoryInfo(item.activite);
                 const crm = crmData[item.id];
@@ -305,11 +304,12 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 return (
                   <div
                     key={item.id}
-                    className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 max-w-full overflow-hidden"
+                    className="glass-card rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 w-full overflow-hidden cursor-pointer"
+                    onClick={() => onEntrepriseSelect?.(item)}
                   >
-                    <div className="space-y-3 mb-4">
+                    <div className="space-y-2.5 md:space-y-3 mb-3 md:mb-4">
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-bold text-lg truncate flex-1" title={item.nom}>
+                        <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
                           {item.nom}
                         </h4>
                         <div className="flex gap-1 flex-shrink-0">
@@ -373,14 +373,14 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         <div className="flex flex-wrap gap-2 text-xs text-muted-foreground/80">
                           {item.date_demarrage && (
                             <div className="flex items-center gap-1.5">
-                              <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                              <Clock className="w-3.5 h-3.5 flex-shrink-0" />
                               <span>{new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
                             </div>
                           )}
                           
                           {item.capital && (
                             <div className="flex items-center gap-1.5">
-                              <DollarSign className="w-3.5 h-3.5 flex-shrink-0" />
+                              <Briefcase className="w-3.5 h-3.5 flex-shrink-0" />
                               <span>{item.capital.toLocaleString('fr-FR')} €</span>
                             </div>
                           )}
@@ -388,7 +388,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap sm:flex-nowrap">
                       <PhoneButton 
                         phoneNumber={item.telephone} 
                         entrepriseName={item.nom}
@@ -400,11 +400,11 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                            className="flex-1 min-w-[100px] border-accent/30 hover:bg-accent/10 hover:border-accent"
                             disabled={!hasCoordinates}
                           >
-                            <Car className="w-4 h-4 mr-2" />
-                            Visiter
+                            <Car className="w-4 h-4 sm:mr-2" />
+                            <span className="hidden sm:inline">Visiter</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
@@ -423,36 +423,15 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         </DropdownMenuContent>
                       </DropdownMenu>
 
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
-                          >
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            CRM
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => handleCRMAction(item.id, 'appeler')}>
-                            <Phone className="w-4 h-4 mr-2" />
-                            Appeler
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleCRMAction(item.id, 'visite')}>
-                            <Car className="w-4 h-4 mr-2" />
-                            Rendre visite
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleCRMAction(item.id, 'rdv')}>
-                            <CalendarCheck className="w-4 h-4 mr-2" />
-                            Rendez-vous
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleCRMAction(item.id, 'note')}>
-                            <StickyNote className="w-4 h-4 mr-2" />
-                            Ne pas oublier
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onEntrepriseSelect?.(item)}
+                        className="flex-1 min-w-[100px] border-accent/30 hover:bg-accent/10 hover:border-accent"
+                      >
+                        <Building2 className="w-4 h-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Détails</span>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -465,7 +444,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
       {isMobile && filteredEntreprises.length > 0 && (
         <div className="mt-4 p-4 glass-card rounded-lg border border-accent/20">
           <p className="text-xs text-muted-foreground text-center">
-            💡 Utilisez les boutons Visiter et CRM pour interagir avec les entreprises
+            💡 Cliquez sur "Détails" pour accéder au CRM et gérer vos interactions
           </p>
         </div>
       )}

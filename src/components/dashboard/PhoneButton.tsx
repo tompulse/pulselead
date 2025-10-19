@@ -29,10 +29,9 @@ export const PhoneButton = ({ phoneNumber, entrepriseName, onClick, size = "sm" 
         variant="outline"
         size="sm"
         disabled
-        className="flex-1 opacity-50 cursor-not-allowed"
+        className="flex-1 opacity-30 cursor-not-allowed"
       >
-        <Phone className="w-4 h-4 mr-2" />
-        Pas de n°
+        <Phone className="w-4 h-4" />
       </Button>
     );
   }
