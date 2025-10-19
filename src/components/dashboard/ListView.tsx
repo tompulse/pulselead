@@ -5,6 +5,7 @@ import { ACTIVITY_CATEGORIES, categorizeActivity, getCategoryLabel } from "@/uti
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { EntrepriseDetails } from "./EntrepriseDetails";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 
@@ -15,6 +16,7 @@ interface ListViewProps {
     categories: string[];
     departments: string[];
   };
+  onEntrepriseSelect?: (entreprise: Entreprise) => void;
 }
 
 interface Entreprise {
@@ -40,13 +42,14 @@ interface Entreprise {
   longitude?: number;
 }
 
-export const ListView = ({ filters }: ListViewProps) => {
+export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [crmData, setCrmData] = useState<Record<string, { status: any; interactionCount: number; hasUpcomingAction: boolean }>>({});
+  const isMobile = useIsMobile();
   const [selectedEntreprise, setSelectedEntreprise] = useState<Entreprise | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [crmData, setCrmData] = useState<Record<string, { status: any; interactionCount: number; hasUpcomingAction: boolean }>>({});
 
   useEffect(() => {
     const fetchEntreprises = async () => {
@@ -179,8 +182,12 @@ export const ListView = ({ filters }: ListViewProps) => {
   };
 
   const handleCardClick = (entreprise: Entreprise) => {
-    setSelectedEntreprise(entreprise);
-    setDetailsOpen(true);
+    if (isMobile) {
+      setSelectedEntreprise(entreprise);
+      setDetailsOpen(true);
+    } else {
+      onEntrepriseSelect?.(entreprise);
+    }
   };
 
   if (loading) {
@@ -337,15 +344,17 @@ export const ListView = ({ filters }: ListViewProps) => {
         </div>
       </div>
 
-      <EntrepriseDetails
-        entreprise={selectedEntreprise ? {
-          ...selectedEntreprise,
-          latitude: selectedEntreprise.latitude || 0,
-          longitude: selectedEntreprise.longitude || 0,
-        } : null}
-        open={detailsOpen}
-        onOpenChange={setDetailsOpen}
-      />
+      {isMobile && (
+        <EntrepriseDetails
+          entreprise={selectedEntreprise ? {
+            ...selectedEntreprise,
+            latitude: selectedEntreprise.latitude || 0,
+            longitude: selectedEntreprise.longitude || 0,
+          } : null}
+          open={detailsOpen}
+          onOpenChange={setDetailsOpen}
+        />
+      )}
     </>
   );
 };

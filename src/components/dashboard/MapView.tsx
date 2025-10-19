@@ -4,6 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin } from "lucide-react";
 import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { EntrepriseDetails } from "./EntrepriseDetails";
 
 interface MapViewProps {
@@ -13,6 +14,7 @@ interface MapViewProps {
     categories: string[];
     departments: string[];
   };
+  onEntrepriseSelect?: (entreprise: Entreprise) => void;
 }
 
 interface Entreprise {
@@ -35,12 +37,13 @@ interface Entreprise {
   code_naf: string;
 }
 
-export const MapView = ({ filters }: MapViewProps) => {
+export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const isMobile = useIsMobile();
   const [selectedEntreprise, setSelectedEntreprise] = useState<Entreprise | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
@@ -152,8 +155,12 @@ export const MapView = ({ filters }: MapViewProps) => {
 
       // Open modal on marker click
       marker.getElement().addEventListener('click', () => {
-        setSelectedEntreprise(entreprise);
-        setDetailsOpen(true);
+        if (isMobile) {
+          setSelectedEntreprise(entreprise);
+          setDetailsOpen(true);
+        } else {
+          onEntrepriseSelect?.(entreprise);
+        }
       });
 
       markersRef.current.push(marker);
@@ -200,11 +207,13 @@ export const MapView = ({ filters }: MapViewProps) => {
         )}
       </div>
 
-      <EntrepriseDetails
-        entreprise={selectedEntreprise}
-        open={detailsOpen}
-        onOpenChange={setDetailsOpen}
-      />
+      {isMobile && (
+        <EntrepriseDetails
+          entreprise={selectedEntreprise}
+          open={detailsOpen}
+          onOpenChange={setDetailsOpen}
+        />
+      )}
     </>
   );
 };

@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Zap, LogOut, List, MapIcon, Filter } from "lucide-react";
+import { Zap, LogOut, List, MapIcon, Filter, PanelRight } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
 import { SyncButton } from "@/components/dashboard/SyncButton";
-import { DashboardStats } from "@/components/dashboard/DashboardStats";
+import { CompactStats } from "@/components/dashboard/CompactStats";
+import { CRMSidePanel } from "@/components/dashboard/CRMSidePanel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,8 @@ const Dashboard = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [view, setView] = useState<"map" | "list">("map");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [selectedEntreprise, setSelectedEntreprise] = useState<any>(null);
+  const [crmPanelOpen, setCrmPanelOpen] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -99,9 +102,8 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
-      {/* Header - Responsive - Hidden when filter sheet is open on mobile */}
-      {!(isMobile && filterSheetOpen) && (
-        <header className="glass-card border-b border-accent/20 px-3 md:px-4 py-2 md:py-3 z-10 backdrop-blur-xl shrink-0">
+      {/* Header */}
+      <header className="glass-card border-b border-accent/20 px-3 md:px-4 py-2 md:py-3 z-10 backdrop-blur-xl shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-4">
               <div className="flex items-center gap-2 md:gap-3">
@@ -137,6 +139,17 @@ const Dashboard = () => {
 
             <div className="flex items-center gap-2">
               {isAdmin && !isMobile && <SyncButton />}
+              {!isMobile && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCrmPanelOpen(!crmPanelOpen)}
+                  className={`h-7 px-2 text-xs ${crmPanelOpen ? 'bg-accent text-primary' : 'border-accent/50 hover:bg-accent/10'}`}
+                >
+                  <PanelRight className="w-3.5 h-3.5 mr-1" />
+                  CRM
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
@@ -149,10 +162,12 @@ const Dashboard = () => {
             </div>
           </div>
         </header>
-      )}
+      
+      {/* Compact Stats */}
+      {userId && !isMobile && <CompactStats userId={userId} />}
 
-      {/* Mobile Filter Button Bar - Hidden when filter sheet is open */}
-      {isMobile && !filterSheetOpen && (
+      {/* Mobile Filter Button */}
+      {isMobile && (
         <div className="glass-card border-b border-accent/20 px-3 py-2 shrink-0">
           <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
             <SheetTrigger asChild>
@@ -194,31 +209,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Sheet for mobile when open - Full screen */}
-      {isMobile && filterSheetOpen && (
-        <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
-          <SheetContent side="bottom" className="h-screen p-0">
-            <SheetHeader className="px-6 py-4 border-b border-accent/20 bg-gradient-to-b from-accent/5 to-transparent">
-              <SheetTitle className="flex items-center gap-3 text-xl">
-                <div className="p-2 bg-accent/10 rounded-lg">
-                  <Filter className="w-5 h-5 text-accent" />
-                </div>
-                Filtrer les résultats
-              </SheetTitle>
-            </SheetHeader>
-            <div className="h-[calc(100vh-72px)] overflow-hidden">
-              <Sidebar 
-                filters={filters} 
-                setFilters={setFilters}
-                onFilterChange={() => setFilterSheetOpen(false)}
-                isMobileSheet={true}
-              />
-            </div>
-          </SheetContent>
-        </Sheet>
-      )}
-
-      {/* Content Area with Sidebar */}
+      {/* Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop/Tablet Sidebar */}
         {!isMobile && (
@@ -227,22 +218,36 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden">
-          <div className="h-full p-4 md:p-6 flex flex-col gap-4 overflow-y-auto">
-            {/* Dashboard Stats */}
-            {userId && <DashboardStats userId={userId} />}
-            
-            {/* Main View */}
-            <div className="flex-1 overflow-hidden">
-              {view === "map" ? (
-                <MapView filters={filters} />
-              ) : (
-                <div className="h-full">
-                  <ListView filters={filters} />
-                </div>
-              )}
-            </div>
+          <div className="h-full p-4 md:p-6">
+            {view === "map" ? (
+              <MapView 
+                filters={filters} 
+                onEntrepriseSelect={(entreprise) => {
+                  setSelectedEntreprise(entreprise);
+                  setCrmPanelOpen(true);
+                }}
+              />
+            ) : (
+              <div className="h-full">
+                <ListView 
+                  filters={filters}
+                  onEntrepriseSelect={(entreprise) => {
+                    setSelectedEntreprise(entreprise);
+                    setCrmPanelOpen(true);
+                  }}
+                />
+              </div>
+            )}
           </div>
         </main>
+
+        {/* CRM Side Panel - Desktop only */}
+        {!isMobile && crmPanelOpen && (
+          <CRMSidePanel 
+            entreprise={selectedEntreprise}
+            onClose={() => setCrmPanelOpen(false)}
+          />
+        )}
       </div>
     </div>
   );
