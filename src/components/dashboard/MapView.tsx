@@ -3,13 +3,16 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin } from "lucide-react";
-import { categorizeActivity } from "@/utils/activityCategories";
+import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
+import { REGIONS_DATA } from "@/utils/regionsData";
 
 interface MapViewProps {
   filters: {
     dateFrom: string;
     dateTo: string;
     categories: string[];
+    region: string;
+    departments: string[];
   };
 }
 
@@ -30,6 +33,7 @@ interface Entreprise {
   administration?: string;
   capital?: number;
   activite?: string;
+  code_naf: string;
 }
 
 export const MapView = ({ filters }: MapViewProps) => {
@@ -49,10 +53,9 @@ export const MapView = ({ filters }: MapViewProps) => {
         .from("entreprises")
         .select("*")
         .not("latitude", "is", null)
-        .not("longitude", "is", null)
-        .not("activite", "is", null); // Exclure les entreprises sans activité
+        .not("longitude", "is", null);
 
-      // Only apply date filters if we have valid dates AND the entreprise has a date_demarrage
+      // Apply date filters
       if (filters.dateFrom || filters.dateTo) {
         query = query.or(`date_demarrage.is.null,and(date_demarrage.gte.${filters.dateFrom || "1900-01-01"},date_demarrage.lte.${filters.dateTo || "2100-12-31"})`);
       }
@@ -61,16 +64,41 @@ export const MapView = ({ filters }: MapViewProps) => {
 
       if (error) {
         console.error("Error fetching entreprises:", error);
+        setEntreprises([]);
       } else {
-        // Filter by category if categories are selected
-        let filteredData = data || [];
+        // Filter by categories if needed
+        let filtered = data || [];
         if (filters.categories && filters.categories.length > 0) {
-          filteredData = filteredData.filter((entreprise: any) => {
-            const category = categorizeActivity(entreprise.activite);
-            return filters.categories.includes(category);
+          filtered = filtered.filter((ent: Entreprise) => {
+            const codeNaf = ent.code_naf;
+            if (!codeNaf) return false;
+            
+            return filters.categories.some(cat => {
+              const categoryRanges = ACTIVITY_CATEGORIES[cat];
+              if (!categoryRanges) return false;
+              
+              return categoryRanges.some(range => {
+                if (range.includes('-')) {
+                  const [start, end] = range.split('-');
+                  return codeNaf >= start && codeNaf <= end;
+                }
+                return codeNaf.startsWith(range);
+              });
+            });
           });
         }
-        setEntreprises(filteredData);
+
+        // Filter by departments if selected
+        if (filters.departments && filters.departments.length > 0) {
+          filtered = filtered.filter((ent: Entreprise) => {
+            const codePostal = ent.code_postal;
+            if (!codePostal) return false;
+            const dept = codePostal.substring(0, 2);
+            return filters.departments.includes(dept) || filters.departments.includes(codePostal.substring(0, 3));
+          });
+        }
+        
+        setEntreprises(filtered);
       }
       setLoading(false);
     };
@@ -84,11 +112,24 @@ export const MapView = ({ filters }: MapViewProps) => {
 
     mapboxgl.accessToken = "pk.eyJ1IjoicmF3c3MiLCJhIjoiY21nd3FuN3plMHF6YjJrc2JzMHU5enZqbCJ9.DW7r1fzAlHdCdlQatpAEuQ";
 
+    // Determine initial center and zoom based on region filter
+    let initialCenter: [number, number] = [2.3522, 46.2276];
+    let initialZoom = 5.5;
+
+    if (filters.region && filters.region !== "all") {
+      const regionData = REGIONS_DATA[filters.region as keyof typeof REGIONS_DATA];
+      if (regionData) {
+        initialCenter = regionData.center as [number, number];
+        initialZoom = regionData.zoom;
+      }
+    }
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/dark-v11",
-      center: [2.3522, 48.8566], // Paris
-      zoom: 5,
+      center: initialCenter,
+      zoom: initialZoom,
+      projection: { name: "mercator" },
     });
 
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
@@ -96,7 +137,7 @@ export const MapView = ({ filters }: MapViewProps) => {
     return () => {
       map.current?.remove();
     };
-  }, []);
+  }, [filters.region]); // Re-initialize map when region changes
 
   // Add markers when entreprises change
   useEffect(() => {

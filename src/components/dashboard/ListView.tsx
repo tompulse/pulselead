@@ -9,12 +9,15 @@ import {
 import { Building2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
 
 interface ListViewProps {
   filters: {
     dateFrom: string;
     dateTo: string;
     categories: string[];
+    region: string;
+    departments: string[];
   };
 }
 
@@ -60,8 +63,41 @@ export const ListView = ({ filters }: ListViewProps) => {
 
       if (error) {
         console.error("Error fetching entreprises:", error);
+        setEntreprises([]);
       } else {
-        setEntreprises(data || []);
+        // Filter by categories if needed
+        let filtered = data || [];
+        if (filters.categories && filters.categories.length > 0) {
+          filtered = filtered.filter((ent: Entreprise) => {
+            const codeNaf = ent.code_naf;
+            if (!codeNaf) return false;
+            
+            return filters.categories.some(cat => {
+              const categoryRanges = ACTIVITY_CATEGORIES[cat];
+              if (!categoryRanges) return false;
+              
+              return categoryRanges.some(range => {
+                if (range.includes('-')) {
+                  const [start, end] = range.split('-');
+                  return codeNaf >= start && codeNaf <= end;
+                }
+                return codeNaf.startsWith(range);
+              });
+            });
+          });
+        }
+
+        // Filter by departments if selected
+        if (filters.departments && filters.departments.length > 0) {
+          filtered = filtered.filter((ent: Entreprise) => {
+            const codePostal = ent.code_postal;
+            if (!codePostal) return false;
+            const dept = codePostal.substring(0, 2);
+            return filters.departments.includes(dept) || filters.departments.includes(codePostal.substring(0, 3));
+          });
+        }
+
+        setEntreprises(filtered);
       }
       setLoading(false);
     };

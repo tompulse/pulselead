@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Target, LogOut, List, MapIcon } from "lucide-react";
-import { FilterBar } from "@/components/dashboard/FilterBar";
+import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
 import { SyncButton } from "@/components/dashboard/SyncButton";
@@ -17,6 +17,8 @@ const Dashboard = () => {
     dateFrom: "2025-09-01",
     dateTo: "",
     categories: [] as string[],
+    region: "",
+    departments: [] as string[],
   });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -128,19 +130,22 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Filter Bar */}
-      <FilterBar filters={filters} setFilters={setFilters} />
+      {/* Content Area with Sidebar */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <Sidebar filters={filters} setFilters={setFilters} />
 
-      {/* Content Area */}
-      <main className="flex-1 p-8 overflow-auto">
-        <div className="max-w-[1800px] mx-auto">
-          {view === "map" ? (
-            <MapView filters={filters} />
-          ) : (
-            <ListView filters={filters} />
-          )}
-        </div>
-      </main>
+        {/* Main Content */}
+        <main className="flex-1 p-8 overflow-auto">
+          <div className="max-w-[1800px] mx-auto h-full">
+            {view === "map" ? (
+              <MapView filters={filters} />
+            ) : (
+              <ListView filters={filters} />
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
