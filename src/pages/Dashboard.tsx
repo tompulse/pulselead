@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Lightbulb, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare, Building2, Calendar, DollarSign, User, Navigation, Map as MapIconLucide } from "lucide-react";
+import { LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare, Building2, Calendar, DollarSign, User, Navigation, Map as MapIconLucide } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { InteractionTimeline } from "@/components/dashboard/InteractionTimeline";
+import { Logo } from "@/components/Logo";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -178,10 +179,7 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
-            <Lightbulb className="w-12 h-12 text-accent mx-auto relative" />
-          </div>
+          <Logo size="xl" />
           <p className="text-muted-foreground text-base">Chargement...</p>
         </div>
       </div>
@@ -195,10 +193,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-4">
               <div className="flex items-center gap-2 md:gap-3">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-accent/30 blur-lg animate-pulse" />
-                  <Lightbulb className="w-6 h-6 md:w-7 md:h-7 text-accent relative" />
-                </div>
+                <Logo size="md" />
                 <span className="text-lg md:text-xl font-bold gradient-text">LUMA</span>
               </div>
               
