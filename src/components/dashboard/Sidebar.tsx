@@ -121,21 +121,35 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
                 onFilterChange?.();
               }}
             >
-              📞 À rappeler aujourd'hui
+              📞 A rappeler
             </Button>
             <Button
-              variant={filters.crmFilter === 'qualifies' ? 'default' : 'outline'}
+              variant={filters.crmFilter === 'rendre_visite' ? 'default' : 'outline'}
               size="sm"
               className="w-full justify-start"
               onClick={() => {
                 setFilters((prev: any) => ({
                   ...prev,
-                  crmFilter: filters.crmFilter === 'qualifies' ? undefined : 'qualifies'
+                  crmFilter: filters.crmFilter === 'rendre_visite' ? undefined : 'rendre_visite'
                 }));
                 onFilterChange?.();
               }}
             >
-              ✅ Leads qualifiés
+              🚗 Rendre visite
+            </Button>
+            <Button
+              variant={filters.crmFilter === 'rdv_pris' ? 'default' : 'outline'}
+              size="sm"
+              className="w-full justify-start"
+              onClick={() => {
+                setFilters((prev: any) => ({
+                  ...prev,
+                  crmFilter: filters.crmFilter === 'rdv_pris' ? undefined : 'rdv_pris'
+                }));
+                onFilterChange?.();
+              }}
+            >
+              ✅ Rendez-vous pris
             </Button>
           </CollapsibleContent>
         </Collapsible>
