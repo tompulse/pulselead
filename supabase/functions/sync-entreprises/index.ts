@@ -18,11 +18,18 @@ serve(async (req) => {
     const sourceDbUrl = Deno.env.get('SOURCE_DB_URL');
     const sourceDbKey = Deno.env.get('SOURCE_DB_ANON_KEY');
     
+    console.log('📝 Debug - SOURCE_DB_URL:', sourceDbUrl);
+    console.log('📝 Debug - SOURCE_DB_ANON_KEY exists:', !!sourceDbKey);
+    
     if (!sourceDbUrl || !sourceDbKey) {
       throw new Error('Les secrets SOURCE_DB_URL et SOURCE_DB_ANON_KEY ne sont pas configurés');
     }
 
-    const sourceDb = createClient(sourceDbUrl, sourceDbKey);
+    // Nettoyer l'URL (enlever les espaces)
+    const cleanSourceUrl = sourceDbUrl.trim();
+    console.log('🧹 URL nettoyée:', cleanSourceUrl);
+
+    const sourceDb = createClient(cleanSourceUrl, sourceDbKey);
     console.log('✅ Connecté à la base source');
 
     // Connexion à la base de destination (Lovable Cloud)
