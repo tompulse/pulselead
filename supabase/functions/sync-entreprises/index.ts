@@ -113,16 +113,44 @@ serve(async (req) => {
       const rawSiret = (item.siret ?? '').toString();
       // Garder uniquement les chiffres dans le SIRET
       const siret = rawSiret.replace(/\D/g, '').trim();
+      
+      // Parser la date de lancement (format: 2025-09-25)
+      let dateDemarrage = null;
+      if (item.lancement) {
+        try {
+          dateDemarrage = item.lancement;
+        } catch (e) {
+          console.warn('⚠️ Date invalide pour SIRET', siret, ':', item.lancement);
+        }
+      }
+      
       return {
         nom: item.entreprise || '',
-        siret, // texte numérique normalisé
-        adresse: null,
-        code_postal: null,
-        code_naf: null,
-        statut: null,
+        siret,
+        numero_voie: item.numero_voie?.toString() || null,
+        type_voie: item.type_voie || null,
+        nom_voie: item.nom_voie || null,
+        code_postal: item.code_postal?.toString() || null,
+        ville: item.ville || null,
+        adresse: null, // On utilise les champs séparés
         latitude: item.latitude,
         longitude: item.longitude,
-        date_demarrage: item.lancement_activite,
+        date_demarrage: dateDemarrage,
+        capital: item.capital,
+        activite: item.activite || null,
+        administration: item.interlocuteurs || null,
+        code_naf: null,
+        statut: null,
+        telephone: null,
+        email: null,
+        forme_juridique: null,
+        dirigeant: null,
+        effectifs: null,
+        chiffre_affaires: null,
+        score_lead: null,
+        enrichi: false,
+        date_enrichissement: null,
+        interlocuteur: null,
       };
     });
 
