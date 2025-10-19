@@ -14,7 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      entreprises: {
+        Row: {
+          adresse: string | null
+          chiffre_affaires: number | null
+          code_naf: string | null
+          code_postal: string | null
+          created_at: string | null
+          date_demarrage: string | null
+          date_enrichissement: string | null
+          dirigeant: string | null
+          effectifs: number | null
+          email: string | null
+          enrichi: boolean | null
+          forme_juridique: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          nom: string
+          score_lead: number | null
+          siret: string
+          site_web: string | null
+          statut: string | null
+          telephone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          adresse?: string | null
+          chiffre_affaires?: number | null
+          code_naf?: string | null
+          code_postal?: string | null
+          created_at?: string | null
+          date_demarrage?: string | null
+          date_enrichissement?: string | null
+          dirigeant?: string | null
+          effectifs?: number | null
+          email?: string | null
+          enrichi?: boolean | null
+          forme_juridique?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nom: string
+          score_lead?: number | null
+          siret: string
+          site_web?: string | null
+          statut?: string | null
+          telephone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          adresse?: string | null
+          chiffre_affaires?: number | null
+          code_naf?: string | null
+          code_postal?: string | null
+          created_at?: string | null
+          date_demarrage?: string | null
+          date_enrichissement?: string | null
+          dirigeant?: string | null
+          effectifs?: number | null
+          email?: string | null
+          enrichi?: boolean | null
+          forme_juridique?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nom?: string
+          score_lead?: number | null
+          siret?: string
+          site_web?: string | null
+          statut?: string | null
+          telephone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
