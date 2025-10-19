@@ -165,7 +165,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                           <Checkbox
                             checked={isSelected}
                             onCheckedChange={() => handleRegionToggle(regionKey)}
-                            className="border-accent/50 shrink-0"
+                            className="border-accent/50 shrink-0 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5"
                           />
                           <div 
                             className="flex-1 cursor-pointer"
@@ -195,7 +195,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                                 <Checkbox
                                   checked={selectedDepartments.includes(deptCode)}
                                   onCheckedChange={() => handleDepartmentToggle(deptCode, regionKey)}
-                                  className="border-accent/50 h-4 w-4"
+                                  className="border-accent/50 h-5 w-5 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary"
                                 />
                                 <span className="text-sm font-medium">
                                   {deptCode} - {DEPARTMENT_NAMES[deptCode]}
@@ -248,7 +248,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                       <Checkbox
                         checked={selectedCategories.includes(key)}
                         onCheckedChange={() => handleCategoryToggle(key)}
-                        className="border-accent/50"
+                        className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5"
                       />
                       <span className="font-medium">{category.label}</span>
                     </label>
