@@ -7,6 +7,7 @@ import { Target, LogOut, Filter, List, MapIcon } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
+import { SyncButton } from "@/components/dashboard/SyncButton";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -100,14 +101,17 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <Button
-              variant="outline"
-              onClick={handleLogout}
-              className="border-accent/50 hover:bg-accent/10"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Déconnexion
-            </Button>
+            <div className="flex items-center gap-3">
+              <SyncButton />
+              <Button
+                variant="outline"
+                onClick={handleLogout}
+                className="border-accent/50 hover:bg-accent/10"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Déconnexion
+              </Button>
+            </div>
           </div>
         </header>
 
