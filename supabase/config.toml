@@ -1,1 +1,4 @@
 project_id = "pcrxbfbktmekkkqhppjn"
+
+[functions.format-lead-details]
+verify_jwt = true

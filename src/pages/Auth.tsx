@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Target, Loader2 } from "lucide-react";
+import { z } from "zod";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,6 +15,14 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const authSchema = z.object({
+    email: z.string().trim().email('Email invalide').max(255, 'Email trop long'),
+    password: z.string()
+      .min(8, 'Minimum 8 caractères requis')
+      .regex(/[A-Z]/, 'Doit contenir au moins une majuscule')
+      .regex(/[0-9]/, 'Doit contenir au moins un chiffre')
+  });
 
   useEffect(() => {
     // Check if user is already logged in
@@ -36,11 +45,14 @@ const Auth = () => {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    // Validate input
+    const validation = authSchema.safeParse({ email, password });
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => e.message).join(', ');
       toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs",
         variant: "destructive",
+        title: "Erreur de validation",
+        description: errors,
       });
       return;
     }
