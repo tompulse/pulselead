@@ -45,6 +45,7 @@ export type Database = {
           telephone: string | null
           type_voie: string | null
           updated_at: string | null
+          ville: string | null
         }
         Insert: {
           activite?: string | null
@@ -76,6 +77,7 @@ export type Database = {
           telephone?: string | null
           type_voie?: string | null
           updated_at?: string | null
+          ville?: string | null
         }
         Update: {
           activite?: string | null
@@ -107,6 +109,7 @@ export type Database = {
           telephone?: string | null
           type_voie?: string | null
           updated_at?: string | null
+          ville?: string | null
         }
         Relationships: []
       }
