@@ -39,10 +39,25 @@ export const QuickActionButtons = ({
   const [statut, setStatut] = useState<'a_rappeler' | 'en_cours' | 'gagne' | 'perdu' | 'sans_suite'>('en_cours');
   const [nouveau_statut_lead, setNouveauStatutLead] = useState<'nouveau' | 'contacte' | 'qualifie' | 'proposition' | 'negociation' | 'gagne' | 'perdu'>('contacte');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleQuickAction = (type: typeof selectedType) => {
     setSelectedType(type);
+    
+    // Smart defaults based on action type
+    if (type === 'appel') {
+      setProchaine_action('Envoyer email de suivi');
+      setNouveauStatutLead('contacte');
+    } else if (type === 'visite') {
+      setProchaine_action('Envoyer proposition commerciale');
+      setNouveauStatutLead('qualifie');
+    } else if (type === 'rdv') {
+      setProchaine_action('Préparer la présentation');
+      setNouveauStatutLead('proposition');
+    }
+    
     setIsDialogOpen(true);
+    setShowSuggestions(true);
   };
 
   const handleSubmit = async () => {
@@ -73,10 +88,18 @@ export const QuickActionButtons = ({
 
       const message = actionMessages[selectedType] || actionMessages.autre;
 
-      toast({
-        title: message.title,
-        description: message.description,
-      });
+      // Show success with next action suggestion
+      if (prochaine_action) {
+        toast({
+          title: message.title,
+          description: `${message.description} • Prochaine action : ${prochaine_action}`,
+        });
+      } else {
+        toast({
+          title: message.title,
+          description: message.description,
+        });
+      }
 
       // Reset form
       setNotes('');
@@ -84,6 +107,7 @@ export const QuickActionButtons = ({
       setDate_prochaine_action('');
       setStatut('en_cours');
       setNouveauStatutLead('contacte');
+      setShowSuggestions(false);
       setIsDialogOpen(false);
       onInteractionAdded();
     } catch (error) {
@@ -96,6 +120,13 @@ export const QuickActionButtons = ({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const suggestions = {
+    appel: ['Envoyer email de suivi', 'Planifier un rendez-vous', 'Envoyer la documentation'],
+    visite: ['Envoyer proposition commerciale', 'Organiser RDV de closing', 'Demander références'],
+    rdv: ['Préparer la présentation', 'Envoyer devis personnalisé', 'Relancer sous 3 jours'],
+    autre: ['Faire un suivi', 'Vérifier la disponibilité', 'Relancer'],
   };
 
   return (
@@ -206,6 +237,22 @@ export const QuickActionButtons = ({
                 value={prochaine_action}
                 onChange={(e) => setProchaine_action(e.target.value)}
               />
+              {showSuggestions && suggestions[selectedType as keyof typeof suggestions] && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {suggestions[selectedType as keyof typeof suggestions].map((suggestion) => (
+                    <Button
+                      key={suggestion}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setProchaine_action(suggestion)}
+                      className="text-xs h-7 border-accent/30 hover:bg-accent/10"
+                    >
+                      {suggestion}
+                    </Button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">

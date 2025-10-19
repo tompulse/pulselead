@@ -6,11 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MapPin, Building2, User, Calendar, DollarSign, Navigation, Map, Loader2, MessageSquare } from "lucide-react";
+import { MapPin, Building2, User, Calendar, DollarSign, Navigation, Map, Loader2, MessageSquare, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { QuickActionButtons } from "./QuickActionButtons";
 import { LeadStatusBadge } from "./LeadStatusBadge";
+import { PhoneButton } from "./PhoneButton";
 
 interface EntrepriseDetailsProps {
   entreprise: {
@@ -31,6 +32,7 @@ interface EntrepriseDetailsProps {
     capital?: number;
     activite?: string;
     code_naf: string;
+    telephone?: string;
   } | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -284,39 +286,48 @@ export const EntrepriseDetails = ({ entreprise, open, onOpenChange }: Entreprise
 
       <Separator className="bg-accent/20" />
 
-      {/* Boutons de navigation */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-        <Button
-          asChild
+      {/* Boutons d'action */}
+      <div className="grid grid-cols-1 gap-3 w-full">
+        <PhoneButton 
+          phoneNumber={entreprise.telephone} 
+          entrepriseName={entreprise.nom}
           size="lg"
-          className="bg-accent/10 hover:bg-accent text-accent hover:text-primary border border-accent/50 w-full"
-        >
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${entreprise.latitude},${entreprise.longitude}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full"
-          >
-            <Map className="w-5 h-5 shrink-0" />
-            <span className="truncate">Ouvrir dans Google Maps</span>
-          </a>
-        </Button>
+          onClick={() => {}}
+        />
         
-        <Button
-          asChild
-          size="lg"
-          className="bg-accent/10 hover:bg-accent text-accent hover:text-primary border border-accent/50 w-full"
-        >
-          <a
-            href={`https://waze.com/ul?ll=${entreprise.latitude},${entreprise.longitude}&navigate=yes`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full"
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Button
+            asChild
+            size="lg"
+            className="bg-accent/10 hover:bg-accent text-accent hover:text-primary border border-accent/50 w-full"
           >
-            <Navigation className="w-5 h-5 shrink-0" />
-            <span className="truncate">Naviguer avec Waze</span>
-          </a>
-        </Button>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${entreprise.latitude},${entreprise.longitude}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full"
+            >
+              <Map className="w-5 h-5 shrink-0" />
+              <span className="truncate">Ouvrir dans Google Maps</span>
+            </a>
+          </Button>
+          
+          <Button
+            asChild
+            size="lg"
+            className="bg-accent/10 hover:bg-accent text-accent hover:text-primary border border-accent/50 w-full"
+          >
+            <a
+              href={`https://waze.com/ul?ll=${entreprise.latitude},${entreprise.longitude}&navigate=yes`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full"
+            >
+              <Navigation className="w-5 h-5 shrink-0" />
+              <span className="truncate">Naviguer avec Waze</span>
+            </a>
+          </Button>
+        </div>
       </div>
         </TabsContent>
 

@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { PhoneButton } from "./PhoneButton";
 
 interface ListViewProps {
   filters: {
@@ -388,6 +389,12 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                     </div>
 
                     <div className="flex gap-2">
+                      <PhoneButton 
+                        phoneNumber={item.telephone} 
+                        entrepriseName={item.nom}
+                        onClick={() => handleCRMAction(item.id, 'appeler')}
+                      />
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
