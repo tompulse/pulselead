@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-import { Phone, Mail, MapPin, TrendingUp, Target } from "lucide-react";
+import { TrendingUp, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
 
 interface CompactStatsProps {
   userId: string;
@@ -11,7 +8,6 @@ interface CompactStatsProps {
 
 export const CompactStats = ({ userId }: CompactStatsProps) => {
   const [stats, setStats] = useState<any>(null);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -54,52 +50,19 @@ export const CompactStats = ({ userId }: CompactStatsProps) => {
   if (!stats) return null;
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className="glass-card border-b border-accent/20 px-3 py-2">
-        <CollapsibleTrigger className="w-full">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-accent" />
-                <span className="text-sm font-medium">Activité: {stats.total_interactions}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-accent" />
-                <span className="text-sm font-medium">
-                  Pipeline: {stats.leads_by_status.qualifie + stats.leads_by_status.proposition + stats.leads_by_status.negociation}
-                </span>
-              </div>
-            </div>
-            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-          </div>
-        </CollapsibleTrigger>
-
-        <CollapsibleContent className="pt-3">
-          <div className="grid grid-cols-3 gap-3">
-            <div className="text-center p-2 bg-accent/5 rounded-lg">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Phone className="h-3 w-3" />
-                <span className="text-xs text-muted-foreground">Appels</span>
-              </div>
-              <p className="text-lg font-bold">{stats.interactions_today.appels}</p>
-            </div>
-            <div className="text-center p-2 bg-accent/5 rounded-lg">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Mail className="h-3 w-3" />
-                <span className="text-xs text-muted-foreground">Emails</span>
-              </div>
-              <p className="text-lg font-bold">{stats.interactions_today.emails}</p>
-            </div>
-            <div className="text-center p-2 bg-accent/5 rounded-lg">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <MapPin className="h-3 w-3" />
-                <span className="text-xs text-muted-foreground">Visites</span>
-              </div>
-              <p className="text-lg font-bold">{stats.interactions_today.visites}</p>
-            </div>
-          </div>
-        </CollapsibleContent>
+    <div className="glass-card border-b border-accent/20 px-4 md:px-6 py-3">
+      <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-accent" />
+          <span className="text-base font-semibold">Activité aujourd'hui: <span className="text-accent">{stats.total_interactions}</span></span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Target className="h-5 w-5 text-accent" />
+          <span className="text-base font-semibold">
+            Pipeline actif: <span className="text-accent">{stats.leads_by_status.qualifie + stats.leads_by_status.proposition + stats.leads_by_status.negociation}</span>
+          </span>
+        </div>
       </div>
-    </Collapsible>
+    </div>
   );
 };

@@ -285,17 +285,6 @@ const Dashboard = () => {
 
             <div className="flex items-center gap-2">
               {isAdmin && !isMobile && <SyncButton />}
-              {!isMobile && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCrmPanelOpen(!crmPanelOpen)}
-                  className={`h-7 px-2 text-xs ${crmPanelOpen ? 'bg-accent text-primary' : 'border-accent/50 hover:bg-accent/10'}`}
-                >
-                  <PanelRight className="w-3.5 h-3.5 mr-1" />
-                  CRM
-                </Button>
-              )}
               <Button
                 variant="outline"
                 size="sm"
@@ -309,8 +298,8 @@ const Dashboard = () => {
           </div>
         </header>
       
-      {/* Compact Stats */}
-      {userId && !isMobile && view !== "activities" && <CompactStats userId={userId} />}
+      {/* Compact Stats - Only in Activities view */}
+      {userId && !isMobile && view === "activities" && <CompactStats userId={userId} />}
 
       {/* Mobile Filter Button */}
       {isMobile && (
@@ -363,7 +352,21 @@ const Dashboard = () => {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden relative">
+          {/* Floating CRM Button - Desktop only (large screens) */}
+          {!isMobile && view !== "activities" && (
+            <Button
+              onClick={() => setCrmPanelOpen(!crmPanelOpen)}
+              className={`hidden xl:flex fixed bottom-6 right-6 z-20 h-12 px-4 shadow-lg items-center gap-2 ${
+                crmPanelOpen ? 'bg-accent text-primary hover:bg-accent/90' : 'bg-card/80 backdrop-blur-sm border-accent/50 hover:bg-accent/10'
+              }`}
+              variant={crmPanelOpen ? "default" : "outline"}
+            >
+              <PanelRight className="w-4 h-4" />
+              <span className="font-medium">CRM</span>
+            </Button>
+          )}
+          
           <div className="h-full p-4 md:p-6">
             {filters.departments.length === 0 ? (
               <div className="h-full flex items-center justify-center">
