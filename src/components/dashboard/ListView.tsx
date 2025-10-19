@@ -276,7 +276,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-4 pb-4 pr-2">{filteredEntreprises.map((item) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">{filteredEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
                 const categoryInfo = getCategoryInfo(item.activite);
                 const crm = crmData[item.id];
@@ -340,12 +340,12 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                            className="flex-1 min-w-[90px] border-accent/30 hover:bg-accent/10 hover:border-accent"
                             disabled={!hasCoordinates}
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Car className="w-4 h-4 sm:mr-2" />
-                            <span className="hidden sm:inline">Visiter</span>
+                            <Car className="w-4 h-4 mr-2" />
+                            <span>Visiter</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-card border-accent/20">
@@ -375,11 +375,11 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                            className="flex-1 min-w-[90px] border-accent/30 hover:bg-accent/10 hover:border-accent"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Zap className="w-4 h-4 sm:mr-2" />
-                            <span className="hidden sm:inline">Action</span>
+                            <Zap className="w-4 h-4 mr-2" />
+                            <span>Action</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-card border-accent/20 z-50">
