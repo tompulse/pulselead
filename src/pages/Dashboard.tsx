@@ -13,7 +13,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"map" | "list">("map");
   const [filters, setFilters] = useState({
-    dateFrom: "",
+    dateFrom: "2025-09-01",
     dateTo: "",
   });
   const navigate = useNavigate();
