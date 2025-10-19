@@ -1,4 +1,8 @@
-export const REGIONS_DATA = {
+export const REGIONS_DATA: Record<string, {
+  center: [number, number];
+  zoom: number;
+  departments: string[];
+}> = {
   "Auvergne-Rhône-Alpes": {
     center: [5.7301, 45.7640],
     zoom: 7,
@@ -64,7 +68,7 @@ export const REGIONS_DATA = {
     zoom: 7,
     departments: ["04", "05", "06", "13", "83", "84"]
   }
-} as const;
+};
 
 export const DEPARTMENT_NAMES: Record<string, string> = {
   "01": "Ain", "02": "Aisne", "03": "Allier", "04": "Alpes-de-Haute-Provence",

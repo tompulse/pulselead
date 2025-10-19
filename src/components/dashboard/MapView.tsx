@@ -88,14 +88,29 @@ export const MapView = ({ filters }: MapViewProps) => {
           });
         }
 
-        // Filter by departments if selected
-        if (filters.departments && filters.departments.length > 0) {
-          filtered = filtered.filter((ent: Entreprise) => {
-            const codePostal = ent.code_postal;
-            if (!codePostal) return false;
-            const dept = codePostal.substring(0, 2);
-            return filters.departments.includes(dept) || filters.departments.includes(codePostal.substring(0, 3));
-          });
+        // Filter by region/departments
+        if (filters.region && filters.region !== "all") {
+          const regionData = REGIONS_DATA[filters.region as keyof typeof REGIONS_DATA];
+          
+          if (filters.departments && filters.departments.length > 0) {
+            // Si des départements spécifiques sont sélectionnés, filtrer par ces départements
+            filtered = filtered.filter((ent: Entreprise) => {
+              const codePostal = ent.code_postal;
+              if (!codePostal) return false;
+              const dept = codePostal.substring(0, 2);
+              const deptCorse = codePostal.substring(0, 3); // Pour la Corse (2A, 2B)
+              return filters.departments.includes(dept) || filters.departments.includes(deptCorse);
+            });
+          } else if (regionData) {
+            // Si seulement la région est sélectionnée, afficher tous les départements de cette région
+            filtered = filtered.filter((ent: Entreprise) => {
+              const codePostal = ent.code_postal;
+              if (!codePostal) return false;
+              const dept = codePostal.substring(0, 2);
+              const deptCorse = codePostal.substring(0, 3); // Pour la Corse (2A, 2B)
+              return regionData.departments.includes(dept) || regionData.departments.includes(deptCorse);
+            });
+          }
         }
         
         setEntreprises(filtered);
