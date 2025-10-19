@@ -14,7 +14,6 @@ interface SidebarProps {
     dateTo: string;
     categories: string[];
     departments: string[];
-    crmFilter?: string;
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   onFilterChange?: () => void;
@@ -25,7 +24,6 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
-  const [isCRMOpen, setIsCRMOpen] = useState(true);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev: any) => ({ ...prev, [key]: value }));
@@ -80,80 +78,6 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
         ? "space-y-3 overflow-y-auto flex-1 pr-2 custom-scrollbar"
         : "space-y-2 overflow-y-auto flex-1 pr-1 custom-scrollbar"
       }>
-        {/* CRM Filters */}
-        <Collapsible open={isCRMOpen} onOpenChange={setIsCRMOpen}>
-          <CollapsibleTrigger className="w-full">
-            <div className={`flex items-center justify-between rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors ${
-              isMobileSheet ? "p-4 bg-accent/5" : "p-2 bg-accent/5"
-            }`}>
-              <Label className={`font-semibold cursor-pointer ${isMobileSheet ? "text-base" : "text-xs"}`}>
-                🎯 CRM
-              </Label>
-              <ChevronDown className={`text-accent transition-transform ${
-                isCRMOpen ? 'rotate-180' : ''
-              } ${isMobileSheet ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
-            </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent className={isMobileSheet ? "mt-2 space-y-2 px-2" : "mt-1.5 space-y-1 px-1"}>
-            <Button
-              variant={filters.crmFilter === 'appeler' ? 'default' : 'outline'}
-              size="sm"
-              className="w-full justify-start"
-              onClick={() => {
-                setFilters((prev: any) => ({
-                  ...prev,
-                  crmFilter: filters.crmFilter === 'appeler' ? undefined : 'appeler'
-                }));
-                onFilterChange?.();
-              }}
-            >
-              📞 Appeler
-            </Button>
-            <Button
-              variant={filters.crmFilter === 'rendre_visite' ? 'default' : 'outline'}
-              size="sm"
-              className="w-full justify-start"
-              onClick={() => {
-                setFilters((prev: any) => ({
-                  ...prev,
-                  crmFilter: filters.crmFilter === 'rendre_visite' ? undefined : 'rendre_visite'
-                }));
-                onFilterChange?.();
-              }}
-            >
-              🚗 Rendre visite
-            </Button>
-            <Button
-              variant={filters.crmFilter === 'rdv' ? 'default' : 'outline'}
-              size="sm"
-              className="w-full justify-start"
-              onClick={() => {
-                setFilters((prev: any) => ({
-                  ...prev,
-                  crmFilter: filters.crmFilter === 'rdv' ? undefined : 'rdv'
-                }));
-                onFilterChange?.();
-              }}
-            >
-              📅 Rendez-vous
-            </Button>
-            <Button
-              variant={filters.crmFilter === 'ne_pas_oublier' ? 'default' : 'outline'}
-              size="sm"
-              className="w-full justify-start"
-              onClick={() => {
-                setFilters((prev: any) => ({
-                  ...prev,
-                  crmFilter: filters.crmFilter === 'ne_pas_oublier' ? undefined : 'ne_pas_oublier'
-                }));
-                onFilterChange?.();
-              }}
-            >
-              📝 Ne pas oublier
-            </Button>
-          </CollapsibleContent>
-        </Collapsible>
-
         {/* Geographic Filters - Departments Only */}
         <Collapsible open={isDepartmentsOpen} onOpenChange={setIsDepartmentsOpen}>
           <CollapsibleTrigger className="w-full">

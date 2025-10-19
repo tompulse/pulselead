@@ -43,7 +43,6 @@ const Dashboard = () => {
     dateTo: "",
     categories: [] as string[],
     departments: [] as string[],
-    crmFilter: undefined as string | undefined,
   });
   const navigate = useNavigate();
   const { toast } = useToast();
