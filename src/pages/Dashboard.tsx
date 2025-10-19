@@ -23,13 +23,13 @@ import { Separator } from "@/components/ui/separator";
 import { LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { InteractionTimeline } from "@/components/dashboard/InteractionTimeline";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
-import { DailyActionsWidget } from "@/components/dashboard/DailyActionsWidget";
+import { ActivitiesView } from "@/components/dashboard/ActivitiesView";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [view, setView] = useState<"map" | "list">("map");
+  const [view, setView] = useState<"map" | "list" | "activities">("map");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [selectedEntreprise, setSelectedEntreprise] = useState<any>(null);
   const [crmPanelOpen, setCrmPanelOpen] = useState(false);
@@ -269,6 +269,18 @@ const Dashboard = () => {
                   <List className="w-3.5 h-3.5 mr-1" />
                   <span className="hidden sm:inline">Liste</span>
                 </Button>
+                <Button
+                  variant={view === "activities" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setView("activities");
+                    trackViewChange("activities");
+                  }}
+                  className={`h-7 px-2 text-xs ${view === "activities" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+                >
+                  <Calendar className="w-3.5 h-3.5 mr-1" />
+                  <span className="hidden sm:inline">Activités</span>
+                </Button>
               </div>
             </div>
 
@@ -299,31 +311,7 @@ const Dashboard = () => {
         </header>
       
       {/* Compact Stats */}
-      {userId && !isMobile && <CompactStats userId={userId} />}
-      
-      {/* Daily Actions Widget - Desktop only */}
-      {userId && !isMobile && (
-        <div className="px-4 md:px-6 pt-4">
-          <DailyActionsWidget 
-            userId={userId} 
-            onEntrepriseClick={(entrepriseId) => {
-              // Find and select the entreprise
-              const findAndSelectEntreprise = async () => {
-                const { data } = await supabase
-                  .from('entreprises')
-                  .select('*')
-                  .eq('id', entrepriseId)
-                  .single();
-                
-                if (data) {
-                  handleEntrepriseSelect(data);
-                }
-              };
-              findAndSelectEntreprise();
-            }}
-          />
-        </div>
-      )}
+      {userId && !isMobile && view !== "activities" && <CompactStats userId={userId} />}
 
       {/* Mobile Filter Button */}
       {isMobile && (
@@ -414,11 +402,28 @@ const Dashboard = () => {
                 filters={filters} 
                 onEntrepriseSelect={handleEntrepriseSelect}
               />
-            ) : (
+            ) : view === "list" ? (
               <div className="h-full">
                 <ListView 
                   filters={filters}
                   onEntrepriseSelect={handleEntrepriseSelect}
+                />
+              </div>
+            ) : (
+              <div className="h-full">
+                <ActivitiesView
+                  userId={userId!}
+                  onEntrepriseClick={async (entrepriseId) => {
+                    const { data } = await supabase
+                      .from('entreprises')
+                      .select('*')
+                      .eq('id', entrepriseId)
+                      .single();
+                    
+                    if (data) {
+                      handleEntrepriseSelect(data);
+                    }
+                  }}
                 />
               </div>
             )}
