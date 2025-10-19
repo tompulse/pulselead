@@ -37,6 +37,7 @@ export const MapView = ({ filters }: MapViewProps) => {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const currentPopupRef = useRef<mapboxgl.Popup | null>(null); // Pour gérer le popup ouvert
 
   // Fetch entreprises from Supabase
   useEffect(() => {
@@ -122,7 +123,7 @@ export const MapView = ({ filters }: MapViewProps) => {
       const popup = new mapboxgl.Popup({ 
         offset: 25,
         className: 'lead-popup',
-        closeButton: true,
+        closeButton: false, // On gère la croix nous-mêmes
         closeOnClick: false,
         maxWidth: '400px'
       });
@@ -166,7 +167,33 @@ export const MapView = ({ filters }: MapViewProps) => {
             min-width: 300px;
             max-width: 400px;
             box-shadow: 0 8px 32px hsl(0 0% 0% / 0.6);
+            position: relative;
           ">
+            <button 
+              onclick="this.closest('.mapboxgl-popup').remove()"
+              style="
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: hsl(220 40% 10%);
+                border: 1px solid hsl(190 95% 60% / 0.5);
+                color: hsl(190 95% 60%);
+                font-size: 24px;
+                line-height: 1;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                padding: 0;
+              "
+              onmouseover="this.style.background='hsl(190 95% 60%)'; this.style.color='hsl(220 40% 10%)'; this.style.transform='scale(1.1)';"
+              onmouseout="this.style.background='hsl(220 40% 10%)'; this.style.color='hsl(190 95% 60%)'; this.style.transform='scale(1)';"
+            >×</button>
+            
             <h3 style="
               font-size: 18px;
               font-weight: 700;
@@ -176,6 +203,7 @@ export const MapView = ({ filters }: MapViewProps) => {
               -webkit-background-clip: text;
               -webkit-text-fill-color: transparent;
               background-clip: text;
+              padding-right: 40px;
             ">${entreprise.nom}</h3>
             
             <div style="
@@ -229,7 +257,7 @@ export const MapView = ({ filters }: MapViewProps) => {
 
       // Set initial loading content
       popup.setHTML(`
-        <div style="padding: 20px; text-align: center;">
+        <div style="padding: 40px 20px; text-align: center; background: linear-gradient(135deg, hsl(220 40% 10%), hsl(220 20% 5%)); border-radius: 12px;">
           <div style="
             width: 24px;
             height: 24px;
@@ -249,6 +277,12 @@ export const MapView = ({ filters }: MapViewProps) => {
 
       // Update content when popup opens
       popup.on('open', async () => {
+        // Fermer le popup précédent s'il existe
+        if (currentPopupRef.current && currentPopupRef.current !== popup) {
+          currentPopupRef.current.remove();
+        }
+        currentPopupRef.current = popup;
+        
         const content = await createPopupContent();
         popup.setHTML(content);
       });
