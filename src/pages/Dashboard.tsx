@@ -3,16 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Target, LogOut, List, MapIcon } from "lucide-react";
+import { Target, LogOut, List, MapIcon, Menu, X } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
 import { SyncButton } from "@/components/dashboard/SyncButton";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [view, setView] = useState<"map" | "list">("map");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -21,6 +24,7 @@ const Dashboard = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Check authentication and admin role
@@ -79,29 +83,47 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="glass-card border-b border-accent/20 px-8 py-5 sticky top-0 z-10 backdrop-blur-xl">
+      <header className="glass-card border-b border-accent/20 px-4 md:px-8 py-3 md:py-5 z-10 backdrop-blur-xl shrink-0">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 md:gap-6">
+            {/* Mobile/Tablet Menu Button */}
+            {isMobile && (
+              <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-accent/10"
+                  >
+                    <Menu className="w-5 h-5 text-accent" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-80 p-0">
+                  <Sidebar filters={filters} setFilters={setFilters} onFilterChange={() => setSidebarOpen(false)} />
+                </SheetContent>
+              </Sheet>
+            )}
+            
+            <div className="flex items-center gap-2 md:gap-3">
               <div className="relative">
                 <div className="absolute inset-0 bg-accent blur-xl opacity-30 animate-pulse" />
-                <Target className="w-10 h-10 text-accent relative" />
+                <Target className="w-8 h-8 md:w-10 md:h-10 text-accent relative" />
               </div>
-              <span className="text-3xl font-bold gradient-text">LeadMagnet</span>
+              <span className="text-xl md:text-3xl font-bold gradient-text">LeadMagnet</span>
             </div>
             
             {/* View Toggle */}
-            <div className="flex gap-2 p-1 bg-card/50 rounded-lg border border-accent/20">
+            <div className="flex gap-1 md:gap-2 p-1 bg-card/50 rounded-lg border border-accent/20">
               <Button
                 variant={view === "map" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setView("map")}
                 className={view === "map" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}
               >
-                <MapIcon className="w-4 h-4 mr-2" />
-                Carte
+                <MapIcon className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">Carte</span>
               </Button>
               <Button
                 variant={view === "list" ? "default" : "ghost"}
@@ -109,21 +131,22 @@ const Dashboard = () => {
                 onClick={() => setView("list")}
                 className={view === "list" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}
               >
-                <List className="w-4 h-4 mr-2" />
-                Liste
+                <List className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">Liste</span>
               </Button>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             {isAdmin && <SyncButton />}
             <Button
               variant="outline"
+              size="sm"
               onClick={handleLogout}
               className="border-accent/50 hover:bg-accent/10 hover:border-accent transition-all"
             >
-              <LogOut className="w-4 h-4 mr-2" />
-              Déconnexion
+              <LogOut className="w-4 h-4 md:mr-2" />
+              <span className="hidden md:inline">Déconnexion</span>
             </Button>
           </div>
         </div>
@@ -131,11 +154,13 @@ const Dashboard = () => {
 
       {/* Content Area with Sidebar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar filters={filters} setFilters={setFilters} />
+        {/* Desktop Sidebar */}
+        {!isMobile && (
+          <Sidebar filters={filters} setFilters={setFilters} />
+        )}
 
         {/* Main Content */}
-        <main className="flex-1 p-4 overflow-auto">
+        <main className="flex-1 overflow-hidden">
           <div className="h-full">
             {view === "map" ? (
               <MapView filters={filters} />

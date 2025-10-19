@@ -16,9 +16,10 @@ interface SidebarProps {
     departments: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
+  onFilterChange?: () => void;
 }
 
-export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
+export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) => {
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
@@ -39,6 +40,7 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
           : [...currentCategories, categoryKey]
       };
     });
+    onFilterChange?.();
   };
 
   const allCategories = Object.keys(ACTIVITY_CATEGORIES);
@@ -56,16 +58,17 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
           : [...currentDepartments, deptCode]
       };
     });
+    onFilterChange?.();
   };
 
   return (
-    <aside className="w-80 glass-card border-r border-accent/20 p-4 space-y-3 overflow-y-auto">
-      <div className="flex items-center gap-2 mb-4">
+    <aside className="w-64 xl:w-80 glass-card border-r border-accent/20 p-4 space-y-3 flex flex-col h-full overflow-hidden">
+      <div className="flex items-center gap-2 mb-3 shrink-0">
         <Filter className="w-5 h-5 text-accent" />
         <h2 className="text-xl font-semibold">Filtres</h2>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 overflow-y-auto flex-1 pr-2 custom-scrollbar">
         {/* Geographic Filters - Departments Only */}
         <Collapsible open={isDepartmentsOpen} onOpenChange={setIsDepartmentsOpen}>
           <CollapsibleTrigger className="w-full">
@@ -82,7 +85,7 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-2 space-y-1.5 px-2">
-            <div className="max-h-60 overflow-y-auto pr-2 custom-scrollbar space-y-1.5">
+            <div className="max-h-48 overflow-y-auto pr-2 custom-scrollbar space-y-1.5">
               {allDepartments.map((deptCode) => (
                 <div key={deptCode} className="flex items-center space-x-2 p-1.5 rounded hover:bg-accent/5">
                   <Checkbox
@@ -112,7 +115,7 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-2">
-            <div className="space-y-1.5 max-h-60 overflow-y-auto pr-2 px-2 custom-scrollbar">
+            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2 px-2 custom-scrollbar">
               {allCategories.map((categoryKey) => (
                 <div key={categoryKey} className="flex items-center space-x-2 p-1.5 rounded hover:bg-accent/5">
                   <Checkbox
@@ -166,23 +169,25 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Reset Filters */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full border-accent/50 hover:bg-accent/10 mt-4"
-          onClick={() => {
-            setFilters({
-              dateFrom: "",
-              dateTo: "",
-              categories: [],
-              departments: [],
-            });
-          }}
-        >
-          Réinitialiser les filtres
-        </Button>
       </div>
+
+      {/* Reset Filters */}
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full border-accent/50 hover:bg-accent/10 mt-3 shrink-0"
+        onClick={() => {
+          setFilters({
+            dateFrom: "",
+            dateTo: "",
+            categories: [],
+            departments: [],
+          });
+          onFilterChange?.();
+        }}
+      >
+        Réinitialiser les filtres
+      </Button>
     </aside>
   );
 };
