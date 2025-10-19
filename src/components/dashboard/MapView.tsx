@@ -149,16 +149,20 @@ export const MapView = ({ filters }: MapViewProps) => {
 
     // Add new markers
     entreprises.forEach((entreprise) => {
-      // Format address from separate fields
+      // Format address with city fallback extracted from adresse if needed
       const addressParts = [
         entreprise.numero_voie,
         entreprise.type_voie,
         entreprise.nom_voie
       ].filter(Boolean).join(' ');
+
+      const cityFallback = !entreprise.ville && entreprise.adresse
+        ? (entreprise.adresse.match(/\b\d{5}\s+(.+)$/)?.[1]?.trim())
+        : undefined;
       
       const locationParts = [
         entreprise.code_postal,
-        entreprise.ville
+        entreprise.ville || cityFallback
       ].filter(Boolean).join(' ');
       
       const formattedAddress = addressParts && locationParts 

@@ -165,9 +165,13 @@ export const ListView = ({ filters }: ListViewProps) => {
                   item.nom_voie
                 ].filter(Boolean).join(' ');
                 
+                const cityFallback = !item.ville && item.adresse
+                  ? (item.adresse.match(/\b\d{5}\s+(.+)$/)?.[1]?.trim())
+                  : undefined;
+                
                 const locationParts = [
                   item.code_postal,
-                  item.ville
+                  item.ville || cityFallback
                 ].filter(Boolean).join(' ');
                 
                 const formattedAddress = addressParts && locationParts 
