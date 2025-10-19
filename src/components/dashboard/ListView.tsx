@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -304,10 +304,12 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 return (
                   <div
                     key={item.id}
-                    className="glass-card rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 w-full overflow-hidden cursor-pointer"
-                    onClick={() => onEntrepriseSelect?.(item)}
+                    className="glass-card rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 w-full overflow-hidden"
                   >
-                    <div className="flex items-start justify-between gap-2 mb-4">
+                    <div 
+                      className="flex items-start justify-between gap-2 mb-4 cursor-pointer"
+                      onClick={() => onEntrepriseSelect?.(item)}
+                    >
                       <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
                         {item.nom}
                       </h4>
@@ -340,20 +342,27 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                             size="sm"
                             className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
                             disabled={!hasCoordinates}
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Car className="w-4 h-4 sm:mr-2" />
                             <span className="hidden sm:inline">Visiter</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent className="bg-card border-accent/20">
                           <DropdownMenuItem 
-                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank');
+                            }}
                           >
                             <Map className="w-4 h-4 mr-2" />
                             Google Maps
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            onClick={() => window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank');
+                            }}
                           >
                             <Navigation className="w-4 h-4 mr-2" />
                             Waze
@@ -361,15 +370,57 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         </DropdownMenuContent>
                       </DropdownMenu>
 
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onEntrepriseSelect?.(item)}
-                        className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
-                      >
-                        <Building2 className="w-4 h-4 sm:mr-2" />
-                        <span className="hidden sm:inline">CRM</span>
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Zap className="w-4 h-4 sm:mr-2" />
+                            <span className="hidden sm:inline">Action</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-card border-accent/20 z-50">
+                          <DropdownMenuItem 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCRMAction(item.id, 'appeler');
+                            }}
+                          >
+                            <Phone className="w-4 h-4 mr-2" />
+                            Appeler
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCRMAction(item.id, 'visite');
+                            }}
+                          >
+                            <Car className="w-4 h-4 mr-2" />
+                            Visite
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCRMAction(item.id, 'rdv');
+                            }}
+                          >
+                            <CalendarCheck className="w-4 h-4 mr-2" />
+                            RDV
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCRMAction(item.id, 'note');
+                            }}
+                          >
+                            <StickyNote className="w-4 h-4 mr-2" />
+                            Note
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 );
@@ -382,7 +433,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
       {isMobile && filteredEntreprises.length > 0 && (
         <div className="mt-4 p-4 glass-card rounded-lg border border-accent/20">
           <p className="text-xs text-muted-foreground text-center">
-            💡 Cliquez sur "CRM" pour accéder au panel et gérer vos interactions
+            💡 Cliquez sur "Action" pour enregistrer rapidement vos actions
           </p>
         </div>
       )}
