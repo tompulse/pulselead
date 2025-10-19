@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { EntrepriseDetails } from "./EntrepriseDetails";
 import { LeadStatusBadge } from "./LeadStatusBadge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 interface ListViewProps {
   filters: {
@@ -48,8 +49,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [crmData, setCrmData] = useState<Record<string, { status: any; interactionCount: number; hasUpcomingAction: boolean }>>({});
   const isMobile = useIsMobile();
-  const [selectedEntreprise, setSelectedEntreprise] = useState<Entreprise | null>(null);
-  const [detailsOpen, setDetailsOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchEntreprises = async () => {
@@ -172,12 +172,44 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
     };
   };
 
-  const handleCardClick = (entreprise: Entreprise) => {
-    if (isMobile) {
-      setSelectedEntreprise(entreprise);
-      setDetailsOpen(true);
-    } else {
-      onEntrepriseSelect?.(entreprise);
+  const handleCRMAction = async (entrepriseId: string, actionType: 'appeler' | 'visite' | 'rdv' | 'note') => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const actionLabels = {
+      appeler: 'Appel planifié',
+      visite: 'Visite planifiée',
+      rdv: 'Rendez-vous confirmé',
+      note: 'Note ajoutée'
+    };
+
+    const interactionTypes: Record<string, 'appel' | 'visite' | 'rdv' | 'autre'> = {
+      appeler: 'appel',
+      visite: 'visite',
+      rdv: 'rdv',
+      note: 'autre'
+    };
+
+    try {
+      await supabase.from('lead_interactions').insert([{
+        entreprise_id: entrepriseId,
+        user_id: user.id,
+        type: interactionTypes[actionType],
+        statut: 'en_cours',
+        notes: actionLabels[actionType]
+      }]);
+
+      toast({
+        title: "Action enregistrée",
+        description: actionLabels[actionType],
+      });
+    } catch (error) {
+      console.error('Error adding CRM action:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'enregistrer l'action",
+        variant: "destructive"
+      });
     }
   };
 
@@ -265,8 +297,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 return (
                   <div
                     key={item.id}
-                    onClick={() => handleCardClick(item)}
-                    className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-card/80 to-card/40 max-w-full overflow-hidden"
+                    className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 max-w-full overflow-hidden"
                   >
                     <div className="space-y-3 mb-4">
                       <div className="flex items-start justify-between gap-2">
@@ -316,7 +347,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         {item.activite && (
                           <div className="flex items-start gap-2 text-xs">
                             <Building2 className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" />
-                            <p className="text-muted-foreground/90 line-clamp-2 leading-relaxed">
+                            <p className="text-muted-foreground/90 line-clamp-3 leading-relaxed">
                               {item.activite}
                             </p>
                           </div>
@@ -331,62 +362,83 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           </div>
                         )}
                         
-                        {item.date_demarrage && (
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground/80">
-                            <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-                            <span>Créée le {new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
-                          </div>
-                        )}
-                        
-                        {item.capital && (
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground/80">
-                            <DollarSign className="w-3.5 h-3.5 flex-shrink-0" />
-                            <span>Capital: {item.capital.toLocaleString('fr-FR')} €</span>
-                          </div>
-                        )}
-                        
-                        {item.forme_juridique && (
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground/80">
-                            <Building2 className="w-3.5 h-3.5 flex-shrink-0" />
-                            <span className="truncate">{item.forme_juridique}</span>
-                          </div>
-                        )}
+                        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground/80">
+                          {item.date_demarrage && (
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                              <span>{new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                          )}
+                          
+                          {item.capital && (
+                            <div className="flex items-center gap-1.5">
+                              <DollarSign className="w-3.5 h-3.5 flex-shrink-0" />
+                              <span>{item.capital.toLocaleString('fr-FR')} €</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 
                     <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (hasCoordinates) {
-                            window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank');
-                          }
-                        }}
-                        disabled={!hasCoordinates}
-                        title={hasCoordinates ? "Ouvrir dans Google Maps" : "Coordonnées non disponibles"}
-                      >
-                        <Map className="w-4 h-4 mr-1" />
-                        Maps
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (hasCoordinates) {
-                            window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank');
-                          }
-                        }}
-                        disabled={!hasCoordinates}
-                        title={hasCoordinates ? "Naviguer avec Waze" : "Coordonnées non disponibles"}
-                      >
-                        <Navigation className="w-4 h-4 mr-1" />
-                        Waze
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                            disabled={!hasCoordinates}
+                          >
+                            <Car className="w-4 h-4 mr-2" />
+                            Visiter
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem 
+                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank')}
+                          >
+                            <Map className="w-4 h-4 mr-2" />
+                            Google Maps
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank')}
+                          >
+                            <Navigation className="w-4 h-4 mr-2" />
+                            Waze
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                          >
+                            <MessageSquare className="w-4 h-4 mr-2" />
+                            CRM
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem onClick={() => handleCRMAction(item.id, 'appeler')}>
+                            <Phone className="w-4 h-4 mr-2" />
+                            Appeler
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleCRMAction(item.id, 'visite')}>
+                            <Car className="w-4 h-4 mr-2" />
+                            Rendre visite
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleCRMAction(item.id, 'rdv')}>
+                            <CalendarCheck className="w-4 h-4 mr-2" />
+                            Rendez-vous
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleCRMAction(item.id, 'note')}>
+                            <StickyNote className="w-4 h-4 mr-2" />
+                            Ne pas oublier
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 );
@@ -396,16 +448,12 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
         </div>
       </div>
 
-      {isMobile && (
-        <EntrepriseDetails
-          entreprise={selectedEntreprise ? {
-            ...selectedEntreprise,
-            latitude: selectedEntreprise.latitude || 0,
-            longitude: selectedEntreprise.longitude || 0,
-          } : null}
-          open={detailsOpen}
-          onOpenChange={setDetailsOpen}
-        />
+      {isMobile && filteredEntreprises.length > 0 && (
+        <div className="mt-4 p-4 glass-card rounded-lg border border-accent/20">
+          <p className="text-xs text-muted-foreground text-center">
+            💡 Utilisez les boutons Visiter et CRM pour interagir avec les entreprises
+          </p>
+        </div>
       )}
     </>
   );

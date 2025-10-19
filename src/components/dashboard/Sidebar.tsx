@@ -96,18 +96,18 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
           </CollapsibleTrigger>
           <CollapsibleContent className={isMobileSheet ? "mt-2 space-y-2 px-2" : "mt-1.5 space-y-1 px-1"}>
             <Button
-              variant={filters.crmFilter === 'a_rappeler' ? 'default' : 'outline'}
+              variant={filters.crmFilter === 'appeler' ? 'default' : 'outline'}
               size="sm"
               className="w-full justify-start"
               onClick={() => {
                 setFilters((prev: any) => ({
                   ...prev,
-                  crmFilter: filters.crmFilter === 'a_rappeler' ? undefined : 'a_rappeler'
+                  crmFilter: filters.crmFilter === 'appeler' ? undefined : 'appeler'
                 }));
                 onFilterChange?.();
               }}
             >
-              📞 Rappeler
+              📞 Appeler
             </Button>
             <Button
               variant={filters.crmFilter === 'rendre_visite' ? 'default' : 'outline'}
@@ -124,18 +124,32 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
               🚗 Rendre visite
             </Button>
             <Button
-              variant={filters.crmFilter === 'rdv_pris' ? 'default' : 'outline'}
+              variant={filters.crmFilter === 'rdv' ? 'default' : 'outline'}
               size="sm"
               className="w-full justify-start"
               onClick={() => {
                 setFilters((prev: any) => ({
                   ...prev,
-                  crmFilter: filters.crmFilter === 'rdv_pris' ? undefined : 'rdv_pris'
+                  crmFilter: filters.crmFilter === 'rdv' ? undefined : 'rdv'
                 }));
                 onFilterChange?.();
               }}
             >
-              ✅ Rendez-vous pris
+              📅 Rendez-vous
+            </Button>
+            <Button
+              variant={filters.crmFilter === 'ne_pas_oublier' ? 'default' : 'outline'}
+              size="sm"
+              className="w-full justify-start"
+              onClick={() => {
+                setFilters((prev: any) => ({
+                  ...prev,
+                  crmFilter: filters.crmFilter === 'ne_pas_oublier' ? undefined : 'ne_pas_oublier'
+                }));
+                onFilterChange?.();
+              }}
+            >
+              📝 Ne pas oublier
             </Button>
           </CollapsibleContent>
         </Collapsible>
