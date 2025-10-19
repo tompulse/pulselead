@@ -23,6 +23,15 @@ interface Entreprise {
   code_naf: string;
   statut: string;
   date_demarrage: string;
+  numero_voie?: string;
+  type_voie?: string;
+  nom_voie?: string;
+  telephone?: string;
+  email?: string;
+  forme_juridique?: string;
+  capital?: number;
+  activite?: string;
+  administration?: string;
 }
 
 export const ListView = ({ filters }: ListViewProps) => {
@@ -32,10 +41,17 @@ export const ListView = ({ filters }: ListViewProps) => {
   useEffect(() => {
     const fetchEntreprises = async () => {
       setLoading(true);
-      // Using any cast due to type generation lag
-      const { data, error } = await (supabase as any)
+      
+      let query = (supabase as any)
         .from("entreprises")
         .select("*");
+
+      // Apply date filters with null handling
+      if (filters.dateFrom || filters.dateTo) {
+        query = query.or(`date_demarrage.is.null,and(date_demarrage.gte.${filters.dateFrom || "1900-01-01"},date_demarrage.lte.${filters.dateTo || "2100-12-31"})`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching entreprises:", error);
@@ -77,41 +93,64 @@ export const ListView = ({ filters }: ListViewProps) => {
           </p>
         </div>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow className="border-accent/20 hover:bg-accent/5">
-              <TableHead className="text-accent">Nom</TableHead>
-              <TableHead className="text-accent">SIRET</TableHead>
-              <TableHead className="text-accent">Adresse</TableHead>
-              <TableHead className="text-accent">NAF</TableHead>
-              <TableHead className="text-accent">Statut</TableHead>
-              <TableHead className="text-accent">Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {entreprises.map((item) => (
-              <TableRow
-                key={item.id}
-                className="border-accent/20 hover:bg-accent/5 cursor-pointer transition-colors"
-              >
-                <TableCell className="font-medium">{item.nom}</TableCell>
-                <TableCell className="text-muted-foreground">{item.siret}</TableCell>
-                <TableCell className="text-muted-foreground">
-                  {item.adresse || "N/A"}, {item.code_postal || "N/A"}
-                </TableCell>
-                <TableCell className="text-muted-foreground">{item.code_naf || "N/A"}</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-accent">
-                    {item.statut || "N/A"}
-                  </span>
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {item.date_demarrage ? new Date(item.date_demarrage).toLocaleDateString('fr-FR') : "N/A"}
-                </TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-accent/20 hover:bg-accent/5">
+                <TableHead className="text-accent">Nom</TableHead>
+                <TableHead className="text-accent">SIRET</TableHead>
+                <TableHead className="text-accent">Adresse</TableHead>
+                <TableHead className="text-accent">Contact</TableHead>
+                <TableHead className="text-accent">Activité</TableHead>
+                <TableHead className="text-accent">Capital</TableHead>
+                <TableHead className="text-accent">Forme</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {entreprises.map((item) => {
+                const formattedAddress = [
+                  item.numero_voie,
+                  item.type_voie,
+                  item.nom_voie,
+                  item.code_postal
+                ].filter(Boolean).join(' ') || item.adresse || "N/A";
+                
+                const formattedCapital = item.capital 
+                  ? `${item.capital.toLocaleString('fr-FR')} €`
+                  : "N/A";
+                
+                return (
+                  <TableRow
+                    key={item.id}
+                    className="border-accent/20 hover:bg-accent/5 cursor-pointer transition-colors"
+                  >
+                    <TableCell className="font-medium">{item.nom}</TableCell>
+                    <TableCell className="text-muted-foreground font-mono text-xs">{item.siret}</TableCell>
+                    <TableCell className="text-muted-foreground max-w-xs truncate" title={formattedAddress}>
+                      {formattedAddress}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-xs">
+                      {item.telephone && <div>📞 {item.telephone}</div>}
+                      {item.email && <div>✉️ {item.email}</div>}
+                      {!item.telephone && !item.email && "N/A"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground max-w-xs truncate" title={item.activite || undefined}>
+                      {item.activite || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground font-medium">
+                      {formattedCapital}
+                    </TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-accent">
+                        {item.forme_juridique || "N/A"}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </div>
   );

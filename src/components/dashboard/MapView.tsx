@@ -37,14 +37,19 @@ export const MapView = ({ filters }: MapViewProps) => {
   useEffect(() => {
     const fetchEntreprises = async () => {
       setLoading(true);
-      // Using any cast due to type generation lag
-      const { data, error } = await (supabase as any)
+      
+      let query = (supabase as any)
         .from("entreprises")
         .select("*")
         .not("latitude", "is", null)
-        .not("longitude", "is", null)
-        .gte("date_demarrage", filters.dateFrom || "1900-01-01")
-        .lte("date_demarrage", filters.dateTo || "2100-12-31");
+        .not("longitude", "is", null);
+
+      // Only apply date filters if we have valid dates AND the entreprise has a date_demarrage
+      if (filters.dateFrom || filters.dateTo) {
+        query = query.or(`date_demarrage.is.null,and(date_demarrage.gte.${filters.dateFrom || "1900-01-01"},date_demarrage.lte.${filters.dateTo || "2100-12-31"})`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching entreprises:", error);
