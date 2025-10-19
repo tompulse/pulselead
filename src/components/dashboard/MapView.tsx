@@ -296,6 +296,65 @@ export const MapView = ({ filters }: MapViewProps) => {
               </div>
               ` : ''}
             </div>
+            
+            <div style="
+              display: flex;
+              gap: 8px;
+              margin-top: 16px;
+              padding-top: 16px;
+              border-top: 1px solid hsl(190 95% 60% / 0.2);
+            ">
+              <a 
+                href="https://www.google.com/maps/search/?api=1&query=${entreprise.latitude},${entreprise.longitude}"
+                target="_blank"
+                style="
+                  flex: 1;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 6px;
+                  padding: 10px 16px;
+                  background: hsl(190 95% 60% / 0.1);
+                  border: 1px solid hsl(190 95% 60% / 0.5);
+                  border-radius: 8px;
+                  color: hsl(190 95% 60%);
+                  text-decoration: none;
+                  font-size: 13px;
+                  font-weight: 600;
+                  transition: all 0.2s;
+                "
+                onmouseover="this.style.background='hsl(190 95% 60%)'; this.style.color='hsl(220 40% 10%)';"
+                onmouseout="this.style.background='hsl(190 95% 60% / 0.1)'; this.style.color='hsl(190 95% 60%)';"
+              >
+                <span style="font-size: 16px;">🗺️</span>
+                Google Maps
+              </a>
+              <a 
+                href="https://waze.com/ul?ll=${entreprise.latitude},${entreprise.longitude}&navigate=yes"
+                target="_blank"
+                style="
+                  flex: 1;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 6px;
+                  padding: 10px 16px;
+                  background: hsl(190 95% 60% / 0.1);
+                  border: 1px solid hsl(190 95% 60% / 0.5);
+                  border-radius: 8px;
+                  color: hsl(190 95% 60%);
+                  text-decoration: none;
+                  font-size: 13px;
+                  font-weight: 600;
+                  transition: all 0.2s;
+                "
+                onmouseover="this.style.background='hsl(190 95% 60%)'; this.style.color='hsl(220 40% 10%)';"
+                onmouseout="this.style.background='hsl(190 95% 60% / 0.1)'; this.style.color='hsl(190 95% 60%)';"
+              >
+                <span style="font-size: 16px;">🧭</span>
+                Waze
+              </a>
+            </div>
           </div>
         `;
       };

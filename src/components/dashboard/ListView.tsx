@@ -6,10 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Building2 } from "lucide-react";
+import { Building2, Navigation } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
+import { Button } from "@/components/ui/button";
 
 interface ListViewProps {
   filters: {
@@ -39,6 +40,8 @@ interface Entreprise {
   capital?: number;
   activite?: string;
   administration?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export const ListView = ({ filters }: ListViewProps) => {
@@ -159,6 +162,7 @@ export const ListView = ({ filters }: ListViewProps) => {
                 <TableHead className="text-accent font-semibold w-[200px]">Contact</TableHead>
                 <TableHead className="text-accent font-semibold w-[280px]">Activité</TableHead>
                 <TableHead className="text-accent font-semibold w-[100px]">Capital</TableHead>
+                <TableHead className="text-accent font-semibold w-[120px]">Navigation</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -181,6 +185,8 @@ export const ListView = ({ filters }: ListViewProps) => {
                 const formattedCapital = typeof item.capital === 'number' 
                   ? `${item.capital.toLocaleString('fr-FR')} €`
                   : "N/A";
+
+                const hasCoordinates = item.latitude && item.longitude;
                 
                 return (
                   <TableRow
@@ -200,6 +206,32 @@ export const ListView = ({ filters }: ListViewProps) => {
                     </TableCell>
                     <TableCell className="text-muted-foreground font-medium text-xs whitespace-nowrap">
                       {formattedCapital}
+                    </TableCell>
+                    <TableCell>
+                      {hasCoordinates ? (
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-accent/20 hover:text-accent"
+                            title="Ouvrir dans Google Maps"
+                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank')}
+                          >
+                            <span className="text-base">🗺️</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-accent/20 hover:text-accent"
+                            title="Ouvrir dans Waze"
+                            onClick={() => window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank')}
+                          >
+                            <Navigation className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">N/A</span>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
