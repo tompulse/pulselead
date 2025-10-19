@@ -11,6 +11,7 @@ import { SyncButton } from "@/components/dashboard/SyncButton";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [view, setView] = useState<"map" | "list">("map");
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
@@ -20,14 +21,26 @@ const Dashboard = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check authentication
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check authentication and admin role
+    const checkAuthAndRole = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       if (!session) {
         navigate("/auth");
-      } else {
-        setLoading(false);
+        return;
       }
-    });
+
+      // Check if user has admin role
+      const { data: adminCheck } = await supabase.rpc('has_role', {
+        _user_id: session.user.id,
+        _role: 'admin'
+      });
+
+      setIsAdmin(adminCheck || false);
+      setLoading(false);
+    };
+
+    checkAuthAndRole();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
@@ -98,7 +111,7 @@ const Dashboard = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <SyncButton />
+              {isAdmin && <SyncButton />}
               <Button
                 variant="outline"
                 onClick={handleLogout}

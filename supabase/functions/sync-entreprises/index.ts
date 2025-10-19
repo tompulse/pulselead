@@ -14,6 +14,59 @@ serve(async (req) => {
   try {
     console.log('🔄 Début de la synchronisation des entreprises...');
 
+    // Vérification de l'authentification et du rôle admin
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Non autorisé - authentification requise' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Connexion à la base de destination pour vérifier le rôle
+    const destDbUrl = Deno.env.get('SUPABASE_URL');
+    const destDbKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!destDbUrl || !destDbKey) {
+      throw new Error('Les secrets SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY ne sont pas configurés');
+    }
+
+    const destDb = createClient(destDbUrl, destDbKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+
+    // Récupérer l'utilisateur authentifié
+    const { data: { user }, error: userError } = await destDb.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
+
+    if (userError || !user) {
+      console.error('❌ Erreur authentification:', userError);
+      return new Response(
+        JSON.stringify({ error: 'Non autorisé - utilisateur invalide' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Vérifier si l'utilisateur a le rôle admin
+    const { data: isAdmin, error: roleError } = await destDb.rpc('has_role', {
+      _user_id: user.id,
+      _role: 'admin'
+    });
+
+    if (roleError || !isAdmin) {
+      console.log('❌ Tentative d\'accès non autorisé par l\'utilisateur:', user.id);
+      return new Response(
+        JSON.stringify({ error: 'Non autorisé - droits administrateur requis' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('✅ Utilisateur admin vérifié:', user.id);
+
     // Connexion à la base source
     const sourceDbUrl = Deno.env.get('SOURCE_DB_URL');
     const sourceDbKey = Deno.env.get('SOURCE_DB_ANON_KEY');
@@ -31,17 +84,6 @@ serve(async (req) => {
 
     const sourceDb = createClient(cleanSourceUrl, sourceDbKey);
     console.log('✅ Connecté à la base source');
-
-    // Connexion à la base de destination (Lovable Cloud)
-    const destDbUrl = Deno.env.get('SUPABASE_URL');
-    const destDbKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    
-    if (!destDbUrl || !destDbKey) {
-      throw new Error('Les secrets SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY ne sont pas configurés');
-    }
-
-    const destDb = createClient(destDbUrl, destDbKey);
-    console.log('✅ Connecté à la base de destination');
 
     // Récupération des données depuis la base source
     const { data: sourceData, error: sourceError } = await sourceDb
