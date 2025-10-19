@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* LeadMagnet Brand Colors - Bleu Marine → Noir + Cyan */
+    /* LUMA Brand Colors - Bleu Marine → Noir + Cyan */
     --navy-deep: 220 90% 12%;
     --navy-darker: 220 70% 8%;
     --black-deep: 220 20% 5%;
