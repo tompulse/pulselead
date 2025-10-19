@@ -264,7 +264,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
         </div>
 
         {/* Cards Grid - Scrollable */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2">
           {filteredEntreprises.length === 0 ? (
             <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
               <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
@@ -276,7 +276,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-4 pb-4">{filteredEntreprises.map((item) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-4 pb-4 pr-2">{filteredEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
                 const categoryInfo = getCategoryInfo(item.activite);
                 const crm = crmData[item.id];
@@ -326,7 +326,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                    <div className="flex gap-2">
                       <PhoneButton 
                         phoneNumber={item.telephone} 
                         entrepriseName={item.nom}
@@ -338,7 +338,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 min-w-[100px] border-accent/30 hover:bg-accent/10 hover:border-accent"
+                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
                             disabled={!hasCoordinates}
                           >
                             <Car className="w-4 h-4 sm:mr-2" />
@@ -365,10 +365,10 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         variant="outline"
                         size="sm"
                         onClick={() => onEntrepriseSelect?.(item)}
-                        className="flex-1 min-w-[100px] border-accent/30 hover:bg-accent/10 hover:border-accent"
+                        className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
                       >
                         <Building2 className="w-4 h-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Détails</span>
+                        <span className="hidden sm:inline">CRM</span>
                       </Button>
                     </div>
                   </div>
@@ -382,7 +382,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
       {isMobile && filteredEntreprises.length > 0 && (
         <div className="mt-4 p-4 glass-card rounded-lg border border-accent/20">
           <p className="text-xs text-muted-foreground text-center">
-            💡 Cliquez sur "Détails" pour accéder au CRM et gérer vos interactions
+            💡 Cliquez sur "CRM" pour accéder au panel et gérer vos interactions
           </p>
         </div>
       )}
