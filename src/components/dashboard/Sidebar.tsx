@@ -107,20 +107,20 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
             }`}>
               {allDepartments.map((deptCode) => (
                 <div key={deptCode} className={`flex items-center rounded hover:bg-accent/5 ${
-                  isMobileSheet ? "space-x-3 p-2.5" : "space-x-1.5 p-1"
+                  isMobileSheet ? "space-x-3 p-3 min-h-[48px]" : "space-x-1.5 p-1"
                 }`}>
                   <Checkbox
                     id={`dept-${deptCode}`}
                     checked={filters.departments?.includes(deptCode)}
                     onCheckedChange={() => handleDepartmentToggle(deptCode)}
-                    className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary ${
-                      isMobileSheet ? "h-5 w-5" : "h-3.5 w-3.5"
+                    className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary shrink-0 ${
+                      isMobileSheet ? "h-6 w-6" : "h-3.5 w-3.5"
                     }`}
                   />
                   <label
                     htmlFor={`dept-${deptCode}`}
                     className={`font-medium leading-none cursor-pointer flex-1 ${
-                      isMobileSheet ? "text-sm" : "text-[11px]"
+                      isMobileSheet ? "text-base" : "text-[11px]"
                     }`}
                   >
                     {deptCode} - {DEPARTMENT_NAMES[deptCode]}
@@ -151,20 +151,20 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
             }`}>
               {allCategories.map((categoryKey) => (
                 <div key={categoryKey} className={`flex items-center rounded hover:bg-accent/5 ${
-                  isMobileSheet ? "space-x-3 p-2.5" : "space-x-1.5 p-1"
+                  isMobileSheet ? "space-x-3 p-3 min-h-[48px]" : "space-x-1.5 p-1"
                 }`}>
                   <Checkbox
                     id={`cat-${categoryKey}`}
                     checked={filters.categories?.includes(categoryKey)}
                     onCheckedChange={() => handleCategoryToggle(categoryKey)}
-                    className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary ${
-                      isMobileSheet ? "h-5 w-5" : "h-3.5 w-3.5"
+                    className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary shrink-0 ${
+                      isMobileSheet ? "h-6 w-6" : "h-3.5 w-3.5"
                     }`}
                   />
                   <label
                     htmlFor={`cat-${categoryKey}`}
                     className={`font-medium leading-none cursor-pointer flex-1 ${
-                      isMobileSheet ? "text-sm" : "text-[11px]"
+                      isMobileSheet ? "text-base" : "text-[11px]"
                     }`}
                   >
                     {getCategoryLabel(categoryKey)}

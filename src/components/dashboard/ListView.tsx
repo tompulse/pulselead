@@ -150,16 +150,16 @@ export const ListView = ({ filters }: ListViewProps) => {
   return (
     <>
       <div className="space-y-4 h-full flex flex-col overflow-hidden">
-        {/* Header with search */}
-        <div className="glass-card rounded-2xl p-6 shadow-2xl border border-accent/20 flex-shrink-0">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <div className="flex items-center gap-3">
+        {/* Header with search - More subtle */}
+        <div className="glass-card rounded-lg p-3 md:p-4 border border-accent/10 flex-shrink-0 bg-accent/5">
+          <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
+            <div className="flex items-center gap-2.5">
               <div className="p-2 bg-accent/10 rounded-lg">
-                <Building2 className="w-6 h-6 text-accent" />
+                <Building2 className="w-4 h-4 md:w-5 md:h-5 text-accent" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">Liste des entreprises</h3>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <h3 className="text-base md:text-lg font-semibold text-foreground/80">Liste des entreprises</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
                   {filteredEntreprises.length} résultat{filteredEntreprises.length > 1 ? 's' : ''}
                 </p>
               </div>
@@ -172,7 +172,7 @@ export const ListView = ({ filters }: ListViewProps) => {
                 placeholder="Rechercher une entreprise..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 bg-background/50 border-accent/20 focus:border-accent"
+                className="pl-9 bg-background/50 border-accent/20 focus:border-accent h-9"
               />
             </div>
           </div>

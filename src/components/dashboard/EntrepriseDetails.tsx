@@ -200,36 +200,36 @@ export const EntrepriseDetails = ({ entreprise, open, onOpenChange }: Entreprise
       <Separator className="bg-accent/20" />
 
       {/* Boutons de navigation */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
         <Button
           asChild
           size="lg"
-          className="bg-accent/10 hover:bg-accent text-accent hover:text-primary border border-accent/50"
+          className="bg-accent/10 hover:bg-accent text-accent hover:text-primary border border-accent/50 w-full"
         >
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${entreprise.latitude},${entreprise.longitude}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 w-full"
           >
-            <Map className="w-5 h-5" />
-            <span>Ouvrir dans Google Maps</span>
+            <Map className="w-5 h-5 shrink-0" />
+            <span className="truncate">Ouvrir dans Google Maps</span>
           </a>
         </Button>
         
         <Button
           asChild
           size="lg"
-          className="bg-accent/10 hover:bg-accent text-accent hover:text-primary border border-accent/50"
+          className="bg-accent/10 hover:bg-accent text-accent hover:text-primary border border-accent/50 w-full"
         >
           <a
             href={`https://waze.com/ul?ll=${entreprise.latitude},${entreprise.longitude}&navigate=yes`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 w-full"
           >
-            <Navigation className="w-5 h-5" />
-            <span>Naviguer avec Waze</span>
+            <Navigation className="w-5 h-5 shrink-0" />
+            <span className="truncate">Naviguer avec Waze</span>
           </a>
         </Button>
       </div>
@@ -239,11 +239,13 @@ export const EntrepriseDetails = ({ entreprise, open, onOpenChange }: Entreprise
   if (isMobile) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="h-[90vh] overflow-y-auto">
+        <SheetContent side="bottom" className="h-[90vh] overflow-y-auto overflow-x-hidden">
           <SheetHeader className="mb-4">
             <SheetTitle className="text-xl">Détails de l'entreprise</SheetTitle>
           </SheetHeader>
-          {content}
+          <div className="max-w-full overflow-x-hidden">
+            {content}
+          </div>
         </SheetContent>
       </Sheet>
     );
