@@ -12,7 +12,6 @@ import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SyncButton } from "@/components/dashboard/SyncButton";
-import { CompactStats } from "@/components/dashboard/CompactStats";
 import { CRMSidePanel } from "@/components/dashboard/CRMSidePanel";
 import { QuickActionButtons } from "@/components/dashboard/QuickActionButtons";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -298,8 +297,7 @@ const Dashboard = () => {
           </div>
         </header>
       
-      {/* Compact Stats - Only in Activities view */}
-      {userId && !isMobile && view === "activities" && <CompactStats userId={userId} />}
+      {/* Compact Stats - Removed from all views */}
 
       {/* Mobile Filter Button */}
       {isMobile && (

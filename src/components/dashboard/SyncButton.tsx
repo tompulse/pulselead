@@ -39,10 +39,11 @@ export const SyncButton = () => {
       onClick={handleSync}
       disabled={loading}
       variant="outline"
-      className="gap-2"
+      size="sm"
+      className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
     >
-      <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-      {loading ? "Synchronisation..." : "Synchroniser les données"}
+      <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+      <span className="hidden lg:inline ml-1">{loading ? "Sync..." : "Sync"}</span>
     </Button>
   );
 };
