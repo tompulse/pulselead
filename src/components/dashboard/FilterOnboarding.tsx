@@ -97,11 +97,11 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           .not('latitude', 'is', null)
           .not('longitude', 'is', null);
 
-        // Filtre par départements
-        const deptFilters = selectedDepartments.map(dept => `code_postal.like.${dept}%`);
-        if (deptFilters.length > 0) {
-          query = query.or(deptFilters.join(','));
-        }
+        // Aligner avec le dashboard: inclure dates nulles ou démarrées après 2025-09-01
+        query = query.or(`date_demarrage.is.null,and(date_demarrage.gte.2025-09-01,date_demarrage.lte.2100-12-31)`);
+
+        // Le filtrage par départements est fait côté client pour permettre une logique cohérente (et gérer la Corse)
+        // Ancien filtre SQL supprimé pour éviter les conflits avec le filtre de date.
 
         const { data, error } = await query;
 
@@ -111,10 +111,26 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           return;
         }
 
-        // Filtre par catégories si sélectionnées
         let filteredData = data || [];
+
+        // Filtre par départements (client-side, gère la Corse)
+        if (selectedDepartments.length > 0) {
+          filteredData = filteredData.filter((entreprise: any) => {
+            const cp = entreprise.code_postal as string | null;
+            if (!cp) return false;
+            const normalized = cp.length === 4 ? '0' + cp : cp;
+            if (normalized.startsWith('20')) {
+              // Corse: impossible de distinguer 2A vs 2B via le code postal => on inclut si l'un des deux est sélectionné
+              return selectedDepartments.includes('2A') || selectedDepartments.includes('2B');
+            }
+            const dept = normalized.substring(0, 2);
+            return selectedDepartments.includes(dept);
+          });
+        }
+
+        // Filtre par catégories si sélectionnées
         if (selectedCategories.length > 0) {
-          filteredData = filteredData.filter(entreprise => {
+          filteredData = filteredData.filter((entreprise: any) => {
             const category = categorizeActivity(entreprise.activite);
             return selectedCategories.includes(category);
           });

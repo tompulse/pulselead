@@ -82,12 +82,15 @@ export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
             const codePostal = ent.code_postal;
             if (!codePostal) return false;
             
-            // Normaliser le code postal (ajouter 0 devant si nécessaire)
             const normalizedCP = codePostal.length === 4 ? '0' + codePostal : codePostal;
             const dept = normalizedCP.substring(0, 2);
-            const deptCorse = normalizedCP.substring(0, 3); // Pour la Corse (2A, 2B)
             
-            return filters.departments.includes(dept) || filters.departments.includes(deptCorse);
+            if (normalizedCP.startsWith('20')) {
+              // Corse: impossible de distinguer 2A vs 2B via le code postal => on inclut si l'un des deux est sélectionné
+              return filters.departments.includes('2A') || filters.departments.includes('2B');
+            }
+            
+            return filters.departments.includes(dept);
           });
         }
         
