@@ -149,7 +149,7 @@ export const ListView = ({ filters }: ListViewProps) => {
 
   return (
     <>
-      <div className="space-y-4 h-full flex flex-col overflow-hidden">
+      <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
         {/* Header with search - More subtle */}
         <div className="glass-card rounded-lg p-3 md:p-4 border border-accent/10 flex-shrink-0 bg-accent/5">
           <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
@@ -179,7 +179,7 @@ export const ListView = ({ filters }: ListViewProps) => {
         </div>
 
         {/* Cards Grid - Scrollable */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
           {filteredEntreprises.length === 0 ? (
             <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
               <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
@@ -191,7 +191,7 @@ export const ListView = ({ filters }: ListViewProps) => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4 max-w-full">
               {filteredEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
                 const categoryInfo = getCategoryInfo(item.activite);
@@ -200,7 +200,7 @@ export const ListView = ({ filters }: ListViewProps) => {
                   <div
                     key={item.id}
                     onClick={() => handleCardClick(item)}
-                    className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-card/80 to-card/40"
+                    className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-card/80 to-card/40 max-w-full overflow-hidden"
                   >
                     <div className="space-y-3 mb-4">
                       <h4 className="font-bold text-lg truncate" title={item.nom}>
