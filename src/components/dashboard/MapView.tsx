@@ -4,14 +4,12 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin } from "lucide-react";
 import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
-import { REGIONS_DATA } from "@/utils/regionsData";
 
 interface MapViewProps {
   filters: {
     dateFrom: string;
     dateTo: string;
     categories: string[];
-    region: string;
     departments: string[];
   };
 }
@@ -88,29 +86,15 @@ export const MapView = ({ filters }: MapViewProps) => {
           });
         }
 
-        // Filter by region/departments
-        if (filters.region && filters.region !== "all") {
-          const regionData = REGIONS_DATA[filters.region as keyof typeof REGIONS_DATA];
-          
-          if (filters.departments && filters.departments.length > 0) {
-            // Si des départements spécifiques sont sélectionnés, filtrer par ces départements
-            filtered = filtered.filter((ent: Entreprise) => {
-              const codePostal = ent.code_postal;
-              if (!codePostal) return false;
-              const dept = codePostal.substring(0, 2);
-              const deptCorse = codePostal.substring(0, 3); // Pour la Corse (2A, 2B)
-              return filters.departments.includes(dept) || filters.departments.includes(deptCorse);
-            });
-          } else if (regionData) {
-            // Si seulement la région est sélectionnée, afficher tous les départements de cette région
-            filtered = filtered.filter((ent: Entreprise) => {
-              const codePostal = ent.code_postal;
-              if (!codePostal) return false;
-              const dept = codePostal.substring(0, 2);
-              const deptCorse = codePostal.substring(0, 3); // Pour la Corse (2A, 2B)
-              return regionData.departments.includes(dept) || regionData.departments.includes(deptCorse);
-            });
-          }
+        // Filter by departments if selected
+        if (filters.departments && filters.departments.length > 0) {
+          filtered = filtered.filter((ent: Entreprise) => {
+            const codePostal = ent.code_postal;
+            if (!codePostal) return false;
+            const dept = codePostal.substring(0, 2);
+            const deptCorse = codePostal.substring(0, 3); // Pour la Corse (2A, 2B)
+            return filters.departments.includes(dept) || filters.departments.includes(deptCorse);
+          });
         }
         
         setEntreprises(filtered);
@@ -127,17 +111,9 @@ export const MapView = ({ filters }: MapViewProps) => {
 
     mapboxgl.accessToken = "pk.eyJ1IjoicmF3c3MiLCJhIjoiY21nd3FuN3plMHF6YjJrc2JzMHU5enZqbCJ9.DW7r1fzAlHdCdlQatpAEuQ";
 
-    // Determine initial center and zoom based on region filter
+    // Determine initial center and zoom
     let initialCenter: [number, number] = [2.3522, 46.2276];
     let initialZoom = 5.5;
-
-    if (filters.region && filters.region !== "all") {
-      const regionData = REGIONS_DATA[filters.region as keyof typeof REGIONS_DATA];
-      if (regionData) {
-        initialCenter = regionData.center as [number, number];
-        initialZoom = regionData.zoom;
-      }
-    }
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -152,7 +128,7 @@ export const MapView = ({ filters }: MapViewProps) => {
     return () => {
       map.current?.remove();
     };
-  }, [filters.region]); // Re-initialize map when region changes
+  }, []); // Re-initialize only once
 
   // Add markers when entreprises change
   useEffect(() => {

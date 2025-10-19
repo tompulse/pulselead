@@ -17,7 +17,6 @@ const Dashboard = () => {
     dateFrom: "2025-09-01",
     dateTo: "",
     categories: [] as string[],
-    region: "",
     departments: [] as string[],
   });
   const navigate = useNavigate();

@@ -1,12 +1,11 @@
-import { Filter, MapPin, ChevronDown } from "lucide-react";
+import { Filter, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
-import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
+import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { useState } from "react";
 
 interface SidebarProps {
@@ -14,14 +13,13 @@ interface SidebarProps {
     dateFrom: string;
     dateTo: string;
     categories: string[];
-    region: string;
     departments: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
-  const [isLocationOpen, setIsLocationOpen] = useState(true);
+  const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
 
@@ -44,18 +42,7 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
   };
 
   const allCategories = Object.keys(ACTIVITY_CATEGORIES);
-  const allRegions = Object.keys(REGIONS_DATA);
-  const availableDepartments = filters.region 
-    ? REGIONS_DATA[filters.region as keyof typeof REGIONS_DATA]?.departments || []
-    : [];
-
-  const handleRegionChange = (region: string) => {
-    setFilters((prev: any) => ({
-      ...prev,
-      region,
-      departments: [], // Reset departments when region changes
-    }));
-  };
+  const allDepartments = Object.keys(DEPARTMENT_NAMES).sort();
 
   const handleDepartmentToggle = (deptCode: string) => {
     setFilters((prev: any) => {
@@ -79,60 +66,40 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
       </div>
 
       <div className="space-y-3">
-        {/* Geographic Filters - Collapsible */}
-        <Collapsible open={isLocationOpen} onOpenChange={setIsLocationOpen}>
+        {/* Geographic Filters - Departments Only */}
+        <Collapsible open={isDepartmentsOpen} onOpenChange={setIsDepartmentsOpen}>
           <CollapsibleTrigger className="w-full">
             <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-accent" />
-                <Label className="text-sm font-semibold cursor-pointer">Localisation</Label>
+                <Label className="text-sm font-semibold cursor-pointer">Départements</Label>
+                {filters.departments.length > 0 && (
+                  <span className="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full">
+                    {filters.departments.length}
+                  </span>
+                )}
               </div>
-              <ChevronDown className={`w-4 h-4 text-accent transition-transform ${isLocationOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-accent transition-transform ${isDepartmentsOpen ? 'rotate-180' : ''}`} />
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2 space-y-3 px-2">
-            {/* Region Select */}
-            <div className="space-y-2">
-              <Label htmlFor="region" className="text-xs">Région</Label>
-              <Select value={filters.region} onValueChange={handleRegionChange}>
-                <SelectTrigger className="h-9 bg-background/50 border-border focus:border-accent text-sm">
-                  <SelectValue placeholder="Toutes les régions" />
-                </SelectTrigger>
-                <SelectContent className="bg-background/95 backdrop-blur-xl border-accent/20 z-50">
-                  <SelectItem value="all">Toutes les régions</SelectItem>
-                  {allRegions.map((region) => (
-                    <SelectItem key={region} value={region} className="text-sm">
-                      {region}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Departments */}
-            {filters.region && filters.region !== "all" && (
-              <div className="space-y-2">
-                <Label className="text-xs">Départements ({filters.departments.length} sélectionné{filters.departments.length > 1 ? 's' : ''})</Label>
-                <div className="space-y-1.5 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                  {availableDepartments.map((deptCode) => (
-                    <div key={deptCode} className="flex items-center space-x-2 p-1.5 rounded hover:bg-accent/5">
-                      <Checkbox
-                        id={`dept-${deptCode}`}
-                        checked={filters.departments?.includes(deptCode)}
-                        onCheckedChange={() => handleDepartmentToggle(deptCode)}
-                        className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-4 w-4"
-                      />
-                      <label
-                        htmlFor={`dept-${deptCode}`}
-                        className="text-xs font-medium leading-none cursor-pointer flex-1"
-                      >
-                        {deptCode} - {DEPARTMENT_NAMES[deptCode]}
-                      </label>
-                    </div>
-                  ))}
+          <CollapsibleContent className="mt-2 space-y-1.5 px-2">
+            <div className="max-h-60 overflow-y-auto pr-2 custom-scrollbar space-y-1.5">
+              {allDepartments.map((deptCode) => (
+                <div key={deptCode} className="flex items-center space-x-2 p-1.5 rounded hover:bg-accent/5">
+                  <Checkbox
+                    id={`dept-${deptCode}`}
+                    checked={filters.departments?.includes(deptCode)}
+                    onCheckedChange={() => handleDepartmentToggle(deptCode)}
+                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-4 w-4"
+                  />
+                  <label
+                    htmlFor={`dept-${deptCode}`}
+                    className="text-xs font-medium leading-none cursor-pointer flex-1"
+                  >
+                    {deptCode} - {DEPARTMENT_NAMES[deptCode]}
+                  </label>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
           </CollapsibleContent>
         </Collapsible>
 
@@ -209,7 +176,6 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
               dateFrom: "",
               dateTo: "",
               categories: [],
-              region: "",
               departments: [],
             });
           }}
