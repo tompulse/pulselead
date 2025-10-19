@@ -59,8 +59,8 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
   };
 
   const canProceed = step === 1 
-    ? selectedCategories.length > 0 
-    : selectedDepartments.length > 0;
+    ? selectedDepartments.length > 0  // Géographie obligatoire
+    : true; // Activité optionnelle
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex items-center justify-center p-4">
@@ -87,8 +87,8 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
             <div className={`flex-1 h-2 rounded-full ${step >= 2 ? 'bg-accent' : 'bg-accent/20'} transition-all`} />
           </div>
           <div className="flex justify-between mt-2 text-sm text-muted-foreground">
-            <span className={step === 1 ? 'text-accent font-medium' : ''}>Secteurs d'activité</span>
-            <span className={step === 2 ? 'text-accent font-medium' : ''}>Zone géographique</span>
+            <span className={step === 1 ? 'text-accent font-medium' : ''}>Zone géographique</span>
+            <span className={step === 2 ? 'text-accent font-medium' : ''}>Secteurs d'activité</span>
           </div>
         </div>
 
@@ -98,47 +98,11 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
             {step === 1 ? (
               <div className="space-y-6">
                 <div className="flex items-start gap-3 p-4 rounded-lg bg-accent/5 border border-accent/20">
-                  <Building2 className="w-6 h-6 text-accent shrink-0 mt-1" />
-                  <div>
-                    <h2 className="text-xl font-semibold mb-2">Quels secteurs vous intéressent ?</h2>
-                    <p className="text-muted-foreground">
-                      Sélectionnez un ou plusieurs secteurs d'activité pour voir les entreprises qui correspondent à vos besoins.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
-                    <label
-                      key={key}
-                      className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40"
-                      style={{
-                        borderColor: selectedCategories.includes(key) 
-                          ? 'hsl(var(--accent))' 
-                          : 'hsl(var(--accent) / 0.2)',
-                        backgroundColor: selectedCategories.includes(key) 
-                          ? 'hsl(var(--accent) / 0.1)' 
-                          : 'transparent'
-                      }}
-                    >
-                      <Checkbox
-                        checked={selectedCategories.includes(key)}
-                        onCheckedChange={() => handleCategoryToggle(key)}
-                        className="border-accent/50"
-                      />
-                      <span className="font-medium">{category.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-accent/5 border border-accent/20">
                   <MapPin className="w-6 h-6 text-accent shrink-0 mt-1" />
                   <div>
-                    <h2 className="text-xl font-semibold mb-2">Dans quelles régions ?</h2>
+                    <h2 className="text-xl font-semibold mb-2">Dans quelles régions ? <span className="text-destructive">*</span></h2>
                     <p className="text-muted-foreground">
-                      Sélectionnez les régions où vous souhaitez trouver des entreprises.
+                      Sélectionnez les régions où vous souhaitez trouver des entreprises. Cette étape est obligatoire.
                     </p>
                   </div>
                 </div>
@@ -181,6 +145,42 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   })}
                 </div>
               </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="flex items-start gap-3 p-4 rounded-lg bg-accent/5 border border-accent/20">
+                  <Building2 className="w-6 h-6 text-accent shrink-0 mt-1" />
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-sm">(optionnel)</span></h2>
+                    <p className="text-muted-foreground">
+                      Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche. Vous pouvez aussi passer cette étape.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
+                    <label
+                      key={key}
+                      className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40"
+                      style={{
+                        borderColor: selectedCategories.includes(key) 
+                          ? 'hsl(var(--accent))' 
+                          : 'hsl(var(--accent) / 0.2)',
+                        backgroundColor: selectedCategories.includes(key) 
+                          ? 'hsl(var(--accent) / 0.1)' 
+                          : 'transparent'
+                      }}
+                    >
+                      <Checkbox
+                        checked={selectedCategories.includes(key)}
+                        onCheckedChange={() => handleCategoryToggle(key)}
+                        className="border-accent/50"
+                      />
+                      <span className="font-medium">{category.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </ScrollArea>
@@ -190,11 +190,15 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           <div className="text-sm text-muted-foreground">
             {step === 1 ? (
               <span>
-                {selectedCategories.length} secteur{selectedCategories.length > 1 ? 's' : ''} sélectionné{selectedCategories.length > 1 ? 's' : ''}
+                {selectedDepartments.length} département{selectedDepartments.length > 1 ? 's' : ''} sélectionné{selectedDepartments.length > 1 ? 's' : ''}
               </span>
             ) : (
               <span>
-                {selectedDepartments.length} département{selectedDepartments.length > 1 ? 's' : ''} sélectionné{selectedDepartments.length > 1 ? 's' : ''}
+                {selectedCategories.length > 0 ? (
+                  `${selectedCategories.length} secteur${selectedCategories.length > 1 ? 's' : ''} sélectionné${selectedCategories.length > 1 ? 's' : ''}`
+                ) : (
+                  'Aucun secteur sélectionné (optionnel)'
+                )}
               </span>
             )}
           </div>
