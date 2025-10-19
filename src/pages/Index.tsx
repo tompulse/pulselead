@@ -24,7 +24,7 @@ const Index = () => {
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all duration-300"></div>
                 <Target className="w-7 h-7 sm:w-8 sm:h-8 text-accent relative" />
               </div>
-              <span className="text-xl sm:text-2xl font-bold gradient-text">LeadMagnet</span>
+              <span className="text-xl sm:text-2xl font-bold gradient-text">LUMA</span>
             </div>
             
             {/* Boutons d'action */}
@@ -53,14 +53,15 @@ const Index = () => {
           <div className="text-center space-y-6 sm:space-y-8 animate-fade-in">
             {/* Titre principal */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="text-foreground">L'intelligence commerciale</span>
+              <span className="text-foreground">LUMA</span>
               <br />
-              <span className="gradient-text">au service de votre prospection.</span>
+              <span className="gradient-text">éclaire les leviers de ta croissance.</span>
             </h1>
             
             {/* Sous-texte */}
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Analysez, scorez et convertissez vos leads grâce à la puissance de la donnée terrain.
+              Visualise ton marché, comprends tes prospects et passe à l'action.<br />
+              LUMA t'aide à voir clair dans ta data pour accélérer ta croissance.
             </p>
             
             {/* Boutons CTA */}
@@ -70,16 +71,11 @@ const Index = () => {
                 size="lg"
                 className="btn-hero w-full sm:w-auto min-w-[200px] sm:min-w-[240px] h-12 sm:h-14 text-base sm:text-lg"
               >
-                Se connecter
+                Explorer LUMA
               </Button>
-              <Button 
-                onClick={() => navigate("/auth")}
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto min-w-[200px] sm:min-w-[240px] h-12 sm:h-14 text-base sm:text-lg border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent/50 transition-all duration-300"
-              >
-                Créer un compte gratuitement
-              </Button>
+              <p className="text-sm text-muted-foreground/80 mt-2">
+                Démo instantanée — sans création de compte.
+              </p>
             </div>
 
             {/* Dashboard Preview - Interactive animation */}
@@ -101,7 +97,7 @@ const Index = () => {
           <div className="text-center space-y-10 sm:space-y-16">
             {/* Phrase unique */}
             <p className="text-xl sm:text-2xl md:text-3xl text-foreground/90 font-light leading-relaxed max-w-4xl mx-auto">
-              Choisi par les commerciaux modernes pour identifier leurs meilleures opportunités en un clic.
+              Visualise, comprends, et agis. En clair.
             </p>
             
             {/* 3 mini pictos */}
@@ -115,8 +111,8 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="text-center space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Intelligence Artificielle</h3>
-                  <p className="text-sm text-muted-foreground">Scoring prédictif</p>
+                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Clarté instantanée</h3>
+                  <p className="text-sm text-muted-foreground">Data lisible et actionnables</p>
                 </div>
               </div>
               
@@ -129,8 +125,8 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="text-center space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Performance</h3>
-                  <p className="text-sm text-muted-foreground">Résultats mesurables</p>
+                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Croissance accélérée</h3>
+                  <p className="text-sm text-muted-foreground">Décisions plus rapides</p>
                 </div>
               </div>
               
@@ -143,8 +139,8 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="text-center space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Sécurité des données</h3>
-                  <p className="text-sm text-muted-foreground">Conformité RGPD</p>
+                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Vision complète</h3>
+                  <p className="text-sm text-muted-foreground">Tous vos leviers en un coup d'œil</p>
                 </div>
               </div>
             </div>
@@ -160,7 +156,7 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8">
               <div className="flex items-center space-x-3">
                 <Target className="w-6 h-6 text-accent" />
-                <span className="text-lg font-bold gradient-text">LeadMagnet</span>
+                <span className="text-lg font-bold gradient-text">LUMA</span>
               </div>
               
               <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm text-muted-foreground">
@@ -174,7 +170,7 @@ const Index = () => {
             
             {/* Copyright */}
             <div className="text-center text-sm text-muted-foreground border-t border-accent/10 pt-6">
-              <p>© 2025 LeadMagnet. Tous droits réservés.</p>
+              <p>© 2025 LUMA. Tous droits réservés.</p>
             </div>
           </div>
         </div>

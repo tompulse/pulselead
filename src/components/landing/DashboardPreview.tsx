@@ -26,14 +26,14 @@ const DashboardPreview = () => {
   }, [currentScene]);
 
   const overlayTexts = [
-    "Découvrez en un clin d'œil les opportunités autour de vous",
-    "Visualisez vos prospects sur la carte de France",
-    "Cliquez sur une région pour zoomer et filtrer",
-    "Analysez les leads par département",
-    "Accédez instantanément aux fiches complètes",
-    "Contactez vos prospects directement",
-    "Naviguez vers vos rendez-vous en un clic",
-    "Tout votre potentiel client, en un seul tableau de bord"
+    "Visualise, comprends, et agis. En clair.",
+    "Vois ton marché d'un seul coup d'œil",
+    "Zoom sur les opportunités qui comptent",
+    "Comprends chaque prospect en détail",
+    "Accède aux infos clés instantanément",
+    "Contacte tes prospects en un clic",
+    "Passe à l'action directement",
+    "Tous tes leviers de croissance, éclairés"
   ];
 
   // Sample companies data
@@ -65,7 +65,8 @@ const DashboardPreview = () => {
           <div className="absolute inset-0 bg-accent/20 blur-2xl rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
           <Target className="w-32 h-32 text-accent relative animate-[spin_20s_linear_infinite]" />
         </div>
-        <h2 className="text-3xl font-bold gradient-text mt-8 animate-fade-in">LeadMagnet</h2>
+        <h2 className="text-3xl font-bold gradient-text mt-8 animate-fade-in">LUMA</h2>
+        <p className="text-sm text-muted-foreground mt-2 animate-fade-in">éclaire les leviers de ta croissance</p>
       </div>
 
       {/* Scene 1: France Map Overview */}
