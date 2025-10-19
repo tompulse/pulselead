@@ -32,33 +32,18 @@ export const MapView = ({ filters }: MapViewProps) => {
   useEffect(() => {
     const fetchEntreprises = async () => {
       setLoading(true);
-      let query = supabase
+      // Using any cast due to type generation lag
+      const { data, error } = await (supabase as any)
         .from("entreprises")
         .select("*")
         .not("latitude", "is", null)
-        .not("longitude", "is", null);
-
-      // Apply filters
-      if (filters.department) {
-        query = query.like("code_postal", `${filters.department}%`);
-      }
-      if (filters.postalCode) {
-        query = query.eq("code_postal", filters.postalCode);
-      }
-      if (filters.naf) {
-        query = query.eq("code_naf", filters.naf);
-      }
-      if (filters.status) {
-        query = query.eq("statut", filters.status);
-      }
-      if (filters.dateRange?.from) {
-        query = query.gte("date_demarrage", filters.dateRange.from);
-      }
-      if (filters.dateRange?.to) {
-        query = query.lte("date_demarrage", filters.dateRange.to);
-      }
-
-      const { data, error } = await query;
+        .not("longitude", "is", null)
+        .like("code_postal", filters.department ? `${filters.department}%` : "%")
+        .eq("code_postal", filters.postalCode || undefined)
+        .eq("code_naf", filters.naf || undefined)
+        .eq("statut", filters.status || undefined)
+        .gte("date_demarrage", filters.dateRange?.from || "1900-01-01")
+        .lte("date_demarrage", filters.dateRange?.to || "2100-12-31");
 
       if (error) {
         console.error("Error fetching entreprises:", error);
