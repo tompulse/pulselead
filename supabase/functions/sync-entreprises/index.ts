@@ -141,6 +141,7 @@ serve(async (req) => {
         type_voie: item.type_voie || null,
         nom_voie: item.nom_voie || null,
         code_postal: item.code_postal?.toString() || null,
+        ville: item.ville || item.Ville || null, // Support pour différentes variations de noms de colonnes
         adresse: null, // On utilise les champs séparés
         latitude: item.latitude,
         longitude: item.longitude,
