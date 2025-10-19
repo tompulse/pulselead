@@ -10,6 +10,7 @@ import { Lightbulb, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSq
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SyncButton } from "@/components/dashboard/SyncButton";
 import { CompactStats } from "@/components/dashboard/CompactStats";
 import { CRMSidePanel } from "@/components/dashboard/CRMSidePanel";
@@ -314,6 +315,7 @@ const Dashboard = () => {
           <div className="h-full p-4 md:p-6">
             {view === "map" ? (
               <MapView 
+                key="map-view"
                 filters={filters} 
                 onEntrepriseSelect={handleEntrepriseSelect}
               />

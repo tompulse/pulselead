@@ -69,6 +69,19 @@ All colors MUST be HSL.
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     letter-spacing: -0.011em;
   }
+
+  /* Optimisation mobile pour Mapbox */
+  .mapboxgl-canvas {
+    touch-action: pan-x pan-y;
+  }
+  
+  .cluster-marker {
+    transition: transform 0.2s ease;
+  }
+  
+  .cluster-marker:active {
+    transform: scale(0.95);
+  }
   
   h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
