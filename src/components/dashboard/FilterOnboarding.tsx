@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, ChevronDown } from "lucide-react";
-import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
+import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, ChevronDown, TrendingUp } from "lucide-react";
+import { ACTIVITY_CATEGORIES, categorizeActivity } from "@/utils/activityCategories";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FilterOnboardingProps {
   onComplete: (filters: {
@@ -20,6 +21,8 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [expandedRegions, setExpandedRegions] = useState<string[]>([]);
+  const [entrepriseCount, setEntrepriseCount] = useState<number>(0);
+  const [loadingCount, setLoadingCount] = useState(false);
 
   const handleCategoryToggle = (categoryKey: string) => {
     setSelectedCategories(prev =>
@@ -77,6 +80,57 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         : [...prev, regionKey]
     );
   };
+
+  // Compter les entreprises en fonction des critères
+  useEffect(() => {
+    const fetchCount = async () => {
+      if (selectedDepartments.length === 0) {
+        setEntrepriseCount(0);
+        return;
+      }
+
+      setLoadingCount(true);
+      try {
+        let query = supabase
+          .from('entreprises')
+          .select('*', { count: 'exact', head: false })
+          .not('latitude', 'is', null)
+          .not('longitude', 'is', null);
+
+        // Filtre par départements
+        const deptFilters = selectedDepartments.map(dept => `code_postal.like.${dept}%`);
+        if (deptFilters.length > 0) {
+          query = query.or(deptFilters.join(','));
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+          console.error('Error fetching count:', error);
+          setEntrepriseCount(0);
+          return;
+        }
+
+        // Filtre par catégories si sélectionnées
+        let filteredData = data || [];
+        if (selectedCategories.length > 0) {
+          filteredData = filteredData.filter(entreprise => {
+            const category = categorizeActivity(entreprise.activite);
+            return selectedCategories.includes(category);
+          });
+        }
+
+        setEntrepriseCount(filteredData.length);
+      } catch (error) {
+        console.error('Error:', error);
+        setEntrepriseCount(0);
+      } finally {
+        setLoadingCount(false);
+      }
+    };
+
+    fetchCount();
+  }, [selectedDepartments, selectedCategories]);
 
   const handleFinish = () => {
     const filters = {
@@ -260,24 +314,40 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         </ScrollArea>
 
         {/* Footer */}
-        <div className="p-6 border-t border-accent/20 bg-accent/5 flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            {step === 1 ? (
-              <span>
-                {selectedDepartments.length} département{selectedDepartments.length > 1 ? 's' : ''} sélectionné{selectedDepartments.length > 1 ? 's' : ''}
-              </span>
-            ) : (
-              <span>
-                {selectedCategories.length > 0 ? (
-                  `${selectedCategories.length} secteur${selectedCategories.length > 1 ? 's' : ''} sélectionné${selectedCategories.length > 1 ? 's' : ''}`
-                ) : (
-                  'Aucun secteur sélectionné (optionnel)'
-                )}
-              </span>
+        <div className="p-6 border-t border-accent/20 bg-gradient-to-br from-accent/10 to-accent/5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-sm text-muted-foreground">
+              {step === 1 ? (
+                <span>
+                  {selectedDepartments.length} département{selectedDepartments.length > 1 ? 's' : ''} sélectionné{selectedDepartments.length > 1 ? 's' : ''}
+                </span>
+              ) : (
+                <span>
+                  {selectedCategories.length > 0 ? (
+                    `${selectedCategories.length} secteur${selectedCategories.length > 1 ? 's' : ''} sélectionné${selectedCategories.length > 1 ? 's' : ''}`
+                  ) : (
+                    'Aucun secteur sélectionné (optionnel)'
+                  )}
+                </span>
+              )}
+            </div>
+            
+            {/* Compteur d'entreprises */}
+            {selectedDepartments.length > 0 && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/20 border border-accent/30">
+                <TrendingUp className="w-4 h-4 text-accent" />
+                <span className="font-semibold text-accent">
+                  {loadingCount ? (
+                    <span className="animate-pulse">Calcul...</span>
+                  ) : (
+                    `${entrepriseCount.toLocaleString('fr-FR')} entreprise${entrepriseCount > 1 ? 's' : ''}`
+                  )}
+                </span>
+              </div>
             )}
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full">
             {step === 2 && (
               <Button
                 variant="outline"
@@ -298,7 +368,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                 }
               }}
               disabled={!canProceed}
-              className="bg-accent hover:bg-accent/90 text-primary"
+              className="bg-accent hover:bg-accent/90 text-primary flex-1"
             >
               {step === 1 ? (
                 <>
