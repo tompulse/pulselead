@@ -140,7 +140,11 @@ serve(async (req) => {
         numero_voie: item.numero_voie?.toString() || null,
         type_voie: item.type_voie || null,
         nom_voie: item.nom_voie || null,
-        code_postal: item.code_postal?.toString() || null,
+        code_postal: (() => {
+          const cp = item.code_postal?.toString() || null;
+          // Normaliser le code postal : ajouter 0 devant si 4 chiffres
+          return cp && cp.length === 4 ? '0' + cp : cp;
+        })(),
         ville: item.ville || item.Ville || null, // Support pour différentes variations de noms de colonnes
         adresse: null, // On utilise les champs séparés
         latitude: item.latitude,

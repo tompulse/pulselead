@@ -91,8 +91,12 @@ export const MapView = ({ filters }: MapViewProps) => {
           filtered = filtered.filter((ent: Entreprise) => {
             const codePostal = ent.code_postal;
             if (!codePostal) return false;
-            const dept = codePostal.substring(0, 2);
-            const deptCorse = codePostal.substring(0, 3); // Pour la Corse (2A, 2B)
+            
+            // Normaliser le code postal (ajouter 0 devant si nécessaire)
+            const normalizedCP = codePostal.length === 4 ? '0' + codePostal : codePostal;
+            const dept = normalizedCP.substring(0, 2);
+            const deptCorse = normalizedCP.substring(0, 3); // Pour la Corse (2A, 2B)
+            
             return filters.departments.includes(dept) || filters.departments.includes(deptCorse);
           });
         }
