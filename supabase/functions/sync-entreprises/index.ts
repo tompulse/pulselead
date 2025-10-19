@@ -45,7 +45,7 @@ serve(async (req) => {
 
     // Récupération des données depuis la base source
     const { data: sourceData, error: sourceError } = await sourceDb
-      .from('entreprises')
+      .from('Data SaaS Lovable')
       .select('*');
 
     if (sourceError) {
@@ -66,6 +66,21 @@ serve(async (req) => {
       );
     }
 
+    // Mapper les données de la source vers le format destination
+    const mappedData = sourceData.map((item: any) => ({
+      nom: item.entreprise || '',
+      siret: item.siret?.toString() || '',
+      adresse: null,
+      code_postal: null,
+      code_naf: null,
+      statut: null,
+      latitude: item.latitude,
+      longitude: item.longitude,
+      date_demarrage: item.lancement_activite,
+    }));
+
+    console.log(`🔄 ${mappedData.length} entreprises mappées pour l'insertion`);
+
     // Suppression des anciennes données (pour une synchronisation complète)
     const { error: deleteError } = await destDb
       .from('entreprises')
@@ -81,7 +96,7 @@ serve(async (req) => {
     // Insertion des nouvelles données
     const { data: insertedData, error: insertError } = await destDb
       .from('entreprises')
-      .insert(sourceData)
+      .insert(mappedData)
       .select();
 
     if (insertError) {
