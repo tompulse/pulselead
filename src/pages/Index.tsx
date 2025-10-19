@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Target, Sparkles, TrendingUp, Shield } from "lucide-react";
+import DashboardPreview from "@/components/landing/DashboardPreview";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -81,16 +82,12 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Mockup Dashboard - Simple visual placeholder */}
+            {/* Dashboard Preview - Interactive animation */}
             <div className="pt-12 sm:pt-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
               <div className="glass-card p-4 sm:p-6 md:p-8 max-w-5xl mx-auto relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
-                <div className="relative aspect-video bg-gradient-to-br from-card to-background rounded-lg border border-accent/20 flex items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent"></div>
-                  <div className="relative text-center space-y-4 p-6">
-                    <Target className="w-16 h-16 sm:w-20 sm:h-20 text-accent mx-auto opacity-50" />
-                    <p className="text-muted-foreground text-sm sm:text-base">Dashboard LeadMagnet</p>
-                  </div>
+                <div className="relative aspect-video">
+                  <DashboardPreview />
                 </div>
               </div>
             </div>
