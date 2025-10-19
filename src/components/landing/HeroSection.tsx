@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Play } from "lucide-react";
-import { Logo } from "@/components/Logo";
+import { Lightbulb, ArrowRight, Play } from "lucide-react";
 
 export const HeroSection = () => {
   const navigate = useNavigate();
@@ -17,7 +16,7 @@ export const HeroSection = () => {
       <div className="relative text-center max-w-5xl mx-auto space-y-8 animate-fade-in">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm mb-4 hover:border-accent/50 transition-all">
-          <Logo size="sm" withGlow={false} className="animate-pulse" />
+          <Lightbulb className="w-4 h-4 text-accent animate-pulse" />
           <span className="text-sm text-accent font-semibold tracking-wide">Propulsé par l'Intelligence Artificielle</span>
         </div>
         

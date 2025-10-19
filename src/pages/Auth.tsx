@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Lightbulb, Loader2 } from "lucide-react";
 import { z } from "zod";
-import { Logo } from "@/components/Logo";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -107,7 +106,10 @@ const Auth = () => {
         {/* Logo */}
         <div className="text-center mb-8 animate-fade-in">
           <div className="inline-flex items-center gap-3 mb-4">
-            <Logo size="lg" />
+            <div className="relative">
+              <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
+              <Lightbulb className="w-10 h-10 text-accent relative" />
+            </div>
             <span className="text-3xl font-bold gradient-text">LUMA</span>
           </div>
           <p className="text-muted-foreground text-base">
