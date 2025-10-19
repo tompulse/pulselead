@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -253,6 +253,15 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                   ? `${addressParts}, ${item.code_postal} ${item.ville || ''}`
                   : `${item.code_postal || ''} ${item.ville || ''}`.trim();
                 
+                // Extract gérant from administration field
+                const extractGerant = (admin: string | null) => {
+                  if (!admin) return null;
+                  const match = admin.match(/(?:Gérant|Président|Directeur général)\s*:\s*([^;,]+)/i);
+                  return match ? match[1].trim() : null;
+                };
+                
+                const gerant = extractGerant(item.administration);
+                
                 return (
                   <div
                     key={item.id}
@@ -294,6 +303,24 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           <span className="text-base flex-shrink-0">{categoryInfo.emoji}</span>
                           <span className="text-muted-foreground truncate">{categoryInfo.label}</span>
                         </div>
+                        
+                        {gerant && (
+                          <div className="flex items-start gap-2 text-sm">
+                            <User className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+                            <span className="text-muted-foreground truncate">
+                              {gerant}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {item.activite && (
+                          <div className="flex items-start gap-2 text-xs">
+                            <Building2 className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" />
+                            <p className="text-muted-foreground/90 line-clamp-2 leading-relaxed">
+                              {item.activite}
+                            </p>
+                          </div>
+                        )}
                         
                         {fullAddress && (
                           <div className="flex items-start gap-2 text-sm">

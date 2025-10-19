@@ -107,7 +107,7 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
                 onFilterChange?.();
               }}
             >
-              📞 A rappeler
+              📞 Rappeler
             </Button>
             <Button
               variant={filters.crmFilter === 'rendre_visite' ? 'default' : 'outline'}
