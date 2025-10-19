@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Zap, LogOut, List, MapIcon, Filter, PanelRight } from "lucide-react";
+import { Zap, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
 import { SyncButton } from "@/components/dashboard/SyncButton";
 import { CompactStats } from "@/components/dashboard/CompactStats";
 import { CRMSidePanel } from "@/components/dashboard/CRMSidePanel";
+import { QuickActionButtons } from "@/components/dashboard/QuickActionButtons";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -247,6 +250,45 @@ const Dashboard = () => {
             entreprise={selectedEntreprise}
             onClose={() => setCrmPanelOpen(false)}
           />
+        )}
+
+        {/* CRM Sheet - Mobile only */}
+        {isMobile && (
+          <Sheet open={crmPanelOpen} onOpenChange={setCrmPanelOpen}>
+            <SheetContent side="bottom" className="h-[90vh] p-0">
+              {selectedEntreprise && (
+                <div className="h-full flex flex-col">
+                  <SheetHeader className="px-6 py-4 border-b border-accent/20">
+                    <SheetTitle className="text-xl gradient-text">{selectedEntreprise.nom}</SheetTitle>
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {selectedEntreprise.ville || selectedEntreprise.code_postal}
+                    </p>
+                  </SheetHeader>
+                  <ScrollArea className="flex-1 px-6 py-4">
+                    <div className="space-y-6">
+                      <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
+                        <CardContent className="p-5 space-y-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="p-2 bg-accent/20 rounded-lg">
+                              <MessageSquare className="h-4 w-4 text-accent" />
+                            </div>
+                            <h4 className="font-semibold">Actions rapides</h4>
+                          </div>
+                          <QuickActionButtons 
+                            entrepriseId={selectedEntreprise.id} 
+                            onInteractionAdded={() => {
+                              /* Refresh logic would go here */
+                            }}
+                          />
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </ScrollArea>
+                </div>
+              )}
+            </SheetContent>
+          </Sheet>
         )}
       </div>
     </div>

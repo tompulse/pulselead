@@ -90,47 +90,47 @@ export const QuickActionButtons = ({
 
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         <Button
           variant="outline"
-          size="sm"
+          size="lg"
           onClick={() => handleQuickAction('appel')}
-          className="flex items-center gap-2"
+          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group"
         >
-          <Phone className="h-4 w-4" />
-          Appel
+          <Phone className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-medium">Appel</span>
         </Button>
         <Button
           variant="outline"
-          size="sm"
+          size="lg"
           onClick={() => handleQuickAction('email')}
-          className="flex items-center gap-2"
+          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group"
         >
-          <Mail className="h-4 w-4" />
-          Email
+          <Mail className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-medium">Email</span>
         </Button>
         <Button
           variant="outline"
-          size="sm"
+          size="lg"
           onClick={() => handleQuickAction('visite')}
-          className="flex items-center gap-2"
+          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group"
         >
-          <MapPin className="h-4 w-4" />
-          Visite
+          <MapPin className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-medium">Visite</span>
         </Button>
         <Button
           variant="outline"
-          size="sm"
+          size="lg"
           onClick={() => handleQuickAction('rdv')}
-          className="flex items-center gap-2"
+          className="h-20 flex flex-col items-center justify-center gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent transition-all group"
         >
-          <Calendar className="h-4 w-4" />
-          RDV
+          <Calendar className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-medium">RDV</span>
         </Button>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} modal>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto z-[9999] bg-background"  onClick={(e) => e.stopPropagation()}>
           <DialogHeader>
             <DialogTitle>Enregistrer une interaction</DialogTitle>
             <DialogDescription>
