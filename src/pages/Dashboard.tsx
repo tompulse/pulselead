@@ -31,12 +31,17 @@ const Dashboard = () => {
       }
 
       // Check if user has admin role
-      const { data: adminCheck } = await supabase.rpc('has_role', {
+      const { data: adminCheck, error } = await supabase.rpc('has_role', {
         _user_id: session.user.id,
         _role: 'admin'
       });
 
-      setIsAdmin(adminCheck || false);
+      if (error) {
+        console.error('Erreur vérification admin:', error);
+      }
+      
+      console.log('Vérification admin pour:', session.user.email, 'Résultat:', adminCheck);
+      setIsAdmin(adminCheck === true);
       setLoading(false);
     };
 
