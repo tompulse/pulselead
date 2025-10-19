@@ -30,8 +30,8 @@ const DashboardPreview = () => {
     "Vois ton marché d'un seul coup d'œil",
     "Zoom sur les opportunités qui comptent",
     "Comprends chaque prospect en détail",
-    "Accède aux infos clés instantanément",
     "Contacte tes prospects en un clic",
+    "Gère tes interactions CRM efficacement",
     "Passe à l'action directement",
     "Tous tes leviers de croissance, éclairés"
   ];
@@ -274,102 +274,58 @@ const DashboardPreview = () => {
         </div>
       </div>
 
-      {/* Scene 4: List view with detailed cards */}
+      {/* Scene 4: Company detail card */}
       <div className={`absolute inset-0 transition-opacity duration-700 ${currentScene === 4 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <div className="w-full h-full flex items-center justify-center p-2 sm:p-4 md:p-8 overflow-auto">
-          <div className="w-full max-w-4xl space-y-2">
-            {companies.map((company, i) => (
-              <div
-                key={i}
-                className="bg-card/70 backdrop-blur-xl border border-accent/30 rounded-lg p-2 sm:p-3 md:p-4 animate-fade-in hover:border-accent/50 hover:shadow-lg hover:shadow-accent/20 transition-all duration-300 group/card cursor-pointer"
-                style={{ animationDelay: `${i * 0.12}s` }}
-              >
-                <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
-                  <div className="relative flex-shrink-0">
-                    <div className="absolute inset-0 bg-accent/20 blur-md group-hover/card:blur-lg transition-all"></div>
-                    <Building2 className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-accent relative" />
-                  </div>
-                  <div className="flex-1 min-w-0 space-y-1 sm:space-y-1.5">
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-xs sm:text-sm md:text-base font-bold text-foreground truncate">{company.name}</h4>
-                      <div className="flex items-center gap-0.5 sm:gap-1 bg-accent/20 rounded-full px-1.5 sm:px-2 py-0.5 flex-shrink-0">
-                        <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-accent" />
-                        <span className="text-[10px] sm:text-xs font-semibold text-accent">{company.score}</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs">
-                      <span className="px-1.5 sm:px-2 py-0.5 bg-accent/10 rounded-full text-accent whitespace-nowrap">{company.sector}</span>
-                      <span className="text-muted-foreground truncate">{company.city}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground">
-                      <Users className="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0" />
-                      <span className="truncate">{company.manager}</span>
-                      <span className="text-accent/50 hidden sm:inline">•</span>
-                      <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0 hidden sm:block" />
-                      <span className="hidden sm:inline whitespace-nowrap">Actif il y a 2j</span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-accent opacity-0 group-hover/card:opacity-100 transition-opacity flex-shrink-0 hidden sm:block" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Scene 5: Ultra-detailed company card with contact info */}
-      <div className={`absolute inset-0 transition-opacity duration-700 ${currentScene === 5 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <div className="w-full h-full flex items-center justify-center p-2 sm:p-4 md:p-8 overflow-auto">
-          <div className="w-full max-w-2xl bg-card/85 backdrop-blur-xl border border-accent/40 rounded-xl p-3 sm:p-6 md:p-8 animate-scale-in">
-            <div className="space-y-3 sm:space-y-4 md:space-y-6">
+        <div className="w-full h-full flex items-center justify-center p-2 sm:p-4 md:p-8">
+          <div className="w-full max-w-lg bg-card/85 backdrop-blur-xl border border-accent/40 rounded-xl p-3 sm:p-4 md:p-6 animate-scale-in">
+            <div className="space-y-2.5 sm:space-y-3 md:space-y-4">
               {/* Company header */}
-              <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
+              <div className="flex items-start gap-2 sm:gap-3">
                 <div className="relative flex-shrink-0">
                   <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
-                  <Building2 className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-accent relative" />
+                  <Building2 className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-accent relative" />
                 </div>
-                <div className="flex-1 min-w-0 space-y-1 sm:space-y-2">
-                  <h3 className="text-base sm:text-lg md:text-2xl font-bold text-foreground">VICAMAR Technologies</h3>
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs md:text-sm text-muted-foreground">
+                <div className="flex-1 min-w-0 space-y-1 sm:space-y-1.5">
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-foreground">VICAMAR Technologies</h3>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground">
                     <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-accent/20 rounded-full text-accent font-semibold whitespace-nowrap">Technologie</span>
-                    <span>Saint-Germain-en-Laye (78)</span>
+                    <span className="truncate">Saint-Germain-en-Laye (78)</span>
                   </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <div className="flex items-center gap-1 bg-accent/20 rounded-full px-2 sm:px-2 md:px-3 py-0.5 sm:py-1">
-                      <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-accent" />
-                      <span className="text-[10px] sm:text-xs md:text-sm font-semibold text-accent">Score: 92/100</span>
+                  <div className="flex items-center gap-1 sm:gap-1.5">
+                    <div className="flex items-center gap-1 bg-accent/20 rounded-full px-1.5 sm:px-2 py-0.5">
+                      <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-accent flex-shrink-0" />
+                      <span className="text-[10px] sm:text-xs font-semibold text-accent whitespace-nowrap">Score: 92/100</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Manager info */}
-              <div className="border border-accent/20 rounded-lg p-2.5 sm:p-3 md:p-4 bg-accent/5 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <div className="flex items-start justify-between gap-2 sm:gap-3">
+              <div className="border border-accent/20 rounded-lg p-2 sm:p-2.5 md:p-3 bg-accent/5 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">Dirigeant</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Dirigeant</p>
                     <p className="text-xs sm:text-sm md:text-base font-bold text-foreground">Sophie Durand</p>
-                    <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mt-0.5 sm:mt-1">Directrice Générale</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">Directrice Générale</p>
                   </div>
-                  <button className="flex-shrink-0 bg-[#0077B5] hover:bg-[#006399] text-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 flex items-center gap-1.5 sm:gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-[#0077B5]/30 group/btn">
-                    <Linkedin className="w-3 h-3 sm:w-4 sm:h-4 group-hover/btn:scale-110 transition-transform" />
-                    <span className="text-[10px] sm:text-xs font-semibold hidden sm:inline">LinkedIn</span>
+                  <button className="flex-shrink-0 bg-[#0077B5] hover:bg-[#006399] text-white rounded-lg px-2 py-1.5 sm:px-2.5 sm:py-2 flex items-center gap-1 sm:gap-1.5 transition-all duration-300 hover:shadow-lg hover:shadow-[#0077B5]/30 group/btn">
+                    <Linkedin className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/btn:scale-110 transition-transform" />
                   </button>
                 </div>
               </div>
 
               {/* Contact details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <div className="border border-accent/20 rounded-lg p-2 sm:p-3 bg-card/60 hover:bg-accent/5 transition-all cursor-pointer group">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                    <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-accent group-hover:scale-110 transition-transform" />
+              <div className="grid grid-cols-1 gap-2 sm:gap-2.5 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <div className="border border-accent/20 rounded-lg p-2 sm:p-2.5 bg-card/60 hover:bg-accent/5 transition-all">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5">
+                    <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-accent flex-shrink-0" />
                     <span className="text-[10px] sm:text-xs text-muted-foreground">Téléphone</span>
                   </div>
-                  <p className="text-xs sm:text-sm font-semibold text-foreground">01 39 21 45 67</p>
+                  <p className="text-xs sm:text-sm md:text-base font-semibold text-foreground">01 39 21 45 67</p>
                 </div>
-                <div className="border border-accent/20 rounded-lg p-2 sm:p-3 bg-card/60 hover:bg-accent/5 transition-all cursor-pointer group">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                    <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-accent group-hover:scale-110 transition-transform" />
+                <div className="border border-accent/20 rounded-lg p-2 sm:p-2.5 bg-card/60 hover:bg-accent/5 transition-all">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5">
+                    <Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-accent flex-shrink-0" />
                     <span className="text-[10px] sm:text-xs text-muted-foreground">Email</span>
                   </div>
                   <p className="text-[10px] sm:text-xs md:text-sm font-semibold text-foreground truncate">contact@vicamar.fr</p>
@@ -377,20 +333,86 @@ const DashboardPreview = () => {
               </div>
 
               {/* Activity details */}
-              <div className="space-y-1.5 sm:space-y-2 border-t border-accent/20 pt-2.5 sm:pt-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <div className="flex justify-between text-[10px] sm:text-xs md:text-sm">
+              <div className="space-y-1.5 border-t border-accent/20 pt-2 sm:pt-2.5 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="flex justify-between text-[10px] sm:text-xs">
                   <span className="text-muted-foreground">Activité récente</span>
                   <span className="text-accent font-semibold">Il y a 2 jours</span>
                 </div>
-                <div className="flex justify-between text-[10px] sm:text-xs md:text-sm">
+                <div className="flex justify-between text-[10px] sm:text-xs">
                   <span className="text-muted-foreground">Effectifs</span>
                   <span className="text-foreground font-semibold">25-50 employés</span>
                 </div>
-                <div className="flex justify-between text-[10px] sm:text-xs md:text-sm">
+                <div className="flex justify-between text-[10px] sm:text-xs">
                   <span className="text-muted-foreground">Chiffre d'affaires</span>
                   <span className="text-foreground font-semibold">2.5M €</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Scene 5: CRM Panel with interactions */}
+      <div className={`absolute inset-0 transition-opacity duration-700 ${currentScene === 5 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div className="w-full h-full flex items-center justify-center p-2 sm:p-4 md:p-8">
+          <div className="w-full max-w-lg bg-card/85 backdrop-blur-xl border border-accent/40 rounded-xl p-3 sm:p-4 md:p-6 animate-scale-in">
+            <div className="space-y-2.5 sm:space-y-3 md:space-y-4">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-foreground">CRM</h3>
+                <div className="flex items-center gap-1 sm:gap-1.5 bg-accent/20 rounded-full px-2 sm:px-2.5 py-0.5 sm:py-1">
+                  <Users className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-accent" />
+                  <span className="text-[10px] sm:text-xs font-semibold text-accent">VICAMAR Technologies</span>
+                </div>
+              </div>
+
+              {/* Lead Status */}
+              <div className="bg-accent/10 border border-accent/30 rounded-lg p-2 sm:p-2.5 md:p-3 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">Statut du lead</span>
+                  <span className="text-[10px] sm:text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full font-semibold">En cours</span>
+                </div>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Dernière mise à jour: Il y a 3 heures</p>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="grid grid-cols-2 gap-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <button className="bg-accent/10 hover:bg-accent/20 border border-accent/30 text-accent rounded-lg px-2 py-2 sm:px-3 sm:py-2.5 flex items-center justify-center gap-1.5 transition-all text-[10px] sm:text-xs font-semibold">
+                  <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <span>Appeler</span>
+                </button>
+                <button className="bg-accent/10 hover:bg-accent/20 border border-accent/30 text-accent rounded-lg px-2 py-2 sm:px-3 sm:py-2.5 flex items-center justify-center gap-1.5 transition-all text-[10px] sm:text-xs font-semibold">
+                  <Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <span>Email</span>
+                </button>
+              </div>
+
+              {/* Interactions Timeline */}
+              <div className="border-t border-accent/20 pt-2.5 sm:pt-3 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <h4 className="text-xs sm:text-sm font-semibold text-foreground mb-2 sm:mb-2.5">Historique des interactions</h4>
+                <div className="space-y-2">
+                  {[
+                    { type: 'Appel téléphonique', date: 'Il y a 3 heures', icon: Phone },
+                    { type: 'Email envoyé', date: 'Hier', icon: Mail },
+                    { type: 'Rendez-vous planifié', date: 'Il y a 2 jours', icon: Calendar }
+                  ].map((interaction, i) => (
+                    <div key={i} className="flex items-start gap-2 sm:gap-2.5 p-1.5 sm:p-2 bg-card/40 rounded-lg border border-accent/10 animate-fade-in" style={{ animationDelay: `${0.1 * (i + 1)}s` }}>
+                      <div className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 bg-accent/20 rounded-full flex items-center justify-center">
+                        <interaction.icon className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-accent" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] sm:text-xs font-semibold text-foreground">{interaction.type}</p>
+                        <p className="text-[9px] sm:text-[10px] text-muted-foreground">{interaction.date}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Add Note Button */}
+              <button className="w-full bg-accent hover:bg-accent/90 text-primary-foreground rounded-lg px-3 py-2 sm:py-2.5 text-[10px] sm:text-xs font-semibold transition-all animate-fade-in" style={{ animationDelay: '0.5s' }}>
+                + Ajouter une note
+              </button>
             </div>
           </div>
         </div>
