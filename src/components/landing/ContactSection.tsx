@@ -3,11 +3,7 @@ import { MessageSquare } from "lucide-react";
 import { trackEvent } from "@/utils/analytics";
 
 const ContactSection = () => {
-  const handleWhatsApp = () => {
-    trackEvent('whatsapp_click', { source: 'contact_section' });
-    const message = encodeURIComponent("Bonjour, je souhaite en savoir plus sur LUMA.");
-    window.location.href = `https://wa.me/33760227532?text=${message}`;
-  };
+  const waUrl = `https://wa.me/33760227532?text=${encodeURIComponent("Bonjour, je souhaite en savoir plus sur LUMA.")}`;
 
   return (
     <section className="relative py-12 px-4 sm:px-6 lg:px-8">
@@ -32,11 +28,19 @@ const ContactSection = () => {
           </div>
 
           <Button 
-            onClick={handleWhatsApp}
-            className="bg-[#25D366] hover:bg-[#20BA5A] text-white flex-shrink-0"
+            asChild
+            className="bg-[#25D366] hover:bg-[#20BA5A] text-white flex-shrink-0 hover-scale"
           >
-            <MessageSquare className="w-4 h-4 mr-2" />
-            Démarrer
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackEvent('whatsapp_click', { source: 'contact_section' })}
+              aria-label="Ouvrir WhatsApp"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Démarrer
+            </a>
           </Button>
         </div>
       </div>
