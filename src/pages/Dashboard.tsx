@@ -13,10 +13,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"map" | "list">("map");
   const [filters, setFilters] = useState({
-    department: "",
-    postalCode: "",
-    naf: "",
-    status: "",
     dateFrom: "",
     dateTo: "",
   });

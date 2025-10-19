@@ -38,12 +38,8 @@ export const MapView = ({ filters }: MapViewProps) => {
         .select("*")
         .not("latitude", "is", null)
         .not("longitude", "is", null)
-        .like("code_postal", filters.department ? `${filters.department}%` : "%")
-        .eq("code_postal", filters.postalCode || undefined)
-        .eq("code_naf", filters.naf || undefined)
-        .eq("statut", filters.status || undefined)
-        .gte("date_demarrage", filters.dateRange?.from || "1900-01-01")
-        .lte("date_demarrage", filters.dateRange?.to || "2100-12-31");
+        .gte("date_demarrage", filters.dateFrom || "1900-01-01")
+        .lte("date_demarrage", filters.dateTo || "2100-12-31");
 
       if (error) {
         console.error("Error fetching entreprises:", error);
