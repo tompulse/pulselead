@@ -353,7 +353,37 @@ const Dashboard = () => {
         {/* Main Content */}
         <main className="flex-1 overflow-hidden">
           <div className="h-full p-4 md:p-6">
-            {view === "map" ? (
+            {filters.departments.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <Card className="glass-card border-accent/20 p-8 max-w-md text-center">
+                  <div className="relative inline-block mb-4">
+                    <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
+                    <MapPin className="w-16 h-16 text-accent mx-auto relative" />
+                  </div>
+                  <h3 className="text-xl font-semibold gradient-text mb-3">
+                    Sélectionnez une zone géographique
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Veuillez choisir au moins un département dans les filtres pour afficher les entreprises sur la carte.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      if (isMobile) {
+                        setFilterSheetOpen(true);
+                      } else {
+                        // Focus sur la sidebar
+                        document.querySelector('aside')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="border-accent/50 hover:bg-accent/10"
+                  >
+                    <Filter className="w-4 h-4 mr-2" />
+                    Ouvrir les filtres
+                  </Button>
+                </Card>
+              </div>
+            ) : view === "map" ? (
               <MapView 
                 key="map-view"
                 filters={filters} 
