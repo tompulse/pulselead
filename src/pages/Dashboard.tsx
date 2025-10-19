@@ -300,7 +300,7 @@ const Dashboard = () => {
       {/* Compact Stats - Removed from all views */}
 
       {/* Mobile Filter Button */}
-      {isMobile && (
+      {isMobile && view !== "activities" && (
         <div className="glass-card border-b border-accent/20 px-3 py-2 shrink-0">
           <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
             <SheetTrigger asChild>
@@ -345,7 +345,7 @@ const Dashboard = () => {
       {/* Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop/Tablet Sidebar */}
-        {!isMobile && (
+        {!isMobile && view !== "activities" && (
           <Sidebar filters={filters} setFilters={setFilters} />
         )}
 
