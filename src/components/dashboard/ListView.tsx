@@ -1,16 +1,10 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Building2, Navigation } from "lucide-react";
+import { Building2, Navigation, Map, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
+import { ACTIVITY_CATEGORIES, categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { EntrepriseDetails } from "./EntrepriseDetails";
 
 interface ListViewProps {
   filters: {
@@ -47,6 +41,9 @@ interface Entreprise {
 export const ListView = ({ filters }: ListViewProps) => {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedEntreprise, setSelectedEntreprise] = useState<Entreprise | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   useEffect(() => {
     const fetchEntreprises = async () => {
@@ -112,6 +109,29 @@ export const ListView = ({ filters }: ListViewProps) => {
     fetchEntreprises();
   }, [filters]);
 
+  // Filter by search query
+  const filteredEntreprises = entreprises.filter((ent) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      ent.nom?.toLowerCase().includes(query) ||
+      ent.ville?.toLowerCase().includes(query) ||
+      ent.code_postal?.includes(query) ||
+      ent.activite?.toLowerCase().includes(query)
+    );
+  });
+
+  const getCategoryEmoji = (activity: string | null): string => {
+    const category = categorizeActivity(activity);
+    const label = getCategoryLabel(category);
+    return label.split(' ')[0]; // Extract emoji from label
+  };
+
+  const handleCardClick = (entreprise: Entreprise) => {
+    setSelectedEntreprise(entreprise);
+    setDetailsOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="glass-card rounded-2xl p-12 flex items-center justify-center shadow-2xl border border-accent/20">
@@ -124,122 +144,121 @@ export const ListView = ({ filters }: ListViewProps) => {
   }
 
   return (
-    <div className="glass-card rounded-2xl overflow-hidden shadow-2xl border border-accent/20">
-      <div className="p-6 border-b border-accent/20 bg-gradient-to-r from-card to-card/50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-accent/10 rounded-lg">
-              <Building2 className="w-6 h-6 text-accent" />
+    <>
+      <div className="space-y-4">
+        {/* Header with search */}
+        <div className="glass-card rounded-2xl p-6 shadow-2xl border border-accent/20">
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-accent/10 rounded-lg">
+                <Building2 className="w-6 h-6 text-accent" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">Liste des entreprises</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {filteredEntreprises.length} résultat{filteredEntreprises.length > 1 ? 's' : ''}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold">Liste des entreprises</h3>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                {entreprises.length} résultat{entreprises.length > 1 ? 's' : ''}
-              </p>
+            
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Rechercher une entreprise..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 bg-background/50 border-accent/20 focus:border-accent"
+              />
             </div>
           </div>
         </div>
+
+        {/* Cards Grid */}
+        {filteredEntreprises.length === 0 ? (
+          <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
+            <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
+              <Building2 className="w-20 h-20 text-accent opacity-50" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">Aucune entreprise trouvée</h3>
+            <p className="text-muted-foreground text-lg max-w-md mx-auto">
+              {searchQuery ? "Essayez de modifier votre recherche" : "Cliquez sur 'Synchroniser les données' pour importer vos entreprises"}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredEntreprises.map((item) => {
+              const hasCoordinates = item.latitude && item.longitude;
+              const emoji = getCategoryEmoji(item.activite);
+              
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => handleCardClick(item)}
+                  className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-card/80 to-card/40"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-lg mb-1 truncate" title={item.nom}>
+                        {item.nom}
+                      </h4>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        <span className="text-base">{emoji}</span>
+                        <span className="truncate">{item.ville || item.code_postal || "Ville non disponible"}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (hasCoordinates) {
+                          window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank');
+                        }
+                      }}
+                      disabled={!hasCoordinates}
+                      title={hasCoordinates ? "Ouvrir dans Google Maps" : "Coordonnées non disponibles"}
+                    >
+                      <Map className="w-4 h-4 mr-1" />
+                      Maps
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (hasCoordinates) {
+                          window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank');
+                        }
+                      }}
+                      disabled={!hasCoordinates}
+                      title={hasCoordinates ? "Naviguer avec Waze" : "Coordonnées non disponibles"}
+                    >
+                      <Navigation className="w-4 h-4 mr-1" />
+                      Waze
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {entreprises.length === 0 ? (
-        <div className="p-16 text-center">
-          <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
-            <Building2 className="w-20 h-20 text-accent opacity-50" />
-          </div>
-          <h3 className="text-2xl font-bold mb-3">Aucune entreprise trouvée</h3>
-          <p className="text-muted-foreground text-lg max-w-md mx-auto">
-            Cliquez sur "Synchroniser les données" pour importer vos entreprises
-          </p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-accent/20 hover:bg-accent/5 bg-card/50">
-                <TableHead className="text-accent font-semibold w-[180px]">Nom</TableHead>
-                <TableHead className="text-accent font-semibold w-[110px]">SIRET</TableHead>
-                <TableHead className="text-accent font-semibold w-[200px]">Adresse</TableHead>
-                <TableHead className="text-accent font-semibold w-[200px]">Contact</TableHead>
-                <TableHead className="text-accent font-semibold w-[280px]">Activité</TableHead>
-                <TableHead className="text-accent font-semibold w-[100px]">Capital</TableHead>
-                <TableHead className="text-accent font-semibold w-[120px]">Navigation</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {entreprises.map((item) => {
-                const addressParts = [
-                  item.numero_voie,
-                  item.type_voie,
-                  item.nom_voie
-                ].filter(Boolean).join(' ');
-                
-                const locationParts = [
-                  item.code_postal,
-                  item.ville
-                ].filter(Boolean).join(' ');
-                
-                const formattedAddress = addressParts && locationParts 
-                  ? `${addressParts}, ${locationParts}`
-                  : addressParts || locationParts || item.adresse || "N/A";
-                
-                const formattedCapital = typeof item.capital === 'number' 
-                  ? `${item.capital.toLocaleString('fr-FR')} €`
-                  : "N/A";
-
-                const hasCoordinates = item.latitude && item.longitude;
-                
-                return (
-                  <TableRow
-                    key={item.id}
-                    className="border-accent/20 hover:bg-accent/5 cursor-pointer transition-all hover:shadow-lg"
-                  >
-                    <TableCell className="font-semibold text-sm">{item.nom}</TableCell>
-                    <TableCell className="text-muted-foreground font-mono text-xs">{item.siret}</TableCell>
-                    <TableCell className="text-muted-foreground text-xs" title={formattedAddress}>
-                      <div className="truncate max-w-[200px]">{formattedAddress}</div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-xs" title={item.administration || undefined}>
-                      <div className="truncate max-w-[200px]">{item.administration || "N/A"}</div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-xs" title={item.activite || undefined}>
-                      <div className="truncate max-w-[280px]">{item.activite || "N/A"}</div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground font-medium text-xs whitespace-nowrap">
-                      {formattedCapital}
-                    </TableCell>
-                    <TableCell>
-                      {hasCoordinates ? (
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-accent/20 hover:text-accent"
-                            title="Ouvrir dans Google Maps"
-                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank')}
-                          >
-                            <span className="text-base">🗺️</span>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-accent/20 hover:text-accent"
-                            title="Ouvrir dans Waze"
-                            onClick={() => window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank')}
-                          >
-                            <Navigation className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">N/A</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-    </div>
+      <EntrepriseDetails
+        entreprise={selectedEntreprise ? {
+          ...selectedEntreprise,
+          latitude: selectedEntreprise.latitude || 0,
+          longitude: selectedEntreprise.longitude || 0,
+        } : null}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+      />
+    </>
   );
 };
