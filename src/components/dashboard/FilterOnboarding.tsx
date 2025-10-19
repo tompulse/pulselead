@@ -151,50 +151,50 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl glass-card border-accent/20 overflow-hidden">
+      <Card className="w-full max-w-4xl glass-card border-accent/20 overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-accent/20 via-accent/10 to-transparent p-8 border-b border-accent/20">
+        <div className="relative overflow-hidden bg-gradient-to-br from-accent/20 via-accent/10 to-transparent p-4 md:p-8 border-b border-accent/20 shrink-0">
           <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-          <div className="relative flex items-center gap-4 mb-4">
+          <div className="relative flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
             <div className="relative">
               <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse" />
-              <Lightbulb className="w-12 h-12 text-accent relative" />
+              <Lightbulb className="w-8 h-8 md:w-12 md:h-12 text-accent relative" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold gradient-text">Bienvenue sur LUMA</h1>
-              <p className="text-muted-foreground mt-1">
+              <h1 className="text-xl md:text-3xl font-bold gradient-text">Bienvenue sur LUMA</h1>
+              <p className="text-muted-foreground mt-1 text-sm md:text-base">
                 Configurons votre expérience en quelques étapes
               </p>
             </div>
           </div>
           
           {/* Progress */}
-          <div className="relative flex items-center gap-2 mt-6">
+          <div className="relative flex items-center gap-2 mt-4 md:mt-6">
             <div className={`flex-1 h-2 rounded-full ${step >= 1 ? 'bg-accent' : 'bg-accent/20'} transition-all`} />
             <div className={`flex-1 h-2 rounded-full ${step >= 2 ? 'bg-accent' : 'bg-accent/20'} transition-all`} />
           </div>
-          <div className="flex justify-between mt-2 text-sm text-muted-foreground">
+          <div className="flex justify-between mt-2 text-xs md:text-sm text-muted-foreground">
             <span className={step === 1 ? 'text-accent font-medium' : ''}>Zone géographique</span>
             <span className={step === 2 ? 'text-accent font-medium' : ''}>Secteurs d'activité</span>
           </div>
         </div>
 
         {/* Content */}
-        <ScrollArea className="h-[60vh]">
-          <div className="p-8">
+        <ScrollArea className="flex-1 overflow-auto">
+          <div className="p-4 md:p-8">
             {step === 1 ? (
-              <div className="space-y-6">
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-accent/5 border border-accent/20">
-                  <MapPin className="w-6 h-6 text-accent shrink-0 mt-1" />
+              <div className="space-y-4 md:space-y-6">
+                <div className="flex items-start gap-3 p-3 md:p-4 rounded-lg bg-accent/5 border border-accent/20">
+                  <MapPin className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0 mt-1" />
                   <div>
-                    <h2 className="text-xl font-semibold mb-2">Dans quelles régions ? <span className="text-destructive">*</span></h2>
-                    <p className="text-muted-foreground">
+                    <h2 className="text-lg md:text-xl font-semibold mb-1 md:mb-2">Dans quelles régions ? <span className="text-destructive">*</span></h2>
+                    <p className="text-muted-foreground text-sm md:text-base">
                       Sélectionnez les régions où vous souhaitez trouver des entreprises. Cette étape est obligatoire.
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-[40vh] md:max-h-none overflow-y-auto md:overflow-visible">
                   {Object.entries(REGIONS_DATA).map(([regionKey, regionData]) => {
                     const isSelected = selectedRegions.includes(regionKey);
                     const isExpanded = expandedRegions.includes(regionKey);
@@ -215,7 +215,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                             : 'transparent'
                         }}
                       >
-                        <div className="flex items-center gap-3 p-4">
+                        <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4">
                           <Checkbox
                             checked={isSelected}
                             onCheckedChange={() => handleRegionToggle(regionKey)}
@@ -226,13 +226,13 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                             onClick={() => toggleRegionExpansion(regionKey)}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-medium">{regionKey}</span>
+                              <span className="font-medium text-sm md:text-base">{regionKey}</span>
                               <ChevronDown 
                                 className={`w-4 h-4 text-accent transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                               />
                             </div>
                             {selectedDeptCount > 0 && (
-                              <span className="text-sm text-muted-foreground">
+                              <span className="text-xs md:text-sm text-muted-foreground">
                                 {selectedDeptCount} département{selectedDeptCount > 1 ? 's' : ''} sélectionné{selectedDeptCount > 1 ? 's' : ''}
                               </span>
                             )}
@@ -240,7 +240,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                         </div>
                         
                         {isExpanded && (
-                          <div className="px-4 pb-4 grid grid-cols-2 md:grid-cols-3 gap-2 border-t border-accent/20 pt-3">
+                          <div className="px-3 md:px-4 pb-3 md:pb-4 grid grid-cols-1 md:grid-cols-3 gap-2 border-t border-accent/20 pt-3">
                             {regionData.departments.map((deptCode) => (
                               <label
                                 key={deptCode}
@@ -249,9 +249,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                                 <Checkbox
                                   checked={selectedDepartments.includes(deptCode)}
                                   onCheckedChange={() => handleDepartmentToggle(deptCode, regionKey)}
-                                  className="border-accent/50 h-5 w-5 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary"
+                                  className="border-accent/50 h-4 w-4 md:h-5 md:w-5 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary"
                                 />
-                                <span className="text-sm font-medium">
+                                <span className="text-xs md:text-sm font-medium">
                                   {deptCode} - {DEPARTMENT_NAMES[deptCode]}
                                 </span>
                               </label>
@@ -264,32 +264,32 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                 </div>
               </div>
             ) : (
-              <div className="space-y-6">
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-accent/5 border border-accent/20">
-                  <Building2 className="w-6 h-6 text-accent shrink-0 mt-1" />
+              <div className="space-y-4 md:space-y-6">
+                <div className="flex items-start gap-3 p-3 md:p-4 rounded-lg bg-accent/5 border border-accent/20">
+                  <Building2 className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0 mt-1" />
                   <div>
-                    <h2 className="text-xl font-semibold mb-2">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-sm">(optionnel)</span></h2>
-                    <p className="text-muted-foreground">
+                    <h2 className="text-lg md:text-xl font-semibold mb-1 md:mb-2">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-sm">(optionnel)</span></h2>
+                    <p className="text-muted-foreground text-sm md:text-base">
                       Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche.
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 max-h-[45vh] md:max-h-none overflow-y-auto md:overflow-visible">
                   {/* Option "Tous les secteurs" */}
                   <button
                     onClick={handleFinish}
-                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40 bg-accent/10 border-accent"
+                    className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40 bg-accent/10 border-accent"
                   >
-                    <Sparkles className="w-5 h-5 text-accent shrink-0" />
-                    <span className="font-medium text-left">✨ Tous les secteurs m'intéressent</span>
+                    <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-accent shrink-0" />
+                    <span className="font-medium text-left text-sm md:text-base">✨ Tous les secteurs m'intéressent</span>
                   </button>
 
                   {/* Secteurs spécifiques */}
                   {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
                     <label
                       key={key}
-                      className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40"
+                      className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40"
                       style={{
                         borderColor: selectedCategories.includes(key) 
                           ? 'hsl(var(--accent))' 
@@ -302,9 +302,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                       <Checkbox
                         checked={selectedCategories.includes(key)}
                         onCheckedChange={() => handleCategoryToggle(key)}
-                        className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5"
+                        className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-4 w-4 md:h-5 md:w-5"
                       />
-                      <span className="font-medium">{category.label}</span>
+                      <span className="font-medium text-sm md:text-base">{category.label}</span>
                     </label>
                   ))}
                 </div>
@@ -314,9 +314,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         </ScrollArea>
 
         {/* Footer */}
-        <div className="p-6 border-t border-accent/20 bg-gradient-to-br from-accent/10 to-accent/5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-sm text-muted-foreground">
+        <div className="p-4 md:p-6 border-t border-accent/20 bg-gradient-to-br from-accent/10 to-accent/5 shrink-0">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-3 md:mb-4 gap-3">
+            <div className="text-xs md:text-sm text-muted-foreground">
               {step === 1 ? (
                 <span>
                   {selectedDepartments.length} département{selectedDepartments.length > 1 ? 's' : ''} sélectionné{selectedDepartments.length > 1 ? 's' : ''}
@@ -334,9 +334,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
             
             {/* Compteur d'entreprises */}
             {selectedDepartments.length > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/20 border border-accent/30">
-                <TrendingUp className="w-4 h-4 text-accent" />
-                <span className="font-semibold text-accent">
+              <div className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-accent/20 border border-accent/30">
+                <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-accent" />
+                <span className="font-semibold text-accent text-sm md:text-base">
                   {loadingCount ? (
                     <span className="animate-pulse">Calcul...</span>
                   ) : (
@@ -347,12 +347,12 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
             )}
           </div>
           
-          <div className="flex items-center gap-3 w-full">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-3 w-full">
             {step === 2 && (
               <Button
                 variant="outline"
                 onClick={() => setStep(1)}
-                className="border-accent/50 hover:bg-accent/10"
+                className="border-accent/50 hover:bg-accent/10 text-sm md:text-base h-10 md:h-auto"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Retour
@@ -368,7 +368,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                 }
               }}
               disabled={!canProceed}
-              className="bg-accent hover:bg-accent/90 text-primary flex-1"
+              className="bg-accent hover:bg-accent/90 text-primary flex-1 text-sm md:text-base h-10 md:h-auto"
             >
               {step === 1 ? (
                 <>
