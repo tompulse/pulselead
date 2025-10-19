@@ -115,38 +115,53 @@ All colors MUST be HSL.
   
   /* Fade in animation */
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.6s ease-out;
   }
   
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  /* Gradient animation */
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
-}
 
-/* Custom scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: hsl(var(--background));
-  border-radius: 3px;
-}
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: hsl(var(--accent) / 0.3);
-  border-radius: 3px;
-}
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+    border-radius: 3px;
+  }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--accent) / 0.5);
-}
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--accent) / 0.3);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent) / 0.5);
+  }
 }
 
 /* Style personnalisé pour les popups Mapbox */
