@@ -294,13 +294,22 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
           isMobileSheet ? "h-11 text-sm mt-3" : "h-7 text-xs mt-2"
         }`}
         onClick={() => {
-          setFilters({
-            dateFrom: "",
-            dateTo: "",
-            categories: [],
-            departments: [],
-            crmFilter: undefined,
-          });
+          // Récupérer les filtres initiaux de l'onboarding au lieu de tout effacer
+          const savedFilters = localStorage.getItem('luma_initial_filters');
+          if (savedFilters) {
+            try {
+              const parsed = JSON.parse(savedFilters);
+              setFilters({
+                dateFrom: "2025-09-01",
+                dateTo: "",
+                categories: parsed.categories || [],
+                departments: parsed.departments || [],
+                crmFilter: undefined,
+              });
+            } catch (e) {
+              console.error('Error parsing saved filters:', e);
+            }
+          }
           onFilterChange?.();
         }}
       >
