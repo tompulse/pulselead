@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifest: {
-        name: 'LeadMagnet - Prospection Terrain',
-        short_name: 'LeadMagnet',
-        description: 'Structurez votre prospection sur les créations d\'entreprises',
+        name: 'LUMA — éclaire les leviers de ta croissance',
+        short_name: 'LUMA',
+        description: 'Visualise ton marché, comprends tes prospects et passe à l\'action',
         theme_color: '#00FFF0',
         background_color: '#0A0F1E',
         display: 'standalone',
