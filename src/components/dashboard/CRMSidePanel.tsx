@@ -37,11 +37,17 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
   const [interactions, setInteractions] = useState<any[]>([]);
   const [leadStatus, setLeadStatus] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'info' | 'crm'>('info');
 
   useEffect(() => {
     if (!entreprise) return;
     fetchCRMData();
   }, [entreprise]);
+
+  useEffect(() => {
+    // Reset to Infos tab each time a new entreprise is opened
+    setActiveTab('info');
+  }, [entreprise?.id]);
 
   const fetchCRMData = async () => {
     if (!entreprise) return;
@@ -128,7 +134,7 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
       {/* Content */}
       <ScrollArea className="flex-1">
         <div className="p-6">
-          <Tabs defaultValue="crm" className="w-full">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'info' | 'crm')} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="info">📋 Infos</TabsTrigger>
               <TabsTrigger value="crm" className="flex items-center gap-2">
