@@ -3,19 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Target, LogOut, List, MapIcon, Menu, X } from "lucide-react";
+import { Target, LogOut, List, MapIcon } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
 import { SyncButton } from "@/components/dashboard/SyncButton";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [view, setView] = useState<"map" | "list">("map");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -24,7 +21,6 @@ const Dashboard = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Check authentication and admin role
@@ -84,69 +80,51 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="glass-card border-b border-accent/20 px-4 md:px-8 py-3 md:py-5 z-10 backdrop-blur-xl shrink-0">
+      {/* Header - Compact */}
+      <header className="glass-card border-b border-accent/20 px-3 md:px-4 py-2 md:py-3 z-10 backdrop-blur-xl shrink-0">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 md:gap-6">
-            {/* Mobile/Tablet Menu Button */}
-            {isMobile && (
-              <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="hover:bg-accent/10"
-                  >
-                    <Menu className="w-5 h-5 text-accent" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-80 p-0">
-                  <Sidebar filters={filters} setFilters={setFilters} onFilterChange={() => setSidebarOpen(false)} />
-                </SheetContent>
-              </Sheet>
-            )}
-            
-            <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-2">
               <div className="relative">
-                <div className="absolute inset-0 bg-accent blur-xl opacity-30 animate-pulse" />
-                <Target className="w-8 h-8 md:w-10 md:h-10 text-accent relative" />
+                <div className="absolute inset-0 bg-accent blur-lg opacity-30 animate-pulse" />
+                <Target className="w-6 h-6 md:w-7 md:h-7 text-accent relative" />
               </div>
-              <span className="text-xl md:text-3xl font-bold gradient-text">LeadMagnet</span>
+              <span className="text-lg md:text-xl font-bold gradient-text">LeadMagnet</span>
             </div>
             
-            {/* View Toggle */}
-            <div className="flex gap-1 md:gap-2 p-1 bg-card/50 rounded-lg border border-accent/20">
+            {/* View Toggle - Compact */}
+            <div className="flex gap-1 p-0.5 bg-card/50 rounded-lg border border-accent/20">
               <Button
                 variant={view === "map" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setView("map")}
-                className={view === "map" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}
+                className={`h-7 px-2 text-xs ${view === "map" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
               >
-                <MapIcon className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">Carte</span>
+                <MapIcon className="w-3.5 h-3.5 mr-1" />
+                Carte
               </Button>
               <Button
                 variant={view === "list" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setView("list")}
-                className={view === "list" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}
+                className={`h-7 px-2 text-xs ${view === "list" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
               >
-                <List className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">Liste</span>
+                <List className="w-3.5 h-3.5 mr-1" />
+                Liste
               </Button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex items-center gap-2">
             {isAdmin && <SyncButton />}
             <Button
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="border-accent/50 hover:bg-accent/10 hover:border-accent transition-all"
+              className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10 hover:border-accent transition-all"
             >
-              <LogOut className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">Déconnexion</span>
+              <LogOut className="w-3.5 h-3.5 mr-1" />
+              Déconnexion
             </Button>
           </div>
         </div>
@@ -154,10 +132,8 @@ const Dashboard = () => {
 
       {/* Content Area with Sidebar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Desktop Sidebar */}
-        {!isMobile && (
-          <Sidebar filters={filters} setFilters={setFilters} />
-        )}
+        {/* Sidebar - Always visible */}
+        <Sidebar filters={filters} setFilters={setFilters} />
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden">

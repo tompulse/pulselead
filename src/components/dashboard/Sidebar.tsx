@@ -16,10 +16,9 @@ interface SidebarProps {
     departments: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
-  onFilterChange?: () => void;
 }
 
-export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) => {
+export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
@@ -40,7 +39,6 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
           : [...currentCategories, categoryKey]
       };
     });
-    onFilterChange?.();
   };
 
   const allCategories = Object.keys(ACTIVITY_CATEGORIES);
@@ -58,45 +56,44 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
           : [...currentDepartments, deptCode]
       };
     });
-    onFilterChange?.();
   };
 
   return (
-    <aside className="w-64 xl:w-80 glass-card border-r border-accent/20 p-4 space-y-3 flex flex-col h-full overflow-hidden">
-      <div className="flex items-center gap-2 mb-3 shrink-0">
-        <Filter className="w-5 h-5 text-accent" />
-        <h2 className="text-xl font-semibold">Filtres</h2>
+    <aside className="w-56 md:w-60 glass-card border-r border-accent/20 p-3 space-y-2 flex flex-col h-full overflow-hidden">
+      <div className="flex items-center gap-2 mb-2 shrink-0">
+        <Filter className="w-4 h-4 text-accent" />
+        <h2 className="text-base font-semibold">Filtres</h2>
       </div>
 
-      <div className="space-y-3 overflow-y-auto flex-1 pr-2 custom-scrollbar">
+      <div className="space-y-2 overflow-y-auto flex-1 pr-1 custom-scrollbar">
         {/* Geographic Filters - Departments Only */}
         <Collapsible open={isDepartmentsOpen} onOpenChange={setIsDepartmentsOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm font-semibold cursor-pointer">Départements</Label>
+            <div className="flex items-center justify-between p-2 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
+              <div className="flex items-center gap-1.5">
+                <Label className="text-xs font-semibold cursor-pointer">Départements</Label>
                 {filters.departments.length > 0 && (
-                  <span className="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] bg-accent/20 text-accent px-1.5 py-0.5 rounded-full">
                     {filters.departments.length}
                   </span>
                 )}
               </div>
-              <ChevronDown className={`w-4 h-4 text-accent transition-transform ${isDepartmentsOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 text-accent transition-transform ${isDepartmentsOpen ? 'rotate-180' : ''}`} />
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2 space-y-1.5 px-2">
-            <div className="max-h-48 overflow-y-auto pr-2 custom-scrollbar space-y-1.5">
+          <CollapsibleContent className="mt-1.5 space-y-1 px-1">
+            <div className="max-h-40 overflow-y-auto pr-1 custom-scrollbar space-y-1">
               {allDepartments.map((deptCode) => (
-                <div key={deptCode} className="flex items-center space-x-2 p-1.5 rounded hover:bg-accent/5">
+                <div key={deptCode} className="flex items-center space-x-1.5 p-1 rounded hover:bg-accent/5">
                   <Checkbox
                     id={`dept-${deptCode}`}
                     checked={filters.departments?.includes(deptCode)}
                     onCheckedChange={() => handleDepartmentToggle(deptCode)}
-                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-4 w-4"
+                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-3.5 w-3.5"
                   />
                   <label
                     htmlFor={`dept-${deptCode}`}
-                    className="text-xs font-medium leading-none cursor-pointer flex-1"
+                    className="text-[11px] font-medium leading-none cursor-pointer flex-1"
                   >
                     {deptCode} - {DEPARTMENT_NAMES[deptCode]}
                   </label>
@@ -109,24 +106,24 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
         {/* Categories - Collapsible */}
         <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
-              <Label className="text-sm font-semibold cursor-pointer">Catégories d'activité</Label>
-              <ChevronDown className={`w-4 h-4 text-accent transition-transform ${isCategoriesOpen ? 'rotate-180' : ''}`} />
+            <div className="flex items-center justify-between p-2 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
+              <Label className="text-xs font-semibold cursor-pointer">Catégories d'activité</Label>
+              <ChevronDown className={`w-3.5 h-3.5 text-accent transition-transform ${isCategoriesOpen ? 'rotate-180' : ''}`} />
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2">
-            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2 px-2 custom-scrollbar">
+          <CollapsibleContent className="mt-1.5">
+            <div className="space-y-1 max-h-40 overflow-y-auto pr-1 px-1 custom-scrollbar">
               {allCategories.map((categoryKey) => (
-                <div key={categoryKey} className="flex items-center space-x-2 p-1.5 rounded hover:bg-accent/5">
+                <div key={categoryKey} className="flex items-center space-x-1.5 p-1 rounded hover:bg-accent/5">
                   <Checkbox
                     id={`cat-${categoryKey}`}
                     checked={filters.categories?.includes(categoryKey)}
                     onCheckedChange={() => handleCategoryToggle(categoryKey)}
-                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-4 w-4"
+                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-3.5 w-3.5"
                   />
                   <label
                     htmlFor={`cat-${categoryKey}`}
-                    className="text-xs font-medium leading-none cursor-pointer flex-1"
+                    className="text-[11px] font-medium leading-none cursor-pointer flex-1"
                   >
                     {getCategoryLabel(categoryKey)}
                   </label>
@@ -139,31 +136,31 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
         {/* Dates - Collapsible */}
         <Collapsible open={isDatesOpen} onOpenChange={setIsDatesOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
-              <Label className="text-sm font-semibold cursor-pointer">Dates</Label>
-              <ChevronDown className={`w-4 h-4 text-accent transition-transform ${isDatesOpen ? 'rotate-180' : ''}`} />
+            <div className="flex items-center justify-between p-2 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
+              <Label className="text-xs font-semibold cursor-pointer">Dates</Label>
+              <ChevronDown className={`w-3.5 h-3.5 text-accent transition-transform ${isDatesOpen ? 'rotate-180' : ''}`} />
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2 space-y-3 px-2">
-            <div className="space-y-2">
-              <Label htmlFor="dateFrom" className="text-xs">Date de début</Label>
+          <CollapsibleContent className="mt-1.5 space-y-2 px-1">
+            <div className="space-y-1">
+              <Label htmlFor="dateFrom" className="text-[10px]">Date de début</Label>
               <Input
                 id="dateFrom"
                 type="date"
                 value={filters.dateFrom}
                 onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
-                className="h-9 bg-background/50 border-border focus:border-accent text-sm"
+                className="h-7 bg-background/50 border-border focus:border-accent text-xs"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="dateTo" className="text-xs">Date de fin</Label>
+            <div className="space-y-1">
+              <Label htmlFor="dateTo" className="text-[10px]">Date de fin</Label>
               <Input
                 id="dateTo"
                 type="date"
                 value={filters.dateTo}
                 onChange={(e) => handleFilterChange("dateTo", e.target.value)}
-                className="h-9 bg-background/50 border-border focus:border-accent text-sm"
+                className="h-7 bg-background/50 border-border focus:border-accent text-xs"
               />
             </div>
           </CollapsibleContent>
@@ -175,7 +172,7 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
       <Button
         variant="outline"
         size="sm"
-        className="w-full border-accent/50 hover:bg-accent/10 mt-3 shrink-0"
+        className="w-full h-7 text-xs border-accent/50 hover:bg-accent/10 mt-2 shrink-0"
         onClick={() => {
           setFilters({
             dateFrom: "",
@@ -183,10 +180,9 @@ export const Sidebar = ({ filters, setFilters, onFilterChange }: SidebarProps) =
             categories: [],
             departments: [],
           });
-          onFilterChange?.();
         }}
       >
-        Réinitialiser les filtres
+        Réinitialiser
       </Button>
     </aside>
   );
