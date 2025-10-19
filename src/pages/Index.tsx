@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Target, Sparkles, TrendingUp, Shield } from "lucide-react";
+import { Zap, Sparkles, TrendingUp, Shield } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
 
 const Index = () => {
@@ -21,8 +21,8 @@ const Index = () => {
             {/* Logo */}
             <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <div className="relative">
-                <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all duration-300"></div>
-                <Target className="w-7 h-7 sm:w-8 sm:h-8 text-accent relative" />
+                <div className="absolute inset-0 bg-accent/30 blur-lg group-hover:blur-xl transition-all duration-300"></div>
+                <Zap className="w-7 h-7 sm:w-8 sm:h-8 text-accent relative" />
               </div>
               <span className="text-xl sm:text-2xl font-bold gradient-text">LUMA</span>
             </div>
@@ -155,7 +155,10 @@ const Index = () => {
             {/* Logo et liens */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8">
               <div className="flex items-center space-x-3">
-                <Target className="w-6 h-6 text-accent" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-accent/20 blur-md"></div>
+                  <Zap className="w-6 h-6 text-accent relative" />
+                </div>
                 <span className="text-lg font-bold gradient-text">LUMA</span>
               </div>
               

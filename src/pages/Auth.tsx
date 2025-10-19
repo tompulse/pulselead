@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Target, Loader2 } from "lucide-react";
+import { Zap, Loader2 } from "lucide-react";
 import { z } from "zod";
 
 const Auth = () => {
@@ -70,7 +70,7 @@ const Auth = () => {
 
         toast({
           title: "Connexion réussie",
-          description: "Bienvenue sur LeadMagnet !",
+          description: "Bienvenue sur LUMA !",
         });
       } else {
         const { error } = await supabase.auth.signUp({
@@ -105,11 +105,14 @@ const Auth = () => {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8 animate-fade-in">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <Target className="w-10 h-10 text-accent" />
-            <span className="text-3xl font-bold gradient-text">LeadMagnet</span>
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
+              <Zap className="w-10 h-10 text-accent relative" />
+            </div>
+            <span className="text-3xl font-bold gradient-text">LUMA</span>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-base">
             {isLogin ? "Connectez-vous à votre compte" : "Créez votre compte"}
           </p>
         </div>
