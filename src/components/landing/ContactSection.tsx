@@ -10,32 +10,33 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
-      <div className="container mx-auto max-w-3xl">
-        <div className="glass-card p-8 sm:p-12 space-y-8 flex flex-col justify-center items-center text-center">
-          <div className="relative">
-            <div className="absolute inset-0 bg-accent/20 blur-2xl"></div>
-            <div className="relative bg-card/60 backdrop-blur-xl border border-accent/20 rounded-3xl p-10">
-              <MessageSquare className="w-20 h-20 text-accent mx-auto" />
+    <section className="relative py-12 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto max-w-4xl">
+        <div className="glass-card p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="relative flex-shrink-0">
+              <div className="absolute inset-0 bg-accent/20 blur-lg"></div>
+              <div className="relative bg-card/60 backdrop-blur-xl border border-accent/20 rounded-xl p-3">
+                <MessageSquare className="w-8 h-8 text-accent" />
+              </div>
             </div>
-          </div>
-          
-          <div className="space-y-4 max-w-xl">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">
-              Une question ? Contactez-nous
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Discutons de votre projet directement sur WhatsApp pour une réponse immédiate
-            </p>
+            
+            <div className="space-y-1 text-left">
+              <h2 className="text-xl sm:text-2xl font-bold gradient-text">
+                Une question ?
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Contactez-nous sur WhatsApp
+              </p>
+            </div>
           </div>
 
           <Button 
             onClick={handleWhatsApp}
-            size="lg"
-            className="bg-[#25D366] hover:bg-[#20BA5A] text-white text-lg px-8 py-6 h-auto"
+            className="bg-[#25D366] hover:bg-[#20BA5A] text-white flex-shrink-0"
           >
-            <MessageSquare className="w-6 h-6 mr-3" />
-            Démarrer la conversation
+            <MessageSquare className="w-4 h-4 mr-2" />
+            Démarrer
           </Button>
         </div>
       </div>
