@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin } from "lucide-react";
-import { ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
+import { categorizeActivity } from "@/utils/activityCategories";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { EntrepriseDetails } from "./EntrepriseDetails";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,29 +74,9 @@ export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
         console.error("Error fetching entreprises:", error);
         setEntreprises([]);
       } else {
-        // Filter by categories if needed
         let filtered = data || [];
-        if (filters.categories && filters.categories.length > 0) {
-          filtered = filtered.filter((ent: Entreprise) => {
-            const codeNaf = ent.code_naf;
-            if (!codeNaf) return false;
-            
-            return filters.categories.some(cat => {
-              const categoryRanges = ACTIVITY_CATEGORIES[cat];
-              if (!categoryRanges) return false;
-              
-              return categoryRanges.some(range => {
-                if (range.includes('-')) {
-                  const [start, end] = range.split('-');
-                  return codeNaf >= start && codeNaf <= end;
-                }
-                return codeNaf.startsWith(range);
-              });
-            });
-          });
-        }
-
-        // Filter by departments if selected
+        
+        // Filter by departments first
         if (filters.departments && filters.departments.length > 0) {
           filtered = filtered.filter((ent: Entreprise) => {
             const codePostal = ent.code_postal;
@@ -108,6 +88,14 @@ export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
             const deptCorse = normalizedCP.substring(0, 3); // Pour la Corse (2A, 2B)
             
             return filters.departments.includes(dept) || filters.departments.includes(deptCorse);
+          });
+        }
+        
+        // Filter by categories using the same logic as FilterOnboarding
+        if (filters.categories && filters.categories.length > 0) {
+          filtered = filtered.filter((ent: Entreprise) => {
+            const category = categorizeActivity(ent.activite);
+            return filters.categories.includes(category);
           });
         }
         
