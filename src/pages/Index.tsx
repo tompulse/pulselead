@@ -166,7 +166,9 @@ const Index = () => {
       </section>
 
       {/* Section Contact */}
-      <ContactSection />
+      <div id="contact">
+        <ContactSection />
+      </div>
 
       {/* Footer minimaliste */}
       <footer className="relative py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-navy-deep/50">
@@ -187,7 +189,10 @@ const Index = () => {
                 <span className="hidden sm:inline text-accent/30">|</span>
                 <a href="#" className="hover:text-accent transition-colors duration-300">Confidentialité</a>
                 <span className="hidden sm:inline text-accent/30">|</span>
-                <a href="#" className="hover:text-accent transition-colors duration-300">Contact</a>
+                <a href="#contact" className="hover:text-accent transition-colors duration-300" onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                }}>Contact</a>
               </div>
             </div>
             
