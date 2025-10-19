@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
+    categories: [] as string[],
   });
   const navigate = useNavigate();
   const { toast } = useToast();

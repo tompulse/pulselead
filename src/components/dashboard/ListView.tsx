@@ -11,7 +11,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ListViewProps {
-  filters: any;
+  filters: {
+    dateFrom: string;
+    dateTo: string;
+    categories: string[];
+  };
 }
 
 interface Entreprise {

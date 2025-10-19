@@ -3,9 +3,14 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin } from "lucide-react";
+import { categorizeActivity } from "@/utils/activityCategories";
 
 interface MapViewProps {
-  filters: any;
+  filters: {
+    dateFrom: string;
+    dateTo: string;
+    categories: string[];
+  };
 }
 
 interface Entreprise {
@@ -55,7 +60,15 @@ export const MapView = ({ filters }: MapViewProps) => {
       if (error) {
         console.error("Error fetching entreprises:", error);
       } else {
-        setEntreprises(data || []);
+        // Filter by category if categories are selected
+        let filteredData = data || [];
+        if (filters.categories && filters.categories.length > 0) {
+          filteredData = filteredData.filter((entreprise: any) => {
+            const category = categorizeActivity(entreprise.activite);
+            return filters.categories.includes(category);
+          });
+        }
+        setEntreprises(filteredData);
       }
       setLoading(false);
     };
