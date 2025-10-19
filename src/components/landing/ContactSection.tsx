@@ -40,12 +40,7 @@ const ContactSection = () => {
     const message = encodeURIComponent(
       `Bonjour, je souhaite en savoir plus sur LUMA.\n\nNom: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`
     );
-    window.open(`https://wa.me/33760227532?text=${message}`, '_blank');
-    
-    toast({
-      title: "Redirection vers WhatsApp",
-      description: "Votre message a été préparé dans WhatsApp.",
-    });
+    window.location.href = `https://wa.me/33760227532?text=${message}`;
     
     setFormData({ name: "", email: "", message: "" });
     setIsSubmitting(false);
@@ -54,7 +49,7 @@ const ContactSection = () => {
   const handleWhatsApp = () => {
     trackEvent('whatsapp_click', { source: 'contact_section' });
     const message = encodeURIComponent("Bonjour, je souhaite en savoir plus sur LUMA.");
-    window.open(`https://wa.me/33760227532?text=${message}`, '_blank');
+    window.location.href = `https://wa.me/33760227532?text=${message}`;
   };
 
   return (
