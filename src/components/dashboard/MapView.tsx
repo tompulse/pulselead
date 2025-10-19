@@ -354,7 +354,7 @@ export const MapView = ({ filters }: MapViewProps) => {
   }, [entreprises]);
 
   return (
-    <div className="h-[calc(100vh-280px)] rounded-2xl overflow-hidden shadow-2xl border border-accent/20 relative">
+    <div className="h-[calc(100vh-140px)] rounded-2xl overflow-hidden shadow-2xl border border-accent/20 relative">
       <div ref={mapContainer} className="absolute inset-0" />
       
       {loading && (

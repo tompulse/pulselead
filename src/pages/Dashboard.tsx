@@ -136,8 +136,8 @@ const Dashboard = () => {
         <Sidebar filters={filters} setFilters={setFilters} />
 
         {/* Main Content */}
-        <main className="flex-1 p-8 overflow-auto">
-          <div className="max-w-[1800px] mx-auto h-full">
+        <main className="flex-1 p-4 overflow-auto">
+          <div className="h-full">
             {view === "map" ? (
               <MapView filters={filters} />
             ) : (

@@ -1,11 +1,13 @@
-import { Filter, MapPin } from "lucide-react";
+import { Filter, MapPin, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
+import { useState } from "react";
 
 interface SidebarProps {
   filters: {
@@ -19,6 +21,10 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
+  const [isLocationOpen, setIsLocationOpen] = useState(true);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [isDatesOpen, setIsDatesOpen] = useState(false);
+
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev: any) => ({ ...prev, [key]: value }));
   };
@@ -66,114 +72,138 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
   };
 
   return (
-    <aside className="w-80 glass-card border-r border-accent/20 p-6 space-y-6 overflow-y-auto">
-      <div className="flex items-center gap-2">
+    <aside className="w-80 glass-card border-r border-accent/20 p-4 space-y-3 overflow-y-auto">
+      <div className="flex items-center gap-2 mb-4">
         <Filter className="w-5 h-5 text-accent" />
         <h2 className="text-xl font-semibold">Filtres</h2>
       </div>
 
-      <div className="space-y-6">
-        {/* Geographic Filters */}
-        <div className="space-y-4 p-4 bg-accent/5 rounded-lg border border-accent/20">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-accent" />
-            <Label className="text-base font-semibold">Localisation</Label>
-          </div>
-          
-          {/* Region Select */}
-          <div className="space-y-2">
-            <Label htmlFor="region" className="text-sm">Région</Label>
-            <Select value={filters.region} onValueChange={handleRegionChange}>
-              <SelectTrigger className="bg-background/50 border-border focus:border-accent">
-                <SelectValue placeholder="Toutes les régions" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toutes les régions</SelectItem>
-                {allRegions.map((region) => (
-                  <SelectItem key={region} value={region}>
-                    {region}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Departments */}
-          {filters.region && filters.region !== "all" && (
-            <div className="space-y-2">
-              <Label className="text-sm">Départements</Label>
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
-                {availableDepartments.map((deptCode) => (
-                  <div key={deptCode} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`dept-${deptCode}`}
-                      checked={filters.departments?.includes(deptCode)}
-                      onCheckedChange={() => handleDepartmentToggle(deptCode)}
-                      className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary"
-                    />
-                    <label
-                      htmlFor={`dept-${deptCode}`}
-                      className="text-sm font-medium leading-none cursor-pointer"
-                    >
-                      {deptCode} - {DEPARTMENT_NAMES[deptCode]}
-                    </label>
-                  </div>
-                ))}
+      <div className="space-y-3">
+        {/* Geographic Filters - Collapsible */}
+        <Collapsible open={isLocationOpen} onOpenChange={setIsLocationOpen}>
+          <CollapsibleTrigger className="w-full">
+            <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-accent" />
+                <Label className="text-sm font-semibold cursor-pointer">Localisation</Label>
               </div>
+              <ChevronDown className={`w-4 h-4 text-accent transition-transform ${isLocationOpen ? 'rotate-180' : ''}`} />
             </div>
-          )}
-        </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2 space-y-3 px-2">
+            {/* Region Select */}
+            <div className="space-y-2">
+              <Label htmlFor="region" className="text-xs">Région</Label>
+              <Select value={filters.region} onValueChange={handleRegionChange}>
+                <SelectTrigger className="h-9 bg-background/50 border-border focus:border-accent text-sm">
+                  <SelectValue placeholder="Toutes les régions" />
+                </SelectTrigger>
+                <SelectContent className="bg-background/95 backdrop-blur-xl border-accent/20 z-50">
+                  <SelectItem value="all">Toutes les régions</SelectItem>
+                  {allRegions.map((region) => (
+                    <SelectItem key={region} value={region} className="text-sm">
+                      {region}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        {/* Categories */}
-        <div className="space-y-3">
-          <Label className="text-base font-semibold">Catégories d'activité</Label>
-          <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-            {allCategories.map((categoryKey) => (
-              <div key={categoryKey} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`cat-${categoryKey}`}
-                  checked={filters.categories?.includes(categoryKey)}
-                  onCheckedChange={() => handleCategoryToggle(categoryKey)}
-                  className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary"
-                />
-                <label
-                  htmlFor={`cat-${categoryKey}`}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                >
-                  {getCategoryLabel(categoryKey)}
-                </label>
+            {/* Departments */}
+            {filters.region && filters.region !== "all" && (
+              <div className="space-y-2">
+                <Label className="text-xs">Départements ({filters.departments.length} sélectionné{filters.departments.length > 1 ? 's' : ''})</Label>
+                <div className="space-y-1.5 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                  {availableDepartments.map((deptCode) => (
+                    <div key={deptCode} className="flex items-center space-x-2 p-1.5 rounded hover:bg-accent/5">
+                      <Checkbox
+                        id={`dept-${deptCode}`}
+                        checked={filters.departments?.includes(deptCode)}
+                        onCheckedChange={() => handleDepartmentToggle(deptCode)}
+                        className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-4 w-4"
+                      />
+                      <label
+                        htmlFor={`dept-${deptCode}`}
+                        className="text-xs font-medium leading-none cursor-pointer flex-1"
+                      >
+                        {deptCode} - {DEPARTMENT_NAMES[deptCode]}
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
+            )}
+          </CollapsibleContent>
+        </Collapsible>
 
-        {/* Dates */}
-        <div className="space-y-2">
-          <Label htmlFor="dateFrom">Date de début</Label>
-          <Input
-            id="dateFrom"
-            type="date"
-            value={filters.dateFrom}
-            onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
-            className="bg-background/50 border-border focus:border-accent"
-          />
-        </div>
+        {/* Categories - Collapsible */}
+        <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
+          <CollapsibleTrigger className="w-full">
+            <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
+              <Label className="text-sm font-semibold cursor-pointer">Catégories d'activité</Label>
+              <ChevronDown className={`w-4 h-4 text-accent transition-transform ${isCategoriesOpen ? 'rotate-180' : ''}`} />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2">
+            <div className="space-y-1.5 max-h-60 overflow-y-auto pr-2 px-2 custom-scrollbar">
+              {allCategories.map((categoryKey) => (
+                <div key={categoryKey} className="flex items-center space-x-2 p-1.5 rounded hover:bg-accent/5">
+                  <Checkbox
+                    id={`cat-${categoryKey}`}
+                    checked={filters.categories?.includes(categoryKey)}
+                    onCheckedChange={() => handleCategoryToggle(categoryKey)}
+                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary h-4 w-4"
+                  />
+                  <label
+                    htmlFor={`cat-${categoryKey}`}
+                    className="text-xs font-medium leading-none cursor-pointer flex-1"
+                  >
+                    {getCategoryLabel(categoryKey)}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
 
-        <div className="space-y-2">
-          <Label htmlFor="dateTo">Date de fin</Label>
-          <Input
-            id="dateTo"
-            type="date"
-            value={filters.dateTo}
-            onChange={(e) => handleFilterChange("dateTo", e.target.value)}
-            className="bg-background/50 border-border focus:border-accent"
-          />
-        </div>
+        {/* Dates - Collapsible */}
+        <Collapsible open={isDatesOpen} onOpenChange={setIsDatesOpen}>
+          <CollapsibleTrigger className="w-full">
+            <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors">
+              <Label className="text-sm font-semibold cursor-pointer">Dates</Label>
+              <ChevronDown className={`w-4 h-4 text-accent transition-transform ${isDatesOpen ? 'rotate-180' : ''}`} />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2 space-y-3 px-2">
+            <div className="space-y-2">
+              <Label htmlFor="dateFrom" className="text-xs">Date de début</Label>
+              <Input
+                id="dateFrom"
+                type="date"
+                value={filters.dateFrom}
+                onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
+                className="h-9 bg-background/50 border-border focus:border-accent text-sm"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="dateTo" className="text-xs">Date de fin</Label>
+              <Input
+                id="dateTo"
+                type="date"
+                value={filters.dateTo}
+                onChange={(e) => handleFilterChange("dateTo", e.target.value)}
+                className="h-9 bg-background/50 border-border focus:border-accent text-sm"
+              />
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Reset Filters */}
         <Button
           variant="outline"
-          className="w-full border-accent/50 hover:bg-accent/10"
+          size="sm"
+          className="w-full border-accent/50 hover:bg-accent/10 mt-4"
           onClick={() => {
             setFilters({
               dateFrom: "",
@@ -184,7 +214,7 @@ export const Sidebar = ({ filters, setFilters }: SidebarProps) => {
             });
           }}
         >
-          Réinitialiser
+          Réinitialiser les filtres
         </Button>
       </div>
     </aside>
