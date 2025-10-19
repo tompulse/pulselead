@@ -4,8 +4,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MapPin, Building2, User, Calendar, DollarSign, Navigation, Map, Loader2 } from "lucide-react";
+import { MapPin, Building2, User, Calendar, DollarSign, Navigation, Map, Loader2, MessageSquare } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { InteractionTimeline } from "./InteractionTimeline";
+import { QuickActionButtons } from "./QuickActionButtons";
+import { LeadStatusBadge } from "./LeadStatusBadge";
 
 interface EntrepriseDetailsProps {
   entreprise: {
@@ -36,6 +41,9 @@ export const EntrepriseDetails = ({ entreprise, open, onOpenChange }: Entreprise
   const [formattedAdmin, setFormattedAdmin] = useState<string | null>(null);
   const [formattedActivite, setFormattedActivite] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [interactions, setInteractions] = useState<any[]>([]);
+  const [leadStatus, setLeadStatus] = useState<any>(null);
+  const [loadingCRM, setLoadingCRM] = useState(true);
 
   useEffect(() => {
     if (!entreprise || !open) return;
@@ -78,8 +86,61 @@ export const EntrepriseDetails = ({ entreprise, open, onOpenChange }: Entreprise
       }
     };
 
+    const fetchCRMData = async () => {
+      setLoadingCRM(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch interactions
+      const { data: interactionsData } = await supabase
+        .from('lead_interactions')
+        .select('*')
+        .eq('entreprise_id', entreprise.id)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      setInteractions(interactionsData || []);
+
+      // Fetch lead status
+      const { data: statusData } = await supabase
+        .from('lead_statuts')
+        .select('*')
+        .eq('entreprise_id', entreprise.id)
+        .eq('user_id', user.id)
+        .single();
+
+      setLeadStatus(statusData);
+      setLoadingCRM(false);
+    };
+
     formatDetails();
+    fetchCRMData();
   }, [entreprise, open]);
+
+  const refreshCRMData = async () => {
+    if (!entreprise) return;
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: interactionsData } = await supabase
+      .from('lead_interactions')
+      .select('*')
+      .eq('entreprise_id', entreprise.id)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    setInteractions(interactionsData || []);
+
+    const { data: statusData } = await supabase
+      .from('lead_statuts')
+      .select('*')
+      .eq('entreprise_id', entreprise.id)
+      .eq('user_id', user.id)
+      .single();
+
+    setLeadStatus(statusData);
+  };
 
   if (!entreprise) return null;
 
@@ -104,19 +165,43 @@ export const EntrepriseDetails = ({ entreprise, open, onOpenChange }: Entreprise
 
   const content = (
     <div className="space-y-6">
-      {/* Header avec nom et badge */}
-      <div className="space-y-2">
+      {/* Header avec nom et badges */}
+      <div className="space-y-3">
         <h2 className="text-2xl md:text-3xl font-bold gradient-text leading-tight pr-8">
           {entreprise.nom}
         </h2>
-        {entreprise.code_naf && (
-          <Badge variant="secondary" className="bg-accent/20 text-accent">
-            NAF: {entreprise.code_naf}
-          </Badge>
-        )}
+        <div className="flex flex-wrap gap-2">
+          {entreprise.code_naf && (
+            <Badge variant="secondary" className="bg-accent/20 text-accent">
+              NAF: {entreprise.code_naf}
+            </Badge>
+          )}
+          {leadStatus && (
+            <LeadStatusBadge 
+              statut={leadStatus.statut_actuel} 
+              probabilite={leadStatus.probabilite}
+            />
+          )}
+        </div>
       </div>
 
       <Separator className="bg-accent/20" />
+
+      <Tabs defaultValue="info" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="info">Informations</TabsTrigger>
+          <TabsTrigger value="crm" className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            CRM
+            {interactions.length > 0 && (
+              <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                {interactions.length}
+              </Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="info" className="space-y-4 mt-4">
 
       {/* Informations principales */}
       <div className="space-y-4">
@@ -195,7 +280,7 @@ export const EntrepriseDetails = ({ entreprise, open, onOpenChange }: Entreprise
             </div>
           </div>
         )}
-      </div>
+        </div>
 
       <Separator className="bg-accent/20" />
 
@@ -233,6 +318,36 @@ export const EntrepriseDetails = ({ entreprise, open, onOpenChange }: Entreprise
           </a>
         </Button>
       </div>
+        </TabsContent>
+
+        <TabsContent value="crm" className="space-y-4 mt-4">
+          {/* Quick Actions */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-accent" />
+              Actions rapides
+            </h3>
+            <QuickActionButtons 
+              entrepriseId={entreprise.id} 
+              onInteractionAdded={refreshCRMData}
+            />
+          </div>
+
+          <Separator className="bg-accent/20" />
+
+          {/* Timeline */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm">Historique des interactions</h3>
+            {loadingCRM ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-accent" />
+              </div>
+            ) : (
+              <InteractionTimeline interactions={interactions} />
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 

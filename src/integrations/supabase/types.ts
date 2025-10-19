@@ -113,6 +113,94 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_interactions: {
+        Row: {
+          created_at: string
+          date_prochaine_action: string | null
+          entreprise_id: string
+          id: string
+          notes: string | null
+          prochaine_action: string | null
+          statut: Database["public"]["Enums"]["interaction_statut"]
+          type: Database["public"]["Enums"]["interaction_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_prochaine_action?: string | null
+          entreprise_id: string
+          id?: string
+          notes?: string | null
+          prochaine_action?: string | null
+          statut: Database["public"]["Enums"]["interaction_statut"]
+          type: Database["public"]["Enums"]["interaction_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_prochaine_action?: string | null
+          entreprise_id?: string
+          id?: string
+          notes?: string | null
+          prochaine_action?: string | null
+          statut?: Database["public"]["Enums"]["interaction_statut"]
+          type?: Database["public"]["Enums"]["interaction_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_interactions_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_statuts: {
+        Row: {
+          entreprise_id: string
+          etape_pipeline: number
+          id: string
+          probabilite: number | null
+          statut_actuel: Database["public"]["Enums"]["lead_statut_enum"]
+          updated_at: string
+          user_id: string
+          valeur_estimee: number | null
+        }
+        Insert: {
+          entreprise_id: string
+          etape_pipeline?: number
+          id?: string
+          probabilite?: number | null
+          statut_actuel?: Database["public"]["Enums"]["lead_statut_enum"]
+          updated_at?: string
+          user_id: string
+          valeur_estimee?: number | null
+        }
+        Update: {
+          entreprise_id?: string
+          etape_pipeline?: number
+          id?: string
+          probabilite?: number | null
+          statut_actuel?: Database["public"]["Enums"]["lead_statut_enum"]
+          updated_at?: string
+          user_id?: string
+          valeur_estimee?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_statuts_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -149,6 +237,21 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      interaction_statut:
+        | "a_rappeler"
+        | "en_cours"
+        | "gagne"
+        | "perdu"
+        | "sans_suite"
+      interaction_type: "appel" | "email" | "visite" | "rdv" | "autre"
+      lead_statut_enum:
+        | "nouveau"
+        | "contacte"
+        | "qualifie"
+        | "proposition"
+        | "negociation"
+        | "gagne"
+        | "perdu"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -277,6 +380,23 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      interaction_statut: [
+        "a_rappeler",
+        "en_cours",
+        "gagne",
+        "perdu",
+        "sans_suite",
+      ],
+      interaction_type: ["appel", "email", "visite", "rdv", "autre"],
+      lead_statut_enum: [
+        "nouveau",
+        "contacte",
+        "qualifie",
+        "proposition",
+        "negociation",
+        "gagne",
+        "perdu",
+      ],
     },
   },
 } as const

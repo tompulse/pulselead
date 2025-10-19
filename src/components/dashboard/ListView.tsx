@@ -1,10 +1,12 @@
-import { Building2, Navigation, Map, Search, MapPin } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ACTIVITY_CATEGORIES, categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { EntrepriseDetails } from "./EntrepriseDetails";
+import { LeadStatusBadge } from "./LeadStatusBadge";
 
 interface ListViewProps {
   filters: {
@@ -44,6 +46,7 @@ export const ListView = ({ filters }: ListViewProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntreprise, setSelectedEntreprise] = useState<Entreprise | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [crmData, setCrmData] = useState<Record<string, { status: any; interactionCount: number; hasUpcomingAction: boolean }>>({});
 
   useEffect(() => {
     const fetchEntreprises = async () => {
@@ -107,6 +110,50 @@ export const ListView = ({ filters }: ListViewProps) => {
     };
 
     fetchEntreprises();
+
+    // Fetch CRM data for all entreprises
+    const fetchCRMData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: statusData } = await supabase
+        .from('lead_statuts')
+        .select('entreprise_id, statut_actuel, probabilite')
+        .eq('user_id', user.id);
+
+      const { data: interactionsData } = await supabase
+        .from('lead_interactions')
+        .select('entreprise_id, date_prochaine_action')
+        .eq('user_id', user.id);
+
+      const crmMap: Record<string, any> = {};
+      
+      statusData?.forEach(status => {
+        if (!crmMap[status.entreprise_id]) {
+          crmMap[status.entreprise_id] = { status, interactionCount: 0, hasUpcomingAction: false };
+        } else {
+          crmMap[status.entreprise_id].status = status;
+        }
+      });
+
+      interactionsData?.forEach(interaction => {
+        if (!crmMap[interaction.entreprise_id]) {
+          crmMap[interaction.entreprise_id] = { status: null, interactionCount: 0, hasUpcomingAction: false };
+        }
+        crmMap[interaction.entreprise_id].interactionCount++;
+        
+        if (interaction.date_prochaine_action) {
+          const actionDate = new Date(interaction.date_prochaine_action);
+          if (actionDate >= new Date()) {
+            crmMap[interaction.entreprise_id].hasUpcomingAction = true;
+          }
+        }
+      });
+
+      setCrmData(crmMap);
+    };
+
+    fetchCRMData();
   }, [filters]);
 
   // Filter by search query
@@ -195,6 +242,7 @@ export const ListView = ({ filters }: ListViewProps) => {
               {filteredEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
                 const categoryInfo = getCategoryInfo(item.activite);
+                const crm = crmData[item.id];
                 
                 return (
                   <div
@@ -203,9 +251,34 @@ export const ListView = ({ filters }: ListViewProps) => {
                     className="glass-card rounded-xl p-5 shadow-lg border border-accent/20 hover:border-accent/40 cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-card/80 to-card/40 max-w-full overflow-hidden"
                   >
                     <div className="space-y-3 mb-4">
-                      <h4 className="font-bold text-lg truncate" title={item.nom}>
-                        {item.nom}
-                      </h4>
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="font-bold text-lg truncate flex-1" title={item.nom}>
+                          {item.nom}
+                        </h4>
+                        <div className="flex gap-1 flex-shrink-0">
+                          {crm?.hasUpcomingAction && (
+                            <Badge variant="outline" className="h-6 px-2">
+                              <Bell className="h-3 w-3" />
+                            </Badge>
+                          )}
+                          {crm?.interactionCount > 0 && (
+                            <Badge variant="secondary" className="h-6 px-2 flex items-center gap-1">
+                              <MessageSquare className="h-3 w-3" />
+                              {crm.interactionCount}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      {crm?.status && (
+                        <div className="flex items-center gap-2">
+                          <LeadStatusBadge 
+                            statut={crm.status.statut_actuel} 
+                            probabilite={crm.status.probabilite}
+                            showTooltip={false}
+                          />
+                        </div>
+                      )}
                       
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm">

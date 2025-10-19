@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
 import { SyncButton } from "@/components/dashboard/SyncButton";
+import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const [view, setView] = useState<"map" | "list">("map");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -22,6 +24,7 @@ const Dashboard = () => {
     dateTo: "",
     categories: [] as string[],
     departments: [] as string[],
+    crmFilter: undefined as string | undefined,
   });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -42,6 +45,8 @@ const Dashboard = () => {
         navigate("/auth");
         return;
       }
+
+      setUserId(session.user.id);
 
       // Check if user has admin role
       const { data: adminCheck, error } = await supabase.rpc('has_role', {
@@ -222,14 +227,20 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden">
-          <div className="h-full p-4 md:p-6">
-            {view === "map" ? (
-              <MapView filters={filters} />
-            ) : (
-              <div className="h-full">
-                <ListView filters={filters} />
-              </div>
-            )}
+          <div className="h-full p-4 md:p-6 flex flex-col gap-4 overflow-y-auto">
+            {/* Dashboard Stats */}
+            {userId && <DashboardStats userId={userId} />}
+            
+            {/* Main View */}
+            <div className="flex-1 overflow-hidden">
+              {view === "map" ? (
+                <MapView filters={filters} />
+              ) : (
+                <div className="h-full">
+                  <ListView filters={filters} />
+                </div>
+              )}
+            </div>
           </div>
         </main>
       </div>
