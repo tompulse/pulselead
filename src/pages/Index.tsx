@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Zap, Sparkles, TrendingUp, Shield } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
+import ContactSection from "@/components/landing/ContactSection";
 import { trackCTAClick } from "@/utils/analytics";
 
 const Index = () => {
@@ -163,6 +164,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Section Contact */}
+      <ContactSection />
 
       {/* Footer minimaliste */}
       <footer className="relative py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-navy-deep/50">
