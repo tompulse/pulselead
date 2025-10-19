@@ -71,29 +71,40 @@ export const ListView = ({ filters }: ListViewProps) => {
 
   if (loading) {
     return (
-      <div className="glass-card rounded-xl p-6 flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
+      <div className="glass-card rounded-2xl p-12 flex items-center justify-center shadow-2xl border border-accent/20">
+        <div className="text-center space-y-4">
+          <div className="animate-spin w-12 h-12 border-4 border-accent border-t-transparent rounded-full mx-auto" />
+          <p className="text-muted-foreground font-medium">Chargement des données...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="glass-card rounded-xl overflow-hidden">
-      <div className="p-6 border-b border-accent/20">
-        <div className="flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-accent" />
-          <h3 className="text-xl font-semibold">Liste des entreprises</h3>
+    <div className="glass-card rounded-2xl overflow-hidden shadow-2xl border border-accent/20">
+      <div className="p-6 border-b border-accent/20 bg-gradient-to-r from-card to-card/50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-accent/10 rounded-lg">
+              <Building2 className="w-6 h-6 text-accent" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">Liste des entreprises</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {entreprises.length} résultat{entreprises.length > 1 ? 's' : ''}
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground mt-1">
-          {entreprises.length} résultats
-        </p>
       </div>
 
       {entreprises.length === 0 ? (
-        <div className="p-12 text-center">
-          <Building2 className="w-16 h-16 text-accent mx-auto mb-4 opacity-50" />
-          <h3 className="text-xl font-semibold mb-2">Aucune entreprise trouvée</h3>
-          <p className="text-muted-foreground">
+        <div className="p-16 text-center">
+          <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
+            <Building2 className="w-20 h-20 text-accent opacity-50" />
+          </div>
+          <h3 className="text-2xl font-bold mb-3">Aucune entreprise trouvée</h3>
+          <p className="text-muted-foreground text-lg max-w-md mx-auto">
             Cliquez sur "Synchroniser les données" pour importer vos entreprises
           </p>
         </div>
@@ -101,13 +112,13 @@ export const ListView = ({ filters }: ListViewProps) => {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-accent/20 hover:bg-accent/5">
-                <TableHead className="text-accent w-[180px]">Nom</TableHead>
-                <TableHead className="text-accent w-[110px]">SIRET</TableHead>
-                <TableHead className="text-accent w-[200px]">Adresse</TableHead>
-                <TableHead className="text-accent w-[200px]">Contact</TableHead>
-                <TableHead className="text-accent w-[280px]">Activité</TableHead>
-                <TableHead className="text-accent w-[100px]">Capital</TableHead>
+              <TableRow className="border-accent/20 hover:bg-accent/5 bg-card/50">
+                <TableHead className="text-accent font-semibold w-[180px]">Nom</TableHead>
+                <TableHead className="text-accent font-semibold w-[110px]">SIRET</TableHead>
+                <TableHead className="text-accent font-semibold w-[200px]">Adresse</TableHead>
+                <TableHead className="text-accent font-semibold w-[200px]">Contact</TableHead>
+                <TableHead className="text-accent font-semibold w-[280px]">Activité</TableHead>
+                <TableHead className="text-accent font-semibold w-[100px]">Capital</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -134,9 +145,9 @@ export const ListView = ({ filters }: ListViewProps) => {
                 return (
                   <TableRow
                     key={item.id}
-                    className="border-accent/20 hover:bg-accent/5 cursor-pointer transition-colors"
+                    className="border-accent/20 hover:bg-accent/5 cursor-pointer transition-all hover:shadow-lg"
                   >
-                    <TableCell className="font-medium text-sm">{item.nom}</TableCell>
+                    <TableCell className="font-semibold text-sm">{item.nom}</TableCell>
                     <TableCell className="text-muted-foreground font-mono text-xs">{item.siret}</TableCell>
                     <TableCell className="text-muted-foreground text-xs" title={formattedAddress}>
                       <div className="truncate max-w-[200px]">{formattedAddress}</div>

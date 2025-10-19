@@ -313,28 +313,30 @@ export const MapView = ({ filters }: MapViewProps) => {
   }, [entreprises]);
 
   return (
-    <div className="glass-card h-full rounded-xl overflow-hidden relative">
-      <div ref={mapContainer} className="w-full h-full" />
+    <div className="h-[calc(100vh-280px)] rounded-2xl overflow-hidden shadow-2xl border border-accent/20 relative">
+      <div ref={mapContainer} className="absolute inset-0" />
       
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black-deep/50 backdrop-blur-sm">
-          <div className="text-center space-y-2">
-            <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full mx-auto" />
-            <p className="text-sm text-muted-foreground">Chargement des données...</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-10">
+          <div className="text-center space-y-4">
+            <div className="animate-spin w-12 h-12 border-4 border-accent border-t-transparent rounded-full mx-auto" />
+            <p className="text-muted-foreground font-medium">Chargement de la carte...</p>
           </div>
         </div>
       )}
 
       {!loading && entreprises.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center space-y-4 animate-fade-in">
-            <MapPin className="w-16 h-16 text-accent mx-auto" />
-            <div className="space-y-2">
-              <h3 className="text-2xl font-semibold">Aucune entreprise trouvée</h3>
-              <p className="text-muted-foreground max-w-md">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-gradient-to-br from-background to-card/50">
+          <div className="text-center space-y-6 animate-fade-in">
+            <div className="inline-flex p-4 bg-accent/10 rounded-2xl">
+              <MapPin className="w-20 h-20 text-accent" />
+            </div>
+            <div className="space-y-3">
+              <h3 className="text-3xl font-bold">Aucune entreprise trouvée</h3>
+              <p className="text-muted-foreground text-lg max-w-md mx-auto">
                 Aucune donnée ne correspond à vos filtres actuels.
                 <br />
-                Ajustez les filtres ou importez des données dans Supabase.
+                Ajustez les filtres ou importez des données.
               </p>
             </div>
           </div>

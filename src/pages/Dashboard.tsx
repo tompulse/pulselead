@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Target, LogOut, Filter, List, MapIcon } from "lucide-react";
-import { Sidebar } from "@/components/dashboard/Sidebar";
+import { Target, LogOut, List, MapIcon } from "lucide-react";
+import { FilterBar } from "@/components/dashboard/FilterBar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
 import { SyncButton } from "@/components/dashboard/SyncButton";
@@ -78,67 +78,69 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar - Only show in map view */}
-      {view === "map" && <Sidebar filters={filters} setFilters={setFilters} />}
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="glass-card border-b border-accent/20 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Target className="w-8 h-8 text-accent" />
-                <span className="text-2xl font-bold gradient-text">LeadMagnet</span>
-              </div>
-              
-              {/* View Toggle */}
-              <div className="flex gap-2 ml-8">
-                <Button
-                  variant={view === "map" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setView("map")}
-                  className={view === "map" ? "bg-accent text-primary" : ""}
-                >
-                  <MapIcon className="w-4 h-4 mr-2" />
-                  Carte
-                </Button>
-                <Button
-                  variant={view === "list" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setView("list")}
-                  className={view === "list" ? "bg-accent text-primary" : ""}
-                >
-                  <List className="w-4 h-4 mr-2" />
-                  Liste
-                </Button>
-              </div>
-            </div>
-
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header */}
+      <header className="glass-card border-b border-accent/20 px-8 py-5 sticky top-0 z-10 backdrop-blur-xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
-              {isAdmin && <SyncButton />}
+              <div className="relative">
+                <div className="absolute inset-0 bg-accent blur-xl opacity-30 animate-pulse" />
+                <Target className="w-10 h-10 text-accent relative" />
+              </div>
+              <span className="text-3xl font-bold gradient-text">LeadMagnet</span>
+            </div>
+            
+            {/* View Toggle */}
+            <div className="flex gap-2 p-1 bg-card/50 rounded-lg border border-accent/20">
               <Button
-                variant="outline"
-                onClick={handleLogout}
-                className="border-accent/50 hover:bg-accent/10"
+                variant={view === "map" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setView("map")}
+                className={view === "map" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Déconnexion
+                <MapIcon className="w-4 h-4 mr-2" />
+                Carte
+              </Button>
+              <Button
+                variant={view === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setView("list")}
+                className={view === "list" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}
+              >
+                <List className="w-4 h-4 mr-2" />
+                Liste
               </Button>
             </div>
           </div>
-        </header>
 
-        {/* Content Area */}
-        <main className="flex-1 p-6">
+          <div className="flex items-center gap-3">
+            {isAdmin && <SyncButton />}
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="border-accent/50 hover:bg-accent/10 hover:border-accent transition-all"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Déconnexion
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Filter Bar */}
+      <FilterBar filters={filters} setFilters={setFilters} />
+
+      {/* Content Area */}
+      <main className="flex-1 p-8 overflow-auto">
+        <div className="max-w-[1800px] mx-auto">
           {view === "map" ? (
             <MapView filters={filters} />
           ) : (
             <ListView filters={filters} />
           )}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
