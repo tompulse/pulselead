@@ -42,7 +42,8 @@ export const MapView = ({ filters }: MapViewProps) => {
         .from("entreprises")
         .select("*")
         .not("latitude", "is", null)
-        .not("longitude", "is", null);
+        .not("longitude", "is", null)
+        .not("activite", "is", null); // Exclure les entreprises sans activité
 
       // Only apply date filters if we have valid dates AND the entreprise has a date_demarrage
       if (filters.dateFrom || filters.dateTo) {
@@ -107,7 +108,10 @@ export const MapView = ({ filters }: MapViewProps) => {
 
       const popup = new mapboxgl.Popup({ 
         offset: 25,
-        className: 'lead-popup'
+        className: 'lead-popup',
+        closeButton: true,
+        closeOnClick: false,
+        maxWidth: '400px'
       });
 
       // Create the popup content
@@ -142,19 +146,18 @@ export const MapView = ({ filters }: MapViewProps) => {
 
         return `
           <div style="
-            background: linear-gradient(135deg, hsl(220 40% 10% / 0.95), hsl(220 20% 5% / 0.95));
-            backdrop-filter: blur(20px);
+            background: linear-gradient(135deg, hsl(220 40% 10%), hsl(220 20% 5%));
             border: 1px solid hsl(190 95% 60% / 0.3);
             border-radius: 12px;
-            padding: 16px;
+            padding: 20px;
             min-width: 300px;
             max-width: 400px;
-            box-shadow: 0 8px 32px hsl(0 0% 0% / 0.6), 0 0 20px hsl(190 95% 60% / 0.2);
+            box-shadow: 0 8px 32px hsl(0 0% 0% / 0.6);
           ">
             <h3 style="
-              font-size: 16px;
+              font-size: 18px;
               font-weight: 700;
-              margin-bottom: 12px;
+              margin-bottom: 16px;
               color: hsl(0 0% 98%);
               background: linear-gradient(135deg, hsl(190 95% 60%), hsl(190 95% 70%));
               -webkit-background-clip: text;
@@ -165,45 +168,45 @@ export const MapView = ({ filters }: MapViewProps) => {
             <div style="
               display: flex;
               flex-direction: column;
-              gap: 8px;
-              font-size: 13px;
+              gap: 10px;
+              font-size: 14px;
               color: hsl(0 0% 90%);
             ">
-              <div style="display: flex; align-items: start; gap: 8px;">
-                <span style="color: hsl(190 95% 60%); font-size: 16px;">📍</span>
-                <span style="color: hsl(0 0% 75%); line-height: 1.4;">${formattedAddress}</span>
+              <div style="display: flex; align-items: start; gap: 10px;">
+                <span style="color: hsl(190 95% 60%); font-size: 18px; min-width: 24px;">📍</span>
+                <span style="color: hsl(0 0% 75%); line-height: 1.5;">${formattedAddress}</span>
               </div>
               
               ${formattedActivite ? `
-              <div style="display: flex; align-items: start; gap: 8px;">
-                <span style="color: hsl(190 95% 60%); font-size: 16px;">💼</span>
-                <span style="color: hsl(0 0% 85%); line-height: 1.4;">${formattedActivite}</span>
+              <div style="display: flex; align-items: start; gap: 10px;">
+                <span style="color: hsl(190 95% 60%); font-size: 18px; min-width: 24px;">💼</span>
+                <span style="color: hsl(0 0% 85%); line-height: 1.5;">${formattedActivite}</span>
               </div>
               ` : ''}
               
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="color: hsl(190 95% 60%); font-size: 16px;">🏢</span>
-                <span><strong style="color: hsl(190 95% 60%);">SIRET:</strong> ${entreprise.siret}</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: hsl(190 95% 60%); font-size: 18px; min-width: 24px;">🏢</span>
+                <span style="line-height: 1.5;"><strong style="color: hsl(190 95% 60%);">SIRET:</strong> ${entreprise.siret}</span>
               </div>
               
               ${formattedAdmin ? `
-              <div style="display: flex; align-items: start; gap: 8px;">
-                <span style="color: hsl(190 95% 60%); font-size: 16px;">👤</span>
-                <span style="line-height: 1.4;"><strong style="color: hsl(190 95% 60%);">Contact:</strong> ${formattedAdmin}</span>
+              <div style="display: flex; align-items: start; gap: 10px;">
+                <span style="color: hsl(190 95% 60%); font-size: 18px; min-width: 24px;">👤</span>
+                <span style="line-height: 1.5;"><strong style="color: hsl(190 95% 60%);">Contact:</strong> ${formattedAdmin}</span>
               </div>
               ` : ''}
               
               ${formattedCapital ? `
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="color: hsl(190 95% 60%); font-size: 16px;">💰</span>
-                <span><strong style="color: hsl(190 95% 60%);">Capital:</strong> ${formattedCapital}</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: hsl(190 95% 60%); font-size: 18px; min-width: 24px;">💰</span>
+                <span style="line-height: 1.5;"><strong style="color: hsl(190 95% 60%);">Capital:</strong> ${formattedCapital}</span>
               </div>
               ` : ''}
               
               ${entreprise.date_demarrage ? `
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="color: hsl(190 95% 60%); font-size: 16px;">📅</span>
-                <span><strong style="color: hsl(190 95% 60%);">Démarrage:</strong> ${entreprise.date_demarrage}</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: hsl(190 95% 60%); font-size: 18px; min-width: 24px;">📅</span>
+                <span style="line-height: 1.5;"><strong style="color: hsl(190 95% 60%);">Démarrage:</strong> ${entreprise.date_demarrage}</span>
               </div>
               ` : ''}
             </div>
