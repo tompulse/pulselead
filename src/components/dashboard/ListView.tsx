@@ -180,6 +180,19 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
     };
 
     fetchCRMData();
+
+    // Refresh CRM data when component gains focus (e.g., returning from Activities view)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchCRMData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [filters]);
 
   // Filter by search query

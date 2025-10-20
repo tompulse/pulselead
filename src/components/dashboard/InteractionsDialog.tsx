@@ -39,6 +39,7 @@ interface InteractionsDialogProps {
   type: 'appel' | 'visite' | 'rdv' | null;
   userId: string;
   onEntrepriseClick?: (entrepriseId: string) => void;
+  onInteractionDeleted?: (entrepriseId: string, type: string) => void;
 }
 
 export const InteractionsDialog = ({ 
@@ -46,7 +47,8 @@ export const InteractionsDialog = ({
   onOpenChange, 
   type, 
   userId,
-  onEntrepriseClick 
+  onEntrepriseClick,
+  onInteractionDeleted
 }: InteractionsDialogProps) => {
   const [interactions, setInteractions] = useState<Interaction[]>([]);
   const [loading, setLoading] = useState(false);
@@ -106,6 +108,9 @@ export const InteractionsDialog = ({
   };
 
   const handleDelete = async (id: string) => {
+    // Find the interaction to get entreprise_id and type before deleting
+    const interaction = interactions.find(i => i.id === id);
+    
     const { error } = await supabase
       .from('lead_interactions')
       .delete()
@@ -122,6 +127,12 @@ export const InteractionsDialog = ({
         title: "✓ Supprimé",
         description: "L'interaction a été supprimée",
       });
+      
+      // Notify parent component about the deletion
+      if (interaction && onInteractionDeleted) {
+        onInteractionDeleted(interaction.entreprise_id, interaction.type);
+      }
+      
       fetchInteractions();
     }
     setDeleteId(null);

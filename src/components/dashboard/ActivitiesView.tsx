@@ -27,8 +27,12 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
     setDialogOpen(true);
   };
 
-  useEffect(() => {
-    const fetchStats = async () => {
+  const handleInteractionDeleted = () => {
+    // Reload stats after deletion
+    fetchStats();
+  };
+
+  const fetchStats = async () => {
       const now = new Date();
       const weekStart = startOfWeek(now, { weekStartsOn: 1 });
       const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
@@ -80,6 +84,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
       setLoading(false);
     };
 
+  useEffect(() => {
     fetchStats();
   }, [userId]);
 
@@ -150,6 +155,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
         type={selectedType}
         userId={userId}
         onEntrepriseClick={onEntrepriseClick}
+        onInteractionDeleted={handleInteractionDeleted}
       />
     </div>
   );
