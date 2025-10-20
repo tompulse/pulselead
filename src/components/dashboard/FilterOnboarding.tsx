@@ -169,29 +169,29 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 flex items-center justify-center p-4">
       <Card className="w-full max-w-6xl glass-card border-accent/30 overflow-hidden max-h-[95vh] flex flex-col shadow-2xl shadow-accent/20">
         {/* Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-accent/30 via-accent/15 to-transparent p-4 md:p-8 border-b border-accent/30 shrink-0">
+        <div className="relative overflow-hidden bg-gradient-to-br from-accent/30 via-accent/15 to-transparent p-3 md:p-4 border-b border-accent/30 shrink-0">
           <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-          <div className="relative flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="relative flex items-center gap-2 md:gap-3 mb-2">
             <div className="relative">
-              <div className="absolute inset-0 bg-accent blur-2xl animate-pulse" />
-              <div className="p-3 bg-gradient-to-br from-accent/30 to-accent/10 rounded-2xl shadow-lg">
-                <Lightbulb className="w-8 h-8 md:w-12 md:h-12 text-accent relative" />
+              <div className="absolute inset-0 bg-accent blur-xl animate-pulse" />
+              <div className="p-2 bg-gradient-to-br from-accent/30 to-accent/10 rounded-xl shadow-lg">
+                <Lightbulb className="w-6 h-6 md:w-8 md:h-8 text-accent relative" />
               </div>
             </div>
             <div>
-              <h1 className="text-xl md:text-3xl font-bold gradient-text">Bienvenue sur LUMA</h1>
-              <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
+              <h1 className="text-lg md:text-2xl font-bold gradient-text">Bienvenue sur LUMA</h1>
+              <p className="text-muted-foreground text-xs md:text-sm font-medium">
                 Configurons votre expérience en quelques étapes
               </p>
             </div>
           </div>
           
           {/* Progress */}
-          <div className="relative flex items-center gap-2 mt-4 md:mt-6">
-            <div className={`flex-1 h-2.5 rounded-full transition-all duration-500 shadow-sm ${step >= 1 ? 'bg-gradient-to-r from-accent to-accent/80 shadow-accent/30' : 'bg-accent/20'}`} />
-            <div className={`flex-1 h-2.5 rounded-full transition-all duration-500 shadow-sm ${step >= 2 ? 'bg-gradient-to-r from-accent to-accent/80 shadow-accent/30' : 'bg-accent/20'}`} />
+          <div className="relative flex items-center gap-2 mt-2 md:mt-3">
+            <div className={`flex-1 h-2 rounded-full transition-all duration-500 shadow-sm ${step >= 1 ? 'bg-gradient-to-r from-accent to-accent/80 shadow-accent/30' : 'bg-accent/20'}`} />
+            <div className={`flex-1 h-2 rounded-full transition-all duration-500 shadow-sm ${step >= 2 ? 'bg-gradient-to-r from-accent to-accent/80 shadow-accent/30' : 'bg-accent/20'}`} />
           </div>
-          <div className="flex justify-between mt-2 text-xs md:text-sm font-medium">
+          <div className="flex justify-between mt-1.5 text-xs font-medium">
             <span className={step === 1 ? 'text-accent font-bold' : 'text-muted-foreground'}>Zone géographique</span>
             <span className={step === 2 ? 'text-accent font-bold' : 'text-muted-foreground'}>Secteurs d'activité</span>
           </div>
@@ -199,17 +199,17 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
 
         {/* Content */}
         <ScrollArea className="flex-1 overflow-auto">
-          <div className="p-4 md:p-8">
+          <div className="p-3 md:p-5">
             {step === 1 ? (
-              <div className="space-y-4 md:space-y-6">
-                <div className="flex items-start gap-3 p-4 md:p-5 rounded-xl bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 border border-accent/30 shadow-lg shadow-accent/5">
-                  <div className="p-2 bg-gradient-to-br from-accent/30 to-accent/10 rounded-lg shadow-sm">
-                    <MapPin className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0" />
+              <div className="space-y-3 md:space-y-4">
+                <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 border border-accent/30 shadow-lg shadow-accent/5">
+                  <div className="p-1.5 bg-gradient-to-br from-accent/30 to-accent/10 rounded-lg shadow-sm">
+                    <MapPin className="w-4 h-4 md:w-5 md:h-5 text-accent shrink-0" />
                   </div>
                   <div>
-                    <h2 className="text-lg md:text-xl font-bold gradient-text mb-1 md:mb-2">Dans quelles régions ? <span className="text-destructive">*</span></h2>
-                    <p className="text-muted-foreground text-sm md:text-base font-medium">
-                      Sélectionnez les régions où vous souhaitez trouver des entreprises. Cette étape est obligatoire.
+                    <h2 className="text-base md:text-lg font-bold gradient-text">Dans quelles régions ? <span className="text-destructive">*</span></h2>
+                    <p className="text-muted-foreground text-xs md:text-sm font-medium">
+                      Sélectionnez les régions où vous souhaitez trouver des entreprises.
                     </p>
                   </div>
                 </div>
@@ -284,14 +284,14 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                 </div>
               </div>
             ) : (
-              <div className="space-y-4 md:space-y-6">
-                <div className="flex items-start gap-3 p-4 md:p-5 rounded-xl bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 border border-accent/30 shadow-lg shadow-accent/5">
-                  <div className="p-2 bg-gradient-to-br from-accent/30 to-accent/10 rounded-lg shadow-sm">
-                    <Building2 className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0" />
+              <div className="space-y-3 md:space-y-4">
+                <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 border border-accent/30 shadow-lg shadow-accent/5">
+                  <div className="p-1.5 bg-gradient-to-br from-accent/30 to-accent/10 rounded-lg shadow-sm">
+                    <Building2 className="w-4 h-4 md:w-5 md:h-5 text-accent shrink-0" />
                   </div>
                   <div>
-                    <h2 className="text-lg md:text-xl font-bold gradient-text mb-1 md:mb-2">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-sm font-medium">(optionnel)</span></h2>
-                    <p className="text-muted-foreground text-sm md:text-base font-medium">
+                    <h2 className="text-base md:text-lg font-bold gradient-text">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-xs font-medium">(optionnel)</span></h2>
+                    <p className="text-muted-foreground text-xs md:text-sm font-medium">
                       Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche.
                     </p>
                   </div>
@@ -336,9 +336,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         </ScrollArea>
 
         {/* Footer */}
-        <div className="p-4 md:p-6 border-t border-accent/30 bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 shrink-0">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-3 md:mb-4 gap-3">
-            <div className="text-xs md:text-sm font-semibold text-muted-foreground">
+        <div className="p-3 md:p-4 border-t border-accent/30 bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 shrink-0">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-2 md:mb-3 gap-2">
+            <div className="text-xs font-semibold text-muted-foreground">
               {step === 1 ? (
                 <span>
                   {selectedDepartments.length} département{selectedDepartments.length > 1 ? 's' : ''} sélectionné{selectedDepartments.length > 1 ? 's' : ''}
@@ -356,9 +356,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
             
             {/* Compteur d'entreprises */}
             {selectedDepartments.length > 0 && (
-              <div className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-r from-accent/30 to-accent/20 border border-accent/40 shadow-lg shadow-accent/20">
-                <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-accent" />
-                <span className="font-bold text-accent text-sm md:text-base">
+              <div className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-lg bg-gradient-to-r from-accent/30 to-accent/20 border border-accent/40 shadow-lg shadow-accent/20">
+                <TrendingUp className="w-3.5 h-3.5 text-accent" />
+                <span className="font-bold text-accent text-xs md:text-sm">
                   {loadingCount ? (
                     <span className="animate-pulse">Calcul...</span>
                   ) : (
@@ -369,14 +369,14 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
             )}
           </div>
           
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-3 w-full">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
             {step === 2 && (
               <Button
                 variant="outline"
                 onClick={() => setStep(1)}
-                className="border-accent/50 hover:bg-accent/10 text-sm md:text-base h-10 md:h-auto"
+                className="border-accent/50 hover:bg-accent/10 hover:border-accent text-sm h-10 font-bold rounded-full"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="w-4 h-4 mr-1.5" />
                 Retour
               </Button>
             )}
@@ -390,16 +390,16 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                 }
               }}
               disabled={!canProceed}
-              className="bg-accent hover:bg-accent/90 text-primary flex-1 text-sm md:text-base h-10 md:h-auto"
+              className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-primary flex-1 text-sm h-10 font-bold rounded-full shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {step === 1 ? (
                 <>
                   Suivant
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-4 h-4 ml-1.5" />
                 </>
               ) : selectedCategories.length > 0 ? (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <Sparkles className="w-4 h-4 mr-1.5" />
                   Découvrir les entreprises
                 </>
               ) : null}
