@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { MapView } from "./MapView";
+import { cn } from "@/lib/utils";
 import {
   Navigation,
   MapPin,
@@ -436,7 +437,10 @@ export const TourneeRouteDisplay = ({
               <Checkbox
                 id="rdv"
                 checked={rdvPris}
-                onCheckedChange={(checked) => setRdvPris(checked as boolean)}
+                onCheckedChange={(checked) => {
+                  setRdvPris(checked as boolean);
+                  if (checked) setARevoir(false);
+                }}
               />
               <Label htmlFor="rdv" className="flex items-center gap-2 cursor-pointer">
                 <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -447,9 +451,10 @@ export const TourneeRouteDisplay = ({
               <Checkbox
                 id="revoir"
                 checked={aRevoir}
+                disabled={rdvPris}
                 onCheckedChange={(checked) => setARevoir(checked as boolean)}
               />
-              <Label htmlFor="revoir" className="flex items-center gap-2 cursor-pointer">
+              <Label htmlFor="revoir" className={cn("flex items-center gap-2", rdvPris ? "opacity-50" : "cursor-pointer")}>
                 <AlertCircle className="w-4 h-4 text-orange-500" />
                 À revoir
               </Label>
