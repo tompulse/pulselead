@@ -70,48 +70,52 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-40 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-32 sm:pt-40 pb-24 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-8 animate-fade-in">
+          <div className="text-center space-y-10 animate-fade-in">
             {/* Badge de lancement */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 backdrop-blur-sm hover:border-cyan-electric/50 transition-all">
-              <Lightbulb className="w-4 h-4 text-cyan-electric animate-pulse" />
-              <span className="text-sm text-cyan-electric font-semibold tracking-wide">Données officielles en temps réel</span>
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 backdrop-blur-sm hover:border-cyan-electric/50 transition-all">
+              <Lightbulb className="w-5 h-5 text-cyan-electric animate-pulse" />
+              <span className="text-base text-cyan-electric font-bold tracking-wide">🔥 Données officielles • Temps réel</span>
             </div>
             
-            {/* Promesse de vente claire */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="text-foreground">Contacte les nouvelles entreprises</span>
+            {/* Promesse de vente ultra claire */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+              <span className="text-foreground">Sois le premier</span>
               <br />
-              <span className="gradient-text">avant tes concurrents</span>
+              <span className="gradient-text">à contacter</span>
+              <br />
+              <span className="text-foreground">les nouvelles entreprises</span>
             </h1>
             
-            {/* Sous-promesse claire */}
-            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              LUMA te permet de visualiser en temps réel toutes les créations d'entreprises sur ton territoire. 
-              Fini les opportunités manquées. À toi les premiers contacts.
+            {/* Sous-promesse ultra directe */}
+            <p className="text-xl sm:text-2xl md:text-3xl text-foreground/80 max-w-4xl mx-auto leading-relaxed font-medium">
+              Visualise en temps réel <span className="text-cyan-electric font-bold">toutes les créations d'entreprises</span> sur ton territoire.
+              <br className="hidden sm:block" />
+              Fini les opportunités manquées.
             </p>
             
-            {/* CTA au-dessus de la ligne de flottaison */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+            {/* CTA ultra visible */}
+            <div className="flex flex-col items-center gap-6 pt-8">
               <Button 
                 onClick={handleExplorerClick}
                 size="lg"
-                className="btn-hero w-full sm:w-auto min-w-[240px] h-14 text-lg group"
+                className="btn-hero w-full sm:w-auto min-w-[280px] h-16 text-xl font-bold group shadow-2xl shadow-cyan-electric/30"
               >
-                Commencer gratuitement
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                Démarrer maintenant
+                <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-2 transition-transform" />
               </Button>
+              <div className="flex items-center gap-2 text-base text-muted-foreground">
+                <CheckCircle className="w-5 h-5 text-cyan-electric" />
+                <span className="font-semibold">Gratuit • Sans carte bancaire • Accès immédiat</span>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Aucune carte bancaire requise • Accès immédiat
-            </p>
 
-            {/* Visuel impactant - Dashboard Preview */}
-            <div className="pt-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="glass-card p-4 sm:p-8 max-w-5xl mx-auto relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-electric/0 via-cyan-electric/10 to-cyan-electric/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
-                <div className="relative aspect-video">
+            {/* Visuel impactant */}
+            <div className="pt-20 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="glass-card p-6 sm:p-10 max-w-5xl mx-auto relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-electric/0 via-cyan-electric/20 to-cyan-electric/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+                <div className="relative aspect-video rounded-lg overflow-hidden">
                   <DashboardPreview />
                 </div>
               </div>
@@ -121,37 +125,45 @@ const Index = () => {
       </section>
 
       {/* Social Proof */}
-      <section className="relative py-12 px-4 border-y border-cyan-electric/10 bg-gradient-to-r from-navy-deep/30 to-black-deep/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
-            <div className="flex items-center gap-3 group">
+      <section className="relative py-16 px-4 border-y border-cyan-electric/10 bg-gradient-to-r from-navy-deep/40 to-black-deep/40">
+        <div className="container mx-auto max-w-7xl">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-20">
+            <div className="flex items-center gap-4 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-cyan-electric/30 blur-xl group-hover:blur-2xl transition-all"></div>
-                <Shield className="w-10 h-10 text-cyan-electric relative" />
+                <div className="absolute inset-0 bg-cyan-electric/40 blur-2xl group-hover:blur-3xl transition-all"></div>
+                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 flex items-center justify-center">
+                  <Shield className="w-9 h-9 text-cyan-electric" />
+                </div>
               </div>
               <div className="text-left">
-                <div className="text-lg font-bold text-foreground">Données officielles INPI</div>
-                <div className="text-sm text-muted-foreground">Source certifiée • Mise à jour quotidienne</div>
+                <div className="text-2xl font-black text-foreground">100% Officiel</div>
+                <div className="text-base text-muted-foreground font-medium">Données certifiées INPI</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 group">
+
+            <div className="flex items-center gap-4 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-cyan-electric/30 blur-xl group-hover:blur-2xl transition-all"></div>
-                <CheckCircle className="w-10 h-10 text-cyan-electric relative" />
+                <div className="absolute inset-0 bg-cyan-electric/40 blur-2xl group-hover:blur-3xl transition-all"></div>
+                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 flex items-center justify-center">
+                  <CheckCircle className="w-9 h-9 text-cyan-electric" />
+                </div>
               </div>
               <div className="text-left">
-                <div className="text-lg font-bold text-foreground">+500 commerciaux</div>
-                <div className="text-sm text-muted-foreground">Gagnent du temps chaque jour</div>
+                <div className="text-2xl font-black text-foreground">+500 Utilisateurs</div>
+                <div className="text-base text-muted-foreground font-medium">Gagnent du temps quotidiennement</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 group">
+
+            <div className="flex items-center gap-4 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-cyan-electric/30 blur-xl group-hover:blur-2xl transition-all"></div>
-                <Star className="w-10 h-10 text-cyan-electric relative fill-cyan-electric" />
+                <div className="absolute inset-0 bg-cyan-electric/40 blur-2xl group-hover:blur-3xl transition-all"></div>
+                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 flex items-center justify-center">
+                  <Star className="w-9 h-9 text-cyan-electric fill-cyan-electric" />
+                </div>
               </div>
               <div className="text-left">
-                <div className="text-lg font-bold text-foreground">4.8/5 de satisfaction</div>
-                <div className="text-sm text-muted-foreground">+200 avis vérifiés</div>
+                <div className="text-2xl font-black text-foreground">4.8/5 ★★★★★</div>
+                <div className="text-base text-muted-foreground font-medium">+200 avis vérifiés</div>
               </div>
             </div>
           </div>
@@ -159,45 +171,47 @@ const Index = () => {
       </section>
 
       {/* Section Problèmes */}
-      <section className="relative py-24 px-4">
+      <section className="relative py-28 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16 space-y-4 animate-fade-in">
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground">
-              Tu perds des <span className="text-destructive">opportunités</span> chaque jour
+          <div className="text-center mb-20 space-y-6 animate-fade-in">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-tight">
+              Tu perds des <span className="text-destructive">milliers d'euros</span>
+              <br />
+              chaque mois
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Sans outil adapté, tu passes à côté de ton vrai potentiel commercial
+            <p className="text-2xl md:text-3xl text-muted-foreground max-w-3xl mx-auto font-medium">
+              Sans outil de prospection moderne, tu passes à côté de ton potentiel
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="glass-card p-8 space-y-4 border-destructive/20 hover:border-destructive/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
-                <AlertCircle className="w-8 h-8 text-destructive" />
+          <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+            <div className="glass-card p-10 space-y-6 border-destructive/30 hover:border-destructive/50 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <div className="w-20 h-20 rounded-3xl bg-destructive/10 flex items-center justify-center">
+                <AlertCircle className="w-10 h-10 text-destructive" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Tes concurrents sont plus rapides</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Pendant que tu cherches manuellement, ils contactent déjà les nouvelles entreprises et signent des contrats.
+              <h3 className="text-2xl font-black text-foreground">Trop lent</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Tes concurrents sont <span className="text-foreground font-bold">3x plus rapides</span>. Ils signent pendant que tu cherches encore.
               </p>
             </div>
 
-            <div className="glass-card p-8 space-y-4 border-destructive/20 hover:border-destructive/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
-                <Clock className="w-8 h-8 text-destructive" />
+            <div className="glass-card p-10 space-y-6 border-destructive/30 hover:border-destructive/50 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="w-20 h-20 rounded-3xl bg-destructive/10 flex items-center justify-center">
+                <Clock className="w-10 h-10 text-destructive" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Tu perds un temps précieux</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Des heures sur Excel, des données périmées, des recherches fastidieuses... Ce temps devrait être consacré à vendre.
+              <h3 className="text-2xl font-black text-foreground">Temps perdu</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                <span className="text-foreground font-bold">200h par mois</span> sur Excel et recherches manuelles. Ce temps devrait servir à vendre.
               </p>
             </div>
 
-            <div className="glass-card p-8 space-y-4 border-destructive/20 hover:border-destructive/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
-                <Target className="w-8 h-8 text-destructive" />
+            <div className="glass-card p-10 space-y-6 border-destructive/30 hover:border-destructive/50 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="w-20 h-20 rounded-3xl bg-destructive/10 flex items-center justify-center">
+                <Target className="w-10 h-10 text-destructive" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Tu manques de vision stratégique</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Impossible de savoir où se trouvent les vraies opportunités : quel secteur ? Quelle zone privilégier ?
+              <h3 className="text-2xl font-black text-foreground">Zéro visibilité</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Impossible de savoir <span className="text-foreground font-bold">où sont les opportunités</span>. Tu prospectées à l'aveugle.
               </p>
             </div>
           </div>
@@ -205,66 +219,66 @@ const Index = () => {
       </section>
 
       {/* Section Solution avec résultats concrets */}
-      <section className="relative py-24 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background">
+      <section className="relative py-28 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16 space-y-4 animate-fade-in">
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold">
-              LUMA transforme ta <span className="gradient-text">prospection</span>
+          <div className="text-center mb-20 space-y-6 animate-fade-in">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight">
+              LUMA multiplie tes <span className="gradient-text">résultats</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Sois le premier à contacter les nouvelles entreprises. Visualise ton territoire. Développe ton portefeuille.
+            <p className="text-2xl md:text-3xl text-foreground/80 max-w-4xl mx-auto font-medium">
+              Deviens le commercial le plus réactif de ton secteur
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-16 max-w-5xl mx-auto">
-            <div className="text-center space-y-4 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <div className="inline-flex w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
-                <Zap className="w-10 h-10 text-cyan-electric" />
+          <div className="grid md:grid-cols-3 gap-10 mb-20 max-w-5xl mx-auto">
+            <div className="text-center space-y-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <div className="inline-flex w-24 h-24 rounded-3xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
+                <Zap className="w-12 h-12 text-cyan-electric" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground">Réactivité maximale</h3>
-              <p className="text-muted-foreground text-lg">
-                Notifications en temps réel des nouvelles créations. Contact immédiat avant la concurrence.
+              <h3 className="text-3xl font-black text-foreground">Premier sur le terrain</h3>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Notifications <span className="text-cyan-electric font-bold">instantanées</span>. Tu contactes avant tout le monde.
               </p>
             </div>
 
-            <div className="text-center space-y-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="inline-flex w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
-                <TrendingUp className="w-10 h-10 text-cyan-electric" />
+            <div className="text-center space-y-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="inline-flex w-24 h-24 rounded-3xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
+                <TrendingUp className="w-12 h-12 text-cyan-electric" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground">Vision stratégique</h3>
-              <p className="text-muted-foreground text-lg">
-                Identifie les secteurs porteurs et les zones dynamiques. Priorise tes actions commerciales.
+              <h3 className="text-3xl font-black text-foreground">Vision stratégique</h3>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Identifie les <span className="text-cyan-electric font-bold">zones à fort potentiel</span>. Priorise intelligemment.
               </p>
             </div>
 
-            <div className="text-center space-y-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="inline-flex w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
-                <Shield className="w-10 h-10 text-cyan-electric" />
+            <div className="text-center space-y-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="inline-flex w-24 h-24 rounded-3xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
+                <Shield className="w-12 h-12 text-cyan-electric" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground">Données fiables</h3>
-              <p className="text-muted-foreground text-lg">
-                Informations officielles vérifiées : SIRET, adresse, activité, dirigeant, capital.
+              <h3 className="text-3xl font-black text-foreground">100% fiable</h3>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Données <span className="text-cyan-electric font-bold">officielles vérifiées</span>. Zéro erreur, zéro perte de temps.
               </p>
             </div>
           </div>
 
           {/* Résultats concrets */}
-          <div className="glass-card p-12 max-w-4xl mx-auto border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 to-transparent">
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="space-y-2">
-                <div className="text-5xl font-bold gradient-text">3x</div>
-                <div className="text-foreground font-semibold">Plus de RDV</div>
-                <div className="text-sm text-muted-foreground">En moyenne</div>
+          <div className="glass-card p-12 md:p-16 max-w-5xl mx-auto border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 to-transparent">
+            <div className="grid md:grid-cols-3 gap-12 text-center">
+              <div className="space-y-3">
+                <div className="text-6xl md:text-7xl font-black gradient-text">×3</div>
+                <div className="text-2xl text-foreground font-bold">Plus de RDV</div>
+                <div className="text-lg text-muted-foreground">Dès le 1er mois</div>
               </div>
-              <div className="space-y-2">
-                <div className="text-5xl font-bold gradient-text">3h</div>
-                <div className="text-foreground font-semibold">Gagnées par jour</div>
-                <div className="text-sm text-muted-foreground">En recherche</div>
+              <div className="space-y-3">
+                <div className="text-6xl md:text-7xl font-black gradient-text">3h</div>
+                <div className="text-2xl text-foreground font-bold">Gagnées/jour</div>
+                <div className="text-lg text-muted-foreground">En recherche manuelle</div>
               </div>
-              <div className="space-y-2">
-                <div className="text-5xl font-bold gradient-text">+45%</div>
-                <div className="text-foreground font-semibold">Nouveaux clients</div>
-                <div className="text-sm text-muted-foreground">En 6 mois</div>
+              <div className="space-y-3">
+                <div className="text-6xl md:text-7xl font-black gradient-text">+45%</div>
+                <div className="text-2xl text-foreground font-bold">De clients</div>
+                <div className="text-lg text-muted-foreground">En 6 mois</div>
               </div>
             </div>
           </div>
@@ -453,78 +467,78 @@ const Index = () => {
       </section>
 
       {/* Section Témoignages */}
-      <section className="relative py-24 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background">
+      <section className="relative py-28 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16 space-y-4 animate-fade-in">
-            <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="text-center mb-20 space-y-6 animate-fade-in">
+            <div className="flex items-center justify-center gap-3 mb-6">
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-6 h-6 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-8 h-8 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <span className="text-2xl font-bold text-foreground">4.8/5</span>
+              <span className="text-3xl font-black text-foreground">4.8/5</span>
             </div>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground">
-              Ils ont accéléré leur <span className="gradient-text">croissance</span>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-tight">
+              Ils explosent leur <span className="gradient-text">chiffre d'affaires</span>
             </h2>
-            <p className="text-xl text-muted-foreground">Des résultats concrets dès les premières semaines</p>
+            <p className="text-2xl md:text-3xl text-muted-foreground font-medium">Résultats réels, mesurables, rapides</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="glass-card p-8 space-y-6 hover:border-cyan-electric/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <Quote className="w-10 h-10 text-cyan-electric/30" />
+          <div className="grid md:grid-cols-3 gap-10">
+            <div className="glass-card p-10 space-y-6 hover:border-cyan-electric/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <Quote className="w-12 h-12 text-cyan-electric/30" />
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-5 h-5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-foreground text-lg leading-relaxed">
-                "En 30 jours, j'ai multiplié mes RDV par 3. LUMA me permet d'être la première à contacter les nouvelles entreprises."
+              <p className="text-xl text-foreground leading-relaxed font-medium">
+                "J'ai <span className="text-cyan-electric font-bold">triplé mes RDV en 30 jours</span>. Fini de rater les bonnes opportunités."
               </p>
-              <div className="inline-flex px-4 py-2 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">+200% de RDV</span>
+              <div className="inline-flex px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
+                <span className="text-base font-bold text-cyan-electric">+200% de RDV</span>
               </div>
-              <div className="pt-4 border-t border-accent/10 space-y-1">
-                <div className="font-semibold text-foreground">Sophie Martin</div>
-                <div className="text-sm text-muted-foreground">Commerciale BtoB</div>
+              <div className="pt-6 border-t border-accent/10 space-y-1">
+                <div className="font-bold text-lg text-foreground">Sophie Martin</div>
+                <div className="text-base text-muted-foreground">Commerciale BtoB</div>
               </div>
             </div>
 
-            <div className="glass-card p-8 space-y-6 hover:border-cyan-electric/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <Quote className="w-10 h-10 text-cyan-electric/30" />
+            <div className="glass-card p-10 space-y-6 hover:border-cyan-electric/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <Quote className="w-12 h-12 text-cyan-electric/30" />
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-5 h-5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-foreground text-lg leading-relaxed">
-                "Fini les fichiers Excel. Je visualise tout mon territoire en un coup d'œil et je priorise mes actions."
+              <p className="text-xl text-foreground leading-relaxed font-medium">
+                "<span className="text-cyan-electric font-bold">3h gagnées chaque jour</span>. Je vois tout mon territoire en un coup d'œil."
               </p>
-              <div className="inline-flex px-4 py-2 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">3h gagnées/jour</span>
+              <div className="inline-flex px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
+                <span className="text-base font-bold text-cyan-electric">3h économisées/jour</span>
               </div>
-              <div className="pt-4 border-t border-accent/10 space-y-1">
-                <div className="font-semibold text-foreground">Thomas Dubois</div>
-                <div className="text-sm text-muted-foreground">Responsable commercial</div>
+              <div className="pt-6 border-t border-accent/10 space-y-1">
+                <div className="font-bold text-lg text-foreground">Thomas Dubois</div>
+                <div className="text-base text-muted-foreground">Responsable commercial</div>
               </div>
             </div>
 
-            <div className="glass-card p-8 space-y-6 hover:border-cyan-electric/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <Quote className="w-10 h-10 text-cyan-electric/30" />
+            <div className="glass-card p-10 space-y-6 hover:border-cyan-electric/40 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <Quote className="w-12 h-12 text-cyan-electric/30" />
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-5 h-5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-foreground text-lg leading-relaxed">
-                "L'outil que j'aurais voulu avoir dès le début. Simple, efficace, et toujours à jour. Un vrai gain de temps."
+              <p className="text-xl text-foreground leading-relaxed font-medium">
+                "Simple, efficace, toujours à jour. <span className="text-cyan-electric font-bold">45 nouveaux clients en 6 mois</span>."
               </p>
-              <div className="inline-flex px-4 py-2 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">+45 nouveaux clients</span>
+              <div className="inline-flex px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
+                <span className="text-base font-bold text-cyan-electric">+45 clients</span>
               </div>
-              <div className="pt-4 border-t border-accent/10 space-y-1">
-                <div className="font-semibold text-foreground">Marie Leroux</div>
-                <div className="text-sm text-muted-foreground">Indépendante</div>
+              <div className="pt-6 border-t border-accent/10 space-y-1">
+                <div className="font-bold text-lg text-foreground">Marie Leroux</div>
+                <div className="text-base text-muted-foreground">Indépendante</div>
               </div>
             </div>
           </div>
@@ -532,88 +546,99 @@ const Index = () => {
       </section>
 
       {/* Section FAQ + CTA Final */}
-      <section className="relative py-24 px-4">
+      <section className="relative py-28 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-16 space-y-4 animate-fade-in">
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground">
-              Questions <span className="gradient-text">fréquentes</span>
+          <div className="text-center mb-20 space-y-6 animate-fade-in">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-tight">
+              Tes <span className="gradient-text">questions</span>
             </h2>
-            <p className="text-xl text-muted-foreground">Tout ce que tu dois savoir sur LUMA</p>
+            <p className="text-2xl text-muted-foreground font-medium">Les réponses que tu cherches</p>
           </div>
 
-          <Accordion type="single" collapsible className="space-y-4 mb-16">
-            <AccordionItem value="item-1" className="glass-card px-6 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-cyan-electric">
+          <Accordion type="single" collapsible className="space-y-5 mb-20">
+            <AccordionItem value="item-1" className="glass-card px-8 py-2 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-xl font-bold text-foreground hover:text-cyan-electric">
                 D'où viennent les données ?
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
-                Toutes nos données proviennent de l'INPI (Institut National de la Propriété Industrielle) et sont mises à jour quotidiennement. Tu as accès aux informations légales vérifiées : SIRET, adresse, activité NAF, forme juridique, etc.
+              <AccordionContent className="text-lg text-muted-foreground leading-relaxed pt-3">
+                <span className="text-foreground font-semibold">100% officielles</span>. Directement de l'INPI. Mise à jour quotidienne. SIRET, adresse, activité NAF, forme juridique... Tout y est.
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-2" className="glass-card px-6 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-cyan-electric">
-                Puis-je essayer gratuitement ?
+            <AccordionItem value="item-2" className="glass-card px-8 py-2 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-xl font-bold text-foreground hover:text-cyan-electric">
+                C'est vraiment gratuit pour tester ?
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
-                Oui ! Le plan gratuit te permet de consulter jusqu'à 50 entreprises par mois. Aucune carte bancaire requise pour commencer.
+              <AccordionContent className="text-lg text-muted-foreground leading-relaxed pt-3">
+                <span className="text-foreground font-semibold">Oui, 100% gratuit</span>. Aucune carte bancaire. Accès immédiat à la plateforme.
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-3" className="glass-card px-6 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-cyan-electric">
-                Comment sont mises à jour les données ?
+            <AccordionItem value="item-3" className="glass-card px-8 py-2 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-xl font-bold text-foreground hover:text-cyan-electric">
+                Les données sont fraîches ?
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
-                Synchronisation automatique chaque jour avec les bases officielles. Tu es toujours informé des dernières créations d'entreprises dans ton secteur.
+              <AccordionContent className="text-lg text-muted-foreground leading-relaxed pt-3">
+                <span className="text-foreground font-semibold">Synchronisation automatique chaque jour</span>. Tu es toujours informé des dernières créations.
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-4" className="glass-card px-6 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-cyan-electric">
-                Puis-je annuler mon abonnement à tout moment ?
+            <AccordionItem value="item-4" className="glass-card px-8 py-2 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-xl font-bold text-foreground hover:text-cyan-electric">
+                Je peux annuler quand je veux ?
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
-                Absolument. Ton abonnement peut être annulé à tout moment depuis ton espace personnel, sans frais ni engagement.
+              <AccordionContent className="text-lg text-muted-foreground leading-relaxed pt-3">
+                <span className="text-foreground font-semibold">Oui, sans engagement</span>. Annulation en 1 clic depuis ton espace. Aucun frais.
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-5" className="glass-card px-6 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-cyan-electric">
-                LUMA fonctionne sur mobile ?
+            <AccordionItem value="item-5" className="glass-card px-8 py-2 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-xl font-bold text-foreground hover:text-cyan-electric">
+                Ça marche sur mobile ?
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
-                Oui, LUMA est entièrement responsive. Tu peux suivre tes prospects où que tu sois : ordinateur, tablette ou smartphone.
+              <AccordionContent className="text-lg text-muted-foreground leading-relaxed pt-3">
+                <span className="text-foreground font-semibold">100% responsive</span>. Ordinateur, tablette, smartphone. Prospecte où tu veux, quand tu veux.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
 
-          {/* CTA Final puissant */}
-          <div className="glass-card p-12 text-center space-y-8 border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 via-navy-deep/10 to-transparent">
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-              Prêt à transformer ta prospection ?
+          {/* CTA Final ultra puissant */}
+          <div className="glass-card p-16 text-center space-y-10 border-cyan-electric/40 bg-gradient-to-br from-cyan-electric/10 via-navy-deep/20 to-transparent shadow-2xl shadow-cyan-electric/20">
+            <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground leading-tight">
+              Prêt à <span className="gradient-text">dominer</span> ton territoire ?
             </h3>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-              Rejoins les centaines de commerciaux qui développent leur portefeuille avec LUMA
+            <p className="text-2xl md:text-3xl text-foreground/80 max-w-2xl mx-auto font-medium">
+              Rejoins les centaines de commerciaux qui cartonnent avec LUMA
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-              <Button onClick={() => navigate("/auth")} size="lg" className="btn-hero min-w-[240px] h-14 text-lg">
-                Commencer gratuitement
-                <ArrowRight className="w-5 h-5 ml-2" />
+            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
+              <Button onClick={() => navigate("/auth")} size="lg" className="btn-hero min-w-[280px] h-16 text-xl font-bold shadow-2xl shadow-cyan-electric/30">
+                Démarrer maintenant
+                <ArrowRight className="w-6 h-6 ml-2" />
               </Button>
               <Button 
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 size="lg"
                 variant="outline"
-                className="border-2 border-cyan-electric/50 text-foreground hover:bg-cyan-electric/10 hover:border-cyan-electric min-w-[240px] h-14 text-lg"
+                className="border-2 border-cyan-electric/50 text-foreground hover:bg-cyan-electric/10 hover:border-cyan-electric min-w-[280px] h-16 text-xl font-bold"
               >
-                <Calendar className="w-5 h-5 mr-2" />
+                <Calendar className="w-6 h-6 mr-2" />
                 Voir la démo
               </Button>
             </div>
-            <p className="text-sm text-muted-foreground pt-4">
-              Aucune carte bancaire • Mis en place en 5 minutes • Garantie satisfait ou remboursé
-            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 text-base text-muted-foreground font-semibold">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-cyan-electric" />
+                <span>Sans carte bancaire</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-cyan-electric" />
+                <span>Mis en place en 5 min</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-cyan-electric" />
+                <span>Support 7j/7</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
