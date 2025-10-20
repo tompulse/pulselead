@@ -39,7 +39,6 @@ const Dashboard = () => {
   const [mobileLeadStatus, setMobileLeadStatus] = useState<any>(null);
   const [mobileActiveTab, setMobileActiveTab] = useState<'info' | 'crm'>('info');
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [selectedEntreprisesForTournee, setSelectedEntreprisesForTournee] = useState<any[]>([]);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -413,10 +412,7 @@ const Dashboard = () => {
               </div>
             ) : view === "tournees" ? (
               <div className="h-full">
-                <TourneesView
-                  selectedEntreprises={selectedEntreprisesForTournee}
-                  onClearSelection={() => setSelectedEntreprisesForTournee([])}
-                />
+            <TourneesView />
               </div>
             ) : (
               <div className="h-full">
