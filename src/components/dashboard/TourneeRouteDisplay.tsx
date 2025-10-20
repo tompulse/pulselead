@@ -143,68 +143,72 @@ export const TourneeRouteDisplay = ({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-4 h-full">
-      {/* Carte - prend tout l'espace disponible */}
-      <div className="h-full min-h-[400px]">
-        <MapView
-          filters={{
-            dateFrom: "",
-            dateTo: "",
-            categories: [],
-            departments: []
-          }}
-          tourneeRoute={{
-            entreprises,
-            pointDepartLat,
-            pointDepartLng
-          }}
-        />
-      </div>
-
-      {/* Liste ultra-simple - colonne fixe à droite */}
-      <Card className="border-accent/20 h-full flex flex-col">
-        <CardHeader className="pb-3 shrink-0">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-bold">{entreprises.length} arrêts</CardTitle>
-            <Badge variant={statusConfig.variant} className="text-xs">
-              {statusConfig.label}
-            </Badge>
+    <div className="space-y-4">
+      {/* Carte avec hauteur fixe */}
+      <Card className="border-accent/20">
+        <CardContent className="p-0">
+          <div className="h-[400px] rounded-lg overflow-hidden">
+            <MapView
+              filters={{
+                dateFrom: "",
+                dateTo: "",
+                categories: [],
+                departments: []
+              }}
+              tourneeRoute={{
+                entreprises,
+                pointDepartLat,
+                pointDepartLng
+              }}
+            />
           </div>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
-            <span>{Math.round(distanceTotaleKm)} km</span>
-            <span>•</span>
-            <span>{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
+        </CardContent>
+      </Card>
+
+      {/* Infos + Liste */}
+      <Card className="border-accent/20">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <CardTitle className="text-base font-bold">{entreprises.length} arrêts</CardTitle>
+              <Badge variant={statusConfig.variant} className="text-xs">
+                {statusConfig.label}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span>{Math.round(distanceTotaleKm)} km</span>
+              <span>•</span>
+              <span>{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
+            </div>
           </div>
         </CardHeader>
         
-        <CardContent className="flex-1 flex flex-col gap-3 p-4 overflow-hidden">
-          {/* Liste simple avec scroll automatique si nécessaire */}
-          <div className="flex-1 overflow-y-auto -mx-2 px-2">
-            <div className="space-y-1.5">
-              {entreprises.map((entreprise, index) => (
-                <div
-                  key={entreprise.id}
-                  className="flex items-center gap-2 p-2 rounded hover:bg-accent/5 transition-colors"
-                >
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{entreprise.nom}</div>
-                    <div className="text-xs text-muted-foreground truncate">
-                      {entreprise.ville}
-                    </div>
+        <CardContent className="space-y-3">
+          {/* Liste simple */}
+          <div className="space-y-1.5">
+            {entreprises.map((entreprise, index) => (
+              <div
+                key={entreprise.id}
+                className="flex items-center gap-2 p-2 rounded hover:bg-accent/5 transition-colors"
+              >
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
+                  {index + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium truncate">{entreprise.nom}</div>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {entreprise.ville}
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
 
-          {/* Bouton fixe en bas */}
+          {/* Bouton de démarrage */}
           <Button 
             onClick={handleStartNavigation} 
             size="lg"
-            className="w-full h-12 text-base font-semibold shrink-0"
+            className="w-full h-12 text-base font-semibold"
           >
             <Navigation className="w-5 h-5 mr-2" />
             Démarrer la prospection
