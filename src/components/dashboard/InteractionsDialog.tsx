@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Phone, MapPin, Calendar, StickyNote, Trash2, X, Navigation } from "lucide-react";
+import { Phone, MapPin, Calendar, StickyNote, Trash2, Navigation } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -150,26 +150,16 @@ export const InteractionsDialog = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-2xl max-h-[85vh]">
           <DialogHeader>
-            <div className="flex items-center justify-between">
-              <DialogTitle className="flex items-center gap-2">
-                <div className={`p-2 rounded-lg ${typeInfo.bg}`}>
-                  <Icon className={`h-5 w-5 ${typeInfo.color}`} />
+            <div className="flex items-center gap-2">
+              <div className={`p-2 rounded-lg ${typeInfo.bg}`}>
+                <Icon className={`h-5 w-5 ${typeInfo.color}`} />
+              </div>
+              <div>
+                <DialogTitle>{typeInfo.label}</DialogTitle>
+                <div className="text-sm text-muted-foreground font-normal">
+                  {interactions.length} {interactions.length > 1 ? 'enregistrements' : 'enregistrement'}
                 </div>
-                <div>
-                  <div>{typeInfo.label}</div>
-                  <div className="text-sm text-muted-foreground font-normal">
-                    {interactions.length} {interactions.length > 1 ? 'enregistrements' : 'enregistrement'}
-                  </div>
-                </div>
-              </DialogTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onOpenChange(false)}
-                className="h-8 w-8"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+              </div>
             </div>
           </DialogHeader>
 
@@ -221,8 +211,8 @@ export const InteractionsDialog = ({
                       </div>
                       
                       <div className="flex gap-2">
-                        {/* Action buttons based on type */}
-                        {interaction.type === 'appel' && interaction.telephone && (
+                        {/* Always show action buttons if data exists */}
+                        {interaction.telephone && (
                           <Button
                             variant="outline"
                             size="sm"
@@ -236,7 +226,7 @@ export const InteractionsDialog = ({
                           </Button>
                         )}
                         
-                        {interaction.type === 'visite' && interaction.latitude && interaction.longitude && (
+                        {interaction.latitude && interaction.longitude && (
                           <Button
                             variant="outline"
                             size="sm"
