@@ -329,12 +329,12 @@ export const TourneesView = () => {
   if (selectedTournee) {
     return (
       <div className="h-full flex flex-col gap-3 overflow-hidden">
-        <Card>
+        <Card className="border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent shadow-lg shadow-accent/5">
           <CardContent className="pt-4 pb-4 flex gap-2">
             <Button 
               variant="outline" 
               onClick={() => setSelectedTournee(null)}
-              className="flex-1"
+              className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
             >
               ← Retour aux tournées
             </Button>
@@ -357,6 +357,7 @@ export const TourneesView = () => {
                     });
                 }
               }}
+              className="border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
             >
               Modifier le nom
             </Button>
@@ -384,10 +385,10 @@ export const TourneesView = () => {
     <div className="h-full flex flex-col gap-3 overflow-hidden">
       {/* Nouvelle tournée */}
       {!isSelecting && !optimizedResult && (
-        <Card>
+        <Card className="border-accent/30 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent hover:border-accent/50 transition-all shadow-lg shadow-accent/5">
           <CardContent className="pt-4 pb-4">
-            <Button onClick={() => setIsSelecting(true)} className="w-full">
-              <Plus className="w-4 h-4 mr-2" />
+            <Button onClick={() => setIsSelecting(true)} className="w-full h-12 text-base font-semibold bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all">
+              <Plus className="w-5 h-5 mr-2" />
               Créer une nouvelle tournée
             </Button>
           </CardContent>
@@ -615,15 +616,19 @@ export const TourneesView = () => {
       )}
 
       {/* Liste des tournées sauvegardées */}
-      <Card className="flex-1 flex flex-col min-h-0">
-        <CardHeader className="pb-3 flex-shrink-0">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            Mes tournées planifiées
-          </CardTitle>
-          <CardDescription className="text-xs">
-            {tournees.length} tournée(s) enregistrée(s)
-          </CardDescription>
+      <Card className="flex-1 flex flex-col min-h-0 border-accent/30 bg-gradient-to-br from-card/95 to-card/80 shadow-lg shadow-accent/5">
+        <CardHeader className="pb-3 flex-shrink-0 border-b border-accent/10">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-accent/10 rounded-lg">
+              <Calendar className="w-4 h-4 text-accent" />
+            </div>
+            <div>
+              <CardTitle className="text-base gradient-text">Mes tournées planifiées</CardTitle>
+              <CardDescription className="text-xs">
+                {tournees.length} tournée(s) enregistrée(s)
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="flex-1 min-h-0 p-0">
           <ScrollArea className="h-full px-4">
@@ -641,12 +646,16 @@ export const TourneesView = () => {
                 {tournees.map((tournee) => {
                   const statutConfig = getStatutBadge(tournee.statut);
                   return (
-                    <Card key={tournee.id} className="border-accent/20">
-                      <CardContent className="pt-3 pb-3 space-y-2">
+                    <Card key={tournee.id} className="group relative border-accent/30 hover:border-accent/50 bg-gradient-to-br from-card/95 to-card/80 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-lg" />
+                      <CardContent className="relative pt-3 pb-3 space-y-2">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-sm truncate">{tournee.nom}</div>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <div className="font-medium text-sm truncate flex items-center gap-2">
+                              <Route className="w-3.5 h-3.5 text-accent" />
+                              {tournee.nom}
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                               <Calendar className="w-3 h-3" />
                               {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy')}
                             </div>
@@ -656,18 +665,18 @@ export const TourneesView = () => {
                           </Badge>
                         </div>
                         
-                        <div className="grid grid-cols-3 gap-1 text-xs">
-                          <div className="flex items-center gap-1 bg-muted/30 p-1 rounded">
-                            <MapPin className="w-3 h-3 text-muted-foreground" />
-                            <span>{tournee.entreprises_ids.length}</span>
+                        <div className="grid grid-cols-3 gap-1.5 text-xs">
+                          <div className="flex items-center gap-1.5 bg-gradient-to-br from-blue-500/10 to-blue-500/5 p-2 rounded-lg border border-blue-500/20">
+                            <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                            <span className="font-medium">{tournee.entreprises_ids.length}</span>
                           </div>
-                          <div className="flex items-center gap-1 bg-muted/30 p-1 rounded">
-                            <Navigation className="w-3 h-3 text-muted-foreground" />
-                            <span>{Math.round(tournee.distance_totale_km)}km</span>
+                          <div className="flex items-center gap-1.5 bg-gradient-to-br from-green-500/10 to-green-500/5 p-2 rounded-lg border border-green-500/20">
+                            <Navigation className="w-3.5 h-3.5 text-green-500" />
+                            <span className="font-medium">{Math.round(tournee.distance_totale_km)}km</span>
                           </div>
-                          <div className="flex items-center gap-1 bg-muted/30 p-1 rounded">
-                            <Clock className="w-3 h-3 text-muted-foreground" />
-                            <span>{Math.floor(tournee.temps_estime_minutes / 60)}h{(tournee.temps_estime_minutes % 60).toString().padStart(2, '0')}</span>
+                          <div className="flex items-center gap-1.5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 p-2 rounded-lg border border-purple-500/20">
+                            <Clock className="w-3.5 h-3.5 text-purple-500" />
+                            <span className="font-medium">{Math.floor(tournee.temps_estime_minutes / 60)}h{(tournee.temps_estime_minutes % 60).toString().padStart(2, '0')}</span>
                           </div>
                         </div>
                         
@@ -675,25 +684,25 @@ export const TourneesView = () => {
                           <Button 
                             variant="default" 
                             size="sm" 
-                            className="flex-1 h-8 text-xs"
+                            className="flex-1 h-9 text-xs bg-gradient-to-r from-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 transition-all"
                             onClick={() => setSelectedTournee(tournee)}
                           >
-                            <MapIconLucide className="w-3 h-3 mr-1" />
+                            <MapIconLucide className="w-3.5 h-3.5 mr-1.5" />
                             Voir détails
                           </Button>
                           <Button 
                             variant="outline" 
                             size="sm" 
-                            className="h-8 text-xs"
+                            className="h-9 text-xs border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
                             onClick={() => handleStartTournee(tournee)}
                           >
-                            <Locate className="w-3 h-3 mr-1" />
+                            <Locate className="w-3.5 h-3.5 mr-1" />
                             GPS
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-8"
+                            className="h-9 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50 transition-all"
                             onClick={() => handleDeleteTournee(tournee.id)}
                           >
                             <Trash2 className="w-3 h-3" />

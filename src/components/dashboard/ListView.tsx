@@ -365,16 +365,16 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
   return (
     <>
       <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
-        {/* Header with search - More subtle */}
-        <div className="glass-card rounded-lg p-3 md:p-4 border border-accent/10 flex-shrink-0 bg-accent/5">
+        {/* Header with search - More colorful */}
+        <div className="glass-card rounded-xl p-3 md:p-4 border border-accent/30 flex-shrink-0 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent shadow-lg shadow-accent/5">
           <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-accent/10 rounded-lg">
+              <div className="p-2.5 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg shadow-sm">
                 <Building2 className="w-4 h-4 md:w-5 md:h-5 text-accent" />
               </div>
               <div>
-                <h3 className="text-base md:text-lg font-semibold text-foreground/80">Liste des entreprises</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">
+                <h3 className="text-base md:text-lg font-bold gradient-text">Liste des entreprises</h3>
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">
                   {filteredEntreprises.length} résultat{filteredEntreprises.length > 1 ? 's' : ''}
                 </p>
               </div>
@@ -434,10 +434,14 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 return (
                   <div
                     key={item.id}
-                    className="rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-card/95 backdrop-blur w-full overflow-hidden flex flex-col"
+                    className="group relative rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 hover:border-accent/50 transition-all bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full overflow-hidden flex flex-col hover:shadow-xl hover:shadow-accent/10 cursor-pointer"
+                    onClick={() => onEntrepriseSelect?.(item)}
                   >
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
+                    {/* Gradient overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    
+                    <div className="relative flex items-start justify-between gap-2 mb-3">
+                      <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1 gradient-text" title={item.nom}>
                         {item.nom}
                       </h4>
                       <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -447,13 +451,13 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                             e.stopPropagation();
                             handleCRMAction(item.id, 'appeler');
                           }}
-                          className={`h-7 w-7 rounded flex items-center justify-center transition-all ${
+                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${
                             crm?.hasAppel 
-                              ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                              : 'border border-blue-500/30 text-blue-500/50 hover:border-blue-500 hover:text-blue-500'
+                              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-md hover:shadow-blue-500/30' 
+                              : 'border border-blue-500/30 text-blue-500/60 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-500/5'
                           }`}
                         >
-                          <Phone className="h-3.5 w-3.5" />
+                          <Phone className="h-4 w-4" />
                         </button>
                         
                         <button
@@ -461,13 +465,13 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                             e.stopPropagation();
                             handleCRMAction(item.id, 'visite');
                           }}
-                          className={`h-7 w-7 rounded flex items-center justify-center transition-all ${
+                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${
                             crm?.hasVisite 
-                              ? 'bg-green-500 text-white hover:bg-green-600' 
-                              : 'border border-green-500/30 text-green-500/50 hover:border-green-500 hover:text-green-500'
+                              ? 'bg-gradient-to-br from-green-500 to-green-600 text-white hover:shadow-md hover:shadow-green-500/30' 
+                              : 'border border-green-500/30 text-green-500/60 hover:border-green-500 hover:text-green-500 hover:bg-green-500/5'
                           }`}
                         >
-                          <Car className="h-3.5 w-3.5" />
+                          <Car className="h-4 w-4" />
                         </button>
                         
                         <button
@@ -475,22 +479,21 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                             e.stopPropagation();
                             handleCRMAction(item.id, 'rdv');
                           }}
-                          className={`h-7 w-7 rounded flex items-center justify-center transition-all ${
+                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${
                             crm?.hasRdv 
-                              ? 'bg-purple-500 text-white hover:bg-purple-600' 
-                              : 'border border-purple-500/30 text-purple-500/50 hover:border-purple-500 hover:text-purple-500'
+                              ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:shadow-md hover:shadow-purple-500/30' 
+                              : 'border border-purple-500/30 text-purple-500/60 hover:border-purple-500 hover:text-purple-500 hover:bg-purple-500/5'
                           }`}
                         >
-                          <CalendarCheck className="h-3.5 w-3.5" />
+                          <CalendarCheck className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
 
-                    <div className="space-y-2 mb-4 flex-1 min-h-0">
-                      {categoryInfo.label && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Briefcase className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{categoryInfo.label}</span>
+                    <div className="relative space-y-2 mb-4 flex-1 min-h-0">{categoryInfo.label && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70 bg-accent/5 p-2 rounded-lg border border-accent/10">
+                          <Briefcase className="w-4 h-4 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1 font-medium">{categoryInfo.label}</span>
                         </div>
                       )}
                       

@@ -98,9 +98,12 @@ export const Sidebar = ({
     }>
       {!isMobileSheet && (
         <>
-          <div className="flex items-center gap-2 mb-2 shrink-0">
-            <Filter className="w-4 h-4 text-accent" />
-            <h2 className="text-base font-semibold">Filtres</h2>
+          {/* Header avec icône */}
+          <div className="flex items-center gap-2 pb-2 border-b border-accent/20">
+            <div className="p-2 bg-accent/10 rounded-lg">
+              <Filter className="h-4 w-4 text-accent" />
+            </div>
+            <h2 className="text-sm font-semibold gradient-text">Filtres</h2>
           </div>
           
           {tourneeMode && onCreateTournee && (
@@ -110,9 +113,9 @@ export const Sidebar = ({
                 variant={tourneeActive ? "default" : "outline"}
                 className={`w-full mb-2 shrink-0 ${
                   tourneeActive 
-                    ? "bg-accent hover:bg-accent/90 text-primary" 
-                    : "border-accent/50 hover:bg-accent/10"
-                }`}
+                    ? "bg-gradient-to-r from-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 text-primary" 
+                    : "border-accent/30 hover:bg-accent/10 hover:border-accent/50"
+                } transition-all`}
                 size="sm"
               >
                 <Route className="w-4 h-4 mr-2" />
