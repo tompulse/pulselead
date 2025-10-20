@@ -352,7 +352,8 @@ const Dashboard = () => {
         {/* Main Content */}
         <main className="flex-1 overflow-hidden relative">
           <div className="h-full p-4 md:p-6">
-            {filters.departments.length === 0 ? (
+            {/* Always show filter prompt if no departments selected, except in activities view */}
+            {filters.departments.length === 0 && view !== "activities" ? (
               <div className="h-full flex items-center justify-center">
                 <Card className="glass-card border-accent/20 p-8 max-w-md text-center">
                   <div className="relative inline-block mb-4">
@@ -363,7 +364,7 @@ const Dashboard = () => {
                     Sélectionnez une zone géographique
                   </h3>
                   <p className="text-muted-foreground mb-4">
-                    Veuillez choisir au moins un département dans les filtres pour afficher les entreprises sur la carte.
+                    Veuillez choisir au moins un département dans les filtres pour afficher les entreprises.
                   </p>
                   <Button
                     variant="outline"
