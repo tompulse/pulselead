@@ -270,17 +270,29 @@ export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
       });
     }
 
-    // Fit bounds to markers if we have data
-    if (entreprises.length > 0 && map.current.isStyleLoaded()) {
-      const bounds = new mapboxgl.LngLatBounds();
-      entreprises.forEach((e) => bounds.extend([e.longitude, e.latitude]));
-      
-      // Animation plus rapide sur mobile
-      map.current.fitBounds(bounds, { 
-        padding: isMobile ? 30 : 50,
-        duration: isMobile ? 600 : 1000,
-        maxZoom: 14
-      });
+    // Fit bounds to markers if we have data - always center on visible markers
+    if (entreprises.length > 0) {
+      const centerMap = () => {
+        if (!map.current || !map.current.isStyleLoaded()) return;
+        
+        const bounds = new mapboxgl.LngLatBounds();
+        entreprises.forEach((e) => bounds.extend([e.longitude, e.latitude]));
+        
+        // Animation plus rapide sur mobile
+        map.current.fitBounds(bounds, { 
+          padding: isMobile ? 30 : 50,
+          duration: isMobile ? 600 : 1000,
+          maxZoom: 14
+        });
+      };
+
+      // Si la carte est déjà chargée, centrer immédiatement
+      if (map.current.isStyleLoaded()) {
+        centerMap();
+      } else {
+        // Sinon attendre que le style soit chargé
+        map.current.once('styleload', centerMap);
+      }
     }
   }, [entreprises, mapboxgl, mapboxLoaded, isMobile]);
 
