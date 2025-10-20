@@ -167,7 +167,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl glass-card border-accent/30 overflow-hidden max-h-[90vh] flex flex-col shadow-2xl shadow-accent/20">
+      <Card className="w-full max-w-6xl glass-card border-accent/30 overflow-hidden max-h-[95vh] flex flex-col shadow-2xl shadow-accent/20">
         {/* Header */}
         <div className="relative overflow-hidden bg-gradient-to-br from-accent/30 via-accent/15 to-transparent p-4 md:p-8 border-b border-accent/30 shrink-0">
           <div className="absolute inset-0 bg-grid-pattern opacity-10" />
@@ -214,7 +214,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   </div>
                 </div>
 
-                <div className="space-y-2 max-h-[40vh] md:max-h-none overflow-y-auto md:overflow-visible">
+                <div className="space-y-3">
                   {Object.entries(REGIONS_DATA).map(([regionKey, regionData]) => {
                     const isSelected = selectedRegions.includes(regionKey);
                     const isExpanded = expandedRegions.includes(regionKey);
@@ -225,34 +225,34 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                     return (
                       <div
                         key={regionKey}
-                        className="rounded-lg border-2 transition-all"
+                        className="rounded-xl border-2 transition-all hover:shadow-lg hover:shadow-accent/10"
                         style={{
                           borderColor: isSelected 
                             ? 'hsl(var(--accent))' 
                             : 'hsl(var(--accent) / 0.2)',
                           backgroundColor: isSelected 
-                            ? 'hsl(var(--accent) / 0.05)' 
+                            ? 'hsl(var(--accent) / 0.08)' 
                             : 'transparent'
                         }}
                       >
-                        <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4">
+                        <div className="flex items-center gap-3 md:gap-4 p-4 md:p-5">
                           <Checkbox
                             checked={isSelected}
                             onCheckedChange={() => handleRegionToggle(regionKey)}
-                            className="border-accent/50 shrink-0 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5"
+                            className="border-accent/50 shrink-0 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-6 w-6"
                           />
                           <div 
                             className="flex-1 cursor-pointer"
                             onClick={() => toggleRegionExpansion(regionKey)}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-medium text-sm md:text-base">{regionKey}</span>
+                              <span className="font-semibold text-base md:text-lg">{regionKey}</span>
                               <ChevronDown 
-                                className={`w-4 h-4 text-accent transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                                className={`w-5 h-5 text-accent transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                               />
                             </div>
                             {selectedDeptCount > 0 && (
-                              <span className="text-xs md:text-sm text-muted-foreground">
+                              <span className="text-sm text-accent font-medium mt-1 inline-block">
                                 {selectedDeptCount} département{selectedDeptCount > 1 ? 's' : ''} sélectionné{selectedDeptCount > 1 ? 's' : ''}
                               </span>
                             )}
@@ -260,18 +260,18 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                         </div>
                         
                         {isExpanded && (
-                          <div className="px-3 md:px-4 pb-3 md:pb-4 grid grid-cols-1 md:grid-cols-3 gap-2 border-t border-accent/20 pt-3">
+                          <div className="px-4 md:px-5 pb-4 md:pb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 border-t border-accent/20 pt-4 bg-accent/5">
                             {regionData.departments.map((deptCode) => (
                               <label
                                 key={deptCode}
-                                className="flex items-center gap-2 p-2 rounded hover:bg-accent/5 cursor-pointer"
+                                className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/10 cursor-pointer transition-all border border-transparent hover:border-accent/30"
                               >
                                 <Checkbox
                                   checked={selectedDepartments.includes(deptCode)}
                                   onCheckedChange={() => handleDepartmentToggle(deptCode, regionKey)}
-                                  className="border-accent/50 h-4 w-4 md:h-5 md:w-5 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary"
+                                  className="border-accent/50 h-5 w-5 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary"
                                 />
-                                <span className="text-xs md:text-sm font-medium">
+                                <span className="text-sm font-medium">
                                   {deptCode} - {DEPARTMENT_NAMES[deptCode]}
                                 </span>
                               </label>
@@ -297,21 +297,21 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 max-h-[45vh] md:max-h-none overflow-y-auto md:overflow-visible">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   {/* Option "Tous les secteurs" */}
                   <button
                     onClick={handleFinish}
-                    className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40 bg-accent/10 border-accent"
+                    className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg hover:shadow-accent/20 bg-gradient-to-br from-accent/15 to-accent/10 border-accent"
                   >
-                    <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-accent shrink-0" />
-                    <span className="font-medium text-left text-sm md:text-base">✨ Tous les secteurs m'intéressent</span>
+                    <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0" />
+                    <span className="font-semibold text-left text-base md:text-lg">✨ Tous les secteurs m'intéressent</span>
                   </button>
 
                   {/* Secteurs spécifiques */}
                   {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
                     <label
                       key={key}
-                      className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg border-2 cursor-pointer transition-all hover:bg-accent/5 hover:border-accent/40"
+                      className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg hover:shadow-accent/10"
                       style={{
                         borderColor: selectedCategories.includes(key) 
                           ? 'hsl(var(--accent))' 
@@ -324,9 +324,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                       <Checkbox
                         checked={selectedCategories.includes(key)}
                         onCheckedChange={() => handleCategoryToggle(key)}
-                        className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-4 w-4 md:h-5 md:w-5"
+                        className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5 md:h-6 md:w-6"
                       />
-                      <span className="font-medium text-sm md:text-base">{category.label}</span>
+                      <span className="font-semibold text-base md:text-lg">{category.label}</span>
                     </label>
                   ))}
                 </div>
