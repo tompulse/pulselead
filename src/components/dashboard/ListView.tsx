@@ -221,6 +221,68 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
+    const crm = crmData[entrepriseId];
+    const actionTypeMapping: Record<string, 'hasAppel' | 'hasVisite' | 'hasRdv'> = {
+      appeler: 'hasAppel',
+      visite: 'hasVisite',
+      rdv: 'hasRdv'
+    };
+
+    const hasAction = crm?.[actionTypeMapping[actionType]];
+
+    // If action already exists, delete it instead
+    if (hasAction && actionType !== 'note') {
+      const interactionTypes: Record<string, 'appel' | 'visite' | 'rdv'> = {
+        appeler: 'appel',
+        visite: 'visite',
+        rdv: 'rdv'
+      };
+
+      const { data: existingInteractions } = await supabase
+        .from('lead_interactions')
+        .select('id')
+        .eq('entreprise_id', entrepriseId)
+        .eq('user_id', user.id)
+        .eq('type', interactionTypes[actionType])
+        .limit(1);
+
+      if (existingInteractions && existingInteractions.length > 0) {
+        await supabase
+          .from('lead_interactions')
+          .delete()
+          .eq('id', existingInteractions[0].id);
+
+        // Update local CRM data immediately
+        setCrmData(prev => {
+          const current = prev[entrepriseId];
+          if (!current) return prev;
+          
+          return {
+            ...prev,
+            [entrepriseId]: {
+              ...current,
+              interactionCount: Math.max(0, current.interactionCount - 1),
+              [actionTypeMapping[actionType]]: false,
+            }
+          };
+        });
+
+        const actionEmojis = {
+          appeler: '📞',
+          visite: '🚗',
+          rdv: '📅',
+        };
+
+        toast({
+          title: `${actionEmojis[actionType]} Action supprimée`,
+          description: `L'action a été retirée pour cette entreprise`,
+        });
+
+        return;
+      }
+    }
+
+    // Otherwise, add the action
     const actionLabels = {
       appeler: 'Appel planifié',
       visite: 'Visite planifiée',
@@ -377,31 +439,49 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
                         {item.nom}
                       </h4>
-                      <div className="flex gap-1.5 flex-shrink-0">
-                        {/* Action icons - filled if action exists, outline otherwise */}
-                        <div className={`h-6 w-6 rounded flex items-center justify-center ${
-                          crm?.hasAppel 
-                            ? 'bg-blue-500 text-white' 
-                            : 'border border-blue-500/30 text-blue-500/50'
-                        }`}>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {/* Action icons - filled if action exists, outline otherwise - Now toggleable */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCRMAction(item.id, 'appeler');
+                          }}
+                          className={`h-7 w-7 rounded flex items-center justify-center transition-all ${
+                            crm?.hasAppel 
+                              ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                              : 'border border-blue-500/30 text-blue-500/50 hover:border-blue-500 hover:text-blue-500'
+                          }`}
+                        >
                           <Phone className="h-3.5 w-3.5" />
-                        </div>
+                        </button>
                         
-                        <div className={`h-6 w-6 rounded flex items-center justify-center ${
-                          crm?.hasVisite 
-                            ? 'bg-green-500 text-white' 
-                            : 'border border-green-500/30 text-green-500/50'
-                        }`}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCRMAction(item.id, 'visite');
+                          }}
+                          className={`h-7 w-7 rounded flex items-center justify-center transition-all ${
+                            crm?.hasVisite 
+                              ? 'bg-green-500 text-white hover:bg-green-600' 
+                              : 'border border-green-500/30 text-green-500/50 hover:border-green-500 hover:text-green-500'
+                          }`}
+                        >
                           <Car className="h-3.5 w-3.5" />
-                        </div>
+                        </button>
                         
-                        <div className={`h-6 w-6 rounded flex items-center justify-center ${
-                          crm?.hasRdv 
-                            ? 'bg-purple-500 text-white' 
-                            : 'border border-purple-500/30 text-purple-500/50'
-                        }`}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCRMAction(item.id, 'rdv');
+                          }}
+                          className={`h-7 w-7 rounded flex items-center justify-center transition-all ${
+                            crm?.hasRdv 
+                              ? 'bg-purple-500 text-white hover:bg-purple-600' 
+                              : 'border border-purple-500/30 text-purple-500/50 hover:border-purple-500 hover:text-purple-500'
+                          }`}
+                        >
                           <CalendarCheck className="h-3.5 w-3.5" />
-                        </div>
+                        </button>
                       </div>
                     </div>
 
