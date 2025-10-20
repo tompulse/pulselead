@@ -15,9 +15,9 @@ export const HeroSection = () => {
 
       <div className="relative text-center max-w-5xl mx-auto space-y-8 animate-fade-in">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm mb-4 hover:border-accent/50 transition-all">
+        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/40 backdrop-blur-sm mb-4 hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 transition-all shadow-md shadow-accent/10">
           <Lightbulb className="w-4 h-4 text-accent animate-pulse" />
-          <span className="text-sm text-accent font-semibold tracking-wide">Propulsé par l'Intelligence Artificielle</span>
+          <span className="text-sm text-accent font-bold tracking-wide">Propulsé par l'Intelligence Artificielle</span>
         </div>
         
         {/* Main Headline */}
@@ -39,7 +39,7 @@ export const HeroSection = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
           <button 
             onClick={() => navigate("/auth")}
-            className="group relative btn-hero inline-flex items-center gap-2"
+            className="group relative btn-hero inline-flex items-center gap-2 shadow-xl shadow-accent/30 hover:shadow-2xl hover:shadow-accent/40"
           >
             Commencer gratuitement
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -48,7 +48,7 @@ export const HeroSection = () => {
             variant="outline" 
             size="lg"
             onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
-            className="group rounded-full border-2 border-accent/50 text-foreground hover:bg-accent/10 hover:border-accent text-lg px-8 py-6 transition-all"
+            className="group rounded-full border-2 border-accent/50 text-foreground hover:bg-gradient-to-r hover:from-accent/15 hover:to-accent/5 hover:border-accent text-lg px-8 py-6 transition-all shadow-lg hover:shadow-xl"
           >
             <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
             Voir la démo

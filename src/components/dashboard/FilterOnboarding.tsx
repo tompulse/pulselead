@@ -166,19 +166,21 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
     : true; // Activité optionnelle
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl glass-card border-accent/20 overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 flex items-center justify-center p-4">
+      <Card className="w-full max-w-4xl glass-card border-accent/30 overflow-hidden max-h-[90vh] flex flex-col shadow-2xl shadow-accent/20">
         {/* Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-accent/20 via-accent/10 to-transparent p-4 md:p-8 border-b border-accent/20 shrink-0">
-          <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+        <div className="relative overflow-hidden bg-gradient-to-br from-accent/30 via-accent/15 to-transparent p-4 md:p-8 border-b border-accent/30 shrink-0">
+          <div className="absolute inset-0 bg-grid-pattern opacity-10" />
           <div className="relative flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
             <div className="relative">
-              <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse" />
-              <Lightbulb className="w-8 h-8 md:w-12 md:h-12 text-accent relative" />
+              <div className="absolute inset-0 bg-accent blur-2xl animate-pulse" />
+              <div className="p-3 bg-gradient-to-br from-accent/30 to-accent/10 rounded-2xl shadow-lg">
+                <Lightbulb className="w-8 h-8 md:w-12 md:h-12 text-accent relative" />
+              </div>
             </div>
             <div>
               <h1 className="text-xl md:text-3xl font-bold gradient-text">Bienvenue sur LUMA</h1>
-              <p className="text-muted-foreground mt-1 text-sm md:text-base">
+              <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
                 Configurons votre expérience en quelques étapes
               </p>
             </div>
@@ -186,12 +188,12 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           
           {/* Progress */}
           <div className="relative flex items-center gap-2 mt-4 md:mt-6">
-            <div className={`flex-1 h-2 rounded-full ${step >= 1 ? 'bg-accent' : 'bg-accent/20'} transition-all`} />
-            <div className={`flex-1 h-2 rounded-full ${step >= 2 ? 'bg-accent' : 'bg-accent/20'} transition-all`} />
+            <div className={`flex-1 h-2.5 rounded-full transition-all duration-500 shadow-sm ${step >= 1 ? 'bg-gradient-to-r from-accent to-accent/80 shadow-accent/30' : 'bg-accent/20'}`} />
+            <div className={`flex-1 h-2.5 rounded-full transition-all duration-500 shadow-sm ${step >= 2 ? 'bg-gradient-to-r from-accent to-accent/80 shadow-accent/30' : 'bg-accent/20'}`} />
           </div>
-          <div className="flex justify-between mt-2 text-xs md:text-sm text-muted-foreground">
-            <span className={step === 1 ? 'text-accent font-medium' : ''}>Zone géographique</span>
-            <span className={step === 2 ? 'text-accent font-medium' : ''}>Secteurs d'activité</span>
+          <div className="flex justify-between mt-2 text-xs md:text-sm font-medium">
+            <span className={step === 1 ? 'text-accent font-bold' : 'text-muted-foreground'}>Zone géographique</span>
+            <span className={step === 2 ? 'text-accent font-bold' : 'text-muted-foreground'}>Secteurs d'activité</span>
           </div>
         </div>
 
@@ -200,11 +202,13 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           <div className="p-4 md:p-8">
             {step === 1 ? (
               <div className="space-y-4 md:space-y-6">
-                <div className="flex items-start gap-3 p-3 md:p-4 rounded-lg bg-accent/5 border border-accent/20">
-                  <MapPin className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0 mt-1" />
+                <div className="flex items-start gap-3 p-4 md:p-5 rounded-xl bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 border border-accent/30 shadow-lg shadow-accent/5">
+                  <div className="p-2 bg-gradient-to-br from-accent/30 to-accent/10 rounded-lg shadow-sm">
+                    <MapPin className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0" />
+                  </div>
                   <div>
-                    <h2 className="text-lg md:text-xl font-semibold mb-1 md:mb-2">Dans quelles régions ? <span className="text-destructive">*</span></h2>
-                    <p className="text-muted-foreground text-sm md:text-base">
+                    <h2 className="text-lg md:text-xl font-bold gradient-text mb-1 md:mb-2">Dans quelles régions ? <span className="text-destructive">*</span></h2>
+                    <p className="text-muted-foreground text-sm md:text-base font-medium">
                       Sélectionnez les régions où vous souhaitez trouver des entreprises. Cette étape est obligatoire.
                     </p>
                   </div>
@@ -281,11 +285,13 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
               </div>
             ) : (
               <div className="space-y-4 md:space-y-6">
-                <div className="flex items-start gap-3 p-3 md:p-4 rounded-lg bg-accent/5 border border-accent/20">
-                  <Building2 className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0 mt-1" />
+                <div className="flex items-start gap-3 p-4 md:p-5 rounded-xl bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 border border-accent/30 shadow-lg shadow-accent/5">
+                  <div className="p-2 bg-gradient-to-br from-accent/30 to-accent/10 rounded-lg shadow-sm">
+                    <Building2 className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0" />
+                  </div>
                   <div>
-                    <h2 className="text-lg md:text-xl font-semibold mb-1 md:mb-2">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-sm">(optionnel)</span></h2>
-                    <p className="text-muted-foreground text-sm md:text-base">
+                    <h2 className="text-lg md:text-xl font-bold gradient-text mb-1 md:mb-2">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-sm font-medium">(optionnel)</span></h2>
+                    <p className="text-muted-foreground text-sm md:text-base font-medium">
                       Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche.
                     </p>
                   </div>
@@ -330,9 +336,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         </ScrollArea>
 
         {/* Footer */}
-        <div className="p-4 md:p-6 border-t border-accent/20 bg-gradient-to-br from-accent/10 to-accent/5 shrink-0">
+        <div className="p-4 md:p-6 border-t border-accent/30 bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 shrink-0">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-3 md:mb-4 gap-3">
-            <div className="text-xs md:text-sm text-muted-foreground">
+            <div className="text-xs md:text-sm font-semibold text-muted-foreground">
               {step === 1 ? (
                 <span>
                   {selectedDepartments.length} département{selectedDepartments.length > 1 ? 's' : ''} sélectionné{selectedDepartments.length > 1 ? 's' : ''}
@@ -350,9 +356,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
             
             {/* Compteur d'entreprises */}
             {selectedDepartments.length > 0 && (
-              <div className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-accent/20 border border-accent/30">
+              <div className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-r from-accent/30 to-accent/20 border border-accent/40 shadow-lg shadow-accent/20">
                 <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-accent" />
-                <span className="font-semibold text-accent text-sm md:text-base">
+                <span className="font-bold text-accent text-sm md:text-base">
                   {loadingCount ? (
                     <span className="animate-pulse">Calcul...</span>
                   ) : (

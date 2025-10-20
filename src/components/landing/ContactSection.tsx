@@ -8,11 +8,11 @@ const ContactSection = () => {
   return (
     <section className="relative py-12 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto max-w-4xl">
-        <div className="glass-card p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="glass-card p-6 flex flex-col sm:flex-row items-center justify-between gap-6 border-accent/30 shadow-lg shadow-accent/10 hover:shadow-xl hover:shadow-accent/20 transition-all">
           <div className="flex items-center gap-4">
             <div className="relative flex-shrink-0">
-              <div className="absolute inset-0 bg-accent/20 blur-lg"></div>
-              <div className="relative bg-card/60 backdrop-blur-xl border border-accent/20 rounded-xl p-3">
+              <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
+              <div className="relative bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border border-accent/30 rounded-xl p-3 shadow-lg shadow-accent/10">
                 <MessageSquare className="w-8 h-8 text-accent" />
               </div>
             </div>
@@ -21,7 +21,7 @@ const ContactSection = () => {
               <h2 className="text-xl sm:text-2xl font-bold gradient-text">
                 Une question ?
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground font-medium">
                 Contactez-nous sur WhatsApp
               </p>
             </div>
@@ -29,7 +29,7 @@ const ContactSection = () => {
 
           <Button 
             asChild
-            className="bg-[#25D366] hover:bg-[#20BA5A] text-white flex-shrink-0 hover-scale"
+            className="bg-[#25D366] hover:bg-[#20BA5A] text-white flex-shrink-0 hover-scale shadow-lg hover:shadow-xl"
           >
             <a
               href={waUrl}

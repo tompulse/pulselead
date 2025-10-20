@@ -63,16 +63,16 @@ export const FeaturesSection = () => {
           return (
             <div 
               key={index}
-              className="glass-card p-6 space-y-4 hover:border-accent/50 hover:shadow-xl hover:shadow-accent/10 transition-all duration-300 group cursor-pointer"
+              className="glass-card p-6 space-y-4 border-accent/30 hover:border-accent/60 hover:shadow-2xl hover:shadow-accent/20 hover:bg-gradient-to-br hover:from-accent/10 hover:to-accent/5 transition-all duration-300 group cursor-pointer"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-accent/30 transition-all shadow-md shadow-accent/10">
                 <Icon className="w-7 h-7 text-accent" />
               </div>
-              <h3 className="text-xl font-semibold group-hover:text-accent transition-colors">
+              <h3 className="text-xl font-bold gradient-text group-hover:scale-105 transition-transform">
                 {feature.title}
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed font-medium">
                 {feature.description}
               </p>
             </div>

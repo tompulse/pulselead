@@ -31,28 +31,28 @@ const DashboardPreview = () => {
   ];
 
   return (
-    <div className="relative w-full h-full min-h-[500px] bg-gradient-to-br from-navy-deep via-card to-background rounded-lg border border-accent/20 overflow-hidden group">
+    <div className="relative w-full h-full min-h-[500px] bg-gradient-to-br from-navy-deep via-card to-background rounded-xl border border-accent/40 overflow-hidden group shadow-2xl shadow-accent/20">
       {/* Animated background effects */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-cyan-electric/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-cyan-electric/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
       </div>
 
       {/* Live Preview Badge */}
-      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 bg-accent/20 backdrop-blur-xl border border-accent/30 rounded-full px-3 py-1 sm:px-4 sm:py-1.5 flex items-center gap-1.5 sm:gap-2">
-        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-accent rounded-full animate-pulse"></div>
-        <span className="text-[10px] sm:text-xs text-accent font-semibold">Live Preview</span>
+      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 bg-gradient-to-r from-accent/30 to-accent/20 backdrop-blur-xl border border-accent/40 rounded-full px-3 py-1 sm:px-4 sm:py-1.5 flex items-center gap-1.5 sm:gap-2 shadow-lg shadow-accent/30">
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-accent rounded-full animate-pulse shadow-md shadow-accent/50"></div>
+        <span className="text-[10px] sm:text-xs text-accent font-bold">Live Preview</span>
       </div>
 
       {/* Scene 0: Logo with animated halo */}
       <div className={`absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${currentScene === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="relative">
-          <div className="absolute inset-0 bg-accent/30 blur-3xl animate-pulse" style={{ animationDuration: '3s' }}></div>
-          <div className="absolute inset-0 bg-accent/20 blur-2xl rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
-          <Target className="w-20 h-20 sm:w-32 sm:h-32 text-accent relative animate-[spin_20s_linear_infinite]" />
+          <div className="absolute inset-0 bg-accent/40 blur-3xl animate-pulse" style={{ animationDuration: '3s' }}></div>
+          <div className="absolute inset-0 bg-accent/30 blur-2xl rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
+          <Target className="w-20 h-20 sm:w-32 sm:h-32 text-accent relative animate-[spin_20s_linear_infinite] drop-shadow-2xl drop-shadow-accent" />
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold gradient-text mt-4 sm:mt-8 animate-fade-in">LUMA</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-2 animate-fade-in px-4 text-center">éclaire les leviers de ta croissance</p>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-2 animate-fade-in px-4 text-center font-medium">éclaire les leviers de ta croissance</p>
       </div>
 
       {/* Scene 1: France Map Overview */}
@@ -221,8 +221,8 @@ const DashboardPreview = () => {
 
       {/* Text overlay */}
       <div className="absolute bottom-4 left-0 right-0 flex justify-center z-10 px-4">
-        <div className="bg-card/90 backdrop-blur-xl border border-accent/30 rounded-full px-4 py-2 sm:px-6 sm:py-3 animate-fade-in">
-          <p className="text-xs sm:text-sm font-semibold text-foreground text-center">
+        <div className="bg-gradient-to-r from-card/95 to-card/90 backdrop-blur-xl border border-accent/40 rounded-full px-4 py-2 sm:px-6 sm:py-3 animate-fade-in shadow-lg shadow-accent/20">
+          <p className="text-xs sm:text-sm font-bold text-foreground text-center gradient-text">
             {overlayTexts[currentScene]}
           </p>
         </div>
@@ -234,7 +234,7 @@ const DashboardPreview = () => {
           <div
             key={i}
             className={`h-1 sm:h-1.5 w-6 sm:w-8 rounded-full transition-all duration-300 ${
-              i === currentScene ? 'bg-accent scale-125' : 'bg-accent/30'
+              i === currentScene ? 'bg-gradient-to-r from-accent to-accent/80 scale-125 shadow-lg shadow-accent/50' : 'bg-accent/30'
             }`}
           />
         ))}
@@ -245,9 +245,9 @@ const DashboardPreview = () => {
         <Button
           onClick={() => navigate('/auth')}
           size="sm"
-          className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          className="gap-2 shadow-xl shadow-accent/30 hover:shadow-2xl hover:shadow-accent/40 transition-all duration-300 hover:scale-105 bg-gradient-to-r from-accent via-accent to-accent/80"
         >
-          <span className="text-xs sm:text-sm font-semibold">Commencer</span>
+          <span className="text-xs sm:text-sm font-bold">Commencer</span>
           <Target className="w-3 h-3 sm:w-4 sm:h-4" />
         </Button>
       </div>

@@ -94,16 +94,16 @@ export const Sidebar = ({
   return (
     <aside className={isMobileSheet 
       ? "w-full h-full flex flex-col p-4 space-y-4" 
-      : "w-56 md:w-60 glass-card border-r border-accent/20 p-3 space-y-2 flex flex-col h-full overflow-hidden"
+      : "w-56 md:w-60 glass-card border-r border-accent/30 p-3 space-y-2 flex flex-col h-full overflow-hidden bg-gradient-to-b from-card/80 to-card/40"
     }>
       {!isMobileSheet && (
         <>
           {/* Header avec icône */}
-          <div className="flex items-center gap-2 pb-2 border-b border-accent/20">
-            <div className="p-2 bg-accent/10 rounded-lg">
+          <div className="flex items-center gap-2 pb-3 border-b border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent rounded-lg p-2 shadow-sm">
+            <div className="p-2 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg shadow-sm">
               <Filter className="h-4 w-4 text-accent" />
             </div>
-            <h2 className="text-sm font-semibold gradient-text">Filtres</h2>
+            <h2 className="text-sm font-bold gradient-text">Filtres</h2>
           </div>
           
           {tourneeMode && onCreateTournee && (
@@ -123,24 +123,24 @@ export const Sidebar = ({
               </Button>
               
               {tourneeActive && setTourneeName && setTourneeDate && (
-                <div className="mb-3 p-3 bg-accent/5 rounded-lg border border-accent/20 space-y-2 shrink-0">
+                <div className="mb-3 p-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30 space-y-2 shrink-0 shadow-sm">
                   <div className="space-y-1.5">
-                    <Label htmlFor="tournee-name" className="text-xs">Nom de la tournée</Label>
+                    <Label htmlFor="tournee-name" className="text-xs font-semibold text-accent">Nom de la tournée</Label>
                     <Input
                       id="tournee-name"
                       placeholder="Ex: Tournée Sud"
                       value={tourneeName}
                       onChange={(e) => setTourneeName(e.target.value)}
-                      className="h-8 text-sm"
+                      className="h-8 text-sm border-accent/30 focus:border-accent focus:ring-accent/20"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="tournee-date" className="text-xs">Date</Label>
+                    <Label htmlFor="tournee-date" className="text-xs font-semibold text-accent">Date</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          className="w-full h-8 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10"
+                          className="w-full h-8 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
                         >
                           <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                           {tourneeDate ? format(new Date(tourneeDate), "dd/MM/yyyy") : "Choisir une date"}
@@ -157,14 +157,14 @@ export const Sidebar = ({
                     </Popover>
                   </div>
                   {selectedCount > 0 && (
-                    <div className="text-xs text-muted-foreground pt-1">
+                    <div className="text-xs bg-accent/10 text-accent font-semibold rounded-lg px-2 py-1 border border-accent/20">
                       {selectedCount} entreprise(s) sélectionnée(s)
                     </div>
                   )}
                   <Button
                     onClick={onOptimize}
                     disabled={selectedCount < 2}
-                    className="w-full h-8 text-xs"
+                    className="w-full h-8 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all"
                     size="sm"
                   >
                     <Route className="w-3 h-3 mr-1.5" />
@@ -184,15 +184,15 @@ export const Sidebar = ({
         {/* Geographic Filters - Departments Only */}
         <Collapsible open={isDepartmentsOpen} onOpenChange={setIsDepartmentsOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className={`flex items-center justify-between rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors ${
-              isMobileSheet ? "p-4 bg-accent/5" : "p-2 bg-accent/5"
+            <div className={`flex items-center justify-between rounded-lg border border-accent/30 hover:bg-gradient-to-r hover:from-accent/15 hover:to-accent/5 transition-all shadow-sm ${
+              isMobileSheet ? "p-4 bg-gradient-to-br from-accent/10 to-accent/5" : "p-2.5 bg-gradient-to-br from-accent/10 to-accent/5"
             }`}>
               <div className="flex items-center gap-2">
-                <Label className={`font-semibold cursor-pointer ${isMobileSheet ? "text-base" : "text-xs"}`}>
+                <Label className={`font-bold cursor-pointer gradient-text ${isMobileSheet ? "text-base" : "text-xs"}`}>
                   Départements
                 </Label>
                 {filters.departments.length > 0 && (
-                  <span className={`bg-accent/20 text-accent rounded-full font-medium ${
+                  <span className={`bg-gradient-to-r from-accent to-accent/80 text-primary rounded-full font-bold shadow-sm ${
                     isMobileSheet ? "text-xs px-2 py-1" : "text-[10px] px-1.5 py-0.5"
                   }`}>
                     {filters.departments.length}
@@ -237,10 +237,10 @@ export const Sidebar = ({
         {/* Categories - Collapsible */}
         <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className={`flex items-center justify-between rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors ${
-              isMobileSheet ? "p-4 bg-accent/5" : "p-2 bg-accent/5"
+            <div className={`flex items-center justify-between rounded-lg border border-accent/30 hover:bg-gradient-to-r hover:from-accent/15 hover:to-accent/5 transition-all shadow-sm ${
+              isMobileSheet ? "p-4 bg-gradient-to-br from-accent/10 to-accent/5" : "p-2.5 bg-gradient-to-br from-accent/10 to-accent/5"
             }`}>
-              <Label className={`font-semibold cursor-pointer ${isMobileSheet ? "text-base" : "text-xs"}`}>
+              <Label className={`font-bold cursor-pointer gradient-text ${isMobileSheet ? "text-base" : "text-xs"}`}>
                 Catégories d'activité
               </Label>
               <ChevronDown className={`text-accent transition-transform ${
@@ -281,10 +281,10 @@ export const Sidebar = ({
         {/* Dates - Collapsible */}
         <Collapsible open={isDatesOpen} onOpenChange={setIsDatesOpen}>
           <CollapsibleTrigger className="w-full">
-            <div className={`flex items-center justify-between rounded-lg border border-accent/20 hover:bg-accent/10 transition-colors ${
-              isMobileSheet ? "p-4 bg-accent/5" : "p-2 bg-accent/5"
+            <div className={`flex items-center justify-between rounded-lg border border-accent/30 hover:bg-gradient-to-r hover:from-accent/15 hover:to-accent/5 transition-all shadow-sm ${
+              isMobileSheet ? "p-4 bg-gradient-to-br from-accent/10 to-accent/5" : "p-2.5 bg-gradient-to-br from-accent/10 to-accent/5"
             }`}>
-              <Label className={`font-semibold cursor-pointer ${isMobileSheet ? "text-base" : "text-xs"}`}>
+              <Label className={`font-bold cursor-pointer gradient-text ${isMobileSheet ? "text-base" : "text-xs"}`}>
                 Dates
               </Label>
               <ChevronDown className={`text-accent transition-transform ${
@@ -325,7 +325,7 @@ export const Sidebar = ({
       <Button
         variant="outline"
         size="sm"
-        className={`w-full border-accent/50 hover:bg-accent/10 shrink-0 ${
+        className={`w-full border-accent/30 hover:bg-gradient-to-r hover:from-accent/15 hover:to-accent/5 hover:border-accent/50 shrink-0 transition-all shadow-sm ${
           isMobileSheet ? "h-11 text-sm mt-3" : "h-7 text-xs mt-2"
         }`}
         onClick={() => {
