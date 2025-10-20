@@ -311,7 +311,7 @@ const Index = () => {
                 className={billingPeriod === 'quarterly' ? 'btn-hero' : 'hover:bg-accent/10'}
               >
                 Trimestriel
-                <span className="ml-2 text-xs bg-cyan-electric/20 px-2 py-0.5 rounded-full">-10%</span>
+                <span className="ml-2 text-xs bg-cyan-electric/20 px-2 py-0.5 rounded-full">-15%</span>
               </Button>
               <Button
                 variant={billingPeriod === 'yearly' ? 'default' : 'ghost'}
@@ -319,7 +319,7 @@ const Index = () => {
                 className={billingPeriod === 'yearly' ? 'btn-hero' : 'hover:bg-accent/10'}
               >
                 Annuel
-                <span className="ml-2 text-xs bg-cyan-electric/20 px-2 py-0.5 rounded-full">-20%</span>
+                <span className="ml-2 text-xs bg-cyan-electric/20 px-2 py-0.5 rounded-full">-25%</span>
               </Button>
             </div>
           </div>
@@ -329,16 +329,16 @@ const Index = () => {
             <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground">Pour tester et démarrer</p>
+                <p className="text-muted-foreground">Pour démarrer votre prospection</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
-                    {billingPeriod === 'monthly' ? '129' : billingPeriod === 'quarterly' ? '119' : '109'}€
+                    {billingPeriod === 'monthly' ? '129' : billingPeriod === 'quarterly' ? '109' : '99'}€
                   </span>
                   <span className="text-muted-foreground">/mois</span>
                 </div>
-                <div className="text-sm text-cyan-electric font-semibold">1 région incluse</div>
+                <div className="text-sm text-cyan-electric font-semibold">Idéal pour 1 secteur d'activité</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -387,16 +387,16 @@ const Index = () => {
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Pro</h3>
-                <p className="text-muted-foreground">Pour les professionnels sérieux</p>
+                <p className="text-muted-foreground">Pour les professionnels ambitieux</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
-                    {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '189' : '169'}€
+                    {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '169' : '149'}€
                   </span>
                   <span className="text-muted-foreground">/mois</span>
                 </div>
-                <div className="text-sm text-cyan-electric font-semibold">Jusqu'à 3 régions</div>
+                <div className="text-sm text-cyan-electric font-semibold">Prospection multi-secteurs illimitée</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -405,7 +405,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Multi-régions</strong> (jusqu'à 3)</span>
+                  <span className="text-foreground"><strong>Tous secteurs</strong> d'activité</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -442,13 +442,13 @@ const Index = () => {
             <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Enterprise</h3>
-                <p className="text-muted-foreground">Pour les grandes équipes</p>
+                <p className="text-muted-foreground">Pour les équipes performantes</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-1 mb-2">
                   <span className="text-5xl font-bold gradient-text">Sur mesure</span>
                 </div>
-                <div className="text-sm text-cyan-electric font-semibold">France entière • Multi-utilisateurs</div>
+                <div className="text-sm text-cyan-electric font-semibold">Solution complète multi-utilisateurs</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -457,7 +457,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>France entière</strong> incluse</span>
+                  <span className="text-foreground"><strong>Couverture nationale</strong> complète</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
