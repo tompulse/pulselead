@@ -686,12 +686,7 @@ const Index = () => {
                 <ArrowRight className="w-6 h-6 ml-2" />
               </Button>
               <Button 
-                onClick={() => {
-                  const contactSection = document.querySelector('#contact');
-                  if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
+                onClick={() => window.open('https://iclosed.io/e/tomiolov', '_blank')}
                 size="lg"
                 variant="outline"
                 className="border-2 border-accent/50 text-foreground hover:bg-accent/10 hover:border-accent min-w-[240px] h-14 text-lg font-bold rounded-full"
