@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Calendar } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
 import { trackCTAClick } from "@/utils/analytics";
@@ -12,6 +13,7 @@ import {
 
 const Index = () => {
   const navigate = useNavigate();
+  const [selectedRegion, setSelectedRegion] = React.useState<'1' | 'plusieurs' | 'france'>('plusieurs');
 
   const handleExplorerClick = () => {
     trackCTAClick('Explorer LUMA', 'hero');
@@ -75,7 +77,7 @@ const Index = () => {
           <div className="text-center space-y-8 animate-fade-in">
             {/* Badge simple */}
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 backdrop-blur-sm">
-              <span className="text-sm text-cyan-electric font-semibold">Données officielles INPI • Temps réel</span>
+              <span className="text-sm text-cyan-electric font-semibold">Temps réel</span>
             </div>
             
             {/* Message ultra clair */}
@@ -91,6 +93,48 @@ const Index = () => {
               <br className="hidden sm:block" />
               Parfait pour la prospection commerciale.
             </p>
+
+            {/* Sélecteur de région interactif */}
+            <div className="glass-card p-6 max-w-2xl mx-auto border-cyan-electric/20">
+              <div className="space-y-4">
+                <div className="text-left">
+                  <h3 className="text-base font-semibold text-foreground mb-1">Choisissez votre région</h3>
+                  <p className="text-sm text-muted-foreground">Le prix varie selon le nombre de créations d'entreprises</p>
+                </div>
+                <div className="flex flex-wrap gap-3 justify-center">
+                  <Button
+                    onClick={() => setSelectedRegion('1')}
+                    variant={selectedRegion === '1' ? 'default' : 'outline'}
+                    className={selectedRegion === '1' 
+                      ? 'bg-cyan-electric text-black-deep hover:bg-cyan-electric/90 border-cyan-electric' 
+                      : 'border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric'
+                    }
+                  >
+                    1 Région
+                  </Button>
+                  <Button
+                    onClick={() => setSelectedRegion('plusieurs')}
+                    variant={selectedRegion === 'plusieurs' ? 'default' : 'outline'}
+                    className={selectedRegion === 'plusieurs' 
+                      ? 'bg-cyan-electric text-black-deep hover:bg-cyan-electric/90 border-cyan-electric' 
+                      : 'border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric'
+                    }
+                  >
+                    Plusieurs Régions
+                  </Button>
+                  <Button
+                    onClick={() => setSelectedRegion('france')}
+                    variant={selectedRegion === 'france' ? 'default' : 'outline'}
+                    className={selectedRegion === 'france' 
+                      ? 'bg-cyan-electric text-black-deep hover:bg-cyan-electric/90 border-cyan-electric' 
+                      : 'border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric'
+                    }
+                  >
+                    France entière
+                  </Button>
+                </div>
+              </div>
+            </div>
             
             {/* CTA */}
             <div className="flex flex-col items-center gap-4 pt-4">
@@ -133,8 +177,8 @@ const Index = () => {
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-base font-bold text-foreground">Données officielles</div>
-                <div className="text-sm text-muted-foreground">Source INPI certifiée</div>
+                <div className="text-base font-bold text-foreground">100% fiable</div>
+                <div className="text-sm text-muted-foreground">Données vérifiées</div>
               </div>
             </div>
 
