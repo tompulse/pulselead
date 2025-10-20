@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Phone, MapPin, Calendar, StickyNote, Trash2, Navigation } from "lucide-react";
+import { Phone, MapPin, Calendar, StickyNote, Trash2, Navigation, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -221,49 +221,71 @@ export const InteractionsDialog = ({
             </div>
           ) : (
             <ScrollArea className="h-[50vh] sm:h-[500px] pr-4">
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {interactions.map((interaction) => (
                   <div
                     key={interaction.id}
-                    className="p-3 sm:p-4 rounded-lg border border-accent/20 bg-card/50 hover:bg-accent/5 transition-colors"
+                    className="group relative p-4 sm:p-5 rounded-xl border border-accent/20 bg-gradient-to-br from-card/80 to-card/40 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300"
                   >
-                    <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+                    {/* Gradient overlay based on type */}
+                    <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity ${
+                      type === 'appel' ? 'bg-gradient-to-br from-blue-500/5 to-transparent' :
+                      type === 'visite' ? 'bg-gradient-to-br from-green-500/5 to-transparent' :
+                      'bg-gradient-to-br from-purple-500/5 to-transparent'
+                    }`} />
+                    
+                    <div className="relative flex flex-col gap-4">
+                      {/* Header: Company name and date */}
                       <div 
-                        className="flex-1 min-w-0 cursor-pointer w-full"
+                        className="cursor-pointer"
                         onClick={() => {
                           onEntrepriseClick?.(interaction.entreprise_id);
                           onOpenChange(false);
                         }}
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
-                          <p className="font-semibold text-foreground/90 text-sm sm:text-base">
-                            {interaction.entreprise_nom}
-                          </p>
-                          <span className="text-xs text-muted-foreground">
+                        <div className="flex items-start justify-between gap-3 mb-2">
+                          <div className="flex-1">
+                            <h4 className="text-lg font-bold text-foreground group-hover:text-accent transition-colors line-clamp-1">
+                              {interaction.entreprise_nom}
+                            </h4>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 px-2.5 py-1 rounded-full">
+                            <Calendar className="w-3 h-3" />
                             {format(new Date(interaction.created_at), 'dd MMM yyyy', { locale: fr })}
-                          </span>
+                          </div>
                         </div>
                         
+                        {/* Notes */}
                         {interaction.notes && (
-                          <p className="text-xs sm:text-sm text-muted-foreground mb-2">
+                          <p className="text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-lg mb-3 border border-muted/30">
                             {interaction.notes}
                           </p>
                         )}
                         
+                        {/* Next action badge */}
                         {interaction.date_prochaine_action && (
-                          <Badge variant="outline" className="text-xs">
-                            Prochaine action: {format(new Date(interaction.date_prochaine_action), 'dd MMM à HH:mm', { locale: fr })}
+                          <Badge variant="outline" className={`text-xs border-accent/50 bg-accent/10 ${
+                            type === 'appel' ? 'text-blue-400' :
+                            type === 'visite' ? 'text-green-400' :
+                            'text-purple-400'
+                          }`}>
+                            <Clock className="w-3 h-3 mr-1" />
+                            {format(new Date(interaction.date_prochaine_action), 'dd MMM à HH:mm', { locale: fr })}
                           </Badge>
                         )}
                       </div>
                       
-                      <div className="flex gap-2 w-full sm:w-auto justify-end">
-                        {/* Always show action buttons, disabled if no data */}
+                      {/* Action buttons */}
+                      <div className="flex gap-2 pt-2 border-t border-accent/10">
                         <Button
                           variant="outline"
                           size="sm"
                           disabled={!interaction.telephone}
-                          className="h-8 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 disabled:opacity-50"
+                          className={`flex-1 h-9 gap-2 ${
+                            interaction.telephone 
+                              ? 'border-blue-500/30 text-blue-400 hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-300' 
+                              : 'opacity-40'
+                          }`}
                           onClick={(e) => {
                             e.stopPropagation();
                             if (interaction.telephone) {
@@ -272,14 +294,21 @@ export const InteractionsDialog = ({
                           }}
                           title={interaction.telephone ? `Appeler ${interaction.telephone}` : "Téléphone non disponible"}
                         >
-                          <Phone className="h-3.5 w-3.5" />
+                          <Phone className="h-4 w-4" />
+                          <span className="hidden sm:inline text-xs font-medium">
+                            {interaction.telephone ? 'Appeler' : 'Non dispo'}
+                          </span>
                         </Button>
                         
                         <Button
                           variant="outline"
                           size="sm"
                           disabled={!interaction.latitude || !interaction.longitude}
-                          className="h-8 border-green-500/30 hover:bg-green-500/10 hover:border-green-500 disabled:opacity-50"
+                          className={`flex-1 h-9 gap-2 ${
+                            interaction.latitude && interaction.longitude
+                              ? 'border-green-500/30 text-green-400 hover:bg-green-500/10 hover:border-green-500 hover:text-green-300' 
+                              : 'opacity-40'
+                          }`}
                           onClick={(e) => {
                             e.stopPropagation();
                             if (interaction.latitude && interaction.longitude) {
@@ -288,17 +317,21 @@ export const InteractionsDialog = ({
                           }}
                           title={interaction.latitude && interaction.longitude ? "Ouvrir dans Waze" : "Adresse non disponible"}
                         >
-                          <Navigation className="h-3.5 w-3.5" />
+                          <Navigation className="h-4 w-4" />
+                          <span className="hidden sm:inline text-xs font-medium">
+                            {interaction.latitude && interaction.longitude ? 'Itinéraire' : 'Non dispo'}
+                          </span>
                         </Button>
                         
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          className="h-9 w-9 border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive hover:text-destructive"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDelete(interaction.id);
                           }}
+                          title="Supprimer"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
