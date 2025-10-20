@@ -443,7 +443,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 return (
                   <div
                     key={item.id}
-                    className="group relative rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 hover:border-accent/50 transition-all bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full flex flex-col hover:shadow-xl hover:shadow-accent/10 min-h-[380px] overflow-hidden"
+                    className="group relative rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 hover:border-accent/50 transition-all bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full flex flex-col hover:shadow-xl hover:shadow-accent/10 min-h-[280px] overflow-hidden"
                   >
                     {/* Gradient overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
