@@ -51,10 +51,12 @@ serve(async (req) => {
 Ta mission est d'optimiser l'ordre de visite d'entreprises pour minimiser la distance totale parcourue.
 
 Règles:
-- Utilise l'algorithme du plus proche voisin
+- Utilise l'algorithme du plus proche voisin en partant du point de départ fourni
+- Si aucun point de départ n'est fourni, utilise automatiquement la première entreprise
 - Retourne UNIQUEMENT un JSON valide avec la structure exacte demandée
 - Calcule les distances en ligne droite (approximation Haversine)
-- Estime 15 minutes par visite + temps de trajet
+- Estime 15 minutes par visite + temps de trajet (environ 60 km/h)
+- Dans l'explication, indique simplement l'itinéraire optimisé sans poser de questions
 - Format de réponse obligatoire: {"ordre": [indices], "distance_km": number, "temps_minutes": number, "explication": "texte"}`;
 
     const userPrompt = `${departInfo}
@@ -62,12 +64,12 @@ Règles:
 Entreprises à visiter:
 ${entreprisesInfo}
 
-Optimise l'ordre de visite pour minimiser la distance totale. 
+Optimise l'ordre de visite pour minimiser la distance totale en partant du point de départ. 
 Retourne un JSON avec:
 - ordre: tableau des indices (0-based) dans l'ordre optimal de visite
-- distance_km: distance totale estimée en km
-- temps_minutes: temps total estimé incluant visites (15min chacune) et trajets
-- explication: brève explication de l'optimisation (2-3 phrases)`;
+- distance_km: distance totale estimée en km (calcul réaliste basé sur les coordonnées GPS)
+- temps_minutes: temps total estimé incluant visites (15min chacune) et trajets (vitesse moyenne 60 km/h)
+- explication: brève description de l'itinéraire optimisé (1-2 phrases descriptives, sans questions)`;
 
     // Appel à Lovable AI
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

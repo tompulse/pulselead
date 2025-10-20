@@ -131,18 +131,19 @@ export const TourneeOptimizationPanel = ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
 
-      // Check for duplicate tournee name
+      // Check for duplicate tournee name AND date
       const { data: existingTournee } = await supabase
         .from('tournees')
         .select('id')
         .eq('user_id', user.id)
         .eq('nom', tourneeName)
+        .eq('date_planifiee', tourneeDate)
         .maybeSingle();
 
       if (existingTournee) {
         toast({
-          title: "Nom déjà utilisé",
-          description: "Une tournée avec ce nom existe déjà",
+          title: "Tournée déjà existante",
+          description: "Une tournée avec ce nom existe déjà pour cette date",
           variant: "destructive",
         });
         return;
@@ -205,7 +206,7 @@ export const TourneeOptimizationPanel = ({
   };
 
   return (
-    <Card className="w-full max-w-2xl border-accent/20 bg-gradient-to-br from-accent/5 to-transparent shadow-2xl">
+    <Card className="w-full max-w-md border-accent/20 bg-card/80 backdrop-blur-xl shadow-xl">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -227,114 +228,70 @@ export const TourneeOptimizationPanel = ({
           </div>
         ) : optimizedResult ? (
           <>
-            {/* Stats en grille */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-card p-4 rounded-lg border border-accent/20 text-center">
-                <Navigation className="w-8 h-8 mx-auto mb-2 text-accent" />
-                <div className="text-2xl font-bold text-accent">
-                  {Math.round(optimizedResult.distance_totale_km)} km
-                </div>
-                <div className="text-xs text-muted-foreground">Distance totale</div>
+            {/* Stats compactes */}
+            <div className="flex items-center justify-around py-3 px-2 bg-accent/5 rounded-lg border border-accent/20">
+              <div className="text-center">
+                <div className="text-lg font-bold text-accent">{Math.round(optimizedResult.distance_totale_km)} km</div>
+                <div className="text-[10px] text-muted-foreground">Distance</div>
               </div>
-              <div className="bg-card p-4 rounded-lg border border-accent/20 text-center">
-                <Clock className="w-8 h-8 mx-auto mb-2 text-accent" />
-                <div className="text-2xl font-bold text-accent">
-                  {Math.floor(optimizedResult.temps_estime_minutes / 60)}h
-                  {Math.round(optimizedResult.temps_estime_minutes % 60).toString().padStart(2, '0')}
+              <div className="h-8 w-px bg-accent/20"></div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-accent">
+                  {Math.floor(optimizedResult.temps_estime_minutes / 60)}h{Math.round(optimizedResult.temps_estime_minutes % 60).toString().padStart(2, '0')}
                 </div>
-                <div className="text-xs text-muted-foreground">Temps total</div>
+                <div className="text-[10px] text-muted-foreground">Durée</div>
               </div>
-              <div className="bg-card p-4 rounded-lg border border-accent/20 text-center">
-                <MapPin className="w-8 h-8 mx-auto mb-2 text-accent" />
-                <div className="text-2xl font-bold text-accent">
-                  {optimizedResult.entreprises_ordonnees.length}
-                </div>
-                <div className="text-xs text-muted-foreground">Prospects</div>
+              <div className="h-8 w-px bg-accent/20"></div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-accent">{optimizedResult.entreprises_ordonnees.length}</div>
+                <div className="text-[10px] text-muted-foreground">Arrêts</div>
               </div>
             </div>
 
-            {/* Itinéraire visuel avec design sexy */}
-            <div className="relative bg-gradient-to-br from-accent/5 via-accent/10 to-accent/5 p-6 rounded-xl border border-accent/20 overflow-hidden">
-              {/* Fond décoratif */}
-              <div className="absolute inset-0 opacity-10">
-                <svg className="w-full h-full" viewBox="0 0 400 200">
-                  <defs>
-                    <linearGradient id="roadGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="hsl(190 95% 60%)" stopOpacity="0.3" />
-                      <stop offset="50%" stopColor="hsl(190 95% 70%)" stopOpacity="0.6" />
-                      <stop offset="100%" stopColor="hsl(190 95% 60%)" stopOpacity="0.3" />
-                    </linearGradient>
-                  </defs>
-                  <path 
-                    d="M 0 100 Q 100 50, 200 100 T 400 100" 
-                    stroke="url(#roadGradient)" 
-                    strokeWidth="4" 
-                    fill="none"
-                    strokeDasharray="8 4"
-                  />
-                </svg>
+            {/* Liste des entreprises épurée */}
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 mb-2">
+                <Route className="w-4 h-4 text-accent" />
+                <h3 className="text-sm font-semibold text-foreground">Itinéraire</h3>
               </div>
-
-              <div className="relative space-y-3">
-                {/* Header avec voiture */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-accent/20 p-2 rounded-lg border border-accent/30">
-                    <span className="text-2xl">🚗</span>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-accent">Itinéraire optimisé</h3>
-                    <p className="text-xs text-muted-foreground">
-                      {optimizedResult.entreprises_ordonnees.length} arrêts planifiés
-                    </p>
-                  </div>
-                </div>
-
-                {/* Liste des entreprises */}
-                <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
-                  {optimizedResult.entreprises_ordonnees.map((entreprise: any, index: number) => (
-                    <div 
-                      key={entreprise.id} 
-                      className="flex items-center gap-3 bg-card/60 backdrop-blur-sm p-3 rounded-lg border border-accent/10 hover:border-accent/30 transition-all group"
-                    >
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-accent to-cyan-glow flex items-center justify-center text-xs font-bold text-primary shadow-lg">
-                          {index + 1}
-                        </div>
-                        {index < optimizedResult.entreprises_ordonnees.length - 1 && (
-                          <div className="h-8 w-0.5 bg-gradient-to-b from-accent/60 to-transparent ml-3"></div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate group-hover:text-accent transition-colors">
-                          {entreprise.nom}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {entreprise.ville || entreprise.adresse}
-                        </p>
-                      </div>
+              <div className="space-y-1.5 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+                {optimizedResult.entreprises_ordonnees.map((entreprise: any, index: number) => (
+                  <div 
+                    key={entreprise.id} 
+                    className="flex gap-2 p-2 rounded-lg border border-accent/10 bg-card/40 hover:bg-card/60 transition-colors"
+                  >
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
+                      {index + 1}
                     </div>
-                  ))}
-                </div>
-
-                {/* Explication IA */}
-                <div className="mt-4 p-3 bg-accent/5 rounded-lg border border-accent/20">
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    💡 {optimizedResult.explication}
-                  </p>
-                </div>
+                    <div className="flex-1 min-w-0 space-y-0.5">
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {entreprise.nom}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {entreprise.adresse && entreprise.code_postal && entreprise.ville 
+                          ? `${entreprise.adresse}, ${entreprise.code_postal} ${entreprise.ville}`
+                          : entreprise.ville || entreprise.adresse || 'Adresse non disponible'
+                        }
+                      </p>
+                      {entreprise.telephone && (
+                        <p className="text-xs text-accent font-medium">📞 {entreprise.telephone}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Boutons d'action */}
-            <div className="flex gap-3">
-              <Button onClick={handleSaveTournee} className="flex-1 h-11" disabled={!tourneeName.trim()}>
+            <div className="flex gap-2">
+              <Button onClick={handleSaveTournee} className="flex-1 h-10" disabled={!tourneeName.trim()}>
                 <Save className="w-4 h-4 mr-2" />
-                Enregistrer la tournée
+                Enregistrer
               </Button>
               <Button 
                 variant="outline"
                 onClick={() => setOptimizedResult(null)}
-                className="h-11"
+                className="h-10 px-3"
               >
                 Modifier
               </Button>
