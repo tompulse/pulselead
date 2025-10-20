@@ -81,19 +81,15 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
         <div className="relative p-6 border-b border-accent/20">
           <div className="flex items-start justify-between mb-3">
             <div className="flex-1 pr-2">
-              <h3 className="font-bold text-xl gradient-text mb-1">{entreprise.nom}</h3>
-              <p className="text-sm text-muted-foreground flex items-center gap-1">
-                <MapPin className="h-3 w-3" />
-                {entreprise.ville || entreprise.code_postal}
-              </p>
+              <h3 className="font-bold text-xl gradient-text">{entreprise.nom}</h3>
             </div>
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={onClose}
-              className="h-9 w-9 p-0 hover:bg-accent/20 rounded-full transition-all"
+              className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-all shadow-sm border border-transparent hover:border-destructive/20"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
           {leadStatus && (
