@@ -498,36 +498,36 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       </div>
                     </div>
 
-                    <div className="relative space-y-2.5 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
-                      {/* Activité - Bloc principal arrondi */}
+                    <div className="relative space-y-2 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                      {/* Activité */}
                       {categoryInfo.label && (
-                        <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
-                          <Briefcase className="w-5 h-5 text-accent flex-shrink-0" />
-                          <span className="text-sm font-medium">{categoryInfo.label}</span>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Briefcase className="w-3.5 h-3.5 text-accent/60 flex-shrink-0" />
+                          <span className="text-xs text-foreground/60">{categoryInfo.label}</span>
                         </div>
                       )}
 
                       {/* SIRET */}
                       {item.siret && (
-                        <div className="bg-gradient-to-br from-accent/5 to-transparent border border-accent/10 rounded-lg p-2.5 flex items-center gap-2.5">
-                          <Building2 className="w-4 h-4 text-accent flex-shrink-0" />
-                          <span className="text-xs text-foreground/80">SIRET: {item.siret}</span>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Building2 className="w-3.5 h-3.5 text-accent/60 flex-shrink-0" />
+                          <span className="text-xs text-foreground/60">SIRET: {item.siret}</span>
                         </div>
                       )}
                       
                       {/* Adresse */}
                       {fullAddress && (
-                        <div className="bg-gradient-to-br from-accent/5 to-transparent border border-accent/10 rounded-lg p-2.5 flex items-center gap-2.5">
-                          <MapPin className="w-4 h-4 text-accent flex-shrink-0" />
-                          <span className="text-xs text-foreground/80">{fullAddress}</span>
+                        <div className="flex items-start gap-2 text-sm">
+                          <MapPin className="w-3.5 h-3.5 text-accent/60 flex-shrink-0 mt-0.5" />
+                          <span className="text-xs text-foreground/60">{fullAddress}</span>
                         </div>
                       )}
 
                       {/* Gérant - Afficher seulement le premier */}
                       {gerant && (
-                        <div className="bg-gradient-to-br from-accent/5 to-transparent border border-accent/10 rounded-lg p-2.5 flex items-center gap-2.5">
-                          <User className="w-4 h-4 text-accent flex-shrink-0" />
-                          <span className="text-xs text-foreground/80">{gerant}</span>
+                        <div className="flex items-start gap-2 text-sm">
+                          <User className="w-3.5 h-3.5 text-accent/60 flex-shrink-0 mt-0.5" />
+                          <span className="text-xs text-foreground/60">{gerant}</span>
                         </div>
                       )}
 
