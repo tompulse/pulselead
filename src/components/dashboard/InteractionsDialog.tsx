@@ -97,6 +97,20 @@ export const InteractionsDialog = ({
     setLoading(false);
   };
 
+  const isRedundantNote = (notes: string, type: string) => {
+    const lowerNotes = notes.toLowerCase().trim();
+    const redundantPhrases = [
+      'appel planifié',
+      'visite planifiée',
+      'rdv planifié',
+      'rendez-vous planifié',
+      'action planifiée',
+      'à planifier',
+      'prévu'
+    ];
+    return redundantPhrases.some(phrase => lowerNotes === phrase || lowerNotes.includes(phrase));
+  };
+
   const handleDelete = async (id: string) => {
     // Find the interaction to get entreprise_id and type before deleting
     const interaction = interactions.find(i => i.id === id);
@@ -183,9 +197,9 @@ export const InteractionsDialog = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-2xl max-h-[85vh] sm:max-w-[90vw]">
           <DialogHeader>
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-2">
-                <div className={`p-2 rounded-lg ${typeInfo.bg}`}>
+            <div className="flex items-start justify-between gap-4 pr-8">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${typeInfo.bg} flex-shrink-0`}>
                   <Icon className={`h-5 w-5 ${typeInfo.color}`} />
                 </div>
                 <div>
@@ -201,7 +215,7 @@ export const InteractionsDialog = ({
                   variant="destructive"
                   size="sm"
                   onClick={handleDeleteAll}
-                  className="flex items-center gap-2 h-9"
+                  className="flex items-center gap-2 h-9 flex-shrink-0"
                 >
                   <Trash2 className="h-4 w-4" />
                   <span className="hidden sm:inline">Tout supprimer</span>
@@ -255,8 +269,8 @@ export const InteractionsDialog = ({
                           </div>
                         </div>
                         
-                        {/* Notes */}
-                        {interaction.notes && (
+                        {/* Notes - only show if not redundant */}
+                        {interaction.notes && !isRedundantNote(interaction.notes, interaction.type) && (
                           <p className="text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-lg mb-3 border border-muted/30">
                             {interaction.notes}
                           </p>
