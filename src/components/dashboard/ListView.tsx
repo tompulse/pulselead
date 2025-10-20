@@ -49,7 +49,14 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [crmData, setCrmData] = useState<Record<string, { status: any; interactionCount: number; hasUpcomingAction: boolean }>>({});
+  const [crmData, setCrmData] = useState<Record<string, { 
+    status: any; 
+    interactionCount: number; 
+    hasUpcomingAction: boolean;
+    hasAppel: boolean;
+    hasVisite: boolean;
+    hasRdv: boolean;
+  }>>({});
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
@@ -119,14 +126,21 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
 
       const { data: interactionsData } = await supabase
         .from('lead_interactions')
-        .select('entreprise_id, date_prochaine_action')
+        .select('entreprise_id, date_prochaine_action, type')
         .eq('user_id', user.id);
 
       const crmMap: Record<string, any> = {};
       
       statusData?.forEach(status => {
         if (!crmMap[status.entreprise_id]) {
-          crmMap[status.entreprise_id] = { status, interactionCount: 0, hasUpcomingAction: false };
+          crmMap[status.entreprise_id] = { 
+            status, 
+            interactionCount: 0, 
+            hasUpcomingAction: false,
+            hasAppel: false,
+            hasVisite: false,
+            hasRdv: false
+          };
         } else {
           crmMap[status.entreprise_id].status = status;
         }
@@ -134,9 +148,25 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
 
       interactionsData?.forEach(interaction => {
         if (!crmMap[interaction.entreprise_id]) {
-          crmMap[interaction.entreprise_id] = { status: null, interactionCount: 0, hasUpcomingAction: false };
+          crmMap[interaction.entreprise_id] = { 
+            status: null, 
+            interactionCount: 0, 
+            hasUpcomingAction: false,
+            hasAppel: false,
+            hasVisite: false,
+            hasRdv: false
+          };
         }
         crmMap[interaction.entreprise_id].interactionCount++;
+        
+        // Track interaction types
+        if (interaction.type === 'appel') {
+          crmMap[interaction.entreprise_id].hasAppel = true;
+        } else if (interaction.type === 'visite') {
+          crmMap[interaction.entreprise_id].hasVisite = true;
+        } else if (interaction.type === 'rdv') {
+          crmMap[interaction.entreprise_id].hasRdv = true;
+        }
         
         if (interaction.date_prochaine_action) {
           const actionDate = new Date(interaction.date_prochaine_action);
@@ -311,18 +341,31 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
                         {item.nom}
                       </h4>
-                      <div className="flex gap-1 flex-shrink-0">
-                        {crm?.hasUpcomingAction && (
-                          <Badge variant="outline" className="h-6 px-2">
-                            <Bell className="h-3 w-3" />
-                          </Badge>
-                        )}
-                        {crm?.interactionCount > 0 && (
-                          <Badge variant="secondary" className="h-6 px-2 flex items-center gap-1">
-                            <MessageSquare className="h-3 w-3" />
-                            {crm.interactionCount}
-                          </Badge>
-                        )}
+                      <div className="flex gap-1.5 flex-shrink-0">
+                        {/* Action icons - filled if action exists, outline otherwise */}
+                        <div className={`h-6 w-6 rounded flex items-center justify-center ${
+                          crm?.hasAppel 
+                            ? 'bg-blue-500 text-white' 
+                            : 'border border-blue-500/30 text-blue-500/50'
+                        }`}>
+                          <Phone className="h-3.5 w-3.5" />
+                        </div>
+                        
+                        <div className={`h-6 w-6 rounded flex items-center justify-center ${
+                          crm?.hasVisite 
+                            ? 'bg-green-500 text-white' 
+                            : 'border border-green-500/30 text-green-500/50'
+                        }`}>
+                          <Car className="h-3.5 w-3.5" />
+                        </div>
+                        
+                        <div className={`h-6 w-6 rounded flex items-center justify-center ${
+                          crm?.hasRdv 
+                            ? 'bg-purple-500 text-white' 
+                            : 'border border-purple-500/30 text-purple-500/50'
+                        }`}>
+                          <CalendarCheck className="h-3.5 w-3.5" />
+                        </div>
                       </div>
                     </div>
 
@@ -330,7 +373,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       {categoryInfo.label && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <Briefcase className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{categoryInfo.emoji} {categoryInfo.label}</span>
+                          <span className="line-clamp-1">{categoryInfo.label}</span>
                         </div>
                       )}
                       
