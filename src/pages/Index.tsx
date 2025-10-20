@@ -358,7 +358,7 @@ const Index = () => {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>20 prospects/mois</strong></span>
+                  <span className="text-foreground font-medium"><strong>10 créations/mois</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
@@ -391,51 +391,51 @@ const Index = () => {
             </div>
 
             {/* Plan Pro - Recommandé */}
-            <div className="relative glass-card p-8 space-y-6 border-accent/70 shadow-2xl shadow-accent/20 scale-105 bg-gradient-to-b from-accent/10 to-transparent">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-accent to-accent/90 text-primary text-sm font-bold rounded-full flex items-center gap-2 shadow-lg shadow-accent/30">
-                <Sparkles className="w-4 h-4" />
+            <div className="relative glass-card p-10 space-y-7 border-accent shadow-2xl shadow-accent/40 scale-110 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-8 py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50 animate-pulse">
+                <Sparkles className="w-5 h-5" />
                 Le plus populaire
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Pro</h3>
-                <p className="text-muted-foreground font-medium">Pour développer rapidement</p>
+                <h3 className="text-3xl font-bold gradient-text">Pro</h3>
+                <p className="text-foreground font-semibold">Pour développer rapidement</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold gradient-text">
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-6xl font-bold gradient-text drop-shadow-lg">
                     {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '169' : '149'}€
                   </span>
-                  <span className="text-muted-foreground font-medium">/mois</span>
+                  <span className="text-foreground font-semibold text-lg">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">Multi-secteurs illimité</div>
+                <div className="text-base text-accent font-bold">Multi-secteurs illimité</div>
               </div>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">✨ <strong>Prospects illimités</strong></span>
+                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-lg">✨ <strong>50 créations/mois</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">🎯 <strong>Tous les secteurs</strong></span>
+                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-lg">🎯 <strong>Tous les secteurs</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">💎 <strong>Contacts dirigeants</strong></span>
+                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-lg">💎 <strong>Contacts dirigeants</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">🤖 <strong>Filtres IA avancés</strong></span>
+                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-lg">🤖 <strong>Filtres IA avancés</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">📊 Analytics & prévisions</span>
+                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold">📊 Analytics & prévisions</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">⚡ <strong>Support prioritaire 24h</strong></span>
+                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-lg">⚡ <strong>Support prioritaire 24h</strong></span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-xl shadow-accent/40 font-bold text-base" size="lg">
+              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-lg py-7 hover:scale-105 transition-transform" size="lg">
                 Essai gratuit 14 jours
               </Button>
             </div>
