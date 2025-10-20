@@ -278,6 +278,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
         toast({
           title: `${actionEmojis[actionType]} Action supprimée`,
           description: `L'action a été retirée pour cette entreprise`,
+          duration: 2500,
         });
 
         return;
@@ -341,13 +342,15 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
       toast({
         title: `${actionEmojis[actionType]} ${actionLabels[actionType]} !`,
         description: `L'action a été enregistrée pour cette entreprise`,
+        duration: 2500,
       });
     } catch (error) {
       console.error('Error adding CRM action:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'enregistrer l'action",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 3000,
       });
     }
   };

@@ -67,6 +67,7 @@ export const TourneeOptimizationPanel = ({
         title: "Sélection insuffisante",
         description: "Sélectionnez au moins 2 entreprises",
         variant: "destructive",
+        duration: 3000,
       });
       return;
     }
@@ -97,6 +98,7 @@ export const TourneeOptimizationPanel = ({
       toast({
         title: "🎯 Tournée optimisée !",
         description: `${data.entreprises_ordonnees.length} visites • ${Math.round(data.distance_totale_km)} km`,
+        duration: 2500,
       });
     } catch (error) {
       console.error('Error optimizing tournee:', error);
@@ -104,6 +106,7 @@ export const TourneeOptimizationPanel = ({
         title: "Erreur d'optimisation",
         description: "Impossible d'optimiser la tournée",
         variant: "destructive",
+        duration: 3000,
       });
     } finally {
       setOptimizing(false);
@@ -123,6 +126,7 @@ export const TourneeOptimizationPanel = ({
         title: "Informations manquantes",
         description: "Veuillez renseigner le nom de la tournée",
         variant: "destructive",
+        duration: 3000,
       });
       return;
     }
@@ -145,6 +149,7 @@ export const TourneeOptimizationPanel = ({
           title: "Tournée déjà existante",
           description: "Une tournée avec ce nom existe déjà pour cette date",
           variant: "destructive",
+          duration: 3000,
         });
         return;
       }
@@ -169,6 +174,7 @@ export const TourneeOptimizationPanel = ({
           title: "Prospects déjà planifiés",
           description: `Ces entreprises sont déjà dans une autre tournée: ${duplicateNames}`,
           variant: "destructive",
+          duration: 3000,
         });
         return;
       }
@@ -192,6 +198,7 @@ export const TourneeOptimizationPanel = ({
       toast({
         title: "✅ Tournée enregistrée",
         description: "La tournée a été sauvegardée avec succès",
+        duration: 2500,
       });
 
       onSave();
@@ -201,6 +208,7 @@ export const TourneeOptimizationPanel = ({
         title: "Erreur",
         description: "Impossible de sauvegarder la tournée",
         variant: "destructive",
+        duration: 3000,
       });
     }
   };

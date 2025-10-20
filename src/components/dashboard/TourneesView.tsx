@@ -118,6 +118,7 @@ export const TourneesView = () => {
         title: "Sélection insuffisante",
         description: "Sélectionnez au moins 2 entreprises pour optimiser une tournée",
         variant: "destructive",
+        duration: 3000,
       });
       return;
     }
@@ -127,6 +128,7 @@ export const TourneesView = () => {
         title: "Nom requis",
         description: "Veuillez donner un nom à votre tournée",
         variant: "destructive",
+        duration: 3000,
       });
       return;
     }
@@ -159,6 +161,7 @@ export const TourneesView = () => {
       toast({
         title: "🎯 Tournée optimisée !",
         description: `${data.entreprises_ordonnees.length} visites • ${Math.round(data.distance_totale_km)} km • ${Math.round(data.temps_estime_minutes / 60)}h${Math.round(data.temps_estime_minutes % 60)}`,
+        duration: 2500,
       });
     } catch (error) {
       console.error('Error optimizing tournee:', error);
@@ -166,6 +169,7 @@ export const TourneesView = () => {
         title: "Erreur d'optimisation",
         description: "Impossible d'optimiser la tournée",
         variant: "destructive",
+        duration: 3000,
       });
     } finally {
       setOptimizing(false);
@@ -178,6 +182,7 @@ export const TourneesView = () => {
         title: "Informations manquantes",
         description: "Veuillez renseigner le nom de la tournée",
         variant: "destructive",
+        duration: 3000,
       });
       return;
     }
@@ -205,6 +210,7 @@ export const TourneesView = () => {
       toast({
         title: "✅ Tournée enregistrée",
         description: "La tournée a été sauvegardée avec succès",
+        duration: 2500,
       });
 
       setTourneeName("");
@@ -219,6 +225,7 @@ export const TourneesView = () => {
         title: "Erreur",
         description: "Impossible de sauvegarder la tournée",
         variant: "destructive",
+        duration: 3000,
       });
     }
   };
@@ -245,6 +252,7 @@ export const TourneesView = () => {
           title: "Erreur",
           description: "Impossible de charger les entreprises de la tournée",
           variant: "destructive",
+          duration: 3000,
         });
         return;
       }
@@ -272,6 +280,7 @@ export const TourneesView = () => {
       toast({
         title: "🚗 Navigation démarrée",
         description: "La tournée s'ouvre dans Google Maps",
+        duration: 2500,
       });
     } catch (error) {
       console.error('Error starting tournee:', error);
@@ -279,6 +288,7 @@ export const TourneesView = () => {
         title: "Erreur",
         description: "Impossible de démarrer la navigation",
         variant: "destructive",
+        duration: 3000,
       });
     }
   };
@@ -291,6 +301,7 @@ export const TourneesView = () => {
       toast({
         title: "Tournée supprimée",
         description: "La tournée a été supprimée",
+        duration: 2500,
       });
       fetchTournees();
     } catch (error) {
@@ -299,6 +310,7 @@ export const TourneesView = () => {
         title: "Erreur",
         description: "Impossible de supprimer la tournée",
         variant: "destructive",
+        duration: 3000,
       });
     }
   };
@@ -353,6 +365,7 @@ export const TourneesView = () => {
                       toast({
                         title: "✅ Nom modifié",
                         description: "Le nom de la tournée a été mis à jour",
+                        duration: 2500,
                       });
                     });
                 }

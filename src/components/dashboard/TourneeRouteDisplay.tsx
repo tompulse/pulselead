@@ -271,6 +271,7 @@ export const TourneeRouteDisplay = ({
       toast({
         title: "✅ Visite enregistrée",
         description: "Les informations ont été sauvegardées",
+        duration: 2500,
       });
     } catch (error) {
       console.error('Error saving visite:', error);
@@ -278,6 +279,7 @@ export const TourneeRouteDisplay = ({
         title: "Erreur",
         description: "Impossible d'enregistrer la visite",
         variant: "destructive",
+        duration: 3000,
       });
     }
   };

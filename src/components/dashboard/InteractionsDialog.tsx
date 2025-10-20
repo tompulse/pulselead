@@ -125,7 +125,8 @@ export const InteractionsDialog = ({
       toast({
         title: "Erreur",
         description: "Impossible de supprimer l'interaction",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 3000,
       });
     } else {
       // Optimistic UI update
@@ -134,6 +135,7 @@ export const InteractionsDialog = ({
       toast({
         title: "✓ Supprimé",
         description: "L'interaction a été supprimée",
+        duration: 2500,
       });
       
       // Notify parent component about the deletion
@@ -156,7 +158,8 @@ export const InteractionsDialog = ({
       toast({
         title: "Erreur",
         description: "Impossible de supprimer les interactions",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 3000,
       });
     } else {
       // Notify parent component about each deletion
@@ -171,6 +174,7 @@ export const InteractionsDialog = ({
       toast({
         title: "✓ Tout supprimé",
         description: `${interactionIds.length} interaction${interactionIds.length > 1 ? 's supprimées' : ' supprimée'}`,
+        duration: 2500,
       });
     }
   };

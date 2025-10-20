@@ -18,6 +18,7 @@ export const SyncButton = () => {
       toast({
         title: "✅ Synchronisation réussie",
         description: `${data?.synced || 0} entreprises synchronisées`,
+        duration: 2500,
       });
 
       // Recharger la page pour afficher les nouvelles données
@@ -28,6 +29,7 @@ export const SyncButton = () => {
         title: "❌ Erreur de synchronisation",
         description: error instanceof Error ? error.message : "Erreur inconnue",
         variant: "destructive",
+        duration: 3000,
       });
     } finally {
       setLoading(false);

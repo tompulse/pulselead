@@ -93,11 +93,13 @@ export const QuickActionButtons = ({
         toast({
           title: message.title,
           description: `${message.description} • Prochaine action : ${prochaine_action}`,
+          duration: 2500,
         });
       } else {
         toast({
           title: message.title,
           description: message.description,
+          duration: 2500,
         });
       }
 
@@ -116,6 +118,7 @@ export const QuickActionButtons = ({
         title: "Erreur",
         description: "Impossible d'enregistrer l'interaction",
         variant: "destructive",
+        duration: 3000,
       });
     } finally {
       setIsSubmitting(false);
