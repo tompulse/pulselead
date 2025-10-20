@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Phone, MapPin, Calendar, StickyNote, Trash2, X } from "lucide-react";
+import { Phone, MapPin, Calendar, StickyNote, Trash2, X, Navigation } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -28,6 +28,9 @@ interface Interaction {
   date_prochaine_action?: string;
   prochaine_action?: string;
   entreprise_nom: string;
+  telephone?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 interface InteractionsDialogProps {
@@ -71,7 +74,10 @@ export const InteractionsDialog = ({
         date_prochaine_action,
         prochaine_action,
         entreprises (
-          nom
+          nom,
+          telephone,
+          latitude,
+          longitude
         )
       `)
       .eq('user_id', userId)
@@ -90,6 +96,9 @@ export const InteractionsDialog = ({
           date_prochaine_action: item.date_prochaine_action || undefined,
           prochaine_action: item.prochaine_action || undefined,
           entreprise_nom: (item.entreprises as any)?.nom || 'Entreprise',
+          telephone: (item.entreprises as any)?.telephone,
+          latitude: (item.entreprises as any)?.latitude,
+          longitude: (item.entreprises as any)?.longitude,
         }));
       setInteractions(formattedData);
     }
@@ -211,14 +220,48 @@ export const InteractionsDialog = ({
                         )}
                       </div>
                       
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => setDeleteId(interaction.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        {/* Action buttons based on type */}
+                        {interaction.type === 'appel' && interaction.telephone && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.location.href = `tel:${interaction.telephone}`;
+                            }}
+                          >
+                            <Phone className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        
+                        {interaction.type === 'visite' && interaction.latitude && interaction.longitude && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 border-green-500/30 hover:bg-green-500/10 hover:border-green-500"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(`https://waze.com/ul?ll=${interaction.latitude},${interaction.longitude}&navigate=yes`, '_blank');
+                            }}
+                          >
+                            <Navigation className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteId(interaction.id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
