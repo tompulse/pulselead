@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, MessageSquare, Loader2, Phone, Mail, MapPin, Calendar, Building2, DollarSign, User, Navigation, Map as MapIconLucide } from "lucide-react";
+import { X, Loader2, Phone, Mail, MapPin, Calendar, Building2, DollarSign, User, Navigation, Map as MapIconLucide, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
@@ -135,12 +135,16 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
       <ScrollArea className="flex-1">
         <div className="p-6">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'info' | 'crm')} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="info">📋 Infos</TabsTrigger>
-              <TabsTrigger value="crm" className="flex items-center gap-2">
-                💼 CRM
+            <TabsList className="grid w-full grid-cols-2 mb-6 bg-accent/10">
+              <TabsTrigger value="info" className="data-[state=active]:bg-background">
+                <Building2 className="w-4 h-4 mr-2" />
+                Infos
+              </TabsTrigger>
+              <TabsTrigger value="crm" className="flex items-center gap-2 data-[state=active]:bg-background">
+                <Sparkles className="w-4 h-4 text-blue-400" />
+                Activités
                 {interactions.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs bg-blue-500/20 text-blue-400 border-blue-500/30">
                     {interactions.length}
                   </Badge>
                 )}
@@ -268,13 +272,13 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
 
             <TabsContent value="crm" className="space-y-6 mt-0">
           {/* Quick Actions Card */}
-          <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
+          <Card className="border-blue-500/20 bg-gradient-to-br from-blue-500/5 via-blue-400/5 to-transparent shadow-lg">
             <CardContent className="p-5 space-y-4">
               <div className="flex items-center gap-2 mb-3">
-                <div className="p-2 bg-accent/20 rounded-lg">
-                  <MessageSquare className="h-4 w-4 text-accent" />
+                <div className="p-2 bg-blue-500/20 rounded-lg shadow-sm">
+                  <Sparkles className="h-4 w-4 text-blue-400 animate-pulse" />
                 </div>
-                <h4 className="font-semibold">Actions rapides</h4>
+                <h4 className="font-semibold text-foreground/90">Actions commerciales</h4>
               </div>
               <QuickActionButtons 
                 entrepriseId={entreprise.id} 
@@ -286,17 +290,17 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
           <Separator className="bg-accent/20" />
 
           {/* Timeline Card */}
-          <Card className="border-accent/20">
+          <Card className="border-blue-500/20 shadow-lg">
             <CardContent className="p-5 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-accent/20 rounded-lg">
-                  <Calendar className="h-4 w-4 text-accent" />
+                <div className="p-2 bg-blue-500/20 rounded-lg shadow-sm">
+                  <Calendar className="h-4 w-4 text-blue-400" />
                 </div>
-                <h4 className="font-semibold">Historique des interactions</h4>
+                <h4 className="font-semibold text-foreground/90">Historique</h4>
               </div>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-accent" />
+                  <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
                 </div>
               ) : (
                 <InteractionTimeline interactions={interactions} />

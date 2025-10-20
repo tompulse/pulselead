@@ -19,17 +19,18 @@ interface InteractionTimelineProps {
 }
 
 const getTypeIcon = (type: string) => {
+  const iconClass = "h-4 w-4";
   switch (type) {
     case 'appel':
-      return <Phone className="h-4 w-4" />;
+      return <Phone className={`${iconClass} text-blue-500`} />;
     case 'email':
-      return <Mail className="h-4 w-4" />;
+      return <Mail className={`${iconClass} text-cyan-500`} />;
     case 'visite':
-      return <MapPin className="h-4 w-4" />;
+      return <MapPin className={`${iconClass} text-green-500`} />;
     case 'rdv':
-      return <Calendar className="h-4 w-4" />;
+      return <Calendar className={`${iconClass} text-purple-500`} />;
     default:
-      return <MessageSquare className="h-4 w-4" />;
+      return <MessageSquare className={`${iconClass} text-gray-500`} />;
   }
 };
 
@@ -82,44 +83,44 @@ export const InteractionTimeline = ({ interactions }: InteractionTimelineProps) 
 
   return (
     <ScrollArea className="h-[400px] pr-4">
-      <div className="space-y-4">
+      <div className="space-y-3">
         {interactions.map((interaction, index) => (
-          <div key={interaction.id} className="relative pl-8 pb-4 border-l-2 border-accent/30 last:border-0 group">
-            <div className="absolute left-[-9px] top-0 bg-background border-2 border-accent rounded-full p-1.5 shadow-lg group-hover:scale-110 transition-transform">
+          <div key={interaction.id} className="relative pl-8 pb-3 border-l-2 border-blue-500/20 last:border-0 group">
+            <div className="absolute left-[-9px] top-0 bg-background border-2 border-blue-500/30 rounded-full p-1.5 shadow-md group-hover:scale-110 group-hover:border-blue-500/50 transition-all">
               {getTypeIcon(interaction.type)}
             </div>
             
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-sm gradient-text">
+                <span className="font-semibold text-sm text-foreground/90">
                   {getTypeLabel(interaction.type)}
                 </span>
-                <Badge variant={getStatutVariant(interaction.statut)} className="shadow-sm">
+                <Badge variant={getStatutVariant(interaction.statut)} className="shadow-sm text-xs">
                   {getStatutLabel(interaction.statut)}
                 </Badge>
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <span className="text-xs text-muted-foreground/70 flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  {format(new Date(interaction.created_at), 'dd MMM yyyy à HH:mm', { locale: fr })}
+                  {format(new Date(interaction.created_at), 'dd MMM à HH:mm', { locale: fr })}
                 </span>
               </div>
 
               {interaction.notes && (
-                <div className="text-sm bg-accent/5 border border-accent/20 p-3 rounded-lg">
-                  <p className="leading-relaxed">{interaction.notes}</p>
+                <div className="text-sm bg-blue-500/5 border border-blue-500/20 p-2.5 rounded-lg">
+                  <p className="leading-relaxed text-foreground/80">{interaction.notes}</p>
                 </div>
               )}
 
               {interaction.prochaine_action && (
-                <div className="text-sm space-y-1 bg-muted/30 p-3 rounded-lg border border-muted">
-                  <p className="font-semibold text-accent flex items-center gap-1.5">
-                    <span className="inline-block w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
+                <div className="text-sm space-y-1 bg-blue-500/10 p-2.5 rounded-lg border border-blue-500/30">
+                  <p className="font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 text-xs">
+                    <span className="inline-block w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
                     Prochaine action
                   </p>
-                  <p className="text-foreground/90">{interaction.prochaine_action}</p>
+                  <p className="text-foreground/90 text-sm">{interaction.prochaine_action}</p>
                   {interaction.date_prochaine_action && (
-                    <p className="text-xs flex items-center gap-1.5 text-muted-foreground mt-1">
+                    <p className="text-xs flex items-center gap-1.5 text-muted-foreground/70 mt-1">
                       <Calendar className="h-3 w-3" />
-                      {format(new Date(interaction.date_prochaine_action), "dd MMM yyyy à HH:mm", { locale: fr })}
+                      {format(new Date(interaction.date_prochaine_action), "dd MMM à HH:mm", { locale: fr })}
                     </p>
                   )}
                 </div>
