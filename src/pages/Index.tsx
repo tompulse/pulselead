@@ -73,24 +73,23 @@ const Index = () => {
       <section className="relative pt-32 sm:pt-40 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-8 animate-fade-in">
-            {/* Badge de lancement */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 backdrop-blur-sm hover:border-cyan-electric/50 transition-all">
-              <Lightbulb className="w-4 h-4 text-cyan-electric animate-pulse" />
-              <span className="text-sm text-cyan-electric font-semibold tracking-wide">🔥 Données officielles en temps réel</span>
+            {/* Badge simple */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 backdrop-blur-sm">
+              <span className="text-sm text-cyan-electric font-semibold">Données officielles INPI • Temps réel</span>
             </div>
             
-            {/* Promesse de vente claire et concise */}
+            {/* Message ultra clair */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="text-foreground">Contacte les nouvelles entreprises</span>
+              <span className="text-foreground">Trouve toutes les nouvelles entreprises</span>
               <br />
-              <span className="gradient-text">avant tes concurrents</span>
+              <span className="gradient-text">qui se créent près de chez toi</span>
             </h1>
             
-            {/* Sous-promesse courte */}
+            {/* Explication simple */}
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Visualise en temps réel les créations d'entreprises sur ton territoire.
+              Une carte interactive qui affiche en temps réel toutes les créations d'entreprises.
               <br className="hidden sm:block" />
-              Sois le premier à les contacter.
+              Parfait pour la prospection commerciale.
             </p>
             
             {/* CTA */}
@@ -100,7 +99,7 @@ const Index = () => {
                 size="lg"
                 className="btn-hero w-full sm:w-auto min-w-[240px] h-14 text-lg font-semibold group"
               >
-                Démarrer maintenant
+                Voir la carte maintenant
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
