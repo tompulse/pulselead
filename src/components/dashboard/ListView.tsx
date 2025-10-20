@@ -303,7 +303,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 return (
                   <div
                     key={item.id}
-                    className="glass-card rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 w-full overflow-hidden flex flex-col"
+                    className="rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-card/95 backdrop-blur w-full overflow-hidden flex flex-col"
                   >
                     <div className="flex items-start justify-between gap-2 mb-3">
                       <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
