@@ -47,6 +47,7 @@ const Dashboard = () => {
   const [tournees, setTournees] = useState<any[]>([]);
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [showOptimizationPanel, setShowOptimizationPanel] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -401,23 +402,22 @@ const Dashboard = () => {
             tourneeDate={tourneeDate}
             setTourneeDate={setTourneeDate}
             selectedCount={selectedEntreprisesForTournee.length}
+            onOptimize={() => setShowOptimizationPanel(true)}
           />
         )}
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden relative flex">
-          {view === "map" && tourneeSelectionMode && (
+          {showOptimizationPanel && tourneeSelectionMode && (
             <div className="absolute inset-0 flex items-center justify-center z-20 bg-background/80 backdrop-blur-sm p-6">
               <TourneeOptimizationPanel
                 selectedEntreprises={selectedEntreprisesForTournee}
                 tourneeName={tourneeName}
                 tourneeDate={tourneeDate}
-                onClose={() => {
-                  setTourneeSelectionMode(false);
-                  setSelectedEntreprisesForTournee([]);
-                }}
+                onClose={() => setShowOptimizationPanel(false)}
                 onSave={() => {
                   fetchTournees();
+                  setShowOptimizationPanel(false);
                   setTourneeSelectionMode(false);
                   setSelectedEntreprisesForTournee([]);
                   setTourneeName("");

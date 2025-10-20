@@ -29,6 +29,7 @@ interface SidebarProps {
   tourneeDate?: string;
   setTourneeDate?: (date: string) => void;
   selectedCount?: number;
+  onOptimize?: () => void;
 }
 
 export const Sidebar = ({ 
@@ -43,7 +44,8 @@ export const Sidebar = ({
   setTourneeName,
   tourneeDate = "",
   setTourneeDate,
-  selectedCount = 0
+  selectedCount = 0,
+  onOptimize
 }: SidebarProps) => {
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
@@ -141,6 +143,15 @@ export const Sidebar = ({
                       {selectedCount} entreprise(s) sélectionnée(s)
                     </div>
                   )}
+                  <Button
+                    onClick={onOptimize}
+                    disabled={selectedCount < 2}
+                    className="w-full h-8 text-xs"
+                    size="sm"
+                  >
+                    <Route className="w-3 h-3 mr-1.5" />
+                    Optimiser la tournée
+                  </Button>
                 </div>
               )}
             </>
