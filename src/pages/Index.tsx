@@ -353,7 +353,7 @@ const Index = () => {
                   </span>
                   <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">1 secteur d'activité</div>
+                <div className="text-sm text-accent font-bold">1 secteur géographique</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -392,7 +392,7 @@ const Index = () => {
 
             {/* Plan Pro - Recommandé */}
             <div className="relative glass-card p-10 space-y-7 border-accent shadow-2xl shadow-accent/40 scale-110 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
-              <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-8 py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50 animate-pulse">
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-8 py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
                 <Sparkles className="w-5 h-5" />
                 Le plus populaire
               </div>
@@ -440,10 +440,10 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Plan Enterprise */}
+            {/* Plan Entreprise */}
             <div className="glass-card p-8 space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Enterprise</h3>
+                <h3 className="text-2xl font-bold text-foreground">Entreprise</h3>
                 <p className="text-muted-foreground font-medium">Pour les équipes commerciales</p>
               </div>
               <div>
