@@ -3,7 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { MapView } from "./MapView";
 import {
@@ -11,6 +17,7 @@ import {
   Clock,
   Phone,
   ExternalLink,
+  Map as MapIconLucide,
 } from "lucide-react";
 
 type Entreprise = {
@@ -53,6 +60,7 @@ export const TourneeRouteDisplay = ({
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
   const [statut, setStatut] = useState(initialStatut);
+  const [showNavigationDialog, setShowNavigationDialog] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -81,7 +89,7 @@ export const TourneeRouteDisplay = ({
     }
   };
 
-  const handleStartNavigation = async () => {
+  const handleStartNavigation = async (app: 'google' | 'waze') => {
     try {
       const origin = pointDepartLat && pointDepartLng
         ? `${pointDepartLat},${pointDepartLng}`
@@ -94,9 +102,17 @@ export const TourneeRouteDisplay = ({
         .map(e => `${e.latitude},${e.longitude}`)
         .join('|');
 
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypoints}&travelmode=driving`;
+      let url: string;
+      
+      if (app === 'google') {
+        url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypoints}&travelmode=driving`;
+      } else {
+        // Waze ne supporte pas les waypoints multiples, on navigue vers la première destination
+        url = `https://waze.com/ul?ll=${entreprises[0].latitude},${entreprises[0].longitude}&navigate=yes`;
+      }
       
       window.open(url, '_blank');
+      setShowNavigationDialog(false);
 
       // Update status to en_cours if planifiee
       if (statut === 'planifiee') {
@@ -110,7 +126,7 @@ export const TourneeRouteDisplay = ({
 
       toast({
         title: "🚗 Navigation démarrée",
-        description: "La tournée s'ouvre dans Google Maps",
+        description: app === 'google' ? "La tournée s'ouvre dans Google Maps" : "La tournée s'ouvre dans Waze",
       });
     } catch (error) {
       console.error('Error:', error);
@@ -202,7 +218,7 @@ export const TourneeRouteDisplay = ({
 
           {/* Bouton fixe en bas */}
           <Button 
-            onClick={handleStartNavigation} 
+            onClick={() => setShowNavigationDialog(true)} 
             size="lg"
             className="w-full h-12 text-base font-semibold shrink-0"
           >
@@ -211,6 +227,36 @@ export const TourneeRouteDisplay = ({
           </Button>
         </CardContent>
       </Card>
+
+      {/* Dialog de choix de navigation */}
+      <Dialog open={showNavigationDialog} onOpenChange={setShowNavigationDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Choisir l'application de navigation</DialogTitle>
+            <DialogDescription>
+              Sélectionnez l'application que vous souhaitez utiliser pour votre tournée
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <Button
+              onClick={() => handleStartNavigation('google')}
+              className="h-20 flex flex-col gap-2"
+              variant="outline"
+            >
+              <MapIconLucide className="w-8 h-8" />
+              <span>Google Maps</span>
+            </Button>
+            <Button
+              onClick={() => handleStartNavigation('waze')}
+              className="h-20 flex flex-col gap-2"
+              variant="outline"
+            >
+              <Navigation className="w-8 h-8" />
+              <span>Waze</span>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
