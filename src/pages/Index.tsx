@@ -294,27 +294,6 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Segmentation par région */}
-          <div className="glass-card p-6 max-w-2xl mx-auto mb-12 border-cyan-electric/20">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="text-center md:text-left">
-                <div className="text-lg font-semibold text-foreground">Choisissez votre région</div>
-                <div className="text-sm text-muted-foreground">Le prix varie selon le nombre de créations d'entreprises</div>
-              </div>
-              <div className="flex gap-3">
-                <Button variant="outline" className="border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric">
-                  1 Région
-                </Button>
-                <Button variant="outline" className="border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric">
-                  Plusieurs Régions
-                </Button>
-                <Button variant="outline" className="border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric">
-                  France entière
-                </Button>
-              </div>
-            </div>
-          </div>
-
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
             {/* Plan Starter */}
             <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
@@ -452,13 +431,48 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="glass-card p-8 max-w-3xl mx-auto text-center border-cyan-electric/20">
-            <p className="text-xl text-muted-foreground mb-2">ROI moyen constaté :</p>
-            <p className="text-3xl font-bold">
-              <span className="line-through text-destructive/70">100h de recherche manuelle</span>
-              {" → "}
-              <span className="gradient-text">10 minutes avec LUMA</span>
-            </p>
+          {/* ROI Section - Amélioration visuelle */}
+          <div className="glass-card p-10 md:p-14 max-w-4xl mx-auto border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 via-transparent to-cyan-electric/5">
+            <div className="space-y-8">
+              <div className="text-center">
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">ROI moyen constaté</h3>
+                <div className="w-20 h-1 bg-gradient-to-r from-transparent via-cyan-electric to-transparent mx-auto"></div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6 items-center">
+                <div className="glass-card p-6 border-destructive/30 bg-destructive/5">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-destructive" />
+                    </div>
+                    <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Avant</span>
+                  </div>
+                  <div className="text-3xl md:text-4xl font-bold text-destructive line-through">100h</div>
+                  <div className="text-sm text-muted-foreground mt-1">de recherche manuelle</div>
+                </div>
+
+                <div className="glass-card p-6 border-cyan-electric/50 bg-gradient-to-br from-cyan-electric/10 to-transparent relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-electric/10 rounded-full blur-2xl"></div>
+                  <div className="relative">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full bg-cyan-electric/20 flex items-center justify-center">
+                        <Zap className="w-5 h-5 text-cyan-electric" />
+                      </div>
+                      <span className="text-sm font-semibold text-cyan-electric uppercase tracking-wide">Avec LUMA</span>
+                    </div>
+                    <div className="text-3xl md:text-4xl font-bold gradient-text">10 min</div>
+                    <div className="text-sm text-muted-foreground mt-1">Temps réel et automatique</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center pt-4">
+                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
+                  <TrendingUp className="w-5 h-5 text-cyan-electric" />
+                  <span className="text-lg font-semibold gradient-text">Gain de productivité : ×600</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
