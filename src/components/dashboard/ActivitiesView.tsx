@@ -88,7 +88,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="glass-card border-accent/20 bg-gradient-to-br from-blue-500/5 to-transparent">
+        <Card className="glass-card border-accent/20 bg-gradient-to-br from-blue-500/5 to-transparent hover:border-blue-500/40 transition-all cursor-pointer">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Phone className="h-4 w-4 text-blue-500" />
@@ -102,7 +102,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
           </CardContent>
         </Card>
 
-        <Card className="glass-card border-accent/20 bg-gradient-to-br from-green-500/5 to-transparent">
+        <Card className="glass-card border-accent/20 bg-gradient-to-br from-green-500/5 to-transparent hover:border-green-500/40 transition-all cursor-pointer">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <MapPin className="h-4 w-4 text-green-500" />
@@ -116,7 +116,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
           </CardContent>
         </Card>
 
-        <Card className="glass-card border-accent/20 bg-gradient-to-br from-purple-500/5 to-transparent">
+        <Card className="glass-card border-accent/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:border-purple-500/40 transition-all cursor-pointer">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Calendar className="h-4 w-4 text-purple-500" />
@@ -130,7 +130,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
           </CardContent>
         </Card>
 
-        <Card className="glass-card border-accent/20 bg-gradient-to-br from-accent/10 to-transparent">
+        <Card className="glass-card border-accent/20 bg-gradient-to-br from-accent/10 to-transparent hover:border-accent/40 transition-all cursor-pointer">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-accent" />
@@ -145,76 +145,30 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
         </Card>
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Daily Actions Widget */}
-        <DailyActionsWidget userId={userId} onEntrepriseClick={onEntrepriseClick} />
-
-        {/* Performance Card */}
-        <Card className="glass-card border-accent/20">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Target className="h-5 w-5 text-accent" />
-              Performance
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Taux de conversion</span>
-                <span className="text-2xl font-bold text-accent">{stats.conversionRate}%</span>
-              </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-accent to-accent/60 transition-all duration-500"
-                  style={{ width: `${stats.conversionRate}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3 pt-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-accent/5 border border-accent/20">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <span className="text-sm font-medium">Objectif hebdomadaire</span>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {stats.weekCalls + stats.weekVisits + stats.weekMeetings} / 20
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-muted">
-                <div className="flex items-center gap-3">
-                  <TrendingUp className="h-5 w-5 text-accent" />
-                  <span className="text-sm font-medium">Progression ce mois</span>
-                </div>
-                <span className="text-sm font-semibold text-accent">
-                  +{stats.monthTotal > 0 ? Math.round((stats.monthTotal / 30) * 100) : 0}%
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Daily Actions Widget - Full Width */}
+      <DailyActionsWidget userId={userId} onEntrepriseClick={onEntrepriseClick} />
 
       {/* Tips Section */}
       <Card className="glass-card border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
         <CardHeader>
-          <CardTitle className="text-lg">💡 Conseils du jour</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <span className="text-2xl">💡</span>
+            Conseils du jour
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li className="flex items-start gap-2">
-              <span className="text-accent mt-0.5">•</span>
-              <span>Les appels avant 10h ont 40% plus de chances d'aboutir</span>
+          <ul className="space-y-3 text-sm">
+            <li className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors">
+              <span className="text-accent text-lg mt-0.5">→</span>
+              <span className="text-foreground/80">Les appels avant 10h ont 40% plus de chances d'aboutir</span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent mt-0.5">•</span>
-              <span>Planifiez vos visites par zone géographique pour optimiser votre temps</span>
+            <li className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors">
+              <span className="text-accent text-lg mt-0.5">→</span>
+              <span className="text-foreground/80">Planifiez vos visites par zone géographique pour optimiser votre temps</span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent mt-0.5">•</span>
-              <span>Relancez les leads "qualifiés" tous les 3-5 jours</span>
+            <li className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors">
+              <span className="text-accent text-lg mt-0.5">→</span>
+              <span className="text-foreground/80">Relancez les leads "qualifiés" tous les 3-5 jours</span>
             </li>
           </ul>
         </CardContent>
