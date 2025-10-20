@@ -3,22 +3,43 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { MapView } from "./MapView";
 import {
   Navigation,
-  Clock,
-  Phone,
-  ExternalLink,
+  MapPin,
+  Smile,
+  CheckCircle2,
+  AlertCircle,
   Map as MapIconLucide,
 } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { SortableEntrepriseItem } from "./SortableEntrepriseItem";
 
 type Entreprise = {
   id: string;
@@ -50,8 +71,8 @@ interface TourneeRouteDisplayProps {
 export const TourneeRouteDisplay = ({
   tourneeId,
   ordreOptimise: initialOrdre,
-  distanceTotaleKm,
-  tempsEstimeMinutes,
+  distanceTotaleKm: initialDistance,
+  tempsEstimeMinutes: initialTemps,
   pointDepartLat,
   pointDepartLng,
   statut: initialStatut,
@@ -61,10 +82,28 @@ export const TourneeRouteDisplay = ({
   const [loading, setLoading] = useState(true);
   const [statut, setStatut] = useState(initialStatut);
   const [showNavigationDialog, setShowNavigationDialog] = useState(false);
+  const [showVisiteDialog, setShowVisiteDialog] = useState(false);
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  const [selectedEntreprise, setSelectedEntreprise] = useState<Entreprise | null>(null);
+  const [visiteNotes, setVisiteNotes] = useState("");
+  const [rdvPris, setRdvPris] = useState(false);
+  const [aRevoir, setARevoir] = useState(false);
+  const [visites, setVisites] = useState<any[]>([]);
+  const [distanceTotaleKm, setDistanceTotaleKm] = useState(initialDistance);
+  const [tempsEstimeMinutes, setTempsEstimeMinutes] = useState(initialTemps);
+  const [navigatingEntreprise, setNavigatingEntreprise] = useState<Entreprise | null>(null);
   const { toast } = useToast();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     fetchEntreprises();
+    fetchVisites();
   }, [initialOrdre]);
 
   const fetchEntreprises = async () => {
@@ -76,7 +115,6 @@ export const TourneeRouteDisplay = ({
 
       if (error) throw error;
 
-      // Ordonner selon ordre_optimise
       const ordered = initialOrdre
         .map(id => data?.find((e: Entreprise) => e.id === id))
         .filter(Boolean) as Entreprise[];
@@ -89,57 +127,166 @@ export const TourneeRouteDisplay = ({
     }
   };
 
-  const handleStartNavigation = async (app: 'google' | 'waze') => {
+  const fetchVisites = async () => {
     try {
-      const origin = pointDepartLat && pointDepartLng
-        ? `${pointDepartLat},${pointDepartLng}`
-        : `${entreprises[0].latitude},${entreprises[0].longitude}`;
+      const { data, error } = await supabase
+        .from('tournee_visites')
+        .select('*')
+        .eq('tournee_id', tourneeId);
 
-      const destination = `${entreprises[entreprises.length - 1].latitude},${entreprises[entreprises.length - 1].longitude}`;
-      
-      const waypoints = entreprises
-        .slice(pointDepartLat && pointDepartLng ? 0 : 1, -1)
-        .map(e => `${e.latitude},${e.longitude}`)
-        .join('|');
+      if (error) throw error;
+      setVisites(data || []);
+    } catch (error) {
+      console.error('Error fetching visites:', error);
+    }
+  };
 
-      let url: string;
-      
-      if (app === 'google') {
-        url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypoints}&travelmode=driving`;
-      } else {
-        // Waze ne supporte pas les waypoints multiples, on navigue vers la première destination
-        url = `https://waze.com/ul?ll=${entreprises[0].latitude},${entreprises[0].longitude}&navigate=yes`;
-      }
-      
-      window.open(url, '_blank');
-      setShowNavigationDialog(false);
+  const recalculateRoute = async (newOrder: Entreprise[]) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('optimize-tournee', {
+        body: {
+          entreprises: newOrder,
+          point_depart: pointDepartLat && pointDepartLng ? {
+            lat: pointDepartLat,
+            lng: pointDepartLng
+          } : null,
+        },
+      });
 
-      // Update status to en_cours if planifiee
-      if (statut === 'planifiee') {
+      if (error) throw error;
+
+      setDistanceTotaleKm(data.distance_totale_km);
+      setTempsEstimeMinutes(data.temps_estime_minutes);
+
+      await supabase
+        .from('tournees')
+        .update({
+          ordre_optimise: newOrder.map(e => e.id),
+          distance_totale_km: data.distance_totale_km,
+          temps_estime_minutes: data.temps_estime_minutes,
+        })
+        .eq('id', tourneeId);
+
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error recalculating route:', error);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setEntreprises((items) => {
+        const oldIndex = items.findIndex((i) => i.id === active.id);
+        const newIndex = items.findIndex((i) => i.id === over.id);
+        const newOrder = arrayMove(items, oldIndex, newIndex);
+        recalculateRoute(newOrder);
+        return newOrder;
+      });
+    }
+  };
+
+  const handleNavigateToOne = (entreprise: Entreprise) => {
+    setNavigatingEntreprise(entreprise);
+    setShowNavigationDialog(true);
+  };
+
+  const handleNavigateWithApp = (app: 'google' | 'waze') => {
+    if (!navigatingEntreprise) return;
+
+    const lat = navigatingEntreprise.latitude;
+    const lng = navigatingEntreprise.longitude;
+
+    let url: string;
+    if (app === 'google') {
+      url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+    } else {
+      url = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes`;
+    }
+
+    window.open(url, '_blank');
+    setShowNavigationDialog(false);
+    setNavigatingEntreprise(null);
+  };
+
+  const handleSaveVisite = async () => {
+    if (!selectedEntreprise) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const visiteData = {
+        tournee_id: tourneeId,
+        entreprise_id: selectedEntreprise.id,
+        user_id: user.id,
+        ordre_visite: entreprises.findIndex(e => e.id === selectedEntreprise.id) + 1,
+        notes: visiteNotes,
+        rdv_pris: rdvPris,
+        a_revoir: aRevoir,
+        statut: 'visite',
+      };
+
+      const existingVisite = visites.find(v => v.entreprise_id === selectedEntreprise.id);
+
+      if (existingVisite) {
         await supabase
-          .from('tournees')
-          .update({ statut: 'en_cours' })
-          .eq('id', tourneeId);
-        setStatut('en_cours');
-        onUpdate?.();
+          .from('tournee_visites')
+          .update(visiteData)
+          .eq('id', existingVisite.id);
+      } else {
+        await supabase
+          .from('tournee_visites')
+          .insert(visiteData);
       }
+
+      await fetchVisites();
+      
+      setShowVisiteDialog(false);
+      setSelectedEntreprise(null);
+      setVisiteNotes("");
+      setRdvPris(false);
+      setARevoir(false);
 
       toast({
-        title: "🚗 Navigation démarrée",
-        description: app === 'google' ? "La tournée s'ouvre dans Google Maps" : "La tournée s'ouvre dans Waze",
+        title: "✅ Visite enregistrée",
+        description: "Les informations ont été sauvegardées",
       });
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error saving visite:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de démarrer la navigation",
+        description: "Impossible d'enregistrer la visite",
         variant: "destructive",
       });
     }
   };
 
-  const handlePhoneCall = (telephone: string) => {
-    window.location.href = `tel:${telephone}`;
+  const handleOpenVisiteDialog = (entreprise: Entreprise) => {
+    setSelectedEntreprise(entreprise);
+    const existingVisite = visites.find(v => v.entreprise_id === entreprise.id);
+    if (existingVisite) {
+      setVisiteNotes(existingVisite.notes || "");
+      setRdvPris(existingVisite.rdv_pris || false);
+      setARevoir(existingVisite.a_revoir || false);
+    }
+    setShowVisiteDialog(true);
+  };
+
+  const handleCompleteTournee = async () => {
+    try {
+      await supabase
+        .from('tournees')
+        .update({ statut: 'terminee' })
+        .eq('id', tourneeId);
+      
+      setStatut('terminee');
+      setShowCompletionDialog(true);
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error completing tournee:', error);
+    }
   };
 
   const getStatutConfig = (s: string) => {
@@ -194,37 +341,45 @@ export const TourneeRouteDisplay = ({
         </CardHeader>
         
         <CardContent className="flex-1 flex flex-col gap-3 px-4 pb-4 overflow-hidden">
-          {/* Liste avec scroll si besoin */}
+          {/* Liste avec drag & drop */}
           <div className="flex-1 overflow-y-auto -mx-2 px-2">
-            <div className="space-y-1.5">
-              {entreprises.map((entreprise, index) => (
-                <div
-                  key={entreprise.id}
-                  className="flex items-center gap-2 p-2 rounded hover:bg-accent/5 transition-colors"
-                >
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{entreprise.nom}</div>
-                    <div className="text-xs text-muted-foreground truncate">
-                      {entreprise.ville}
-                    </div>
-                  </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={entreprises.map(e => e.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-1.5">
+                  {entreprises.map((entreprise, index) => (
+                    <SortableEntrepriseItem
+                      key={entreprise.id}
+                      entreprise={entreprise}
+                      index={index}
+                      visite={visites.find(v => v.entreprise_id === entreprise.id)}
+                      onNavigate={handleNavigateToOne}
+                      onVisiteClick={handleOpenVisiteDialog}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </SortableContext>
+            </DndContext>
           </div>
 
-          {/* Bouton fixe en bas */}
-          <Button 
-            onClick={() => setShowNavigationDialog(true)} 
-            size="lg"
-            className="w-full h-12 text-base font-semibold shrink-0"
-          >
-            <Navigation className="w-5 h-5 mr-2" />
-            Démarrer la prospection
-          </Button>
+          {/* Bouton terminé */}
+          {statut !== 'terminee' && (
+            <Button 
+              onClick={handleCompleteTournee} 
+              size="lg"
+              className="w-full h-12 text-base font-semibold shrink-0"
+              variant="default"
+            >
+              <CheckCircle2 className="w-5 h-5 mr-2" />
+              Prospection terminée
+            </Button>
+          )}
         </CardContent>
       </Card>
 
@@ -234,12 +389,12 @@ export const TourneeRouteDisplay = ({
           <DialogHeader>
             <DialogTitle>Choisir l'application de navigation</DialogTitle>
             <DialogDescription>
-              Sélectionnez l'application que vous souhaitez utiliser pour votre tournée
+              Navigation vers {navigatingEntreprise?.nom}
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-3 mt-4">
             <Button
-              onClick={() => handleStartNavigation('google')}
+              onClick={() => handleNavigateWithApp('google')}
               className="h-20 flex flex-col gap-2"
               variant="outline"
             >
@@ -247,7 +402,7 @@ export const TourneeRouteDisplay = ({
               <span>Google Maps</span>
             </Button>
             <Button
-              onClick={() => handleStartNavigation('waze')}
+              onClick={() => handleNavigateWithApp('waze')}
               className="h-20 flex flex-col gap-2"
               variant="outline"
             >
@@ -255,6 +410,80 @@ export const TourneeRouteDisplay = ({
               <span>Waze</span>
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog notes de visite */}
+      <Dialog open={showVisiteDialog} onOpenChange={setShowVisiteDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Notes de visite</DialogTitle>
+            <DialogDescription>
+              {selectedEntreprise?.nom}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea
+                placeholder="Ajoutez vos notes sur cette visite..."
+                value={visiteNotes}
+                onChange={(e) => setVisiteNotes(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="rdv"
+                checked={rdvPris}
+                onCheckedChange={(checked) => setRdvPris(checked as boolean)}
+              />
+              <Label htmlFor="rdv" className="flex items-center gap-2 cursor-pointer">
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                RDV pris
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="revoir"
+                checked={aRevoir}
+                onCheckedChange={(checked) => setARevoir(checked as boolean)}
+              />
+              <Label htmlFor="revoir" className="flex items-center gap-2 cursor-pointer">
+                <AlertCircle className="w-4 h-4 text-orange-500" />
+                À revoir
+              </Label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleSaveVisite}>
+              Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog completion */}
+      <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
+        <DialogContent className="sm:max-w-md text-center">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              <div className="flex justify-center mb-4">
+                <Smile className="w-16 h-16 text-accent" />
+              </div>
+              Bravo !
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Votre tournée de prospection est terminée.
+              <br />
+              Vous avez visité {entreprises.length} entreprises !
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center">
+            <Button onClick={() => setShowCompletionDialog(false)}>
+              Fermer
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

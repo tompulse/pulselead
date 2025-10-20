@@ -201,6 +201,63 @@ export type Database = {
           },
         ]
       }
+      tournee_visites: {
+        Row: {
+          a_revoir: boolean | null
+          created_at: string | null
+          entreprise_id: string
+          id: string
+          notes: string | null
+          ordre_visite: number | null
+          rdv_pris: boolean | null
+          statut: string | null
+          tournee_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          a_revoir?: boolean | null
+          created_at?: string | null
+          entreprise_id: string
+          id?: string
+          notes?: string | null
+          ordre_visite?: number | null
+          rdv_pris?: boolean | null
+          statut?: string | null
+          tournee_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          a_revoir?: boolean | null
+          created_at?: string | null
+          entreprise_id?: string
+          id?: string
+          notes?: string | null
+          ordre_visite?: number | null
+          rdv_pris?: boolean | null
+          statut?: string | null
+          tournee_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournee_visites_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournee_visites_tournee_id_fkey"
+            columns: ["tournee_id"]
+            isOneToOne: false
+            referencedRelation: "tournees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournees: {
         Row: {
           created_at: string
@@ -218,6 +275,7 @@ export type Database = {
           temps_estime_minutes: number | null
           updated_at: string
           user_id: string
+          visites_effectuees: Json | null
         }
         Insert: {
           created_at?: string
@@ -235,6 +293,7 @@ export type Database = {
           temps_estime_minutes?: number | null
           updated_at?: string
           user_id: string
+          visites_effectuees?: Json | null
         }
         Update: {
           created_at?: string
@@ -252,6 +311,7 @@ export type Database = {
           temps_estime_minutes?: number | null
           updated_at?: string
           user_id?: string
+          visites_effectuees?: Json | null
         }
         Relationships: []
       }
