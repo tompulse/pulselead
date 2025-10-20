@@ -319,133 +319,144 @@ export const MapView = ({
   useEffect(() => {
     if (!map.current || !mapboxgl || !mapboxLoaded || !tourneeRoute) return;
 
-    // Supprimer les couches précédentes si elles existent
-    if (map.current.getLayer('tournee-route')) {
-      map.current.removeLayer('tournee-route');
-    }
-    if (map.current.getSource('tournee-route')) {
-      map.current.removeSource('tournee-route');
-    }
+    const setupTourneeDisplay = () => {
+      if (!map.current || !map.current.isStyleLoaded()) return;
 
-    // Construire les coordonnées de la route
-    const coordinates: [number, number][] = [];
-    
-    if (tourneeRoute.pointDepartLat && tourneeRoute.pointDepartLng) {
-      coordinates.push([tourneeRoute.pointDepartLng, tourneeRoute.pointDepartLat]);
-    }
-    
-    tourneeRoute.entreprises.forEach(e => {
-      coordinates.push([e.longitude, e.latitude]);
-    });
+      // Supprimer les couches précédentes si elles existent
+      if (map.current.getLayer('tournee-route')) {
+        map.current.removeLayer('tournee-route');
+      }
+      if (map.current.getSource('tournee-route')) {
+        map.current.removeSource('tournee-route');
+      }
 
-    // Ajouter la source de la route
-    map.current.addSource('tournee-route', {
-      type: 'geojson',
-      data: {
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'LineString',
-          coordinates
+      // Construire les coordonnées de la route
+      const coordinates: [number, number][] = [];
+      
+      if (tourneeRoute.pointDepartLat && tourneeRoute.pointDepartLng) {
+        coordinates.push([tourneeRoute.pointDepartLng, tourneeRoute.pointDepartLat]);
+      }
+      
+      tourneeRoute.entreprises.forEach(e => {
+        coordinates.push([e.longitude, e.latitude]);
+      });
+
+      // Ajouter la source de la route
+      map.current.addSource('tournee-route', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates
+          }
         }
+      });
+
+      // Ajouter la couche de ligne
+      map.current.addLayer({
+        id: 'tournee-route',
+        type: 'line',
+        source: 'tournee-route',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#00FFF0',
+          'line-width': 4,
+          'line-opacity': 0.8
+        }
+      });
+
+      // Supprimer les marqueurs existants
+      markersRef.current.forEach(m => m.remove());
+      markersRef.current = [];
+
+      // Ajouter le marqueur de départ si présent
+      if (tourneeRoute.pointDepartLat && tourneeRoute.pointDepartLng) {
+        const startEl = document.createElement('div');
+        startEl.className = 'start-marker';
+        startEl.innerHTML = `
+          <div style="
+            width: 40px;
+            height: 40px;
+            background: #FF6B00;
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(255,107,0,0.6);
+          ">
+            🏁
+          </div>
+        `;
+        
+        const startMarker = new mapboxgl.Marker({ element: startEl })
+          .setLngLat([tourneeRoute.pointDepartLng, tourneeRoute.pointDepartLat])
+          .addTo(map.current);
+        
+        markersRef.current.push(startMarker);
       }
-    });
 
-    // Ajouter la couche de ligne
-    map.current.addLayer({
-      id: 'tournee-route',
-      type: 'line',
-      source: 'tournee-route',
-      layout: {
-        'line-join': 'round',
-        'line-cap': 'round'
-      },
-      paint: {
-        'line-color': '#00FFF0',
-        'line-width': 4,
-        'line-opacity': 0.8
+      // Ajouter les marqueurs numérotés pour chaque arrêt
+      tourneeRoute.entreprises.forEach((entreprise, index) => {
+        const el = document.createElement('div');
+        el.className = 'numbered-marker';
+        el.innerHTML = `
+          <div style="
+            width: 36px;
+            height: 36px;
+            background: #00FFF0;
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0A0F1E;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,255,240,0.6);
+            cursor: pointer;
+          ">
+            ${index + 1}
+          </div>
+        `;
+        
+        const marker = new mapboxgl.Marker({ element: el })
+          .setLngLat([entreprise.longitude, entreprise.latitude])
+          .setPopup(
+            new mapboxgl.Popup({ offset: 25 })
+              .setHTML(`
+                <div style="padding: 8px;">
+                  <div style="font-weight: bold; margin-bottom: 4px;">${entreprise.nom}</div>
+                  <div style="font-size: 12px; color: #666;">${entreprise.adresse}</div>
+                </div>
+              `)
+          )
+          .addTo(map.current);
+        
+        markersRef.current.push(marker);
+      });
+
+      // Ajuster la vue pour montrer toute la route
+      if (coordinates.length > 0) {
+        const bounds = new mapboxgl.LngLatBounds();
+        coordinates.forEach(coord => bounds.extend(coord));
+        map.current.fitBounds(bounds, { padding: 80, duration: 800 });
       }
-    });
+    };
 
-    // Supprimer les marqueurs existants
-    markersRef.current.forEach(m => m.remove());
-    markersRef.current = [];
-
-    // Ajouter le marqueur de départ si présent
-    if (tourneeRoute.pointDepartLat && tourneeRoute.pointDepartLng) {
-      const startEl = document.createElement('div');
-      startEl.className = 'start-marker';
-      startEl.innerHTML = `
-        <div style="
-          width: 40px;
-          height: 40px;
-          background: #FF6B00;
-          border: 3px solid white;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-          font-size: 16px;
-          box-shadow: 0 2px 8px rgba(255,107,0,0.6);
-        ">
-          🏁
-        </div>
-      `;
-      
-      const startMarker = new mapboxgl.Marker({ element: startEl })
-        .setLngLat([tourneeRoute.pointDepartLng, tourneeRoute.pointDepartLat])
-        .addTo(map.current);
-      
-      markersRef.current.push(startMarker);
-    }
-
-    // Ajouter les marqueurs numérotés pour chaque arrêt
-    tourneeRoute.entreprises.forEach((entreprise, index) => {
-      const el = document.createElement('div');
-      el.className = 'numbered-marker';
-      el.innerHTML = `
-        <div style="
-          width: 36px;
-          height: 36px;
-          background: #00FFF0;
-          border: 3px solid white;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #0A0F1E;
-          font-weight: bold;
-          font-size: 14px;
-          box-shadow: 0 2px 8px rgba(0,255,240,0.6);
-          cursor: pointer;
-        ">
-          ${index + 1}
-        </div>
-      `;
-      
-      const marker = new mapboxgl.Marker({ element: el })
-        .setLngLat([entreprise.longitude, entreprise.latitude])
-        .setPopup(
-          new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`
-              <div style="padding: 8px;">
-                <div style="font-weight: bold; margin-bottom: 4px;">${entreprise.nom}</div>
-                <div style="font-size: 12px; color: #666;">${entreprise.adresse}</div>
-              </div>
-            `)
-        )
-        .addTo(map.current);
-      
-      markersRef.current.push(marker);
-    });
-
-    // Ajuster la vue pour montrer toute la route
-    if (coordinates.length > 0) {
-      const bounds = new mapboxgl.LngLatBounds();
-      coordinates.forEach(coord => bounds.extend(coord));
-      map.current.fitBounds(bounds, { padding: 80, duration: 800 });
+    // Attendre que le style soit chargé
+    if (map.current.isStyleLoaded()) {
+      setupTourneeDisplay();
+    } else {
+      map.current.once('style.load', setupTourneeDisplay);
     }
 
     return () => {
