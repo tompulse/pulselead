@@ -340,7 +340,7 @@ export const TourneesView = () => {
             </Button>
           </CardContent>
         </Card>
-        <div className="flex-1 min-h-0 overflow-auto">
+        <div className="flex-1 min-h-0">
           <TourneeRouteDisplay
             tourneeId={selectedTournee.id}
             ordreOptimise={selectedTournee.ordre_optimise}

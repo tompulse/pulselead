@@ -143,9 +143,9 @@ export const TourneeRouteDisplay = ({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 max-h-[600px]">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 h-full">
       {/* Carte à gauche */}
-      <div className="h-[600px] rounded-lg overflow-hidden border border-accent/20">
+      <div className="h-full rounded-lg overflow-hidden border border-accent/20">
         <MapView
           filters={{
             dateFrom: "",
@@ -162,7 +162,7 @@ export const TourneeRouteDisplay = ({
       </div>
 
       {/* Liste à droite - compact */}
-      <Card className="border-accent/20 h-[600px] flex flex-col">
+      <Card className="border-accent/20 h-full flex flex-col">
         <CardHeader className="pb-3 px-4 pt-4 shrink-0">
           <div className="flex items-center justify-between mb-2">
             <CardTitle className="text-base font-bold">{entreprises.length} arrêts</CardTitle>
