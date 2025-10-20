@@ -536,12 +536,6 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                             <CalendarCheck className="w-4 h-4 mr-2" />
                             RDV
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleCRMAction(item.id, 'note')}
-                          >
-                            <StickyNote className="w-4 h-4 mr-2" />
-                            Note
-                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
