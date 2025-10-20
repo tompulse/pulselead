@@ -15,14 +15,15 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
     weekCalls: 0,
     weekVisits: 0,
     weekMeetings: 0,
+    weekARevoir: 0,
     monthTotal: 0,
     conversionRate: 0,
   });
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<'appel' | 'visite' | 'rdv' | null>(null);
+  const [selectedType, setSelectedType] = useState<'appel' | 'visite' | 'rdv' | 'a_revoir' | null>(null);
 
-  const handleCardClick = (type: 'appel' | 'visite' | 'rdv') => {
+  const handleCardClick = (type: 'appel' | 'visite' | 'rdv' | 'a_revoir') => {
     setSelectedType(type);
     setDialogOpen(true);
   };
@@ -38,7 +39,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
       const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
       const monthStart = startOfMonth(now);
 
-      // Week stats by type
+      // Week stats by type from lead_interactions
       const { data: weekInteractions } = await supabase
         .from('lead_interactions')
         .select('type')
@@ -46,9 +47,20 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
         .gte('created_at', weekStart.toISOString())
         .lte('created_at', weekEnd.toISOString());
 
-      const weekCalls = weekInteractions?.filter(i => i.type === 'appel').length || 0;
+      // Week stats from tournee_visites
+      const { data: weekVisites } = await supabase
+        .from('tournee_visites')
+        .select('rdv_pris, a_revoir')
+        .eq('user_id', userId)
+        .gte('created_at', weekStart.toISOString())
+        .lte('created_at', weekEnd.toISOString());
+
+      const weekCalls = (weekInteractions?.filter(i => i.type === 'appel').length || 0) + 
+                        (weekVisites?.filter(v => v.rdv_pris).length || 0);
       const weekVisits = weekInteractions?.filter(i => i.type === 'visite').length || 0;
       const weekMeetings = weekInteractions?.filter(i => i.type === 'rdv').length || 0;
+      const weekARevoir = (weekInteractions?.filter(i => i.type === 'a_revoir').length || 0) +
+                          (weekVisites?.filter(v => v.a_revoir).length || 0);
 
       // Month total
       const { count: monthTotal } = await supabase
@@ -77,6 +89,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
         weekCalls,
         weekVisits,
         weekMeetings,
+        weekARevoir,
         monthTotal: monthTotal || 0,
         conversionRate,
       });
@@ -86,6 +99,27 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
 
   useEffect(() => {
     fetchStats();
+
+    // Realtime subscription pour rafraîchir quand une visite est ajoutée
+    const channel = supabase
+      .channel('tournee_visites_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'tournee_visites',
+          filter: `user_id=eq.${userId}`
+        },
+        () => {
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [userId]);
 
   return (
@@ -97,7 +131,7 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
         </div>
 
         {/* Quick Stats Bar - Clickable & Centered */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div 
             className="glass-card p-6 rounded-xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer transform hover:scale-105"
             onClick={() => handleCardClick('appel')}
@@ -141,6 +175,22 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
               <span className="text-sm text-muted-foreground mb-2">RDV cette semaine</span>
               <div className="text-4xl font-bold text-purple-500 mb-2">
                 {loading ? "..." : stats.weekMeetings}
+              </div>
+              <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
+            </div>
+          </div>
+
+          <div 
+            className="glass-card p-6 rounded-xl border border-orange-500/20 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/40 transition-all cursor-pointer transform hover:scale-105"
+            onClick={() => handleCardClick('a_revoir')}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="p-4 bg-orange-500/10 rounded-full mb-4">
+                <CheckCircle2 className="h-8 w-8 text-orange-500" />
+              </div>
+              <span className="text-sm text-muted-foreground mb-2">À revoir cette semaine</span>
+              <div className="text-4xl font-bold text-orange-500 mb-2">
+                {loading ? "..." : stats.weekARevoir}
               </div>
               <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
             </div>

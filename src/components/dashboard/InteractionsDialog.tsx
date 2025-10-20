@@ -27,7 +27,7 @@ interface Interaction {
 interface InteractionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  type: 'appel' | 'visite' | 'rdv' | null;
+  type: 'appel' | 'visite' | 'rdv' | 'a_revoir' | null;
   userId: string;
   onEntrepriseClick?: (entrepriseId: string) => void;
   onInteractionDeleted?: (entrepriseId: string, type: string) => void;
@@ -183,6 +183,8 @@ export const InteractionsDialog = ({
         return { icon: MapPin, label: 'Visites', color: 'text-green-500', bg: 'bg-green-500/10' };
       case 'rdv':
         return { icon: Calendar, label: 'Rendez-vous', color: 'text-purple-500', bg: 'bg-purple-500/10' };
+      case 'a_revoir':
+        return { icon: Clock, label: 'À revoir', color: 'text-orange-500', bg: 'bg-orange-500/10' };
       default:
         return { icon: StickyNote, label: 'Notes', color: 'text-accent', bg: 'bg-accent/10' };
     }
@@ -246,7 +248,8 @@ export const InteractionsDialog = ({
                     <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity ${
                       type === 'appel' ? 'bg-gradient-to-br from-blue-500/5 to-transparent' :
                       type === 'visite' ? 'bg-gradient-to-br from-green-500/5 to-transparent' :
-                      'bg-gradient-to-br from-purple-500/5 to-transparent'
+                      type === 'rdv' ? 'bg-gradient-to-br from-purple-500/5 to-transparent' :
+                      'bg-gradient-to-br from-orange-500/5 to-transparent'
                     }`} />
                     
                     <div className="relative flex flex-col gap-4">
