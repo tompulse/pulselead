@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
-import { X, Loader2, Phone, Mail, MapPin, Calendar, Building2, DollarSign, User, Navigation, Map as MapIconLucide, Sparkles } from "lucide-react";
+import { X, Phone, MapPin, Calendar, Building2, DollarSign, User, Navigation, Map as MapIconLucide } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { InteractionTimeline } from "./InteractionTimeline";
-import { QuickActionButtons } from "./QuickActionButtons";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -34,36 +29,18 @@ interface CRMSidePanelProps {
 }
 
 export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
-  const [interactions, setInteractions] = useState<any[]>([]);
   const [leadStatus, setLeadStatus] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'info' | 'crm'>('info');
 
   useEffect(() => {
     if (!entreprise) return;
     fetchCRMData();
   }, [entreprise]);
 
-  useEffect(() => {
-    // Reset to Infos tab each time a new entreprise is opened
-    setActiveTab('info');
-  }, [entreprise?.id]);
-
   const fetchCRMData = async () => {
     if (!entreprise) return;
     
-    setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-
-    const { data: interactionsData } = await supabase
-      .from('lead_interactions')
-      .select('*')
-      .eq('entreprise_id', entreprise.id)
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
-    setInteractions(interactionsData || []);
 
     const { data: statusData } = await supabase
       .from('lead_statuts')
@@ -73,7 +50,6 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
       .single();
 
     setLeadStatus(statusData);
-    setLoading(false);
   };
 
   if (!entreprise) return null;
@@ -133,182 +109,198 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
 
       {/* Content */}
       <ScrollArea className="flex-1">
-        <div className="p-6">
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'info' | 'crm')} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6 bg-accent/10">
-              <TabsTrigger value="info" className="data-[state=active]:bg-background">
-                <Building2 className="w-4 h-4 mr-2" />
-                Infos
-              </TabsTrigger>
-              <TabsTrigger value="crm" className="flex items-center gap-2 data-[state=active]:bg-background">
-                <Sparkles className="w-4 h-4 text-blue-400" />
-                Activités
-                {interactions.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs bg-blue-500/20 text-blue-400 border-blue-500/30">
-                    {interactions.length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="info" className="space-y-4 mt-0">
-              {/* Informations de l'entreprise */}
-              <div className="space-y-3">
-                {/* SIRET */}
-                {entreprise.siret && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
-                    <Building2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">SIRET</p>
-                      <p className="text-base font-mono">{entreprise.siret}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Code NAF */}
-                {entreprise.code_naf && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
-                    <Building2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Code NAF</p>
-                      <p className="text-base">{entreprise.code_naf}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Adresse */}
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
-                  <MapPin className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-1">Adresse</p>
-                    <p className="text-base leading-relaxed">{formattedAddress}</p>
-                  </div>
-                </div>
-
-                {/* Activité */}
-                {entreprise.activite && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
-                    <Building2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Activité</p>
-                      <p className="text-base leading-relaxed">{entreprise.activite}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Contact/Administration */}
-                {entreprise.administration && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
-                    <User className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Contact</p>
-                      <p className="text-base leading-relaxed">{entreprise.administration}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Capital */}
-                {formattedCapital && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
-                    <DollarSign className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Capital</p>
-                      <p className="text-base font-semibold">{formattedCapital}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Date de démarrage */}
-                {entreprise.date_demarrage && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
-                    <Calendar className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Date de démarrage</p>
-                      <p className="text-base">{entreprise.date_demarrage}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <Separator className="bg-accent/20 my-4" />
-
-              {/* Boutons de navigation */}
-              {entreprise.latitude && entreprise.longitude && (
-                <div className="grid grid-cols-2 gap-3 w-full">
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="border-accent/30 hover:bg-accent/10"
-                  >
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${entreprise.latitude},${entreprise.longitude}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2"
-                    >
-                      <MapIconLucide className="w-4 h-4" />
-                      Google Maps
-                    </a>
-                  </Button>
-                  
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="border-accent/30 hover:bg-accent/10"
-                  >
-                    <a
-                      href={`https://waze.com/ul?ll=${entreprise.latitude},${entreprise.longitude}&navigate=yes`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2"
-                    >
-                      <Navigation className="w-4 h-4" />
-                      Waze
-                    </a>
-                  </Button>
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="crm" className="space-y-6 mt-0">
-          {/* Quick Actions Card */}
-          <Card className="border-blue-500/20 bg-gradient-to-br from-blue-500/5 via-blue-400/5 to-transparent shadow-lg">
-            <CardContent className="p-5 space-y-4">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="p-2 bg-blue-500/20 rounded-lg shadow-sm">
-                  <Sparkles className="h-4 w-4 text-blue-400 animate-pulse" />
-                </div>
-                <h4 className="font-semibold text-foreground/90">Actions commerciales</h4>
-              </div>
-              <QuickActionButtons 
-                entrepriseId={entreprise.id} 
-                onInteractionAdded={fetchCRMData}
-              />
-            </CardContent>
-          </Card>
+        <div className="p-6 space-y-4">
+          {/* Quick Actions - 3 buttons */}
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={async () => {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
+                
+                await supabase.from('lead_interactions').insert([{
+                  entreprise_id: entreprise.id,
+                  user_id: user.id,
+                  type: 'appel',
+                  statut: 'en_cours',
+                  notes: 'Appel planifié'
+                }]);
+                
+                fetchCRMData();
+              }}
+              className="h-16 flex flex-col items-center justify-center gap-1.5 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-all group relative overflow-hidden shadow-sm"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/5 to-blue-500/0 group-hover:from-blue-500/10 group-hover:to-blue-500/20 transition-all" />
+              <Phone className="h-5 w-5 text-blue-500 group-hover:scale-110 transition-transform relative z-10" />
+              <span className="text-xs font-medium relative z-10">Appeler</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={async () => {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
+                
+                await supabase.from('lead_interactions').insert([{
+                  entreprise_id: entreprise.id,
+                  user_id: user.id,
+                  type: 'visite',
+                  statut: 'en_cours',
+                  notes: 'Visite planifiée'
+                }]);
+                
+                fetchCRMData();
+              }}
+              className="h-16 flex flex-col items-center justify-center gap-1.5 border-green-500/30 hover:bg-green-500/10 hover:border-green-500 transition-all group relative overflow-hidden shadow-sm"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 via-green-500/5 to-green-500/0 group-hover:from-green-500/10 group-hover:to-green-500/20 transition-all" />
+              <MapPin className="h-5 w-5 text-green-500 group-hover:scale-110 transition-transform relative z-10" />
+              <span className="text-xs font-medium relative z-10">Visiter</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={async () => {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
+                
+                await supabase.from('lead_interactions').insert([{
+                  entreprise_id: entreprise.id,
+                  user_id: user.id,
+                  type: 'rdv',
+                  statut: 'en_cours',
+                  notes: 'Rendez-vous confirmé'
+                }]);
+                
+                fetchCRMData();
+              }}
+              className="h-16 flex flex-col items-center justify-center gap-1.5 border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500 transition-all group relative overflow-hidden shadow-sm"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/5 to-purple-500/0 group-hover:from-purple-500/10 group-hover:to-purple-500/20 transition-all" />
+              <Calendar className="h-5 w-5 text-purple-500 group-hover:scale-110 transition-transform relative z-10" />
+              <span className="text-xs font-medium relative z-10">RDV</span>
+            </Button>
+          </div>
 
           <Separator className="bg-accent/20" />
 
-          {/* Timeline Card */}
-          <Card className="border-blue-500/20 shadow-lg">
-            <CardContent className="p-5 space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-blue-500/20 rounded-lg shadow-sm">
-                  <Calendar className="h-4 w-4 text-blue-400" />
+          {/* Informations de l'entreprise */}
+          <div className="space-y-3">
+            {/* SIRET */}
+            {entreprise.siret && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
+                <Building2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">SIRET</p>
+                  <p className="text-base font-mono">{entreprise.siret}</p>
                 </div>
-                <h4 className="font-semibold text-foreground/90">Historique</h4>
               </div>
-              {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+            )}
+
+            {/* Code NAF */}
+            {entreprise.code_naf && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
+                <Building2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Code NAF</p>
+                  <p className="text-base">{entreprise.code_naf}</p>
                 </div>
-              ) : (
-                <InteractionTimeline interactions={interactions} />
-              )}
-            </CardContent>
-          </Card>
-            </TabsContent>
-          </Tabs>
+              </div>
+            )}
+
+            {/* Adresse */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
+              <MapPin className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Adresse</p>
+                <p className="text-base leading-relaxed">{formattedAddress}</p>
+              </div>
+            </div>
+
+            {/* Activité */}
+            {entreprise.activite && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
+                <Building2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Activité</p>
+                  <p className="text-base leading-relaxed">{entreprise.activite}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Contact/Administration */}
+            {entreprise.administration && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
+                <User className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Contact</p>
+                  <p className="text-base leading-relaxed">{entreprise.administration}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Capital */}
+            {formattedCapital && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
+                <DollarSign className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Capital</p>
+                  <p className="text-base font-semibold">{formattedCapital}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Date de démarrage */}
+            {entreprise.date_demarrage && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/20">
+                <Calendar className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Date de démarrage</p>
+                  <p className="text-base">{entreprise.date_demarrage}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <Separator className="bg-accent/20" />
+
+          {/* Boutons de navigation */}
+          {entreprise.latitude && entreprise.longitude && (
+            <div className="grid grid-cols-2 gap-3 w-full">
+              <Button
+                asChild
+                variant="outline"
+                className="border-accent/30 hover:bg-accent/10"
+              >
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${entreprise.latitude},${entreprise.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2"
+                >
+                  <MapIconLucide className="w-4 h-4" />
+                  Google Maps
+                </a>
+              </Button>
+              
+              <Button
+                asChild
+                variant="outline"
+                className="border-accent/30 hover:bg-accent/10"
+              >
+                <a
+                  href={`https://waze.com/ul?ll=${entreprise.latitude},${entreprise.longitude}&navigate=yes`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2"
+                >
+                  <Navigation className="w-4 h-4" />
+                  Waze
+                </a>
+              </Button>
+            </div>
+          )}
         </div>
       </ScrollArea>
     </div>
