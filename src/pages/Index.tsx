@@ -343,7 +343,7 @@ const Index = () => {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>200</strong> nouvelles entreprises/mois</span>
+                  <span className="text-foreground"><strong>20</strong> nouvelles créations d'entreprises/mois</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -401,35 +401,35 @@ const Index = () => {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Entreprises illimitées</strong></span>
+                  <span className="text-foreground">✨ <strong>Créations illimitées</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Tous secteurs</strong> d'activité</span>
+                  <span className="text-foreground">🌟 <strong>Tous secteurs</strong> d'activité</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Fiche contact dirigeant</strong> complète</span>
+                  <span className="text-foreground">💎 <strong>Fiche contact dirigeant</strong> complète</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Filtres avancés</strong> & scoring des prospects</span>
+                  <span className="text-foreground">🎯 <strong>Filtres avancés</strong> & scoring des prospects</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Export Excel</strong> multi-formats</span>
+                  <span className="text-foreground">📊 <strong>Export Excel</strong> multi-formats</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Dashboard analytique & prévisions IA</span>
+                  <span className="text-foreground">🤖 Dashboard analytique & prévisions IA</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Historique complet des créations</span>
+                  <span className="text-foreground">📈 Historique complet des créations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Support prioritaire</strong> (réponse 24h)</span>
+                  <span className="text-foreground">⚡ <strong>Support prioritaire</strong> (réponse 24h)</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-lg shadow-cyan-electric/30" size="lg">
