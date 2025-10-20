@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp, Banknote, CalendarDays } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -493,99 +493,90 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       </div>
                     </div>
 
-                    <div className="relative space-y-2 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                    <div className="relative space-y-2.5 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                      {/* Activité - Bloc principal arrondi */}
                       {categoryInfo.label && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70 bg-accent/5 p-2 rounded-lg border border-accent/10">
-                          <Briefcase className="w-4 h-4 flex-shrink-0 text-accent" />
-                          <span className="font-medium">{categoryInfo.label}</span>
+                        <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center gap-3">
+                          <Briefcase className="w-5 h-5 text-primary flex-shrink-0" />
+                          <span className="text-sm font-medium">{categoryInfo.label}</span>
                         </div>
                       )}
 
+                      {/* SIRET */}
                       {item.siret && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Building2 className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <Building2 className="w-4 h-4 flex-shrink-0 text-primary" />
                           <span className="text-xs">SIRET: {item.siret}</span>
                         </div>
                       )}
-
-                      {item.code_naf && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Briefcase className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="text-xs">Code NAF: {item.code_naf}</span>
-                        </div>
-                      )}
                       
+                      {/* Adresse */}
                       {fullAddress && (
                         <div className="flex items-start gap-2 text-sm text-foreground/70">
-                          <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-accent mt-0.5" />
+                          <MapPin className="w-4 h-4 flex-shrink-0 text-primary mt-0.5" />
                           <span className="text-xs">{fullAddress}</span>
                         </div>
                       )}
 
+                      {/* Gérant - Afficher seulement le premier + "et autres" si plusieurs */}
                       {gerant && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <User className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="text-xs">{gerant}</span>
+                        <div className="flex items-start gap-2 text-sm text-foreground/70">
+                          <User className="w-4 h-4 flex-shrink-0 text-primary mt-0.5" />
+                          <span className="text-xs">
+                            {(() => {
+                              const gerants = gerant.split(/[,;]/).map(g => g.trim()).filter(g => g);
+                              if (gerants.length > 1) {
+                                return `${gerants[0]} et autres`;
+                              }
+                              return gerant;
+                            })()}
+                          </span>
                         </div>
                       )}
 
                       {item.telephone && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Phone className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <Phone className="w-4 h-4 flex-shrink-0 text-primary" />
                           <span className="text-xs">{item.telephone}</span>
                         </div>
                       )}
 
                       {item.email && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Mail className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <Mail className="w-4 h-4 flex-shrink-0 text-primary" />
                           <span className="text-xs break-all">{item.email}</span>
                         </div>
                       )}
 
                       {item.forme_juridique && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Building className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <Building className="w-4 h-4 flex-shrink-0 text-primary" />
                           <span className="text-xs">{item.forme_juridique}</span>
                         </div>
                       )}
 
                       {item.effectifs && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Users className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <Users className="w-4 h-4 flex-shrink-0 text-primary" />
                           <span className="text-xs">{item.effectifs} employés</span>
                         </div>
                       )}
 
                       {item.chiffre_affaires && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <TrendingUp className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <TrendingUp className="w-4 h-4 flex-shrink-0 text-primary" />
                           <span className="text-xs">CA: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.chiffre_affaires))}</span>
-                        </div>
-                      )}
-
-                      {item.capital && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Banknote className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="text-xs">Capital: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.capital))}</span>
-                        </div>
-                      )}
-
-                      {item.date_demarrage && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <CalendarDays className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="text-xs">Créée le {new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
                         </div>
                       )}
 
                       {item.site_web && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Building2 className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <Building2 className="w-4 h-4 flex-shrink-0 text-primary" />
                           <a 
                             href={item.site_web.startsWith('http') ? item.site_web : `https://${item.site_web}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-accent hover:underline break-all text-xs font-semibold"
+                            className="text-primary hover:underline break-all text-xs font-semibold"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {item.site_web}
