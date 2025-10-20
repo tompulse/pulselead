@@ -326,9 +326,9 @@ export const MapView = ({
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
 
-    const setupTourneeDisplay = () => {
+    const setupTourneeDisplay = async () => {
       if (!map.current || !map.current.isStyleLoaded()) {
-        setTimeout(setupTourneeDisplay, 100);
+        setTimeout(() => setupTourneeDisplay(), 100);
         return;
       }
 
@@ -340,16 +340,50 @@ export const MapView = ({
         map.current.removeSource('tournee-route');
       }
 
-      // Construire les coordonnées de la route
-      const coordinates: [number, number][] = [];
-      
+      // Construire les coordonnées de la route via l'API Mapbox Directions
+      const waypoints: [number, number][] = [];
       if (tourneeRoute.pointDepartLat && tourneeRoute.pointDepartLng) {
-        coordinates.push([tourneeRoute.pointDepartLng, tourneeRoute.pointDepartLat]);
+        waypoints.push([tourneeRoute.pointDepartLng, tourneeRoute.pointDepartLat]);
       }
       
       tourneeRoute.entreprises.forEach(e => {
-        coordinates.push([e.longitude, e.latitude]);
+        waypoints.push([e.longitude, e.latitude]);
       });
+
+      // Utiliser l'API Mapbox Directions pour obtenir l'itinéraire routier
+      const getRoutingCoordinates = async () => {
+        if (waypoints.length < 2) return waypoints;
+
+        try {
+          // L'API Mapbox Directions accepte jusqu'à 25 waypoints
+          const coordinatesString = waypoints
+            .map(coord => `${coord[0]},${coord[1]}`)
+            .join(';');
+          
+          const response = await fetch(
+            `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinatesString}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`
+          );
+
+          if (!response.ok) {
+            console.error('Mapbox Directions API error:', response.status);
+            return waypoints; // Fallback to straight lines
+          }
+
+          const data = await response.json();
+          
+          if (data.routes && data.routes.length > 0) {
+            // Retourner les coordonnées de l'itinéraire routier
+            return data.routes[0].geometry.coordinates;
+          }
+          
+          return waypoints; // Fallback to straight lines
+        } catch (error) {
+          console.error('Error fetching route:', error);
+          return waypoints; // Fallback to straight lines
+        }
+      };
+
+      const coordinates = await getRoutingCoordinates();
 
       // Ajouter la source de la route
       map.current.addSource('tournee-route', {
@@ -380,7 +414,7 @@ export const MapView = ({
         }
       });
 
-      // Ajouter le marqueur de départ si présent
+      // Ajouter le marqueur de départ si présent (non cliquable)
       if (tourneeRoute.pointDepartLat && tourneeRoute.pointDepartLng) {
         const startEl = document.createElement('div');
         startEl.innerHTML = `
@@ -397,6 +431,7 @@ export const MapView = ({
             font-weight: bold;
             font-size: 16px;
             box-shadow: 0 2px 8px rgba(255,107,0,0.6);
+            pointer-events: none;
           ">
             🏁
           </div>
@@ -409,7 +444,7 @@ export const MapView = ({
         markersRef.current.push(startMarker);
       }
 
-      // Ajouter les marqueurs numérotés pour chaque arrêt
+      // Ajouter les marqueurs numérotés pour chaque arrêt (non cliquables)
       tourneeRoute.entreprises.forEach((entreprise, index) => {
         const el = document.createElement('div');
         el.innerHTML = `
@@ -426,7 +461,7 @@ export const MapView = ({
             font-weight: bold;
             font-size: 14px;
             box-shadow: 0 2px 8px rgba(0,255,240,0.6);
-            cursor: pointer;
+            pointer-events: none;
           ">
             ${index + 1}
           </div>
@@ -434,15 +469,6 @@ export const MapView = ({
         
         const marker = new mapboxgl.Marker({ element: el })
           .setLngLat([entreprise.longitude, entreprise.latitude])
-          .setPopup(
-            new mapboxgl.Popup({ offset: 25 })
-              .setHTML(`
-                <div style="padding: 8px;">
-                  <div style="font-weight: bold; margin-bottom: 4px;">${entreprise.nom}</div>
-                  <div style="font-size: 12px; color: #666;">${entreprise.adresse}</div>
-                </div>
-              `)
-          )
           .addTo(map.current);
         
         markersRef.current.push(marker);
