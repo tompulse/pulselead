@@ -143,72 +143,68 @@ export const TourneeRouteDisplay = ({
   }
 
   return (
-    <div className="space-y-4">
-      {/* Carte avec hauteur fixe */}
-      <Card className="border-accent/20">
-        <CardContent className="p-0">
-          <div className="h-[400px] rounded-lg overflow-hidden">
-            <MapView
-              filters={{
-                dateFrom: "",
-                dateTo: "",
-                categories: [],
-                departments: []
-              }}
-              tourneeRoute={{
-                entreprises,
-                pointDepartLat,
-                pointDepartLng
-              }}
-            />
-          </div>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 max-h-[600px]">
+      {/* Carte à gauche */}
+      <div className="h-[600px] rounded-lg overflow-hidden border border-accent/20">
+        <MapView
+          filters={{
+            dateFrom: "",
+            dateTo: "",
+            categories: [],
+            departments: []
+          }}
+          tourneeRoute={{
+            entreprises,
+            pointDepartLat,
+            pointDepartLng
+          }}
+        />
+      </div>
 
-      {/* Infos + Liste */}
-      <Card className="border-accent/20">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <CardTitle className="text-base font-bold">{entreprises.length} arrêts</CardTitle>
-              <Badge variant={statusConfig.variant} className="text-xs">
-                {statusConfig.label}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span>{Math.round(distanceTotaleKm)} km</span>
-              <span>•</span>
-              <span>{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
-            </div>
+      {/* Liste à droite - compact */}
+      <Card className="border-accent/20 h-[600px] flex flex-col">
+        <CardHeader className="pb-3 px-4 pt-4 shrink-0">
+          <div className="flex items-center justify-between mb-2">
+            <CardTitle className="text-base font-bold">{entreprises.length} arrêts</CardTitle>
+            <Badge variant={statusConfig.variant} className="text-xs">
+              {statusConfig.label}
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>{Math.round(distanceTotaleKm)} km</span>
+            <span>•</span>
+            <span>{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
           </div>
         </CardHeader>
         
-        <CardContent className="space-y-3">
-          {/* Liste simple */}
-          <div className="space-y-1.5">
-            {entreprises.map((entreprise, index) => (
-              <div
-                key={entreprise.id}
-                className="flex items-center gap-2 p-2 rounded hover:bg-accent/5 transition-colors"
-              >
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
-                  {index + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{entreprise.nom}</div>
-                  <div className="text-xs text-muted-foreground truncate">
-                    {entreprise.ville}
+        <CardContent className="flex-1 flex flex-col gap-3 px-4 pb-4 overflow-hidden">
+          {/* Liste avec scroll si besoin */}
+          <div className="flex-1 overflow-y-auto -mx-2 px-2">
+            <div className="space-y-1.5">
+              {entreprises.map((entreprise, index) => (
+                <div
+                  key={entreprise.id}
+                  className="flex items-center gap-2 p-2 rounded hover:bg-accent/5 transition-colors"
+                >
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium truncate">{entreprise.nom}</div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {entreprise.ville}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* Bouton de démarrage */}
+          {/* Bouton fixe en bas */}
           <Button 
             onClick={handleStartNavigation} 
             size="lg"
-            className="w-full h-12 text-base font-semibold"
+            className="w-full h-12 text-base font-semibold shrink-0"
           >
             <Navigation className="w-5 h-5 mr-2" />
             Démarrer la prospection
