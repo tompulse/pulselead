@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp, Banknote, CalendarDays } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -380,6 +380,20 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <TrendingUp className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                           <span className="line-clamp-1">{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.chiffre_affaires))}</span>
+                        </div>
+                      )}
+
+                      {item.capital && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Banknote className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1">Capital: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.capital))}</span>
+                        </div>
+                      )}
+
+                      {item.date_demarrage && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <CalendarDays className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1">Créée le {new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
                         </div>
                       )}
                     </div>
