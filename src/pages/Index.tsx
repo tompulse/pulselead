@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Calendar } from "lucide-react";
+import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Calendar, X } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
 import { trackCTAClick } from "@/utils/analytics";
 import {
@@ -14,6 +14,7 @@ import {
 const Index = () => {
   const navigate = useNavigate();
   const [selectedRegion, setSelectedRegion] = React.useState<'1' | 'plusieurs' | 'france'>('plusieurs');
+  const [billingPeriod, setBillingPeriod] = React.useState<'monthly' | 'quarterly' | 'yearly'>('yearly');
 
   const handleExplorerClick = () => {
     trackCTAClick('Explorer LUMA', 'hero');
@@ -294,32 +295,64 @@ const Index = () => {
             </p>
           </div>
 
+          {/* Toggle de période */}
+          <div className="flex justify-center mb-12">
+            <div className="glass-card p-1.5 inline-flex gap-1">
+              <Button
+                variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
+                onClick={() => setBillingPeriod('monthly')}
+                className={billingPeriod === 'monthly' ? 'btn-hero' : 'hover:bg-accent/10'}
+              >
+                Mensuel
+              </Button>
+              <Button
+                variant={billingPeriod === 'quarterly' ? 'default' : 'ghost'}
+                onClick={() => setBillingPeriod('quarterly')}
+                className={billingPeriod === 'quarterly' ? 'btn-hero' : 'hover:bg-accent/10'}
+              >
+                Trimestriel
+                <span className="ml-2 text-xs bg-cyan-electric/20 px-2 py-0.5 rounded-full">-10%</span>
+              </Button>
+              <Button
+                variant={billingPeriod === 'yearly' ? 'default' : 'ghost'}
+                onClick={() => setBillingPeriod('yearly')}
+                className={billingPeriod === 'yearly' ? 'btn-hero' : 'hover:bg-accent/10'}
+              >
+                Annuel
+                <span className="ml-2 text-xs bg-cyan-electric/20 px-2 py-0.5 rounded-full">-20%</span>
+              </Button>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
             {/* Plan Starter */}
             <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground">Pour démarrer efficacement</p>
+                <p className="text-muted-foreground">Pour tester et démarrer</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-5xl font-bold gradient-text">99€</span>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-5xl font-bold gradient-text">
+                    {billingPeriod === 'monthly' ? '97' : billingPeriod === 'quarterly' ? '87' : '78'}€
+                  </span>
                   <span className="text-muted-foreground">/mois</span>
                 </div>
-                <div className="text-sm text-cyan-electric font-semibold">1 région incluse</div>
+                {billingPeriod !== 'monthly' && (
+                  <div className="text-sm text-muted-foreground">
+                    {billingPeriod === 'quarterly' ? 'Soit 261€/trimestre' : 'Soit 936€/an'}
+                  </div>
+                )}
+                <div className="text-sm text-cyan-electric font-semibold mt-2">1 région incluse</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">200 entreprises/mois</span>
+                  <span className="text-foreground"><strong>150</strong> nouvelles entreprises/mois</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Carte interactive</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Tous filtres avancés</span>
+                  <span className="text-foreground">Carte interactive & filtres</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -330,103 +363,127 @@ const Index = () => {
                   <span className="text-foreground">Export Excel</span>
                 </li>
                 <li className="flex items-start gap-3">
+                  <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
+                  <span className="text-muted-foreground/60">Alertes SMS en temps réel</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
+                  <span className="text-muted-foreground/60">Accès API</span>
+                </li>
+                <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
                   <span className="text-foreground">Support email</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border border-accent/30" size="lg">
-                Commencer
+                Commencer l'essai gratuit
               </Button>
             </div>
 
-            {/* Plan Pro - Populaire */}
-            <div className="relative glass-card p-8 space-y-6 border-cyan-electric/50 shadow-2xl shadow-cyan-electric/20 scale-105">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-cyan-electric to-cyan-electric/80 text-black-deep text-sm font-semibold rounded-full flex items-center gap-2">
+            {/* Plan Pro - Recommandé */}
+            <div className="relative glass-card p-8 space-y-6 border-cyan-electric/50 shadow-2xl shadow-cyan-electric/20 scale-105 bg-gradient-to-b from-cyan-electric/5 to-transparent">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-gradient-to-r from-cyan-electric to-cyan-electric/80 text-black-deep text-sm font-bold rounded-full flex items-center gap-2 shadow-lg">
                 <Sparkles className="w-4 h-4" />
-                Le plus populaire
+                Recommandé
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Pro</h3>
-                <p className="text-muted-foreground">Pour les pros de la prospection</p>
+                <p className="text-muted-foreground">Pour les professionnels sérieux</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-5xl font-bold gradient-text">199€</span>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-5xl font-bold gradient-text">
+                    {billingPeriod === 'monthly' ? '197' : billingPeriod === 'quarterly' ? '177' : '157'}€
+                  </span>
                   <span className="text-muted-foreground">/mois</span>
                 </div>
-                <div className="text-sm text-cyan-electric font-semibold">Jusqu'à 3 régions</div>
+                {billingPeriod !== 'monthly' && (
+                  <div className="text-sm text-muted-foreground">
+                    {billingPeriod === 'quarterly' ? 'Soit 531€/trimestre' : 'Soit 1 884€/an'}
+                  </div>
+                )}
+                <div className="text-sm text-cyan-electric font-semibold mt-2">Jusqu'à 3 régions</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Entreprises illimitées</span>
+                  <span className="text-foreground"><strong>Entreprises illimitées</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Multi-régions (jusqu'à 3)</span>
+                  <span className="text-foreground"><strong>Multi-régions</strong> (jusqu'à 3)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Alertes temps réel par SMS</span>
+                  <span className="text-foreground"><strong>Alertes SMS</strong> en temps réel</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">API pour intégrations</span>
+                  <span className="text-foreground"><strong>Accès API</strong> pour intégrations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Statistiques avancées</span>
+                  <span className="text-foreground">Statistiques & analytiques avancées</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Support prioritaire</span>
+                  <span className="text-foreground">Enrichissement des données</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground"><strong>Support prioritaire</strong> (24h)</span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full btn-hero" size="lg">
-                Démarrer l'essai gratuit
+              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-lg shadow-cyan-electric/30" size="lg">
+                Démarrer l'essai gratuit 14 jours
               </Button>
+              <p className="text-xs text-center text-muted-foreground">Sans engagement • Sans CB</p>
             </div>
 
-            {/* Plan Équipe - Sur devis */}
+            {/* Plan Enterprise */}
             <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Équipe</h3>
-                <p className="text-muted-foreground">Solution sur-mesure</p>
+                <h3 className="text-2xl font-bold text-foreground">Enterprise</h3>
+                <p className="text-muted-foreground">Pour les grandes équipes</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-5xl font-bold gradient-text">Sur devis</span>
+                  <span className="text-5xl font-bold gradient-text">Sur mesure</span>
                 </div>
                 <div className="text-sm text-cyan-electric font-semibold">France entière • Multi-utilisateurs</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Tout du plan Pro</span>
+                  <span className="text-foreground"><strong>Tout du plan Pro</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">France entière incluse</span>
+                  <span className="text-foreground"><strong>France entière</strong> incluse</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Utilisateurs illimités</span>
+                  <span className="text-foreground"><strong>Utilisateurs illimités</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Tableau de bord équipe</span>
+                  <span className="text-foreground">Tableau de bord équipe avancé</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Gestion des territoires</span>
+                  <span className="text-foreground">Gestion des territoires & assignations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Formation & accompagnement</span>
+                  <span className="text-foreground">Webhooks & intégrations personnalisées</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground"><strong>Account Manager dédié</strong></span>
                 </li>
               </ul>
               <Button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="w-full bg-card hover:bg-accent/10 text-foreground border border-accent/30" size="lg">
-                Nous contacter
+                Contactez-nous
               </Button>
             </div>
           </div>
