@@ -231,6 +231,29 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
         notes: actionLabels[actionType]
       }]);
 
+      // Update local CRM data immediately to reflect the change
+      setCrmData(prev => {
+        const current = prev[entrepriseId] || { 
+          status: null, 
+          interactionCount: 0, 
+          hasUpcomingAction: false,
+          hasAppel: false,
+          hasVisite: false,
+          hasRdv: false
+        };
+        
+        return {
+          ...prev,
+          [entrepriseId]: {
+            ...current,
+            interactionCount: current.interactionCount + 1,
+            hasAppel: actionType === 'appeler' ? true : current.hasAppel,
+            hasVisite: actionType === 'visite' ? true : current.hasVisite,
+            hasRdv: actionType === 'rdv' ? true : current.hasRdv,
+          }
+        };
+      });
+
       const actionEmojis = {
         appeler: '📞',
         visite: '🚗',
