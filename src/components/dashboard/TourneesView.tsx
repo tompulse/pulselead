@@ -353,18 +353,37 @@ export const TourneesView = () => {
                     Cliquez sur les entreprises pour les ajouter
                   </p>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => {
-                    setIsSelecting(false);
-                    setSelectedEntreprises([]);
-                    setTourneeName("");
-                    setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
-                  }}
-                >
-                  Annuler
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    onClick={handleOptimize}
+                    disabled={optimizing || selectedEntreprises.length < 2 || !tourneeName.trim()}
+                  >
+                    {optimizing ? (
+                      <>
+                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        Optimisation...
+                      </>
+                    ) : (
+                      <>
+                        <TrendingUp className="w-3 h-3 mr-1" />
+                        Optimiser
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setIsSelecting(false);
+                      setSelectedEntreprises([]);
+                      setTourneeName("");
+                      setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
+                    }}
+                  >
+                    Annuler
+                  </Button>
+                </div>
               </div>
               
               <div className="grid grid-cols-2 gap-2">
@@ -407,6 +426,13 @@ export const TourneesView = () => {
                       </>
                     )}
                   </Button>
+                </div>
+              )}
+
+              {(!tourneeName.trim() || selectedEntreprises.length < 2) && (
+                <div className="text-[11px] text-muted-foreground">
+                  {!tourneeName.trim() ? "Renseignez un nom de tournée. " : null}
+                  {selectedEntreprises.length < 2 ? "Sélectionnez au moins 2 entreprises sur la carte." : null}
                 </div>
               )}
             </CardContent>

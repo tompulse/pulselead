@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 
@@ -44,6 +44,8 @@ export const TourneeFilters = ({ filters, setFilters }: TourneeFiltersProps) => 
     });
   };
 
+  const clearFilters = () => setFilters((prev: any) => ({ ...prev, categories: [], departments: [] }));
+
   const allCategories = Object.keys(ACTIVITY_CATEGORIES);
   const allDepartments = Object.keys(DEPARTMENT_NAMES).sort();
 
@@ -53,34 +55,38 @@ export const TourneeFilters = ({ filters, setFilters }: TourneeFiltersProps) => 
 
   return (
     <div className="space-y-2">
-      {activeFiltersCount > 0 && (
-        <Badge variant="secondary" className="text-xs">
-          {activeFiltersCount} filtre(s) actif(s)
-        </Badge>
-      )}
+      <div className="flex items-center gap-2">
+        {activeFiltersCount > 0 && (
+          <Badge variant="secondary" className="text-xs">
+            {activeFiltersCount} filtre(s) actif(s)
+          </Badge>
+        )}
+        <Button variant="ghost" size="sm" className="ml-auto h-7 text-xs" onClick={clearFilters}>
+          Effacer
+        </Button>
+      </div>
       
       <div className="grid grid-cols-2 gap-2">
         {/* Catégories */}
         <div className="space-y-2">
           <Label className="text-xs font-semibold">Catégories</Label>
           <ScrollArea className="h-28 rounded border border-accent/20 bg-muted/30">
-            <div className="p-2 space-y-1.5">
-              {allCategories.map((categoryKey) => (
-                <div key={categoryKey} className="flex items-center gap-2">
-                  <Checkbox
-                    id={`cat-${categoryKey}`}
-                    checked={filters.categories?.includes(categoryKey)}
-                    onCheckedChange={() => handleCategoryToggle(categoryKey)}
-                    className="h-3 w-3"
-                  />
-                  <Label 
-                    htmlFor={`cat-${categoryKey}`}
-                    className="text-xs cursor-pointer leading-tight"
+            <div className="p-2 flex flex-wrap gap-1.5">
+              {allCategories.map((categoryKey) => {
+                const selected = filters.categories?.includes(categoryKey);
+                return (
+                  <Button
+                    key={categoryKey}
+                    type="button"
+                    size="sm"
+                    variant={selected ? "secondary" : "outline"}
+                    className="h-7 px-2 text-xs"
+                    onClick={() => handleCategoryToggle(categoryKey)}
                   >
                     {getCategoryLabel(categoryKey)}
-                  </Label>
-                </div>
-              ))}
+                  </Button>
+                );
+              })}
             </div>
           </ScrollArea>
         </div>
@@ -89,23 +95,22 @@ export const TourneeFilters = ({ filters, setFilters }: TourneeFiltersProps) => 
         <div className="space-y-2">
           <Label className="text-xs font-semibold">Départements</Label>
           <ScrollArea className="h-28 rounded border border-accent/20 bg-muted/30">
-            <div className="p-2 space-y-1.5">
-              {allDepartments.map((deptCode) => (
-                <div key={deptCode} className="flex items-center gap-2">
-                  <Checkbox
-                    id={`dept-${deptCode}`}
-                    checked={filters.departments?.includes(deptCode)}
-                    onCheckedChange={() => handleDepartmentToggle(deptCode)}
-                    className="h-3 w-3"
-                  />
-                  <Label 
-                    htmlFor={`dept-${deptCode}`}
-                    className="text-xs cursor-pointer leading-tight"
+            <div className="p-2 flex flex-wrap gap-1.5">
+              {allDepartments.map((deptCode) => {
+                const selected = filters.departments?.includes(deptCode);
+                return (
+                  <Button
+                    key={deptCode}
+                    type="button"
+                    size="sm"
+                    variant={selected ? "secondary" : "outline"}
+                    className="h-7 px-2 text-xs"
+                    onClick={() => handleDepartmentToggle(deptCode)}
                   >
                     {deptCode} - {DEPARTMENT_NAMES[deptCode]}
-                  </Label>
-                </div>
-              ))}
+                  </Button>
+                );
+              })}
             </div>
           </ScrollArea>
         </div>
@@ -113,3 +118,4 @@ export const TourneeFilters = ({ filters, setFilters }: TourneeFiltersProps) => 
     </div>
   );
 };
+
