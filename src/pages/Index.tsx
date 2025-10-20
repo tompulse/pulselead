@@ -32,15 +32,15 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-navy-deep via-black-deep to-background relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-primary via-primary/80 to-background relative overflow-hidden">
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-electric/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
       </div>
 
       {/* Header fixe */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-background/40 border-b border-accent/10">
+      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-background/60 border-b border-accent/10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             {/* Logo */}
@@ -57,15 +57,15 @@ const Index = () => {
               <Button 
                 onClick={handleConnexionClick}
                 variant="outline"
-                className="border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent/50 transition-all duration-300 px-4 sm:px-6 h-9 sm:h-10 text-sm sm:text-base"
+                className="border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent transition-all duration-300 px-4 sm:px-6 h-9 sm:h-10 text-sm sm:text-base rounded-full"
               >
                 Connexion
               </Button>
               <Button 
                 onClick={handleCreerCompteClick}
-                className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-4 sm:px-8 h-9 sm:h-10 text-sm sm:text-base rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-accent/50 hover:-translate-y-0.5"
+                className="btn-hero px-4 sm:px-8 h-9 sm:h-10 text-sm sm:text-base"
               >
-                Créer un compte
+                Essai gratuit
               </Button>
             </div>
           </div>
@@ -76,46 +76,59 @@ const Index = () => {
       <section className="relative pt-32 sm:pt-40 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-8 animate-fade-in">
-            {/* Badge simple */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 backdrop-blur-sm">
-              <span className="text-sm text-cyan-electric font-semibold">Temps réel</span>
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm shadow-lg shadow-accent/10">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+              </span>
+              <span className="text-sm text-accent font-bold">Données en temps réel</span>
             </div>
             
-            {/* Message ultra clair */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="text-foreground">Toutes les nouvelles entreprises</span>
+            {/* Titre principal optimisé pour conversion */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
+              <span className="text-foreground">Prospectez les</span>
               <br />
-              <span className="gradient-text">qui se créent près de chez toi</span>
+              <span className="gradient-text">nouvelles entreprises</span>
+              <br />
+              <span className="text-foreground">avant vos concurrents</span>
             </h1>
             
-            {/* Explication simple */}
-            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Une carte interactive qui affiche en temps réel toutes les créations d'entreprises.
+            {/* Sous-titre optimisé */}
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium">
+              Accédez à toutes les créations d'entreprises en France sur une carte interactive.
               <br className="hidden sm:block" />
-              Parfait pour la prospection commerciale.
+              <span className="text-accent font-semibold">Filtrez par secteur, contactez en premier.</span>
             </p>
             
-            {/* CTA */}
-            <div className="flex flex-col items-center gap-4 pt-4">
+            {/* CTA optimisé */}
+            <div className="flex flex-col items-center gap-5 pt-6">
               <Button 
                 onClick={handleExplorerClick}
                 size="lg"
-                className="btn-hero w-full sm:w-auto min-w-[240px] h-14 text-lg font-semibold group"
+                className="btn-hero w-full sm:w-auto min-w-[280px] h-16 text-xl font-bold group"
               >
-                Voir la carte maintenant
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                Commencer gratuitement
+                <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <CheckCircle className="w-4 h-4 text-cyan-electric" />
-                <span>Gratuit • Sans CB • Accès immédiat</span>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle className="w-4 h-4 text-accent" />
+                  <span className="font-medium">Essai gratuit 14 jours</span>
+                </div>
+                <span className="text-accent/50">•</span>
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle className="w-4 h-4 text-accent" />
+                  <span className="font-medium">Sans carte bancaire</span>
+                </div>
               </div>
             </div>
 
             {/* Visuel */}
-            <div className="pt-12 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="glass-card p-4 sm:p-6 max-w-5xl mx-auto relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-electric/0 via-cyan-electric/10 to-cyan-electric/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
-                <div className="relative aspect-video rounded-lg overflow-hidden">
+            <div className="pt-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="glass-card p-4 sm:p-6 max-w-5xl mx-auto relative group border-accent/30">
+                <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+                <div className="relative aspect-video rounded-lg overflow-hidden ring-1 ring-accent/20">
                   <DashboardPreview />
                 </div>
               </div>
@@ -125,158 +138,158 @@ const Index = () => {
       </section>
 
       {/* Social Proof */}
-      <section className="relative py-12 px-4 border-y border-cyan-electric/10 bg-gradient-to-r from-navy-deep/30 to-black-deep/30">
+      <section className="relative py-16 px-4 border-y border-accent/10 bg-gradient-to-r from-primary/50 to-primary/30 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
-            <div className="flex items-center gap-3 group">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+            <div className="flex items-center gap-4 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-cyan-electric/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-cyan-electric" />
+                <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
+                <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
+                  <Shield className="w-7 h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-base font-bold text-foreground">100% fiable</div>
-                <div className="text-sm text-muted-foreground">Données vérifiées</div>
+                <div className="text-lg font-bold text-foreground">Données officielles</div>
+                <div className="text-sm text-muted-foreground font-medium">Sources INPI & INSEE</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 group">
+            <div className="flex items-center gap-4 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-cyan-electric/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-cyan-electric" />
+                <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
+                <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
+                  <CheckCircle className="w-7 h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-base font-bold text-foreground">+50 utilisateurs</div>
-                <div className="text-sm text-muted-foreground">Actifs quotidiennement</div>
+                <div className="text-lg font-bold text-foreground">+1000 entreprises</div>
+                <div className="text-sm text-muted-foreground font-medium">Ajoutées chaque semaine</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 group">
+            <div className="flex items-center gap-4 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-cyan-electric/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 flex items-center justify-center">
-                  <Star className="w-6 h-6 text-cyan-electric fill-cyan-electric" />
+                <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
+                <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
+                  <Star className="w-7 h-7 text-accent fill-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-base font-bold text-foreground">4.8/5 ★★★★★</div>
-                <div className="text-sm text-muted-foreground">+25 avis vérifiés</div>
+                <div className="text-lg font-bold text-foreground">4.8/5 ★★★★★</div>
+                <div className="text-sm text-muted-foreground font-medium">Note utilisateurs</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section Problèmes */}
-      <section className="relative py-20 px-4">
+      {/* Section Problème/Solution */}
+      <section className="relative py-24 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12 space-y-3 animate-fade-in">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-              Tu perds des <span className="text-destructive">opportunités</span> chaque jour
+          {/* Problème */}
+          <div className="text-center mb-16 space-y-4 animate-fade-in">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+              Vous perdez des <span className="gradient-text">opportunités</span>
+              <br />
+              pendant que vos concurrents prospectent
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Sans outil adapté, tu passes à côté de prospects
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
+              Chaque jour, des centaines d'entreprises se créent. Sans système efficace, vous passez à côté.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <div className="glass-card p-6 space-y-4 border-destructive/20 hover:border-destructive/40 transition-all duration-300">
-              <div className="w-14 h-14 rounded-xl bg-destructive/10 flex items-center justify-center">
-                <AlertCircle className="w-7 h-7 text-destructive" />
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-20">
+            <div className="glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-300 group">
+              <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
+                <AlertCircle className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Trop lent</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Tes concurrents contactent en premier. Pendant que tu cherches, ils signent.
+              <h3 className="text-xl font-bold text-foreground">Concurrence féroce</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                Vos concurrents contactent les prospects en premier pendant que vous cherchez manuellement sur Internet.
               </p>
             </div>
 
-            <div className="glass-card p-6 space-y-4 border-destructive/20 hover:border-destructive/40 transition-all duration-300">
-              <div className="w-14 h-14 rounded-xl bg-destructive/10 flex items-center justify-center">
-                <Clock className="w-7 h-7 text-destructive" />
+            <div className="glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-300 group">
+              <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
+                <Clock className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Temps perdu</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Des heures sur Excel et recherches manuelles. Ce temps devrait servir à vendre.
+              <h3 className="text-xl font-bold text-foreground">Perte de temps</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                Des heures perdues à chercher, vérifier et compiler des données éparpillées sur différentes sources.
               </p>
             </div>
 
-            <div className="glass-card p-6 space-y-4 border-destructive/20 hover:border-destructive/40 transition-all duration-300">
-              <div className="w-14 h-14 rounded-xl bg-destructive/10 flex items-center justify-center">
-                <Target className="w-7 h-7 text-destructive" />
+            <div className="glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-300 group">
+              <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
+                <Target className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Zéro visibilité</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Tu ne sais pas où sont les opportunités. Tu prospectes à l'aveugle.
+              <h3 className="text-xl font-bold text-foreground">Prospection à l'aveugle</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                Sans vue d'ensemble, impossible de cibler efficacement les zones et secteurs à fort potentiel.
               </p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Section Solution */}
-      <section className="relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12 space-y-3 animate-fade-in">
+          {/* Solution */}
+          <div className="text-center mb-12 space-y-4 animate-fade-in">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              LUMA transforme ta <span className="gradient-text">prospection</span>
+              LUMA vous donne l'<span className="gradient-text">avantage décisif</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Sois le premier à contacter. Gagne du temps. Développe ton portefeuille.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
+              Prospectez intelligemment avec des données actualisées et une vision complète de votre territoire.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
-            <div className="text-center space-y-3">
-              <div className="inline-flex w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
-                <Zap className="w-8 h-8 text-cyan-electric" />
+          <div className="grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto">
+            <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
+              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
+                <Zap className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Réactivité maximale</h3>
-              <p className="text-sm text-muted-foreground">
-                Notifications en temps réel. Contact immédiat avant la concurrence.
+              <h3 className="text-xl font-bold text-foreground">Temps réel</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                Accédez aux nouvelles créations dès leur publication officielle. Contactez avant tout le monde.
               </p>
             </div>
 
-            <div className="text-center space-y-3">
-              <div className="inline-flex w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
-                <TrendingUp className="w-8 h-8 text-cyan-electric" />
+            <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
+              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
+                <TrendingUp className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Vision stratégique</h3>
-              <p className="text-sm text-muted-foreground">
-                Identifie les zones à fort potentiel. Priorise intelligemment.
+              <h3 className="text-xl font-bold text-foreground">Ciblage précis</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                Filtrez par secteur d'activité, zone géographique et critères personnalisés. Zéro temps perdu.
               </p>
             </div>
 
-            <div className="text-center space-y-3">
-              <div className="inline-flex w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-electric/20 to-cyan-electric/5 items-center justify-center">
-                <Shield className="w-8 h-8 text-cyan-electric" />
+            <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
+              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
+                <Shield className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Données fiables</h3>
-              <p className="text-sm text-muted-foreground">
-                Informations officielles vérifiées. Zéro erreur.
+              <h3 className="text-xl font-bold text-foreground">Fiabilité totale</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                Données vérifiées issues des sources officielles (INPI, INSEE). Informations complètes et à jour.
               </p>
             </div>
           </div>
 
-          {/* Résultats */}
-          <div className="glass-card p-8 max-w-4xl mx-auto border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 to-transparent">
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="space-y-1">
-                <div className="text-4xl font-bold gradient-text">×2</div>
-                <div className="text-base text-foreground font-semibold">Plus de RDV</div>
-                <div className="text-sm text-muted-foreground">En moyenne</div>
+          {/* Résultats mesurables */}
+          <div className="glass-card p-10 max-w-4xl mx-auto border-accent/40 bg-gradient-to-br from-accent/10 to-transparent shadow-2xl shadow-accent/10">
+            <h3 className="text-2xl font-bold text-center mb-8 gradient-text">Résultats constatés par nos utilisateurs</h3>
+            <div className="grid md:grid-cols-3 gap-10 text-center">
+              <div className="space-y-2">
+                <div className="text-5xl font-bold gradient-text">×2.5</div>
+                <div className="text-lg text-foreground font-bold">Rendez-vous obtenus</div>
+                <div className="text-sm text-muted-foreground font-medium">Par rapport à la prospection classique</div>
               </div>
-              <div className="space-y-1">
-                <div className="text-4xl font-bold gradient-text">2h</div>
-                <div className="text-base text-foreground font-semibold">Gagnées/jour</div>
-                <div className="text-sm text-muted-foreground">En recherche</div>
+              <div className="space-y-2">
+                <div className="text-5xl font-bold gradient-text">3h/jour</div>
+                <div className="text-lg text-foreground font-bold">Temps économisé</div>
+                <div className="text-sm text-muted-foreground font-medium">En recherche et qualification</div>
               </div>
-              <div className="space-y-1">
-                <div className="text-4xl font-bold gradient-text">+30%</div>
-                <div className="text-base text-foreground font-semibold">Nouveaux clients</div>
-                <div className="text-sm text-muted-foreground">En moyenne</div>
+              <div className="space-y-2">
+                <div className="text-5xl font-bold gradient-text">+40%</div>
+                <div className="text-lg text-foreground font-bold">Croissance clients</div>
+                <div className="text-sm text-muted-foreground font-medium">En 6 mois d'utilisation</div>
               </div>
             </div>
           </div>
@@ -284,199 +297,193 @@ const Index = () => {
       </section>
 
       {/* Section Prix */}
-      <section className="relative py-24 px-4">
+      <section className="relative py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-16 space-y-4 animate-fade-in">
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground">
-              Un investissement <span className="gradient-text">rentable</span>
+          <div className="text-center mb-20 space-y-5 animate-fade-in">
+            <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-foreground leading-tight">
+              Choisissez le plan qui
+              <br />
+              <span className="gradient-text">accélère votre croissance</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Combien coûte un client perdu face à un concurrent plus rapide ?
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
+              Chaque jour sans LUMA, c'est un prospect que votre concurrent contacte avant vous.
             </p>
           </div>
 
           {/* Toggle de période */}
-          <div className="flex justify-center mb-12">
-            <div className="glass-card p-1.5 inline-flex gap-1">
+          <div className="flex justify-center mb-16">
+            <div className="glass-card p-2 inline-flex gap-1.5 border-accent/30">
               <Button
                 variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('monthly')}
-                className={billingPeriod === 'monthly' ? 'btn-hero' : 'hover:bg-accent/10'}
+                className={billingPeriod === 'monthly' ? 'btn-hero text-base px-6' : 'hover:bg-accent/10 text-base px-6'}
               >
                 Mensuel
               </Button>
               <Button
                 variant={billingPeriod === 'quarterly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('quarterly')}
-                className={billingPeriod === 'quarterly' ? 'btn-hero' : 'hover:bg-accent/10'}
+                className={billingPeriod === 'quarterly' ? 'btn-hero text-base px-6' : 'hover:bg-accent/10 text-base px-6'}
               >
                 Trimestriel
-                <span className="ml-2 text-xs bg-cyan-electric/20 px-2 py-0.5 rounded-full">-15%</span>
+                <span className="ml-2 text-xs bg-accent/30 px-2.5 py-1 rounded-full font-bold">-15%</span>
               </Button>
               <Button
                 variant={billingPeriod === 'yearly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('yearly')}
-                className={billingPeriod === 'yearly' ? 'btn-hero' : 'hover:bg-accent/10'}
+                className={billingPeriod === 'yearly' ? 'btn-hero text-base px-6' : 'hover:bg-accent/10 text-base px-6'}
               >
                 Annuel
-                <span className="ml-2 text-xs bg-cyan-electric/20 px-2 py-0.5 rounded-full">-25%</span>
+                <span className="ml-2 text-xs bg-accent/30 px-2.5 py-1 rounded-full font-bold">-25%</span>
               </Button>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20">
             {/* Plan Starter */}
-            <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
+            <div className="glass-card p-8 space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground">Pour démarrer votre prospection</p>
+                <p className="text-muted-foreground font-medium">Pour tester la prospection ciblée</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
                     {billingPeriod === 'monthly' ? '129' : billingPeriod === 'quarterly' ? '109' : '99'}€
                   </span>
-                  <span className="text-muted-foreground">/mois</span>
+                  <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-cyan-electric font-semibold">Idéal pour 1 secteur d'activité</div>
+                <div className="text-sm text-accent font-bold">1 secteur d'activité</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>20</strong> nouvelles créations d'entreprises/mois</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium"><strong>20 prospects/mois</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Carte interactive & filtres basiques</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Carte interactive + filtres</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Suivi des interactions CRM</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">CRM intégré</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Données officielles vérifiées</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Fiche contact dirigeant</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Données officielles</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Filtres avancés & scoring</span>
+                  <span className="text-muted-foreground/60">Contact dirigeant</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Dashboard analytique IA</span>
+                  <span className="text-muted-foreground/60">Filtres avancés IA</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Support email (48h)</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Support email</span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border border-accent/30" size="lg">
-                Commencer l'essai gratuit
+              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
+                Essai gratuit 14 jours
               </Button>
             </div>
 
             {/* Plan Pro - Recommandé */}
-            <div className="relative glass-card p-8 space-y-6 border-cyan-electric/50 shadow-2xl shadow-cyan-electric/20 scale-105 bg-gradient-to-b from-cyan-electric/5 to-transparent">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-gradient-to-r from-cyan-electric to-cyan-electric/80 text-black-deep text-sm font-bold rounded-full flex items-center gap-2 shadow-lg">
+            <div className="relative glass-card p-8 space-y-6 border-accent/70 shadow-2xl shadow-accent/20 scale-105 bg-gradient-to-b from-accent/10 to-transparent">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-accent to-accent/90 text-primary text-sm font-bold rounded-full flex items-center gap-2 shadow-lg shadow-accent/30">
                 <Sparkles className="w-4 h-4" />
-                Recommandé
+                Le plus populaire
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Pro</h3>
-                <p className="text-muted-foreground">Pour les professionnels ambitieux</p>
+                <p className="text-muted-foreground font-medium">Pour développer rapidement</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
                     {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '169' : '149'}€
                   </span>
-                  <span className="text-muted-foreground">/mois</span>
+                  <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-cyan-electric font-semibold">Prospection multi-secteurs illimitée</div>
+                <div className="text-sm text-accent font-bold">Multi-secteurs illimité</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">✨ <strong>Créations illimitées</strong></span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">✨ <strong>Prospects illimités</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">🌟 <strong>Tous secteurs</strong> d'activité</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">🎯 <strong>Tous les secteurs</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">💎 <strong>Fiche contact dirigeant</strong> complète</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">💎 <strong>Contacts dirigeants</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">🎯 <strong>Filtres avancés</strong> & scoring des prospects</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">🤖 <strong>Filtres IA avancés</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">🤖 Dashboard analytique & prévisions IA</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">📊 Analytics & prévisions</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">⚡ <strong>Support prioritaire</strong> (réponse 24h)</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">⚡ <strong>Support prioritaire 24h</strong></span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-lg shadow-cyan-electric/30" size="lg">
-                Démarrer l'essai gratuit 14 jours
+              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-xl shadow-accent/40 font-bold text-base" size="lg">
+                Essai gratuit 14 jours
               </Button>
             </div>
 
             {/* Plan Enterprise */}
-            <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
+            <div className="glass-card p-8 space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Enterprise</h3>
-                <p className="text-muted-foreground">Pour les équipes performantes</p>
+                <p className="text-muted-foreground font-medium">Pour les équipes commerciales</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-5xl font-bold gradient-text">Sur mesure</span>
+                  <span className="text-4xl font-bold gradient-text">Sur mesure</span>
                 </div>
-                <div className="text-sm text-cyan-electric font-semibold">Solution complète multi-utilisateurs</div>
+                <div className="text-sm text-accent font-bold">Solution complète équipe</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Tout du plan Pro</strong></span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium"><strong>Tout du plan Pro</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Couverture nationale</strong> complète</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium"><strong>Couverture nationale</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Utilisateurs illimités</strong></span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium"><strong>Utilisateurs illimités</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Tableau de bord équipe avancé</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Dashboard équipe avancé</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Gestion des territoires & assignations</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Gestion des territoires</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Alertes & notifications personnalisées</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Formation dédiée</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Formation & onboarding dédié</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Account Manager dédié</strong></span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium"><strong>Account Manager dédié</strong></span>
                 </li>
               </ul>
-              <Button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="w-full bg-card hover:bg-accent/10 text-foreground border border-accent/30" size="lg">
-                Contactez-nous
+              <Button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
+                Nous contacter
               </Button>
             </div>
           </div>
@@ -664,17 +671,19 @@ const Index = () => {
           </Accordion>
 
           {/* CTA Final */}
-          <div className="glass-card p-10 text-center space-y-6 border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 via-navy-deep/10 to-transparent">
-            <h3 className="text-3xl md:text-4xl font-bold text-foreground">
-              Prêt à transformer ta prospection ?
+          <div className="glass-card p-12 text-center space-y-8 border-accent/40 bg-gradient-to-br from-accent/10 via-primary/20 to-transparent shadow-2xl shadow-accent/10">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+              Ne laissez plus passer
+              <br />
+              <span className="gradient-text">aucune opportunité</span>
             </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Rejoins les commerciaux qui cartonnent avec LUMA
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+              Démarrez votre essai gratuit maintenant. Sans engagement, sans carte bancaire.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button onClick={() => navigate("/auth")} size="lg" className="btn-hero min-w-[220px] h-12">
-                Démarrer maintenant
-                <ArrowRight className="w-5 h-5 ml-2" />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+              <Button onClick={() => navigate("/auth")} size="lg" className="btn-hero min-w-[240px] h-14 text-lg font-bold">
+                Commencer gratuitement
+                <ArrowRight className="w-6 h-6 ml-2" />
               </Button>
               <Button 
                 onClick={() => {
@@ -685,24 +694,24 @@ const Index = () => {
                 }}
                 size="lg"
                 variant="outline"
-                className="border-2 border-cyan-electric/50 text-foreground hover:bg-cyan-electric/10 hover:border-cyan-electric min-w-[220px] h-12"
+                className="border-2 border-accent/50 text-foreground hover:bg-accent/10 hover:border-accent min-w-[240px] h-14 text-lg font-bold rounded-full"
               >
                 <Calendar className="w-5 h-5 mr-2" />
-                Prendre rendez-vous
+                Demander une démo
               </Button>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-cyan-electric" />
-                <span>Sans CB</span>
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-sm text-muted-foreground font-medium">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-accent" />
+                <span>14 jours gratuits</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-cyan-electric" />
-                <span>Setup 5 min</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-accent" />
+                <span>Sans carte bancaire</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-cyan-electric" />
-                <span>Support 7j/7</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-accent" />
+                <span>Accès immédiat</span>
               </div>
             </div>
           </div>
@@ -710,7 +719,7 @@ const Index = () => {
       </section>
 
       {/* Footer complet */}
-      <footer className="relative py-12 px-4 bg-navy-deep/50 border-t border-accent/10">
+      <footer className="relative py-12 px-4 bg-primary/50 border-t border-accent/10">
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             {/* Logo et description */}
