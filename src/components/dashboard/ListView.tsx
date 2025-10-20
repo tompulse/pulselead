@@ -44,12 +44,14 @@ interface Entreprise {
   longitude?: number;
   effectifs?: number;
   chiffre_affaires?: number;
+  site_web?: string;
 }
 
 export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [crmData, setCrmData] = useState<Record<string, { 
     status: any; 
     interactionCount: number; 
@@ -431,14 +433,24 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 
                 const gerant = extractGerant(item.administration);
                 
+                const isHovered = hoveredCardId === item.id;
+                
                 return (
                   <div
                     key={item.id}
-                    className="group relative rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 hover:border-accent/50 transition-all bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full overflow-hidden flex flex-col hover:shadow-xl hover:shadow-accent/10 cursor-pointer"
+                    className={`group rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 hover:border-accent/50 transition-all bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full flex flex-col hover:shadow-xl hover:shadow-accent/10 cursor-pointer ${
+                      isHovered ? 'relative z-50 scale-105' : 'relative'
+                    }`}
+                    style={{
+                      maxHeight: isHovered ? '600px' : '400px',
+                      overflow: isHovered ? 'visible' : 'hidden'
+                    }}
                     onClick={() => onEntrepriseSelect?.(item)}
+                    onMouseEnter={() => setHoveredCardId(item.id)}
+                    onMouseLeave={() => setHoveredCardId(null)}
                   >
                     {/* Gradient overlay on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
                     
                     <div className="relative flex items-start justify-between gap-2 mb-3">
                       <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1 gradient-text" title={item.nom}>
@@ -490,73 +502,119 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       </div>
                     </div>
 
-                    <div className="relative space-y-2 mb-4 flex-1 min-h-0">{categoryInfo.label && (
+                    <div 
+                      className={`relative space-y-2 mb-4 flex-1 ${isHovered ? 'overflow-y-auto max-h-[400px] pr-2 custom-scrollbar' : 'min-h-0 overflow-hidden'}`}
+                    >
+                      {categoryInfo.label && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70 bg-accent/5 p-2 rounded-lg border border-accent/10">
                           <Briefcase className="w-4 h-4 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1 font-medium">{categoryInfo.label}</span>
+                          <span className={isHovered ? 'font-medium' : 'line-clamp-1 font-medium'}>{categoryInfo.label}</span>
+                        </div>
+                      )}
+                      
+                      {item.siret && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Building2 className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className={isHovered ? '' : 'line-clamp-1'}>SIRET: {item.siret}</span>
                         </div>
                       )}
                       
                       {fullAddress && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-2">{fullAddress}</span>
+                          <span className={isHovered ? '' : 'line-clamp-2'}>{fullAddress}</span>
                         </div>
                       )}
                       
                       {gerant && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <User className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{gerant}</span>
+                          <span className={isHovered ? '' : 'line-clamp-1'}>{gerant}</span>
                         </div>
                       )}
 
                       {item.telephone && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <Phone className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{item.telephone}</span>
+                          <span className={isHovered ? '' : 'line-clamp-1'}>{item.telephone}</span>
                         </div>
                       )}
 
                       {item.email && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <Mail className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{item.email}</span>
+                          <span className={isHovered ? 'break-all' : 'line-clamp-1'}>{item.email}</span>
                         </div>
                       )}
 
                       {item.forme_juridique && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <Building className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{item.forme_juridique}</span>
+                          <span className={isHovered ? '' : 'line-clamp-1'}>{item.forme_juridique}</span>
+                        </div>
+                      )}
+
+                      {item.code_naf && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Briefcase className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className={isHovered ? '' : 'line-clamp-1'}>Code NAF: {item.code_naf}</span>
+                        </div>
+                      )}
+
+                      {item.activite && (
+                        <div className="flex items-start gap-2 text-sm text-foreground/70">
+                          <Briefcase className="w-3.5 h-3.5 flex-shrink-0 text-accent mt-0.5" />
+                          <span className={isHovered ? '' : 'line-clamp-2'}>Activité: {item.activite}</span>
                         </div>
                       )}
 
                       {item.effectifs && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <Users className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{item.effectifs} employés</span>
+                          <span className={isHovered ? '' : 'line-clamp-1'}>{item.effectifs} employés</span>
                         </div>
                       )}
 
                       {item.chiffre_affaires && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <TrendingUp className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.chiffre_affaires))}</span>
+                          <span className={isHovered ? '' : 'line-clamp-1'}>CA: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.chiffre_affaires))}</span>
                         </div>
                       )}
 
                       {item.capital && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <Banknote className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">Capital: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.capital))}</span>
+                          <span className={isHovered ? '' : 'line-clamp-1'}>Capital: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.capital))}</span>
                         </div>
                       )}
 
                       {item.date_demarrage && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <CalendarDays className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">Créée le {new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
+                          <span className={isHovered ? '' : 'line-clamp-1'}>Créée le {new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                      )}
+
+                      {item.administration && isHovered && (
+                        <div className="flex items-start gap-2 text-sm text-foreground/70 bg-accent/5 p-2 rounded-lg border border-accent/10">
+                          <User className="w-3.5 h-3.5 flex-shrink-0 text-accent mt-0.5" />
+                          <span>Administration: {item.administration}</span>
+                        </div>
+                      )}
+
+                      {item.site_web && isHovered && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Building2 className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <a 
+                            href={item.site_web.startsWith('http') ? item.site_web : `https://${item.site_web}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-accent hover:underline break-all"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {item.site_web}
+                          </a>
                         </div>
                       )}
                     </div>
