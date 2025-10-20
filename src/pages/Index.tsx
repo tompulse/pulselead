@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Lightbulb, Sparkles, TrendingUp, Shield } from "lucide-react";
+import { Lightbulb, ArrowRight } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
 import ContactSection from "@/components/landing/ContactSection";
+import { SocialProofSection } from "@/components/landing/SocialProofSection";
+import { ProblemsSection } from "@/components/landing/ProblemsSection";
+import { SolutionSection } from "@/components/landing/SolutionSection";
+import { PricingSection } from "@/components/landing/PricingSection";
+import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { FAQSection } from "@/components/landing/FAQSection";
 import { trackCTAClick } from "@/utils/analytics";
 
 const Index = () => {
@@ -65,40 +71,47 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-40 pb-20 sm:pb-32 px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-32 sm:pt-40 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-6 sm:space-y-8 animate-fade-in">
-            {/* Titre principal */}
+          <div className="text-center space-y-8 animate-fade-in">
+            {/* Badge de lancement */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 backdrop-blur-sm hover:border-cyan-electric/50 transition-all">
+              <Lightbulb className="w-4 h-4 text-cyan-electric animate-pulse" />
+              <span className="text-sm text-cyan-electric font-semibold tracking-wide">Données officielles en temps réel</span>
+            </div>
+            
+            {/* Promesse de vente claire */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="text-foreground">LUMA</span>
+              <span className="text-foreground">Contacte les nouvelles entreprises</span>
               <br />
-              <span className="gradient-text">éclaire les leviers de ta croissance.</span>
+              <span className="gradient-text">avant tes concurrents</span>
             </h1>
             
-            {/* Sous-texte */}
+            {/* Sous-promesse claire */}
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Visualise ton marché, comprends tes prospects et passe à l'action.<br />
-              LUMA t'aide à voir clair dans ta data pour accélérer ta croissance.
+              LUMA te permet de visualiser en temps réel toutes les créations d'entreprises sur ton territoire. 
+              Fini les opportunités manquées. À toi les premiers contacts.
             </p>
             
-            {/* Boutons CTA */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 sm:pt-8">
+            {/* CTA au-dessus de la ligne de flottaison */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
               <Button 
                 onClick={handleExplorerClick}
                 size="lg"
-                className="btn-hero w-full sm:w-auto min-w-[200px] sm:min-w-[240px] h-12 sm:h-14 text-base sm:text-lg"
+                className="btn-hero w-full sm:w-auto min-w-[240px] h-14 text-lg group"
               >
-                Explorer LUMA
+                Commencer gratuitement
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <p className="text-sm text-muted-foreground/80 mt-2">
-                Démo instantanée — sans création de compte.
-              </p>
             </div>
+            <p className="text-sm text-muted-foreground">
+              Aucune carte bancaire requise • Accès immédiat
+            </p>
 
-            {/* Dashboard Preview - Interactive animation */}
-            <div className="pt-12 sm:pt-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="glass-card p-4 sm:p-6 md:p-8 max-w-5xl mx-auto relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+            {/* Visuel impactant - Dashboard Preview */}
+            <div className="pt-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="glass-card p-4 sm:p-8 max-w-5xl mx-auto relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-electric/0 via-cyan-electric/10 to-cyan-electric/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
                 <div className="relative aspect-video">
                   <DashboardPreview />
                 </div>
@@ -108,62 +121,23 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Bloc valeur perçue */}
-      <section className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-y border-accent/10">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center space-y-10 sm:space-y-16">
-            {/* Phrase unique */}
-            <p className="text-xl sm:text-2xl md:text-3xl text-foreground/90 font-light leading-relaxed max-w-4xl mx-auto">
-              Visualise, comprends, et agis. En clair.
-            </p>
-            
-            {/* 3 mini pictos */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 max-w-4xl mx-auto">
-              {/* IA */}
-              <div className="flex flex-col items-center space-y-4 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-accent/20 blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                  <div className="relative bg-card/60 backdrop-blur-xl border border-accent/20 rounded-2xl p-6 transition-all duration-300 group-hover:border-accent/40 group-hover:-translate-y-1">
-                    <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
-                  </div>
-                </div>
-                <div className="text-center space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Clarté instantanée</h3>
-                  <p className="text-sm text-muted-foreground">Data lisible et actionnables</p>
-                </div>
-              </div>
-              
-              {/* Performance */}
-              <div className="flex flex-col items-center space-y-4 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-accent/20 blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                  <div className="relative bg-card/60 backdrop-blur-xl border border-accent/20 rounded-2xl p-6 transition-all duration-300 group-hover:border-accent/40 group-hover:-translate-y-1">
-                    <TrendingUp className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
-                  </div>
-                </div>
-                <div className="text-center space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Croissance accélérée</h3>
-                  <p className="text-sm text-muted-foreground">Décisions plus rapides</p>
-                </div>
-              </div>
-              
-              {/* Sécurité */}
-              <div className="flex flex-col items-center space-y-4 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-accent/20 blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                  <div className="relative bg-card/60 backdrop-blur-xl border border-accent/20 rounded-2xl p-6 transition-all duration-300 group-hover:border-accent/40 group-hover:-translate-y-1">
-                    <Shield className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
-                  </div>
-                </div>
-                <div className="text-center space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg text-foreground">Vision complète</h3>
-                  <p className="text-sm text-muted-foreground">Tous vos leviers en un coup d'œil</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Social Proof */}
+      <SocialProofSection />
+
+      {/* Section Problèmes */}
+      <ProblemsSection />
+
+      {/* Section Solution */}
+      <SolutionSection />
+
+      {/* Section Prix */}
+      <PricingSection />
+
+      {/* Section Témoignages */}
+      <TestimonialsSection />
+
+      {/* Section FAQ + CTA */}
+      <FAQSection />
 
       {/* Section Contact */}
       <div id="contact">
