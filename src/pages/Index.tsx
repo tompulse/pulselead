@@ -4,6 +4,7 @@ import React from "react";
 import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Calendar, X } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
 import { trackCTAClick } from "@/utils/analytics";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import {
   Accordion,
   AccordionContent,
@@ -15,6 +16,15 @@ const Index = () => {
   const navigate = useNavigate();
   const [selectedRegion, setSelectedRegion] = React.useState<'1' | 'plusieurs' | 'france'>('plusieurs');
   const [billingPeriod, setBillingPeriod] = React.useState<'monthly' | 'quarterly' | 'yearly'>('yearly');
+  
+  // Animations au scroll
+  const socialProof = useScrollAnimation({ threshold: 0.2 });
+  const problemSection = useScrollAnimation({ threshold: 0.2 });
+  const solutionSection = useScrollAnimation({ threshold: 0.2 });
+  const pricingSection = useScrollAnimation({ threshold: 0.15 });
+  const testimonialsSection = useScrollAnimation({ threshold: 0.2 });
+  const faqSection = useScrollAnimation({ threshold: 0.2 });
+  const finalCTA = useScrollAnimation({ threshold: 0.3 });
 
   const handleExplorerClick = () => {
     trackCTAClick('Explorer LUMA', 'hero');
@@ -138,7 +148,12 @@ const Index = () => {
       </section>
 
       {/* Social Proof */}
-      <section className="relative py-16 px-4 border-y border-accent/10 bg-gradient-to-r from-primary/50 to-primary/30 backdrop-blur-sm">
+      <section 
+        ref={socialProof.ref}
+        className={`relative py-16 px-4 border-y border-accent/10 bg-gradient-to-r from-primary/50 to-primary/30 backdrop-blur-sm transition-all duration-700 ${
+          socialProof.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
             <div className="flex items-center gap-4 group">
@@ -187,7 +202,12 @@ const Index = () => {
       <section className="relative py-24 px-4">
         <div className="container mx-auto max-w-6xl">
           {/* Problème */}
-          <div className="text-center mb-16 space-y-4 animate-fade-in">
+          <div 
+            ref={problemSection.ref}
+            className={`text-center mb-16 space-y-4 transition-all duration-700 ${
+              problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
               Vous perdez des <span className="gradient-text">opportunités</span>
               <br />
@@ -198,7 +218,9 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-20">
+          <div className={`grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-20 transition-all duration-700 delay-150 ${
+            problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          }`}>
             <div className="glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-300 group">
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <AlertCircle className="w-8 h-8 text-destructive" />
@@ -231,7 +253,12 @@ const Index = () => {
           </div>
 
           {/* Solution */}
-          <div className="text-center mb-12 space-y-4 animate-fade-in">
+          <div 
+            ref={solutionSection.ref}
+            className={`text-center mb-12 space-y-4 transition-all duration-700 ${
+              solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
               LUMA vous donne l'<span className="gradient-text">avantage décisif</span>
             </h2>
@@ -240,7 +267,9 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto">
+          <div className={`grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto transition-all duration-700 delay-150 ${
+            solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          }`}>
             <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Zap className="w-9 h-9 text-accent" />
@@ -297,7 +326,12 @@ const Index = () => {
       </section>
 
       {/* Section Prix */}
-      <section className="relative py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background">
+      <section 
+        ref={pricingSection.ref}
+        className={`relative py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-700 ${
+          pricingSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-20 space-y-5 animate-fade-in">
             <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-foreground leading-tight">
@@ -535,7 +569,12 @@ const Index = () => {
       </section>
 
       {/* Section Témoignages */}
-      <section className="relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background">
+      <section 
+        ref={testimonialsSection.ref}
+        className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-700 ${
+          testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12 space-y-3 animate-fade-in">
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -616,7 +655,12 @@ const Index = () => {
       {/* Section FAQ + CTA */}
       <section className="relative py-20 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-12 space-y-3 animate-fade-in">
+          <div 
+            ref={faqSection.ref}
+            className={`text-center mb-12 space-y-3 transition-all duration-700 ${
+              faqSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
               Questions <span className="gradient-text">fréquentes</span>
             </h2>
@@ -671,7 +715,12 @@ const Index = () => {
           </Accordion>
 
           {/* CTA Final */}
-          <div className="glass-card p-12 text-center space-y-8 border-accent/40 bg-gradient-to-br from-accent/10 via-primary/20 to-transparent shadow-2xl shadow-accent/10">
+          <div 
+            ref={finalCTA.ref}
+            className={`glass-card p-12 text-center space-y-8 border-accent/40 bg-gradient-to-br from-accent/10 via-primary/20 to-transparent shadow-2xl shadow-accent/10 transition-all duration-700 ${
+              finalCTA.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
             <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
               Ne laissez plus passer
               <br />
