@@ -399,15 +399,17 @@ export const TourneesView = () => {
       {isSelecting && (
         <div className="flex flex-col h-full gap-3 overflow-hidden">
           {/* En-tête compact */}
-          <Card className="flex-shrink-0">
-            <CardContent className="pt-4 pb-4 space-y-3">
+          <Card className="flex-shrink-0 border-accent/30 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent shadow-lg shadow-accent/5">
+            <CardContent className="pt-4 pb-4 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Route className="w-4 h-4 text-accent" />
+                  <h3 className="font-semibold flex items-center gap-2 gradient-text text-lg">
+                    <div className="p-2 bg-accent/10 rounded-lg">
+                      <Route className="w-5 h-5 text-accent" />
+                    </div>
                     Créer votre tournée
                   </h3>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Cliquez sur les entreprises pour les ajouter
                   </p>
                 </div>
@@ -416,15 +418,16 @@ export const TourneesView = () => {
                     size="sm"
                     onClick={handleOptimize}
                     disabled={optimizing || selectedEntreprises.length < 2 || !tourneeName.trim()}
+                    className="bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all"
                   >
                     {optimizing ? (
                       <>
-                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
                         Optimisation...
                       </>
                     ) : (
                       <>
-                        <TrendingUp className="w-3 h-3 mr-1" />
+                        <TrendingUp className="w-4 h-4 mr-1" />
                         Optimiser
                       </>
                     )}
@@ -438,48 +441,49 @@ export const TourneesView = () => {
                       setTourneeName("");
                       setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
                     }}
+                    className="hover:bg-accent/10"
                   >
                     Annuler
                   </Button>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <Input
                   placeholder="Nom de la tournée *"
                   value={tourneeName}
                   onChange={(e) => setTourneeName(e.target.value)}
-                  className="text-sm"
+                  className="border-accent/30 bg-card/50 focus:border-accent focus:ring-accent/20"
                 />
                 <Input
                   type="date"
                   value={tourneeDate}
                   onChange={(e) => setTourneeDate(e.target.value)}
-                  className="text-sm"
+                  className="border-accent/30 bg-card/50 focus:border-accent focus:ring-accent/20"
                 />
               </div>
 
               <TourneeFilters filters={filters} setFilters={setFilters} />
 
               {selectedEntreprises.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">
+                <div className="flex items-center gap-2 bg-accent/5 p-3 rounded-lg border border-accent/20">
+                  <Badge variant="secondary" className="bg-accent/20 text-accent border-accent/30">
                     {selectedEntreprises.length} sélectionnée(s)
                   </Badge>
                   <Button
                     onClick={handleOptimize}
                     disabled={optimizing || selectedEntreprises.length < 2 || !tourneeName.trim()}
                     size="sm"
-                    className="ml-auto"
+                    className="ml-auto bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all"
                   >
                     {optimizing ? (
                       <>
-                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
                         Optimisation...
                       </>
                     ) : (
                       <>
-                        <TrendingUp className="w-3 h-3 mr-1" />
+                        <TrendingUp className="w-4 h-4 mr-1" />
                         Optimiser
                       </>
                     )}
@@ -497,7 +501,8 @@ export const TourneesView = () => {
           </Card>
 
           {/* Carte */}
-          <div className="flex-1 min-h-0 rounded-lg overflow-hidden border border-accent/20">
+          <div className="flex-1 min-h-0 rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent pointer-events-none z-10" />
             <MapView
               filters={filters}
               onEntrepriseSelect={handleMapMarkerClick}

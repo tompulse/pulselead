@@ -54,24 +54,27 @@ export const TourneeFilters = ({ filters, setFilters }: TourneeFiltersProps) => 
     (filters.departments?.length || 0);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex items-center gap-2">
         {activeFiltersCount > 0 && (
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs bg-accent/20 text-accent border-accent/30">
             {activeFiltersCount} filtre(s) actif(s)
           </Badge>
         )}
-        <Button variant="ghost" size="sm" className="ml-auto h-7 text-xs" onClick={clearFilters}>
+        <Button variant="ghost" size="sm" className="ml-auto h-7 text-xs hover:bg-accent/10 hover:text-accent" onClick={clearFilters}>
           Effacer
         </Button>
       </div>
       
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         {/* Catégories */}
         <div className="space-y-2">
-          <Label className="text-xs font-semibold">Catégories</Label>
-          <ScrollArea className="h-28 rounded border border-accent/20 bg-muted/30">
-            <div className="p-2 flex flex-wrap gap-1.5">
+          <Label className="text-sm font-semibold flex items-center gap-2">
+            <div className="w-1 h-4 bg-gradient-to-b from-accent to-accent/50 rounded-full" />
+            Catégories
+          </Label>
+          <ScrollArea className="h-32 rounded-lg border border-accent/30 bg-gradient-to-br from-card/80 to-card/40 shadow-sm">
+            <div className="p-3 flex flex-wrap gap-2">
               {allCategories.map((categoryKey) => {
                 const selected = filters.categories?.includes(categoryKey);
                 return (
@@ -79,8 +82,11 @@ export const TourneeFilters = ({ filters, setFilters }: TourneeFiltersProps) => 
                     key={categoryKey}
                     type="button"
                     size="sm"
-                    variant={selected ? "secondary" : "outline"}
-                    className="h-7 px-2 text-xs"
+                    variant={selected ? "default" : "outline"}
+                    className={selected 
+                      ? "h-8 px-3 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 border-accent/30 transition-all" 
+                      : "h-8 px-3 text-xs border-accent/20 hover:bg-accent/10 hover:border-accent/30 hover:text-accent transition-all"
+                    }
                     onClick={() => handleCategoryToggle(categoryKey)}
                   >
                     {getCategoryLabel(categoryKey)}
@@ -93,9 +99,12 @@ export const TourneeFilters = ({ filters, setFilters }: TourneeFiltersProps) => 
 
         {/* Départements */}
         <div className="space-y-2">
-          <Label className="text-xs font-semibold">Départements</Label>
-          <ScrollArea className="h-28 rounded border border-accent/20 bg-muted/30">
-            <div className="p-2 flex flex-wrap gap-1.5">
+          <Label className="text-sm font-semibold flex items-center gap-2">
+            <div className="w-1 h-4 bg-gradient-to-b from-accent to-accent/50 rounded-full" />
+            Départements
+          </Label>
+          <ScrollArea className="h-32 rounded-lg border border-accent/30 bg-gradient-to-br from-card/80 to-card/40 shadow-sm">
+            <div className="p-3 flex flex-wrap gap-2">
               {allDepartments.map((deptCode) => {
                 const selected = filters.departments?.includes(deptCode);
                 return (
@@ -103,8 +112,11 @@ export const TourneeFilters = ({ filters, setFilters }: TourneeFiltersProps) => 
                     key={deptCode}
                     type="button"
                     size="sm"
-                    variant={selected ? "secondary" : "outline"}
-                    className="h-7 px-2 text-xs"
+                    variant={selected ? "default" : "outline"}
+                    className={selected 
+                      ? "h-8 px-3 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 border-accent/30 transition-all" 
+                      : "h-8 px-3 text-xs border-accent/20 hover:bg-accent/10 hover:border-accent/30 hover:text-accent transition-all"
+                    }
                     onClick={() => handleDepartmentToggle(deptCode)}
                   >
                     {deptCode} - {DEPARTMENT_NAMES[deptCode]}
