@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { MapView } from "./MapView";
 import type { Database } from "@/integrations/supabase/types";
+import { TourneeFilters } from "./TourneeFilters";
 
 type Entreprise = Database['public']['Tables']['entreprises']['Row'];
 
@@ -53,10 +54,15 @@ export const TourneesView = () => {
   const [optimizedResult, setOptimizedResult] = useState<any>(null);
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [tourneeNotes, setTourneeNotes] = useState("");
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedEntreprises, setSelectedEntreprises] = useState<Entreprise[]>([]);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [filters, setFilters] = useState({
+    dateFrom: "2025-09-01",
+    dateTo: "",
+    categories: [] as string[],
+    departments: [] as string[],
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -188,7 +194,7 @@ export const TourneesView = () => {
         temps_estime_minutes: optimizedResult.temps_estime_minutes,
         point_depart_lat: optimizedResult.point_depart?.lat,
         point_depart_lng: optimizedResult.point_depart?.lng,
-        notes: tourneeNotes || null,
+        notes: null,
         statut: 'planifiee',
       });
 
@@ -200,7 +206,6 @@ export const TourneesView = () => {
       });
 
       setTourneeName("");
-      setTourneeNotes("");
       setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
       fetchTournees();
       setSelectedEntreprises([]);
@@ -319,23 +324,14 @@ export const TourneesView = () => {
   };
 
   return (
-    <div className="h-full flex flex-col gap-6">
+    <div className="h-full flex flex-col gap-3 overflow-hidden">
       {/* Nouvelle tournée */}
       {!isSelecting && !optimizedResult && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              Créer une nouvelle tournée
-            </CardTitle>
-            <CardDescription>
-              Sélectionnez vos entreprises sur la carte et optimisez votre itinéraire
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4 pb-4">
             <Button onClick={() => setIsSelecting(true)} className="w-full">
-              <MapIconLucide className="w-4 h-4 mr-2" />
-              Commencer la sélection
+              <Plus className="w-4 h-4 mr-2" />
+              Créer une nouvelle tournée
             </Button>
           </CardContent>
         </Card>
@@ -343,263 +339,260 @@ export const TourneesView = () => {
 
       {/* Mode sélection avec carte */}
       {isSelecting && (
-        <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Route className="w-5 h-5 text-accent" />
-              Créer votre tournée
-            </CardTitle>
-            <CardDescription>
-              Cliquez sur les entreprises pour les ajouter à votre tournée
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Informations de base */}
-            <div className="space-y-3">
-              <div className="space-y-2">
-                <Label htmlFor="nom-tournee">Nom de la tournée *</Label>
+        <div className="flex flex-col h-full gap-3 overflow-hidden">
+          {/* En-tête compact */}
+          <Card className="flex-shrink-0">
+            <CardContent className="pt-4 pb-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Route className="w-4 h-4 text-accent" />
+                    Créer votre tournée
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Cliquez sur les entreprises pour les ajouter
+                  </p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => {
+                    setIsSelecting(false);
+                    setSelectedEntreprises([]);
+                    setTourneeName("");
+                    setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
+                  }}
+                >
+                  Annuler
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2">
                 <Input
-                  id="nom-tournee"
-                  placeholder="Ex: Tournée Sud 23 octobre"
+                  placeholder="Nom de la tournée *"
                   value={tourneeName}
                   onChange={(e) => setTourneeName(e.target.value)}
+                  className="text-sm"
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="date-tournee">Date planifiée *</Label>
                 <Input
-                  id="date-tournee"
                   type="date"
                   value={tourneeDate}
                   onChange={(e) => setTourneeDate(e.target.value)}
+                  className="text-sm"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="notes-tournee">Notes</Label>
-                <Textarea
-                  id="notes-tournee"
-                  placeholder="Notes ou remarques..."
-                  value={tourneeNotes}
-                  onChange={(e) => setTourneeNotes(e.target.value)}
-                  rows={2}
-                />
-              </div>
-            </div>
 
-            {/* Carte intégrée */}
-            <div className="h-[400px] rounded-lg overflow-hidden border border-accent/20">
-              <MapView
-                filters={{
-                  dateFrom: "",
-                  dateTo: "",
-                  categories: [],
-                  departments: []
-                }}
-                onEntrepriseSelect={handleMapMarkerClick}
-                selectionMode={true}
-                selectedEntreprises={selectedEntreprises}
-                onToggleSelection={handleMapMarkerClick}
-              />
-            </div>
+              <TourneeFilters filters={filters} setFilters={setFilters} />
 
-            {/* Entreprises sélectionnées */}
-            {selectedEntreprises.length > 0 && (
-              <div className="space-y-2">
-                <Label>{selectedEntreprises.length} entreprise(s) sélectionnée(s)</Label>
-                <div className="flex flex-wrap gap-2">
-                  {selectedEntreprises.map((e) => (
-                    <Badge 
-                      key={e.id} 
-                      variant="outline" 
-                      className="text-xs cursor-pointer hover:bg-destructive hover:text-destructive-foreground"
-                      onClick={() => setSelectedEntreprises(prev => prev.filter(item => item.id !== e.id))}
-                    >
-                      {e.nom} ✕
-                    </Badge>
-                  ))}
+              {selectedEntreprises.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {selectedEntreprises.length} sélectionnée(s)
+                  </Badge>
+                  <Button
+                    onClick={handleOptimize}
+                    disabled={optimizing || selectedEntreprises.length < 2 || !tourneeName.trim()}
+                    size="sm"
+                    className="ml-auto"
+                  >
+                    {optimizing ? (
+                      <>
+                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        Optimisation...
+                      </>
+                    ) : (
+                      <>
+                        <TrendingUp className="w-3 h-3 mr-1" />
+                        Optimiser
+                      </>
+                    )}
+                  </Button>
                 </div>
-              </div>
-            )}
+              )}
+            </CardContent>
+          </Card>
 
-            <div className="flex gap-2">
-              <Button
-                onClick={handleOptimize}
-                disabled={optimizing || selectedEntreprises.length < 2 || !tourneeName.trim()}
-                className="flex-1"
-              >
-                {optimizing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Optimisation en cours...
-                  </>
-                ) : (
-                  <>
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    Optimiser avec l'IA
-                  </>
-                )}
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setIsSelecting(false);
-                  setSelectedEntreprises([]);
-                  setTourneeName("");
-                  setTourneeNotes("");
-                  setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
-                }}
-              >
-                Annuler
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Carte */}
+          <div className="flex-1 min-h-0 rounded-lg overflow-hidden border border-accent/20">
+            <MapView
+              filters={filters}
+              onEntrepriseSelect={handleMapMarkerClick}
+              selectionMode={true}
+              selectedEntreprises={selectedEntreprises}
+              onToggleSelection={handleMapMarkerClick}
+            />
+          </div>
+        </div>
       )}
 
       {/* Résultat optimisé */}
       {optimizedResult && (
-        <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-accent" />
-              Tournée optimisée
-            </CardTitle>
-            <CardDescription>
-              Votre itinéraire a été calculé avec l'IA
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-accent">
-                      {Math.round(optimizedResult.distance_totale_km)} km
-                    </div>
-                    <div className="text-xs text-muted-foreground">Distance totale</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-accent">
-                      {Math.floor(optimizedResult.temps_estime_minutes / 60)}h
-                      {Math.round(optimizedResult.temps_estime_minutes % 60).toString().padStart(2, '0')}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Temps estimé</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-accent">
-                      {optimizedResult.entreprises_ordonnees.length}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Visites</div>
+        <div className="flex flex-col h-full gap-3 overflow-hidden">
+          {/* Rapport de tournée */}
+          <Card className="flex-shrink-0 border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-accent" />
+                Rapport de tournée optimisée
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Stats compactes */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-card p-3 rounded-lg border">
+                  <div className="text-xs text-muted-foreground mb-1">Distance</div>
+                  <div className="text-xl font-bold text-accent">
+                    {Math.round(optimizedResult.distance_totale_km)} km
                   </div>
                 </div>
-
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <p className="text-sm text-muted-foreground">{optimizedResult.explication}</p>
+                <div className="bg-card p-3 rounded-lg border">
+                  <div className="text-xs text-muted-foreground mb-1">Temps trajet</div>
+                  <div className="text-xl font-bold text-accent">
+                    {Math.floor(optimizedResult.temps_estime_minutes / 60)}h
+                    {Math.round(optimizedResult.temps_estime_minutes % 60).toString().padStart(2, '0')}
+                  </div>
                 </div>
+                <div className="bg-card p-3 rounded-lg border">
+                  <div className="text-xs text-muted-foreground mb-1">Prospects</div>
+                  <div className="text-xl font-bold text-accent">
+                    {optimizedResult.entreprises_ordonnees.length}
+                  </div>
+                </div>
+              </div>
 
-                <div className="space-y-2">
-                  <div className="text-sm font-semibold">Itinéraire optimisé :</div>
+              {/* Détails supplémentaires */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="flex items-center gap-1 bg-muted/50 p-2 rounded">
+                  <Clock className="w-3 h-3 text-muted-foreground" />
+                  <span className="text-muted-foreground">Temps/visite:</span>
+                  <span className="font-medium ml-auto">15 min</span>
+                </div>
+                <div className="flex items-center gap-1 bg-muted/50 p-2 rounded">
+                  <Navigation className="w-3 h-3 text-muted-foreground" />
+                  <span className="text-muted-foreground">Distance moy:</span>
+                  <span className="font-medium ml-auto">
+                    {Math.round(optimizedResult.distance_totale_km / (optimizedResult.entreprises_ordonnees.length || 1))} km
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-muted/50 p-2 rounded text-xs text-muted-foreground">
+                💡 {optimizedResult.explication}
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={handleSaveTournee} size="sm" className="flex-1">
+                  <Save className="w-3 h-3 mr-1" />
+                  Enregistrer
+                </Button>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setOptimizedResult(null);
+                    setSelectedEntreprises([]);
+                    setTourneeName("");
+                    setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
+                    setIsSelecting(false);
+                  }}
+                >
+                  Annuler
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Liste des entreprises scrollable */}
+          <Card className="flex-1 min-h-0 flex flex-col">
+            <CardHeader className="pb-3 flex-shrink-0">
+              <CardTitle className="text-sm">Itinéraire optimisé</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 min-h-0 p-0">
+              <ScrollArea className="h-full px-4">
+                <div className="space-y-2 pb-4">
                   {optimizedResult.entreprises_ordonnees.map((e: Entreprise, idx: number) => (
-                    <div key={e.id} className="flex items-start gap-3 p-2 bg-card rounded border border-accent/10">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent font-bold text-sm">
+                    <div key={e.id} className="flex items-center gap-2 p-2 bg-muted/30 rounded border border-accent/10">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent font-bold text-xs">
                         {idx + 1}
                       </div>
-                      <div className="flex-1">
-                        <div className="font-medium">{e.nom}</div>
-                        <div className="text-xs text-muted-foreground">{e.ville} {e.code_postal}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm truncate">{e.nom}</div>
+                        <div className="text-xs text-muted-foreground truncate">{e.ville} {e.code_postal}</div>
                       </div>
                       {idx < optimizedResult.entreprises_ordonnees.length - 1 && (
-                        <ArrowRight className="w-4 h-4 text-muted-foreground mt-2" />
+                        <ArrowRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                       )}
                     </div>
                   ))}
                 </div>
-
-            <div className="flex gap-2">
-              <Button onClick={handleSaveTournee} className="flex-1">
-                <Save className="w-4 h-4 mr-2" />
-                Enregistrer la tournée
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={() => {
-                  setOptimizedResult(null);
-                  setSelectedEntreprises([]);
-                  setTourneeName("");
-                  setTourneeNotes("");
-                  setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
-                  setIsSelecting(false);
-                }}
-              >
-                Annuler
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Liste des tournées sauvegardées */}
-      <Card className="flex-1 flex flex-col">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5" />
+      <Card className="flex-1 flex flex-col min-h-0">
+        <CardHeader className="pb-3 flex-shrink-0">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
             Mes tournées planifiées
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-xs">
             {tournees.length} tournée(s) enregistrée(s)
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
+        <CardContent className="flex-1 min-h-0 p-0">
+          <ScrollArea className="h-full px-4">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-8 h-8 animate-spin text-accent" />
+                <Loader2 className="w-6 h-6 animate-spin text-accent" />
               </div>
             ) : tournees.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <Route className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Aucune tournée planifiée</p>
-                <p className="text-sm mt-2">Sélectionnez des entreprises sur la carte pour commencer</p>
+              <div className="text-center py-8 text-muted-foreground">
+                <Route className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Aucune tournée planifiée</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 pb-4">
                 {tournees.map((tournee) => {
                   const statutConfig = getStatutBadge(tournee.statut);
                   return (
                     <Card key={tournee.id} className="border-accent/20">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-1">
-                            <CardTitle className="text-base">{tournee.nom}</CardTitle>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <CardContent className="pt-3 pb-3 space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm truncate">{tournee.nom}</div>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Calendar className="w-3 h-3" />
-                              {format(new Date(tournee.date_planifiee), 'PPP', { locale: fr })}
+                              {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy')}
                             </div>
                           </div>
-                          <Badge variant={statutConfig.variant}>{statutConfig.label}</Badge>
+                          <Badge variant={statutConfig.variant} className="text-xs flex-shrink-0">
+                            {statutConfig.label}
+                          </Badge>
                         </div>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="grid grid-cols-3 gap-2 text-sm">
-                          <div className="flex items-center gap-1">
+                        
+                        <div className="grid grid-cols-3 gap-1 text-xs">
+                          <div className="flex items-center gap-1 bg-muted/30 p-1 rounded">
                             <MapPin className="w-3 h-3 text-muted-foreground" />
-                            <span>{tournee.entreprises_ids.length} visites</span>
+                            <span>{tournee.entreprises_ids.length}</span>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 bg-muted/30 p-1 rounded">
                             <Navigation className="w-3 h-3 text-muted-foreground" />
-                            <span>{Math.round(tournee.distance_totale_km)} km</span>
+                            <span>{Math.round(tournee.distance_totale_km)}km</span>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 bg-muted/30 p-1 rounded">
                             <Clock className="w-3 h-3 text-muted-foreground" />
                             <span>{Math.floor(tournee.temps_estime_minutes / 60)}h{(tournee.temps_estime_minutes % 60).toString().padStart(2, '0')}</span>
                           </div>
                         </div>
-                        {tournee.notes && (
-                          <p className="text-xs text-muted-foreground">{tournee.notes}</p>
-                        )}
-                        <div className="flex gap-2 pt-2">
+                        
+                        <div className="flex gap-2">
                           <Button 
                             variant="outline" 
                             size="sm" 
-                            className="flex-1"
+                            className="flex-1 h-8 text-xs"
                             onClick={() => handleStartTournee(tournee)}
                           >
                             <Locate className="w-3 h-3 mr-1" />
@@ -608,6 +601,7 @@ export const TourneesView = () => {
                           <Button
                             variant="outline"
                             size="sm"
+                            className="h-8"
                             onClick={() => handleDeleteTournee(tournee.id)}
                           >
                             <Trash2 className="w-3 h-3" />
