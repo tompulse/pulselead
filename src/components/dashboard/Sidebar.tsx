@@ -5,6 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
 import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
@@ -130,13 +133,25 @@ export const Sidebar = ({
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="tournee-date" className="text-xs">Date</Label>
-                    <Input
-                      id="tournee-date"
-                      type="date"
-                      value={tourneeDate}
-                      onChange={(e) => setTourneeDate(e.target.value)}
-                      className="h-8 text-sm"
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full h-8 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10"
+                        >
+                          <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                          {tourneeDate ? format(new Date(tourneeDate), "dd/MM/yyyy") : "Choisir une date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={tourneeDate ? new Date(tourneeDate) : undefined}
+                          onSelect={(date) => setTourneeDate(date ? format(date, "yyyy-MM-dd") : "")}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   {selectedCount > 0 && (
                     <div className="text-xs text-muted-foreground pt-1">
