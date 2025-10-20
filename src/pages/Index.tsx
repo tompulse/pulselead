@@ -147,7 +147,7 @@ const Index = () => {
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-base font-bold text-foreground">+500 utilisateurs</div>
+                <div className="text-base font-bold text-foreground">+50 utilisateurs</div>
                 <div className="text-sm text-muted-foreground">Actifs quotidiennement</div>
               </div>
             </div>
@@ -161,7 +161,7 @@ const Index = () => {
               </div>
               <div className="text-left">
                 <div className="text-base font-bold text-foreground">4.8/5 ★★★★★</div>
-                <div className="text-sm text-muted-foreground">+200 avis vérifiés</div>
+                <div className="text-sm text-muted-foreground">+25 avis vérifiés</div>
               </div>
             </div>
           </div>
@@ -262,19 +262,19 @@ const Index = () => {
           <div className="glass-card p-8 max-w-4xl mx-auto border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 to-transparent">
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div className="space-y-1">
-                <div className="text-4xl font-bold gradient-text">×3</div>
+                <div className="text-4xl font-bold gradient-text">×2</div>
                 <div className="text-base text-foreground font-semibold">Plus de RDV</div>
                 <div className="text-sm text-muted-foreground">En moyenne</div>
               </div>
               <div className="space-y-1">
-                <div className="text-4xl font-bold gradient-text">3h</div>
+                <div className="text-4xl font-bold gradient-text">2h</div>
                 <div className="text-base text-foreground font-semibold">Gagnées/jour</div>
                 <div className="text-sm text-muted-foreground">En recherche</div>
               </div>
               <div className="space-y-1">
-                <div className="text-4xl font-bold gradient-text">+45%</div>
+                <div className="text-4xl font-bold gradient-text">+30%</div>
                 <div className="text-base text-foreground font-semibold">Nouveaux clients</div>
-                <div className="text-sm text-muted-foreground">En 6 mois</div>
+                <div className="text-sm text-muted-foreground">En moyenne</div>
               </div>
             </div>
           </div>
@@ -454,9 +454,9 @@ const Index = () => {
           <div className="glass-card p-8 max-w-3xl mx-auto text-center border-cyan-electric/20">
             <p className="text-xl text-muted-foreground mb-2">ROI moyen constaté :</p>
             <p className="text-3xl font-bold">
-              <span className="line-through text-destructive/70">200h de recherche manuelle</span>
+              <span className="line-through text-destructive/70">100h de recherche manuelle</span>
               {" → "}
-              <span className="gradient-text">5 minutes avec LUMA</span>
+              <span className="gradient-text">10 minutes avec LUMA</span>
             </p>
           </div>
         </div>
@@ -489,10 +489,10 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-base text-foreground leading-relaxed">
-                "J'ai triplé mes RDV en 30 jours. Plus aucune opportunité ratée."
+                "J'ai multiplié mes RDV par 2 en quelques semaines. Plus aucune opportunité ratée."
               </p>
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">+200% de RDV</span>
+                <span className="text-sm font-semibold text-cyan-electric">+100% de RDV</span>
               </div>
               <div className="pt-3 border-t border-accent/10">
                 <div className="font-semibold text-foreground">Sophie Martin</div>
@@ -508,10 +508,10 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-base text-foreground leading-relaxed">
-                "3h gagnées chaque jour. Je vois tout mon territoire en un coup d'œil."
+                "Environ 2h gagnées chaque jour. Je vois tout mon territoire en un coup d'œil."
               </p>
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">3h/jour</span>
+                <span className="text-sm font-semibold text-cyan-electric">2h/jour économisées</span>
               </div>
               <div className="pt-3 border-t border-accent/10">
                 <div className="font-semibold text-foreground">Thomas Dubois</div>
@@ -527,10 +527,10 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-base text-foreground leading-relaxed">
-                "Simple, efficace. 45 nouveaux clients en 6 mois."
+                "Simple, efficace. Une quinzaine de nouveaux clients en quelques mois."
               </p>
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">+45 clients</span>
+                <span className="text-sm font-semibold text-cyan-electric">+15 clients</span>
               </div>
               <div className="pt-3 border-t border-accent/10">
                 <div className="font-semibold text-foreground">Marie Leroux</div>
@@ -639,12 +639,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer minimaliste */}
-      <footer className="relative py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-navy-deep/50">
+      {/* Footer complet */}
+      <footer className="relative py-12 px-4 bg-navy-deep/50 border-t border-accent/10">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col space-y-6">
-            {/* Logo et liens */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* Logo et description */}
+            <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <div className="relative">
                   <div className="absolute inset-0 bg-accent/20 blur-md"></div>
@@ -652,22 +652,81 @@ const Index = () => {
                 </div>
                 <span className="text-lg font-bold gradient-text">LUMA</span>
               </div>
-              
-              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm text-muted-foreground">
-                <a href="#" className="hover:text-accent transition-colors duration-300">Mentions légales</a>
-                <span className="hidden sm:inline text-accent/30">|</span>
-                <a href="#" className="hover:text-accent transition-colors duration-300">Confidentialité</a>
-                <span className="hidden sm:inline text-accent/30">|</span>
-                <a href="#contact" className="hover:text-accent transition-colors duration-300" onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-                }}>Contact</a>
-              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Visualise les créations d'entreprises en temps réel et développe ton portefeuille client.
+              </p>
             </div>
-            
-            {/* Copyright */}
-            <div className="text-center text-sm text-muted-foreground border-t border-accent/10 pt-6">
+
+            {/* Produit */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Produit</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-accent transition-colors">
+                    Fonctionnalités
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => {
+                    const pricingSection = document.querySelector('section:has(h2:contains("investissement"))');
+                    pricingSection?.scrollIntoView({ behavior: 'smooth' });
+                  }} className="hover:text-accent transition-colors">
+                    Tarifs
+                  </button>
+                </li>
+                <li>
+                  <button onClick={handleExplorerClick} className="hover:text-accent transition-colors">
+                    Démo gratuite
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Entreprise */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Entreprise</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <a href="#" className="hover:text-accent transition-colors">À propos</a>
+                </li>
+                <li>
+                  <a href="#contact" onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                  }} className="hover:text-accent transition-colors">
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Légal */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Légal</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <a href="#mentions-legales" className="hover:text-accent transition-colors">Mentions légales</a>
+                </li>
+                <li>
+                  <a href="#confidentialite" className="hover:text-accent transition-colors">Politique de confidentialité</a>
+                </li>
+                <li>
+                  <a href="#cgv" className="hover:text-accent transition-colors">CGV</a>
+                </li>
+                <li>
+                  <a href="#cgu" className="hover:text-accent transition-colors">CGU</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="pt-8 border-t border-accent/10">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
               <p>© 2025 LUMA. Tous droits réservés.</p>
+              <p className="text-xs">
+                LUMA - SAS au capital de 10 000€ - RCS Paris
+              </p>
             </div>
           </div>
         </div>
