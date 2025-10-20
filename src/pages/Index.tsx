@@ -283,37 +283,69 @@ const Index = () => {
             </p>
           </div>
 
+          {/* Segmentation par région */}
+          <div className="glass-card p-6 max-w-2xl mx-auto mb-12 border-cyan-electric/20">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="text-center md:text-left">
+                <div className="text-lg font-semibold text-foreground">Choisissez votre région</div>
+                <div className="text-sm text-muted-foreground">Le prix varie selon le nombre de créations d'entreprises</div>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" className="border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric">
+                  1 Région
+                </Button>
+                <Button variant="outline" className="border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric">
+                  Plusieurs Régions
+                </Button>
+                <Button variant="outline" className="border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric">
+                  France entière
+                </Button>
+              </div>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
-            {/* Plan Gratuit */}
+            {/* Plan Starter */}
             <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Découverte</h3>
-                <p className="text-muted-foreground">Pour tester LUMA</p>
+                <h3 className="text-2xl font-bold text-foreground">Starter</h3>
+                <p className="text-muted-foreground">Pour démarrer efficacement</p>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold gradient-text">0€</span>
-                <span className="text-muted-foreground">/mois</span>
+              <div>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-5xl font-bold gradient-text">99€</span>
+                  <span className="text-muted-foreground">/mois</span>
+                </div>
+                <div className="text-sm text-cyan-electric font-semibold">1 région incluse</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Accès carte interactive</span>
+                  <span className="text-foreground">200 entreprises/mois</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">50 entreprises/mois</span>
+                  <span className="text-foreground">Carte interactive</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Filtres par département</span>
+                  <span className="text-foreground">Tous filtres avancés</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Données INPI officielles</span>
+                  <span className="text-foreground">Suivi des interactions</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground">Export Excel</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground">Support email</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border border-accent/30" size="lg">
-                Commencer gratuitement
+                Commencer
               </Button>
             </div>
 
@@ -325,11 +357,14 @@ const Index = () => {
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Pro</h3>
-                <p className="text-muted-foreground">Pour les commerciaux actifs</p>
+                <p className="text-muted-foreground">Pour les pros de la prospection</p>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold gradient-text">49€</span>
-                <span className="text-muted-foreground">/mois</span>
+              <div>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-5xl font-bold gradient-text">199€</span>
+                  <span className="text-muted-foreground">/mois</span>
+                </div>
+                <div className="text-sm text-cyan-electric font-semibold">Jusqu'à 3 régions</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -338,19 +373,19 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Tous filtres avancés</span>
+                  <span className="text-foreground">Multi-régions (jusqu'à 3)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Suivi interactions (appels, RDV)</span>
+                  <span className="text-foreground">Alertes temps réel par SMS</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Export données Excel</span>
+                  <span className="text-foreground">API pour intégrations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Alertes temps réel</span>
+                  <span className="text-foreground">Statistiques avancées</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -362,15 +397,17 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Plan Équipe */}
+            {/* Plan Équipe - Sur devis */}
             <div className="glass-card p-8 space-y-6 hover:border-accent/50 transition-all duration-300">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Équipe</h3>
-                <p className="text-muted-foreground">Pour les équipes commerciales</p>
+                <p className="text-muted-foreground">Solution sur-mesure</p>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold gradient-text">129€</span>
-                <span className="text-muted-foreground">/mois</span>
+              <div>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-5xl font-bold gradient-text">Sur devis</span>
+                </div>
+                <div className="text-sm text-cyan-electric font-semibold">France entière • Multi-utilisateurs</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -379,7 +416,11 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Jusqu'à 5 utilisateurs</span>
+                  <span className="text-foreground">France entière incluse</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground">Utilisateurs illimités</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -387,19 +428,15 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Statistiques avancées</span>
+                  <span className="text-foreground">Gestion des territoires</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Gestion territoires</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Formation personnalisée</span>
+                  <span className="text-foreground">Formation & accompagnement</span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border border-accent/30" size="lg">
-                Contacter l'équipe
+              <Button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="w-full bg-card hover:bg-accent/10 text-foreground border border-accent/30" size="lg">
+                Nous contacter
               </Button>
             </div>
           </div>
