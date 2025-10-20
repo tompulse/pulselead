@@ -2,6 +2,7 @@ import { Filter, ChevronDown } from "lucide-react";
 import { Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -23,6 +24,11 @@ interface SidebarProps {
   tourneeMode?: boolean;
   onCreateTournee?: () => void;
   tourneeActive?: boolean;
+  tourneeName?: string;
+  setTourneeName?: (name: string) => void;
+  tourneeDate?: string;
+  setTourneeDate?: (date: string) => void;
+  selectedCount?: number;
 }
 
 export const Sidebar = ({ 
@@ -32,7 +38,12 @@ export const Sidebar = ({
   isMobileSheet = false,
   tourneeMode = false,
   onCreateTournee,
-  tourneeActive = false
+  tourneeActive = false,
+  tourneeName = "",
+  setTourneeName,
+  tourneeDate = "",
+  setTourneeDate,
+  selectedCount = 0
 }: SidebarProps) => {
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
@@ -88,19 +99,51 @@ export const Sidebar = ({
           </div>
           
           {tourneeMode && onCreateTournee && (
-            <Button
-              onClick={onCreateTournee}
-              variant={tourneeActive ? "default" : "outline"}
-              className={`w-full mb-2 shrink-0 ${
-                tourneeActive 
-                  ? "bg-accent hover:bg-accent/90 text-primary" 
-                  : "border-accent/50 hover:bg-accent/10"
-              }`}
-              size="sm"
-            >
-              <Route className="w-4 h-4 mr-2" />
-              {tourneeActive ? "Mode tournée actif" : "Créer une tournée"}
-            </Button>
+            <>
+              <Button
+                onClick={onCreateTournee}
+                variant={tourneeActive ? "default" : "outline"}
+                className={`w-full mb-2 shrink-0 ${
+                  tourneeActive 
+                    ? "bg-accent hover:bg-accent/90 text-primary" 
+                    : "border-accent/50 hover:bg-accent/10"
+                }`}
+                size="sm"
+              >
+                <Route className="w-4 h-4 mr-2" />
+                {tourneeActive ? "Mode tournée actif" : "Créer une tournée"}
+              </Button>
+              
+              {tourneeActive && setTourneeName && setTourneeDate && (
+                <div className="mb-3 p-3 bg-accent/5 rounded-lg border border-accent/20 space-y-2 shrink-0">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="tournee-name" className="text-xs">Nom de la tournée</Label>
+                    <Input
+                      id="tournee-name"
+                      placeholder="Ex: Tournée Sud"
+                      value={tourneeName}
+                      onChange={(e) => setTourneeName(e.target.value)}
+                      className="h-8 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="tournee-date" className="text-xs">Date</Label>
+                    <Input
+                      id="tournee-date"
+                      type="date"
+                      value={tourneeDate}
+                      onChange={(e) => setTourneeDate(e.target.value)}
+                      className="h-8 text-sm"
+                    />
+                  </div>
+                  {selectedCount > 0 && (
+                    <div className="text-xs text-muted-foreground pt-1">
+                      {selectedCount} entreprise(s) sélectionnée(s)
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </>
       )}

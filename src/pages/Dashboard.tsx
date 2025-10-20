@@ -27,6 +27,8 @@ import { ActivitiesView } from "@/components/dashboard/ActivitiesView";
 import { TourneesView } from "@/components/dashboard/TourneesView";
 import { TourneeOptimizationPanel } from "@/components/dashboard/TourneeOptimizationPanel";
 
+import { format } from "date-fns";
+
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -43,6 +45,8 @@ const Dashboard = () => {
   const [tourneeSelectionMode, setTourneeSelectionMode] = useState(false);
   const [selectedEntreprisesForTournee, setSelectedEntreprisesForTournee] = useState<any[]>([]);
   const [tournees, setTournees] = useState<any[]>([]);
+  const [tourneeName, setTourneeName] = useState("");
+  const [tourneeDate, setTourneeDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -307,20 +311,18 @@ const Dashboard = () => {
                   <Calendar className="w-3.5 h-3.5 mr-1" />
                   <span className="hidden sm:inline">Activités</span>
                 </Button>
-                {tournees.length > 0 && (
-                  <Button
-                    variant={view === "tournees" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => {
-                      setView("tournees");
-                      trackViewChange("tournees");
-                    }}
-                    className={`h-7 px-2 text-xs ${view === "tournees" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
-                  >
-                    <Navigation className="w-3.5 h-3.5 mr-1" />
-                    <span className="hidden sm:inline">Tournées</span>
-                  </Button>
-                )}
+                <Button
+                  variant={view === "tournees" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setView("tournees");
+                    trackViewChange("tournees");
+                  }}
+                  className={`h-7 px-2 text-xs ${view === "tournees" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+                >
+                  <Navigation className="w-3.5 h-3.5 mr-1" />
+                  <span className="hidden sm:inline">Tournées</span>
+                </Button>
               </div>
             </div>
 
@@ -394,15 +396,22 @@ const Dashboard = () => {
             tourneeMode={view === "map"}
             onCreateTournee={() => setTourneeSelectionMode(!tourneeSelectionMode)}
             tourneeActive={tourneeSelectionMode}
+            tourneeName={tourneeName}
+            setTourneeName={setTourneeName}
+            tourneeDate={tourneeDate}
+            setTourneeDate={setTourneeDate}
+            selectedCount={selectedEntreprisesForTournee.length}
           />
         )}
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden relative flex">
           {view === "map" && tourneeSelectionMode && (
-            <div className="w-80 flex-shrink-0 p-4 border-r border-accent/20">
+            <div className="absolute inset-0 flex items-center justify-center z-20 bg-background/80 backdrop-blur-sm p-6">
               <TourneeOptimizationPanel
                 selectedEntreprises={selectedEntreprisesForTournee}
+                tourneeName={tourneeName}
+                tourneeDate={tourneeDate}
                 onClose={() => {
                   setTourneeSelectionMode(false);
                   setSelectedEntreprisesForTournee([]);
@@ -411,6 +420,8 @@ const Dashboard = () => {
                   fetchTournees();
                   setTourneeSelectionMode(false);
                   setSelectedEntreprisesForTournee([]);
+                  setTourneeName("");
+                  setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
                 }}
               />
             </div>

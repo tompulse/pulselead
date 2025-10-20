@@ -22,19 +22,21 @@ type Entreprise = Database['public']['Tables']['entreprises']['Row'];
 
 interface TourneeOptimizationPanelProps {
   selectedEntreprises: Entreprise[];
+  tourneeName: string;
+  tourneeDate: string;
   onClose: () => void;
   onSave: () => void;
 }
 
 export const TourneeOptimizationPanel = ({ 
-  selectedEntreprises, 
+  selectedEntreprises,
+  tourneeName,
+  tourneeDate,
   onClose,
   onSave 
 }: TourneeOptimizationPanelProps) => {
   const [optimizing, setOptimizing] = useState(false);
   const [optimizedResult, setOptimizedResult] = useState<any>(null);
-  const [tourneeName, setTourneeName] = useState("");
-  const [tourneeDate, setTourneeDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const { toast } = useToast();
 
   const getUserLocation = (): Promise<{lat: number, lng: number}> => {
@@ -154,11 +156,11 @@ export const TourneeOptimizationPanel = ({
   };
 
   return (
-    <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
+    <Card className="w-full max-w-2xl border-accent/20 bg-gradient-to-br from-accent/5 to-transparent shadow-2xl">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Route className="w-4 h-4 text-accent" />
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Route className="w-5 h-5 text-accent" />
             {optimizedResult ? "Tournée optimisée" : "Nouvelle tournée"}
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -166,44 +168,32 @@ export const TourneeOptimizationPanel = ({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
         {!optimizedResult ? (
           <>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs">
-                {selectedEntreprises.length} entreprise(s)
+            <div className="text-center space-y-2">
+              <Badge variant="secondary" className="text-sm px-3 py-1">
+                {selectedEntreprises.length} entreprise(s) sélectionnée(s)
               </Badge>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-2">
-              <Input
-                placeholder="Nom de la tournée *"
-                value={tourneeName}
-                onChange={(e) => setTourneeName(e.target.value)}
-                className="text-sm"
-              />
-              <Input
-                type="date"
-                value={tourneeDate}
-                onChange={(e) => setTourneeDate(e.target.value)}
-                className="text-sm"
-              />
+              <p className="text-sm text-muted-foreground">
+                Cliquez sur Optimiser pour calculer le meilleur itinéraire
+              </p>
             </div>
 
             <Button
               onClick={handleOptimize}
               disabled={optimizing || selectedEntreprises.length < 2}
-              className="w-full"
-              size="sm"
+              className="w-full h-12 text-base"
+              size="lg"
             >
               {optimizing ? (
                 <>
-                  <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                  Optimisation...
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Optimisation en cours...
                 </>
               ) : (
                 <>
-                  <TrendingUp className="w-3 h-3 mr-1" />
+                  <TrendingUp className="w-5 h-5 mr-2" />
                   Optimiser avec l'IA
                 </>
               )}
@@ -211,56 +201,49 @@ export const TourneeOptimizationPanel = ({
           </>
         ) : (
           <>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-card p-2 rounded border text-center">
-                <div className="text-[10px] text-muted-foreground mb-0.5">Distance</div>
-                <div className="text-lg font-bold text-accent">
+            {/* Stats en grille */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-card p-4 rounded-lg border border-accent/20 text-center">
+                <Navigation className="w-8 h-8 mx-auto mb-2 text-accent" />
+                <div className="text-2xl font-bold text-accent">
                   {Math.round(optimizedResult.distance_totale_km)} km
                 </div>
+                <div className="text-xs text-muted-foreground">Distance totale</div>
               </div>
-              <div className="bg-card p-2 rounded border text-center">
-                <div className="text-[10px] text-muted-foreground mb-0.5">Temps</div>
-                <div className="text-lg font-bold text-accent">
+              <div className="bg-card p-4 rounded-lg border border-accent/20 text-center">
+                <Clock className="w-8 h-8 mx-auto mb-2 text-accent" />
+                <div className="text-2xl font-bold text-accent">
                   {Math.floor(optimizedResult.temps_estime_minutes / 60)}h
                   {Math.round(optimizedResult.temps_estime_minutes % 60).toString().padStart(2, '0')}
                 </div>
+                <div className="text-xs text-muted-foreground">Temps total</div>
               </div>
-              <div className="bg-card p-2 rounded border text-center">
-                <div className="text-[10px] text-muted-foreground mb-0.5">Visites</div>
-                <div className="text-lg font-bold text-accent">
+              <div className="bg-card p-4 rounded-lg border border-accent/20 text-center">
+                <MapPin className="w-8 h-8 mx-auto mb-2 text-accent" />
+                <div className="text-2xl font-bold text-accent">
                   {optimizedResult.entreprises_ordonnees.length}
                 </div>
+                <div className="text-xs text-muted-foreground">Prospects</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-              <div className="flex items-center gap-1 bg-muted/50 p-1.5 rounded">
-                <Clock className="w-3 h-3 text-muted-foreground" />
-                <span className="text-muted-foreground">Temps/visite:</span>
-                <span className="font-medium ml-auto">15 min</span>
-              </div>
-              <div className="flex items-center gap-1 bg-muted/50 p-1.5 rounded">
-                <Navigation className="w-3 h-3 text-muted-foreground" />
-                <span className="text-muted-foreground">Distance moy:</span>
-                <span className="font-medium ml-auto">
-                  {Math.round(optimizedResult.distance_totale_km / (optimizedResult.entreprises_ordonnees.length || 1))} km
-                </span>
-              </div>
+            {/* Détails */}
+            <div className="bg-muted/30 p-3 rounded-lg border border-accent/10">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                💡 {optimizedResult.explication}
+              </p>
             </div>
 
-            <div className="bg-muted/50 p-2 rounded text-[10px] text-muted-foreground">
-              💡 {optimizedResult.explication}
-            </div>
-
-            <div className="flex gap-2">
-              <Button onClick={handleSaveTournee} size="sm" className="flex-1" disabled={!tourneeName.trim()}>
-                <Save className="w-3 h-3 mr-1" />
-                Enregistrer
+            {/* Boutons d'action */}
+            <div className="flex gap-3">
+              <Button onClick={handleSaveTournee} className="flex-1 h-11" disabled={!tourneeName.trim()}>
+                <Save className="w-4 h-4 mr-2" />
+                Enregistrer la tournée
               </Button>
               <Button 
                 variant="outline"
-                size="sm"
                 onClick={() => setOptimizedResult(null)}
+                className="h-11"
               >
                 Modifier
               </Button>
