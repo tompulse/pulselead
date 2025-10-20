@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -41,6 +41,8 @@ interface Entreprise {
   administration?: string;
   latitude?: number;
   longitude?: number;
+  effectifs?: number;
+  chiffre_affaires?: number;
 }
 
 export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
@@ -343,6 +345,41 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <User className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                           <span className="line-clamp-1">{gerant}</span>
+                        </div>
+                      )}
+
+                      {item.telephone && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Phone className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1">{item.telephone}</span>
+                        </div>
+                      )}
+
+                      {item.email && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Mail className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1">{item.email}</span>
+                        </div>
+                      )}
+
+                      {item.forme_juridique && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Building className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1">{item.forme_juridique}</span>
+                        </div>
+                      )}
+
+                      {item.effectifs && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Users className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1">{item.effectifs} employés</span>
+                        </div>
+                      )}
+
+                      {item.chiffre_affaires && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <TrendingUp className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1">{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.chiffre_affaires))}</span>
                         </div>
                       )}
                     </div>
