@@ -8,16 +8,6 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 interface Interaction {
   id: string;
@@ -123,6 +113,9 @@ export const InteractionsDialog = ({
         variant: "destructive"
       });
     } else {
+      // Optimistic UI update
+      setInteractions(prev => prev.filter(i => i.id !== id));
+
       toast({
         title: "✓ Supprimé",
         description: "L'interaction a été supprimée",
@@ -132,10 +125,7 @@ export const InteractionsDialog = ({
       if (interaction && onInteractionDeleted) {
         onInteractionDeleted(interaction.entreprise_id, interaction.type);
       }
-      
-      fetchInteractions();
     }
-    setDeleteId(null);
   };
 
   const getTypeInfo = (type: string) => {
@@ -261,7 +251,7 @@ export const InteractionsDialog = ({
                           className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setDeleteId(interaction.id);
+                            handleDelete(interaction.id);
                           }}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -276,25 +266,6 @@ export const InteractionsDialog = ({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer cette interaction ?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Cette action est irréversible. L'interaction sera définitivement supprimée.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteId && handleDelete(deleteId)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Supprimer
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 };
