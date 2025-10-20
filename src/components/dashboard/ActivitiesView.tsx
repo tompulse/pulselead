@@ -4,6 +4,7 @@ import { TrendingUp, Target, Phone, MapPin, Calendar, CheckCircle2 } from "lucid
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfWeek, endOfWeek, startOfMonth } from "date-fns";
+import { InteractionsDialog } from "./InteractionsDialog";
 
 interface ActivitiesViewProps {
   userId: string;
@@ -19,6 +20,13 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
     conversionRate: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<'appel' | 'visite' | 'rdv' | null>(null);
+
+  const handleCardClick = (type: 'appel' | 'visite' | 'rdv') => {
+    setSelectedType(type);
+    setDialogOpen(true);
+  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -78,35 +86,56 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
 
   return (
     <div className="h-full flex flex-col gap-4 p-4 md:p-6 overflow-y-auto">
-      {/* Quick Stats Bar */}
+      {/* Quick Stats Bar - Clickable */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="glass-card p-3 rounded-lg border border-blue-500/20 bg-blue-500/5">
+        <div 
+          className="glass-card p-3 rounded-lg border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer"
+          onClick={() => handleCardClick('appel')}
+        >
           <div className="flex items-center gap-2 mb-1">
             <Phone className="h-4 w-4 text-blue-500" />
             <span className="text-xs text-muted-foreground">Appels</span>
           </div>
           <div className="text-2xl font-bold text-blue-500">{loading ? "..." : stats.weekCalls}</div>
+          <p className="text-[10px] text-muted-foreground mt-1">Cliquer pour voir</p>
         </div>
 
-        <div className="glass-card p-3 rounded-lg border border-green-500/20 bg-green-500/5">
+        <div 
+          className="glass-card p-3 rounded-lg border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer"
+          onClick={() => handleCardClick('visite')}
+        >
           <div className="flex items-center gap-2 mb-1">
             <MapPin className="h-4 w-4 text-green-500" />
             <span className="text-xs text-muted-foreground">Visites</span>
           </div>
           <div className="text-2xl font-bold text-green-500">{loading ? "..." : stats.weekVisits}</div>
+          <p className="text-[10px] text-muted-foreground mt-1">Cliquer pour voir</p>
         </div>
 
-        <div className="glass-card p-3 rounded-lg border border-purple-500/20 bg-purple-500/5">
+        <div 
+          className="glass-card p-3 rounded-lg border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all cursor-pointer"
+          onClick={() => handleCardClick('rdv')}
+        >
           <div className="flex items-center gap-2 mb-1">
             <Calendar className="h-4 w-4 text-purple-500" />
             <span className="text-xs text-muted-foreground">RDV</span>
           </div>
           <div className="text-2xl font-bold text-purple-500">{loading ? "..." : stats.weekMeetings}</div>
+          <p className="text-[10px] text-muted-foreground mt-1">Cliquer pour voir</p>
         </div>
       </div>
 
       {/* Actions Today - Full Width, Priority */}
       <DailyActionsWidget userId={userId} onEntrepriseClick={onEntrepriseClick} />
+
+      {/* Interactions Dialog */}
+      <InteractionsDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        type={selectedType}
+        userId={userId}
+        onEntrepriseClick={onEntrepriseClick}
+      />
     </div>
   );
 };
