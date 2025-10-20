@@ -12,16 +12,24 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const authSchema = z.object({
+  const loginSchema = z.object({
     email: z.string().trim().email('Email invalide').max(255, 'Email trop long'),
     password: z.string()
       .min(8, 'Minimum 8 caractères requis')
       .regex(/[A-Z]/, 'Doit contenir au moins une majuscule')
       .regex(/[0-9]/, 'Doit contenir au moins un chiffre')
+  });
+
+  const signupSchema = loginSchema.extend({
+    phone: z.string()
+      .trim()
+      .regex(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/, 'Numéro de téléphone français invalide')
+      .transform(val => val.replace(/[\s.-]/g, ''))
   });
 
   useEffect(() => {
@@ -46,7 +54,10 @@ const Auth = () => {
     e.preventDefault();
     
     // Validate input
-    const validation = authSchema.safeParse({ email, password });
+    const schema = isLogin ? loginSchema : signupSchema;
+    const data = isLogin ? { email, password } : { email, password, phone };
+    const validation = schema.safeParse(data);
+    
     if (!validation.success) {
       const errors = validation.error.errors.map(e => e.message).join(', ');
       toast({
@@ -73,11 +84,15 @@ const Auth = () => {
           description: "Bienvenue sur LUMA !",
         });
       } else {
+        const validatedData = validation.data as { email: string; password: string; phone: string };
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: {
+              phone: validatedData.phone,
+            }
           },
         });
 
@@ -145,6 +160,23 @@ const Auth = () => {
                 disabled={loading}
               />
             </div>
+
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="phone">Téléphone *</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="06 12 34 56 78"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="bg-background/50 border-border focus:border-accent"
+                  disabled={loading}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">Format: 06 12 34 56 78 ou +33 6 12 34 56 78</p>
+              </div>
+            )}
 
             <Button
               type="submit"
