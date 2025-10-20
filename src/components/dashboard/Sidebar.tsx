@@ -1,4 +1,5 @@
 import { Filter, ChevronDown } from "lucide-react";
+import { Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,9 +20,20 @@ interface SidebarProps {
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   onFilterChange?: () => void;
   isMobileSheet?: boolean;
+  tourneeMode?: boolean;
+  onCreateTournee?: () => void;
+  tourneeActive?: boolean;
 }
 
-export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = false }: SidebarProps) => {
+export const Sidebar = ({ 
+  filters, 
+  setFilters, 
+  onFilterChange, 
+  isMobileSheet = false,
+  tourneeMode = false,
+  onCreateTournee,
+  tourneeActive = false
+}: SidebarProps) => {
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
@@ -69,10 +81,28 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
       : "w-56 md:w-60 glass-card border-r border-accent/20 p-3 space-y-2 flex flex-col h-full overflow-hidden"
     }>
       {!isMobileSheet && (
-        <div className="flex items-center gap-2 mb-2 shrink-0">
-          <Filter className="w-4 h-4 text-accent" />
-          <h2 className="text-base font-semibold">Filtres</h2>
-        </div>
+        <>
+          <div className="flex items-center gap-2 mb-2 shrink-0">
+            <Filter className="w-4 h-4 text-accent" />
+            <h2 className="text-base font-semibold">Filtres</h2>
+          </div>
+          
+          {tourneeMode && onCreateTournee && (
+            <Button
+              onClick={onCreateTournee}
+              variant={tourneeActive ? "default" : "outline"}
+              className={`w-full mb-2 shrink-0 ${
+                tourneeActive 
+                  ? "bg-accent hover:bg-accent/90 text-primary" 
+                  : "border-accent/50 hover:bg-accent/10"
+              }`}
+              size="sm"
+            >
+              <Route className="w-4 h-4 mr-2" />
+              {tourneeActive ? "Mode tournée actif" : "Créer une tournée"}
+            </Button>
+          )}
+        </>
       )}
 
       <div className={isMobileSheet 

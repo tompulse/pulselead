@@ -388,11 +388,35 @@ const Dashboard = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop/Tablet Sidebar */}
         {!isMobile && view !== "activities" && view !== "tournees" && (
-          <Sidebar filters={filters} setFilters={setFilters} />
+          <Sidebar 
+            filters={filters} 
+            setFilters={setFilters}
+            tourneeMode={view === "map"}
+            onCreateTournee={() => setTourneeSelectionMode(!tourneeSelectionMode)}
+            tourneeActive={tourneeSelectionMode}
+          />
         )}
 
         {/* Main Content */}
-        <main className="flex-1 overflow-hidden relative">
+        <main className="flex-1 overflow-hidden relative flex">
+          {view === "map" && tourneeSelectionMode && (
+            <div className="w-80 flex-shrink-0 p-4 border-r border-accent/20">
+              <TourneeOptimizationPanel
+                selectedEntreprises={selectedEntreprisesForTournee}
+                onClose={() => {
+                  setTourneeSelectionMode(false);
+                  setSelectedEntreprisesForTournee([]);
+                }}
+                onSave={() => {
+                  fetchTournees();
+                  setTourneeSelectionMode(false);
+                  setSelectedEntreprisesForTournee([]);
+                }}
+              />
+            </div>
+          )}
+          
+          <div className="flex-1 overflow-hidden">
           <div className="h-full p-4 md:p-6">
             {/* Always show filter prompt if no departments selected, except in activities and tournees view */}
             {filters.departments.length === 0 && view !== "activities" && view !== "tournees" ? (
@@ -426,51 +450,22 @@ const Dashboard = () => {
                 </Card>
               </div>
             ) : view === "map" ? (
-              <div className="h-full flex gap-4 overflow-hidden">
-                <MapView 
-                  key="map-view"
-                  filters={filters} 
-                  onEntrepriseSelect={handleEntrepriseSelect}
-                  selectionMode={tourneeSelectionMode}
-                  selectedEntreprises={selectedEntreprisesForTournee}
-                  onToggleSelection={(entreprise) => {
-                    setSelectedEntreprisesForTournee(prev => {
-                      const exists = prev.find(e => e.id === entreprise.id);
-                      if (exists) {
-                        return prev.filter(e => e.id !== entreprise.id);
-                      }
-                      return [...prev, entreprise];
-                    });
-                  }}
-                />
-                {tourneeSelectionMode && (
-                  <div className="w-80 flex-shrink-0">
-                    <TourneeOptimizationPanel
-                      selectedEntreprises={selectedEntreprisesForTournee}
-                      onClose={() => {
-                        setTourneeSelectionMode(false);
-                        setSelectedEntreprisesForTournee([]);
-                      }}
-                      onSave={() => {
-                        fetchTournees();
-                        setTourneeSelectionMode(false);
-                        setSelectedEntreprisesForTournee([]);
-                      }}
-                    />
-                  </div>
-                )}
-                {!tourneeSelectionMode && (
-                  <div className="absolute bottom-6 right-6 z-10">
-                    <Button
-                      onClick={() => setTourneeSelectionMode(true)}
-                      className="shadow-lg"
-                    >
-                      <Route className="w-4 h-4 mr-2" />
-                      Créer une tournée
-                    </Button>
-                  </div>
-                )}
-              </div>
+              <MapView 
+                key="map-view"
+                filters={filters} 
+                onEntrepriseSelect={handleEntrepriseSelect}
+                selectionMode={tourneeSelectionMode}
+                selectedEntreprises={selectedEntreprisesForTournee}
+                onToggleSelection={(entreprise) => {
+                  setSelectedEntreprisesForTournee(prev => {
+                    const exists = prev.find(e => e.id === entreprise.id);
+                    if (exists) {
+                      return prev.filter(e => e.id !== entreprise.id);
+                    }
+                    return [...prev, entreprise];
+                  });
+                }}
+              />
             ) : view === "list" ? (
               <div className="h-full">
                 <ListView 
@@ -500,6 +495,7 @@ const Dashboard = () => {
                 />
               </div>
             )}
+            </div>
           </div>
         </main>
 
