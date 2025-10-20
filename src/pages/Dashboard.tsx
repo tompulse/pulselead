@@ -15,6 +15,7 @@ import { SyncButton } from "@/components/dashboard/SyncButton";
 import { CRMSidePanel } from "@/components/dashboard/CRMSidePanel";
 import { QuickActionButtons } from "@/components/dashboard/QuickActionButtons";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -575,35 +576,21 @@ const Dashboard = () => {
                             {entreprise.latitude && entreprise.longitude && (
                               <div className="grid grid-cols-2 gap-3 w-full">
                                 <Button
-                                  asChild
                                   variant="outline"
-                                  className="border-accent/30 hover:bg-accent/10"
+                                  onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
+                                  className="border-accent/30 hover:bg-accent/10 flex items-center justify-center gap-2"
                                 >
-                                  <a
-                                    href={`https://www.google.com/maps/search/?api=1&query=${entreprise.latitude},${entreprise.longitude}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-2"
-                                  >
-                                    <MapIconLucide className="w-4 h-4" />
-                                    Google Maps
-                                  </a>
+                                  <MapIconLucide className="w-4 h-4" />
+                                  Google Maps
                                 </Button>
                                 
                                 <Button
-                                  asChild
                                   variant="outline"
-                                  className="border-accent/30 hover:bg-accent/10"
+                                  onClick={() => openWaze(entreprise.latitude, entreprise.longitude)}
+                                  className="border-accent/30 hover:bg-accent/10 flex items-center justify-center gap-2"
                                 >
-                                  <a
-                                    href={`https://waze.com/ul?ll=${entreprise.latitude},${entreprise.longitude}&navigate=yes`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-2"
-                                  >
-                                    <Navigation className="w-4 h-4" />
-                                    Waze
-                                  </a>
+                                  <Navigation className="w-4 h-4" />
+                                  Waze
                                 </Button>
                               </div>
                             )}

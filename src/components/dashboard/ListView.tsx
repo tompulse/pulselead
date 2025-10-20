@@ -5,6 +5,7 @@ import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -586,13 +587,13 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-card border-accent/20 z-50">
                           <DropdownMenuItem 
-                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}`, '_blank')}
+                            onClick={() => openGoogleMaps(item.latitude, item.longitude)}
                           >
                             <Map className="w-4 h-4 mr-2" />
                             Google Maps
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            onClick={() => window.open(`https://waze.com/ul?ll=${item.latitude},${item.longitude}&navigate=yes`, '_blank')}
+                            onClick={() => openWaze(item.latitude, item.longitude)}
                           >
                             <Navigation className="w-4 h-4 mr-2" />
                             Waze

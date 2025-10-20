@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { openWaze } from "@/utils/navigation";
 
 interface Interaction {
   id: string;
@@ -326,7 +327,7 @@ export const InteractionsDialog = ({
                           onClick={(e) => {
                             e.stopPropagation();
                             if (interaction.latitude && interaction.longitude) {
-                              window.open(`https://waze.com/ul?ll=${interaction.latitude},${interaction.longitude}&navigate=yes`, '_blank');
+                              openWaze(interaction.latitude, interaction.longitude);
                             }
                           }}
                           title={interaction.latitude && interaction.longitude ? "Ouvrir dans Waze" : "Adresse non disponible"}
