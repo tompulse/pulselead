@@ -509,25 +509,25 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
 
                       {/* SIRET */}
                       {item.siret && (
-                        <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
-                          <Building2 className="w-5 h-5 text-accent flex-shrink-0" />
-                          <span className="text-sm font-medium">SIRET: {item.siret}</span>
+                        <div className="bg-gradient-to-br from-accent/5 to-transparent border border-accent/10 rounded-lg p-2.5 flex items-center gap-2.5">
+                          <Building2 className="w-4 h-4 text-accent flex-shrink-0" />
+                          <span className="text-xs text-foreground/80">SIRET: {item.siret}</span>
                         </div>
                       )}
                       
                       {/* Adresse */}
                       {fullAddress && (
-                        <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
-                          <MapPin className="w-5 h-5 text-accent flex-shrink-0" />
-                          <span className="text-sm font-medium">{fullAddress}</span>
+                        <div className="bg-gradient-to-br from-accent/5 to-transparent border border-accent/10 rounded-lg p-2.5 flex items-center gap-2.5">
+                          <MapPin className="w-4 h-4 text-accent flex-shrink-0" />
+                          <span className="text-xs text-foreground/80">{fullAddress}</span>
                         </div>
                       )}
 
                       {/* Gérant - Afficher seulement le premier */}
                       {gerant && (
-                        <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
-                          <User className="w-5 h-5 text-accent flex-shrink-0" />
-                          <span className="text-sm font-medium">{gerant}</span>
+                        <div className="bg-gradient-to-br from-accent/5 to-transparent border border-accent/10 rounded-lg p-2.5 flex items-center gap-2.5">
+                          <User className="w-4 h-4 text-accent flex-shrink-0" />
+                          <span className="text-xs text-foreground/80">{gerant}</span>
                         </div>
                       )}
 
