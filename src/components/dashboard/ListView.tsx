@@ -438,8 +438,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 return (
                   <div
                     key={item.id}
-                    className="group relative rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 hover:border-accent/50 transition-all bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full flex flex-col hover:shadow-xl hover:shadow-accent/10 cursor-pointer h-[380px] overflow-hidden"
-                    onClick={() => onEntrepriseSelect?.(item)}
+                    className="group relative rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 hover:border-accent/50 transition-all bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full flex flex-col hover:shadow-xl hover:shadow-accent/10 h-[380px] overflow-hidden"
                     onMouseEnter={() => setHoveredCardId(item.id)}
                     onMouseLeave={() => setHoveredCardId(null)}
                   >
@@ -510,13 +509,6 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                           <span className="line-clamp-2">{fullAddress}</span>
                         </div>
                       )}
-                      
-                      {gerant && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <User className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                          <span className="line-clamp-1">{gerant}</span>
-                        </div>
-                      )}
 
                       {item.telephone && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
@@ -539,6 +531,13 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         </div>
                       )}
 
+                      {item.capital && (
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Banknote className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                          <span className="line-clamp-1">Capital: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.capital))}</span>
+                        </div>
+                      )}
+
                       {item.date_demarrage && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <CalendarDays className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
@@ -546,85 +545,119 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         </div>
                       )}
 
-                      {/* Overlay sheet avec infos supplémentaires au survol */}
+                      {/* Overlay sheet avec infos supplémentaires au survol - même taille que la carte */}
                       {isHovered && (
                         <div 
-                          className="absolute inset-0 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl rounded-lg border border-accent/30 shadow-2xl shadow-accent/20 p-4 overflow-y-auto custom-scrollbar z-50 animate-fade-in"
+                          className="absolute inset-0 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl rounded-xl border border-accent/30 shadow-2xl shadow-accent/20 p-4 md:p-5 overflow-hidden z-50 animate-fade-in flex flex-col"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <div className="space-y-2.5">
-                            <div className="flex items-center justify-between mb-3 pb-2 border-b border-accent/20">
-                              <h4 className="font-bold text-sm gradient-text">Informations détaillées</h4>
-                            </div>
+                          <div className="flex items-center justify-between mb-3 pb-2 border-b border-accent/20 flex-shrink-0">
+                            <h4 className="font-bold text-sm gradient-text">Informations détaillées</h4>
+                          </div>
 
+                          <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2.5">
                             {item.siret && (
                               <div className="flex items-center gap-2 text-xs text-foreground/70">
-                                <Building2 className="w-3 h-3 flex-shrink-0 text-accent" />
+                                <Building2 className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                                 <span>SIRET: {item.siret}</span>
                               </div>
                             )}
 
                             {item.code_naf && (
                               <div className="flex items-center gap-2 text-xs text-foreground/70">
-                                <Briefcase className="w-3 h-3 flex-shrink-0 text-accent" />
+                                <Briefcase className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                                 <span>Code NAF: {item.code_naf}</span>
                               </div>
                             )}
 
                             {item.activite && (
-                              <div className="flex items-start gap-2 text-xs text-foreground/70 bg-accent/5 p-2 rounded border border-accent/10">
-                                <Briefcase className="w-3 h-3 flex-shrink-0 text-accent mt-0.5" />
-                                <span>Activité: {item.activite}</span>
+                              <div className="flex items-start gap-2 text-xs text-foreground/70 bg-accent/5 p-2.5 rounded-lg border border-accent/10">
+                                <Briefcase className="w-3.5 h-3.5 flex-shrink-0 text-accent mt-0.5" />
+                                <div>
+                                  <div className="font-semibold text-accent mb-1">Activité:</div>
+                                  <span>{item.activite}</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {fullAddress && (
+                              <div className="flex items-start gap-2 text-xs text-foreground/70 bg-accent/5 p-2.5 rounded-lg border border-accent/10">
+                                <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-accent mt-0.5" />
+                                <div>
+                                  <div className="font-semibold text-accent mb-1">Adresse:</div>
+                                  <span>{fullAddress}</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {gerant && (
+                              <div className="flex items-center gap-2 text-xs text-foreground/70">
+                                <User className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                                <span>Dirigeant: {gerant}</span>
+                              </div>
+                            )}
+
+                            {item.telephone && (
+                              <div className="flex items-center gap-2 text-xs text-foreground/70">
+                                <Phone className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                                <span>{item.telephone}</span>
+                              </div>
+                            )}
+
+                            {item.email && (
+                              <div className="flex items-center gap-2 text-xs text-foreground/70">
+                                <Mail className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                                <span className="break-all">{item.email}</span>
+                              </div>
+                            )}
+
+                            {item.forme_juridique && (
+                              <div className="flex items-center gap-2 text-xs text-foreground/70">
+                                <Building className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                                <span>{item.forme_juridique}</span>
                               </div>
                             )}
 
                             {item.effectifs && (
                               <div className="flex items-center gap-2 text-xs text-foreground/70">
-                                <Users className="w-3 h-3 flex-shrink-0 text-accent" />
+                                <Users className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                                 <span>{item.effectifs} employés</span>
                               </div>
                             )}
 
                             {item.chiffre_affaires && (
                               <div className="flex items-center gap-2 text-xs text-foreground/70">
-                                <TrendingUp className="w-3 h-3 flex-shrink-0 text-accent" />
+                                <TrendingUp className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                                 <span>CA: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.chiffre_affaires))}</span>
                               </div>
                             )}
 
                             {item.capital && (
                               <div className="flex items-center gap-2 text-xs text-foreground/70">
-                                <Banknote className="w-3 h-3 flex-shrink-0 text-accent" />
+                                <Banknote className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                                 <span>Capital: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.capital))}</span>
                               </div>
                             )}
 
-                            {item.administration && (
-                              <div className="flex items-start gap-2 text-xs text-foreground/70 bg-accent/5 p-2 rounded border border-accent/10">
-                                <User className="w-3 h-3 flex-shrink-0 text-accent mt-0.5" />
-                                <span>Administration: {item.administration}</span>
+                            {item.date_demarrage && (
+                              <div className="flex items-center gap-2 text-xs text-foreground/70">
+                                <CalendarDays className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                                <span>Créée le {new Date(item.date_demarrage).toLocaleDateString('fr-FR')}</span>
                               </div>
                             )}
 
                             {item.site_web && (
                               <div className="flex items-center gap-2 text-xs text-foreground/70">
-                                <Building2 className="w-3 h-3 flex-shrink-0 text-accent" />
+                                <Building2 className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                                 <a 
                                   href={item.site_web.startsWith('http') ? item.site_web : `https://${item.site_web}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-accent hover:underline break-all"
+                                  className="text-accent hover:underline break-all font-semibold"
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   {item.site_web}
                                 </a>
-                              </div>
-                            )}
-
-                            {fullAddress && (
-                              <div className="flex items-start gap-2 text-xs text-foreground/70 bg-accent/5 p-2 rounded border border-accent/10">
-                                <MapPin className="w-3 h-3 flex-shrink-0 text-accent mt-0.5" />
-                                <span>{fullAddress}</span>
                               </div>
                             )}
                           </div>
