@@ -24,6 +24,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Map as MapIconLucide,
+  Clock,
 } from "lucide-react";
 import {
   DndContext,
@@ -325,8 +326,9 @@ export const TourneeRouteDisplay = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 h-full">
-      {/* Carte à gauche */}
-      <div className="h-full rounded-lg overflow-hidden border border-accent/20">
+      {/* Carte à gauche avec border améliorée */}
+      <div className="relative h-full rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5">
+        <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/5 pointer-events-none" />
         <MapView
           filters={{
             dateFrom: "",
@@ -342,24 +344,35 @@ export const TourneeRouteDisplay = ({
         />
       </div>
 
-      {/* Liste à droite - compact */}
-      <Card className="border-accent/20 h-full flex flex-col">
-        <CardHeader className="pb-3 px-4 pt-4 shrink-0">
+      {/* Liste à droite - style sexy */}
+      <Card className="border-accent/30 h-full flex flex-col bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm shadow-lg shadow-accent/5">
+        <CardHeader className="pb-3 px-4 pt-4 shrink-0 border-b border-accent/10">
           <div className="flex items-center justify-between mb-2">
-            <CardTitle className="text-base font-bold">{entreprises.length} arrêts</CardTitle>
-            <Badge variant={statusConfig.variant} className="text-xs">
+            <CardTitle className="text-base font-bold gradient-text flex items-center gap-2">
+              <div className="p-2 bg-accent/10 rounded-lg">
+                <MapPin className="w-4 h-4 text-accent" />
+              </div>
+              {entreprises.length} arrêts
+            </CardTitle>
+            <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
               {statusConfig.label}
             </Badge>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>{Math.round(distanceTotaleKm)} km</span>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground bg-accent/5 rounded-lg px-3 py-2">
+            <div className="flex items-center gap-1">
+              <Navigation className="w-3 h-3" />
+              <span className="font-medium">{Math.round(distanceTotaleKm)} km</span>
+            </div>
             <span>•</span>
-            <span>{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span className="font-medium">{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
+            </div>
           </div>
         </CardHeader>
         
         <CardContent className="flex-1 flex flex-col gap-3 px-4 pb-4 overflow-hidden">
-          {/* Liste avec drag & drop */}
+          {/* Liste avec drag & drop stylée */}
           <div className="flex-1 overflow-y-auto -mx-2 px-2">
             <DndContext
               sensors={sensors}
@@ -370,7 +383,7 @@ export const TourneeRouteDisplay = ({
                 items={entreprises.map(e => e.id)}
                 strategy={verticalListSortingStrategy}
               >
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {entreprises.map((entreprise, index) => (
                     <SortableEntrepriseItem
                       key={entreprise.id}
@@ -386,16 +399,16 @@ export const TourneeRouteDisplay = ({
             </DndContext>
           </div>
 
-          {/* Bouton terminé */}
+          {/* Bouton terminé stylé */}
           {statut !== 'terminee' && (
             <Button 
               onClick={handleCompleteTournee} 
               size="lg"
-              className="w-full h-12 text-base font-semibold shrink-0"
-              variant="default"
+              className="relative w-full h-12 text-base font-semibold shrink-0 bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all duration-300 group overflow-hidden"
             >
-              <CheckCircle2 className="w-5 h-5 mr-2" />
-              Prospection terminée
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <CheckCircle2 className="w-5 h-5 mr-2 relative z-10" />
+              <span className="relative z-10">Prospection terminée</span>
             </Button>
           )}
         </CardContent>

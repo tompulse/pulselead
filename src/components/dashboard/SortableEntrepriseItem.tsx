@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Navigation, CheckCircle2, AlertCircle } from 'lucide-react';
+import { GripVertical, Navigation, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type Entreprise = {
@@ -45,28 +45,38 @@ export const SortableEntrepriseItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-2 p-2 rounded bg-card border border-accent/10 hover:border-accent/30 transition-colors"
+      className="group relative flex items-center gap-2 p-3 rounded-lg bg-gradient-to-br from-card/80 to-card/40 border border-accent/10 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300 cursor-pointer"
+      onClick={() => onVisiteClick(entreprise)}
     >
+      {/* Gradient overlay on hover */}
+      <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-accent/5 to-transparent" />
+      
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-accent"
+        className="relative cursor-grab active:cursor-grabbing text-muted-foreground hover:text-accent transition-colors z-10"
+        onClick={(e) => e.stopPropagation()}
       >
         <GripVertical className="w-4 h-4" />
       </div>
       
-      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
+      <div className="relative flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center text-xs font-bold text-accent shadow-sm">
         {index + 1}
       </div>
       
-      <div 
-        className="flex-1 min-w-0 cursor-pointer"
-        onClick={() => onVisiteClick(entreprise)}
-      >
+      <div className="relative flex-1 min-w-0">
         <div className="text-sm font-medium truncate flex items-center gap-2">
           {entreprise.nom}
-          {visite?.rdv_pris && <CheckCircle2 className="w-3 h-3 text-green-500" />}
-          {visite?.a_revoir && <AlertCircle className="w-3 h-3 text-orange-500" />}
+          {visite?.rdv_pris && (
+            <div className="p-1 bg-green-500/10 rounded">
+              <CheckCircle2 className="w-3 h-3 text-green-500" />
+            </div>
+          )}
+          {visite?.a_revoir && (
+            <div className="p-1 bg-orange-500/10 rounded">
+              <AlertCircle className="w-3 h-3 text-orange-500" />
+            </div>
+          )}
         </div>
         <div className="text-xs text-muted-foreground truncate">
           {entreprise.ville}
@@ -80,7 +90,7 @@ export const SortableEntrepriseItem = ({
           e.stopPropagation();
           onNavigate(entreprise);
         }}
-        className="flex-shrink-0 h-8 w-8 p-0"
+        className="relative flex-shrink-0 h-8 w-8 p-0 hover:bg-accent/10 hover:text-accent transition-colors z-10"
       >
         <Navigation className="w-4 h-4" />
       </Button>
