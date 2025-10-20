@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Zap } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -397,7 +397,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                             size="sm"
                             className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
                           >
-                            <Zap className="w-5 h-5" />
+                            <Calendar className="w-5 h-5" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-card border-accent/20 z-50">
