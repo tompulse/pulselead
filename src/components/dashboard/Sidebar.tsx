@@ -1,12 +1,13 @@
 import { Filter, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { DatePicker } from "@/components/ui/date-picker";
 import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { useState } from "react";
+import { format } from "date-fns";
 
 interface SidebarProps {
   filters: {
@@ -189,34 +190,28 @@ export const Sidebar = ({ filters, setFilters, onFilterChange, isMobileSheet = f
               } ${isMobileSheet ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className={isMobileSheet ? "mt-2 space-y-3 px-2" : "mt-1.5 space-y-2 px-1"}>
-            <div className={isMobileSheet ? "space-y-2" : "space-y-1"}>
-              <Label htmlFor="dateFrom" className={isMobileSheet ? "text-sm" : "text-[10px]"}>
+          <CollapsibleContent className={isMobileSheet ? "mt-3 space-y-3 px-2" : "mt-2 space-y-2.5 px-1"}>
+            <div className={isMobileSheet ? "space-y-2" : "space-y-1.5"}>
+              <Label htmlFor="dateFrom" className={`font-medium text-cyan-electric/90 ${isMobileSheet ? "text-sm" : "text-[11px]"}`}>
                 Date de début
               </Label>
-              <Input
-                id="dateFrom"
-                type="date"
-                value={filters.dateFrom}
-                onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
-                className={`bg-background/50 border-border focus:border-accent ${
-                  isMobileSheet ? "h-10 text-sm" : "h-7 text-xs"
-                }`}
+              <DatePicker
+                date={filters.dateFrom ? new Date(filters.dateFrom) : undefined}
+                onSelect={(date) => handleFilterChange("dateFrom", date ? format(date, "yyyy-MM-dd") : "")}
+                placeholder="Choisir une date"
+                className={isMobileSheet ? "h-11" : "h-9 text-xs"}
               />
             </div>
 
-            <div className={isMobileSheet ? "space-y-2" : "space-y-1"}>
-              <Label htmlFor="dateTo" className={isMobileSheet ? "text-sm" : "text-[10px]"}>
+            <div className={isMobileSheet ? "space-y-2" : "space-y-1.5"}>
+              <Label htmlFor="dateTo" className={`font-medium text-cyan-electric/90 ${isMobileSheet ? "text-sm" : "text-[11px]"}`}>
                 Date de fin
               </Label>
-              <Input
-                id="dateTo"
-                type="date"
-                value={filters.dateTo}
-                onChange={(e) => handleFilterChange("dateTo", e.target.value)}
-                className={`bg-background/50 border-border focus:border-accent ${
-                  isMobileSheet ? "h-10 text-sm" : "h-7 text-xs"
-                }`}
+              <DatePicker
+                date={filters.dateTo ? new Date(filters.dateTo) : undefined}
+                onSelect={(date) => handleFilterChange("dateTo", date ? format(date, "yyyy-MM-dd") : "")}
+                placeholder="Choisir une date"
+                className={isMobileSheet ? "h-11" : "h-9 text-xs"}
               />
             </div>
           </CollapsibleContent>
