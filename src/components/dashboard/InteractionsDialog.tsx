@@ -128,6 +128,38 @@ export const InteractionsDialog = ({
     }
   };
 
+  const handleDeleteAll = async () => {
+    if (!type || interactions.length === 0) return;
+
+    const interactionIds = interactions.map(i => i.id);
+    const { error } = await supabase
+      .from('lead_interactions')
+      .delete()
+      .in('id', interactionIds);
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer les interactions",
+        variant: "destructive"
+      });
+    } else {
+      // Notify parent component about each deletion
+      if (onInteractionDeleted) {
+        interactions.forEach(interaction => {
+          onInteractionDeleted(interaction.entreprise_id, interaction.type);
+        });
+      }
+
+      setInteractions([]);
+      
+      toast({
+        title: "✓ Tout supprimé",
+        description: `${interactionIds.length} interaction${interactionIds.length > 1 ? 's supprimées' : ' supprimée'}`,
+      });
+    }
+  };
+
   const getTypeInfo = (type: string) => {
     switch (type) {
       case 'appel':
@@ -149,18 +181,32 @@ export const InteractionsDialog = ({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl max-h-[85vh]">
+        <DialogContent className="max-w-2xl max-h-[85vh] sm:max-w-[90vw]">
           <DialogHeader>
-            <div className="flex items-center gap-2">
-              <div className={`p-2 rounded-lg ${typeInfo.bg}`}>
-                <Icon className={`h-5 w-5 ${typeInfo.color}`} />
-              </div>
-              <div>
-                <DialogTitle>{typeInfo.label}</DialogTitle>
-                <div className="text-sm text-muted-foreground font-normal">
-                  {interactions.length} {interactions.length > 1 ? 'enregistrements' : 'enregistrement'}
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className={`p-2 rounded-lg ${typeInfo.bg}`}>
+                  <Icon className={`h-5 w-5 ${typeInfo.color}`} />
+                </div>
+                <div>
+                  <DialogTitle>{typeInfo.label}</DialogTitle>
+                  <div className="text-sm text-muted-foreground font-normal">
+                    {interactions.length} {interactions.length > 1 ? 'enregistrements' : 'enregistrement'}
+                  </div>
                 </div>
               </div>
+              
+              {interactions.length > 0 && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDeleteAll}
+                  className="flex items-center gap-2 h-9"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Tout supprimer</span>
+                </Button>
+              )}
             </div>
           </DialogHeader>
 
@@ -174,23 +220,23 @@ export const InteractionsDialog = ({
               <p>Aucun {typeInfo.label.toLowerCase()} enregistré</p>
             </div>
           ) : (
-            <ScrollArea className="h-[500px] pr-4">
+            <ScrollArea className="h-[50vh] sm:h-[500px] pr-4">
               <div className="space-y-3">
                 {interactions.map((interaction) => (
                   <div
                     key={interaction.id}
-                    className="p-4 rounded-lg border border-accent/20 bg-card/50 hover:bg-accent/5 transition-colors"
+                    className="p-3 sm:p-4 rounded-lg border border-accent/20 bg-card/50 hover:bg-accent/5 transition-colors"
                   >
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
                       <div 
-                        className="flex-1 min-w-0 cursor-pointer"
+                        className="flex-1 min-w-0 cursor-pointer w-full"
                         onClick={() => {
                           onEntrepriseClick?.(interaction.entreprise_id);
                           onOpenChange(false);
                         }}
                       >
-                        <div className="flex items-center gap-2 mb-2">
-                          <p className="font-semibold text-foreground/90">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
+                          <p className="font-semibold text-foreground/90 text-sm sm:text-base">
                             {interaction.entreprise_nom}
                           </p>
                           <span className="text-xs text-muted-foreground">
@@ -199,7 +245,7 @@ export const InteractionsDialog = ({
                         </div>
                         
                         {interaction.notes && (
-                          <p className="text-sm text-muted-foreground mb-2">
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                             {interaction.notes}
                           </p>
                         )}
@@ -211,7 +257,7 @@ export const InteractionsDialog = ({
                         )}
                       </div>
                       
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 w-full sm:w-auto justify-end">
                         {/* Always show action buttons, disabled if no data */}
                         <Button
                           variant="outline"
