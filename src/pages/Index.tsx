@@ -82,7 +82,7 @@ const Index = () => {
             
             {/* Message ultra clair */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="text-foreground">Trouve toutes les nouvelles entreprises</span>
+              <span className="text-foreground">Toutes les nouvelles entreprises</span>
               <br />
               <span className="gradient-text">qui se créent près de chez toi</span>
             </h1>
@@ -93,48 +93,6 @@ const Index = () => {
               <br className="hidden sm:block" />
               Parfait pour la prospection commerciale.
             </p>
-
-            {/* Sélecteur de région interactif */}
-            <div className="glass-card p-6 max-w-2xl mx-auto border-cyan-electric/20">
-              <div className="space-y-4">
-                <div className="text-left">
-                  <h3 className="text-base font-semibold text-foreground mb-1">Choisissez votre région</h3>
-                  <p className="text-sm text-muted-foreground">Le prix varie selon le nombre de créations d'entreprises</p>
-                </div>
-                <div className="flex flex-wrap gap-3 justify-center">
-                  <Button
-                    onClick={() => setSelectedRegion('1')}
-                    variant={selectedRegion === '1' ? 'default' : 'outline'}
-                    className={selectedRegion === '1' 
-                      ? 'bg-cyan-electric text-black-deep hover:bg-cyan-electric/90 border-cyan-electric' 
-                      : 'border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric'
-                    }
-                  >
-                    1 Région
-                  </Button>
-                  <Button
-                    onClick={() => setSelectedRegion('plusieurs')}
-                    variant={selectedRegion === 'plusieurs' ? 'default' : 'outline'}
-                    className={selectedRegion === 'plusieurs' 
-                      ? 'bg-cyan-electric text-black-deep hover:bg-cyan-electric/90 border-cyan-electric' 
-                      : 'border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric'
-                    }
-                  >
-                    Plusieurs Régions
-                  </Button>
-                  <Button
-                    onClick={() => setSelectedRegion('france')}
-                    variant={selectedRegion === 'france' ? 'default' : 'outline'}
-                    className={selectedRegion === 'france' 
-                      ? 'bg-cyan-electric text-black-deep hover:bg-cyan-electric/90 border-cyan-electric' 
-                      : 'border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric'
-                    }
-                  >
-                    France entière
-                  </Button>
-                </div>
-              </div>
-            </div>
             
             {/* CTA */}
             <div className="flex flex-col items-center gap-4 pt-4">
