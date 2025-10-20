@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 interface DailyAction {
   id: string;
   entreprise_id: string;
-  type: 'appel' | 'email' | 'visite' | 'rdv' | 'autre';
+  type: 'appel' | 'email' | 'visite' | 'rdv' | 'autre' | 'a_revoir';
   prochaine_action: string;
   date_prochaine_action: string;
   entreprise_nom: string;
@@ -84,6 +84,8 @@ export const DailyActionsWidget = ({ userId, onEntrepriseClick }: DailyActionsWi
         return <MapPin className="h-4 w-4" />;
       case 'rdv':
         return <Calendar className="h-4 w-4" />;
+      case 'a_revoir':
+        return <Clock className="h-4 w-4" />;
       default:
         return <StickyNote className="h-4 w-4" />;
     }
@@ -96,6 +98,7 @@ export const DailyActionsWidget = ({ userId, onEntrepriseClick }: DailyActionsWi
       rdv: 'Rendez-vous',
       autre: 'Note',
       email: 'Email',
+      a_revoir: 'À revoir',
     };
     return labels[type as keyof typeof labels] || type;
   };

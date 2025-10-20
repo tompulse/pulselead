@@ -357,7 +357,13 @@ export type Database = {
         | "gagne"
         | "perdu"
         | "sans_suite"
-      interaction_type: "appel" | "email" | "visite" | "rdv" | "autre"
+      interaction_type:
+        | "appel"
+        | "email"
+        | "visite"
+        | "rdv"
+        | "autre"
+        | "a_revoir"
       lead_statut_enum:
         | "nouveau"
         | "contacte"
@@ -501,7 +507,14 @@ export const Constants = {
         "perdu",
         "sans_suite",
       ],
-      interaction_type: ["appel", "email", "visite", "rdv", "autre"],
+      interaction_type: [
+        "appel",
+        "email",
+        "visite",
+        "rdv",
+        "autre",
+        "a_revoir",
+      ],
       lead_statut_enum: [
         "nouveau",
         "contacte",

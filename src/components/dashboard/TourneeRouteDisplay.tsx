@@ -242,6 +242,23 @@ export const TourneeRouteDisplay = ({
           .insert(visiteData);
       }
 
+      // Créer une interaction dans lead_interactions si RDV pris ou À revoir
+      if (rdvPris || aRevoir) {
+        const interactionData = {
+          entreprise_id: selectedEntreprise.id,
+          user_id: user.id,
+          type: rdvPris ? ('appel' as const) : ('a_revoir' as const),
+          statut: 'en_cours' as const,
+          notes: visiteNotes || (rdvPris ? 'RDV pris lors de la tournée' : 'À revoir suite à la tournée'),
+          prochaine_action: rdvPris ? 'Confirmer le RDV' : 'Revoir cette entreprise',
+          date_prochaine_action: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        };
+
+        await supabase
+          .from('lead_interactions')
+          .insert([interactionData]);
+      }
+
       await fetchVisites();
       
       setShowVisiteDialog(false);

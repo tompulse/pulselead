@@ -330,13 +330,35 @@ export const TourneesView = () => {
     return (
       <div className="h-full flex flex-col gap-3 overflow-hidden">
         <Card>
-          <CardContent className="pt-4 pb-4">
+          <CardContent className="pt-4 pb-4 flex gap-2">
             <Button 
               variant="outline" 
               onClick={() => setSelectedTournee(null)}
-              className="w-full"
+              className="flex-1"
             >
               ← Retour aux tournées
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const newName = prompt('Nouveau nom de la tournée:', selectedTournee.nom);
+                if (newName && newName.trim()) {
+                  supabase
+                    .from('tournees')
+                    .update({ nom: newName })
+                    .eq('id', selectedTournee.id)
+                    .then(() => {
+                      setSelectedTournee({ ...selectedTournee, nom: newName });
+                      fetchTournees();
+                      toast({
+                        title: "✅ Nom modifié",
+                        description: "Le nom de la tournée a été mis à jour",
+                      });
+                    });
+                }
+              }}
+            >
+              Modifier le nom
             </Button>
           </CardContent>
         </Card>
