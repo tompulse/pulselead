@@ -426,14 +426,19 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                   ? `${addressParts}, ${item.code_postal} ${item.ville || ''}`
                   : `${item.code_postal || ''} ${item.ville || ''}`.trim();
                 
-                // Extract gérant from administration field
-                const extractGerant = (admin: string | null) => {
+                // Extract ONLY the first gérant name from administration field
+                const extractFirstGerant = (admin: string | null) => {
                   if (!admin) return null;
-                  const match = admin.match(/(?:Gérant|Président|Directeur général)\s*:\s*([^;,]+)/i);
-                  return match ? match[1].trim() : null;
+                  const match = admin.match(/(?:Gérant|Président|Directeur général)\s*:\s*([^;,\.]+)/i);
+                  if (!match) return null;
+                  
+                  // Get the first name only, before any "nom d'usage" or other additions
+                  const fullName = match[1].trim();
+                  const firstName = fullName.split(/\s+nom\s+d'usage|\s+Président|\s+Directeur/i)[0].trim();
+                  return firstName;
                 };
                 
-                const gerant = extractGerant(item.administration);
+                const gerant = extractFirstGerant(item.administration);
                 
                 return (
                   <div
@@ -496,8 +501,8 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                     <div className="relative space-y-2.5 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
                       {/* Activité - Bloc principal arrondi */}
                       {categoryInfo.label && (
-                        <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center gap-3">
-                          <Briefcase className="w-5 h-5 text-primary flex-shrink-0" />
+                        <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
+                          <Briefcase className="w-5 h-5 text-accent flex-shrink-0" />
                           <span className="text-sm font-medium">{categoryInfo.label}</span>
                         </div>
                       )}
@@ -505,7 +510,7 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       {/* SIRET */}
                       {item.siret && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Building2 className="w-4 h-4 flex-shrink-0 text-primary" />
+                          <Building2 className="w-4 h-4 flex-shrink-0 text-accent" />
                           <span className="text-xs">SIRET: {item.siret}</span>
                         </div>
                       )}
@@ -513,70 +518,62 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       {/* Adresse */}
                       {fullAddress && (
                         <div className="flex items-start gap-2 text-sm text-foreground/70">
-                          <MapPin className="w-4 h-4 flex-shrink-0 text-primary mt-0.5" />
+                          <MapPin className="w-4 h-4 flex-shrink-0 text-accent mt-0.5" />
                           <span className="text-xs">{fullAddress}</span>
                         </div>
                       )}
 
-                      {/* Gérant - Afficher seulement le premier + "et autres" si plusieurs */}
+                      {/* Gérant - Afficher seulement le premier */}
                       {gerant && (
                         <div className="flex items-start gap-2 text-sm text-foreground/70">
-                          <User className="w-4 h-4 flex-shrink-0 text-primary mt-0.5" />
-                          <span className="text-xs">
-                            {(() => {
-                              const gerants = gerant.split(/[,;]/).map(g => g.trim()).filter(g => g);
-                              if (gerants.length > 1) {
-                                return `${gerants[0]} et autres`;
-                              }
-                              return gerant;
-                            })()}
-                          </span>
+                          <User className="w-4 h-4 flex-shrink-0 text-accent mt-0.5" />
+                          <span className="text-xs">{gerant}</span>
                         </div>
                       )}
 
                       {item.telephone && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Phone className="w-4 h-4 flex-shrink-0 text-primary" />
+                          <Phone className="w-4 h-4 flex-shrink-0 text-accent" />
                           <span className="text-xs">{item.telephone}</span>
                         </div>
                       )}
 
                       {item.email && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Mail className="w-4 h-4 flex-shrink-0 text-primary" />
+                          <Mail className="w-4 h-4 flex-shrink-0 text-accent" />
                           <span className="text-xs break-all">{item.email}</span>
                         </div>
                       )}
 
                       {item.forme_juridique && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Building className="w-4 h-4 flex-shrink-0 text-primary" />
+                          <Building className="w-4 h-4 flex-shrink-0 text-accent" />
                           <span className="text-xs">{item.forme_juridique}</span>
                         </div>
                       )}
 
                       {item.effectifs && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Users className="w-4 h-4 flex-shrink-0 text-primary" />
+                          <Users className="w-4 h-4 flex-shrink-0 text-accent" />
                           <span className="text-xs">{item.effectifs} employés</span>
                         </div>
                       )}
 
                       {item.chiffre_affaires && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <TrendingUp className="w-4 h-4 flex-shrink-0 text-primary" />
+                          <TrendingUp className="w-4 h-4 flex-shrink-0 text-accent" />
                           <span className="text-xs">CA: {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(item.chiffre_affaires))}</span>
                         </div>
                       )}
 
                       {item.site_web && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Building2 className="w-4 h-4 flex-shrink-0 text-primary" />
+                          <Building2 className="w-4 h-4 flex-shrink-0 text-accent" />
                           <a 
                             href={item.site_web.startsWith('http') ? item.site_web : `https://${item.site_web}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary hover:underline break-all text-xs font-semibold"
+                            className="text-accent hover:underline break-all text-xs font-semibold"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {item.site_web}
