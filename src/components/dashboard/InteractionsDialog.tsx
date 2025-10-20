@@ -211,34 +211,38 @@ export const InteractionsDialog = ({
                       </div>
                       
                       <div className="flex gap-2">
-                        {/* Always show action buttons if data exists */}
-                        {interaction.telephone && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500"
-                            onClick={(e) => {
-                              e.stopPropagation();
+                        {/* Always show action buttons, disabled if no data */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={!interaction.telephone}
+                          className="h-8 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 disabled:opacity-50"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (interaction.telephone) {
                               window.location.href = `tel:${interaction.telephone}`;
-                            }}
-                          >
-                            <Phone className="h-3.5 w-3.5" />
-                          </Button>
-                        )}
+                            }
+                          }}
+                          title={interaction.telephone ? `Appeler ${interaction.telephone}` : "Téléphone non disponible"}
+                        >
+                          <Phone className="h-3.5 w-3.5" />
+                        </Button>
                         
-                        {interaction.latitude && interaction.longitude && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 border-green-500/30 hover:bg-green-500/10 hover:border-green-500"
-                            onClick={(e) => {
-                              e.stopPropagation();
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={!interaction.latitude || !interaction.longitude}
+                          className="h-8 border-green-500/30 hover:bg-green-500/10 hover:border-green-500 disabled:opacity-50"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (interaction.latitude && interaction.longitude) {
                               window.open(`https://waze.com/ul?ll=${interaction.latitude},${interaction.longitude}&navigate=yes`, '_blank');
-                            }}
-                          >
-                            <Navigation className="h-3.5 w-3.5" />
-                          </Button>
-                        )}
+                            }
+                          }}
+                          title={interaction.latitude && interaction.longitude ? "Ouvrir dans Waze" : "Adresse non disponible"}
+                        >
+                          <Navigation className="h-3.5 w-3.5" />
+                        </Button>
                         
                         <Button
                           variant="ghost"
