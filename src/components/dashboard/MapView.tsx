@@ -18,6 +18,9 @@ interface MapViewProps {
     departments: string[];
   };
   onEntrepriseSelect?: (entreprise: Entreprise) => void;
+  selectionMode?: boolean;
+  selectedEntreprises?: Entreprise[];
+  onToggleSelection?: (entreprise: Entreprise) => void;
 }
 
 interface Entreprise {
@@ -40,7 +43,13 @@ interface Entreprise {
   code_naf: string;
 }
 
-export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
+export const MapView = ({ 
+  filters, 
+  onEntrepriseSelect,
+  selectionMode = false,
+  selectedEntreprises = [],
+  onToggleSelection
+}: MapViewProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
@@ -255,13 +264,18 @@ export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
     } else {
       // Mode normal : un marqueur par entreprise
       entreprises.forEach((entreprise) => {
-        const marker = new mapboxgl.Marker({ color: "#00FFF0" })
+        const isSelected = selectedEntreprises.some(e => e.id === entreprise.id);
+        const markerColor = selectionMode && isSelected ? "#FF6B00" : "#00FFF0";
+        
+        const marker = new mapboxgl.Marker({ color: markerColor })
           .setLngLat([entreprise.longitude, entreprise.latitude])
           .addTo(map.current);
 
         // Open modal on marker click
         marker.getElement().addEventListener('click', () => {
-          if (isMobile) {
+          if (selectionMode && onToggleSelection) {
+            onToggleSelection(entreprise);
+          } else if (isMobile) {
             setSelectedEntreprise(entreprise);
             setDetailsOpen(true);
           } else {
@@ -293,7 +307,7 @@ export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
       // Petit délai pour s'assurer que les marqueurs sont bien ajoutés
       setTimeout(centerMap, 100);
     }
-  }, [entreprises, mapboxgl, mapboxLoaded, isMobile]);
+  }, [entreprises, mapboxgl, mapboxLoaded, isMobile, selectionMode, selectedEntreprises, onToggleSelection]);
 
   return (
     <>

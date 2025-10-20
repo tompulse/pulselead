@@ -201,6 +201,57 @@ export type Database = {
           },
         ]
       }
+      tournees: {
+        Row: {
+          created_at: string
+          date_planifiee: string
+          distance_totale_km: number | null
+          entreprises_ids: string[]
+          id: string
+          nom: string
+          notes: string | null
+          ordre_optimise: string[]
+          point_depart_lat: number | null
+          point_depart_lng: number | null
+          statut: string
+          temps_estime_minutes: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_planifiee: string
+          distance_totale_km?: number | null
+          entreprises_ids: string[]
+          id?: string
+          nom: string
+          notes?: string | null
+          ordre_optimise: string[]
+          point_depart_lat?: number | null
+          point_depart_lng?: number | null
+          statut?: string
+          temps_estime_minutes?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_planifiee?: string
+          distance_totale_km?: number | null
+          entreprises_ids?: string[]
+          id?: string
+          nom?: string
+          notes?: string | null
+          ordre_optimise?: string[]
+          point_depart_lat?: number | null
+          point_depart_lng?: number | null
+          statut?: string
+          temps_estime_minutes?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null

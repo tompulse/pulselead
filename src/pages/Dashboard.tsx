@@ -24,12 +24,13 @@ import { LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { InteractionTimeline } from "@/components/dashboard/InteractionTimeline";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { ActivitiesView } from "@/components/dashboard/ActivitiesView";
+import { TourneesView } from "@/components/dashboard/TourneesView";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [view, setView] = useState<"map" | "list" | "activities">("map");
+  const [view, setView] = useState<"map" | "list" | "activities" | "tournees">("map");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [selectedEntreprise, setSelectedEntreprise] = useState<any>(null);
   const [crmPanelOpen, setCrmPanelOpen] = useState(false);
@@ -38,6 +39,7 @@ const Dashboard = () => {
   const [mobileLeadStatus, setMobileLeadStatus] = useState<any>(null);
   const [mobileActiveTab, setMobileActiveTab] = useState<'info' | 'crm'>('info');
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [selectedEntreprisesForTournee, setSelectedEntreprisesForTournee] = useState<any[]>([]);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -280,6 +282,18 @@ const Dashboard = () => {
                   <Calendar className="w-3.5 h-3.5 mr-1" />
                   <span className="hidden sm:inline">Activités</span>
                 </Button>
+                <Button
+                  variant={view === "tournees" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setView("tournees");
+                    trackViewChange("tournees");
+                  }}
+                  className={`h-7 px-2 text-xs ${view === "tournees" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+                >
+                  <Navigation className="w-3.5 h-3.5 mr-1" />
+                  <span className="hidden sm:inline">Tournées</span>
+                </Button>
               </div>
             </div>
 
@@ -301,7 +315,7 @@ const Dashboard = () => {
       {/* Compact Stats - Removed from all views */}
 
       {/* Mobile Filter Button */}
-      {isMobile && view !== "activities" && (
+      {isMobile && view !== "activities" && view !== "tournees" && (
         <div className="glass-card border-b border-accent/20 px-3 py-2 shrink-0">
           <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
             <SheetTrigger asChild>
@@ -346,15 +360,15 @@ const Dashboard = () => {
       {/* Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop/Tablet Sidebar */}
-        {!isMobile && view !== "activities" && (
+        {!isMobile && view !== "activities" && view !== "tournees" && (
           <Sidebar filters={filters} setFilters={setFilters} />
         )}
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden relative">
           <div className="h-full p-4 md:p-6">
-            {/* Always show filter prompt if no departments selected, except in activities view */}
-            {filters.departments.length === 0 && view !== "activities" ? (
+            {/* Always show filter prompt if no departments selected, except in activities and tournees view */}
+            {filters.departments.length === 0 && view !== "activities" && view !== "tournees" ? (
               <div className="h-full flex items-center justify-center">
                 <Card className="glass-card border-accent/20 p-8 max-w-md text-center">
                   <div className="relative inline-block mb-4">
@@ -395,6 +409,13 @@ const Dashboard = () => {
                 <ListView 
                   filters={filters}
                   onEntrepriseSelect={handleEntrepriseSelect}
+                />
+              </div>
+            ) : view === "tournees" ? (
+              <div className="h-full">
+                <TourneesView
+                  selectedEntreprises={selectedEntreprisesForTournee}
+                  onClearSelection={() => setSelectedEntreprisesForTournee([])}
                 />
               </div>
             ) : (
