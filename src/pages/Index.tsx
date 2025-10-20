@@ -334,25 +334,20 @@ const Index = () => {
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
-                    {billingPeriod === 'monthly' ? '97' : billingPeriod === 'quarterly' ? '87' : '78'}€
+                    {billingPeriod === 'monthly' ? '129' : billingPeriod === 'quarterly' ? '116' : '103'}€
                   </span>
                   <span className="text-muted-foreground">/mois</span>
                 </div>
-                {billingPeriod !== 'monthly' && (
-                  <div className="text-sm text-muted-foreground">
-                    {billingPeriod === 'quarterly' ? 'Soit 261€/trimestre' : 'Soit 936€/an'}
-                  </div>
-                )}
-                <div className="text-sm text-cyan-electric font-semibold mt-2">1 région incluse</div>
+                <div className="text-sm text-cyan-electric font-semibold">1 région incluse</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>150</strong> nouvelles entreprises/mois</span>
+                  <span className="text-foreground"><strong>200</strong> nouvelles entreprises/mois</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Carte interactive & filtres</span>
+                  <span className="text-foreground">Carte interactive & filtres basiques</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -360,7 +355,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Export Excel</span>
+                  <span className="text-foreground">Export Excel simple</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
@@ -368,11 +363,15 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
+                  <span className="text-muted-foreground/60">Enrichissement des données</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground/60">Accès API</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Support email</span>
+                  <span className="text-foreground">Support email (48h)</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border border-accent/30" size="lg">
@@ -393,16 +392,11 @@ const Index = () => {
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
-                    {billingPeriod === 'monthly' ? '197' : billingPeriod === 'quarterly' ? '177' : '157'}€
+                    {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '179' : '159'}€
                   </span>
                   <span className="text-muted-foreground">/mois</span>
                 </div>
-                {billingPeriod !== 'monthly' && (
-                  <div className="text-sm text-muted-foreground">
-                    {billingPeriod === 'quarterly' ? 'Soit 531€/trimestre' : 'Soit 1 884€/an'}
-                  </div>
-                )}
-                <div className="text-sm text-cyan-electric font-semibold mt-2">Jusqu'à 3 régions</div>
+                <div className="text-sm text-cyan-electric font-semibold">Jusqu'à 3 régions</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -415,23 +409,27 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Alertes SMS</strong> en temps réel</span>
+                  <span className="text-foreground"><strong>Alertes SMS instantanées</strong> à chaque création</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Accès API</strong> pour intégrations</span>
+                  <span className="text-foreground"><strong>Enrichissement automatique</strong> (emails, téléphones)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Statistiques & analytiques avancées</span>
+                  <span className="text-foreground"><strong>Filtres avancés</strong> & scoring des prospects</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Enrichissement des données</span>
+                  <span className="text-foreground"><strong>Accès API</strong> pour automatisation complète</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Support prioritaire</strong> (24h)</span>
+                  <span className="text-foreground">Dashboard analytique & prévisions IA</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground"><strong>Support prioritaire</strong> (réponse 24h)</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-lg shadow-cyan-electric/30" size="lg">
