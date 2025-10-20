@@ -303,9 +303,9 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 return (
                   <div
                     key={item.id}
-                    className="glass-card rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 w-full overflow-hidden"
+                    className="glass-card rounded-xl p-4 md:p-5 shadow-lg border border-accent/20 hover:border-accent/40 transition-all bg-gradient-to-br from-card/80 to-card/40 w-full overflow-hidden flex flex-col"
                   >
-                    <div className="flex items-start justify-between gap-2 mb-4">
+                    <div className="flex items-start justify-between gap-2 mb-3">
                       <h4 className="font-bold text-base md:text-lg line-clamp-2 flex-1" title={item.nom}>
                         {item.nom}
                       </h4>
@@ -324,7 +324,30 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 justify-center">
+                    <div className="space-y-2 mb-4 flex-1 min-h-0">
+                      {categoryInfo.label && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Briefcase className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span className="line-clamp-1">{categoryInfo.emoji} {categoryInfo.label}</span>
+                        </div>
+                      )}
+                      
+                      {fullAddress && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span className="line-clamp-2">{fullAddress}</span>
+                        </div>
+                      )}
+                      
+                      {gerant && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <User className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span className="line-clamp-1">{gerant}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2 justify-center mt-auto">
                       <Button
                         variant="outline"
                         size="sm"
