@@ -186,6 +186,9 @@ export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
 
+    // Ne rien faire si pas d'entreprises
+    if (entreprises.length === 0) return;
+
     // Sur mobile avec beaucoup de marqueurs, on utilise un clustering simple
     const shouldCluster = isMobile && entreprises.length > 50;
     
@@ -270,29 +273,25 @@ export const MapView = ({ filters, onEntrepriseSelect }: MapViewProps) => {
       });
     }
 
-    // Fit bounds to markers if we have data - always center on visible markers
+    // Fit bounds to markers - always center on visible markers after adding them
     if (entreprises.length > 0) {
+      // Attendre un peu que les marqueurs soient bien ajoutés au DOM
       const centerMap = () => {
-        if (!map.current || !map.current.isStyleLoaded()) return;
+        if (!map.current) return;
         
         const bounds = new mapboxgl.LngLatBounds();
         entreprises.forEach((e) => bounds.extend([e.longitude, e.latitude]));
         
-        // Animation plus rapide sur mobile
+        // Animation de centrage
         map.current.fitBounds(bounds, { 
-          padding: isMobile ? 30 : 50,
-          duration: isMobile ? 600 : 1000,
-          maxZoom: 14
+          padding: isMobile ? 40 : 60,
+          duration: isMobile ? 800 : 1200,
+          maxZoom: 12
         });
       };
 
-      // Si la carte est déjà chargée, centrer immédiatement
-      if (map.current.isStyleLoaded()) {
-        centerMap();
-      } else {
-        // Sinon attendre que le style soit chargé
-        map.current.once('styleload', centerMap);
-      }
+      // Petit délai pour s'assurer que les marqueurs sont bien ajoutés
+      setTimeout(centerMap, 100);
     }
   }, [entreprises, mapboxgl, mapboxLoaded, isMobile]);
 
