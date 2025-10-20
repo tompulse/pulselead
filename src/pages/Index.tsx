@@ -334,7 +334,7 @@ const Index = () => {
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
-                    {billingPeriod === 'monthly' ? '129' : billingPeriod === 'quarterly' ? '116' : '103'}€
+                    {billingPeriod === 'monthly' ? '129' : billingPeriod === 'quarterly' ? '119' : '109'}€
                   </span>
                   <span className="text-muted-foreground">/mois</span>
                 </div>
@@ -392,7 +392,7 @@ const Index = () => {
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
-                    {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '179' : '159'}€
+                    {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '189' : '169'}€
                   </span>
                   <span className="text-muted-foreground">/mois</span>
                 </div>
