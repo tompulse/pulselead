@@ -197,6 +197,9 @@ export const MapView = ({
   useEffect(() => {
     if (!map.current || !mapboxgl || !mapboxLoaded) return;
 
+    // Si on affiche une tournée, ne pas afficher les marqueurs individuels
+    if (tourneeRoute) return;
+
     // Remove existing markers
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];

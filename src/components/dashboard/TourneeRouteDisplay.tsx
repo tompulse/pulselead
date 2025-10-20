@@ -143,9 +143,9 @@ export const TourneeRouteDisplay = ({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
-      {/* Carte interactive */}
-      <div className="h-full min-h-[500px]">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-4 h-full">
+      {/* Carte - prend tout l'espace disponible */}
+      <div className="h-full min-h-[400px]">
         <MapView
           filters={{
             dateFrom: "",
@@ -161,77 +161,53 @@ export const TourneeRouteDisplay = ({
         />
       </div>
 
-      {/* Liste simple des arrêts */}
-      <Card className="border-accent/20 flex flex-col">
-        <CardHeader className="pb-4">
+      {/* Liste ultra-simple - colonne fixe à droite */}
+      <Card className="border-accent/20 h-full flex flex-col">
+        <CardHeader className="pb-3 shrink-0">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-bold">{entreprises.length} arrêts</CardTitle>
-            <Badge variant={statusConfig.variant}>
+            <CardTitle className="text-base font-bold">{entreprises.length} arrêts</CardTitle>
+            <Badge variant={statusConfig.variant} className="text-xs">
               {statusConfig.label}
             </Badge>
           </div>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
-            <span className="flex items-center gap-1">
-              <Navigation className="w-4 h-4" />
-              {Math.round(distanceTotaleKm)} km
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              {Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}
-            </span>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
+            <span>{Math.round(distanceTotaleKm)} km</span>
+            <span>•</span>
+            <span>{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
           </div>
         </CardHeader>
         
-        <CardContent className="flex-1 flex flex-col gap-4">
-          {/* Liste des arrêts */}
-          <ScrollArea className="flex-1">
-            <div className="space-y-2 pr-3">
+        <CardContent className="flex-1 flex flex-col gap-3 p-4 overflow-hidden">
+          {/* Liste scrollable simple */}
+          <ScrollArea className="flex-1 -mx-2 px-2">
+            <div className="space-y-1.5">
               {entreprises.map((entreprise, index) => (
                 <div
                   key={entreprise.id}
-                  className="flex gap-3 p-3 bg-card/60 rounded-lg border border-accent/10 hover:border-accent/30 transition-all"
+                  className="flex items-center gap-2 p-2 rounded hover:bg-accent/5 transition-colors"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
                     {index + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm mb-1">{entreprise.nom}</div>
-                    <div className="text-xs text-muted-foreground mb-2">
-                      {entreprise.adresse}, {entreprise.code_postal} {entreprise.ville}
+                    <div className="text-sm font-medium truncate">{entreprise.nom}</div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {entreprise.ville}
                     </div>
-                    {entreprise.telephone && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handlePhoneCall(entreprise.telephone!)}
-                        className="h-7 px-2 text-xs"
-                      >
-                        <Phone className="w-3 h-3 mr-1" />
-                        {entreprise.telephone}
-                      </Button>
-                    )}
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${entreprise.latitude},${entreprise.longitude}`, '_blank')}
-                    className="flex-shrink-0"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </Button>
                 </div>
               ))}
             </div>
           </ScrollArea>
 
-          {/* Bouton navigation */}
+          {/* Bouton fixe en bas */}
           <Button 
             onClick={handleStartNavigation} 
             size="lg"
-            className="w-full h-14 text-base font-semibold"
+            className="w-full h-12 text-base font-semibold shrink-0"
           >
             <Navigation className="w-5 h-5 mr-2" />
-            Lancer la navigation
+            Démarrer la prospection
           </Button>
         </CardContent>
       </Card>
