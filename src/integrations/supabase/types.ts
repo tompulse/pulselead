@@ -207,6 +207,7 @@ export type Database = {
           date_planifiee: string
           distance_totale_km: number | null
           entreprises_ids: string[]
+          heure_debut: string | null
           id: string
           nom: string
           notes: string | null
@@ -223,6 +224,7 @@ export type Database = {
           date_planifiee: string
           distance_totale_km?: number | null
           entreprises_ids: string[]
+          heure_debut?: string | null
           id?: string
           nom: string
           notes?: string | null
@@ -239,6 +241,7 @@ export type Database = {
           date_planifiee?: string
           distance_totale_km?: number | null
           entreprises_ids?: string[]
+          heure_debut?: string | null
           id?: string
           nom?: string
           notes?: string | null

@@ -29,6 +29,7 @@ import { fr } from "date-fns/locale";
 import { MapView } from "./MapView";
 import type { Database } from "@/integrations/supabase/types";
 import { TourneeFilters } from "./TourneeFilters";
+import { TourneeRouteDisplay } from "./TourneeRouteDisplay";
 
 type Entreprise = Database['public']['Tables']['entreprises']['Row'];
 
@@ -57,6 +58,7 @@ export const TourneesView = () => {
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedEntreprises, setSelectedEntreprises] = useState<Entreprise[]>([]);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [selectedTournee, setSelectedTournee] = useState<Tournee | null>(null);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -322,6 +324,39 @@ export const TourneesView = () => {
       return [...prev, entreprise];
     });
   };
+
+  // View détaillée d'une tournée
+  if (selectedTournee) {
+    return (
+      <div className="h-full flex flex-col gap-3 overflow-hidden">
+        <Card>
+          <CardContent className="pt-4 pb-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setSelectedTournee(null)}
+              className="w-full"
+            >
+              ← Retour aux tournées
+            </Button>
+          </CardContent>
+        </Card>
+        <div className="flex-1 min-h-0 overflow-auto">
+          <TourneeRouteDisplay
+            tourneeId={selectedTournee.id}
+            ordreOptimise={selectedTournee.ordre_optimise}
+            distanceTotaleKm={selectedTournee.distance_totale_km}
+            tempsEstimeMinutes={selectedTournee.temps_estime_minutes}
+            pointDepartLat={selectedTournee.point_depart_lat}
+            pointDepartLng={selectedTournee.point_depart_lng}
+            statut={selectedTournee.statut}
+            notes={selectedTournee.notes}
+            heureDebut={(selectedTournee as any).heure_debut}
+            onUpdate={fetchTournees}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col gap-3 overflow-hidden">
@@ -616,13 +651,22 @@ export const TourneesView = () => {
                         
                         <div className="flex gap-2">
                           <Button 
-                            variant="outline" 
+                            variant="default" 
                             size="sm" 
                             className="flex-1 h-8 text-xs"
+                            onClick={() => setSelectedTournee(tournee)}
+                          >
+                            <MapIconLucide className="w-3 h-3 mr-1" />
+                            Voir détails
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8 text-xs"
                             onClick={() => handleStartTournee(tournee)}
                           >
                             <Locate className="w-3 h-3 mr-1" />
-                            Démarrer
+                            GPS
                           </Button>
                           <Button
                             variant="outline"
