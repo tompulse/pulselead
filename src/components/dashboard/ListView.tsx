@@ -509,25 +509,25 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
 
                       {/* SIRET */}
                       {item.siret && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Building2 className="w-4 h-4 flex-shrink-0 text-accent" />
-                          <span className="text-xs">SIRET: {item.siret}</span>
+                        <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
+                          <Building2 className="w-5 h-5 text-accent flex-shrink-0" />
+                          <span className="text-sm font-medium">SIRET: {item.siret}</span>
                         </div>
                       )}
                       
                       {/* Adresse */}
                       {fullAddress && (
-                        <div className="flex items-start gap-2 text-sm text-foreground/70">
-                          <MapPin className="w-4 h-4 flex-shrink-0 text-accent mt-0.5" />
-                          <span className="text-xs">{fullAddress}</span>
+                        <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
+                          <MapPin className="w-5 h-5 text-accent flex-shrink-0" />
+                          <span className="text-sm font-medium">{fullAddress}</span>
                         </div>
                       )}
 
                       {/* Gérant - Afficher seulement le premier */}
                       {gerant && (
-                        <div className="flex items-start gap-2 text-sm text-foreground/70">
-                          <User className="w-4 h-4 flex-shrink-0 text-accent mt-0.5" />
-                          <span className="text-xs">{gerant}</span>
+                        <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
+                          <User className="w-5 h-5 text-accent flex-shrink-0" />
+                          <span className="text-sm font-medium">{gerant}</span>
                         </div>
                       )}
 
