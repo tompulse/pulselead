@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Lightbulb, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare, Building2, Calendar, DollarSign, User, Navigation, Map as MapIconLucide } from "lucide-react";
+import { Lightbulb, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare, Building2, Calendar, DollarSign, User, Navigation, Map as MapIconLucide, Route } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
@@ -25,6 +25,7 @@ import { InteractionTimeline } from "@/components/dashboard/InteractionTimeline"
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { ActivitiesView } from "@/components/dashboard/ActivitiesView";
 import { TourneesView } from "@/components/dashboard/TourneesView";
+import { TourneeOptimizationPanel } from "@/components/dashboard/TourneeOptimizationPanel";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -39,6 +40,9 @@ const Dashboard = () => {
   const [mobileLeadStatus, setMobileLeadStatus] = useState<any>(null);
   const [mobileActiveTab, setMobileActiveTab] = useState<'info' | 'crm'>('info');
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [tourneeSelectionMode, setTourneeSelectionMode] = useState(false);
+  const [selectedEntreprisesForTournee, setSelectedEntreprisesForTournee] = useState<any[]>([]);
+  const [tournees, setTournees] = useState<any[]>([]);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -211,6 +215,28 @@ const Dashboard = () => {
     });
   };
 
+  const fetchTournees = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('tournees')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date_planifiee', { ascending: false });
+
+      if (error) throw error;
+      setTournees(data || []);
+    } catch (error) {
+      console.error('Error fetching tournees:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTournees();
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -281,18 +307,20 @@ const Dashboard = () => {
                   <Calendar className="w-3.5 h-3.5 mr-1" />
                   <span className="hidden sm:inline">Activités</span>
                 </Button>
-                <Button
-                  variant={view === "tournees" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => {
-                    setView("tournees");
-                    trackViewChange("tournees");
-                  }}
-                  className={`h-7 px-2 text-xs ${view === "tournees" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
-                >
-                  <Navigation className="w-3.5 h-3.5 mr-1" />
-                  <span className="hidden sm:inline">Tournées</span>
-                </Button>
+                {tournees.length > 0 && (
+                  <Button
+                    variant={view === "tournees" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => {
+                      setView("tournees");
+                      trackViewChange("tournees");
+                    }}
+                    className={`h-7 px-2 text-xs ${view === "tournees" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+                  >
+                    <Navigation className="w-3.5 h-3.5 mr-1" />
+                    <span className="hidden sm:inline">Tournées</span>
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -398,11 +426,51 @@ const Dashboard = () => {
                 </Card>
               </div>
             ) : view === "map" ? (
-              <MapView 
-                key="map-view"
-                filters={filters} 
-                onEntrepriseSelect={handleEntrepriseSelect}
-              />
+              <div className="h-full flex gap-4 overflow-hidden">
+                <MapView 
+                  key="map-view"
+                  filters={filters} 
+                  onEntrepriseSelect={handleEntrepriseSelect}
+                  selectionMode={tourneeSelectionMode}
+                  selectedEntreprises={selectedEntreprisesForTournee}
+                  onToggleSelection={(entreprise) => {
+                    setSelectedEntreprisesForTournee(prev => {
+                      const exists = prev.find(e => e.id === entreprise.id);
+                      if (exists) {
+                        return prev.filter(e => e.id !== entreprise.id);
+                      }
+                      return [...prev, entreprise];
+                    });
+                  }}
+                />
+                {tourneeSelectionMode && (
+                  <div className="w-80 flex-shrink-0">
+                    <TourneeOptimizationPanel
+                      selectedEntreprises={selectedEntreprisesForTournee}
+                      onClose={() => {
+                        setTourneeSelectionMode(false);
+                        setSelectedEntreprisesForTournee([]);
+                      }}
+                      onSave={() => {
+                        fetchTournees();
+                        setTourneeSelectionMode(false);
+                        setSelectedEntreprisesForTournee([]);
+                      }}
+                    />
+                  </div>
+                )}
+                {!tourneeSelectionMode && (
+                  <div className="absolute bottom-6 right-6 z-10">
+                    <Button
+                      onClick={() => setTourneeSelectionMode(true)}
+                      className="shadow-lg"
+                    >
+                      <Route className="w-4 h-4 mr-2" />
+                      Créer une tournée
+                    </Button>
+                  </div>
+                )}
+              </div>
             ) : view === "list" ? (
               <div className="h-full">
                 <ListView 
