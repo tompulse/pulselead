@@ -320,10 +320,17 @@ export const MapView = ({
 
   // Afficher l'itinéraire de la tournée
   useEffect(() => {
-    if (!map.current || !mapboxgl || !mapboxLoaded || !tourneeRoute) return;
+    if (!map.current || !mapboxgl || !mapboxLoaded || !tourneeRoute || !tourneeRoute.entreprises.length) return;
+
+    // Supprimer les marqueurs existants immédiatement
+    markersRef.current.forEach(m => m.remove());
+    markersRef.current = [];
 
     const setupTourneeDisplay = () => {
-      if (!map.current || !map.current.isStyleLoaded()) return;
+      if (!map.current || !map.current.isStyleLoaded()) {
+        setTimeout(setupTourneeDisplay, 100);
+        return;
+      }
 
       // Supprimer les couches précédentes si elles existent
       if (map.current.getLayer('tournee-route')) {
@@ -373,14 +380,9 @@ export const MapView = ({
         }
       });
 
-      // Supprimer les marqueurs existants
-      markersRef.current.forEach(m => m.remove());
-      markersRef.current = [];
-
       // Ajouter le marqueur de départ si présent
       if (tourneeRoute.pointDepartLat && tourneeRoute.pointDepartLng) {
         const startEl = document.createElement('div');
-        startEl.className = 'start-marker';
         startEl.innerHTML = `
           <div style="
             width: 40px;
@@ -410,7 +412,6 @@ export const MapView = ({
       // Ajouter les marqueurs numérotés pour chaque arrêt
       tourneeRoute.entreprises.forEach((entreprise, index) => {
         const el = document.createElement('div');
-        el.className = 'numbered-marker';
         el.innerHTML = `
           <div style="
             width: 36px;
@@ -447,20 +448,17 @@ export const MapView = ({
         markersRef.current.push(marker);
       });
 
-      // Ajuster la vue pour montrer toute la route
-      if (coordinates.length > 0) {
-        const bounds = new mapboxgl.LngLatBounds();
-        coordinates.forEach(coord => bounds.extend(coord));
-        map.current.fitBounds(bounds, { padding: 80, duration: 800 });
-      }
+      // Ajuster la vue pour montrer toute la route avec un délai
+      setTimeout(() => {
+        if (coordinates.length > 0 && map.current) {
+          const bounds = new mapboxgl.LngLatBounds();
+          coordinates.forEach(coord => bounds.extend(coord));
+          map.current.fitBounds(bounds, { padding: isMobile ? 60 : 100, duration: 1000, maxZoom: 14 });
+        }
+      }, 200);
     };
 
-    // Attendre que le style soit chargé
-    if (map.current.isStyleLoaded()) {
-      setupTourneeDisplay();
-    } else {
-      map.current.once('style.load', setupTourneeDisplay);
-    }
+    setupTourneeDisplay();
 
     return () => {
       if (map.current?.getLayer('tournee-route')) {
@@ -469,8 +467,10 @@ export const MapView = ({
       if (map.current?.getSource('tournee-route')) {
         map.current.removeSource('tournee-route');
       }
+      markersRef.current.forEach(m => m.remove());
+      markersRef.current = [];
     };
-  }, [tourneeRoute, mapboxgl, mapboxLoaded]);
+  }, [tourneeRoute?.entreprises, tourneeRoute?.pointDepartLat, tourneeRoute?.pointDepartLng, mapboxgl, mapboxLoaded, isMobile]);
 
   return (
     <>

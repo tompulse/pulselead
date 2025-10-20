@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { useToast } from "@/hooks/use-toast";
 import { MapView } from "./MapView";
 import {
@@ -178,8 +178,8 @@ export const TourneeRouteDisplay = ({
         </CardHeader>
         
         <CardContent className="flex-1 flex flex-col gap-3 p-4 overflow-hidden">
-          {/* Liste scrollable simple */}
-          <ScrollArea className="flex-1 -mx-2 px-2">
+          {/* Liste simple avec scroll automatique si nécessaire */}
+          <div className="flex-1 overflow-y-auto -mx-2 px-2">
             <div className="space-y-1.5">
               {entreprises.map((entreprise, index) => (
                 <div
@@ -198,7 +198,7 @@ export const TourneeRouteDisplay = ({
                 </div>
               ))}
             </div>
-          </ScrollArea>
+          </div>
 
           {/* Bouton fixe en bas */}
           <Button 
