@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 
 interface CRMSidePanelProps {
   entreprise: {
@@ -30,6 +31,16 @@ interface CRMSidePanelProps {
 
 export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
   const [leadStatus, setLeadStatus] = useState<any>(null);
+  const [interactions, setInteractions] = useState<{
+    hasAppel: boolean;
+    hasVisite: boolean;
+    hasRdv: boolean;
+  }>({
+    hasAppel: false,
+    hasVisite: false,
+    hasRdv: false,
+  });
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!entreprise) return;
@@ -49,7 +60,127 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
       .eq('user_id', user.id)
       .single();
 
+    const { data: interactionsData } = await supabase
+      .from('lead_interactions')
+      .select('type')
+      .eq('entreprise_id', entreprise.id)
+      .eq('user_id', user.id);
+
     setLeadStatus(statusData);
+    
+    // Update interaction states
+    const hasAppel = interactionsData?.some(i => i.type === 'appel') || false;
+    const hasVisite = interactionsData?.some(i => i.type === 'visite') || false;
+    const hasRdv = interactionsData?.some(i => i.type === 'rdv') || false;
+    
+    setInteractions({
+      hasAppel,
+      hasVisite,
+      hasRdv,
+    });
+  };
+
+  const handleCRMAction = async (actionType: 'appeler' | 'visite' | 'rdv') => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || !entreprise) return;
+
+    const actionTypeMapping: Record<string, 'hasAppel' | 'hasVisite' | 'hasRdv'> = {
+      appeler: 'hasAppel',
+      visite: 'hasVisite',
+      rdv: 'hasRdv'
+    };
+
+    const hasAction = interactions[actionTypeMapping[actionType]];
+
+    // If action already exists, delete it (toggle off)
+    if (hasAction) {
+      const interactionTypes: Record<string, 'appel' | 'visite' | 'rdv'> = {
+        appeler: 'appel',
+        visite: 'visite',
+        rdv: 'rdv'
+      };
+
+      const { data: existingInteractions } = await supabase
+        .from('lead_interactions')
+        .select('id')
+        .eq('entreprise_id', entreprise.id)
+        .eq('user_id', user.id)
+        .eq('type', interactionTypes[actionType])
+        .limit(1);
+
+      if (existingInteractions && existingInteractions.length > 0) {
+        await supabase
+          .from('lead_interactions')
+          .delete()
+          .eq('id', existingInteractions[0].id);
+
+        // Update local state immediately
+        setInteractions(prev => ({
+          ...prev,
+          [actionTypeMapping[actionType]]: false,
+        }));
+
+        const actionEmojis = {
+          appeler: '📞',
+          visite: '🚗',
+          rdv: '📅',
+        };
+
+        toast({
+          title: `${actionEmojis[actionType]} Action supprimée`,
+          description: `L'action a été retirée pour cette entreprise`,
+        });
+
+        return;
+      }
+    }
+
+    // Otherwise, add the action (toggle on)
+    const actionLabels = {
+      appeler: 'Appel planifié',
+      visite: 'Visite planifiée',
+      rdv: 'Rendez-vous confirmé',
+    };
+
+    const interactionTypes: Record<string, 'appel' | 'visite' | 'rdv'> = {
+      appeler: 'appel',
+      visite: 'visite',
+      rdv: 'rdv',
+    };
+
+    try {
+      await supabase.from('lead_interactions').insert([{
+        entreprise_id: entreprise.id,
+        user_id: user.id,
+        type: interactionTypes[actionType],
+        statut: 'en_cours',
+        notes: actionLabels[actionType]
+      }]);
+
+      // Update local state immediately
+      setInteractions(prev => ({
+        ...prev,
+        [actionTypeMapping[actionType]]: true,
+      }));
+
+      const actionEmojis = {
+        appeler: '📞',
+        visite: '🚗',
+        rdv: '📅',
+      };
+
+      toast({
+        title: `${actionEmojis[actionType]} ${actionLabels[actionType]} !`,
+        description: `L'action a été enregistrée pour cette entreprise`,
+      });
+    } catch (error) {
+      console.error('Error adding CRM action:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'enregistrer l'action",
+        variant: "destructive"
+      });
+    }
   };
 
   if (!entreprise) return null;
@@ -75,106 +206,79 @@ export const CRMSidePanel = ({ entreprise, onClose }: CRMSidePanelProps) => {
 
   return (
     <div className="w-[400px] bg-background border-l border-accent/20 flex flex-col h-full shadow-2xl">
-      {/* Header with gradient */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent" />
-        <div className="relative p-6 border-b border-accent/20">
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex-1 pr-2">
-              <h3 className="font-bold text-xl gradient-text">{entreprise.nom}</h3>
+      {/* Header with optimized design */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-navy-deep via-navy-darker to-black-deep border-b border-cyan-electric/20">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-cyan-electric/10 via-transparent to-transparent" />
+        <div className="relative p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-2xl gradient-text mb-2 line-clamp-2 leading-tight">
+                {entreprise.nom}
+              </h3>
+              {leadStatus && (
+                <LeadStatusBadge 
+                  statut={leadStatus.statut_actuel} 
+                  probabilite={leadStatus.probabilite}
+                />
+              )}
             </div>
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-all shadow-sm border border-transparent hover:border-destructive/20"
+              className="h-9 w-9 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-all shadow-lg border border-transparent hover:border-destructive/30 flex-shrink-0"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" />
             </Button>
           </div>
-          {leadStatus && (
-            <div className="flex items-center gap-2">
-              <LeadStatusBadge 
-                statut={leadStatus.statut_actuel} 
-                probabilite={leadStatus.probabilite}
-              />
-            </div>
-          )}
         </div>
       </div>
 
       {/* Content */}
       <ScrollArea className="flex-1">
         <div className="p-6 space-y-4">
-          {/* Quick Actions - 3 buttons */}
+          {/* Quick Actions - 3 toggle buttons */}
           <div className="grid grid-cols-3 gap-2">
             <Button
               variant="outline"
               size="lg"
-              onClick={async () => {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) return;
-                
-                await supabase.from('lead_interactions').insert([{
-                  entreprise_id: entreprise.id,
-                  user_id: user.id,
-                  type: 'appel',
-                  statut: 'en_cours',
-                  notes: 'Appel planifié'
-                }]);
-                
-                fetchCRMData();
-              }}
-              className="h-16 flex flex-col items-center justify-center gap-1.5 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-all group relative overflow-hidden shadow-sm"
+              onClick={() => handleCRMAction('appeler')}
+              className={`h-16 flex flex-col items-center justify-center gap-1.5 transition-all group relative overflow-hidden shadow-sm ${
+                interactions.hasAppel
+                  ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                  : 'border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500'
+              }`}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/5 to-blue-500/0 group-hover:from-blue-500/10 group-hover:to-blue-500/20 transition-all" />
-              <Phone className="h-5 w-5 text-blue-500 group-hover:scale-110 transition-transform relative z-10" />
+              <Phone className={`h-5 w-5 text-blue-500 group-hover:scale-110 transition-transform relative z-10 ${interactions.hasAppel ? 'scale-110' : ''}`} />
               <span className="text-xs font-medium relative z-10">Appeler</span>
             </Button>
             <Button
               variant="outline"
               size="lg"
-              onClick={async () => {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) return;
-                
-                await supabase.from('lead_interactions').insert([{
-                  entreprise_id: entreprise.id,
-                  user_id: user.id,
-                  type: 'visite',
-                  statut: 'en_cours',
-                  notes: 'Visite planifiée'
-                }]);
-                
-                fetchCRMData();
-              }}
-              className="h-16 flex flex-col items-center justify-center gap-1.5 border-green-500/30 hover:bg-green-500/10 hover:border-green-500 transition-all group relative overflow-hidden shadow-sm"
+              onClick={() => handleCRMAction('visite')}
+              className={`h-16 flex flex-col items-center justify-center gap-1.5 transition-all group relative overflow-hidden shadow-sm ${
+                interactions.hasVisite
+                  ? 'bg-green-500/20 border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.3)]'
+                  : 'border-green-500/30 hover:bg-green-500/10 hover:border-green-500'
+              }`}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 via-green-500/5 to-green-500/0 group-hover:from-green-500/10 group-hover:to-green-500/20 transition-all" />
-              <MapPin className="h-5 w-5 text-green-500 group-hover:scale-110 transition-transform relative z-10" />
+              <MapPin className={`h-5 w-5 text-green-500 group-hover:scale-110 transition-transform relative z-10 ${interactions.hasVisite ? 'scale-110' : ''}`} />
               <span className="text-xs font-medium relative z-10">Visiter</span>
             </Button>
             <Button
               variant="outline"
               size="lg"
-              onClick={async () => {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) return;
-                
-                await supabase.from('lead_interactions').insert([{
-                  entreprise_id: entreprise.id,
-                  user_id: user.id,
-                  type: 'rdv',
-                  statut: 'en_cours',
-                  notes: 'Rendez-vous confirmé'
-                }]);
-                
-                fetchCRMData();
-              }}
-              className="h-16 flex flex-col items-center justify-center gap-1.5 border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500 transition-all group relative overflow-hidden shadow-sm"
+              onClick={() => handleCRMAction('rdv')}
+              className={`h-16 flex flex-col items-center justify-center gap-1.5 transition-all group relative overflow-hidden shadow-sm ${
+                interactions.hasRdv
+                  ? 'bg-purple-500/20 border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.3)]'
+                  : 'border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500'
+              }`}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/5 to-purple-500/0 group-hover:from-purple-500/10 group-hover:to-purple-500/20 transition-all" />
-              <Calendar className="h-5 w-5 text-purple-500 group-hover:scale-110 transition-transform relative z-10" />
+              <Calendar className={`h-5 w-5 text-purple-500 group-hover:scale-110 transition-transform relative z-10 ${interactions.hasRdv ? 'scale-110' : ''}`} />
               <span className="text-xs font-medium relative z-10">RDV</span>
             </Button>
           </div>
