@@ -1,4 +1,3 @@
-import { DailyActionsWidget } from "./DailyActionsWidget";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, Target, Phone, MapPin, Calendar, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -85,48 +84,64 @@ export const ActivitiesView = ({ userId, onEntrepriseClick }: ActivitiesViewProp
   }, [userId]);
 
   return (
-    <div className="h-full flex flex-col gap-4 p-4 md:p-6 overflow-y-auto">
-      {/* Quick Stats Bar - Clickable */}
-      <div className="grid grid-cols-3 gap-3">
-        <div 
-          className="glass-card p-3 rounded-lg border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer"
-          onClick={() => handleCardClick('appel')}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <Phone className="h-4 w-4 text-blue-500" />
-            <span className="text-xs text-muted-foreground">Appels</span>
-          </div>
-          <div className="text-2xl font-bold text-blue-500">{loading ? "..." : stats.weekCalls}</div>
-          <p className="text-[10px] text-muted-foreground mt-1">Cliquer pour voir</p>
+    <div className="h-full flex items-center justify-center p-4 md:p-6">
+      <div className="w-full max-w-4xl">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold gradient-text mb-2">Mes Activités</h2>
+          <p className="text-muted-foreground">Suivez vos actions commerciales</p>
         </div>
 
-        <div 
-          className="glass-card p-3 rounded-lg border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer"
-          onClick={() => handleCardClick('visite')}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <MapPin className="h-4 w-4 text-green-500" />
-            <span className="text-xs text-muted-foreground">Visites</span>
+        {/* Quick Stats Bar - Clickable & Centered */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div 
+            className="glass-card p-6 rounded-xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer transform hover:scale-105"
+            onClick={() => handleCardClick('appel')}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="p-4 bg-blue-500/10 rounded-full mb-4">
+                <Phone className="h-8 w-8 text-blue-500" />
+              </div>
+              <span className="text-sm text-muted-foreground mb-2">Appels cette semaine</span>
+              <div className="text-4xl font-bold text-blue-500 mb-2">
+                {loading ? "..." : stats.weekCalls}
+              </div>
+              <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
+            </div>
           </div>
-          <div className="text-2xl font-bold text-green-500">{loading ? "..." : stats.weekVisits}</div>
-          <p className="text-[10px] text-muted-foreground mt-1">Cliquer pour voir</p>
-        </div>
 
-        <div 
-          className="glass-card p-3 rounded-lg border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all cursor-pointer"
-          onClick={() => handleCardClick('rdv')}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <Calendar className="h-4 w-4 text-purple-500" />
-            <span className="text-xs text-muted-foreground">RDV</span>
+          <div 
+            className="glass-card p-6 rounded-xl border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer transform hover:scale-105"
+            onClick={() => handleCardClick('visite')}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="p-4 bg-green-500/10 rounded-full mb-4">
+                <MapPin className="h-8 w-8 text-green-500" />
+              </div>
+              <span className="text-sm text-muted-foreground mb-2">Visites cette semaine</span>
+              <div className="text-4xl font-bold text-green-500 mb-2">
+                {loading ? "..." : stats.weekVisits}
+              </div>
+              <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
+            </div>
           </div>
-          <div className="text-2xl font-bold text-purple-500">{loading ? "..." : stats.weekMeetings}</div>
-          <p className="text-[10px] text-muted-foreground mt-1">Cliquer pour voir</p>
+
+          <div 
+            className="glass-card p-6 rounded-xl border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all cursor-pointer transform hover:scale-105"
+            onClick={() => handleCardClick('rdv')}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="p-4 bg-purple-500/10 rounded-full mb-4">
+                <Calendar className="h-8 w-8 text-purple-500" />
+              </div>
+              <span className="text-sm text-muted-foreground mb-2">RDV cette semaine</span>
+              <div className="text-4xl font-bold text-purple-500 mb-2">
+                {loading ? "..." : stats.weekMeetings}
+              </div>
+              <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Actions Today - Full Width, Priority */}
-      <DailyActionsWidget userId={userId} onEntrepriseClick={onEntrepriseClick} />
 
       {/* Interactions Dialog */}
       <InteractionsDialog
