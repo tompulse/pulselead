@@ -326,22 +326,22 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
 
                     <div className="space-y-2 mb-4 flex-1 min-h-0">
                       {categoryInfo.label && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Briefcase className="w-3.5 h-3.5 flex-shrink-0" />
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <Briefcase className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                           <span className="line-clamp-1">{categoryInfo.emoji} {categoryInfo.label}</span>
                         </div>
                       )}
                       
                       {fullAddress && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                           <span className="line-clamp-2">{fullAddress}</span>
                         </div>
                       )}
                       
                       {gerant && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <User className="w-3.5 h-3.5 flex-shrink-0" />
+                        <div className="flex items-center gap-2 text-sm text-foreground/70">
+                          <User className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                           <span className="line-clamp-1">{gerant}</span>
                         </div>
                       )}
