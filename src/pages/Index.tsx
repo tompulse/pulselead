@@ -351,23 +351,23 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Suivi des interactions</span>
+                  <span className="text-foreground">Suivi des interactions CRM</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Export Excel simple</span>
+                  <span className="text-foreground">Données officielles vérifiées</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Alertes SMS en temps réel</span>
+                  <span className="text-muted-foreground/60">Fiche contact dirigeant</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Enrichissement des données</span>
+                  <span className="text-muted-foreground/60">Filtres avancés & scoring</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Accès API</span>
+                  <span className="text-muted-foreground/60">Dashboard analytique IA</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -409,11 +409,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Alertes SMS instantanées</strong> à chaque création</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Enrichissement automatique</strong> (emails, téléphones)</span>
+                  <span className="text-foreground"><strong>Fiche contact dirigeant</strong> complète</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -421,11 +417,15 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground"><strong>Accès API</strong> pour automatisation complète</span>
+                  <span className="text-foreground"><strong>Export Excel</strong> multi-formats</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
                   <span className="text-foreground">Dashboard analytique & prévisions IA</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground">Historique complet des créations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
@@ -435,7 +435,6 @@ const Index = () => {
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-lg shadow-cyan-electric/30" size="lg">
                 Démarrer l'essai gratuit 14 jours
               </Button>
-              <p className="text-xs text-center text-muted-foreground">Sans engagement • Sans CB</p>
             </div>
 
             {/* Plan Enterprise */}
@@ -473,7 +472,11 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">Webhooks & intégrations personnalisées</span>
+                  <span className="text-foreground">Alertes & notifications personnalisées</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground">Formation & onboarding dédié</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
