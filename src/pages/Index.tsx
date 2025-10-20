@@ -655,13 +655,18 @@ const Index = () => {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               <Button 
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onClick={() => {
+                  const contactSection = document.querySelector('#contact');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
                 size="lg"
                 variant="outline"
                 className="border-2 border-cyan-electric/50 text-foreground hover:bg-cyan-electric/10 hover:border-cyan-electric min-w-[220px] h-12"
               >
                 <Calendar className="w-5 h-5 mr-2" />
-                Voir la démo
+                Prendre rendez-vous
               </Button>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-sm text-muted-foreground">
