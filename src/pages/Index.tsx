@@ -417,15 +417,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">📊 <strong>Export Excel</strong> multi-formats</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
                   <span className="text-foreground">🤖 Dashboard analytique & prévisions IA</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground">📈 Historique complet des créations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
