@@ -8,7 +8,7 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCorners }
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Building2, TrendingUp, TrendingDown, Mail, Phone, Calendar } from "lucide-react";
+import { Building2, TrendingUp, TrendingDown, Mail, Phone, Calendar, Inbox, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Lead {
@@ -134,9 +134,20 @@ const PipelineColumn = ({
       <CardContent className="flex-1 overflow-hidden p-3 pt-0">
         <ScrollArea className="h-full pr-2">
           <SortableContext items={leads.map(l => l.entreprise_id)} strategy={verticalListSortingStrategy}>
-            {leads.map((lead) => (
-              <LeadCard key={lead.entreprise_id} lead={lead} onSelect={onSelect} />
-            ))}
+            {leads.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-48 text-center px-2">
+                <div className={`p-3 rounded-full ${stage.color} bg-opacity-10 mb-3`}>
+                  <Inbox className={`w-8 h-8 ${stage.color.replace('bg-', 'text-')}`} />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Aucun lead pour le moment
+                </p>
+              </div>
+            ) : (
+              leads.map((lead) => (
+                <LeadCard key={lead.entreprise_id} lead={lead} onSelect={onSelect} />
+              ))
+            )}
           </SortableContext>
         </ScrollArea>
       </CardContent>
@@ -291,8 +302,25 @@ export const PipelineKanban = ({ onLeadSelect }: { onLeadSelect?: (entrepriseId:
     );
   }
 
+  const hasLeads = leads.length > 0;
+
   return (
     <div className="h-full p-4">
+      {!hasLeads && (
+        <div className="flex flex-col items-center justify-center mb-8 space-y-4 animate-fade-in">
+          <div className="p-6 rounded-full bg-gradient-to-br from-accent/20 to-cyan-glow/10">
+            <Sparkles className="w-12 h-12 text-accent" />
+          </div>
+          <div className="text-center space-y-2">
+            <h3 className="text-xl font-bold gradient-text">Votre pipeline est prêt !</h3>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Commencez par ajouter vos premiers prospects dans la section Prospects,<br />
+              puis assignez-leur un statut pour les voir apparaître ici.
+            </p>
+          </div>
+        </div>
+      )}
+      
       <DndContext
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}
