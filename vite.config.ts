@@ -11,6 +11,8 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   build: {
+    // Enable source maps for debugging
+    sourcemap: true,
     // Enable CSS code splitting for better caching
     cssCodeSplit: true,
     // Optimize chunk size
