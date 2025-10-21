@@ -166,17 +166,17 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-6">
-      <Card className="w-full max-w-4xl max-h-[85vh] overflow-hidden p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-4">
+      <Card className="w-full max-w-3xl max-h-[80vh] overflow-auto custom-scrollbar p-6">
         {/* Progress Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-3xl font-bold">Bienvenue sur LUMA 👋</h2>
-            <span className="text-base font-semibold text-muted-foreground">
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-2xl font-bold">Bienvenue sur LUMA 👋</h2>
+            <span className="text-sm font-semibold text-muted-foreground">
               Étape {currentStep}/3
             </span>
           </div>
-          <Progress value={progress} className="h-2.5" />
+          <Progress value={progress} className="h-2" />
         </div>
 
         {/* Step 1: Welcome & Value Proposition */}
@@ -187,68 +187,68 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                 <Sparkles className="h-4 w-4" />
                 Offre de lancement
               </div>
-              <h3 className="text-3xl font-bold">
+              <h3 className="text-2xl font-bold">
                 Transformez votre prospection terrain
               </h3>
-              <p className="text-base text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-sm text-muted-foreground max-w-xl mx-auto">
                 LUMA vous aide à trouver, qualifier et suivre vos prospects 
                 tout en optimisant vos déplacements
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
-              <Card className="p-6 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 border-accent/30">
-                <div className="h-14 w-14 rounded-xl bg-accent/20 flex items-center justify-center mx-auto mb-4">
-                  <Target className="h-7 w-7 text-accent" />
+            <div className="grid md:grid-cols-3 gap-4 mb-4">
+              <Card className="p-4 text-center border-accent/30">
+                <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                  <Target className="h-5 w-5 text-accent" />
                 </div>
-                <h4 className="text-lg font-bold mb-2">+40% de conversion</h4>
-                <p className="text-sm text-muted-foreground">
+                <h4 className="text-base font-bold mb-1">+40% de conversion</h4>
+                <p className="text-xs text-muted-foreground">
                   Ciblez les bons prospects au bon moment
                 </p>
               </Card>
 
-              <Card className="p-6 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 border-accent/30">
-                <div className="h-14 w-14 rounded-xl bg-accent/20 flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="h-7 w-7 text-accent" />
+              <Card className="p-4 text-center border-accent/30">
+                <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                  <MapPin className="h-5 w-5 text-accent" />
                 </div>
-                <h4 className="text-lg font-bold mb-2">-30% de temps route</h4>
-                <p className="text-sm text-muted-foreground">
+                <h4 className="text-base font-bold mb-1">-30% de temps route</h4>
+                <p className="text-xs text-muted-foreground">
                   Optimisez automatiquement vos tournées
                 </p>
               </Card>
 
-              <Card className="p-6 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 border-accent/30">
-                <div className="h-14 w-14 rounded-xl bg-accent/20 flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="h-7 w-7 text-accent" />
+              <Card className="p-4 text-center border-accent/30">
+                <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                  <TrendingUp className="h-5 w-5 text-accent" />
                 </div>
-                <h4 className="text-lg font-bold mb-2">8h/semaine économisées</h4>
-                <p className="text-sm text-muted-foreground">
+                <h4 className="text-base font-bold mb-1">8h/semaine économisées</h4>
+                <p className="text-xs text-muted-foreground">
                   Automatisez votre suivi commercial
                 </p>
               </Card>
             </div>
 
-            <div className="space-y-5">
-              <p className="text-center text-xl font-semibold mb-4">
+            <div className="space-y-4">
+              <p className="text-center text-lg font-semibold mb-2">
                 Comment souhaitez-vous commencer ?
               </p>
               
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-4">
                 <Card
-                  className={`p-8 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border-2 ${
+                  className={`p-6 cursor-pointer transition-all border ${
                     selectedOption === 'demo' 
-                      ? 'ring-2 ring-accent shadow-xl border-accent' 
+                      ? 'ring-2 ring-accent border-accent' 
                       : 'border-accent/30 hover:border-accent/50'
                   }`}
                   onClick={() => handleDemoChoice('demo')}
                 >
-                  <div className="flex flex-col gap-5">
-                    <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-accent/30 flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="h-6 w-6 text-accent" />
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-accent/30 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="h-5 w-5 text-accent" />
                       </div>
                       <div>
-                        <h4 className="text-xl font-bold mb-1">Mode Découverte</h4>
+                        <h4 className="text-lg font-bold mb-0.5">Mode Découverte</h4>
                         <p className="text-sm text-muted-foreground">
                           Explorez LUMA avec 10 entreprises fictives pré-chargées
                         </p>
@@ -272,20 +272,20 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                 </Card>
 
                 <Card
-                  className={`p-8 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border-2 ${
+                  className={`p-6 cursor-pointer transition-all border ${
                     selectedOption === 'real' 
-                      ? 'ring-2 ring-accent shadow-xl border-accent' 
+                      ? 'ring-2 ring-accent border-accent' 
                       : 'border-accent/30 hover:border-accent/50'
                   }`}
                   onClick={() => handleDemoChoice('real')}
                 >
-                  <div className="flex flex-col gap-5">
-                    <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-accent/30 flex items-center justify-center flex-shrink-0">
-                        <Rocket className="h-6 w-6 text-accent" />
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-accent/30 flex items-center justify-center flex-shrink-0">
+                        <Rocket className="h-5 w-5 text-accent" />
                       </div>
                       <div>
-                        <h4 className="text-xl font-bold mb-1">Mode Production</h4>
+                        <h4 className="text-lg font-bold mb-0.5">Mode Production</h4>
                         <p className="text-sm text-muted-foreground">
                           Configurez votre territoire et commencez immédiatement
                         </p>
