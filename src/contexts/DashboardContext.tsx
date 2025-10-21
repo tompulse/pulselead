@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 interface DashboardContextType {
-  view: 'prospects' | 'tournees' | 'suivi' | 'pipeline';
-  setView: (view: 'prospects' | 'tournees' | 'suivi' | 'pipeline') => void;
+  view: 'prospects' | 'tournees' | 'analytics';
+  setView: (view: 'prospects' | 'tournees' | 'analytics') => void;
   selectedEntreprise: any | null;
   setSelectedEntreprise: (entreprise: any | null) => void;
   crmPanelOpen: boolean;
@@ -12,7 +12,7 @@ interface DashboardContextType {
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export const DashboardProvider = ({ children }: { children: ReactNode }) => {
-  const [view, setView] = useState<'prospects' | 'tournees' | 'suivi' | 'pipeline'>('prospects');
+  const [view, setView] = useState<'prospects' | 'tournees' | 'analytics'>('prospects');
   const [selectedEntreprise, setSelectedEntreprise] = useState<any | null>(null);
   const [crmPanelOpen, setCrmPanelOpen] = useState(false);
 
