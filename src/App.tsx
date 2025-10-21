@@ -13,6 +13,7 @@ import MentionsLegales from "./pages/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import CGV from "./pages/CGV";
 import CGU from "./pages/CGU";
+import SecuritySettings from "./pages/SecuritySettings";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,11 @@ const App = () => (
           <Route path="/confidentialite" element={<PolitiqueConfidentialite />} />
           <Route path="/cgv" element={<CGV />} />
           <Route path="/cgu" element={<CGU />} />
+          <Route path="/security" element={
+            <ProtectedRoute>
+              <SecuritySettings />
+            </ProtectedRoute>
+          } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Error404 />} />
         </Routes>

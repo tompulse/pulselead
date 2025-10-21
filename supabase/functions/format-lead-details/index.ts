@@ -9,6 +9,26 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Rate limiting check
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader) {
+      const response = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/rate-limiter`, {
+        method: "POST",
+        headers: {
+          "Authorization": authHeader,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ endpoint: 'format-lead-details' }),
+      });
+
+      if (!response.ok && response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     const { administration, activite } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
