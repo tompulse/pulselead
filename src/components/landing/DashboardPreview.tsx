@@ -65,13 +65,13 @@ const DashboardPreview = () => {
                     </div>
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
-                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0" aria-label="Appeler">
                       <Phone className="w-3 h-3 text-cyan-electric" />
                     </Button>
-                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0" aria-label="Envoyer un email">
                       <Mail className="w-3 h-3 text-cyan-electric" />
                     </Button>
-                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0" aria-label="Planifier un rendez-vous">
                       <Calendar className="w-3 h-3 text-cyan-electric" />
                     </Button>
                   </div>
