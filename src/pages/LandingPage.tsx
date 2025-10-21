@@ -804,16 +804,16 @@ const Index = () => {
               <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Légal</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#mentions-legales" className="hover:text-accent transition-colors">Mentions légales</a>
+                  <a href="/mentions-legales" className="hover:text-accent transition-colors">Mentions légales</a>
                 </li>
                 <li>
-                  <a href="#confidentialite" className="hover:text-accent transition-colors">Politique de confidentialité</a>
+                  <a href="/confidentialite" className="hover:text-accent transition-colors">Politique de confidentialité</a>
                 </li>
                 <li>
-                  <a href="#cgv" className="hover:text-accent transition-colors">CGV</a>
+                  <a href="/cgv" className="hover:text-accent transition-colors">CGV</a>
                 </li>
                 <li>
-                  <a href="#cgu" className="hover:text-accent transition-colors">CGU</a>
+                  <a href="/cgu" className="hover:text-accent transition-colors">CGU</a>
                 </li>
               </ul>
             </div>
@@ -821,11 +821,8 @@ const Index = () => {
 
           {/* Copyright */}
           <div className="pt-8 border-t border-accent/10">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex justify-center items-center text-sm text-muted-foreground">
               <p>© 2025 LUMA. Tous droits réservés.</p>
-              <p className="text-xs">
-                LUMA - SAS au capital de 10 000€ - RCS Paris
-              </p>
             </div>
           </div>
         </div>

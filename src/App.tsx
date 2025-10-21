@@ -9,6 +9,10 @@ import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Error404 from "./pages/Error404";
+import MentionsLegales from "./pages/MentionsLegales";
+import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
+import CGV from "./pages/CGV";
+import CGU from "./pages/CGU";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +31,10 @@ const App = () => (
               <Dashboard />
             </ProtectedRoute>
           } />
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/confidentialite" element={<PolitiqueConfidentialite />} />
+          <Route path="/cgv" element={<CGV />} />
+          <Route path="/cgu" element={<CGU />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Error404 />} />
         </Routes>
