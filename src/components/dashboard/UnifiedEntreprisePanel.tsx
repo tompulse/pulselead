@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useCRMActions } from "@/hooks/useCRMActions";
-import { QuickActionButtons } from "./QuickActionButtons";
+import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { PhoneButton } from "./PhoneButton";
@@ -201,18 +201,12 @@ export const UnifiedEntreprisePanel = ({
               <>
                 <div className="space-y-3">
                   <h3 className="text-sm font-semibold text-accent">Actions rapides</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button 
-                      size="sm" 
-                      variant={interactions.some(i => i.type === 'appel') ? "default" : "outline"}
-                      onClick={() => interactions.some(i => i.type === 'appel') ? removeInteraction('appel') : addInteraction({ type: 'appel' })}
-                      disabled={isUpdating}
-                    >
-                      Appel
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant={interactions.some(i => i.type === 'visite') ? "default" : "outline"}
+                  <UnifiedCRMActions
+                    entrepriseId={entreprise.id}
+                    onInteractionAdded={() => {}}
+                    mode="dialog"
+                    size="lg"
+                  />
                       onClick={() => interactions.some(i => i.type === 'visite') ? removeInteraction('visite') : addInteraction({ type: 'visite' })}
                       disabled={isUpdating}
                     >

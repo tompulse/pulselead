@@ -9,8 +9,7 @@ import { Sidebar } from "@/components/dashboard/Sidebar";
 import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprisePanel";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
-import { MapViewContainer } from "@/views/MapViewContainer";
-import { ListViewContainer } from "@/views/ListViewContainer";
+import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { ActivitiesViewContainer } from "@/views/ActivitiesViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { PipelineViewContainer } from "@/views/PipelineViewContainer";
@@ -165,7 +164,7 @@ const DashboardContent = () => {
     return <FilterOnboarding onComplete={handleOnboardingComplete} />;
   }
 
-  const showSidebar = !['activities', 'tournees', 'pipeline', 'analytics'].includes(view);
+  const showSidebar = view === 'prospects';
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
@@ -225,15 +224,8 @@ const DashboardContent = () => {
         )}
 
         <main className="flex-1 overflow-hidden">
-          {view === 'map' && userId && (
-            <MapViewContainer 
-              filters={filters}
-              userId={userId}
-              onEntrepriseSelect={handleEntrepriseSelect}
-            />
-          )}
-          {view === 'list' && userId && (
-            <ListViewContainer 
+          {view === 'prospects' && userId && (
+            <ProspectsViewContainer 
               filters={filters}
               userId={userId}
               onEntrepriseSelect={handleEntrepriseSelect}

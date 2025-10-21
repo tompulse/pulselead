@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, Mail, MapPin, Calendar, MessageSquare } from "lucide-react";
+import { Phone, MapPin, Calendar, StickyNote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -22,15 +22,19 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-interface QuickActionButtonsProps {
+interface UnifiedCRMActionsProps {
   entrepriseId: string;
   onInteractionAdded: () => void;
+  mode?: 'inline' | 'dialog';
+  size?: 'sm' | 'lg';
 }
 
-export const QuickActionButtons = ({
+export const UnifiedCRMActions = ({
   entrepriseId,
   onInteractionAdded,
-}: QuickActionButtonsProps) => {
+  mode = 'dialog',
+  size = 'lg',
+}: UnifiedCRMActionsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<'appel' | 'email' | 'visite' | 'rdv' | 'autre'>('appel');
   const [notes, setNotes] = useState('');
@@ -88,7 +92,6 @@ export const QuickActionButtons = ({
 
       const message = actionMessages[selectedType] || actionMessages.autre;
 
-      // Show success with next action suggestion
       if (prochaine_action) {
         toast({
           title: message.title,
@@ -132,43 +135,59 @@ export const QuickActionButtons = ({
     autre: ['Faire un suivi', 'Vérifier la disponibilité', 'Relancer'],
   };
 
+  const buttonHeight = size === 'lg' ? 'h-20' : 'h-16';
+  const iconSize = size === 'lg' ? 'h-6 w-6' : 'h-5 w-5';
+  const textSize = size === 'lg' ? 'text-sm' : 'text-xs';
+
   return (
     <>
-      <div className="grid grid-cols-3 gap-3">
+      <div className={`grid ${mode === 'inline' ? 'grid-cols-4' : 'grid-cols-3'} gap-3`}>
         <Button
           variant="outline"
-          size="lg"
+          size={size}
           onClick={() => handleQuickAction('appel')}
-          className="h-20 flex flex-col items-center justify-center gap-2 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-all group relative overflow-hidden shadow-sm"
+          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-all group relative overflow-hidden shadow-sm`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/5 to-blue-500/0 group-hover:from-blue-500/10 group-hover:to-blue-500/20 transition-all" />
-          <Phone className="h-6 w-6 text-blue-500 group-hover:scale-110 transition-transform relative z-10" />
-          <span className="text-sm font-medium relative z-10">Appeler</span>
+          <Phone className={`${iconSize} text-blue-500 group-hover:scale-110 transition-transform relative z-10`} />
+          <span className={`${textSize} font-medium relative z-10`}>Appeler</span>
         </Button>
         <Button
           variant="outline"
-          size="lg"
+          size={size}
           onClick={() => handleQuickAction('visite')}
-          className="h-20 flex flex-col items-center justify-center gap-2 border-green-500/30 hover:bg-green-500/10 hover:border-green-500 transition-all group relative overflow-hidden shadow-sm"
+          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-green-500/30 hover:bg-green-500/10 hover:border-green-500 transition-all group relative overflow-hidden shadow-sm`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 via-green-500/5 to-green-500/0 group-hover:from-green-500/10 group-hover:to-green-500/20 transition-all" />
-          <MapPin className="h-6 w-6 text-green-500 group-hover:scale-110 transition-transform relative z-10" />
-          <span className="text-sm font-medium relative z-10">Visiter</span>
+          <MapPin className={`${iconSize} text-green-500 group-hover:scale-110 transition-transform relative z-10`} />
+          <span className={`${textSize} font-medium relative z-10`}>Visiter</span>
         </Button>
         <Button
           variant="outline"
-          size="lg"
+          size={size}
           onClick={() => handleQuickAction('rdv')}
-          className="h-20 flex flex-col items-center justify-center gap-2 border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500 transition-all group relative overflow-hidden shadow-sm"
+          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500 transition-all group relative overflow-hidden shadow-sm`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/5 to-purple-500/0 group-hover:from-purple-500/10 group-hover:to-purple-500/20 transition-all" />
-          <Calendar className="h-6 w-6 text-purple-500 group-hover:scale-110 transition-transform relative z-10" />
-          <span className="text-sm font-medium relative z-10">RDV</span>
+          <Calendar className={`${iconSize} text-purple-500 group-hover:scale-110 transition-transform relative z-10`} />
+          <span className={`${textSize} font-medium relative z-10`}>RDV</span>
         </Button>
+        {mode === 'inline' && (
+          <Button
+            variant="outline"
+            size={size}
+            onClick={() => handleQuickAction('autre')}
+            className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500 transition-all group relative overflow-hidden shadow-sm`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/5 to-amber-500/0 group-hover:from-amber-500/10 group-hover:to-amber-500/20 transition-all" />
+            <StickyNote className={`${iconSize} text-amber-500 group-hover:scale-110 transition-transform relative z-10`} />
+            <span className={`${textSize} font-medium relative z-10`}>Note</span>
+          </Button>
+        )}
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} modal>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto z-[9999] bg-background"  onClick={(e) => e.stopPropagation()}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto z-[9999] bg-background" onClick={(e) => e.stopPropagation()}>
           <DialogHeader>
             <DialogTitle>Enregistrer une interaction</DialogTitle>
             <DialogDescription>

@@ -5,8 +5,8 @@ import { SyncButton } from "./SyncButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardHeaderProps {
-  view: 'map' | 'list' | 'activities' | 'tournees' | 'pipeline' | 'analytics';
-  onViewChange: (view: 'map' | 'list' | 'activities' | 'tournees' | 'pipeline' | 'analytics') => void;
+  view: 'prospects' | 'activities' | 'tournees' | 'pipeline' | 'analytics';
+  onViewChange: (view: 'prospects' | 'activities' | 'tournees' | 'pipeline' | 'analytics') => void;
   isAdmin: boolean;
   onLogout: () => void;
 }
@@ -34,22 +34,13 @@ export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: Dashb
           {/* View Toggle */}
           <div className="flex gap-1 p-0.5 bg-card/50 rounded-lg border border-accent/20">
             <Button
-              variant={view === "map" ? "default" : "ghost"}
+              variant={view === "prospects" ? "default" : "ghost"}
               size="sm"
-              onClick={() => handleViewChange("map")}
-              className={`h-7 px-2 text-xs ${view === "map" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+              onClick={() => handleViewChange("prospects")}
+              className={`h-7 px-2 text-xs ${view === "prospects" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
             >
               <MapIcon className="w-3.5 h-3.5 mr-1" />
-              <span className="hidden sm:inline">Carte</span>
-            </Button>
-            <Button
-              variant={view === "list" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => handleViewChange("list")}
-              className={`h-7 px-2 text-xs ${view === "list" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
-            >
-              <List className="w-3.5 h-3.5 mr-1" />
-              <span className="hidden sm:inline">Liste</span>
+              <span className="hidden sm:inline">Prospects</span>
             </Button>
             <Button
               variant={view === "activities" ? "default" : "ghost"}
