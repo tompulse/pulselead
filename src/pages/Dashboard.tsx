@@ -26,6 +26,7 @@ const DashboardContent = () => {
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -219,9 +220,14 @@ const DashboardContent = () => {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden min-h-0">
+      <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
         {!isMobile && showSidebar && (
-          <Sidebar filters={filters} setFilters={setFilters} />
+          <Sidebar 
+            filters={filters} 
+            setFilters={setFilters}
+            isCollapsed={sidebarCollapsed}
+            setIsCollapsed={setSidebarCollapsed}
+          />
         )}
 
         <main className="flex-1 overflow-hidden min-h-0">
