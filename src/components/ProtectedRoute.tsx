@@ -33,7 +33,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="relative inline-block">
-            <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse-slow"></div>
+            <div className="absolute inset-0 bg-accent/30 blur-xl"></div>
             <Lightbulb className="w-12 h-12 text-accent mx-auto relative" />
           </div>
           <p className="text-muted-foreground text-base">Vérification...</p>
