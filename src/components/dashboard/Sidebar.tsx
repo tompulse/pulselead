@@ -110,16 +110,14 @@ export const Sidebar = ({
               </div>
               {!isCollapsed && <h2 className="text-sm font-bold gradient-text">Filtres</h2>}
             </div>
-            {setIsCollapsed && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="h-7 w-7 p-0 hover:bg-accent/10"
-              >
-                <ChevronDown className={`h-4 w-4 text-accent transition-transform duration-300 ${isCollapsed ? 'rotate-90' : 'rotate-0'}`} />
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCollapsed && setIsCollapsed(!isCollapsed)}
+              className="h-7 w-7 p-0 hover:bg-accent/10"
+            >
+              <ChevronDown className={`h-4 w-4 text-accent transition-transform duration-300 ${isCollapsed ? '-rotate-90' : 'rotate-0'}`} />
+            </Button>
           </div>
           
           {!isCollapsed && tourneeMode && onCreateTournee && (
