@@ -218,12 +218,12 @@ const DashboardContent = () => {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden min-h-0">
         {!isMobile && showSidebar && (
           <Sidebar filters={filters} setFilters={setFilters} />
         )}
 
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden min-h-0">
           {view === 'prospects' && userId && (
             <ProspectsViewContainer 
               filters={filters}

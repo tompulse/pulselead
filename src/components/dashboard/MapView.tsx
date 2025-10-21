@@ -73,6 +73,58 @@ export const MapView = ({
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const userMarkerRef = useRef<any>(null);
   const [geolocating, setGeolocating] = useState(false);
+  const [mapboxToken, setMapboxToken] = useState<string | null>(null);
+  const [tokenError, setTokenError] = useState(false);
+  const [tokenLoading, setTokenLoading] = useState(true);
+
+  // Fetch Mapbox token from backend
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        if (import.meta.env.DEV) {
+          console.log('[MapView] Fetching Mapbox token from backend...');
+        }
+        
+        // Check localStorage for temporary token first
+        const tempToken = localStorage.getItem('mapbox_temp_token');
+        if (tempToken) {
+          if (import.meta.env.DEV) {
+            console.log('[MapView] Using temporary token from localStorage ✅');
+          }
+          setMapboxToken(tempToken);
+          setTokenLoading(false);
+          return;
+        }
+
+        const { data, error } = await supabase.functions.invoke('get-mapbox-token');
+        
+        if (error) {
+          console.error('[MapView] Error fetching token:', error);
+          setTokenError(true);
+          setTokenLoading(false);
+          return;
+        }
+
+        if (data?.token) {
+          if (import.meta.env.DEV) {
+            console.log('[MapView] Token fetched successfully ✅');
+          }
+          setMapboxToken(data.token);
+          setTokenError(false);
+        } else {
+          console.error('[MapView] No token in response');
+          setTokenError(true);
+        }
+      } catch (err) {
+        console.error('[MapView] Exception fetching token:', err);
+        setTokenError(true);
+      } finally {
+        setTokenLoading(false);
+      }
+    };
+
+    fetchToken();
+  }, []);
 
   // Fetch entreprises from Supabase with offline cache
   useEffect(() => {
@@ -189,9 +241,31 @@ export const MapView = ({
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainer.current || !mapboxgl || !mapboxLoaded) return;
+    if (!mapContainer.current || !mapboxgl || !mapboxLoaded || !mapboxToken) return;
 
-    mapboxgl.accessToken = "pk.eyJ1IjoicmF3c3MiLCJhIjoiY21nd3FuN3plMHF6YjJrc2JzMHU5enZqbCJ9.DW7r1fzAlHdCdlQatpAEuQ";
+    // Wait for container to have non-zero size
+    const rect = mapContainer.current.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      if (import.meta.env.DEV) {
+        console.warn('[MapView] Container has zero size, waiting...', { width: rect.width, height: rect.height });
+      }
+      // Retry after a short delay
+      const retryTimer = setTimeout(() => {
+        if (mapContainer.current) {
+          const newRect = mapContainer.current.getBoundingClientRect();
+          if (import.meta.env.DEV) {
+            console.log('[MapView] Retry container size:', { width: newRect.width, height: newRect.height });
+          }
+        }
+      }, 200);
+      return () => clearTimeout(retryTimer);
+    }
+
+    if (import.meta.env.DEV) {
+      console.log('[MapView] Initializing map with container size:', { width: rect.width, height: rect.height });
+    }
+
+    mapboxgl.accessToken = mapboxToken;
 
     // Determine initial center and zoom
     let initialCenter: [number, number] = [2.3522, 46.2276];
@@ -214,6 +288,32 @@ export const MapView = ({
 
     map.current = new mapboxgl.Map(mapOptions);
 
+    // Add error handler for Mapbox errors
+    map.current.on('error', (e: any) => {
+      console.error('[MapView] Mapbox error:', e);
+      if (e.error?.message?.includes('401') || e.error?.message?.includes('token')) {
+        toast.error('Token Mapbox invalide ou expiré');
+        setTokenError(true);
+      } else {
+        toast.error('Erreur de chargement de la carte');
+      }
+    });
+
+    map.current.on('load', () => {
+      if (import.meta.env.DEV) {
+        console.log('[MapView] Map loaded successfully ✅');
+      }
+      // Force resize after map is fully loaded
+      setTimeout(() => {
+        try { 
+          map.current?.resize();
+          if (import.meta.env.DEV) {
+            console.log('[MapView] Map resized after load');
+          }
+        } catch {}
+      }, 100);
+    });
+
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     // Force a resize shortly after mount to correct initial canvas size
@@ -234,7 +334,7 @@ export const MapView = ({
       map.current?.remove();
       map.current = null;
     };
-  }, [mapboxgl, mapboxLoaded, isMobile]);
+  }, [mapboxgl, mapboxLoaded, isMobile, mapboxToken]);
 
   // Ensure proper sizing when container resizes (e.g., tab/view toggles)
   useEffect(() => {
@@ -623,14 +723,54 @@ export const MapView = ({
   return (
     <>
       <div className={`${fullHeight ? 'h-full' : 'h-[calc(100vh-140px)]'} rounded-2xl overflow-hidden shadow-2xl border border-accent/20 relative`}>
-        {!mapboxLoaded ? (
-          // Skeleton loader pendant le chargement de Mapbox
+        {tokenLoading || !mapboxLoaded ? (
+          // Skeleton loader pendant le chargement
           <div className="absolute inset-0 bg-card">
             <Skeleton className="w-full h-full" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center space-y-3">
                 <div className="animate-spin w-10 h-10 border-3 border-accent border-t-transparent rounded-full mx-auto" />
-                <p className="text-sm text-muted-foreground font-medium">Initialisation de la carte...</p>
+                <p className="text-sm text-muted-foreground font-medium">
+                  {tokenLoading ? 'Récupération du token...' : 'Initialisation de la carte...'}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : tokenError ? (
+          // Error overlay when token is missing or invalid
+          <div className="absolute inset-0 bg-card flex items-center justify-center">
+            <div className="text-center space-y-4 max-w-md mx-auto p-6">
+              <div className="inline-flex p-4 bg-destructive/10 rounded-2xl">
+                <MapPin className="w-16 h-16 text-destructive" />
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-2xl font-bold">Token Mapbox manquant</h3>
+                <p className="text-muted-foreground">
+                  Le token Mapbox n'est pas configuré ou est invalide.
+                  <br />
+                  Contactez l'administrateur pour configurer MAPBOX_PUBLIC_TOKEN.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">Ou utilisez un token temporaire :</p>
+                <input
+                  type="text"
+                  placeholder="Collez votre token Mapbox ici"
+                  className="w-full px-3 py-2 border border-accent/50 rounded-lg bg-background text-sm"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const input = e.currentTarget;
+                      const token = input.value.trim();
+                      if (token) {
+                        localStorage.setItem('mapbox_temp_token', token);
+                        setMapboxToken(token);
+                        setTokenError(false);
+                        toast.success('Token temporaire enregistré');
+                      }
+                    }
+                  }}
+                />
+                <p className="text-xs text-muted-foreground">Appuyez sur Entrée pour valider</p>
               </div>
             </div>
           </div>
@@ -639,10 +779,10 @@ export const MapView = ({
         )}
         
         {/* Bouton de géolocalisation */}
-        {mapboxLoaded && !tourneeRoute && (
+        {mapboxLoaded && !tourneeRoute && !tokenError && (
           <Button
             onClick={handleLocateUser}
-            disabled={geolocating}
+            disabled={geolocating || !map.current}
             size="icon"
             className="absolute top-4 left-4 z-10 bg-background/90 backdrop-blur-sm hover:bg-background shadow-lg"
             title="Me localiser"
