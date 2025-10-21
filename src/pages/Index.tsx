@@ -5,6 +5,7 @@ import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, T
 import DashboardPreview from "@/components/landing/DashboardPreview";
 import { trackCTAClick } from "@/utils/analytics";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { BookingDialog } from "@/components/landing/BookingDialog";
 import {
   Accordion,
   AccordionContent,
@@ -16,6 +17,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [selectedRegion, setSelectedRegion] = React.useState<'1' | 'plusieurs' | 'france'>('plusieurs');
   const [billingPeriod, setBillingPeriod] = React.useState<'monthly' | 'quarterly' | 'yearly'>('yearly');
+  const [bookingOpen, setBookingOpen] = React.useState(false);
   
   // Animations au scroll - effets plus percutants
   const socialProof = useScrollAnimation({ threshold: 0.1 });
@@ -762,7 +764,7 @@ const Index = () => {
                 <ArrowRight className="w-6 h-6 ml-2" />
               </Button>
               <Button 
-                onClick={() => window.open('https://app.iclosed.io/e/tomiolov/demo', '_blank')}
+                onClick={() => setBookingOpen(true)}
                 size="lg"
                 variant="outline"
                 className="border-2 border-accent/50 text-foreground hover:bg-accent/10 hover:border-accent min-w-[240px] h-14 text-lg font-bold rounded-full"
@@ -881,6 +883,9 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Booking Dialog */}
+      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} />
     </div>
   );
 };
