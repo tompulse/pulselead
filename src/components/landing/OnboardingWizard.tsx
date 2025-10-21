@@ -66,39 +66,56 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
     
     if (choice === 'demo') {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Utilisateur non connecté",
+          variant: "destructive",
+        });
+        return;
+      }
 
       toast({
         title: "Chargement des données de démo...",
-        description: "Veuillez patienter",
+        description: "Veuillez patienter quelques secondes",
       });
 
-      const result = await generateDemoData(user.id);
-      
-      if (result.success) {
-        toast({
-          title: "Données de démo chargées",
-          description: "10 entreprises fictives ont été ajoutées à votre compte",
-        });
+      try {
+        const result = await generateDemoData(user.id);
         
-        await supabase
-          .from('user_onboarding_progress')
-          .upsert({
-            user_id: user.id,
-            current_step: 3,
-            completed_steps: [1,2,3],
-            demo_data_loaded: true,
-            completed_at: new Date().toISOString(),
+        if (result.success) {
+          // Update onboarding progress
+          await supabase
+            .from('user_onboarding_progress')
+            .upsert({
+              user_id: user.id,
+              current_step: 3,
+              completed_steps: [1,2,3],
+              demo_data_loaded: true,
+              completed_at: new Date().toISOString(),
+            });
+
+          toast({
+            title: "C'est parti ! 🚀",
+            description: "Vos données de démo sont prêtes",
           });
 
-        localStorage.setItem('luma_onboarding_complete', 'true');
-
-        // Fermer l'onboarding et montrer directement le dashboard
-        onComplete();
-      } else {
+          // Close onboarding and show dashboard
+          setTimeout(() => {
+            onComplete();
+          }, 500);
+        } else {
+          toast({
+            title: "Erreur",
+            description: "Impossible de charger les données de démo",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error('Demo data error:', error);
         toast({
           title: "Erreur",
-          description: "Impossible de charger les données de démo",
+          description: "Une erreur s'est produite",
           variant: "destructive",
         });
       }
@@ -109,7 +126,6 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
           .from('user_onboarding_progress')
           .upsert({ user_id: user.id, current_step: 2 });
       }
-      // Demander l'onboarding filtre en plein écran via Dashboard
       localStorage.setItem('luma_launch_filter_onboarding', 'true');
       onComplete();
     }

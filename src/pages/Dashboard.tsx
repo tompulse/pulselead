@@ -156,7 +156,10 @@ const DashboardContent = () => {
   }
 
   if (showWizard) {
-    return <OnboardingWizard onComplete={() => setShowWizard(false)} />;
+    return <OnboardingWizard onComplete={() => {
+      setShowWizard(false);
+      setLoading(false);
+    }} />;
   }
 
   if (showOnboarding) {
