@@ -4,43 +4,43 @@ export const FeaturesSection = () => {
   const features = [
     {
       icon: MapPin,
-      title: "Cartographie interactive",
-      description: "Visualisez toutes les nouvelles entreprises sur une carte intuitive avec zoom et filtres géographiques par département."
+      title: "Tournées optimisées",
+      description: "Planifiez vos visites terrain avec des itinéraires intelligents. GPS intégré et optimisation automatique pour gagner du temps."
     },
     {
       icon: Target,
-      title: "Filtres intelligents",
-      description: "Affinez vos recherches par secteur d'activité, localisation, date de création et forme juridique."
+      title: "CRM intégré",
+      description: "Gérez vos prospects et clients. Historique complet, relances automatiques, pipeline commercial clair et actionable."
     },
     {
       icon: TrendingUp,
-      title: "Données officielles",
-      description: "Accédez aux informations vérifiées : SIRET, adresse complète, activité NAF, capital social."
+      title: "Suivi d'activité",
+      description: "Suivez vos performances : appels, visites, RDV, conversions. Tableaux de bord et statistiques en temps réel."
     },
     {
       icon: Zap,
-      title: "IA de formatage",
-      description: "Les données brutes sont automatiquement formatées et enrichies par notre intelligence artificielle."
+      title: "Nouvelles entreprises",
+      description: "Accédez aux créations d'entreprises de votre secteur. Données INPI & INSEE, filtres avancés par zone et activité."
     },
     {
       icon: Clock,
-      title: "Mise à jour continue",
-      description: "Synchronisation automatique avec les bases de données officielles pour des informations toujours à jour."
+      title: "Gestion du temps",
+      description: "Organisez votre agenda, programmez vos relances et ne manquez plus aucune opportunité commerciale."
     },
     {
       icon: Shield,
-      title: "Sécurité maximale",
-      description: "Vos données et recherches sont protégées avec un chiffrement de niveau bancaire."
+      title: "Données sécurisées",
+      description: "Vos données commerciales protégées avec un chiffrement de niveau bancaire. Hébergement en France."
     },
     {
       icon: Users,
-      title: "Multi-utilisateurs",
-      description: "Gérez votre équipe commerciale avec des accès différenciés et un suivi des performances."
+      title: "Mode équipe",
+      description: "Gérez votre équipe commerciale avec des accès différenciés et un suivi des performances de chacun."
     },
     {
       icon: BarChart,
-      title: "Tableaux de bord",
-      description: "Analysez vos données avec des statistiques détaillées et des graphiques interactifs."
+      title: "Reporting complet",
+      description: "Analysez votre activité avec des statistiques détaillées et des graphiques interactifs pour piloter vos résultats."
     }
   ];
 
@@ -48,12 +48,12 @@ export const FeaturesSection = () => {
     <section className="container mx-auto px-6 py-32">
       <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
         <h2 className="text-4xl md:text-5xl font-bold">
-          Maîtrisez votre territoire
+          Toutes les fonctionnalités
           <br />
-          <span className="gradient-text">et développez votre portefeuille</span>
+          <span className="gradient-text">pour développer votre activité</span>
         </h2>
         <p className="text-xl text-muted-foreground">
-          Des outils conçus pour les commerciaux qui veulent structurer leur prospection et connaître leur secteur
+          Un outil complet pensé pour les commerciaux terrain qui veulent être plus efficaces
         </p>
       </div>
 

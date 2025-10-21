@@ -23,13 +23,13 @@ export const CTASection = () => {
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-            Ne laissez plus vos concurrents
+            Transformez votre façon
             <br />
-            <span className="gradient-text">prospecter avant vous</span>
+            <span className="gradient-text">de vendre sur le terrain</span>
           </h2>
           
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-            Structurez votre prospection et soyez le premier à contacter les nouvelles entreprises de votre secteur
+            Gagnez du temps, optimisez vos déplacements et développez votre chiffre d'affaires
           </p>
 
           {/* Benefits */}
@@ -56,7 +56,7 @@ export const CTASection = () => {
           </div>
 
           <p className="text-sm text-muted-foreground pt-4">
-            Toutes les <span className="text-accent font-semibold">créations d'entreprises</span> en France accessibles
+            L'outil <span className="text-accent font-semibold">tout-en-un</span> des commerciaux qui performent
           </p>
         </div>
       </div>

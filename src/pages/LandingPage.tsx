@@ -93,25 +93,23 @@ const Index = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
               </span>
-              <span className="text-sm text-accent font-bold">Données en temps réel</span>
+              <span className="text-sm text-accent font-bold">Tout-en-un pour commerciaux terrain</span>
             </div>
             
-            {/* Titre principal - focus sur le bénéfice unique */}
+            {/* Titre principal - focus développement commercial */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight">
-              <span className="text-foreground">Prospectez les nouvelles</span>
+              <span className="text-foreground">L'outil ultime pour</span>
               <br />
-              <span className="gradient-text">entreprises</span>
-              <span className="text-foreground"> avant vos</span>
+              <span className="gradient-text">développer votre activité</span>
               <br />
-              <span className="text-foreground">concurrents</span>
+              <span className="text-foreground">commerciale terrain</span>
             </h1>
             
             {/* Sous-titre clair et orienté bénéfice */}
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium">
-              Accédez aux créations d'entreprises en <span className="text-accent font-semibold">temps réel</span>, 
-              organisez vos tournées terrain et pilotez votre activité commerciale.
+              Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold">prospectez efficacement</span>.
               <br className="hidden sm:block" />
-              <span className="text-foreground/90 text-base sm:text-lg mt-2 block">Tout en un seul outil.</span>
+              <span className="text-foreground/90 text-base sm:text-lg mt-2 block">Tout centralisé dans une seule plateforme.</span>
             </p>
             
             {/* CTA principal unique et puissant */}
@@ -164,19 +162,19 @@ const Index = () => {
       >
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
-            {/* Trust indicators crédibles - focus sur les faits vérifiables */}
+            {/* Trust indicators - focus outil commercial */}
             <div className={`flex items-center gap-4 group transition-all duration-700 ${
               socialProof.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
             }`} style={{ transitionDelay: '200ms' }}>
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
                 <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <Shield className="w-7 h-7 text-accent" />
+                  <Target className="w-7 h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">Sources officielles</div>
-                <div className="text-sm text-muted-foreground font-medium">INPI & INSEE vérifiées</div>
+                <div className="text-xl font-bold text-foreground">Tournées optimisées</div>
+                <div className="text-sm text-muted-foreground font-medium">GPS & itinéraires intelligents</div>
               </div>
             </div>
 
@@ -186,12 +184,12 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
                 <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <Zap className="w-7 h-7 text-accent" />
+                  <TrendingUp className="w-7 h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">Temps réel</div>
-                <div className="text-sm text-muted-foreground font-medium">Mise à jour continue</div>
+                <div className="text-xl font-bold text-foreground">CRM complet</div>
+                <div className="text-sm text-muted-foreground font-medium">Pipeline & suivi client</div>
               </div>
             </div>
 
@@ -201,12 +199,12 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
                 <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <Target className="w-7 h-7 text-accent" />
+                  <Zap className="w-7 h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">France entière</div>
-                <div className="text-sm text-muted-foreground font-medium">Tous les départements</div>
+                <div className="text-xl font-bold text-foreground">Données temps réel</div>
+                <div className="text-sm text-muted-foreground font-medium">Nouvelles entreprises</div>
               </div>
             </div>
           </div>
@@ -287,10 +285,10 @@ const Index = () => {
               <span className="text-sm font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              LUMA <span className="gradient-text">centralise</span> votre prospection
+              LUMA <span className="gradient-text">booste</span> votre efficacité commerciale
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Toutes vos données au même endroit : nouvelles entreprises, tournées, CRM et suivi commercial.
+              Toutes les fonctionnalités dont vous avez besoin : tournées, CRM, prospection et données terrain.
             </p>
           </div>
 
@@ -327,9 +325,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Sparkles className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Données en temps réel</h3>
+              <h3 className="text-xl font-bold text-foreground">Prospection intelligente</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Prospectez les créations d'entreprises dès leur apparition. Soyez le premier à les contacter.
+                Accédez aux nouvelles entreprises de votre secteur + filtres avancés pour cibler vos prospects idéaux.
               </p>
             </div>
           </div>

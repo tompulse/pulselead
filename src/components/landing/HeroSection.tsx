@@ -20,23 +20,22 @@ export const HeroSection = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
           </span>
-          <span className="text-sm text-accent font-bold tracking-wide">Données en temps réel • Sources officielles</span>
+          <span className="text-sm text-accent font-bold tracking-wide">L'outil tout-en-un des commerciaux terrain</span>
         </div>
         
-        {/* Main Headline - Focus sur le bénéfice unique */}
+        {/* Main Headline - Focus sur le développement commercial */}
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight">
-          Prospectez les nouvelles
+          Développez votre activité
           <br />
-          <span className="gradient-text inline-block">entreprises</span> avant vos
+          <span className="gradient-text inline-block">commerciale</span> avec
           <br />
-          concurrents
+          l'outil ultime du terrain
         </h1>
         
-        {/* Subheadline - Plus spécifique et orienté bénéfice */}
+        {/* Subheadline - Focus sur les bénéfices globaux */}
         <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          Accédez aux créations d'entreprises en <span className="text-accent font-semibold">temps réel</span>, 
-          organisez vos tournées et gérez votre pipeline commercial. 
-          <span className="block mt-2 text-accent/90">Tout en un seul outil.</span>
+          Organisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold">accédez aux nouvelles entreprises</span> de votre secteur.
+          <span className="block mt-2 text-foreground/90">Tout centralisé dans un seul outil.</span>
         </p>
 
         {/* CTA Principal unique et fort */}
@@ -72,27 +71,27 @@ export const HeroSection = () => {
           </button>
         </div>
 
-        {/* Trust badges avec sources officielles */}
+        {/* Trust badges - focus outil commercial */}
         <div className="flex flex-wrap items-center justify-center gap-6 pt-16 max-w-4xl mx-auto">
           <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-card/60 border border-accent/20">
-            <Shield className="w-5 h-5 text-accent" />
+            <Target className="w-5 h-5 text-accent" />
             <div className="text-left">
-              <div className="text-xs text-muted-foreground">Sources</div>
-              <div className="text-sm font-bold text-foreground">INPI • INSEE</div>
+              <div className="text-xs text-muted-foreground">Tournées</div>
+              <div className="text-sm font-bold text-foreground">Optimisées</div>
             </div>
           </div>
           <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-card/60 border border-accent/20">
             <Zap className="w-5 h-5 text-accent" />
             <div className="text-left">
-              <div className="text-xs text-muted-foreground">Mise à jour</div>
-              <div className="text-sm font-bold text-foreground">Temps réel</div>
+              <div className="text-xs text-muted-foreground">CRM</div>
+              <div className="text-sm font-bold text-foreground">Intégré</div>
             </div>
           </div>
           <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-card/60 border border-accent/20">
-            <Target className="w-5 h-5 text-accent" />
+            <Shield className="w-5 h-5 text-accent" />
             <div className="text-left">
-              <div className="text-xs text-muted-foreground">Couverture</div>
-              <div className="text-sm font-bold text-foreground">France entière</div>
+              <div className="text-xs text-muted-foreground">Données</div>
+              <div className="text-sm font-bold text-foreground">Officielles</div>
             </div>
           </div>
         </div>
