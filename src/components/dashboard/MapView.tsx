@@ -28,6 +28,7 @@ interface MapViewProps {
     pointDepartLat?: number;
     pointDepartLng?: number;
   };
+  fullHeight?: boolean;
 }
 
 interface Entreprise {
@@ -56,7 +57,8 @@ export const MapView = ({
   selectionMode = false,
   selectedEntreprises = [],
   onToggleSelection,
-  tourneeRoute
+  tourneeRoute,
+  fullHeight = false
 }: MapViewProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
@@ -600,7 +602,7 @@ export const MapView = ({
 
   return (
     <>
-      <div className="h-[calc(100vh-140px)] rounded-2xl overflow-hidden shadow-2xl border border-accent/20 relative">
+      <div className={`${fullHeight ? 'h-full' : 'h-[calc(100vh-140px)]'} rounded-2xl overflow-hidden shadow-2xl border border-accent/20 relative`}>
         {!mapboxLoaded ? (
           // Skeleton loader pendant le chargement de Mapbox
           <div className="absolute inset-0 bg-card">
