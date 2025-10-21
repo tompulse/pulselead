@@ -329,24 +329,24 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Résultats mesurables - En vert */}
-          <div className="glass-card p-10 max-w-4xl mx-auto border-cyan-electric/40 bg-gradient-to-br from-cyan-electric/10 to-transparent shadow-2xl shadow-cyan-electric/10">
-            <h3 className="text-2xl font-bold text-center mb-8 text-cyan-electric">Résultats constatés par nos utilisateurs</h3>
-            <div className="grid md:grid-cols-3 gap-10 text-center">
-              <div className="space-y-2">
-                <div className="text-5xl font-bold text-cyan-electric">6h/semaine</div>
-                <div className="text-lg text-foreground font-bold">Temps économisé</div>
-                <div className="text-sm text-muted-foreground font-medium">Moins d'admin, plus de vente</div>
+          {/* Résultats mesurables - En vert avec copywriting amélioré */}
+          <div className="glass-card p-10 md:p-12 max-w-5xl mx-auto border-cyan-electric/50 bg-gradient-to-br from-cyan-electric/15 via-cyan-electric/5 to-transparent shadow-2xl shadow-cyan-electric/20">
+            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10 text-cyan-electric">Ce que nos utilisateurs réalisent avec LUMA</h3>
+            <div className="grid md:grid-cols-3 gap-8 text-center">
+              <div className="space-y-3">
+                <div className="text-5xl md:text-6xl font-bold text-cyan-electric">6h/semaine</div>
+                <div className="text-lg md:text-xl text-foreground font-bold">Temps économisé</div>
+                <div className="text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre</div>
               </div>
-              <div className="space-y-2">
-                <div className="text-5xl font-bold text-cyan-electric">×2.5</div>
-                <div className="text-lg text-foreground font-bold">Rendez-vous obtenus</div>
-                <div className="text-sm text-muted-foreground font-medium">Grâce à une meilleure organisation</div>
+              <div className="space-y-3">
+                <div className="text-5xl md:text-6xl font-bold text-cyan-electric">×2.5</div>
+                <div className="text-lg md:text-xl text-foreground font-bold">Rendez-vous décrochés</div>
+                <div className="text-sm text-muted-foreground">Grâce à une organisation optimisée</div>
               </div>
-              <div className="space-y-2">
-                <div className="text-5xl font-bold text-cyan-electric">+40%</div>
-                <div className="text-lg text-foreground font-bold">Croissance CA</div>
-                <div className="text-sm text-muted-foreground font-medium">En 6 mois d'utilisation</div>
+              <div className="space-y-3">
+                <div className="text-5xl md:text-6xl font-bold text-cyan-electric">+40%</div>
+                <div className="text-lg md:text-xl text-foreground font-bold">Croissance du CA</div>
+                <div className="text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation</div>
               </div>
             </div>
           </div>
