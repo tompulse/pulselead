@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin } from "lucide-react";
+import { MapPin, Locate } from "lucide-react";
 import { categorizeActivity } from "@/utils/activityCategories";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { EntrepriseDetails } from "./EntrepriseDetails";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { offlineStorage } from "@/utils/offlineStorage";
 
 // Lazy load mapbox pour optimiser le chargement initial
 const loadMapbox = () => import("mapbox-gl");
@@ -66,12 +69,30 @@ export const MapView = ({
   const [selectedEntreprise, setSelectedEntreprise] = useState<Entreprise | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [mapboxgl, setMapboxgl] = useState<any>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const userMarkerRef = useRef<any>(null);
+  const [geolocating, setGeolocating] = useState(false);
 
-  // Fetch entreprises from Supabase
+  // Fetch entreprises from Supabase with offline cache
   useEffect(() => {
     const fetchEntreprises = async () => {
       setLoading(true);
       
+      const cacheKey = `entreprises_${JSON.stringify(filters)}`;
+      
+      // Essayer de charger depuis le cache d'abord
+      try {
+        const cachedData = await offlineStorage.get<Entreprise[]>(cacheKey);
+        if (cachedData) {
+          setEntreprises(cachedData);
+          setLoading(false);
+          // Continuer à charger les données fraîches en arrière-plan
+        }
+      } catch (error) {
+        console.error('Erreur de lecture du cache:', error);
+      }
+      
+      // Charger les données depuis Supabase
       let query = (supabase as any)
         .from("entreprises")
         .select("*")
@@ -87,7 +108,14 @@ export const MapView = ({
 
       if (error) {
         console.error("Error fetching entreprises:", error);
-        setEntreprises([]);
+        // Si on a des données en cache et qu'il y a une erreur réseau, utiliser le cache
+        const cachedData = await offlineStorage.get<Entreprise[]>(cacheKey);
+        if (cachedData) {
+          toast.info("Mode hors-ligne: affichage des données en cache");
+          setEntreprises(cachedData);
+        } else {
+          setEntreprises([]);
+        }
       } else {
         let filtered = data || [];
         
@@ -118,6 +146,13 @@ export const MapView = ({
         }
         
         setEntreprises(filtered);
+        
+        // Sauvegarder dans le cache
+        try {
+          await offlineStorage.set(cacheKey, filtered);
+        } catch (error) {
+          console.error('Erreur de sauvegarde du cache:', error);
+        }
       }
       setLoading(false);
     };
@@ -188,10 +223,76 @@ export const MapView = ({
     return () => {
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
+      userMarkerRef.current?.remove();
+      userMarkerRef.current = null;
       map.current?.remove();
       map.current = null;
     };
   }, [mapboxgl, mapboxLoaded, isMobile]);
+
+  // Géolocalisation utilisateur
+  const handleLocateUser = () => {
+    if (!map.current || !mapboxgl) return;
+
+    setGeolocating(true);
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const userPos: [number, number] = [longitude, latitude];
+          
+          setUserLocation(userPos);
+          
+          // Supprimer l'ancien marqueur utilisateur s'il existe
+          if (userMarkerRef.current) {
+            userMarkerRef.current.remove();
+          }
+
+          // Créer un marqueur personnalisé pour l'utilisateur
+          const el = document.createElement('div');
+          el.innerHTML = `
+            <div style="
+              width: 24px;
+              height: 24px;
+              background: #FF6B00;
+              border: 3px solid white;
+              border-radius: 50%;
+              box-shadow: 0 0 0 4px rgba(255,107,0,0.2), 0 2px 8px rgba(255,107,0,0.6);
+              animation: pulse 2s infinite;
+            "></div>
+          `;
+          
+          userMarkerRef.current = new mapboxgl.Marker({ element: el })
+            .setLngLat(userPos)
+            .addTo(map.current);
+
+          // Centrer la carte sur la position de l'utilisateur
+          map.current.flyTo({
+            center: userPos,
+            zoom: 12,
+            duration: 1500
+          });
+
+          setGeolocating(false);
+          toast.success("Position détectée");
+        },
+        (error) => {
+          setGeolocating(false);
+          console.error("Erreur de géolocalisation:", error);
+          toast.error("Impossible de détecter votre position");
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      setGeolocating(false);
+      toast.error("Géolocalisation non supportée");
+    }
+  };
 
   // Add markers when entreprises change (avec clustering optimisé)
   useEffect(() => {
@@ -514,6 +615,19 @@ export const MapView = ({
           </div>
         ) : (
           <div ref={mapContainer} className="absolute inset-0" />
+        )}
+        
+        {/* Bouton de géolocalisation */}
+        {mapboxLoaded && !tourneeRoute && (
+          <Button
+            onClick={handleLocateUser}
+            disabled={geolocating}
+            size="icon"
+            className="absolute top-4 left-4 z-10 bg-background/90 backdrop-blur-sm hover:bg-background shadow-lg"
+            title="Me localiser"
+          >
+            <Locate className={`h-4 w-4 ${geolocating ? 'animate-spin' : ''}`} />
+          </Button>
         )}
         
         {loading && mapboxLoaded && (
