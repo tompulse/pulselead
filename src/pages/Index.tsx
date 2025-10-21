@@ -241,7 +241,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-bold text-foreground">Outils dispersés</h3>
               <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                CRM sur un outil, tournées sur un autre, prospects ailleurs. Impossible de s'y retrouver efficacement.
+                Suivi commercial sur un outil, tournées sur un autre, prospects ailleurs. Impossible de s'y retrouver efficacement.
               </p>
             </div>
 
@@ -285,7 +285,7 @@ const Index = () => {
               LUMA <span className="gradient-text">centralise et simplifie</span> votre travail
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Un seul outil pour gérer vos prospects, optimiser vos tournées, suivre votre CRM et accéder aux nouvelles entreprises en temps réel.
+              Un seul outil pour gérer vos prospects, optimiser vos tournées terrain, piloter votre activité commerciale et accéder aux nouvelles entreprises en temps réel.
             </p>
           </div>
 
@@ -310,7 +310,7 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <TrendingUp className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">CRM intégré</h3>
+              <h3 className="text-xl font-bold text-foreground">Suivi commercial intégré</h3>
               <p className="text-sm text-muted-foreground leading-relaxed font-medium">
                 Suivez vos prospects, interactions et opportunités. Pipeline clair, historique complet, zéro oubli.
               </p>
@@ -428,7 +428,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">CRM intégré</span>
+                  <span className="text-foreground font-medium">Suivi commercial intégré</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
@@ -587,7 +587,7 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-base text-foreground leading-relaxed">
-                "Enfin un outil pensé pour les commerciaux terrain ! Tournées optimisées, CRM simple. J'ai doublé mes RDV."
+                "Enfin un outil pensé pour les commerciaux terrain ! Tournées optimisées, suivi commercial simple. J'ai doublé mes RDV."
               </p>
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
                 <span className="text-sm font-semibold text-cyan-electric">+100% de RDV</span>
@@ -680,7 +680,7 @@ const Index = () => {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
                 <p>L'essai gratuit de 7 jours vous donne accès à toutes les fonctionnalités de LUMA sans aucune limitation.</p>
-                <p>Vous pouvez créer vos tournées, gérer vos prospects, accéder aux données entreprises en temps réel et utiliser le CRM intégré. À la fin de l'essai, vous choisissez si vous souhaitez continuer avec un abonnement payant ou non.</p>
+                <p>Vous pouvez créer vos tournées, gérer vos prospects, accéder aux données entreprises en temps réel et utiliser les outils de suivi intégrés. À la fin de l'essai, vous choisissez si vous souhaitez continuer avec un abonnement payant ou non.</p>
               </AccordionContent>
             </AccordionItem>
 
