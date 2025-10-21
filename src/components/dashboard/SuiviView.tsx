@@ -223,72 +223,66 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
   ];
 
   return (
-    <div className="p-2 md:p-6 space-y-3 md:space-y-8 overflow-y-auto h-full custom-scrollbar">
-      {/* Header */}
-      <div className="text-center">
-        <h2 className="text-xl md:text-3xl font-bold gradient-text mb-1">Suivi & Performance</h2>
-        <p className="text-xs md:text-sm text-muted-foreground">Suivez vos actions et résultats</p>
-      </div>
-
+    <div className="p-2 md:p-4 space-y-2 md:space-y-4 overflow-hidden h-full flex flex-col">
       {/* Section 1: Mes Activités */}
-      <div className="space-y-2 md:space-y-4">
-        <h3 className="text-sm md:text-xl font-semibold gradient-text">Activités</h3>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+      <div className="space-y-2 shrink-0">
+        <h3 className="text-xs md:text-sm font-semibold gradient-text">Activités</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <div 
-            className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer"
+            className="glass-card p-2 md:p-4 rounded-lg border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('appel')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-2 md:p-4 bg-blue-500/10 rounded-full mb-2 md:mb-4">
-                <Phone className="h-5 w-5 md:h-8 md:w-8 text-blue-500" />
+              <div className="p-1.5 md:p-3 bg-blue-500/10 rounded-full mb-1 md:mb-2">
+                <Phone className="h-4 w-4 md:h-6 md:w-6 text-blue-500" />
               </div>
-              <span className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">Appels</span>
-              <div className="text-2xl md:text-4xl font-bold text-blue-500">
+              <span className="text-xs text-muted-foreground mb-0.5 md:mb-1">Appels</span>
+              <div className="text-xl md:text-3xl font-bold text-blue-500">
                 {activityStats.weekCalls}
               </div>
             </div>
           </div>
 
           <div 
-            className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer"
+            className="glass-card p-2 md:p-4 rounded-lg border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('visite')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-2 md:p-4 bg-green-500/10 rounded-full mb-2 md:mb-4">
-                <MapPin className="h-5 w-5 md:h-8 md:w-8 text-green-500" />
+              <div className="p-1.5 md:p-3 bg-green-500/10 rounded-full mb-1 md:mb-2">
+                <MapPin className="h-4 w-4 md:h-6 md:w-6 text-green-500" />
               </div>
-              <span className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">Visites</span>
-              <div className="text-2xl md:text-4xl font-bold text-green-500">
+              <span className="text-xs text-muted-foreground mb-0.5 md:mb-1">Visites</span>
+              <div className="text-xl md:text-3xl font-bold text-green-500">
                 {activityStats.weekVisits}
               </div>
             </div>
           </div>
 
           <div 
-            className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all cursor-pointer"
+            className="glass-card p-2 md:p-4 rounded-lg border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('rdv')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-2 md:p-4 bg-purple-500/10 rounded-full mb-2 md:mb-4">
-                <Calendar className="h-5 w-5 md:h-8 md:w-8 text-purple-500" />
+              <div className="p-1.5 md:p-3 bg-purple-500/10 rounded-full mb-1 md:mb-2">
+                <Calendar className="h-4 w-4 md:h-6 md:w-6 text-purple-500" />
               </div>
-              <span className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">RDV</span>
-              <div className="text-2xl md:text-4xl font-bold text-purple-500">
+              <span className="text-xs text-muted-foreground mb-0.5 md:mb-1">RDV</span>
+              <div className="text-xl md:text-3xl font-bold text-purple-500">
                 {activityStats.weekMeetings}
               </div>
             </div>
           </div>
 
           <div 
-            className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-orange-500/20 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/40 transition-all cursor-pointer"
+            className="glass-card p-2 md:p-4 rounded-lg border border-orange-500/20 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('a_revoir')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-2 md:p-4 bg-orange-500/10 rounded-full mb-2 md:mb-4">
-                <CheckCircle2 className="h-5 w-5 md:h-8 md:w-8 text-orange-500" />
+              <div className="p-1.5 md:p-3 bg-orange-500/10 rounded-full mb-1 md:mb-2">
+                <CheckCircle2 className="h-4 w-4 md:h-6 md:w-6 text-orange-500" />
               </div>
-              <span className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">À revoir</span>
-              <div className="text-2xl md:text-4xl font-bold text-orange-500">
+              <span className="text-xs text-muted-foreground mb-0.5 md:mb-1">À revoir</span>
+              <div className="text-xl md:text-3xl font-bold text-orange-500">
                 {activityStats.weekARevoir}
               </div>
             </div>
@@ -297,21 +291,21 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
       </div>
 
       {/* Section 2: Performance & Analytics */}
-      <div className="space-y-2 md:space-y-4">
-        <h3 className="text-sm md:text-xl font-semibold gradient-text">Performance</h3>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
+      <div className="space-y-2 flex-1 min-h-0">
+        <h3 className="text-xs md:text-sm font-semibold gradient-text">Performance</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {analyticsStats.map((stat, index) => (
             <Card key={index} className="glass-card border-accent/30 hover:border-accent/50 transition-all duration-300 hover-scale group">
-              <CardHeader className="flex flex-row items-center justify-between pb-1 md:pb-2 p-3 md:p-6">
-                <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
+              <CardHeader className="flex flex-row items-center justify-between pb-1 p-2 md:p-3">
+                <CardTitle className="text-xs font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <div className={`p-1.5 md:p-2 rounded-lg bg-gradient-to-br ${stat.gradient} group-hover:scale-110 transition-transform duration-300`}>
-                  <stat.icon className={`h-4 w-4 md:h-5 md:w-5 ${stat.color}`} />
+                <div className={`p-1 rounded-lg bg-gradient-to-br ${stat.gradient} group-hover:scale-110 transition-transform duration-300`}>
+                  <stat.icon className={`h-3 w-3 md:h-4 md:w-4 ${stat.color}`} />
                 </div>
               </CardHeader>
-              <CardContent className="p-3 md:p-6 pt-0">
-                <div className={`text-xl md:text-3xl font-bold ${stat.color}`}>{stat.value}</div>
+              <CardContent className="p-2 md:p-3 pt-0">
+                <div className={`text-lg md:text-2xl font-bold ${stat.color}`}>{stat.value}</div>
               </CardContent>
             </Card>
           ))}

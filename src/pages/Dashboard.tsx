@@ -11,7 +11,7 @@ import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
 import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
-import { AnalyticsViewContainer } from "@/views/AnalyticsViewContainer";
+import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -235,8 +235,8 @@ const DashboardContent = () => {
           {view === 'tournees' && userId && (
             <TourneesViewContainer userId={userId} />
           )}
-          {view === 'analytics' && userId && (
-            <AnalyticsViewContainer 
+          {view === 'crm' && userId && (
+            <CRMViewContainer 
               userId={userId}
               onEntrepriseSelect={(id) => {
                 const entreprise = { id };

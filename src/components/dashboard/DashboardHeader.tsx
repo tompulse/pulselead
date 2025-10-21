@@ -5,8 +5,8 @@ import { SyncButton } from "./SyncButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardHeaderProps {
-  view: 'prospects' | 'tournees' | 'analytics';
-  onViewChange: (view: 'prospects' | 'tournees' | 'analytics') => void;
+  view: 'prospects' | 'tournees' | 'crm';
+  onViewChange: (view: 'prospects' | 'tournees' | 'crm') => void;
   isAdmin: boolean;
   onLogout: () => void;
 }
@@ -52,13 +52,13 @@ export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: Dashb
               <span className="hidden sm:inline">Tournées</span>
             </Button>
             <Button
-              variant={view === "analytics" ? "default" : "ghost"}
+              variant={view === "crm" ? "default" : "ghost"}
               size="sm"
-              onClick={() => handleViewChange("analytics")}
-              className={`h-7 px-2 text-xs ${view === "analytics" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+              onClick={() => handleViewChange("crm")}
+              className={`h-7 px-2 text-xs ${view === "crm" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
             >
               <TrendingUp className="w-3.5 h-3.5 mr-1" />
-              <span className="hidden sm:inline">Analytics</span>
+              <span className="hidden sm:inline">CRM</span>
             </Button>
           </div>
         </div>
