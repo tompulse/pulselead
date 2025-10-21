@@ -19,6 +19,9 @@ interface ListViewProps {
     departments: string[];
   };
   onEntrepriseSelect?: (entreprise: Entreprise) => void;
+  selectionMode?: boolean;
+  selectedEntreprises?: Entreprise[];
+  onToggleSelection?: (entreprise: Entreprise) => void;
 }
 
 interface Entreprise {
@@ -47,7 +50,13 @@ interface Entreprise {
   site_web?: string;
 }
 
-export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
+export const ListView = ({ 
+  filters, 
+  onEntrepriseSelect,
+  selectionMode = false,
+  selectedEntreprises = [],
+  onToggleSelection
+}: ListViewProps) => {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -439,19 +448,43 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                 };
                 
                 const gerant = extractFirstGerant(item.administration);
+                const isSelected = selectedEntreprises.some(e => e.id === item.id);
                 
                 return (
                   <div
                     key={item.id}
-                    className="group relative rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 hover:border-accent/50 transition-all bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full flex flex-col hover:shadow-xl hover:shadow-accent/10 min-h-[280px] overflow-hidden"
+                    onClick={() => {
+                      if (selectionMode && onToggleSelection) {
+                        onToggleSelection(item);
+                      }
+                    }}
+                    className={`group relative rounded-xl p-4 md:p-5 shadow-lg border transition-all bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[280px] overflow-hidden ${
+                      selectionMode 
+                        ? isSelected
+                          ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15'
+                          : 'border-accent/30 from-card/95 to-card/80 cursor-pointer hover:border-accent/50 hover:bg-accent/5'
+                        : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50 hover:shadow-xl hover:shadow-accent/10'
+                    }`}
                   >
                     {/* Gradient overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
                     
                     <div className="relative flex items-start justify-between gap-2 mb-3">
-                      <h4 className="font-bold text-base md:text-lg flex-1 gradient-text break-words" title={item.nom}>
-                        {item.nom}
-                      </h4>
+                      <div className="flex items-center gap-2 flex-1">
+                        {selectionMode && (
+                          <div className={`flex-shrink-0 w-5 h-5 rounded border-2 transition-all ${
+                            isSelected 
+                              ? 'bg-accent border-accent' 
+                              : 'border-accent/50'
+                          } flex items-center justify-center`}>
+                            {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
+                          </div>
+                        )}
+                        <h4 className="font-bold text-base md:text-lg gradient-text break-words" title={item.nom}>
+                          {item.nom}
+                        </h4>
+                      </div>
+                      {!selectionMode && (
                       <div className="flex items-center gap-1.5 flex-shrink-0">
                         {/* Action icons - filled if action exists, outline otherwise - Now toggleable */}
                         <button
@@ -495,7 +528,18 @@ export const ListView = ({ filters, onEntrepriseSelect }: ListViewProps) => {
                         >
                           <CalendarCheck className="h-4 w-4" />
                         </button>
+                        
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCRMAction(item.id, 'note');
+                          }}
+                          className="h-8 w-8 rounded-lg flex items-center justify-center transition-all border border-amber-500/30 text-amber-500/60 hover:border-amber-500 hover:text-amber-500 hover:bg-amber-500/5 shadow-sm"
+                        >
+                          <StickyNote className="h-4 w-4" />
+                        </button>
                       </div>
+                      )}
                     </div>
 
                     <div className="relative space-y-2 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">

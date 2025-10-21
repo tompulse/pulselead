@@ -22,11 +22,13 @@ import {
   ArrowRight,
   TrendingUp,
   Plus,
-  Locate
+  Locate,
+  List
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { MapView } from "./MapView";
+import { ListView } from "./ListView";
 import type { Database } from "@/integrations/supabase/types";
 import { TourneeFilters } from "./TourneeFilters";
 import { TourneeRouteDisplay } from "./TourneeRouteDisplay";
@@ -59,6 +61,7 @@ export const TourneesView = () => {
   const [selectedEntreprises, setSelectedEntreprises] = useState<Entreprise[]>([]);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [selectedTournee, setSelectedTournee] = useState<Tournee | null>(null);
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -429,6 +432,24 @@ export const TourneesView = () => {
                 <div className="flex items-center gap-2">
                   <Button
                     size="sm"
+                    variant={viewMode === 'map' ? 'default' : 'outline'}
+                    onClick={() => setViewMode('map')}
+                    className={viewMode === 'map' ? 'bg-gradient-to-r from-accent via-accent to-accent/80' : 'border-accent/30 hover:bg-accent/10'}
+                  >
+                    <MapIconLucide className="w-4 h-4 mr-1" />
+                    Carte
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={viewMode === 'list' ? 'default' : 'outline'}
+                    onClick={() => setViewMode('list')}
+                    className={viewMode === 'list' ? 'bg-gradient-to-r from-accent via-accent to-accent/80' : 'border-accent/30 hover:bg-accent/10'}
+                  >
+                    <List className="w-4 h-4 mr-1" />
+                    Liste
+                  </Button>
+                  <Button
+                    size="sm"
                     onClick={handleOptimize}
                     disabled={optimizing || selectedEntreprises.length < 2 || !tourneeName.trim()}
                     className="bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all"
@@ -513,16 +534,25 @@ export const TourneesView = () => {
             </CardContent>
           </Card>
 
-          {/* Carte */}
+          {/* Carte ou Liste */}
           <div className="flex-1 min-h-0 rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5 relative">
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent pointer-events-none z-10" />
-            <MapView
-              filters={filters}
-              onEntrepriseSelect={handleMapMarkerClick}
-              selectionMode={true}
-              selectedEntreprises={selectedEntreprises}
-              onToggleSelection={handleMapMarkerClick}
-            />
+            {viewMode === 'map' ? (
+              <MapView
+                filters={filters}
+                onEntrepriseSelect={handleMapMarkerClick}
+                selectionMode={true}
+                selectedEntreprises={selectedEntreprises}
+                onToggleSelection={handleMapMarkerClick}
+              />
+            ) : (
+              <ListView
+                filters={filters}
+                selectionMode={true}
+                selectedEntreprises={selectedEntreprises}
+                onToggleSelection={handleMapMarkerClick}
+              />
+            )}
           </div>
         </div>
       )}
