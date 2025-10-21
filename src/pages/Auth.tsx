@@ -98,20 +98,13 @@ const Auth = () => {
 
         if (error) throw error;
 
-        // Envoi du mail de bienvenue via la fonction backend (fallback sans hook)
-        try {
-          await supabase.functions.invoke('send-welcome', {
-            body: { email }
-          });
-        } catch (e) {
-          console.warn('send-welcome failed:', e);
-        }
-
         toast({
-          title: "Inscription réussie",
-          description: "Vous pouvez maintenant vous connecter",
+          title: "✉️ Vérifiez votre email",
+          description: "Un lien de confirmation a été envoyé à votre adresse email",
         });
-        setIsLogin(true);
+        setEmail('');
+        setPassword('');
+        setPhone('');
       }
     } catch (error: any) {
       toast({
