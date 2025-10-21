@@ -106,79 +106,79 @@ export function BookingSection() {
         </div>
 
         {step === "datetime" && (
-          <div className="grid lg:grid-cols-[400px,1fr] gap-8 max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-[350px,1fr] gap-8 max-w-6xl mx-auto">
             {/* Left side - Info */}
-            <div className="glass-card p-8 space-y-6 border-cyan-electric/30 animate-fade-in flex flex-col justify-between">
+            <div className="glass-card p-6 space-y-5 border-cyan-electric/30 animate-fade-in flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-3 mb-5">
                   <div className="relative">
                     <div className="absolute inset-0 bg-cyan-electric/30 blur-xl"></div>
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-cyan-electric/40 to-cyan-electric/20 flex items-center justify-center border-2 border-cyan-electric/50">
-                      <User className="w-8 h-8 text-cyan-electric" />
+                    <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-cyan-electric/40 to-cyan-electric/20 flex items-center justify-center border-2 border-cyan-electric/50">
+                      <User className="w-7 h-7 text-cyan-electric" />
                     </div>
                   </div>
                   <div>
                     <div className="text-xs text-cyan-electric/70 font-medium">Avec</div>
-                    <div className="font-bold text-foreground text-lg">Le Fondateur de LUMA</div>
+                    <div className="font-bold text-foreground">Le Fondateur de LUMA</div>
                   </div>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-4">
                   <div>
-                    <h3 className="text-xl font-bold gradient-text mb-2">Démo personnalisée exclusive</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <h3 className="text-lg font-bold gradient-text mb-1">Démo personnalisée exclusive</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       Un échange de 30 minutes en visio pour découvrir comment LUMA peut transformer votre activité commerciale.
                     </p>
                   </div>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">Au programme</div>
-                    <ul className="space-y-2.5 text-sm text-foreground">
-                      <li className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-electric" />
+                    <ul className="space-y-2 text-xs text-foreground">
+                      <li className="flex items-start gap-2">
+                        <div className="w-4 h-4 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-2.5 h-2.5 text-cyan-electric" />
                         </div>
-                        <span><strong className="text-cyan-electric">Analyse personnalisée</strong> de votre territoire et besoins</span>
+                        <span><strong className="text-cyan-electric">Analyse personnalisée</strong> de votre territoire</span>
                       </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-electric" />
+                      <li className="flex items-start gap-2">
+                        <div className="w-4 h-4 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-2.5 h-2.5 text-cyan-electric" />
                         </div>
-                        <span><strong className="text-cyan-electric">Démonstration live</strong> des fonctionnalités terrain</span>
+                        <span><strong className="text-cyan-electric">Démonstration live</strong> des fonctionnalités</span>
                       </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-electric" />
+                      <li className="flex items-start gap-2">
+                        <div className="w-4 h-4 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-2.5 h-2.5 text-cyan-electric" />
                         </div>
-                        <span><strong className="text-cyan-electric">Stratégie de déploiement</strong> adaptée à votre activité</span>
+                        <span><strong className="text-cyan-electric">Stratégie de déploiement</strong> sur mesure</span>
                       </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-electric" />
+                      <li className="flex items-start gap-2">
+                        <div className="w-4 h-4 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-2.5 h-2.5 text-cyan-electric" />
                         </div>
-                        <span><strong className="text-cyan-electric">Accès immédiat</strong> aux créations d'entreprises en temps réel</span>
+                        <span><strong className="text-cyan-electric">Accès immédiat</strong> aux créations temps réel</span>
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3 pt-4 border-t border-cyan-electric/20">
-                <div className="flex items-center gap-3 text-sm text-foreground">
-                  <div className="w-8 h-8 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-cyan-electric" />
+              <div className="space-y-2 pt-4 border-t border-cyan-electric/20">
+                <div className="flex items-center gap-2 text-xs text-foreground">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
+                    <Clock className="w-3.5 h-3.5 text-cyan-electric" />
                   </div>
                   <span className="font-medium">30 minutes chrono</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-foreground">
-                  <div className="w-8 h-8 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
-                    <Video className="w-4 h-4 text-cyan-electric" />
+                <div className="flex items-center gap-2 text-xs text-foreground">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
+                    <Video className="w-3.5 h-3.5 text-cyan-electric" />
                   </div>
                   <span className="font-medium">Visio Google Meet</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-foreground">
-                  <div className="w-8 h-8 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
-                    <CalendarIcon className="w-4 h-4 text-cyan-electric" />
+                <div className="flex items-center gap-2 text-xs text-foreground">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
+                    <CalendarIcon className="w-3.5 h-3.5 text-cyan-electric" />
                   </div>
                   <span className="font-medium">Confirmation instantanée</span>
                 </div>
@@ -186,13 +186,13 @@ export function BookingSection() {
             </div>
 
             {/* Right side - Calendar & Time */}
-            <div className="glass-card p-8 space-y-6 border-cyan-electric/30 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="glass-card p-6 space-y-5 border-cyan-electric/30 animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">Choisissez votre créneau</h3>
                 <p className="text-muted-foreground text-sm">Sélectionnez une date puis un horaire disponible</p>
               </div>
 
-              <div className="grid md:grid-cols-[1.3fr,1fr] gap-6">
+              <div className="grid lg:grid-cols-[1fr,2fr] gap-6">
                 {/* Calendar */}
                 <div className="flex flex-col space-y-3">
                   <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">Date</div>
@@ -213,16 +213,16 @@ export function BookingSection() {
                   />
                 </div>
 
-                {/* Time slots - Always visible */}
+                {/* Time slots - Toujours visibles, sans scrollbar */}
                 <div className="space-y-4">
                   <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">
                     {selectedDate ? format(selectedDate, "EEEE d MMMM", { locale: fr }) : "Horaires disponibles"}
                   </div>
                   
-                  <div className="space-y-4 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
+                  <div className="grid grid-cols-2 gap-4">
                     {/* Morning slots */}
                     <div className="space-y-2">
-                      <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-2">Matin</div>
+                      <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1 mb-2">Matin</div>
                       <div className="flex flex-col gap-2">
                         {morningSlots.map((slot) => (
                           <Button
@@ -244,7 +244,7 @@ export function BookingSection() {
 
                     {/* Afternoon slots */}
                     <div className="space-y-2">
-                      <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-2">Après-midi</div>
+                      <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1 mb-2">Après-midi</div>
                       <div className="flex flex-col gap-2">
                         {afternoonSlots.map((slot) => (
                           <Button
