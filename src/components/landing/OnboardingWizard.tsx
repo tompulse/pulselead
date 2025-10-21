@@ -81,12 +81,20 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
           description: "10 entreprises fictives ont été ajoutées à votre compte",
         });
         
-        await handleStepComplete();
-        
-        // Wait a bit to ensure data is saved
-        setTimeout(() => {
-          setCurrentStep(3);
-        }, 500);
+        await supabase
+          .from('user_onboarding_progress')
+          .upsert({
+            user_id: user.id,
+            current_step: 3,
+            completed_steps: [1,2,3],
+            demo_data_loaded: true,
+            completed_at: new Date().toISOString(),
+          });
+
+        localStorage.setItem('luma_onboarding_complete', 'true');
+
+        // Fermer l'onboarding et montrer directement le dashboard
+        onComplete();
       } else {
         toast({
           title: "Erreur",
@@ -152,7 +160,7 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-6">
-      <Card className="w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8">
+      <Card className="w-full max-w-4xl max-h-[85vh] overflow-hidden p-6">
         {/* Progress Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
