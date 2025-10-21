@@ -329,22 +329,22 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Résultats mesurables */}
-          <div className="glass-card p-10 max-w-4xl mx-auto border-accent/40 bg-gradient-to-br from-accent/10 to-transparent shadow-2xl shadow-accent/10">
-            <h3 className="text-2xl font-bold text-center mb-8 gradient-text">Résultats constatés par nos utilisateurs</h3>
+          {/* Résultats mesurables - En vert */}
+          <div className="glass-card p-10 max-w-4xl mx-auto border-cyan-electric/40 bg-gradient-to-br from-cyan-electric/10 to-transparent shadow-2xl shadow-cyan-electric/10">
+            <h3 className="text-2xl font-bold text-center mb-8 text-cyan-electric">Résultats constatés par nos utilisateurs</h3>
             <div className="grid md:grid-cols-3 gap-10 text-center">
               <div className="space-y-2">
-                <div className="text-5xl font-bold gradient-text">3h/jour</div>
+                <div className="text-5xl font-bold text-cyan-electric">6h/semaine</div>
                 <div className="text-lg text-foreground font-bold">Temps économisé</div>
                 <div className="text-sm text-muted-foreground font-medium">Moins d'admin, plus de vente</div>
               </div>
               <div className="space-y-2">
-                <div className="text-5xl font-bold gradient-text">×2.5</div>
+                <div className="text-5xl font-bold text-cyan-electric">×2.5</div>
                 <div className="text-lg text-foreground font-bold">Rendez-vous obtenus</div>
                 <div className="text-sm text-muted-foreground font-medium">Grâce à une meilleure organisation</div>
               </div>
               <div className="space-y-2">
-                <div className="text-5xl font-bold gradient-text">+40%</div>
+                <div className="text-5xl font-bold text-cyan-electric">+40%</div>
                 <div className="text-lg text-foreground font-bold">Croissance CA</div>
                 <div className="text-sm text-muted-foreground font-medium">En 6 mois d'utilisation</div>
               </div>
@@ -550,51 +550,6 @@ const Index = () => {
             </div>
           </div>
 
-          {/* ROI Section - Intégré plus subtilement dans les bénéfices */}
-          <div className="glass-card p-8 md:p-10 max-w-5xl mx-auto border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 to-transparent">
-            <div className="space-y-6">
-              <div className="text-center">
-                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Temps économisé par semaine</h3>
-                <div className="w-16 h-1 bg-gradient-to-r from-transparent via-cyan-electric to-transparent mx-auto"></div>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-4 items-stretch">
-                <div className="glass-card p-5 border-destructive/30 bg-destructive/5 flex items-center gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-lg bg-destructive/20 flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-destructive" />
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Méthode manuelle</div>
-                    <div className="text-2xl md:text-3xl font-bold text-destructive">~6h</div>
-                    <div className="text-xs text-muted-foreground">recherche et organisation</div>
-                  </div>
-                </div>
-
-                <div className="glass-card p-5 border-cyan-electric/50 bg-gradient-to-br from-cyan-electric/10 to-transparent flex items-center gap-4 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-electric/10 rounded-full blur-2xl"></div>
-                  <div className="flex-shrink-0 relative z-10">
-                    <div className="w-12 h-12 rounded-lg bg-cyan-electric/30 flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-cyan-electric" />
-                    </div>
-                  </div>
-                  <div className="flex-1 relative z-10">
-                    <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide mb-1">Avec LUMA</div>
-                    <div className="text-2xl md:text-3xl font-bold gradient-text">10 min</div>
-                    <div className="text-xs text-muted-foreground">temps réel, automatique</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center pt-2">
-                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                  <TrendingUp className="w-4 h-4 text-cyan-electric" />
-                  <span className="text-sm font-semibold gradient-text">×36 de productivité</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
