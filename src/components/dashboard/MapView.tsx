@@ -243,90 +243,101 @@ export const MapView = ({
   useEffect(() => {
     if (!mapContainer.current || !mapboxgl || !mapboxLoaded || !mapboxToken) return;
 
-    // Wait for container to have non-zero size
-    const rect = mapContainer.current.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) {
-      if (import.meta.env.DEV) {
-        console.warn('[MapView] Container has zero size, waiting...', { width: rect.width, height: rect.height });
-      }
-      // Retry after a short delay
-      const retryTimer = setTimeout(() => {
-        if (mapContainer.current) {
-          const newRect = mapContainer.current.getBoundingClientRect();
-          if (import.meta.env.DEV) {
-            console.log('[MapView] Retry container size:', { width: newRect.width, height: newRect.height });
-          }
+    let retryTimer: NodeJS.Timeout | null = null;
+    
+    // Use requestAnimationFrame to defer layout reads to avoid forced reflow
+    const rafId = requestAnimationFrame(() => {
+      if (!mapContainer.current) return;
+      
+      // Wait for container to have non-zero size
+      const rect = mapContainer.current.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) {
+        if (import.meta.env.DEV) {
+          console.warn('[MapView] Container has zero size, waiting...', { width: rect.width, height: rect.height });
         }
-      }, 200);
-      return () => clearTimeout(retryTimer);
-    }
-
-    if (import.meta.env.DEV) {
-      console.log('[MapView] Initializing map with container size:', { width: rect.width, height: rect.height });
-    }
-
-    mapboxgl.accessToken = mapboxToken;
-
-    // Determine initial center and zoom
-    let initialCenter: [number, number] = [2.3522, 46.2276];
-    let initialZoom = isMobile ? 5 : 5.5;
-
-    const mapOptions: any = {
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/dark-v11",
-      center: initialCenter,
-      zoom: initialZoom,
-      projection: { name: "mercator" },
-    };
-
-    // Optimisations mobiles
-    if (isMobile) {
-      mapOptions.pitchWithRotate = false;
-      mapOptions.dragRotate = false;
-      mapOptions.touchPitch = false;
-    }
-
-    map.current = new mapboxgl.Map(mapOptions);
-
-    // Add error handler for Mapbox errors
-    map.current.on('error', (e: any) => {
-      console.error('[MapView] Mapbox error:', e);
-      if (e.error?.message?.includes('401') || e.error?.message?.includes('token')) {
-        toast.error('Token Mapbox invalide ou expiré');
-        setTokenError(true);
-      } else {
-        toast.error('Erreur de chargement de la carte');
+        // Retry after a short delay
+        retryTimer = setTimeout(() => {
+          requestAnimationFrame(() => {
+            if (mapContainer.current) {
+              const newRect = mapContainer.current.getBoundingClientRect();
+              if (import.meta.env.DEV) {
+                console.log('[MapView] Retry container size:', { width: newRect.width, height: newRect.height });
+              }
+            }
+          });
+        }, 200);
+        return;
       }
-    });
 
-    map.current.on('load', () => {
       if (import.meta.env.DEV) {
-        console.log('[MapView] Map loaded successfully ✅');
+        console.log('[MapView] Initializing map with container size:', { width: rect.width, height: rect.height });
       }
-      // Force resize after map is fully loaded
+
+      mapboxgl.accessToken = mapboxToken;
+
+      // Determine initial center and zoom
+      let initialCenter: [number, number] = [2.3522, 46.2276];
+      let initialZoom = isMobile ? 5 : 5.5;
+
+      const mapOptions: any = {
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/dark-v11",
+        center: initialCenter,
+        zoom: initialZoom,
+        projection: { name: "mercator" },
+      };
+
+      // Optimisations mobiles
+      if (isMobile) {
+        mapOptions.pitchWithRotate = false;
+        mapOptions.dragRotate = false;
+        mapOptions.touchPitch = false;
+      }
+
+      map.current = new mapboxgl.Map(mapOptions);
+
+      // Add error handler for Mapbox errors
+      map.current.on('error', (e: any) => {
+        console.error('[MapView] Mapbox error:', e);
+        if (e.error?.message?.includes('401') || e.error?.message?.includes('token')) {
+          toast.error('Token Mapbox invalide ou expiré');
+          setTokenError(true);
+        } else {
+          toast.error('Erreur de chargement de la carte');
+        }
+      });
+
+      map.current.on('load', () => {
+        if (import.meta.env.DEV) {
+          console.log('[MapView] Map loaded successfully ✅');
+        }
+        // Force resize after map is fully loaded
+        setTimeout(() => {
+          try { 
+            map.current?.resize();
+            if (import.meta.env.DEV) {
+              console.log('[MapView] Map resized after load');
+            }
+          } catch {}
+        }, 100);
+      });
+
+      map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+      // Force a resize shortly after mount to correct initial canvas size
       setTimeout(() => {
-        try { 
-          map.current?.resize();
-          if (import.meta.env.DEV) {
-            console.log('[MapView] Map resized after load');
-          }
-        } catch {}
-      }, 100);
+        try { map.current?.resize(); } catch {}
+      }, 200);
+
+      // Optimisation: désactiver certaines fonctionnalités lourdes sur mobile
+      if (isMobile) {
+        map.current.scrollZoom.disable();
+      }
     });
-
-    map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
-
-    // Force a resize shortly after mount to correct initial canvas size
-    setTimeout(() => {
-      try { map.current?.resize(); } catch {}
-    }, 200);
-
-    // Optimisation: désactiver certaines fonctionnalités lourdes sur mobile
-    if (isMobile) {
-      map.current.scrollZoom.disable();
-    }
 
     return () => {
+      cancelAnimationFrame(rafId);
+      if (retryTimer) clearTimeout(retryTimer);
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
       userMarkerRef.current?.remove();

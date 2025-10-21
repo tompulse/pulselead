@@ -27,40 +27,43 @@ export const ProductTour = ({ steps, onComplete, onSkip }: ProductTourProps) => 
     const targetElement = document.querySelector(currentStepData.target);
     if (!targetElement) return;
 
-    const rect = targetElement.getBoundingClientRect();
-    const tooltipWidth = 320;
-    const tooltipHeight = 200;
-    const padding = 16;
+    // Use requestAnimationFrame to defer layout reads and avoid forced reflow
+    requestAnimationFrame(() => {
+      const rect = targetElement.getBoundingClientRect();
+      const tooltipWidth = 320;
+      const tooltipHeight = 200;
+      const padding = 16;
 
-    let top = 0;
-    let left = 0;
+      let top = 0;
+      let left = 0;
 
-    switch (currentStepData.position) {
-      case 'top':
-        top = rect.top - tooltipHeight - padding;
-        left = rect.left + rect.width / 2 - tooltipWidth / 2;
-        break;
-      case 'bottom':
-        top = rect.bottom + padding;
-        left = rect.left + rect.width / 2 - tooltipWidth / 2;
-        break;
-      case 'left':
-        top = rect.top + rect.height / 2 - tooltipHeight / 2;
-        left = rect.left - tooltipWidth - padding;
-        break;
-      case 'right':
-        top = rect.top + rect.height / 2 - tooltipHeight / 2;
-        left = rect.right + padding;
-        break;
-    }
+      switch (currentStepData.position) {
+        case 'top':
+          top = rect.top - tooltipHeight - padding;
+          left = rect.left + rect.width / 2 - tooltipWidth / 2;
+          break;
+        case 'bottom':
+          top = rect.bottom + padding;
+          left = rect.left + rect.width / 2 - tooltipWidth / 2;
+          break;
+        case 'left':
+          top = rect.top + rect.height / 2 - tooltipHeight / 2;
+          left = rect.left - tooltipWidth - padding;
+          break;
+        case 'right':
+          top = rect.top + rect.height / 2 - tooltipHeight / 2;
+          left = rect.right + padding;
+          break;
+      }
 
-    setTooltipPosition({ top, left });
+      setTooltipPosition({ top, left });
 
-    // Add highlight to target element
-    targetElement.classList.add('tour-highlight');
-    
-    // Scroll element into view
-    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Add highlight to target element
+      targetElement.classList.add('tour-highlight');
+      
+      // Scroll element into view
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   };
 
   useEffect(() => {
