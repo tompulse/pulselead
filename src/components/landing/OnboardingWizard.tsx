@@ -169,58 +169,48 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-4">
       <Card className="w-full max-w-3xl max-h-[80vh] overflow-auto custom-scrollbar p-6">
         {/* Progress Header */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-2xl font-bold">Bienvenue sur LUMA 👋</h2>
-            <span className="text-sm font-semibold text-muted-foreground">
-              Étape {currentStep}/3
-            </span>
-          </div>
-          <Progress value={progress} className="h-2" />
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-center">Bienvenue sur LUMA</h2>
         </div>
 
         {/* Step 1: Welcome & Value Proposition */}
         {currentStep === 1 && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
-            {/* Benefits badges en haut */}
-            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 border border-accent/20 rounded-full text-xs font-medium text-accent">
-                <Target className="h-3.5 w-3.5" />
+          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
+            {/* Benefits badges en haut - Plus gros et en vert */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500/10 border border-green-500/30 rounded-full text-sm font-semibold text-green-500">
+                <Target className="h-4 w-4" />
                 +40% de conversion
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 border border-accent/20 rounded-full text-xs font-medium text-accent">
-                <MapPin className="h-3.5 w-3.5" />
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500/10 border border-green-500/30 rounded-full text-sm font-semibold text-green-500">
+                <MapPin className="h-4 w-4" />
                 -30% de temps route
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 border border-accent/20 rounded-full text-xs font-medium text-accent">
-                <TrendingUp className="h-3.5 w-3.5" />
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500/10 border border-green-500/30 rounded-full text-sm font-semibold text-green-500">
+                <TrendingUp className="h-4 w-4" />
                 6h/semaine économisées
               </div>
             </div>
 
-            <div className="text-center space-y-4">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-full text-accent font-semibold">
-                <Sparkles className="h-4 w-4" />
-                Offre de lancement
-              </div>
-              <h3 className="text-3xl font-bold">
-                Transformez votre prospection terrain
+            <div className="text-center space-y-6">
+              <h3 className="text-4xl font-bold leading-tight">
+                La prospection terrain intelligente
               </h3>
-              <p className="text-base text-muted-foreground max-w-xl mx-auto">
-                LUMA vous aide à trouver, qualifier et suivre vos prospects 
-                tout en assurant vos déplacements
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Identifiez les meilleurs prospects, optimisez vos tournées et boostez vos conversions. 
+                Tout ce dont vous avez besoin pour réussir sur le terrain.
               </p>
             </div>
 
             {/* Single CTA Button */}
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center pt-6">
               <Button
                 size="lg"
                 onClick={() => handleDemoChoice('demo')}
-                className="gap-2 hover:scale-105 transition-transform bg-accent hover:bg-accent/90 text-lg px-8 py-6"
+                className="gap-2 hover:scale-105 transition-transform bg-accent hover:bg-accent/90 text-lg px-10 py-7 shadow-lg"
               >
-                <Rocket className="h-5 w-5" />
-                C&apos;est parti, je découvre Luma
+                <Rocket className="h-6 w-6" />
+                Démarrer maintenant
               </Button>
             </div>
           </div>
