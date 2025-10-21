@@ -17,14 +17,14 @@ const Index = () => {
   const [selectedRegion, setSelectedRegion] = React.useState<'1' | 'plusieurs' | 'france'>('plusieurs');
   const [billingPeriod, setBillingPeriod] = React.useState<'monthly' | 'quarterly' | 'yearly'>('yearly');
   
-  // Animations au scroll
-  const socialProof = useScrollAnimation({ threshold: 0.2 });
-  const problemSection = useScrollAnimation({ threshold: 0.2 });
-  const solutionSection = useScrollAnimation({ threshold: 0.2 });
-  const pricingSection = useScrollAnimation({ threshold: 0.15 });
-  const testimonialsSection = useScrollAnimation({ threshold: 0.2 });
-  const faqSection = useScrollAnimation({ threshold: 0.2 });
-  const finalCTA = useScrollAnimation({ threshold: 0.3 });
+  // Animations au scroll - effets plus percutants
+  const socialProof = useScrollAnimation({ threshold: 0.1 });
+  const problemSection = useScrollAnimation({ threshold: 0.1 });
+  const solutionSection = useScrollAnimation({ threshold: 0.1 });
+  const pricingSection = useScrollAnimation({ threshold: 0.1 });
+  const testimonialsSection = useScrollAnimation({ threshold: 0.1 });
+  const faqSection = useScrollAnimation({ threshold: 0.1 });
+  const finalCTA = useScrollAnimation({ threshold: 0.2 });
 
   const handleExplorerClick = () => {
     trackCTAClick('Explorer LUMA', 'hero');
@@ -150,13 +150,18 @@ const Index = () => {
       {/* Social Proof */}
       <section 
         ref={socialProof.ref}
-        className={`relative py-16 px-4 border-y border-accent/10 bg-gradient-to-r from-primary/50 to-primary/30 backdrop-blur-sm transition-all duration-700 ${
-          socialProof.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        className={`relative py-16 px-4 border-y border-accent/10 bg-gradient-to-r from-primary/50 to-primary/30 backdrop-blur-sm transition-all duration-1000 ${
+          socialProof.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
         }`}
+        style={{
+          transitionDelay: socialProof.isVisible ? '100ms' : '0ms'
+        }}
       >
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
-            <div className="flex items-center gap-4 group">
+            <div className={`flex items-center gap-4 group transition-all duration-700 ${
+              socialProof.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+            }`} style={{ transitionDelay: '200ms' }}>
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
                 <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
@@ -169,7 +174,9 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 group">
+            <div className={`flex items-center gap-4 group transition-all duration-700 ${
+              socialProof.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`} style={{ transitionDelay: '400ms' }}>
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
                 <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
@@ -182,7 +189,9 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 group">
+            <div className={`flex items-center gap-4 group transition-all duration-700 ${
+              socialProof.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
+            }`} style={{ transitionDelay: '600ms' }}>
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
                 <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
@@ -204,24 +213,26 @@ const Index = () => {
           {/* Problème */}
           <div 
             ref={problemSection.ref}
-            className={`text-center mb-16 space-y-4 transition-all duration-700 ${
-              problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            className={`text-center mb-16 space-y-4 transition-all duration-1000 ${
+              problemSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
             }`}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
               Les <span className="gradient-text">commerciaux terrain</span>
               <br />
-              perdent un temps fou
+              perdent un temps précieux
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
               Outils dispersés, données désorganisées, aucune vision d'ensemble. Vous méritez mieux.
             </p>
           </div>
 
-          <div className={`grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-20 transition-all duration-700 delay-150 ${
-            problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          <div className={`grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-20 transition-all duration-1000 ${
+            problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
           }`}>
-            <div className="glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-300 group">
+            <div className={`glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-500 group ${
+              problemSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+            }`} style={{ transitionDelay: problemSection.isVisible ? '200ms' : '0ms' }}>
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <AlertCircle className="w-8 h-8 text-destructive" />
               </div>
@@ -231,7 +242,9 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-300 group">
+            <div className={`glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-500 group ${
+              problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`} style={{ transitionDelay: problemSection.isVisible ? '400ms' : '0ms' }}>
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <Clock className="w-8 h-8 text-destructive" />
               </div>
@@ -241,7 +254,9 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-300 group">
+            <div className={`glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-500 group ${
+              problemSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
+            }`} style={{ transitionDelay: problemSection.isVisible ? '600ms' : '0ms' }}>
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <Target className="w-8 h-8 text-destructive" />
               </div>
@@ -255,8 +270,8 @@ const Index = () => {
           {/* Solution */}
           <div 
             ref={solutionSection.ref}
-            className={`text-center mb-12 space-y-4 transition-all duration-700 ${
-              solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            className={`text-center mb-12 space-y-4 transition-all duration-1000 ${
+              solutionSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
             }`}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
@@ -267,10 +282,12 @@ const Index = () => {
             </p>
           </div>
 
-          <div className={`grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto transition-all duration-700 delay-150 ${
-            solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          <div className={`grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto transition-all duration-1000 ${
+            solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
           }`}>
-            <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
+            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
+              solutionSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+            }`} style={{ transitionDelay: solutionSection.isVisible ? '200ms' : '0ms' }}>
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Map className="w-9 h-9 text-accent" />
               </div>
@@ -280,7 +297,9 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
+            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
+              solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`} style={{ transitionDelay: solutionSection.isVisible ? '400ms' : '0ms' }}>
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <TrendingUp className="w-9 h-9 text-accent" />
               </div>
@@ -290,7 +309,9 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
+            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
+              solutionSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
+            }`} style={{ transitionDelay: solutionSection.isVisible ? '600ms' : '0ms' }}>
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Sparkles className="w-9 h-9 text-accent" />
               </div>
@@ -328,8 +349,8 @@ const Index = () => {
       {/* Section Prix */}
       <section 
         ref={pricingSection.ref}
-        className={`relative py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-700 ${
-          pricingSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        className={`relative py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000 ${
+          pricingSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
         }`}
       >
         <div className="container mx-auto max-w-7xl">
@@ -571,8 +592,8 @@ const Index = () => {
       {/* Section Témoignages */}
       <section 
         ref={testimonialsSection.ref}
-        className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-700 ${
-          testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${
+          testimonialsSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
         }`}
       >
         <div className="container mx-auto max-w-6xl">
@@ -592,7 +613,9 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-300">
+            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${
+              testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`} style={{ transitionDelay: testimonialsSection.isVisible ? '200ms' : '0ms' }}>
               <Quote className="w-8 h-8 text-cyan-electric/30" />
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
@@ -611,7 +634,9 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-300">
+            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${
+              testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`} style={{ transitionDelay: testimonialsSection.isVisible ? '400ms' : '0ms' }}>
               <Quote className="w-8 h-8 text-cyan-electric/30" />
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
@@ -630,7 +655,9 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-300">
+            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${
+              testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`} style={{ transitionDelay: testimonialsSection.isVisible ? '600ms' : '0ms' }}>
               <Quote className="w-8 h-8 text-cyan-electric/30" />
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
@@ -657,14 +684,14 @@ const Index = () => {
         <div className="container mx-auto max-w-4xl">
           <div 
             ref={faqSection.ref}
-            className={`text-center mb-12 space-y-3 transition-all duration-700 ${
-              faqSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            className={`text-center mb-12 space-y-3 transition-all duration-1000 ${
+              faqSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
             }`}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
               Questions <span className="gradient-text">fréquentes</span>
             </h2>
-            <p className="text-lg text-muted-foreground">Tout ce que tu dois savoir</p>
+            <p className="text-lg text-muted-foreground">Tout ce que vous devez savoir</p>
           </div>
 
           <Accordion type="single" collapsible className="space-y-3 mb-12">
@@ -673,7 +700,7 @@ const Index = () => {
                 D'où viennent les données ?
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2">
-                100% officielles. Directement de l'INPI. Mise à jour quotidienne.
+                100% officielles. Directement de l'INPI et l'INSEE. Mise à jour quotidienne.
               </AccordionContent>
             </AccordionItem>
 
@@ -717,8 +744,8 @@ const Index = () => {
           {/* CTA Final */}
           <div 
             ref={finalCTA.ref}
-            className={`glass-card p-12 text-center space-y-8 border-accent/40 bg-gradient-to-br from-accent/10 via-primary/20 to-transparent shadow-2xl shadow-accent/10 transition-all duration-700 ${
-              finalCTA.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            className={`glass-card p-12 text-center space-y-8 border-accent/40 bg-gradient-to-br from-accent/10 via-primary/20 to-transparent shadow-2xl shadow-accent/10 transition-all duration-1000 ${
+              finalCTA.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-90'
             }`}
           >
             <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
