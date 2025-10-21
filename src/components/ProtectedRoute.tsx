@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Lightbulb } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -32,9 +31,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="relative inline-block">
-            <Lightbulb className="w-12 h-12 text-accent mx-auto relative" />
-          </div>
+          <h1 className="text-4xl font-bold text-accent">LUMA</h1>
           <p className="text-muted-foreground text-base">Vérification...</p>
         </div>
       </div>

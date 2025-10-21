@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Lightbulb, LogOut, MapIcon, Navigation, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { LogOut, MapIcon, Navigation, TrendingUp } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { SyncButton } from "./SyncButton";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -24,10 +25,6 @@ export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: Dashb
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 md:gap-4">
           <div className="flex items-center gap-2 md:gap-3">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-accent/30 blur-lg animate-[pulse_4s_ease-in-out_infinite] group-hover:bg-accent/50 transition-all duration-300" />
-              <Lightbulb className="w-6 h-6 md:w-7 md:h-7 text-accent relative drop-shadow-[0_0_8px_hsl(var(--accent))] group-hover:drop-shadow-[0_0_16px_hsl(var(--accent))] transition-all duration-300" />
-            </div>
             <span className="text-lg md:text-xl font-bold gradient-text">LUMA</span>
           </div>
           

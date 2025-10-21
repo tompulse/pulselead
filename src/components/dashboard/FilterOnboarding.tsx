@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, ChevronDown, TrendingUp } from "lucide-react";
+import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, ChevronDown, TrendingUp } from "lucide-react";
 import { ACTIVITY_CATEGORIES, categorizeActivity } from "@/utils/activityCategories";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { supabase } from "@/integrations/supabase/client";
@@ -175,11 +175,6 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         <div className="relative overflow-hidden bg-gradient-to-br from-accent/30 via-accent/15 to-transparent p-3 md:p-4 border-b border-accent/30 shrink-0">
           <div className="absolute inset-0 bg-grid-pattern opacity-10" />
           <div className="relative flex items-center gap-2 md:gap-3 mb-2">
-            <div className="relative">
-              <div className="p-2 bg-gradient-to-br from-accent/30 to-accent/10 rounded-xl shadow-lg">
-                <Lightbulb className="w-6 h-6 md:w-8 md:h-8 text-accent relative" />
-              </div>
-            </div>
             <div>
               <h1 className="text-lg md:text-2xl font-bold gradient-text">Bienvenue sur LUMA</h1>
               <p className="text-muted-foreground text-xs md:text-sm font-medium">

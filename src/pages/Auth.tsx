@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Lightbulb, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { z } from "zod";
 
 const Auth = () => {
@@ -122,12 +122,7 @@ const Auth = () => {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8 animate-fade-in">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="relative">
-              <Lightbulb className="w-10 h-10 text-accent relative" />
-            </div>
-            <span className="text-3xl font-bold gradient-text">LUMA</span>
-          </div>
+          <h1 className="text-3xl font-bold gradient-text mb-4">LUMA</h1>
           <p className="text-muted-foreground text-base">
             {isLogin ? "Connectez-vous à votre compte" : "Créez votre compte"}
           </p>

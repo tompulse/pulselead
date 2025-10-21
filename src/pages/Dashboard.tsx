@@ -15,7 +15,7 @@ import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Filter, Lightbulb } from "lucide-react";
+import { Filter } from "lucide-react";
 import { format } from "date-fns";
 import { trackEntrepriseView } from "@/utils/analytics";
 
@@ -145,9 +145,7 @@ const DashboardContent = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="relative inline-block">
-            <Lightbulb className="w-12 h-12 text-accent mx-auto relative" />
-          </div>
+          <h1 className="text-4xl font-bold text-accent">LUMA</h1>
           <p className="text-muted-foreground text-base">Chargement...</p>
         </div>
       </div>
