@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Lightbulb, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare, Building2, Calendar, DollarSign, User, Navigation, Map as MapIconLucide, Route } from "lucide-react";
+import { Lightbulb, LogOut, List, MapIcon, Filter, PanelRight, MapPin, MessageSquare, Building2, Calendar, DollarSign, User, Navigation, Map as MapIconLucide, Route, TrendingUp } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MapView } from "@/components/dashboard/MapView";
 import { ListView } from "@/components/dashboard/ListView";
@@ -26,6 +26,7 @@ import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { ActivitiesView } from "@/components/dashboard/ActivitiesView";
 import { TourneesView } from "@/components/dashboard/TourneesView";
 import { TourneeOptimizationPanel } from "@/components/dashboard/TourneeOptimizationPanel";
+import { PipelineKanban } from "@/components/dashboard/PipelineKanban";
 
 import { format } from "date-fns";
 
@@ -33,7 +34,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [view, setView] = useState<"map" | "list" | "activities" | "tournees">("map");
+  const [view, setView] = useState<"map" | "list" | "activities" | "tournees" | "pipeline">("map");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [selectedEntreprise, setSelectedEntreprise] = useState<any>(null);
   const [crmPanelOpen, setCrmPanelOpen] = useState(false);
@@ -324,6 +325,18 @@ const Dashboard = () => {
                   <Navigation className="w-3.5 h-3.5 mr-1" />
                   <span className="hidden sm:inline">Tournées</span>
                 </Button>
+                <Button
+                  variant={view === "pipeline" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setView("pipeline");
+                    trackViewChange("pipeline");
+                  }}
+                  className={`h-7 px-2 text-xs ${view === "pipeline" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+                >
+                  <TrendingUp className="w-3.5 h-3.5 mr-1" />
+                  <span className="hidden sm:inline">Pipeline</span>
+                </Button>
               </div>
             </div>
 
@@ -345,7 +358,7 @@ const Dashboard = () => {
       {/* Compact Stats - Removed from all views */}
 
       {/* Mobile Filter Button */}
-      {isMobile && view !== "activities" && view !== "tournees" && (
+      {isMobile && view !== "activities" && view !== "tournees" && view !== "pipeline" && (
         <div className="glass-card border-b border-accent/20 px-3 py-2 shrink-0">
           <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
             <SheetTrigger asChild>
@@ -390,7 +403,7 @@ const Dashboard = () => {
       {/* Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop/Tablet Sidebar */}
-        {!isMobile && view !== "activities" && view !== "tournees" && (
+        {!isMobile && view !== "activities" && view !== "tournees" && view !== "pipeline" && (
           <Sidebar 
             filters={filters} 
             setFilters={setFilters}
@@ -429,8 +442,8 @@ const Dashboard = () => {
           
           <div className="flex-1 overflow-hidden">
           <div className="h-full p-4 md:p-6">
-            {/* Always show filter prompt if no departments selected, except in activities and tournees view */}
-            {filters.departments.length === 0 && view !== "activities" && view !== "tournees" ? (
+            {/* Always show filter prompt if no departments selected, except in activities, tournees and pipeline view */}
+            {filters.departments.length === 0 && view !== "activities" && view !== "tournees" && view !== "pipeline" ? (
               <div className="h-full flex items-center justify-center">
                 <Card className="glass-card border-accent/20 p-8 max-w-md text-center">
                   <div className="relative inline-block mb-4">
@@ -497,7 +510,23 @@ const Dashboard = () => {
               </div>
             ) : view === "tournees" ? (
               <div className="h-full">
-            <TourneesView />
+                <TourneesView />
+              </div>
+            ) : view === "pipeline" ? (
+              <div className="h-full">
+                <PipelineKanban 
+                  onLeadSelect={async (entrepriseId) => {
+                    const { data } = await supabase
+                      .from('entreprises')
+                      .select('*')
+                      .eq('id', entrepriseId)
+                      .single();
+                    
+                    if (data) {
+                      handleEntrepriseSelect(data);
+                    }
+                  }}
+                />
               </div>
             ) : (
               <div className="h-full">
