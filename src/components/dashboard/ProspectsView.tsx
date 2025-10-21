@@ -11,6 +11,7 @@ interface ProspectsViewProps {
     categories: string[];
     departments: string[];
   };
+  userId: string;
   onEntrepriseSelect?: (entreprise: any) => void;
   selectionMode?: boolean;
   selectedEntreprises?: any[];
@@ -19,6 +20,7 @@ interface ProspectsViewProps {
 
 export const ProspectsView = ({
   filters,
+  userId,
   onEntrepriseSelect,
   selectionMode = false,
   selectedEntreprises = [],
