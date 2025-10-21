@@ -1,9 +1,12 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AuditLogViewer } from "@/components/dashboard/AuditLogViewer";
-import { ArrowLeft, Shield, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Shield, AlertTriangle, RefreshCw, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 /**
  * Page des paramètres de sécurité
@@ -16,6 +19,70 @@ import { useNavigate } from "react-router-dom";
 
 export default function SecuritySettings() {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [resetting, setResetting] = useState(false);
+
+  useEffect(() => {
+    checkAdminStatus();
+  }, []);
+
+  const checkAdminStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: adminCheck } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin'
+      });
+
+      setIsAdmin(adminCheck === true);
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetOnboarding = async () => {
+    setResetting(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Delete onboarding progress from database
+      await supabase
+        .from('user_onboarding_progress')
+        .delete()
+        .eq('user_id', user.id);
+
+      // Clear localStorage
+      localStorage.removeItem('luma_onboarding_complete');
+      localStorage.removeItem('luma_initial_filters');
+
+      toast({
+        title: "Onboarding réinitialisé",
+        description: "Redirection vers l'onboarding...",
+      });
+
+      // Redirect to dashboard which will show onboarding
+      setTimeout(() => {
+        navigate('/dashboard');
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error('Error resetting onboarding:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de réinitialiser l'onboarding",
+        variant: "destructive",
+      });
+    } finally {
+      setResetting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -146,6 +213,49 @@ export default function SecuritySettings() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Outils Admin */}
+        {isAdmin && (
+          <Card className="glass-card border-purple-500/30 bg-purple-500/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-500" />
+                Outils Administrateur
+              </CardTitle>
+              <CardDescription>
+                Outils de test et de développement
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-4 rounded-lg border border-purple-500/20 bg-purple-500/5">
+                <div className="flex-1">
+                  <p className="font-medium">Réinitialiser l'onboarding</p>
+                  <p className="text-sm text-muted-foreground">
+                    Supprimer votre progression d'onboarding et recommencer depuis le début
+                  </p>
+                </div>
+                <Button
+                  onClick={handleResetOnboarding}
+                  disabled={resetting}
+                  variant="outline"
+                  className="gap-2 border-purple-500/50 hover:bg-purple-500/10"
+                >
+                  {resetting ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      Réinitialisation...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-4 h-4" />
+                      Réinitialiser
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Logs d'audit */}
         <AuditLogViewer />
