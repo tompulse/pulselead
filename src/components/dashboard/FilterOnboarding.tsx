@@ -176,7 +176,6 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           <div className="absolute inset-0 bg-grid-pattern opacity-10" />
           <div className="relative flex items-center gap-2 md:gap-3 mb-2">
             <div className="relative">
-              <div className="absolute inset-0 bg-accent blur-xl" />
               <div className="p-2 bg-gradient-to-br from-accent/30 to-accent/10 rounded-xl shadow-lg">
                 <Lightbulb className="w-6 h-6 md:w-8 md:h-8 text-accent relative" />
               </div>
