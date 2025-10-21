@@ -165,17 +165,17 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-8 overflow-y-auto h-full custom-scrollbar">
-        <Skeleton className="h-12 w-64" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="p-2 md:p-6 space-y-3 md:space-y-8 overflow-y-auto h-full custom-scrollbar">
+        <Skeleton className="h-8 md:h-12 w-48 md:w-64 mx-auto" />
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
           {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-48 w-full" />
+            <Skeleton key={i} className="h-32 md:h-48 w-full" />
           ))}
         </div>
-        <Skeleton className="h-8 w-48 mt-8" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Skeleton className="h-6 md:h-8 w-32 md:w-48" />
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
           {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full" />
+            <Skeleton key={i} className="h-24 md:h-32 w-full" />
           ))}
         </div>
       </div>
@@ -222,97 +222,93 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
   ];
 
   return (
-    <div className="p-4 md:p-6 space-y-8 overflow-y-auto h-full custom-scrollbar">
+    <div className="p-2 md:p-6 space-y-3 md:space-y-8 overflow-y-auto h-full custom-scrollbar">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-bold gradient-text mb-2">Suivi & Performance</h2>
-        <p className="text-muted-foreground">Suivez vos actions et résultats commerciaux</p>
+        <h2 className="text-xl md:text-3xl font-bold gradient-text mb-1">Suivi & Performance</h2>
+        <p className="text-xs md:text-sm text-muted-foreground">Suivez vos actions et résultats</p>
       </div>
 
       {/* Section 1: Mes Activités */}
-      <div className="space-y-4">
-        <h3 className="text-xl font-semibold gradient-text">📊 Mes Activités cette semaine</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-2 md:space-y-4">
+        <h3 className="text-sm md:text-xl font-semibold gradient-text">📊 Activités</h3>
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
           <div 
-            className="glass-card p-6 rounded-xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer transform hover:scale-105"
+            className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('appel')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-4 bg-blue-500/10 rounded-full mb-4">
-                <Phone className="h-8 w-8 text-blue-500" />
+              <div className="p-2 md:p-4 bg-blue-500/10 rounded-full mb-2 md:mb-4">
+                <Phone className="h-5 w-5 md:h-8 md:w-8 text-blue-500" />
               </div>
-              <span className="text-sm text-muted-foreground mb-2">Appels</span>
-              <div className="text-4xl font-bold text-blue-500 mb-2">
+              <span className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">Appels</span>
+              <div className="text-2xl md:text-4xl font-bold text-blue-500">
                 {activityStats.weekCalls}
               </div>
-              <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
             </div>
           </div>
 
           <div 
-            className="glass-card p-6 rounded-xl border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer transform hover:scale-105"
+            className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('visite')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-4 bg-green-500/10 rounded-full mb-4">
-                <MapPin className="h-8 w-8 text-green-500" />
+              <div className="p-2 md:p-4 bg-green-500/10 rounded-full mb-2 md:mb-4">
+                <MapPin className="h-5 w-5 md:h-8 md:w-8 text-green-500" />
               </div>
-              <span className="text-sm text-muted-foreground mb-2">Visites</span>
-              <div className="text-4xl font-bold text-green-500 mb-2">
+              <span className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">Visites</span>
+              <div className="text-2xl md:text-4xl font-bold text-green-500">
                 {activityStats.weekVisits}
               </div>
-              <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
             </div>
           </div>
 
           <div 
-            className="glass-card p-6 rounded-xl border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all cursor-pointer transform hover:scale-105"
+            className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('rdv')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-4 bg-purple-500/10 rounded-full mb-4">
-                <Calendar className="h-8 w-8 text-purple-500" />
+              <div className="p-2 md:p-4 bg-purple-500/10 rounded-full mb-2 md:mb-4">
+                <Calendar className="h-5 w-5 md:h-8 md:w-8 text-purple-500" />
               </div>
-              <span className="text-sm text-muted-foreground mb-2">RDV</span>
-              <div className="text-4xl font-bold text-purple-500 mb-2">
+              <span className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">RDV</span>
+              <div className="text-2xl md:text-4xl font-bold text-purple-500">
                 {activityStats.weekMeetings}
               </div>
-              <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
             </div>
           </div>
 
           <div 
-            className="glass-card p-6 rounded-xl border border-orange-500/20 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/40 transition-all cursor-pointer transform hover:scale-105"
+            className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-orange-500/20 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('a_revoir')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-4 bg-orange-500/10 rounded-full mb-4">
-                <CheckCircle2 className="h-8 w-8 text-orange-500" />
+              <div className="p-2 md:p-4 bg-orange-500/10 rounded-full mb-2 md:mb-4">
+                <CheckCircle2 className="h-5 w-5 md:h-8 md:w-8 text-orange-500" />
               </div>
-              <span className="text-sm text-muted-foreground mb-2">À revoir</span>
-              <div className="text-4xl font-bold text-orange-500 mb-2">
+              <span className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">À revoir</span>
+              <div className="text-2xl md:text-4xl font-bold text-orange-500">
                 {activityStats.weekARevoir}
               </div>
-              <p className="text-xs text-muted-foreground">Cliquer pour voir le détail</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Section 2: Performance & Analytics */}
-      <div className="space-y-4">
-        <h3 className="text-xl font-semibold gradient-text">📈 Performance & Analytics</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="space-y-2 md:space-y-4">
+        <h3 className="text-sm md:text-xl font-semibold gradient-text">📈 Performance</h3>
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
           {analyticsStats.map((stat, index) => (
-            <Card key={index} className="glass-card border-accent/30 hover:border-accent/50 transition-all hover:scale-105">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+            <Card key={index} className="glass-card border-accent/30">
+              <CardHeader className="flex flex-row items-center justify-between pb-1 md:pb-2 p-3 md:p-6">
+                <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                <stat.icon className={`h-4 w-4 md:h-5 md:w-5 ${stat.color}`} />
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{stat.value}</div>
+              <CardContent className="p-3 md:p-6 pt-0">
+                <div className="text-xl md:text-3xl font-bold">{stat.value}</div>
               </CardContent>
             </Card>
           ))}
@@ -320,23 +316,23 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
 
         {/* Average Score */}
         <Card className="glass-card border-accent/30">
-          <CardHeader>
-            <CardTitle className="gradient-text">Score moyen des leads</CardTitle>
-            <CardDescription>Qualité globale de votre pipeline</CardDescription>
+          <CardHeader className="p-3 md:p-6">
+            <CardTitle className="text-sm md:text-base gradient-text">Score moyen</CardTitle>
+            <CardDescription className="text-xs md:text-sm">Qualité du pipeline</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="text-5xl font-bold gradient-text">
+          <CardContent className="p-3 md:p-6 pt-0">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="text-3xl md:text-5xl font-bold gradient-text">
                 {analytics.averageScore}
               </div>
               <div className="flex-1">
-                <div className="h-4 bg-accent/20 rounded-full overflow-hidden">
+                <div className="h-3 md:h-4 bg-accent/20 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-gradient-to-r from-accent to-cyan-glow transition-all duration-500"
                     style={{ width: `${analytics.averageScore}%` }}
                   />
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-xs md:text-sm text-muted-foreground mt-1 md:mt-2">
                   {analytics.averageScore >= 80 ? "Excellent" : analytics.averageScore >= 50 ? "Bon" : "À améliorer"}
                 </p>
               </div>
