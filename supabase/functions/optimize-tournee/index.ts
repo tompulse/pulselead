@@ -61,67 +61,68 @@ serve(async (req) => {
       lng: entreprises[0].longitude
     };
 
-    // Utiliser l'API Mapbox Optimization pour un ordre vraiment optimal (résout le TSP)
+    // Trier les entreprises par distance depuis le point de départ (plus proche d'abord)
+    const entreprisesWithDistance = entreprises.map(e => ({
+      ...e,
+      distance: calculateDistance(startPoint.lat, startPoint.lng, e.latitude, e.longitude)
+    }));
+    
+    entreprisesWithDistance.sort((a, b) => a.distance - b.distance);
+    
+    const sortedEntreprises = entreprisesWithDistance.map(({ distance, ...e }) => e);
+    
+    // Créer l'itinéraire avec les entreprises triées par proximité
     const coordinates = [
       `${startPoint.lng},${startPoint.lat}`,
-      ...entreprises.map(e => `${e.longitude},${e.latitude}`)
+      ...sortedEntreprises.map(e => `${e.longitude},${e.latitude}`)
     ].join(';');
 
-    // API Mapbox Optimization - résout le problème du voyageur de commerce
-    const optimizationUrl = `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
+    // API Mapbox Directions pour obtenir l'itinéraire
+    const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
     
-    console.log('🎯 Appel Mapbox Optimization API (TSP) avec', entreprises.length + 1, 'points');
+    console.log('🎯 Appel Mapbox Directions API avec ordre par proximité:', sortedEntreprises.length + 1, 'points');
     
-    const mapboxResponse = await fetch(optimizationUrl);
+    const mapboxResponse = await fetch(directionsUrl);
     
     if (!mapboxResponse.ok) {
-      console.error('❌ Erreur Mapbox Optimization:', mapboxResponse.status);
+      console.error('❌ Erreur Mapbox Directions:', mapboxResponse.status);
       const errorText = await mapboxResponse.text();
       console.error('Détails:', errorText);
-      throw new Error(`Mapbox Optimization API error: ${mapboxResponse.status}`);
+      throw new Error(`Mapbox Directions API error: ${mapboxResponse.status}`);
     }
 
     const mapboxData = await mapboxResponse.json();
     
-    if (!mapboxData.trips || mapboxData.trips.length === 0) {
-      throw new Error("Aucun itinéraire optimisé trouvé par Mapbox");
+    if (!mapboxData.routes || mapboxData.routes.length === 0) {
+      throw new Error("Aucun itinéraire trouvé par Mapbox");
     }
 
-    const trip = mapboxData.trips[0];
+    const route = mapboxData.routes[0];
     
-    // Récupérer l'ordre optimisé depuis les waypoints de Mapbox
-    // waypoint_index indique l'ordre optimal
-    const waypointOrder = mapboxData.waypoints
-      .slice(1) // Exclure le point de départ
-      .sort((a: any, b: any) => a.waypoint_index - b.waypoint_index)
-      .map((wp: any) => wp.waypoint_index - 1); // -1 car le premier est le départ
+    console.log('✅ Ordre par proximité:', sortedEntreprises.map((e: Entreprise) => e.nom));
 
-    const optimizedOrder = waypointOrder.map((idx: number) => entreprises[idx]);
-
-    console.log('✅ Ordre optimal (TSP Mapbox):', optimizedOrder.map((e: Entreprise) => e.nom));
-
-    const distanceKm = trip.distance / 1000; // Conversion mètres -> km
-    const tempsTrajetMinutes = trip.duration / 60; // Conversion secondes -> minutes
-    const tempsVisites = optimizedOrder.length * 15; // 15 min par visite
+    const distanceKm = route.distance / 1000; // Conversion mètres -> km
+    const tempsTrajetMinutes = route.duration / 60; // Conversion secondes -> minutes
+    const tempsVisites = sortedEntreprises.length * 15; // 15 min par visite
     const tempsTotal = tempsTrajetMinutes + tempsVisites;
 
-    console.log('✅ Itinéraire optimal calculé:', {
+    console.log('✅ Itinéraire calculé par proximité:', {
       distance: Math.round(distanceKm) + ' km',
       temps: Math.round(tempsTotal) + ' min',
-      arrêts: optimizedOrder.length
+      arrêts: sortedEntreprises.length
     });
 
     return new Response(
       JSON.stringify({
-        ordre_optimise: optimizedOrder.map((e: Entreprise) => e.id),
-        entreprises_ordonnees: optimizedOrder,
+        ordre_optimise: sortedEntreprises.map((e: Entreprise) => e.id),
+        entreprises_ordonnees: sortedEntreprises,
         distance_totale_km: Math.round(distanceKm * 10) / 10,
         temps_estime_minutes: Math.round(tempsTotal),
         temps_trajet_minutes: Math.round(tempsTrajetMinutes),
-        explication: `Itinéraire optimal: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${optimizedOrder.length} arrêts`,
-        route_geometry: trip.geometry, // GeoJSON de la route complète
+        explication: `Itinéraire par proximité: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
+        route_geometry: route.geometry, // GeoJSON de la route complète
         waypoints: mapboxData.waypoints, // Points de passage avec données GPS
-        legs: trip.legs, // Détails de chaque segment
+        legs: route.legs, // Détails de chaque segment
         fallback: false
       }),
       {
