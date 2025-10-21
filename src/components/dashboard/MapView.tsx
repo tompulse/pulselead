@@ -216,6 +216,11 @@ export const MapView = ({
 
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
+    // Force a resize shortly after mount to correct initial canvas size
+    setTimeout(() => {
+      try { map.current?.resize(); } catch {}
+    }, 200);
+
     // Optimisation: désactiver certaines fonctionnalités lourdes sur mobile
     if (isMobile) {
       map.current.scrollZoom.disable();
@@ -230,6 +235,21 @@ export const MapView = ({
       map.current = null;
     };
   }, [mapboxgl, mapboxLoaded, isMobile]);
+
+  // Ensure proper sizing when container resizes (e.g., tab/view toggles)
+  useEffect(() => {
+    if (!mapboxLoaded || !map.current || !mapContainer.current) return;
+    const ro = new ResizeObserver(() => {
+      try { map.current?.resize(); } catch {}
+    });
+    ro.observe(mapContainer.current);
+    const onResize = () => { try { map.current?.resize(); } catch {} };
+    window.addEventListener('resize', onResize);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', onResize);
+    };
+  }, [mapboxLoaded]);
 
   // Géolocalisation utilisateur
   const handleLocateUser = () => {
