@@ -191,58 +191,11 @@ export const generateDemoData = async (userId: string) => {
 
     if (progress?.demo_data_loaded) {
       console.log('Demo data already loaded');
-      return { success: true, message: 'Demo data already loaded' };
+      return { success: true, message: 'Demo data already loaded', entreprises: DEMO_ENTREPRISES };
     }
 
-    // Create demo lead_statuts
-    const leadStatuts = DEMO_ENTREPRISES.map((_, index) => ({
-      user_id: userId,
-      entreprise_id: `demo-${index}`,
-      statut_actuel: (index < 3 ? 'qualifie' : index < 7 ? 'contacte' : 'nouveau') as 'nouveau' | 'contacte' | 'qualifie' | 'proposition' | 'negociation' | 'gagne' | 'perdu',
-      probabilite: DEMO_ENTREPRISES[index].score_lead,
-      etape_pipeline: index < 3 ? 3 : index < 7 ? 2 : 1,
-    }));
-
-    const { error: statutError } = await supabase
-      .from('lead_statuts')
-      .insert(leadStatuts);
-
-    if (statutError) throw statutError;
-
-    // Create demo interactions
-    const demoInteractions = [
-      {
-        user_id: userId,
-        entreprise_id: 'demo-0',
-        type: 'appel' as 'appel' | 'email' | 'visite' | 'rdv' | 'a_revoir',
-        statut: 'en_cours' as 'en_cours' | 'a_rappeler' | 'gagne' | 'perdu' | 'sans_suite',
-        notes: 'Très intéressé par notre offre. À recontacter la semaine prochaine.',
-        date_prochaine_action: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        user_id: userId,
-        entreprise_id: 'demo-1',
-        type: 'visite' as 'appel' | 'email' | 'visite' | 'rdv' | 'a_revoir',
-        statut: 'en_cours' as 'en_cours' | 'a_rappeler' | 'gagne' | 'perdu' | 'sans_suite',
-        notes: 'Visite effectuée. Devis à envoyer.',
-        date_prochaine_action: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        user_id: userId,
-        entreprise_id: 'demo-2',
-        type: 'email' as 'appel' | 'email' | 'visite' | 'rdv' | 'a_revoir',
-        statut: 'en_cours' as 'en_cours' | 'a_rappeler' | 'gagne' | 'perdu' | 'sans_suite',
-        notes: 'Email de présentation envoyé. En attente de retour.',
-      },
-    ];
-
-    const { error: interactionError } = await supabase
-      .from('lead_interactions')
-      .insert(demoInteractions);
-
-    if (interactionError) throw interactionError;
-
-    // Mark demo data as loaded
+    // We don't insert into entreprises in demo mode to avoid RLS and UUID constraints.
+    // Simply mark demo flag and return in-memory demo list for UI showcase.
     const { error: progressError } = await supabase
       .from('user_onboarding_progress')
       .upsert({
@@ -254,7 +207,7 @@ export const generateDemoData = async (userId: string) => {
 
     return { 
       success: true, 
-      message: 'Données de démo créées avec succès',
+      message: 'Mode démo activé',
       entreprises: DEMO_ENTREPRISES 
     };
   } catch (error) {
@@ -265,25 +218,10 @@ export const generateDemoData = async (userId: string) => {
 
 export const clearDemoData = async (userId: string) => {
   try {
-    // Delete demo interactions
-    await supabase
-      .from('lead_interactions')
-      .delete()
-      .eq('user_id', userId)
-      .like('entreprise_id', 'demo-%');
-
-    // Delete demo lead statuts
-    await supabase
-      .from('lead_statuts')
-      .delete()
-      .eq('user_id', userId)
-      .like('entreprise_id', 'demo-%');
-
-    // Update progress
+    // Just flip the flag; demo data are in-memory only
     await supabase
       .from('user_onboarding_progress')
-      .update({ demo_data_loaded: false })
-      .eq('user_id', userId);
+      .upsert({ user_id: userId, demo_data_loaded: false });
 
     return { success: true };
   } catch (error) {

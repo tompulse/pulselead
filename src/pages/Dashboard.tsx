@@ -176,7 +176,14 @@ const Dashboard = () => {
 
       // Show wizard if user hasn't completed onboarding
       if (!progress || !progress.completed_at) {
-        setShowWizard(true);
+        const launch = localStorage.getItem('luma_launch_filter_onboarding');
+        if (launch) {
+          localStorage.removeItem('luma_launch_filter_onboarding');
+          setShowWizard(false);
+          setShowOnboarding(true);
+        } else {
+          setShowWizard(true);
+        }
       } else {
         // Check if onboarding is needed (legacy)
         const onboardingComplete = localStorage.getItem('luma_onboarding_complete');

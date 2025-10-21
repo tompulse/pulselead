@@ -103,8 +103,15 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
         });
       }
     } else {
-      await handleStepComplete();
-      setCurrentStep(2);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('user_onboarding_progress')
+          .upsert({ user_id: user.id, current_step: 2 });
+      }
+      // Demander l'onboarding filtre en plein écran via Dashboard
+      localStorage.setItem('luma_launch_filter_onboarding', 'true');
+      onComplete();
     }
   };
 
