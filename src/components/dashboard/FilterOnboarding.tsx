@@ -7,6 +7,8 @@ import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, ChevronD
 import { ACTIVITY_CATEGORIES, categorizeActivity } from "@/utils/activityCategories";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
+import { useSmartSuggestions } from "@/hooks/useSmartSuggestions";
 
 interface FilterOnboardingProps {
   onComplete: (filters: {
@@ -23,6 +25,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
   const [expandedRegions, setExpandedRegions] = useState<string[]>([]);
   const [entrepriseCount, setEntrepriseCount] = useState<number>(0);
   const [loadingCount, setLoadingCount] = useState(false);
+  const { suggestions, loading: suggestionsLoading } = useSmartSuggestions();
 
   const handleCategoryToggle = (categoryKey: string) => {
     setSelectedCategories(prev =>

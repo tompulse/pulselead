@@ -1,136 +1,113 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
-interface Suggestion {
-  type: 'appel' | 'visite' | 'rdv' | 'note';
-  message: string;
-  priority: 'high' | 'medium' | 'low';
+interface SmartSuggestion {
+  type: 'region' | 'department' | 'category';
+  value: string;
+  label: string;
   reason: string;
+  count: number;
+  priority: number;
 }
 
-export const useSmartSuggestions = (entrepriseId: string, userId: string) => {
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+export const useSmartSuggestions = () => {
+  const [suggestions, setSuggestions] = useState<SmartSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (!entrepriseId || !userId) return;
+    generateSuggestions();
+  }, []);
 
-      // Get last interaction
-      const { data: interactions } = await supabase
-        .from('lead_interactions')
-        .select('*')
-        .eq('entreprise_id', entrepriseId)
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1);
+  const generateSuggestions = async () => {
+    setLoading(true);
+    
+    try {
+      // Fetch all entreprises to analyze
+      const { data: entreprises, error } = await supabase
+        .from('entreprises')
+        .select('ville, code_postal, activite, effectifs, chiffre_affaires');
 
-      // Get lead status
-      const { data: leadStatus } = await supabase
-        .from('lead_statuts')
-        .select('*')
-        .eq('entreprise_id', entrepriseId)
-        .eq('user_id', userId)
-        .maybeSingle();
+      if (error) throw error;
 
-      const newSuggestions: Suggestion[] = [];
+      const newSuggestions: SmartSuggestion[] = [];
 
-      if (!interactions || interactions.length === 0) {
-        // No interactions yet - suggest first contact
-        newSuggestions.push({
-          type: 'appel',
-          message: 'Premier contact recommandé',
-          priority: 'high',
-          reason: 'Aucune interaction enregistrée avec cette entreprise'
-        });
-      } else {
-        const lastInteraction = interactions[0];
-        const daysSinceLastContact = Math.floor(
-          (Date.now() - new Date(lastInteraction.created_at).getTime()) / (1000 * 60 * 60 * 24)
-        );
+      // Analyze by department (from postal code)
+      const departmentCounts = new Map<string, number>();
+      const departmentHighValue = new Map<string, number>();
 
-        // Suggest follow-up based on last interaction type
-        if (lastInteraction.type === 'appel' && daysSinceLastContact >= 3) {
-          newSuggestions.push({
-            type: 'visite',
-            message: 'Planifier une visite sur site',
-            priority: 'medium',
-            reason: `Dernier appel il y a ${daysSinceLastContact} jours`
-          });
-        }
-
-        if (lastInteraction.type === 'visite' && daysSinceLastContact >= 2) {
-          newSuggestions.push({
-            type: 'rdv',
-            message: 'Proposer un rendez-vous de présentation',
-            priority: 'high',
-            reason: 'Suite à la visite récente'
-          });
-        }
-
-        // Check for pending next action
-        if (lastInteraction.date_prochaine_action) {
-          const nextActionDate = new Date(lastInteraction.date_prochaine_action);
-          const daysUntilAction = Math.floor(
-            (nextActionDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-          );
-
-          if (daysUntilAction <= 0) {
-            newSuggestions.push({
-              type: 'note',
-              message: lastInteraction.prochaine_action || 'Action en attente',
-              priority: 'high',
-              reason: 'Action planifiée à faire maintenant'
-            });
-          } else if (daysUntilAction <= 2) {
-            newSuggestions.push({
-              type: 'note',
-              message: lastInteraction.prochaine_action || 'Action à venir',
-              priority: 'medium',
-              reason: `Prévue dans ${daysUntilAction} jour(s)`
-            });
+      entreprises?.forEach(e => {
+        if (e.code_postal) {
+          const dept = e.code_postal.substring(0, 2);
+          departmentCounts.set(dept, (departmentCounts.get(dept) || 0) + 1);
+          
+          if (e.chiffre_affaires && e.chiffre_affaires > 500000) {
+            departmentHighValue.set(dept, (departmentHighValue.get(dept) || 0) + 1);
           }
         }
+      });
 
-        // Status-based suggestions
-        if (leadStatus?.statut_actuel === 'contacte' && daysSinceLastContact >= 5) {
-          newSuggestions.push({
-            type: 'appel',
-            message: 'Relancer pour qualification',
-            priority: 'medium',
-            reason: 'Lead contacté il y a plus de 5 jours'
-          });
+      // Top departments by volume
+      const sortedDepts = Array.from(departmentCounts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
+
+      sortedDepts.forEach(([dept, count], index) => {
+        const highValueCount = departmentHighValue.get(dept) || 0;
+        newSuggestions.push({
+          type: 'department',
+          value: dept,
+          label: `Département ${dept}`,
+          reason: highValueCount > 0 
+            ? `${count} entreprises dont ${highValueCount} à fort potentiel`
+            : `${count} entreprises dans ce département`,
+          count,
+          priority: 10 - index,
+        });
+      });
+
+      // Analyze by activity
+      const activityCounts = new Map<string, number>();
+      const activityHighValue = new Map<string, number>();
+
+      entreprises?.forEach(e => {
+        if (e.activite) {
+          activityCounts.set(e.activite, (activityCounts.get(e.activite) || 0) + 1);
+          
+          if (e.chiffre_affaires && e.chiffre_affaires > 500000) {
+            activityHighValue.set(e.activite, (activityHighValue.get(e.activite) || 0) + 1);
+          }
         }
+      });
 
-        if (leadStatus?.statut_actuel === 'qualifie' && daysSinceLastContact >= 7) {
-          newSuggestions.push({
-            type: 'rdv',
-            message: 'Proposer une démo/présentation',
-            priority: 'high',
-            reason: 'Lead qualifié sans proposition depuis 7 jours'
-          });
-        }
+      // Top activities by volume
+      const sortedActivities = Array.from(activityCounts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
 
-        if (leadStatus?.statut_actuel === 'proposition' && daysSinceLastContact >= 10) {
-          newSuggestions.push({
-            type: 'appel',
-            message: 'Relancer sur la proposition',
-            priority: 'high',
-            reason: 'Proposition envoyée il y a plus de 10 jours'
-          });
-        }
-      }
+      sortedActivities.forEach(([activity, count], index) => {
+        const highValueCount = activityHighValue.get(activity) || 0;
+        newSuggestions.push({
+          type: 'category',
+          value: activity,
+          label: activity,
+          reason: highValueCount > 0
+            ? `${count} entreprises, ${highValueCount} à fort CA`
+            : `${count} entreprises dans ce secteur`,
+          count,
+          priority: 7 - index,
+        });
+      });
 
-      // Sort by priority
-      const priorityOrder = { high: 0, medium: 1, low: 2 };
-      newSuggestions.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+      // Sort all suggestions by priority
+      newSuggestions.sort((a, b) => b.priority - a.priority);
 
       setSuggestions(newSuggestions);
+    } catch (error) {
+      console.error('Error generating suggestions:', error);
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
-    fetchSuggestions();
-  }, [entrepriseId, userId]);
-
-  return { suggestions, loading };
+  return { suggestions, loading, refreshSuggestions: generateSuggestions };
 };

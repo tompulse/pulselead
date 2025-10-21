@@ -27,6 +27,7 @@ import { ActivitiesView } from "@/components/dashboard/ActivitiesView";
 import { TourneesView } from "@/components/dashboard/TourneesView";
 import { TourneeOptimizationPanel } from "@/components/dashboard/TourneeOptimizationPanel";
 import { PipelineKanban } from "@/components/dashboard/PipelineKanban";
+import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
 
 import { format } from "date-fns";
 
@@ -43,6 +44,7 @@ const Dashboard = () => {
   const [mobileLeadStatus, setMobileLeadStatus] = useState<any>(null);
   const [mobileActiveTab, setMobileActiveTab] = useState<'info' | 'crm'>('info');
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const [tourneeSelectionMode, setTourneeSelectionMode] = useState(false);
   const [selectedEntreprisesForTournee, setSelectedEntreprisesForTournee] = useState<any[]>([]);
   const [tournees, setTournees] = useState<any[]>([]);
@@ -165,22 +167,34 @@ const Dashboard = () => {
       console.log('Vérification admin pour:', session.user.email, 'Résultat:', adminCheck);
       setIsAdmin(adminCheck === true);
       
-      // Check if onboarding is needed
-      const onboardingComplete = localStorage.getItem('luma_onboarding_complete');
-      const savedFilters = localStorage.getItem('luma_initial_filters');
-      
-      if (!onboardingComplete) {
-        setShowOnboarding(true);
-      } else if (savedFilters) {
-        try {
-          const parsed = JSON.parse(savedFilters);
-          setFilters(prev => ({
-            ...prev,
-            categories: parsed.categories || [],
-            departments: parsed.departments || []
-          }));
-        } catch (e) {
-          console.error('Error parsing saved filters:', e);
+      // Check onboarding status
+      const { data: progress } = await supabase
+        .from('user_onboarding_progress')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      // Show wizard if user hasn't completed onboarding
+      if (!progress || !progress.completed_at) {
+        setShowWizard(true);
+      } else {
+        // Check if onboarding is needed (legacy)
+        const onboardingComplete = localStorage.getItem('luma_onboarding_complete');
+        const savedFilters = localStorage.getItem('luma_initial_filters');
+        
+        if (!onboardingComplete) {
+          setShowOnboarding(true);
+        } else if (savedFilters) {
+          try {
+            const parsed = JSON.parse(savedFilters);
+            setFilters(prev => ({
+              ...prev,
+              categories: parsed.categories || [],
+              departments: parsed.departments || []
+            }));
+          } catch (e) {
+            console.error('Error parsing saved filters:', e);
+          }
         }
       }
       
@@ -255,6 +269,10 @@ const Dashboard = () => {
         </div>
       </div>
     );
+  }
+
+  if (showWizard) {
+    return <OnboardingWizard onComplete={() => setShowWizard(false)} />;
   }
 
   if (showOnboarding) {
