@@ -329,22 +329,22 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Résultats mesurables - En vert avec copywriting amélioré */}
-          <div className="glass-card p-10 md:p-12 max-w-5xl mx-auto border-cyan-electric/50 bg-gradient-to-br from-cyan-electric/15 via-cyan-electric/5 to-transparent shadow-2xl shadow-cyan-electric/20">
-            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10 text-cyan-electric">Ce que nos utilisateurs réalisent avec LUMA</h3>
+          {/* Résultats mesurables - En vert avec tailles réduites */}
+          <div className="glass-card p-10 md:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
+            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA</h3>
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div className="space-y-3">
-                <div className="text-5xl md:text-6xl font-bold text-cyan-electric">6h/semaine</div>
+                <div className="text-4xl md:text-5xl font-bold text-green-400">6h/semaine</div>
                 <div className="text-lg md:text-xl text-foreground font-bold">Temps économisé</div>
                 <div className="text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre</div>
               </div>
               <div className="space-y-3">
-                <div className="text-5xl md:text-6xl font-bold text-cyan-electric">×2.5</div>
+                <div className="text-4xl md:text-5xl font-bold text-green-400">×2.5</div>
                 <div className="text-lg md:text-xl text-foreground font-bold">Rendez-vous décrochés</div>
                 <div className="text-sm text-muted-foreground">Grâce à une organisation optimisée</div>
               </div>
               <div className="space-y-3">
-                <div className="text-5xl md:text-6xl font-bold text-cyan-electric">+40%</div>
+                <div className="text-4xl md:text-5xl font-bold text-green-400">+40%</div>
                 <div className="text-lg md:text-xl text-foreground font-bold">Croissance du CA</div>
                 <div className="text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation</div>
               </div>
