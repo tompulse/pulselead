@@ -394,7 +394,7 @@ const Dashboard = () => {
           <Sidebar 
             filters={filters} 
             setFilters={setFilters}
-            tourneeMode={view === "map"}
+            tourneeMode={view === "map" || view === "list"}
             onCreateTournee={() => setTourneeSelectionMode(!tourneeSelectionMode)}
             tourneeActive={tourneeSelectionMode}
             tourneeName={tourneeName}
@@ -482,6 +482,17 @@ const Dashboard = () => {
                 <ListView 
                   filters={filters}
                   onEntrepriseSelect={handleEntrepriseSelect}
+                  selectionMode={tourneeSelectionMode}
+                  selectedEntreprises={selectedEntreprisesForTournee}
+                  onToggleSelection={(entreprise) => {
+                    setSelectedEntreprisesForTournee(prev => {
+                      const exists = prev.find(e => e.id === entreprise.id);
+                      if (exists) {
+                        return prev.filter(e => e.id !== entreprise.id);
+                      }
+                      return [...prev, entreprise];
+                    });
+                  }}
                 />
               </div>
             ) : view === "tournees" ? (

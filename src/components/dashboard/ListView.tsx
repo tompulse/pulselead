@@ -528,16 +528,6 @@ export const ListView = ({
                         >
                           <CalendarCheck className="h-4 w-4" />
                         </button>
-                        
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCRMAction(item.id, 'note');
-                          }}
-                          className="h-8 w-8 rounded-lg flex items-center justify-center transition-all border border-amber-500/30 text-amber-500/60 hover:border-amber-500 hover:text-amber-500 hover:bg-amber-500/5 shadow-sm"
-                        >
-                          <StickyNote className="h-4 w-4" />
-                        </button>
                       </div>
                       )}
                     </div>
