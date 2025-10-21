@@ -68,6 +68,11 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      toast({
+        title: "Chargement des données de démo...",
+        description: "Veuillez patienter",
+      });
+
       const result = await generateDemoData(user.id);
       
       if (result.success) {
@@ -77,7 +82,17 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
         });
         
         await handleStepComplete();
-        setCurrentStep(3);
+        
+        // Wait a bit to ensure data is saved
+        setTimeout(() => {
+          setCurrentStep(3);
+        }, 500);
+      } else {
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les données de démo",
+          variant: "destructive",
+        });
       }
     } else {
       await handleStepComplete();
@@ -136,107 +151,105 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-4 overflow-y-auto">
-      <Card className="w-full max-w-6xl p-12 my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-6">
+      <Card className="w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8">
         {/* Progress Header */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-              Bienvenue sur LUMA 👋
-            </h2>
-            <span className="text-lg font-semibold text-muted-foreground">
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-3xl font-bold">Bienvenue sur LUMA 👋</h2>
+            <span className="text-base font-semibold text-muted-foreground">
               Étape {currentStep}/3
             </span>
           </div>
-          <Progress value={progress} className="h-3" />
+          <Progress value={progress} className="h-2.5" />
         </div>
 
         {/* Step 1: Welcome & Value Proposition */}
         {currentStep === 1 && (
-          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
-            <div className="text-center space-y-6 mb-12">
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary/10 rounded-full text-primary font-semibold text-lg">
-                <Sparkles className="h-5 w-5" />
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+            <div className="text-center space-y-4 mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-full text-accent font-semibold">
+                <Sparkles className="h-4 w-4" />
                 Offre de lancement
               </div>
-              <h3 className="text-5xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <h3 className="text-3xl font-bold">
                 Transformez votre prospection terrain
               </h3>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              <p className="text-base text-muted-foreground max-w-2xl mx-auto">
                 LUMA vous aide à trouver, qualifier et suivre vos prospects 
                 tout en optimisant vos déplacements
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-              <Card className="p-8 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300 border-2 hover:border-primary/50">
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <Target className="h-8 w-8 text-primary" />
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
+              <Card className="p-6 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 border-accent/30">
+                <div className="h-14 w-14 rounded-xl bg-accent/20 flex items-center justify-center mx-auto mb-4">
+                  <Target className="h-7 w-7 text-accent" />
                 </div>
-                <h4 className="text-xl font-bold mb-3">+40% de conversion</h4>
-                <p className="text-base text-muted-foreground leading-relaxed">
+                <h4 className="text-lg font-bold mb-2">+40% de conversion</h4>
+                <p className="text-sm text-muted-foreground">
                   Ciblez les bons prospects au bon moment
                 </p>
               </Card>
 
-              <Card className="p-8 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300 border-2 hover:border-primary/50">
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <MapPin className="h-8 w-8 text-primary" />
+              <Card className="p-6 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 border-accent/30">
+                <div className="h-14 w-14 rounded-xl bg-accent/20 flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="h-7 w-7 text-accent" />
                 </div>
-                <h4 className="text-xl font-bold mb-3">-30% de temps route</h4>
-                <p className="text-base text-muted-foreground leading-relaxed">
+                <h4 className="text-lg font-bold mb-2">-30% de temps route</h4>
+                <p className="text-sm text-muted-foreground">
                   Optimisez automatiquement vos tournées
                 </p>
               </Card>
 
-              <Card className="p-8 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300 border-2 hover:border-primary/50">
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <TrendingUp className="h-8 w-8 text-primary" />
+              <Card className="p-6 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 border-accent/30">
+                <div className="h-14 w-14 rounded-xl bg-accent/20 flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="h-7 w-7 text-accent" />
                 </div>
-                <h4 className="text-xl font-bold mb-3">8h/semaine économisées</h4>
-                <p className="text-base text-muted-foreground leading-relaxed">
+                <h4 className="text-lg font-bold mb-2">8h/semaine économisées</h4>
+                <p className="text-sm text-muted-foreground">
                   Automatisez votre suivi commercial
                 </p>
               </Card>
             </div>
 
-            <div className="space-y-8">
-              <p className="text-center text-2xl font-semibold mb-8">
+            <div className="space-y-5">
+              <p className="text-center text-xl font-semibold mb-4">
                 Comment souhaitez-vous commencer ?
               </p>
               
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid md:grid-cols-2 gap-6">
                 <Card
-                  className={`p-10 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] border-2 ${
+                  className={`p-8 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border-2 ${
                     selectedOption === 'demo' 
-                      ? 'ring-4 ring-primary shadow-2xl shadow-primary/20 border-primary' 
-                      : 'hover:border-primary/50'
+                      ? 'ring-2 ring-accent shadow-xl border-accent' 
+                      : 'border-accent/30 hover:border-accent/50'
                   }`}
                   onClick={() => handleDemoChoice('demo')}
                 >
-                  <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-5">
                     <div className="flex items-center gap-4">
-                      <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <Sparkles className="h-7 w-7 text-primary" />
+                      <div className="h-12 w-12 rounded-xl bg-accent/30 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="h-6 w-6 text-accent" />
                       </div>
                       <div>
-                        <h4 className="text-2xl font-bold mb-2">Mode Découverte</h4>
-                        <p className="text-base text-muted-foreground leading-relaxed">
+                        <h4 className="text-xl font-bold mb-1">Mode Découverte</h4>
+                        <p className="text-sm text-muted-foreground">
                           Explorez LUMA avec 10 entreprises fictives pré-chargées
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-primary">
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4" />
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-accent">
+                      <div className="flex items-center gap-1.5">
+                        <Check className="h-3.5 w-3.5" />
                         Démo interactive
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4" />
+                      <div className="flex items-center gap-1.5">
+                        <Check className="h-3.5 w-3.5" />
                         Données réalistes
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4" />
+                      <div className="flex items-center gap-1.5">
+                        <Check className="h-3.5 w-3.5" />
                         Sans engagement
                       </div>
                     </div>
@@ -244,36 +257,36 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                 </Card>
 
                 <Card
-                  className={`p-10 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] border-2 ${
+                  className={`p-8 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border-2 ${
                     selectedOption === 'real' 
-                      ? 'ring-4 ring-primary shadow-2xl shadow-primary/20 border-primary' 
-                      : 'hover:border-primary/50'
+                      ? 'ring-2 ring-accent shadow-xl border-accent' 
+                      : 'border-accent/30 hover:border-accent/50'
                   }`}
                   onClick={() => handleDemoChoice('real')}
                 >
-                  <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-5">
                     <div className="flex items-center gap-4">
-                      <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <Rocket className="h-7 w-7 text-primary" />
+                      <div className="h-12 w-12 rounded-xl bg-accent/30 flex items-center justify-center flex-shrink-0">
+                        <Rocket className="h-6 w-6 text-accent" />
                       </div>
                       <div>
-                        <h4 className="text-2xl font-bold mb-2">Mode Production</h4>
-                        <p className="text-base text-muted-foreground leading-relaxed">
+                        <h4 className="text-xl font-bold mb-1">Mode Production</h4>
+                        <p className="text-sm text-muted-foreground">
                           Configurez votre territoire et commencez immédiatement
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-primary">
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4" />
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-accent">
+                      <div className="flex items-center gap-1.5">
+                        <Check className="h-3.5 w-3.5" />
                         Vraies entreprises
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4" />
+                      <div className="flex items-center gap-1.5">
+                        <Check className="h-3.5 w-3.5" />
                         Données à jour
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4" />
+                      <div className="flex items-center gap-1.5">
+                        <Check className="h-3.5 w-3.5" />
                         Résultats réels
                       </div>
                     </div>
@@ -293,37 +306,37 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
 
         {/* Step 3: Launch Tour */}
         {currentStep === 3 && (
-          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 text-center py-8">
-            <div className="inline-flex h-28 w-28 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 items-center justify-center mx-auto mb-6 shadow-2xl">
-              <Check className="h-16 w-16 text-primary" />
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 text-center py-6">
+            <div className="inline-flex h-20 w-20 rounded-full bg-accent/30 items-center justify-center mx-auto mb-4">
+              <Check className="h-10 w-10 text-accent" />
             </div>
             
-            <h3 className="text-5xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <h3 className="text-3xl font-bold">
               Configuration terminée ! 🎉
             </h3>
             
-            <p className="text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
               {selectedOption === 'demo' 
                 ? "Vos données de démo sont prêtes. Voulez-vous un tour guidé de l'interface ?"
                 : "Votre territoire est configuré. Voulez-vous un tour guidé de l'interface ?"
               }
             </p>
 
-            <div className="flex items-center justify-center gap-6 pt-8">
+            <div className="flex items-center justify-center gap-4 pt-4">
               <Button
                 variant="outline"
                 size="lg"
                 onClick={handleSkipTour}
-                className="text-lg px-8 py-6 h-auto hover:scale-105 transition-transform"
+                className="hover:scale-105 transition-transform border-accent/50"
               >
                 Passer le tutoriel
               </Button>
               <Button
                 size="lg"
                 onClick={handleStartTour}
-                className="gap-3 text-lg px-8 py-6 h-auto hover:scale-105 transition-transform shadow-lg hover:shadow-2xl"
+                className="gap-2 hover:scale-105 transition-transform bg-accent hover:bg-accent/90"
               >
-                <Sparkles className="h-6 w-6" />
+                <Sparkles className="h-5 w-5" />
                 Démarrer le tour guidé
               </Button>
             </div>
