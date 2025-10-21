@@ -10,10 +10,9 @@ import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprise
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
 import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
-import { ActivitiesViewContainer } from "@/views/ActivitiesViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
+import { SuiviViewContainer } from "@/views/SuiviViewContainer";
 import { PipelineViewContainer } from "@/views/PipelineViewContainer";
-import { AnalyticsViewContainer } from "@/views/AnalyticsViewContainer";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -231,17 +230,14 @@ const DashboardContent = () => {
               onEntrepriseSelect={handleEntrepriseSelect}
             />
           )}
-          {view === 'activities' && userId && (
-            <ActivitiesViewContainer userId={userId} />
-          )}
           {view === 'tournees' && userId && (
             <TourneesViewContainer userId={userId} />
           )}
+          {view === 'suivi' && userId && (
+            <SuiviViewContainer userId={userId} />
+          )}
           {view === 'pipeline' && userId && (
             <PipelineViewContainer userId={userId} />
-          )}
-          {view === 'analytics' && userId && (
-            <AnalyticsViewContainer userId={userId} />
           )}
         </main>
       </div>

@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Lightbulb, LogOut, List, MapIcon, Calendar, Navigation, TrendingUp, BarChart3 } from "lucide-react";
+import { Lightbulb, LogOut, MapIcon, Navigation, TrendingUp, BarChart3 } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { SyncButton } from "./SyncButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardHeaderProps {
-  view: 'prospects' | 'activities' | 'tournees' | 'pipeline' | 'analytics';
-  onViewChange: (view: 'prospects' | 'activities' | 'tournees' | 'pipeline' | 'analytics') => void;
+  view: 'prospects' | 'tournees' | 'suivi' | 'pipeline';
+  onViewChange: (view: 'prospects' | 'tournees' | 'suivi' | 'pipeline') => void;
   isAdmin: boolean;
   onLogout: () => void;
 }
@@ -52,13 +52,13 @@ export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: Dashb
               <span className="hidden sm:inline">Tournées</span>
             </Button>
             <Button
-              variant={view === "activities" ? "default" : "ghost"}
+              variant={view === "suivi" ? "default" : "ghost"}
               size="sm"
-              onClick={() => handleViewChange("activities")}
-              className={`h-7 px-2 text-xs ${view === "activities" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+              onClick={() => handleViewChange("suivi")}
+              className={`h-7 px-2 text-xs ${view === "suivi" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
             >
-              <Calendar className="w-3.5 h-3.5 mr-1" />
-              <span className="hidden sm:inline">Activités</span>
+              <BarChart3 className="w-3.5 h-3.5 mr-1" />
+              <span className="hidden sm:inline">Suivi</span>
             </Button>
             <Button
               variant={view === "pipeline" ? "default" : "ghost"}
@@ -68,15 +68,6 @@ export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: Dashb
             >
               <TrendingUp className="w-3.5 h-3.5 mr-1" />
               <span className="hidden sm:inline">Pipeline</span>
-            </Button>
-            <Button
-              variant={view === "analytics" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => handleViewChange("analytics")}
-              className={`h-7 px-2 text-xs ${view === "analytics" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
-            >
-              <BarChart3 className="w-3.5 h-3.5 mr-1" />
-              <span className="hidden sm:inline">Analytics</span>
             </Button>
           </div>
         </div>

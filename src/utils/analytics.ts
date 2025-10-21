@@ -12,7 +12,7 @@ export const trackCTAClick = (ctaName: string, location: string = 'landing') => 
   });
 };
 
-export const trackEntrepriseView = (entrepriseId: string, entrepriseName: string, source: 'prospects' | 'activities' | 'tournees' | 'pipeline' | 'analytics') => {
+export const trackEntrepriseView = (entrepriseId: string, entrepriseName: string, source: 'prospects' | 'tournees' | 'suivi' | 'pipeline') => {
   trackEvent('entreprise_view', {
     entreprise_id: entrepriseId,
     entreprise_name: entrepriseName,
@@ -20,7 +20,7 @@ export const trackEntrepriseView = (entrepriseId: string, entrepriseName: string
   });
 };
 
-export const trackViewChange = (newView: 'prospects' | 'activities' | 'tournees' | 'pipeline' | 'analytics') => {
+export const trackViewChange = (newView: 'prospects' | 'tournees' | 'suivi' | 'pipeline') => {
   trackEvent('view_change', { 
     view_type: newView 
   });
