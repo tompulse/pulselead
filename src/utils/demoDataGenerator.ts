@@ -201,7 +201,7 @@ export const generateDemoData = async (userId: string) => {
       .upsert({
         user_id: userId,
         demo_data_loaded: true,
-      });
+      }, { onConflict: 'user_id' });
 
     if (progressError) throw progressError;
 

@@ -58,7 +58,7 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
         user_id: user.id,
         current_step: currentStep + 1,
         completed_steps: Array.from({ length: currentStep }, (_, i) => i + 1),
-      });
+      }, { onConflict: 'user_id' });
   };
 
   const handleDemoChoice = async (choice: 'demo' | 'real') => {
@@ -93,7 +93,7 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
               completed_steps: [1,2,3],
               demo_data_loaded: true,
               completed_at: new Date().toISOString(),
-            });
+            }, { onConflict: 'user_id' });
 
           toast({
             title: "C'est parti ! 🚀",
@@ -124,7 +124,7 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
       if (user) {
         await supabase
           .from('user_onboarding_progress')
-          .upsert({ user_id: user.id, current_step: 2 });
+          .upsert({ user_id: user.id, current_step: 2 }, { onConflict: 'user_id' });
       }
       localStorage.setItem('luma_launch_filter_onboarding', 'true');
       onComplete();
