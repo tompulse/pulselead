@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Calendar, X } from "lucide-react";
+import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Calendar, X, Map } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
 import { trackCTAClick } from "@/utils/analytics";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -97,18 +97,18 @@ const Index = () => {
             
             {/* Titre principal optimisé pour conversion */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
-              <span className="text-foreground">Prospectez les</span>
+              <span className="text-foreground">L'outil ultime pour les</span>
               <br />
-              <span className="gradient-text">nouvelles entreprises</span>
+              <span className="gradient-text">commerciaux terrain</span>
               <br />
-              <span className="text-foreground">avant vos concurrents</span>
+              <span className="text-foreground">qui veulent performer</span>
             </h1>
             
             {/* Sous-titre optimisé */}
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium">
-              Accédez à toutes les créations d'entreprises en France sur une carte interactive.
+              Organisez vos tournées, gérez vos prospects et suivez votre pipeline commercial.
               <br className="hidden sm:block" />
-              <span className="text-accent font-semibold">Filtrez par secteur, contactez en premier.</span>
+              <span className="text-accent font-semibold">+ Accès aux créations d'entreprises en temps réel.</span>
             </p>
             
             {/* CTA optimisé */}
@@ -209,12 +209,12 @@ const Index = () => {
             }`}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              Vous perdez des <span className="gradient-text">opportunités</span>
+              Les <span className="gradient-text">commerciaux terrain</span>
               <br />
-              pendant que vos concurrents prospectent
+              perdent un temps fou
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Chaque jour, des centaines d'entreprises se créent. Sans système efficace, vous passez à côté.
+              Outils dispersés, données désorganisées, aucune vision d'ensemble. Vous méritez mieux.
             </p>
           </div>
 
@@ -225,9 +225,9 @@ const Index = () => {
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <AlertCircle className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Concurrence féroce</h3>
+              <h3 className="text-xl font-bold text-foreground">Outils dispersés</h3>
               <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Vos concurrents contactent les prospects en premier pendant que vous cherchez manuellement sur Internet.
+                CRM sur un outil, tournées sur un autre, prospects ailleurs. Impossible de s'y retrouver efficacement.
               </p>
             </div>
 
@@ -235,9 +235,9 @@ const Index = () => {
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <Clock className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Perte de temps</h3>
+              <h3 className="text-xl font-bold text-foreground">Gestion chronophage</h3>
               <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Des heures perdues à chercher, vérifier et compiler des données éparpillées sur différentes sources.
+                Trop de temps administratif au lieu de vendre. Planification de tournées, suivi client, reporting manuel.
               </p>
             </div>
 
@@ -245,9 +245,9 @@ const Index = () => {
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <Target className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Prospection à l'aveugle</h3>
+              <h3 className="text-xl font-bold text-foreground">Manque de visibilité</h3>
               <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Sans vue d'ensemble, impossible de cibler efficacement les zones et secteurs à fort potentiel.
+                Aucune vue claire sur votre territoire, vos prospects, votre pipeline. Vous naviguez à l'aveugle.
               </p>
             </div>
           </div>
@@ -260,10 +260,10 @@ const Index = () => {
             }`}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              LUMA vous donne l'<span className="gradient-text">avantage décisif</span>
+              LUMA centralise <span className="gradient-text">tout ce dont vous avez besoin</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Prospectez intelligemment avec des données actualisées et une vision complète de votre territoire.
+              Un seul outil pour gérer vos prospects, vos tournées, votre CRM et suivre votre performance.
             </p>
           </div>
 
@@ -272,11 +272,11 @@ const Index = () => {
           }`}>
             <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <Zap className="w-9 h-9 text-accent" />
+                <Map className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Temps réel</h3>
+              <h3 className="text-xl font-bold text-foreground">Tournées optimisées</h3>
               <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Accédez aux nouvelles créations dès leur publication officielle. Contactez avant tout le monde.
+                Planifiez vos visites terrain efficacement. Itinéraires optimisés, GPS intégré. Gagnez du temps.
               </p>
             </div>
 
@@ -284,19 +284,19 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <TrendingUp className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Ciblage précis</h3>
+              <h3 className="text-xl font-bold text-foreground">CRM intégré</h3>
               <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Filtrez par secteur d'activité, zone géographique et critères personnalisés. Zéro temps perdu.
+                Suivez vos prospects, interactions et opportunités. Pipeline clair, historique complet, zéro oubli.
               </p>
             </div>
 
             <div className="glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <Shield className="w-9 h-9 text-accent" />
+                <Sparkles className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Fiabilité totale</h3>
+              <h3 className="text-xl font-bold text-foreground">Créations en temps réel</h3>
               <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Données vérifiées issues des sources officielles (INPI, INSEE). Informations complètes et à jour.
+                Le + qui fait la différence : accédez aux nouvelles entreprises avant vos concurrents.
               </p>
             </div>
           </div>
@@ -306,18 +306,18 @@ const Index = () => {
             <h3 className="text-2xl font-bold text-center mb-8 gradient-text">Résultats constatés par nos utilisateurs</h3>
             <div className="grid md:grid-cols-3 gap-10 text-center">
               <div className="space-y-2">
-                <div className="text-5xl font-bold gradient-text">×2.5</div>
-                <div className="text-lg text-foreground font-bold">Rendez-vous obtenus</div>
-                <div className="text-sm text-muted-foreground font-medium">Par rapport à la prospection classique</div>
-              </div>
-              <div className="space-y-2">
                 <div className="text-5xl font-bold gradient-text">3h/jour</div>
                 <div className="text-lg text-foreground font-bold">Temps économisé</div>
-                <div className="text-sm text-muted-foreground font-medium">En recherche et qualification</div>
+                <div className="text-sm text-muted-foreground font-medium">Moins d'admin, plus de vente</div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-5xl font-bold gradient-text">×2.5</div>
+                <div className="text-lg text-foreground font-bold">Rendez-vous obtenus</div>
+                <div className="text-sm text-muted-foreground font-medium">Grâce à une meilleure organisation</div>
               </div>
               <div className="space-y-2">
                 <div className="text-5xl font-bold gradient-text">+40%</div>
-                <div className="text-lg text-foreground font-bold">Croissance clients</div>
+                <div className="text-lg text-foreground font-bold">Croissance CA</div>
                 <div className="text-sm text-muted-foreground font-medium">En 6 mois d'utilisation</div>
               </div>
             </div>
@@ -340,7 +340,7 @@ const Index = () => {
               <span className="gradient-text">accélère votre croissance</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Chaque jour sans LUMA, c'est un prospect que votre concurrent contacte avant vous.
+              Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
           </div>
 
@@ -600,7 +600,7 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-base text-foreground leading-relaxed">
-                "J'ai multiplié mes RDV par 2 en quelques semaines. Plus aucune opportunité ratée."
+                "Enfin un outil pensé pour les commerciaux terrain ! Tournées optimisées, CRM simple. J'ai doublé mes RDV."
               </p>
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
                 <span className="text-sm font-semibold text-cyan-electric">+100% de RDV</span>
@@ -619,7 +619,7 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-base text-foreground leading-relaxed">
-                "Environ 2h gagnées chaque jour. Je vois tout mon territoire en un coup d'œil."
+                "Plus besoin de jongler entre 5 outils. Tout est centralisé, je gagne 2h par jour et je vois tout mon secteur."
               </p>
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
                 <span className="text-sm font-semibold text-cyan-electric">2h/jour économisées</span>
@@ -638,7 +638,7 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-base text-foreground leading-relaxed">
-                "Simple, efficace. Une quinzaine de nouveaux clients en quelques mois."
+                "L'outil parfait pour les indépendants. Simple, complet, avec le bonus des créations d'entreprises."
               </p>
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
                 <span className="text-sm font-semibold text-cyan-electric">+15 clients</span>
@@ -776,7 +776,7 @@ const Index = () => {
                 <span className="text-lg font-bold gradient-text">LUMA</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Visualise les créations d'entreprises en temps réel et développe ton portefeuille client.
+                L'outil tout-en-un des commerciaux terrain pour optimiser leurs tournées et développer leur portefeuille.
               </p>
             </div>
 
