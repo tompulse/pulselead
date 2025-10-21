@@ -212,6 +212,38 @@ export const TourneeRouteDisplay = ({
     setNavigatingEntreprise(null);
   };
 
+  const handleNavigateFullRoute = (app: 'google' | 'waze') => {
+    const waypoints = entreprises.map(e => ({
+      lat: e.latitude,
+      lng: e.longitude,
+      name: e.nom
+    }));
+
+    if (waypoints.length === 0) return;
+
+    let url: string;
+    if (app === 'google') {
+      // Google Maps: origin, waypoints, destination
+      const origin = pointDepartLat && pointDepartLng 
+        ? `${pointDepartLat},${pointDepartLng}`
+        : `${waypoints[0].lat},${waypoints[0].lng}`;
+      
+      const destination = waypoints[waypoints.length - 1];
+      const waypointsStr = waypoints
+        .slice(0, -1)
+        .map(w => `${w.lat},${w.lng}`)
+        .join('|');
+
+      url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination.lat},${destination.lng}&waypoints=${waypointsStr}&travelmode=driving`;
+    } else {
+      // Waze: seulement la première destination (limitation de Waze)
+      const first = waypoints[0];
+      url = `https://waze.com/ul?ll=${first.lat},${first.lng}&navigate=yes`;
+    }
+
+    window.open(url, '_blank');
+  };
+
   const handleSaveVisite = async () => {
     if (!selectedEntreprise) return;
 
@@ -356,9 +388,21 @@ export const TourneeRouteDisplay = ({
               </div>
               {entreprises.length} arrêts
             </CardTitle>
-            <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
-              {statusConfig.label}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleNavigateFullRoute('google')}
+                className="h-7 px-2 text-xs border-accent/30 hover:border-accent hover:bg-accent/10"
+                title="Ouvrir l'itinéraire complet dans Google Maps"
+              >
+                <MapIconLucide className="w-3.5 h-3.5 mr-1" />
+                <span className="hidden sm:inline">GPS</span>
+              </Button>
+              <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
+                {statusConfig.label}
+              </Badge>
+            </div>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground bg-accent/5 rounded-lg px-3 py-2">
             <div className="flex items-center gap-1">
@@ -420,29 +464,40 @@ export const TourneeRouteDisplay = ({
       <Dialog open={showNavigationDialog} onOpenChange={setShowNavigationDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Choisir l'application de navigation</DialogTitle>
+            <DialogTitle>Navigation GPS</DialogTitle>
             <DialogDescription>
-              Navigation vers {navigatingEntreprise?.nom}
+              {navigatingEntreprise ? `Vers ${navigatingEntreprise.nom}` : 'Itinéraire complet de la tournée'}
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-3 mt-4">
             <Button
               onClick={() => handleNavigateWithApp('google')}
-              className="h-20 flex flex-col gap-2"
+              className="h-24 flex flex-col gap-2 hover:border-accent hover:bg-accent/10"
               variant="outline"
             >
-              <MapIconLucide className="w-8 h-8" />
-              <span>Google Maps</span>
+              <MapIconLucide className="w-10 h-10 text-accent" />
+              <div className="text-center">
+                <span className="font-semibold">Google Maps</span>
+                {!navigatingEntreprise && <p className="text-xs text-muted-foreground mt-1">Itinéraire complet</p>}
+              </div>
             </Button>
             <Button
               onClick={() => handleNavigateWithApp('waze')}
-              className="h-20 flex flex-col gap-2"
+              className="h-24 flex flex-col gap-2 hover:border-accent hover:bg-accent/10"
               variant="outline"
             >
-              <Navigation className="w-8 h-8" />
-              <span>Waze</span>
+              <Navigation className="w-10 h-10 text-accent" />
+              <div className="text-center">
+                <span className="font-semibold">Waze</span>
+                {!navigatingEntreprise && <p className="text-xs text-muted-foreground mt-1">Premier arrêt</p>}
+              </div>
             </Button>
           </div>
+          {!navigatingEntreprise && (
+            <p className="text-xs text-muted-foreground text-center mt-2 px-4">
+              📍 Google Maps affichera tous les arrêts. Waze vous guidera vers le premier point.
+            </p>
+          )}
         </DialogContent>
       </Dialog>
 

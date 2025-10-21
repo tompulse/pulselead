@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,11 +13,55 @@ interface Entreprise {
   adresse?: string;
   ville?: string;
   code_postal?: string;
+  telephone?: string;
 }
 
 interface OptimizationRequest {
   entreprises: Entreprise[];
   point_depart?: { lat: number; lng: number };
+}
+
+// Calcul de distance Haversine pour pré-tri
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Rayon de la Terre en km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// Algorithme du plus proche voisin pour optimisation de base
+function nearestNeighborOptimization(
+  startPoint: { lat: number; lng: number },
+  points: Entreprise[]
+): Entreprise[] {
+  if (points.length === 0) return [];
+  
+  const result: Entreprise[] = [];
+  const remaining = [...points];
+  let current = startPoint;
+  
+  while (remaining.length > 0) {
+    let nearestIdx = 0;
+    let minDist = calculateDistance(current.lat, current.lng, remaining[0].latitude, remaining[0].longitude);
+    
+    for (let i = 1; i < remaining.length; i++) {
+      const dist = calculateDistance(current.lat, current.lng, remaining[i].latitude, remaining[i].longitude);
+      if (dist < minDist) {
+        minDist = dist;
+        nearestIdx = i;
+      }
+    }
+    
+    const nearest = remaining.splice(nearestIdx, 1)[0];
+    result.push(nearest);
+    current = { lat: nearest.latitude, lng: nearest.longitude };
+  }
+  
+  return result;
 }
 
 serve(async (req) => {
@@ -29,92 +72,112 @@ serve(async (req) => {
   try {
     const { entreprises, point_depart }: OptimizationRequest = await req.json();
     
+    console.log('🚀 Optimisation de tournée demandée:', { 
+      nbEntreprises: entreprises.length,
+      hasStartPoint: !!point_depart 
+    });
+    
     if (!entreprises || entreprises.length === 0) {
       throw new Error("Aucune entreprise fournie");
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+    const MAPBOX_TOKEN = Deno.env.get('MAPBOX_ACCESS_TOKEN');
+    if (!MAPBOX_TOKEN) {
+      throw new Error('MAPBOX_ACCESS_TOKEN is not configured');
     }
 
-    // Préparer les données pour l'IA
-    const entreprisesInfo = entreprises.map((e, idx) => 
-      `${idx + 1}. ${e.nom} - ${e.ville || ''} ${e.code_postal || ''} (Lat: ${e.latitude}, Lng: ${e.longitude})`
-    ).join('\n');
+    // Déterminer le point de départ
+    const startPoint = point_depart || {
+      lat: entreprises[0].latitude,
+      lng: entreprises[0].longitude
+    };
 
-    const departInfo = point_depart 
-      ? `Point de départ: Lat ${point_depart.lat}, Lng ${point_depart.lng}`
-      : "Point de départ: première entreprise de la liste";
+    // Pré-optimisation avec algorithme du plus proche voisin
+    const optimizedOrder = nearestNeighborOptimization(startPoint, entreprises);
+    
+    console.log('✅ Ordre optimisé (plus proche voisin):', optimizedOrder.map(e => e.nom));
 
-    const systemPrompt = `Tu es un expert en optimisation d'itinéraires commerciaux. 
-Ta mission est d'optimiser l'ordre de visite d'entreprises pour minimiser la distance totale parcourue.
+    // Construire l'URL pour Mapbox Directions API
+    // Format: lng,lat pour chaque point
+    const coordinates = [
+      `${startPoint.lng},${startPoint.lat}`,
+      ...optimizedOrder.map(e => `${e.longitude},${e.latitude}`)
+    ].join(';');
 
-Règles:
-- Utilise l'algorithme du plus proche voisin en partant du point de départ fourni
-- Si aucun point de départ n'est fourni, utilise automatiquement la première entreprise
-- Retourne UNIQUEMENT un JSON valide avec la structure exacte demandée
-- Calcule les distances en ligne droite (approximation Haversine)
-- Estime 15 minutes par visite + temps de trajet (environ 60 km/h)
-- Dans l'explication, indique simplement l'itinéraire optimisé sans poser de questions
-- Format de réponse obligatoire: {"ordre": [indices], "distance_km": number, "temps_minutes": number, "explication": "texte"}`;
+    // Appel à Mapbox Directions API pour obtenir l'itinéraire réel
+    const mapboxUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
+    
+    console.log('📍 Appel Mapbox Directions API avec', optimizedOrder.length + 1, 'points');
+    
+    const mapboxResponse = await fetch(mapboxUrl);
+    
+    if (!mapboxResponse.ok) {
+      console.error('❌ Erreur Mapbox:', mapboxResponse.status);
+      // Fallback sur calcul approximatif si Mapbox échoue
+      let totalDistance = 0;
+      let currentPoint = startPoint;
+      
+      for (const entreprise of optimizedOrder) {
+        totalDistance += calculateDistance(
+          currentPoint.lat,
+          currentPoint.lng,
+          entreprise.latitude,
+          entreprise.longitude
+        );
+        currentPoint = { lat: entreprise.latitude, lng: entreprise.longitude };
+      }
+      
+      const tempsTrajet = (totalDistance / 60) * 60; // 60 km/h en minutes
+      const tempsVisites = optimizedOrder.length * 15; // 15 min par visite
+      const tempsTotal = tempsTrajet + tempsVisites;
+      
+      return new Response(
+        JSON.stringify({
+          ordre_optimise: optimizedOrder.map(e => e.id),
+          entreprises_ordonnees: optimizedOrder,
+          distance_totale_km: Math.round(totalDistance * 10) / 10,
+          temps_estime_minutes: Math.round(tempsTotal),
+          explication: `Itinéraire optimisé avec ${optimizedOrder.length} arrêts (calcul approximatif)`,
+          route_geometry: null,
+          fallback: true
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      );
+    }
 
-    const userPrompt = `${departInfo}
+    const mapboxData = await mapboxResponse.json();
+    
+    if (!mapboxData.routes || mapboxData.routes.length === 0) {
+      throw new Error("Aucun itinéraire trouvé par Mapbox");
+    }
 
-Entreprises à visiter:
-${entreprisesInfo}
+    const route = mapboxData.routes[0];
+    const distanceKm = route.distance / 1000; // Conversion mètres -> km
+    const tempsTrajetMinutes = route.duration / 60; // Conversion secondes -> minutes
+    const tempsVisites = optimizedOrder.length * 15; // 15 min par visite
+    const tempsTotal = tempsTrajetMinutes + tempsVisites;
 
-Optimise l'ordre de visite pour minimiser la distance totale en partant du point de départ. 
-Retourne un JSON avec:
-- ordre: tableau des indices (0-based) dans l'ordre optimal de visite
-- distance_km: distance totale estimée en km (calcul réaliste basé sur les coordonnées GPS)
-- temps_minutes: temps total estimé incluant visites (15min chacune) et trajets (vitesse moyenne 60 km/h)
-- explication: brève description de l'itinéraire optimisé (1-2 phrases descriptives, sans questions)`;
-
-    // Appel à Lovable AI
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.3,
-      }),
+    console.log('✅ Itinéraire calculé:', {
+      distance: Math.round(distanceKm) + ' km',
+      temps: Math.round(tempsTotal) + ' min',
+      arrêts: optimizedOrder.length
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Lovable AI error:', response.status, errorText);
-      throw new Error(`AI optimization failed: ${response.status}`);
-    }
-
-    const aiData = await response.json();
-    const aiResponse = aiData.choices[0].message.content;
-    
-    // Parser la réponse JSON de l'IA
-    const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error("Format de réponse IA invalide");
-    }
-
-    const result = JSON.parse(jsonMatch[0]);
-    
-    // Valider et construire l'ordre optimisé avec les IDs
-    const ordreOptimise = result.ordre.map((idx: number) => entreprises[idx].id);
-    
     return new Response(
       JSON.stringify({
-        ordre_optimise: ordreOptimise,
-        entreprises_ordonnees: result.ordre.map((idx: number) => entreprises[idx]),
-        distance_totale_km: result.distance_km,
-        temps_estime_minutes: result.temps_minutes,
-        explication: result.explication,
+        ordre_optimise: optimizedOrder.map(e => e.id),
+        entreprises_ordonnees: optimizedOrder,
+        distance_totale_km: Math.round(distanceKm * 10) / 10,
+        temps_estime_minutes: Math.round(tempsTotal),
+        temps_trajet_minutes: Math.round(tempsTrajetMinutes),
+        explication: `Itinéraire optimisé: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${optimizedOrder.length} arrêts`,
+        route_geometry: route.geometry, // GeoJSON de la route complète
+        waypoints: mapboxData.waypoints, // Points de passage avec données GPS
+        legs: route.legs, // Détails de chaque segment
+        fallback: false
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -123,7 +186,7 @@ Retourne un JSON avec:
     );
 
   } catch (error) {
-    console.error('Error in optimize-tournee:', error);
+    console.error('❌ Error in optimize-tournee:', error);
     return new Response(
       JSON.stringify({ 
         error: error instanceof Error ? error.message : 'Unknown error',

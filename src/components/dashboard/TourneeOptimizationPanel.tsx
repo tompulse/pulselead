@@ -38,6 +38,7 @@ export const TourneeOptimizationPanel = ({
 }: TourneeOptimizationPanelProps) => {
   const [optimizing, setOptimizing] = useState(false);
   const [optimizedResult, setOptimizedResult] = useState<any>(null);
+  const [showNavigationDialog, setShowNavigationDialog] = useState(false);
   const { toast } = useToast();
 
   const getUserLocation = (): Promise<{lat: number, lng: number}> => {
@@ -97,7 +98,7 @@ export const TourneeOptimizationPanel = ({
       
       toast({
         title: "🎯 Tournée optimisée !",
-        description: `${data.entreprises_ordonnees.length} visites • ${Math.round(data.distance_totale_km)} km`,
+        description: `${data.entreprises_ordonnees.length} visites • ${Math.round(data.distance_totale_km)} km ${data.fallback ? '(approximatif)' : '(GPS réel)'}`,
         duration: 2500,
       });
     } catch (error) {
@@ -119,6 +120,33 @@ export const TourneeOptimizationPanel = ({
       handleOptimize();
     }
   }, []);
+
+  const handleNavigateFullRoute = (app: 'google' | 'waze') => {
+    if (!optimizedResult) return;
+
+    const waypoints = optimizedResult.entreprises_ordonnees;
+    const origin = optimizedResult.point_depart || {
+      lat: waypoints[0].latitude,
+      lng: waypoints[0].longitude
+    };
+
+    let url: string;
+    if (app === 'google') {
+      const destination = waypoints[waypoints.length - 1];
+      const waypointsStr = waypoints
+        .slice(0, -1)
+        .map((w: any) => `${w.latitude},${w.longitude}`)
+        .join('|');
+
+      url = `https://www.google.com/maps/dir/?api=1&origin=${origin.lat},${origin.lng}&destination=${destination.latitude},${destination.longitude}&waypoints=${waypointsStr}&travelmode=driving`;
+    } else {
+      const first = waypoints[0];
+      url = `https://waze.com/ul?ll=${first.latitude},${first.longitude}&navigate=yes`;
+    }
+
+    window.open(url, '_blank');
+    setShowNavigationDialog(false);
+  };
 
   const handleSaveTournee = async () => {
     if (!optimizedResult || !tourneeName) {
@@ -291,21 +319,77 @@ export const TourneeOptimizationPanel = ({
             </div>
 
             {/* Boutons d'action */}
-            <div className="flex gap-2">
-              <Button onClick={handleSaveTournee} className="flex-1 h-10" disabled={!tourneeName.trim()}>
-                <Save className="w-4 h-4 mr-2" />
-                Enregistrer
-              </Button>
+            <div className="space-y-2">
               <Button 
                 variant="outline"
-                onClick={() => setOptimizedResult(null)}
-                className="h-10 px-3"
+                onClick={() => setShowNavigationDialog(true)}
+                className="w-full h-10 border-accent/30 hover:border-accent hover:bg-accent/10"
               >
-                Modifier
+                <Navigation className="w-4 h-4 mr-2 text-accent" />
+                Ouvrir dans GPS
               </Button>
+              <div className="flex gap-2">
+                <Button onClick={handleSaveTournee} className="flex-1 h-10" disabled={!tourneeName.trim()}>
+                  <Save className="w-4 h-4 mr-2" />
+                  Enregistrer
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => setOptimizedResult(null)}
+                  className="h-10 px-3"
+                >
+                  Modifier
+                </Button>
+              </div>
             </div>
           </>
         ) : null}
+
+        {/* Dialog de navigation GPS */}
+        {optimizedResult && (
+          <div className={`fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity ${showNavigationDialog ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <div className="glass-card max-w-sm w-full p-6 space-y-4 animate-scale-in">
+              <div className="space-y-2">
+                <h3 className="text-lg font-bold gradient-text">Navigation GPS</h3>
+                <p className="text-sm text-muted-foreground">
+                  Choisissez votre application de navigation préférée
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => handleNavigateFullRoute('google')}
+                  className="flex flex-col items-center gap-3 p-4 rounded-lg border-2 border-accent/30 hover:border-accent hover:bg-accent/10 transition-all"
+                >
+                  <MapPin className="w-10 h-10 text-accent" />
+                  <div className="text-center">
+                    <span className="font-semibold text-sm">Google Maps</span>
+                    <p className="text-xs text-muted-foreground mt-1">Itinéraire complet</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => handleNavigateFullRoute('waze')}
+                  className="flex flex-col items-center gap-3 p-4 rounded-lg border-2 border-accent/30 hover:border-accent hover:bg-accent/10 transition-all"
+                >
+                  <Navigation className="w-10 h-10 text-accent" />
+                  <div className="text-center">
+                    <span className="font-semibold text-sm">Waze</span>
+                    <p className="text-xs text-muted-foreground mt-1">Premier arrêt</p>
+                  </div>
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground text-center">
+                📍 Google Maps affichera tous les arrêts. Waze vous guidera vers le premier point.
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowNavigationDialog(false)}
+                className="w-full"
+              >
+                Annuler
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
