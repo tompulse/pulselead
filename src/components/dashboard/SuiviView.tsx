@@ -232,7 +232,7 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
 
       {/* Section 1: Mes Activités */}
       <div className="space-y-2 md:space-y-4">
-        <h3 className="text-sm md:text-xl font-semibold gradient-text">📊 Activités</h3>
+        <h3 className="text-sm md:text-xl font-semibold gradient-text">Activités</h3>
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
           <div 
             className="glass-card p-3 md:p-6 rounded-lg md:rounded-xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer"
@@ -298,7 +298,7 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
 
       {/* Section 2: Performance & Analytics */}
       <div className="space-y-2 md:space-y-4">
-        <h3 className="text-sm md:text-xl font-semibold gradient-text">📈 Performance</h3>
+        <h3 className="text-sm md:text-xl font-semibold gradient-text">Performance</h3>
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
           {analyticsStats.map((stat, index) => (
             <Card key={index} className="glass-card border-accent/30 hover:border-accent/50 transition-all duration-300 hover-scale group">
