@@ -9,15 +9,19 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 
-const timeSlots = [
+const morningSlots = [
   { time: "09:00", available: true },
   { time: "09:30", available: true },
   { time: "10:00", available: false },
   { time: "10:30", available: true },
   { time: "11:00", available: true },
+  { time: "11:30", available: true },
+];
+
+const afternoonSlots = [
   { time: "13:30", available: true },
   { time: "14:00", available: true },
-  { time: "14:30", available: false },
+  { time: "14:30", available: true },
   { time: "15:00", available: true },
   { time: "15:30", available: true },
   { time: "16:00", available: true },
@@ -44,6 +48,18 @@ export function BookingSection() {
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
+    // Auto-select today or next available weekday if no date selected
+    if (!selectedDate) {
+      const today = new Date();
+      const day = today.getDay();
+      // If weekend, select next Monday
+      if (day === 0) { // Sunday
+        today.setDate(today.getDate() + 1);
+      } else if (day === 6) { // Saturday
+        today.setDate(today.getDate() + 2);
+      }
+      setSelectedDate(today);
+    }
   };
 
   const handleNext = () => {
@@ -95,49 +111,76 @@ export function BookingSection() {
             <div className="glass-card p-8 space-y-6 border-cyan-electric/30 animate-fade-in flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-electric/30 to-cyan-electric/10 flex items-center justify-center">
-                    <User className="w-8 h-8 text-cyan-electric" />
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-cyan-electric/30 blur-xl"></div>
+                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-cyan-electric/40 to-cyan-electric/20 flex items-center justify-center border-2 border-cyan-electric/50">
+                      <User className="w-8 h-8 text-cyan-electric" />
+                    </div>
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground">Avec</div>
-                    <div className="font-bold text-foreground text-lg">Équipe LUMA</div>
+                    <div className="text-xs text-cyan-electric/70 font-medium">Avec</div>
+                    <div className="font-bold text-foreground text-lg">Le Fondateur de LUMA</div>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-cyan-electric">Démo personnalisée</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Un échange de 30 minutes pour comprendre vos besoins et vous montrer comment LUMA peut vous aider à :
-                  </p>
-                  <ul className="space-y-2 text-sm text-foreground">
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
-                      <span>Optimiser vos tournées commerciales</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
-                      <span>Piloter votre activité terrain</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
-                      <span>Accéder aux créations en temps réel</span>
-                    </li>
-                  </ul>
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="text-xl font-bold gradient-text mb-2">Démo personnalisée exclusive</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Un échange de 30 minutes en visio pour découvrir comment LUMA peut transformer votre activité commerciale.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">Au programme</div>
+                    <ul className="space-y-2.5 text-sm text-foreground">
+                      <li className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-cyan-electric" />
+                        </div>
+                        <span><strong className="text-cyan-electric">Analyse personnalisée</strong> de votre territoire et besoins</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-cyan-electric" />
+                        </div>
+                        <span><strong className="text-cyan-electric">Démonstration live</strong> des fonctionnalités terrain</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-cyan-electric" />
+                        </div>
+                        <span><strong className="text-cyan-electric">Stratégie de déploiement</strong> adaptée à votre activité</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-cyan-electric/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-cyan-electric" />
+                        </div>
+                        <span><strong className="text-cyan-electric">Accès immédiat</strong> aux créations d'entreprises en temps réel</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-4 border-t border-cyan-electric/20">
+              <div className="space-y-3 pt-4 border-t border-cyan-electric/20">
                 <div className="flex items-center gap-3 text-sm text-foreground">
-                  <Clock className="w-4 h-4 text-cyan-electric" />
-                  <span>30 minutes</span>
+                  <div className="w-8 h-8 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-cyan-electric" />
+                  </div>
+                  <span className="font-medium">30 minutes chrono</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground">
-                  <Video className="w-4 h-4 text-cyan-electric" />
-                  <span>Visioconférence Google Meet</span>
+                  <div className="w-8 h-8 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
+                    <Video className="w-4 h-4 text-cyan-electric" />
+                  </div>
+                  <span className="font-medium">Visio Google Meet</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground">
-                  <CalendarIcon className="w-4 h-4 text-cyan-electric" />
-                  <span>Lien envoyé par email</span>
+                  <div className="w-8 h-8 rounded-lg bg-cyan-electric/10 flex items-center justify-center">
+                    <CalendarIcon className="w-4 h-4 text-cyan-electric" />
+                  </div>
+                  <span className="font-medium">Confirmation instantanée</span>
                 </div>
               </div>
             </div>
@@ -170,23 +213,18 @@ export function BookingSection() {
                   />
                 </div>
 
-                {/* Time slots */}
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide mb-2">Horaires</div>
-                    {!selectedDate && (
-                      <p className="text-xs text-muted-foreground italic">
-                        Sélectionnez d'abord une date
-                      </p>
-                    )}
+                {/* Time slots - Always visible */}
+                <div className="space-y-4">
+                  <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">
+                    {selectedDate ? format(selectedDate, "EEEE d MMMM", { locale: fr }) : "Horaires disponibles"}
                   </div>
-                  {selectedDate && (
-                    <div>
-                      <div className="text-xs font-medium text-foreground mb-3">
-                        {format(selectedDate, "EEEE d MMMM", { locale: fr })}
-                      </div>
-                      <div className="flex flex-col gap-2 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
-                        {timeSlots.map((slot) => (
+                  
+                  <div className="space-y-4 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
+                    {/* Morning slots */}
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-2">Matin</div>
+                      <div className="flex flex-col gap-2">
+                        {morningSlots.map((slot) => (
                           <Button
                             key={slot.time}
                             variant={selectedTime === slot.time ? "default" : "outline"}
@@ -203,7 +241,29 @@ export function BookingSection() {
                         ))}
                       </div>
                     </div>
-                  )}
+
+                    {/* Afternoon slots */}
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-2">Après-midi</div>
+                      <div className="flex flex-col gap-2">
+                        {afternoonSlots.map((slot) => (
+                          <Button
+                            key={slot.time}
+                            variant={selectedTime === slot.time ? "default" : "outline"}
+                            disabled={!slot.available}
+                            onClick={() => handleTimeSelect(slot.time)}
+                            className={`h-9 font-semibold transition-all text-sm ${
+                              selectedTime === slot.time
+                                ? "bg-cyan-electric text-navy-deep hover:bg-cyan-glow shadow-lg shadow-cyan-electric/40"
+                                : "border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric/50"
+                            } ${!slot.available ? "opacity-40 cursor-not-allowed" : ""}`}
+                          >
+                            {slot.time}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
