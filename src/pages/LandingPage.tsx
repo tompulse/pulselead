@@ -83,6 +83,8 @@ const Index = () => {
         </div>
       </nav>
 
+      <main>
+
       {/* Hero Section */}
       <section className="relative pt-32 sm:pt-40 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
@@ -745,6 +747,7 @@ const Index = () => {
 
         </div>
       </section>
+      </main>
 
       {/* Footer complet */}
       <footer className="relative py-12 px-4 bg-primary/50 border-t border-accent/10">
