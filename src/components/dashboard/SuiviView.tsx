@@ -182,31 +182,43 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
       title: "Leads totaux",
       value: analytics.totalLeads,
       icon: Users,
-      color: "text-blue-500"
+      color: "text-blue-500",
+      gradient: "from-blue-500/20 to-blue-600/5"
     },
     {
       title: "Leads qualifiés",
       value: analytics.qualifiedLeads,
       icon: Target,
-      color: "text-accent"
+      color: "text-accent",
+      gradient: "from-accent/20 to-cyan-glow/5"
     },
     {
       title: "Deals gagnés",
       value: analytics.wonDeals,
       icon: DollarSign,
-      color: "text-green-500"
+      color: "text-green-500",
+      gradient: "from-green-500/20 to-green-600/5"
+    },
+    {
+      title: "Score moyen",
+      value: analytics.averageScore,
+      icon: TrendingUp,
+      color: "text-yellow-500",
+      gradient: "from-yellow-500/20 to-yellow-600/5"
     },
     {
       title: "Interactions totales",
       value: analytics.totalInteractions,
       icon: Phone,
-      color: "text-purple-500"
+      color: "text-purple-500",
+      gradient: "from-purple-500/20 to-purple-600/5"
     },
     {
       title: "Taux de conversion",
       value: `${analytics.conversionRate}%`,
       icon: TrendingUp,
-      color: "text-pink-500"
+      color: "text-pink-500",
+      gradient: "from-pink-500/20 to-pink-600/5"
     }
   ];
 
@@ -287,47 +299,23 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
       {/* Section 2: Performance & Analytics */}
       <div className="space-y-2 md:space-y-4">
         <h3 className="text-sm md:text-xl font-semibold gradient-text">📈 Performance</h3>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
           {analyticsStats.map((stat, index) => (
-            <Card key={index} className="glass-card border-accent/30">
+            <Card key={index} className="glass-card border-accent/30 hover:border-accent/50 transition-all duration-300 hover-scale group">
               <CardHeader className="flex flex-row items-center justify-between pb-1 md:pb-2 p-3 md:p-6">
                 <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <stat.icon className={`h-4 w-4 md:h-5 md:w-5 ${stat.color}`} />
+                <div className={`p-1.5 md:p-2 rounded-lg bg-gradient-to-br ${stat.gradient} group-hover:scale-110 transition-transform duration-300`}>
+                  <stat.icon className={`h-4 w-4 md:h-5 md:w-5 ${stat.color}`} />
+                </div>
               </CardHeader>
               <CardContent className="p-3 md:p-6 pt-0">
-                <div className="text-xl md:text-3xl font-bold">{stat.value}</div>
+                <div className={`text-xl md:text-3xl font-bold ${stat.color}`}>{stat.value}</div>
               </CardContent>
             </Card>
           ))}
         </div>
-
-        {/* Average Score */}
-        <Card className="glass-card border-accent/30">
-          <CardHeader className="p-3 md:p-6">
-            <CardTitle className="text-sm md:text-base gradient-text">Score moyen</CardTitle>
-            <CardDescription className="text-xs md:text-sm">Qualité du pipeline</CardDescription>
-          </CardHeader>
-          <CardContent className="p-3 md:p-6 pt-0">
-            <div className="flex items-center gap-3 md:gap-4">
-              <div className="text-3xl md:text-5xl font-bold gradient-text">
-                {analytics.averageScore}
-              </div>
-              <div className="flex-1">
-                <div className="h-3 md:h-4 bg-accent/20 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-accent to-cyan-glow transition-all duration-500"
-                    style={{ width: `${analytics.averageScore}%` }}
-                  />
-                </div>
-                <p className="text-xs md:text-sm text-muted-foreground mt-1 md:mt-2">
-                  {analytics.averageScore >= 80 ? "Excellent" : analytics.averageScore >= 50 ? "Bon" : "À améliorer"}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Interactions Dialog */}
