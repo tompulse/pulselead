@@ -218,13 +218,15 @@ const Index = () => {
               problemSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
             }`}
           >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/30 mb-4">
+              <AlertCircle className="w-4 h-4 text-destructive" />
+              <span className="text-sm font-bold text-destructive uppercase tracking-wide">Le constat</span>
+            </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              Les <span className="gradient-text">commerciaux terrain</span>
-              <br />
-              perdent un temps précieux
+              Les <span className="text-destructive">problèmes</span> des commerciaux terrain
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Outils dispersés, données désorganisées, aucune vision d'ensemble. Vous méritez mieux.
+              Vous perdez un temps précieux avec des outils dispersés et aucune vision d'ensemble. Résultat : moins de ventes, plus de frustration.
             </p>
           </div>
 
@@ -275,11 +277,15 @@ const Index = () => {
               solutionSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
             }`}
           >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 mb-4">
+              <Sparkles className="w-4 h-4 text-cyan-electric" />
+              <span className="text-sm font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
+            </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              LUMA centralise <span className="gradient-text">tout ce dont vous avez besoin</span>
+              LUMA <span className="gradient-text">centralise et simplifie</span> votre travail
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Un seul outil pour gérer vos prospects, vos tournées, votre CRM et suivre votre performance.
+              Un seul outil pour gérer vos prospects, optimiser vos tournées, suivre votre CRM et accéder aux nouvelles entreprises en temps réel.
             </p>
           </div>
 
@@ -544,45 +550,47 @@ const Index = () => {
             </div>
           </div>
 
-          {/* ROI Section - Amélioration visuelle */}
-          <div className="glass-card p-10 md:p-14 max-w-4xl mx-auto border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 via-transparent to-cyan-electric/5">
-            <div className="space-y-8">
+          {/* ROI Section - Intégré plus subtilement dans les bénéfices */}
+          <div className="glass-card p-8 md:p-10 max-w-5xl mx-auto border-cyan-electric/30 bg-gradient-to-br from-cyan-electric/5 to-transparent">
+            <div className="space-y-6">
               <div className="text-center">
-                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">ROI moyen constaté</h3>
-                <div className="w-20 h-1 bg-gradient-to-r from-transparent via-cyan-electric to-transparent mx-auto"></div>
+                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Temps économisé par semaine</h3>
+                <div className="w-16 h-1 bg-gradient-to-r from-transparent via-cyan-electric to-transparent mx-auto"></div>
               </div>
               
-              <div className="grid md:grid-cols-2 gap-6 items-center">
-                <div className="glass-card p-6 border-destructive/30 bg-destructive/5">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-destructive" />
+              <div className="grid md:grid-cols-2 gap-4 items-stretch">
+                <div className="glass-card p-5 border-destructive/30 bg-destructive/5 flex items-center gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 rounded-lg bg-destructive/20 flex items-center justify-center">
+                      <Clock className="w-6 h-6 text-destructive" />
                     </div>
-                    <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Avant</span>
                   </div>
-                  <div className="text-3xl md:text-4xl font-bold text-destructive line-through">100h</div>
-                  <div className="text-sm text-muted-foreground mt-1">de recherche manuelle</div>
+                  <div className="flex-1">
+                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Méthode manuelle</div>
+                    <div className="text-2xl md:text-3xl font-bold text-destructive">~100h</div>
+                    <div className="text-xs text-muted-foreground">recherche et organisation</div>
+                  </div>
                 </div>
 
-                <div className="glass-card p-6 border-cyan-electric/50 bg-gradient-to-br from-cyan-electric/10 to-transparent relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-electric/10 rounded-full blur-2xl"></div>
-                  <div className="relative">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-full bg-cyan-electric/20 flex items-center justify-center">
-                        <Zap className="w-5 h-5 text-cyan-electric" />
-                      </div>
-                      <span className="text-sm font-semibold text-cyan-electric uppercase tracking-wide">Avec LUMA</span>
+                <div className="glass-card p-5 border-cyan-electric/50 bg-gradient-to-br from-cyan-electric/10 to-transparent flex items-center gap-4 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-electric/10 rounded-full blur-2xl"></div>
+                  <div className="flex-shrink-0 relative z-10">
+                    <div className="w-12 h-12 rounded-lg bg-cyan-electric/30 flex items-center justify-center">
+                      <Zap className="w-6 h-6 text-cyan-electric" />
                     </div>
-                    <div className="text-3xl md:text-4xl font-bold gradient-text">10 min</div>
-                    <div className="text-sm text-muted-foreground mt-1">Temps réel et automatique</div>
+                  </div>
+                  <div className="flex-1 relative z-10">
+                    <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide mb-1">Avec LUMA</div>
+                    <div className="text-2xl md:text-3xl font-bold gradient-text">10 min</div>
+                    <div className="text-xs text-muted-foreground">temps réel, automatique</div>
                   </div>
                 </div>
               </div>
 
-              <div className="text-center pt-4">
-                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                  <TrendingUp className="w-5 h-5 text-cyan-electric" />
-                  <span className="text-lg font-semibold gradient-text">Gain de productivité : ×600</span>
+              <div className="text-center pt-2">
+                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
+                  <TrendingUp className="w-4 h-4 text-cyan-electric" />
+                  <span className="text-sm font-semibold gradient-text">×600 de productivité</span>
                 </div>
               </div>
             </div>
@@ -680,6 +688,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Section Réservation - Avant FAQ */}
+      <BookingSection />
+
       {/* Section FAQ + CTA */}
       <section className="relative py-20 px-4">
         <div className="container mx-auto max-w-4xl">
@@ -692,61 +703,85 @@ const Index = () => {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
               Questions <span className="gradient-text">fréquentes</span>
             </h2>
-            <p className="text-lg text-muted-foreground">Tout ce que vous devez savoir</p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+              Tout ce que vous devez savoir sur LUMA
+            </p>
           </div>
 
           <Accordion type="single" collapsible className="space-y-3 mb-12">
             <AccordionItem value="item-1" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
               <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                D'où viennent les données ?
+                D'où viennent les données entreprises ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2">
-                100% officielles. Directement de l'INPI et l'INSEE. Mise à jour quotidienne.
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+                <p>Les données proviennent exclusivement de sources officielles françaises : l'INPI (Institut National de la Propriété Industrielle) et l'INSEE (Institut National de la Statistique et des Études Économiques).</p>
+                <p>Ces données sont synchronisées automatiquement chaque jour pour vous garantir un accès aux créations d'entreprises les plus récentes. Vous êtes toujours informé en temps réel des nouvelles opportunités sur votre territoire.</p>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-2" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
               <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                C'est vraiment gratuit ?
+                Comment fonctionne l'essai gratuit ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2">
-                Oui. Aucune carte bancaire requise pour tester.
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+                <p>L'essai gratuit de 14 jours vous donne accès à toutes les fonctionnalités de LUMA sans aucune limitation. Aucune carte bancaire n'est requise pour démarrer.</p>
+                <p>Vous pouvez créer vos tournées, gérer vos prospects, accéder aux données entreprises en temps réel et utiliser le CRM intégré. À la fin de l'essai, vous choisissez si vous souhaitez continuer avec un abonnement payant ou non.</p>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-3" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
               <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Les données sont à jour ?
+                Puis-je utiliser LUMA sur mobile ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2">
-                Synchronisation automatique chaque jour. Toujours frais.
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+                <p>Absolument ! LUMA est 100% responsive et s'adapte parfaitement à tous les écrans : ordinateur, tablette et smartphone.</p>
+                <p>L'application mobile vous permet de gérer vos tournées en déplacement, d'ajouter des interactions avec vos prospects directement sur le terrain, et de consulter les informations entreprises où que vous soyez. Le GPS intégré vous guide vers vos rendez-vous.</p>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-4" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
               <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Je peux annuler quand je veux ?
+                Puis-je annuler mon abonnement à tout moment ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2">
-                Oui, sans engagement. Annulation en 1 clic.
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+                <p>Oui, sans aucun engagement. Vous pouvez annuler votre abonnement en 1 clic depuis votre espace personnel à tout moment.</p>
+                <p>Vos données restent accessibles jusqu'à la fin de la période payée, et vous pouvez exporter toutes vos informations avant de partir. Aucune question posée, aucun frais caché.</p>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-5" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
               <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Ça marche sur mobile ?
+                Comment sont calculées les tournées optimisées ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2">
-                100% responsive. Ordinateur, tablette, smartphone.
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+                <p>LUMA utilise des algorithmes d'optimisation avancés pour calculer le meilleur itinéraire en fonction de vos contraintes : localisation des prospects, priorités commerciales, horaires de disponibilité et trafic en temps réel.</p>
+                <p>Vous gagnez du temps sur la route et maximisez le nombre de visites par jour. L'outil s'adapte automatiquement aux changements et vous propose des alternatives en cas d'imprévus.</p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-6" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+                Mes données sont-elles sécurisées ?
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+                <p>La sécurité de vos données est notre priorité absolue. Toutes les informations sont chiffrées et hébergées sur des serveurs sécurisés en Europe, conformes au RGPD.</p>
+                <p>Vos données clients, historiques d'interactions et informations commerciales restent 100% privées et ne sont jamais partagées avec des tiers. Vous gardez le contrôle total de vos informations.</p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-7" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+                Puis-je importer mes données existantes ?
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+                <p>Oui, vous pouvez importer facilement vos données depuis un fichier Excel ou CSV. LUMA prend en charge les formats standards et vous guide dans le processus d'import.</p>
+                <p>Vous pouvez également exporter vos données à tout moment pour les utiliser dans d'autres outils ou pour conserver une sauvegarde. Import et export illimités sur tous les forfaits.</p>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
 
         </div>
       </section>
-
-      {/* Section Réservation */}
-      <BookingSection />
 
       {/* Footer complet */}
       <footer className="relative py-12 px-4 bg-primary/50 border-t border-accent/10">
