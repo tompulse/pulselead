@@ -43,15 +43,6 @@ export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: Dashb
               <span className="hidden sm:inline">Prospects</span>
             </Button>
             <Button
-              variant={view === "activities" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => handleViewChange("activities")}
-              className={`h-7 px-2 text-xs ${view === "activities" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
-            >
-              <Calendar className="w-3.5 h-3.5 mr-1" />
-              <span className="hidden sm:inline">Activités</span>
-            </Button>
-            <Button
               variant={view === "tournees" ? "default" : "ghost"}
               size="sm"
               onClick={() => handleViewChange("tournees")}
@@ -59,6 +50,15 @@ export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: Dashb
             >
               <Navigation className="w-3.5 h-3.5 mr-1" />
               <span className="hidden sm:inline">Tournées</span>
+            </Button>
+            <Button
+              variant={view === "activities" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => handleViewChange("activities")}
+              className={`h-7 px-2 text-xs ${view === "activities" ? "bg-accent text-primary hover:bg-accent/90" : "hover:bg-accent/10"}`}
+            >
+              <Calendar className="w-3.5 h-3.5 mr-1" />
+              <span className="hidden sm:inline">Activités</span>
             </Button>
             <Button
               variant={view === "pipeline" ? "default" : "ghost"}
