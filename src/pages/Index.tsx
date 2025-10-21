@@ -125,12 +125,12 @@ const Index = () => {
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1.5">
                   <CheckCircle className="w-4 h-4 text-accent" />
-                  <span className="font-medium">Essai gratuit 14 jours</span>
+                  <span className="font-medium">Essai gratuit 7 jours</span>
                 </div>
                 <span className="text-accent/50">•</span>
                 <div className="flex items-center gap-1.5">
                   <CheckCircle className="w-4 h-4 text-accent" />
-                  <span className="font-medium">Sans carte bancaire</span>
+                  <span className="font-medium">Accès immédiat</span>
                 </div>
               </div>
             </div>
@@ -448,7 +448,7 @@ const Index = () => {
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
-                Essai gratuit 14 jours
+                Essai gratuit 7 jours
               </Button>
             </div>
 
@@ -498,7 +498,7 @@ const Index = () => {
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-lg py-7 hover:scale-105 transition-transform" size="lg">
-                Essai gratuit 14 jours
+                Essai gratuit 7 jours
               </Button>
             </div>
 
@@ -679,7 +679,7 @@ const Index = () => {
                 Comment fonctionne l'essai gratuit ?
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
-                <p>L'essai gratuit de 14 jours vous donne accès à toutes les fonctionnalités de LUMA sans aucune limitation. Aucune carte bancaire n'est requise pour démarrer.</p>
+                <p>L'essai gratuit de 7 jours vous donne accès à toutes les fonctionnalités de LUMA sans aucune limitation.</p>
                 <p>Vous pouvez créer vos tournées, gérer vos prospects, accéder aux données entreprises en temps réel et utiliser le CRM intégré. À la fin de l'essai, vous choisissez si vous souhaitez continuer avec un abonnement payant ou non.</p>
               </AccordionContent>
             </AccordionItem>

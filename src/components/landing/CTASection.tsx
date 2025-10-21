@@ -33,10 +33,9 @@ export const CTASection = () => {
           </p>
 
           {/* Benefits */}
-          <div className="grid sm:grid-cols-3 gap-6 pt-8 max-w-3xl mx-auto">
+          <div className="grid sm:grid-cols-2 gap-6 pt-8 max-w-2xl mx-auto">
             {[
-              "Gratuit pendant 14 jours",
-              "Sans carte bancaire",
+              "Essai gratuit 7 jours",
               "Annulation à tout moment"
             ].map((benefit, index) => (
               <div key={index} className="flex items-center gap-2 text-left">
