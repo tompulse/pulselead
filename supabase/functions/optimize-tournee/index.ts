@@ -33,37 +33,6 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 }
 
-// Algorithme du plus proche voisin pour optimisation de base
-function nearestNeighborOptimization(
-  startPoint: { lat: number; lng: number },
-  points: Entreprise[]
-): Entreprise[] {
-  if (points.length === 0) return [];
-  
-  const result: Entreprise[] = [];
-  const remaining = [...points];
-  let current = startPoint;
-  
-  while (remaining.length > 0) {
-    let nearestIdx = 0;
-    let minDist = calculateDistance(current.lat, current.lng, remaining[0].latitude, remaining[0].longitude);
-    
-    for (let i = 1; i < remaining.length; i++) {
-      const dist = calculateDistance(current.lat, current.lng, remaining[i].latitude, remaining[i].longitude);
-      if (dist < minDist) {
-        minDist = dist;
-        nearestIdx = i;
-      }
-    }
-    
-    const nearest = remaining.splice(nearestIdx, 1)[0];
-    result.push(nearest);
-    current = { lat: nearest.latitude, lng: nearest.longitude };
-  }
-  
-  return result;
-}
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -92,75 +61,51 @@ serve(async (req) => {
       lng: entreprises[0].longitude
     };
 
-    // Pré-optimisation avec algorithme du plus proche voisin
-    const optimizedOrder = nearestNeighborOptimization(startPoint, entreprises);
-    
-    console.log('✅ Ordre optimisé (plus proche voisin):', optimizedOrder.map(e => e.nom));
-
-    // Construire l'URL pour Mapbox Directions API
-    // Format: lng,lat pour chaque point
+    // Utiliser l'API Mapbox Optimization pour un ordre vraiment optimal (résout le TSP)
     const coordinates = [
       `${startPoint.lng},${startPoint.lat}`,
-      ...optimizedOrder.map(e => `${e.longitude},${e.latitude}`)
+      ...entreprises.map(e => `${e.longitude},${e.latitude}`)
     ].join(';');
 
-    // Appel à Mapbox Directions API pour obtenir l'itinéraire réel
-    const mapboxUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
+    // API Mapbox Optimization - résout le problème du voyageur de commerce
+    const optimizationUrl = `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
     
-    console.log('📍 Appel Mapbox Directions API avec', optimizedOrder.length + 1, 'points');
+    console.log('🎯 Appel Mapbox Optimization API (TSP) avec', entreprises.length + 1, 'points');
     
-    const mapboxResponse = await fetch(mapboxUrl);
+    const mapboxResponse = await fetch(optimizationUrl);
     
     if (!mapboxResponse.ok) {
-      console.error('❌ Erreur Mapbox:', mapboxResponse.status);
-      // Fallback sur calcul approximatif si Mapbox échoue
-      let totalDistance = 0;
-      let currentPoint = startPoint;
-      
-      for (const entreprise of optimizedOrder) {
-        totalDistance += calculateDistance(
-          currentPoint.lat,
-          currentPoint.lng,
-          entreprise.latitude,
-          entreprise.longitude
-        );
-        currentPoint = { lat: entreprise.latitude, lng: entreprise.longitude };
-      }
-      
-      const tempsTrajet = (totalDistance / 60) * 60; // 60 km/h en minutes
-      const tempsVisites = optimizedOrder.length * 15; // 15 min par visite
-      const tempsTotal = tempsTrajet + tempsVisites;
-      
-      return new Response(
-        JSON.stringify({
-          ordre_optimise: optimizedOrder.map(e => e.id),
-          entreprises_ordonnees: optimizedOrder,
-          distance_totale_km: Math.round(totalDistance * 10) / 10,
-          temps_estime_minutes: Math.round(tempsTotal),
-          explication: `Itinéraire optimisé avec ${optimizedOrder.length} arrêts (calcul approximatif)`,
-          route_geometry: null,
-          fallback: true
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        }
-      );
+      console.error('❌ Erreur Mapbox Optimization:', mapboxResponse.status);
+      const errorText = await mapboxResponse.text();
+      console.error('Détails:', errorText);
+      throw new Error(`Mapbox Optimization API error: ${mapboxResponse.status}`);
     }
 
     const mapboxData = await mapboxResponse.json();
     
-    if (!mapboxData.routes || mapboxData.routes.length === 0) {
-      throw new Error("Aucun itinéraire trouvé par Mapbox");
+    if (!mapboxData.trips || mapboxData.trips.length === 0) {
+      throw new Error("Aucun itinéraire optimisé trouvé par Mapbox");
     }
 
-    const route = mapboxData.routes[0];
-    const distanceKm = route.distance / 1000; // Conversion mètres -> km
-    const tempsTrajetMinutes = route.duration / 60; // Conversion secondes -> minutes
+    const trip = mapboxData.trips[0];
+    
+    // Récupérer l'ordre optimisé depuis les waypoints de Mapbox
+    // waypoint_index indique l'ordre optimal
+    const waypointOrder = mapboxData.waypoints
+      .slice(1) // Exclure le point de départ
+      .sort((a: any, b: any) => a.waypoint_index - b.waypoint_index)
+      .map((wp: any) => wp.waypoint_index - 1); // -1 car le premier est le départ
+
+    const optimizedOrder = waypointOrder.map((idx: number) => entreprises[idx]);
+
+    console.log('✅ Ordre optimal (TSP Mapbox):', optimizedOrder.map((e: Entreprise) => e.nom));
+
+    const distanceKm = trip.distance / 1000; // Conversion mètres -> km
+    const tempsTrajetMinutes = trip.duration / 60; // Conversion secondes -> minutes
     const tempsVisites = optimizedOrder.length * 15; // 15 min par visite
     const tempsTotal = tempsTrajetMinutes + tempsVisites;
 
-    console.log('✅ Itinéraire calculé:', {
+    console.log('✅ Itinéraire optimal calculé:', {
       distance: Math.round(distanceKm) + ' km',
       temps: Math.round(tempsTotal) + ' min',
       arrêts: optimizedOrder.length
@@ -168,15 +113,15 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        ordre_optimise: optimizedOrder.map(e => e.id),
+        ordre_optimise: optimizedOrder.map((e: Entreprise) => e.id),
         entreprises_ordonnees: optimizedOrder,
         distance_totale_km: Math.round(distanceKm * 10) / 10,
         temps_estime_minutes: Math.round(tempsTotal),
         temps_trajet_minutes: Math.round(tempsTrajetMinutes),
-        explication: `Itinéraire optimisé: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${optimizedOrder.length} arrêts`,
-        route_geometry: route.geometry, // GeoJSON de la route complète
+        explication: `Itinéraire optimal: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${optimizedOrder.length} arrêts`,
+        route_geometry: trip.geometry, // GeoJSON de la route complète
         waypoints: mapboxData.waypoints, // Points de passage avec données GPS
-        legs: route.legs, // Détails de chaque segment
+        legs: trip.legs, // Détails de chaque segment
         fallback: false
       }),
       {
