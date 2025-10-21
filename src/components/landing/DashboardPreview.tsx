@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Target, Building2, Phone, Mail, MapPin, TrendingUp, Calendar, CheckCircle } from "lucide-react";
+import { Target, Building2, Phone, Mail, MapPin, TrendingUp, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -7,10 +7,10 @@ const DashboardPreview = () => {
   const [currentScene, setCurrentScene] = useState(0);
   const navigate = useNavigate();
 
-  // Animation loop: 5 scenes, 4 seconds each
+  // Animation loop: 4 scenes, 4 seconds each
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentScene((prev) => (prev + 1) % 5);
+      setCurrentScene((prev) => (prev + 1) % 4);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -36,34 +36,8 @@ const DashboardPreview = () => {
         <span className="text-[10px] sm:text-xs text-cyan-electric font-bold">Live Preview</span>
       </div>
 
-      {/* Scene 0: Résultats constatés */}
+      {/* Scene 0: Liste d'entreprises */}
       <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <div className="w-full h-full flex items-center justify-center p-3 sm:p-6">
-          <div className="w-full max-w-3xl bg-navy-deep/80 backdrop-blur-xl border border-cyan-electric/40 rounded-2xl p-6 sm:p-8 animate-scale-in shadow-2xl shadow-cyan-electric/20">
-            <h3 className="text-xl sm:text-2xl font-bold text-center mb-8 text-cyan-electric">Résultats constatés</h3>
-            <div className="grid grid-cols-3 gap-4 sm:gap-8 text-center">
-              <div className="space-y-2">
-                <div className="text-3xl sm:text-5xl font-bold text-cyan-electric">6h/semaine</div>
-                <div className="text-xs sm:text-sm text-foreground font-bold">Temps économisé</div>
-                <div className="text-[10px] sm:text-xs text-muted-foreground">Moins d'admin, plus de vente</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl sm:text-5xl font-bold text-cyan-electric">×2.5</div>
-                <div className="text-xs sm:text-sm text-foreground font-bold">Rendez-vous obtenus</div>
-                <div className="text-[10px] sm:text-xs text-muted-foreground">Meilleure organisation</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl sm:text-5xl font-bold text-cyan-electric">+40%</div>
-                <div className="text-xs sm:text-sm text-foreground font-bold">Croissance CA</div>
-                <div className="text-[10px] sm:text-xs text-muted-foreground">En 6 mois</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Scene 1: Liste d'entreprises */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full flex items-center justify-center p-3 sm:p-6">
           <div className="w-full max-w-5xl space-y-3 sm:space-y-4">
             {companies.map((company, i) => (
@@ -108,8 +82,8 @@ const DashboardPreview = () => {
         </div>
       </div>
 
-      {/* Scene 2: Carte avec pins */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 2 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      {/* Scene 1: Carte avec pins */}
+      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full flex items-center justify-center p-3 sm:p-6">
           <div className="w-full max-w-4xl bg-navy-deep/80 backdrop-blur-xl border border-cyan-electric/40 rounded-2xl p-6 sm:p-8 animate-scale-in shadow-2xl shadow-cyan-electric/20">
             <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 text-cyan-electric">Visualisez votre territoire</h3>
@@ -132,25 +106,26 @@ const DashboardPreview = () => {
                 <MapPin className="w-8 h-8 text-cyan-electric fill-cyan-electric/50" />
               </div>
               <div className="absolute top-center text-center p-4 bg-navy-deep/90 backdrop-blur-sm border border-cyan-electric/40 rounded-lg">
-                <p className="text-sm font-semibold text-cyan-electric">3 prospects à proximité</p>
+                <p className="text-sm font-semibold text-cyan-electric">Aix-en-Provence & alentours</p>
+                <p className="text-xs text-muted-foreground mt-1">Vitrolles • Marseille • Gardanne</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scene 3: Statistiques d'activités */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 3 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      {/* Scene 2: Statistiques d'activités */}
+      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 2 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full flex items-center justify-center p-3 sm:p-6">
           <div className="w-full max-w-4xl space-y-4">
             <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 text-cyan-electric">Mes Activités</h3>
             <p className="text-sm text-center text-muted-foreground mb-6">Suivez vos actions commerciales</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {[
-                { icon: Phone, label: "Appels cette semaine", value: "0", color: "blue" },
-                { icon: MapPin, label: "Visites cette semaine", value: "0", color: "green" },
-                { icon: Calendar, label: "RDV cette semaine", value: "0", color: "purple" },
-                { icon: CheckCircle, label: "À revoir cette semaine", value: "0", color: "orange" }
+                { icon: Phone, label: "Appels cette semaine", value: "12", color: "blue" },
+                { icon: MapPin, label: "Visites cette semaine", value: "8", color: "green" },
+                { icon: Calendar, label: "RDV cette semaine", value: "5", color: "purple" },
+                { icon: Clock, label: "Relances prévues", value: "7", color: "orange" }
               ].map((stat, i) => (
                 <div 
                   key={i}
@@ -169,8 +144,8 @@ const DashboardPreview = () => {
         </div>
       </div>
 
-      {/* Scene 4: Tournée optimisée */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 4 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      {/* Scene 3: Tournée optimisée */}
+      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 3 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full flex items-center justify-center p-3 sm:p-6">
           <div className="w-full max-w-5xl grid lg:grid-cols-[1fr,300px] gap-4">
             {/* Map */}
@@ -186,7 +161,7 @@ const DashboardPreview = () => {
                 {/* Route line */}
                 <svg className="absolute inset-0 w-full h-full">
                   <path
-                    d="M 100 80 Q 150 120, 200 100 T 300 150 T 250 250"
+                    d="M 80 70 L 150 90 L 240 120 L 280 180"
                     stroke="rgba(34, 211, 238, 0.6)"
                     strokeWidth="3"
                     fill="none"
@@ -194,11 +169,17 @@ const DashboardPreview = () => {
                   />
                 </svg>
                 {/* Pins */}
-                <div className="absolute top-20 left-24">
+                <div className="absolute top-16 left-16">
                   <div className="w-8 h-8 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-sm shadow-lg shadow-cyan-electric/50">1</div>
                 </div>
-                <div className="absolute top-32 right-32">
+                <div className="absolute top-20 left-36">
                   <div className="w-8 h-8 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-sm shadow-lg shadow-cyan-electric/50">2</div>
+                </div>
+                <div className="absolute top-28 right-20">
+                  <div className="w-8 h-8 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-sm shadow-lg shadow-cyan-electric/50">3</div>
+                </div>
+                <div className="absolute bottom-16 right-12">
+                  <div className="w-8 h-8 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-sm shadow-lg shadow-cyan-electric/50">4</div>
                 </div>
               </div>
             </div>
@@ -207,27 +188,41 @@ const DashboardPreview = () => {
             <div className="bg-navy-deep/80 backdrop-blur-xl border border-cyan-electric/40 rounded-2xl p-4 animate-fade-in shadow-lg shadow-cyan-electric/10">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-cyan-electric font-bold">2 arrêts</p>
-                  <p className="text-xs text-muted-foreground">Terminée</p>
+                  <p className="text-cyan-electric font-bold">4 arrêts</p>
+                  <p className="text-xs text-muted-foreground">En cours</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-muted-foreground">⚡ 94 km</p>
-                  <p className="text-sm text-muted-foreground">⏱ 2h19</p>
+                  <p className="text-sm text-muted-foreground">⚡ 42 km</p>
+                  <p className="text-sm text-muted-foreground">⏱ 1h15</p>
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-3 p-2 rounded-lg bg-cyan-electric/10 border border-cyan-electric/20">
                   <div className="w-6 h-6 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-xs flex-shrink-0">1</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-foreground truncate">CAMILLE Ô BAUX</p>
-                    <p className="text-[10px] text-muted-foreground truncate">Les Baux-de-Provence</p>
+                    <p className="text-xs font-semibold text-foreground truncate">TechnoSud</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Aix-en-Provence</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-2 rounded-lg bg-cyan-electric/10 border border-cyan-electric/20">
                   <div className="w-6 h-6 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-xs flex-shrink-0">2</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-foreground truncate">JUMISTINE</p>
-                    <p className="text-[10px] text-muted-foreground truncate">Eyguières</p>
+                    <p className="text-xs font-semibold text-foreground truncate">Industrie Plus</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Vitrolles</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-2 rounded-lg bg-cyan-electric/10 border border-cyan-electric/20">
+                  <div className="w-6 h-6 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-xs flex-shrink-0">3</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-foreground truncate">Green Solutions</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Gardanne</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-2 rounded-lg bg-cyan-electric/10 border border-cyan-electric/20">
+                  <div className="w-6 h-6 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-xs flex-shrink-0">4</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-foreground truncate">Innovation Lab</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Marseille</p>
                   </div>
                 </div>
               </div>
@@ -238,7 +233,7 @@ const DashboardPreview = () => {
 
       {/* Progress indicators */}
       <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10 px-4">
-        {[0, 1, 2, 3, 4].map((i) => (
+        {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
             className={`h-1 sm:h-1.5 w-6 sm:w-8 rounded-full transition-all duration-300 ${
