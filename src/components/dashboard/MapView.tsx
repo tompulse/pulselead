@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Locate } from "lucide-react";
 import { categorizeActivity } from "@/utils/activityCategories";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { EntrepriseDetails } from "./EntrepriseDetails";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -657,14 +656,6 @@ export const MapView = ({
           </div>
         )}
       </div>
-
-      {isMobile && (
-        <EntrepriseDetails
-          entreprise={selectedEntreprise}
-          open={detailsOpen}
-          onOpenChange={setDetailsOpen}
-        />
-      )}
     </>
   );
 };
