@@ -189,6 +189,49 @@ export const TourneeRouteDisplay = ({
     }
   };
 
+  const handleDeleteEntreprise = async (entreprise: Entreprise) => {
+    try {
+      const newEntreprises = entreprises.filter(e => e.id !== entreprise.id);
+      
+      if (newEntreprises.length === 0) {
+        toast({
+          title: "Impossible de supprimer",
+          description: "Une tournée doit contenir au moins 1 arrêt",
+          variant: "destructive",
+          duration: 3000,
+        });
+        return;
+      }
+
+      setEntreprises(newEntreprises);
+      await recalculateRoute(newEntreprises);
+
+      // Update tournees table
+      await supabase
+        .from('tournees')
+        .update({
+          entreprises_ids: newEntreprises.map(e => e.id),
+        })
+        .eq('id', tourneeId);
+
+      toast({
+        title: "✅ Arrêt supprimé",
+        description: `${entreprise.nom} a été retiré de la tournée`,
+        duration: 2500,
+      });
+
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error deleting entreprise:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer l'arrêt",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
   const handleNavigateToOne = (entreprise: Entreprise) => {
     setNavigatingEntreprise(entreprise);
     setShowNavigationDialog(true);
@@ -444,6 +487,7 @@ export const TourneeRouteDisplay = ({
                       visite={visites.find(v => v.entreprise_id === entreprise.id)}
                       onNavigate={handleNavigateToOne}
                       onVisiteClick={handleOpenVisiteDialog}
+                      onDelete={handleDeleteEntreprise}
                     />
                   ))}
                 </div>

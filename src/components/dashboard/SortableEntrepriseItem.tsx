@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Navigation, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { GripVertical, Navigation, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type Entreprise = {
@@ -17,6 +17,7 @@ interface SortableEntrepriseItemProps {
   visite?: any;
   onNavigate: (e: Entreprise) => void;
   onVisiteClick: (e: Entreprise) => void;
+  onDelete: (e: Entreprise) => void;
 }
 
 export const SortableEntrepriseItem = ({
@@ -25,6 +26,7 @@ export const SortableEntrepriseItem = ({
   visite,
   onNavigate,
   onVisiteClick,
+  onDelete,
 }: SortableEntrepriseItemProps) => {
   const {
     attributes,
@@ -93,6 +95,18 @@ export const SortableEntrepriseItem = ({
         className="relative flex-shrink-0 h-8 w-8 p-0 hover:bg-accent/10 hover:text-accent transition-colors z-10"
       >
         <Navigation className="w-4 h-4" />
+      </Button>
+
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(entreprise);
+        }}
+        className="relative flex-shrink-0 h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-500 transition-colors z-10"
+      >
+        <X className="w-4 h-4" />
       </Button>
     </div>
   );
