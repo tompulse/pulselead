@@ -207,12 +207,6 @@ export const UnifiedEntreprisePanel = ({
                     mode="dialog"
                     size="lg"
                   />
-                      onClick={() => interactions.some(i => i.type === 'visite') ? removeInteraction('visite') : addInteraction({ type: 'visite' })}
-                      disabled={isUpdating}
-                    >
-                      Visite
-                    </Button>
-                  </div>
                 </div>
 
                 <Separator />
