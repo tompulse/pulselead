@@ -90,7 +90,7 @@ export function BookingSection() {
         </div>
 
         {step === "datetime" && (
-          <div className="grid lg:grid-cols-[400px,1fr] gap-8 max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-[380px,1fr] gap-8 max-w-7xl mx-auto">
             {/* Left side - Info */}
             <div className="glass-card p-8 space-y-6 border-cyan-electric/30 h-fit animate-fade-in">
               <div className="flex items-center gap-4">
@@ -98,13 +98,13 @@ export function BookingSection() {
                   <User className="w-8 h-8 text-cyan-electric" />
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground">Avec</div>
-                  <div className="font-bold text-foreground text-xl">Équipe LUMA</div>
+                  <div className="text-xs text-muted-foreground">Avec</div>
+                  <div className="font-bold text-foreground text-lg">Équipe LUMA</div>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold gradient-text">Démo personnalisée</h3>
+                <h3 className="text-xl font-bold text-cyan-electric">Démo personnalisée</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Un échange de 30 minutes pour comprendre vos besoins et vous montrer comment LUMA peut vous aider à :
                 </p>
@@ -124,64 +124,64 @@ export function BookingSection() {
                 </ul>
               </div>
 
-              <div className="space-y-3 pt-4 border-t border-cyan-electric/20">
+              <div className="space-y-2 pt-4 border-t border-cyan-electric/20">
                 <div className="flex items-center gap-3 text-sm text-foreground">
-                  <Clock className="w-5 h-5 text-cyan-electric" />
-                  <span className="font-medium">30 minutes</span>
+                  <Clock className="w-4 h-4 text-cyan-electric" />
+                  <span>30 minutes</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground">
-                  <Video className="w-5 h-5 text-cyan-electric" />
-                  <span className="font-medium">Visioconférence Google Meet</span>
+                  <Video className="w-4 h-4 text-cyan-electric" />
+                  <span>Visioconférence Google Meet</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground">
-                  <CalendarIcon className="w-5 h-5 text-cyan-electric" />
-                  <span className="font-medium">Lien envoyé par email</span>
+                  <CalendarIcon className="w-4 h-4 text-cyan-electric" />
+                  <span>Lien envoyé par email</span>
                 </div>
               </div>
             </div>
 
             {/* Right side - Calendar & Time */}
-            <div className="glass-card p-8 space-y-8 border-cyan-electric/30 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="glass-card p-8 space-y-6 border-cyan-electric/30 animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">Choisissez votre créneau</h3>
-                <p className="text-muted-foreground">Sélectionnez une date puis un horaire disponible</p>
+                <p className="text-muted-foreground text-sm">Sélectionnez une date puis un horaire disponible</p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Calendar */}
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="text-sm font-semibold text-cyan-electric uppercase tracking-wide">Date</div>
+              <div className="grid md:grid-cols-[2fr,1fr] gap-6">
+                {/* Calendar - Plus grand */}
+                <div className="flex flex-col space-y-3">
+                  <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">Date</div>
                   <Calendar
                     mode="single"
                     selected={selectedDate}
                     onSelect={handleDateSelect}
                     disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
                     locale={fr}
-                    className="rounded-lg border-0 p-0"
+                    className="rounded-lg border-0 p-0 w-full"
                   />
                 </div>
 
-                {/* Time slots */}
-                <div className="space-y-4">
+                {/* Time slots - Plus compact */}
+                <div className="space-y-3">
                   <div>
-                    <div className="text-sm font-semibold text-cyan-electric uppercase tracking-wide mb-3">
+                    <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide mb-2">
                       {selectedDate ? format(selectedDate, "EEEE d MMMM", { locale: fr }) : "Horaires"}
                     </div>
                     {!selectedDate && (
-                      <p className="text-sm text-muted-foreground italic">
+                      <p className="text-xs text-muted-foreground italic">
                         Sélectionnez d'abord une date
                       </p>
                     )}
                   </div>
                   {selectedDate && (
-                    <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto pr-2">
+                    <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto pr-1">
                       {timeSlots.map((slot) => (
                         <Button
                           key={slot.time}
                           variant={selectedTime === slot.time ? "default" : "outline"}
                           disabled={!slot.available}
                           onClick={() => handleTimeSelect(slot.time)}
-                          className={`h-12 font-semibold transition-all ${
+                          className={`h-10 font-semibold transition-all text-sm ${
                             selectedTime === slot.time
                               ? "bg-cyan-electric text-navy-deep hover:bg-cyan-glow shadow-lg shadow-cyan-electric/40"
                               : "border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric/50"
@@ -196,13 +196,13 @@ export function BookingSection() {
               </div>
 
               {selectedDate && selectedTime && (
-                <div className="pt-6 border-t border-cyan-electric/20 animate-fade-in">
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-cyan-electric/10 border border-cyan-electric/30 mb-4">
+                <div className="pt-4 border-t border-cyan-electric/20 animate-fade-in">
+                  <div className="p-4 rounded-lg bg-cyan-electric/10 border border-cyan-electric/30 mb-4">
                     <div className="flex items-center gap-3">
                       <CalendarIcon className="w-5 h-5 text-cyan-electric" />
                       <div>
-                        <div className="text-sm text-muted-foreground">Rendez-vous prévu</div>
-                        <div className="font-semibold text-foreground">
+                        <div className="text-xs text-muted-foreground">Rendez-vous prévu</div>
+                        <div className="font-bold text-foreground text-sm">
                           {format(selectedDate, "EEEE d MMMM yyyy", { locale: fr })} à {selectedTime}
                         </div>
                       </div>
@@ -210,7 +210,7 @@ export function BookingSection() {
                   </div>
                   <Button
                     onClick={handleNext}
-                    className="w-full btn-hero h-14 text-lg group"
+                    className="w-full btn-hero h-12 text-base group"
                   >
                     Continuer
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -346,46 +346,46 @@ export function BookingSection() {
         )}
 
         {step === "confirmation" && (
-          <div className="max-w-2xl mx-auto animate-fade-in">
+          <div className="max-w-3xl mx-auto animate-fade-in">
             <div className="glass-card p-12 text-center space-y-8 border-cyan-electric/30">
               <div className="flex flex-col items-center space-y-6">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-electric/30 to-cyan-electric/10 flex items-center justify-center animate-scale-in">
-                  <Check className="w-12 h-12 text-cyan-electric" />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-electric/30 to-cyan-electric/10 flex items-center justify-center animate-scale-in">
+                  <Check className="w-10 h-10 text-cyan-electric" />
                 </div>
                 
                 <div className="space-y-3">
-                  <h3 className="text-4xl font-bold gradient-text">C'est confirmé !</h3>
-                  <p className="text-lg text-muted-foreground">
+                  <h3 className="text-3xl font-bold gradient-text">C'est confirmé !</h3>
+                  <p className="text-base text-muted-foreground">
                     Votre démo est réservée pour le
                   </p>
-                  <div className="p-6 rounded-lg bg-cyan-electric/10 border border-cyan-electric/30 inline-block">
-                    <p className="text-2xl font-bold text-foreground">
+                  <div className="p-5 rounded-lg bg-cyan-electric/10 border border-cyan-electric/30 inline-block">
+                    <p className="text-xl font-bold text-foreground">
                       {selectedDate && format(selectedDate, "EEEE d MMMM yyyy", { locale: fr })}
                     </p>
-                    <p className="text-xl text-cyan-electric font-semibold mt-2">
+                    <p className="text-lg text-cyan-electric font-semibold mt-1">
                       à {selectedTime}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-3 text-sm text-muted-foreground max-w-md">
-                  <p className="flex items-start gap-3 text-left">
-                    <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                <div className="space-y-2 text-sm text-muted-foreground max-w-md">
+                  <p className="flex items-start gap-2 text-left">
+                    <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
                     <span>Email de confirmation envoyé à <strong className="text-foreground">{formData.email}</strong></span>
                   </p>
-                  <p className="flex items-start gap-3 text-left">
-                    <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <p className="flex items-start gap-2 text-left">
+                    <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
                     <span>Lien Google Meet inclus dans l'email</span>
                   </p>
-                  <p className="flex items-start gap-3 text-left">
-                    <Check className="w-5 h-5 text-cyan-electric mt-0.5 flex-shrink-0" />
+                  <p className="flex items-start gap-2 text-left">
+                    <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
                     <span>Rappel automatique 24h avant le rendez-vous</span>
                   </p>
                 </div>
 
                 <Button
                   onClick={handleReset}
-                  className="btn-hero mt-6 h-14 text-lg px-8"
+                  className="btn-hero mt-4 h-12 text-base px-8"
                 >
                   Parfait, merci !
                 </Button>

@@ -742,54 +742,6 @@ const Index = () => {
             </AccordionItem>
           </Accordion>
 
-          {/* CTA Final */}
-          <div 
-            ref={finalCTA.ref}
-            className={`glass-card p-12 text-center space-y-8 border-accent/40 bg-gradient-to-br from-accent/10 via-primary/20 to-transparent shadow-2xl shadow-accent/10 transition-all duration-1000 ${
-              finalCTA.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-90'
-            }`}
-          >
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              Ne laissez plus passer
-              <br />
-              <span className="gradient-text">aucune opportunité</span>
-            </h3>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
-              Démarrez votre essai gratuit maintenant. Sans engagement, sans carte bancaire.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-              <Button onClick={() => navigate("/auth")} size="lg" className="btn-hero min-w-[240px] h-14 text-lg font-bold">
-                Commencer gratuitement
-                <ArrowRight className="w-6 h-6 ml-2" />
-              </Button>
-              <Button 
-                onClick={() => {
-                  const demoSection = document.getElementById('demo');
-                  demoSection?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                size="lg"
-                variant="outline"
-                className="border-2 border-accent/50 text-foreground hover:bg-accent/10 hover:border-accent min-w-[240px] h-14 text-lg font-bold rounded-full"
-              >
-                Voir les créneaux
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-sm text-muted-foreground font-medium">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-accent" />
-                <span>14 jours gratuits</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-accent" />
-                <span>Sans carte bancaire</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-accent" />
-                <span>Accès immédiat</span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

@@ -16,20 +16,20 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center",
-        caption_label: "text-sm font-semibold text-cyan-electric",
+        caption_label: "text-base font-bold text-cyan-electric",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
-          "h-8 w-8 bg-cyan-electric/10 hover:bg-cyan-electric/20 border border-cyan-electric/30 rounded-lg p-0 transition-all hover:shadow-[0_0_15px_rgba(34,211,238,0.3)]",
+          "h-9 w-9 bg-cyan-electric/10 hover:bg-cyan-electric/20 border border-cyan-electric/30 rounded-lg p-0 transition-all hover:shadow-[0_0_15px_rgba(34,211,238,0.3)]",
         ),
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
-        table: "w-full border-collapse space-y-1 mt-2",
+        table: "w-full border-collapse space-y-1 mt-3",
         head_row: "flex",
-        head_cell: "text-cyan-electric/70 rounded-md w-10 font-semibold text-xs uppercase",
+        head_cell: "text-cyan-electric/70 rounded-md w-12 h-10 font-semibold text-xs uppercase",
         row: "flex w-full mt-1",
-        cell: "h-10 w-10 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-lg [&:has([aria-selected].day-outside)]:bg-cyan-electric/20 [&:has([aria-selected])]:bg-cyan-electric/10 first:[&:has([aria-selected])]:rounded-l-lg last:[&:has([aria-selected])]:rounded-r-lg focus-within:relative focus-within:z-20",
+        cell: "h-12 w-12 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-lg [&:has([aria-selected].day-outside)]:bg-cyan-electric/20 [&:has([aria-selected])]:bg-cyan-electric/10 first:[&:has([aria-selected])]:rounded-l-lg last:[&:has([aria-selected])]:rounded-r-lg focus-within:relative focus-within:z-20",
         day: cn(
-          "h-10 w-10 p-0 font-medium rounded-lg hover:bg-cyan-electric/10 hover:text-cyan-electric transition-all hover:shadow-[0_0_10px_rgba(34,211,238,0.2)] aria-selected:opacity-100"
+          "h-12 w-12 p-0 font-semibold text-base rounded-lg hover:bg-cyan-electric/10 hover:text-cyan-electric transition-all hover:shadow-[0_0_10px_rgba(34,211,238,0.2)] aria-selected:opacity-100"
         ),
         day_range_end: "day-range-end",
         day_selected:
