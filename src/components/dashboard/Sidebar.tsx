@@ -98,29 +98,19 @@ export const Sidebar = ({
   return (
     <aside className={isMobileSheet 
       ? "w-full h-full flex flex-col p-4 space-y-4" 
-      : `${isCollapsed ? 'w-16' : 'w-56 md:w-60'} glass-card border-r border-accent/30 p-3 space-y-2 flex flex-col h-full overflow-hidden bg-gradient-to-b from-card/80 to-card/40 transition-all duration-300 mr-4`
+      : "w-56 md:w-60 glass-card border-r border-accent/30 p-3 space-y-2 flex flex-col h-full overflow-hidden bg-gradient-to-b from-card/80 to-card/40 transition-all duration-300 mr-4"
     }>
       {!isMobileSheet && (
         <>
           {/* Header avec icône */}
-          <div className="flex items-center justify-between pb-3 border-b border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent rounded-lg p-2 shadow-sm">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg shadow-sm">
-                <Filter className="h-4 w-4 text-accent" />
-              </div>
-              {!isCollapsed && <h2 className="text-sm font-bold gradient-text">Filtres</h2>}
+          <div className="flex items-center gap-2 pb-3 border-b border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent rounded-lg p-2 shadow-sm">
+            <div className="p-2 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg shadow-sm">
+              <Filter className="h-4 w-4 text-accent" />
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsCollapsed && setIsCollapsed(!isCollapsed)}
-              className="h-7 w-7 p-0 hover:bg-accent/10"
-            >
-              <ChevronDown className={`h-4 w-4 text-accent transition-transform duration-300 ${isCollapsed ? '-rotate-90' : 'rotate-0'}`} />
-            </Button>
+            <h2 className="text-sm font-bold gradient-text">Filtres</h2>
           </div>
           
-          {!isCollapsed && tourneeMode && onCreateTournee && (
+          {tourneeMode && onCreateTournee && (
             <>
               <Button
                 onClick={onCreateTournee}
@@ -191,11 +181,10 @@ export const Sidebar = ({
         </>
       )}
 
-      {!isCollapsed && (
-        <div className={isMobileSheet
-          ? "space-y-3 overflow-y-auto flex-1 pr-2 custom-scrollbar"
-          : "space-y-2 overflow-y-auto flex-1 pr-1 custom-scrollbar"
-        }>
+      <div className={isMobileSheet 
+        ? "space-y-3 overflow-y-auto flex-1 pr-2 custom-scrollbar"
+        : "space-y-2 overflow-y-auto flex-1 pr-1 custom-scrollbar"
+      }>
         {/* Geographic Filters - Departments Only */}
         <Collapsible open={isDepartmentsOpen} onOpenChange={setIsDepartmentsOpen}>
           <CollapsibleTrigger className="w-full">
@@ -335,11 +324,9 @@ export const Sidebar = ({
         </Collapsible>
 
       </div>
-      )}
 
       {/* Reset Filters */}
-      {!isCollapsed && (
-        <Button
+      <Button
           variant="outline"
           size="sm"
           className={`w-full border-accent/30 hover:bg-gradient-to-r hover:from-accent/15 hover:to-accent/5 hover:border-accent/50 shrink-0 transition-all shadow-sm ${
@@ -354,7 +341,6 @@ export const Sidebar = ({
         >
           Réinitialiser les filtres
         </Button>
-      )}
     </aside>
   );
 };

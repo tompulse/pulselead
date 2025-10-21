@@ -225,8 +225,6 @@ const DashboardContent = () => {
           <Sidebar 
             filters={filters} 
             setFilters={setFilters}
-            isCollapsed={sidebarCollapsed}
-            setIsCollapsed={setSidebarCollapsed}
           />
         )}
 
