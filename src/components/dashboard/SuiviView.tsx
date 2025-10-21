@@ -23,7 +23,6 @@ interface AnalyticsData {
   qualifiedLeads: number;
   wonDeals: number;
   totalInteractions: number;
-  interactionsThisWeek: number;
   averageScore: number;
   conversionRate: number;
 }
@@ -40,7 +39,6 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
     qualifiedLeads: 0,
     wonDeals: 0,
     totalInteractions: 0,
-    interactionsThisWeek: 0,
     averageScore: 0,
     conversionRate: 0
   });
@@ -104,8 +102,6 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
         .select('created_at')
         .eq('user_id', userId);
 
-      const interactionsThisWeek = weekInteractions?.length || 0;
-
       const { data: scores } = await supabase
         .from('entreprises')
         .select('score_lead')
@@ -126,7 +122,6 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
         qualifiedLeads,
         wonDeals,
         totalInteractions: allInteractions?.length || 0,
-        interactionsThisWeek,
         averageScore: Math.round(averageScore),
         conversionRate: Math.round(conversionRate)
       });
@@ -206,12 +201,6 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
       value: analytics.totalInteractions,
       icon: Phone,
       color: "text-purple-500"
-    },
-    {
-      title: "Cette semaine",
-      value: analytics.interactionsThisWeek,
-      icon: Calendar,
-      color: "text-orange-500"
     },
     {
       title: "Taux de conversion",
