@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Calendar, X, Map } from "lucide-react";
+import { Lightbulb, ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, X, Map } from "lucide-react";
 import DashboardPreview from "@/components/landing/DashboardPreview";
 import { trackCTAClick } from "@/utils/analytics";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { BookingDialog } from "@/components/landing/BookingDialog";
+import { BookingSection } from "@/components/landing/BookingSection";
 import {
   Accordion,
   AccordionContent,
@@ -17,7 +17,6 @@ const Index = () => {
   const navigate = useNavigate();
   const [selectedRegion, setSelectedRegion] = React.useState<'1' | 'plusieurs' | 'france'>('plusieurs');
   const [billingPeriod, setBillingPeriod] = React.useState<'monthly' | 'quarterly' | 'yearly'>('yearly');
-  const [bookingOpen, setBookingOpen] = React.useState(false);
   
   // Animations au scroll - effets plus percutants
   const socialProof = useScrollAnimation({ threshold: 0.1 });
@@ -764,13 +763,16 @@ const Index = () => {
                 <ArrowRight className="w-6 h-6 ml-2" />
               </Button>
               <Button 
-                onClick={() => setBookingOpen(true)}
+                onClick={() => {
+                  const demoSection = document.getElementById('demo');
+                  demoSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 size="lg"
                 variant="outline"
                 className="border-2 border-accent/50 text-foreground hover:bg-accent/10 hover:border-accent min-w-[240px] h-14 text-lg font-bold rounded-full"
               >
-                <Calendar className="w-5 h-5 mr-2" />
-                Demander une démo
+                Voir les créneaux
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-sm text-muted-foreground font-medium">
@@ -790,6 +792,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Section Réservation */}
+      <BookingSection />
 
       {/* Footer complet */}
       <footer className="relative py-12 px-4 bg-primary/50 border-t border-accent/10">
@@ -883,9 +888,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-
-      {/* Booking Dialog */}
-      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} />
     </div>
   );
 };
