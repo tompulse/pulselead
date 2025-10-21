@@ -90,38 +90,40 @@ export function BookingSection() {
         </div>
 
         {step === "datetime" && (
-          <div className="grid lg:grid-cols-[380px,1fr] gap-8 max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-[400px,1fr] gap-8 max-w-6xl mx-auto">
             {/* Left side - Info */}
-            <div className="glass-card p-8 space-y-6 border-cyan-electric/30 h-fit animate-fade-in">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-electric/30 to-cyan-electric/10 flex items-center justify-center">
-                  <User className="w-8 h-8 text-cyan-electric" />
+            <div className="glass-card p-8 space-y-6 border-cyan-electric/30 animate-fade-in flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-electric/30 to-cyan-electric/10 flex items-center justify-center">
+                    <User className="w-8 h-8 text-cyan-electric" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">Avec</div>
+                    <div className="font-bold text-foreground text-lg">Équipe LUMA</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-xs text-muted-foreground">Avec</div>
-                  <div className="font-bold text-foreground text-lg">Équipe LUMA</div>
-                </div>
-              </div>
 
-              <div className="space-y-4">
-                <h3 className="text-xl font-bold text-cyan-electric">Démo personnalisée</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Un échange de 30 minutes pour comprendre vos besoins et vous montrer comment LUMA peut vous aider à :
-                </p>
-                <ul className="space-y-2 text-sm text-foreground">
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
-                    <span>Optimiser vos tournées commerciales</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
-                    <span>Centraliser votre CRM terrain</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
-                    <span>Accéder aux créations en temps réel</span>
-                  </li>
-                </ul>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-cyan-electric">Démo personnalisée</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Un échange de 30 minutes pour comprendre vos besoins et vous montrer comment LUMA peut vous aider à :
+                  </p>
+                  <ul className="space-y-2 text-sm text-foreground">
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
+                      <span>Optimiser vos tournées commerciales</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
+                      <span>Piloter votre activité terrain</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-cyan-electric mt-0.5 flex-shrink-0" />
+                      <span>Accéder aux créations en temps réel</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
 
               <div className="space-y-2 pt-4 border-t border-cyan-electric/20">
@@ -147,26 +149,31 @@ export function BookingSection() {
                 <p className="text-muted-foreground text-sm">Sélectionnez une date puis un horaire disponible</p>
               </div>
 
-              <div className="grid md:grid-cols-[2fr,1fr] gap-6">
-                {/* Calendar - Plus grand */}
+              <div className="grid md:grid-cols-[1.3fr,1fr] gap-6">
+                {/* Calendar */}
                 <div className="flex flex-col space-y-3">
                   <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">Date</div>
                   <Calendar
                     mode="single"
                     selected={selectedDate}
                     onSelect={handleDateSelect}
-                    disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
+                    disabled={(date) => {
+                      const day = date.getDay();
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      return date < today || day === 0 || day === 6;
+                    }}
                     locale={fr}
+                    fromDate={new Date()}
                     className="rounded-lg border-0 p-0 w-full"
+                    hidden={{ dayOfWeek: [0, 6] }}
                   />
                 </div>
 
-                {/* Time slots - Plus compact */}
+                {/* Time slots */}
                 <div className="space-y-3">
                   <div>
-                    <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide mb-2">
-                      {selectedDate ? format(selectedDate, "EEEE d MMMM", { locale: fr }) : "Horaires"}
-                    </div>
+                    <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide mb-2">Horaires</div>
                     {!selectedDate && (
                       <p className="text-xs text-muted-foreground italic">
                         Sélectionnez d'abord une date
@@ -174,22 +181,27 @@ export function BookingSection() {
                     )}
                   </div>
                   {selectedDate && (
-                    <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto pr-1">
-                      {timeSlots.map((slot) => (
-                        <Button
-                          key={slot.time}
-                          variant={selectedTime === slot.time ? "default" : "outline"}
-                          disabled={!slot.available}
-                          onClick={() => handleTimeSelect(slot.time)}
-                          className={`h-10 font-semibold transition-all text-sm ${
-                            selectedTime === slot.time
-                              ? "bg-cyan-electric text-navy-deep hover:bg-cyan-glow shadow-lg shadow-cyan-electric/40"
-                              : "border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric/50"
-                          } ${!slot.available ? "opacity-40 cursor-not-allowed" : ""}`}
-                        >
-                          {slot.time}
-                        </Button>
-                      ))}
+                    <div>
+                      <div className="text-xs font-medium text-foreground mb-3">
+                        {format(selectedDate, "EEEE d MMMM", { locale: fr })}
+                      </div>
+                      <div className="flex flex-col gap-2 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
+                        {timeSlots.map((slot) => (
+                          <Button
+                            key={slot.time}
+                            variant={selectedTime === slot.time ? "default" : "outline"}
+                            disabled={!slot.available}
+                            onClick={() => handleTimeSelect(slot.time)}
+                            className={`h-9 font-semibold transition-all text-sm ${
+                              selectedTime === slot.time
+                                ? "bg-cyan-electric text-navy-deep hover:bg-cyan-glow shadow-lg shadow-cyan-electric/40"
+                                : "border-cyan-electric/30 hover:bg-cyan-electric/10 hover:border-cyan-electric/50"
+                            } ${!slot.available ? "opacity-40 cursor-not-allowed" : ""}`}
+                          >
+                            {slot.time}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
