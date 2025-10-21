@@ -404,15 +404,21 @@ export const TourneeRouteDisplay = ({
               </Badge>
             </div>
           </div>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground bg-accent/5 rounded-lg px-3 py-2">
-            <div className="flex items-center gap-1">
-              <Navigation className="w-3 h-3" />
-              <span className="font-medium">{Math.round(distanceTotaleKm)} km</span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground bg-accent/5 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-1">
+                <Navigation className="w-3 h-3" />
+                <span className="font-medium">{Math.round(distanceTotaleKm)} km</span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                <span className="font-medium">{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
+              </div>
             </div>
-            <span>•</span>
-            <div className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              <span className="font-medium">{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
+            <div className="text-[10px] text-muted-foreground bg-card/40 rounded-lg px-3 py-1.5 flex items-center justify-between">
+              <span>Dont visites: {Math.floor((entreprises.length * 15) / 60)}h{Math.round((entreprises.length * 15) % 60).toString().padStart(2, '0')}</span>
+              <span className="opacity-70">(15 min/arrêt)</span>
             </div>
           </div>
         </CardHeader>

@@ -265,22 +265,43 @@ export const TourneeOptimizationPanel = ({
         ) : optimizedResult ? (
           <>
             {/* Stats compactes */}
-            <div className="flex items-center justify-around py-3 px-2 bg-accent/5 rounded-lg border border-accent/20">
-              <div className="text-center">
-                <div className="text-lg font-bold text-accent">{Math.round(optimizedResult.distance_totale_km)} km</div>
-                <div className="text-[10px] text-muted-foreground">Distance</div>
-              </div>
-              <div className="h-8 w-px bg-accent/20"></div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-accent">
-                  {Math.floor(optimizedResult.temps_estime_minutes / 60)}h{Math.round(optimizedResult.temps_estime_minutes % 60).toString().padStart(2, '0')}
+            <div className="space-y-3">
+              <div className="flex items-center justify-around py-3 px-2 bg-accent/5 rounded-lg border border-accent/20">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-accent">{Math.round(optimizedResult.distance_totale_km)} km</div>
+                  <div className="text-[10px] text-muted-foreground">Distance</div>
                 </div>
-                <div className="text-[10px] text-muted-foreground">Durée</div>
+                <div className="h-8 w-px bg-accent/20"></div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-accent">
+                    {Math.floor(optimizedResult.temps_estime_minutes / 60)}h{Math.round(optimizedResult.temps_estime_minutes % 60).toString().padStart(2, '0')}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">Durée totale</div>
+                </div>
+                <div className="h-8 w-px bg-accent/20"></div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-accent">{optimizedResult.entreprises_ordonnees.length}</div>
+                  <div className="text-[10px] text-muted-foreground">Arrêts</div>
+                </div>
               </div>
-              <div className="h-8 w-px bg-accent/20"></div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-accent">{optimizedResult.entreprises_ordonnees.length}</div>
-                <div className="text-[10px] text-muted-foreground">Arrêts</div>
+              
+              {/* Détail du temps */}
+              <div className="text-xs text-muted-foreground bg-card/60 rounded-lg px-3 py-2 space-y-1">
+                <div className="flex justify-between">
+                  <span>Temps trajet :</span>
+                  <span className="font-medium">
+                    {Math.floor((optimizedResult.temps_trajet_minutes || 0) / 60)}h
+                    {Math.round((optimizedResult.temps_trajet_minutes || 0) % 60).toString().padStart(2, '0')}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Temps visites :</span>
+                  <span className="font-medium">
+                    {Math.floor((optimizedResult.entreprises_ordonnees.length * 15) / 60)}h
+                    {Math.round((optimizedResult.entreprises_ordonnees.length * 15) % 60).toString().padStart(2, '0')}
+                    <span className="text-[10px] ml-1 opacity-70">(15 min/arrêt)</span>
+                  </span>
+                </div>
               </div>
             </div>
 
