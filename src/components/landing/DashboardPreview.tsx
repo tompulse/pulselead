@@ -87,14 +87,27 @@ const DashboardPreview = () => {
         <div className="w-full h-full flex items-center justify-center p-3 sm:p-6">
           <div className="w-full max-w-4xl bg-navy-deep/80 backdrop-blur-xl border border-cyan-electric/40 rounded-2xl p-6 sm:p-8 animate-scale-in shadow-2xl shadow-cyan-electric/20">
             <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 text-cyan-electric">Visualisez votre territoire</h3>
-            {/* Simplified map representation */}
+            {/* Map with realistic background */}
             <div className="relative h-64 sm:h-80 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl overflow-hidden border border-cyan-electric/20">
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 left-0 w-full h-full" style={{ 
-                  backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(34, 211, 238, 0.1) 35px, rgba(34, 211, 238, 0.1) 36px),
-                                   repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(34, 211, 238, 0.1) 35px, rgba(34, 211, 238, 0.1) 36px)` 
-                }}></div>
+              {/* Realistic map background */}
+              <div className="absolute inset-0 opacity-30" style={{
+                backgroundImage: `
+                  linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px)
+                `,
+                backgroundSize: '20px 20px',
+                backgroundColor: '#1a2332'
+              }}>
+                {/* Simulated roads */}
+                <svg className="w-full h-full opacity-20">
+                  <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#4a5568" strokeWidth="2"/>
+                  <line x1="30%" y1="0" x2="30%" y2="100%" stroke="#4a5568" strokeWidth="2"/>
+                  <line x1="70%" y1="0" x2="70%" y2="100%" stroke="#4a5568" strokeWidth="2"/>
+                  <line x1="0" y1="30%" x2="100%" y2="30%" stroke="#4a5568" strokeWidth="1.5"/>
+                  <line x1="0" y1="70%" x2="100%" y2="70%" stroke="#4a5568" strokeWidth="1.5"/>
+                </svg>
               </div>
+              
               {/* Map pins */}
               <div className="absolute top-1/4 left-1/3 animate-pulse">
                 <MapPin className="w-8 h-8 text-cyan-electric fill-cyan-electric/50" />
@@ -152,33 +165,48 @@ const DashboardPreview = () => {
             <div className="bg-navy-deep/80 backdrop-blur-xl border border-cyan-electric/40 rounded-2xl p-4 sm:p-6 animate-scale-in shadow-2xl shadow-cyan-electric/20">
               <h3 className="text-lg sm:text-xl font-bold mb-4 text-cyan-electric">Tournée optimisée</h3>
               <div className="relative h-64 sm:h-80 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl overflow-hidden border border-cyan-electric/20">
-                <div className="absolute inset-0 opacity-20">
-                  <div className="absolute top-0 left-0 w-full h-full" style={{ 
-                    backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(34, 211, 238, 0.1) 35px, rgba(34, 211, 238, 0.1) 36px),
-                                     repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(34, 211, 238, 0.1) 35px, rgba(34, 211, 238, 0.1) 36px)` 
-                  }}></div>
+                {/* Realistic map background */}
+                <div className="absolute inset-0 opacity-30" style={{
+                  backgroundImage: `
+                    linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px)
+                  `,
+                  backgroundSize: '20px 20px',
+                  backgroundColor: '#1a2332'
+                }}>
+                  {/* Simulated roads */}
+                  <svg className="w-full h-full opacity-20">
+                    <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#4a5568" strokeWidth="2"/>
+                    <line x1="30%" y1="0" x2="30%" y2="100%" stroke="#4a5568" strokeWidth="2"/>
+                    <line x1="70%" y1="0" x2="70%" y2="100%" stroke="#4a5568" strokeWidth="2"/>
+                    <line x1="0" y1="30%" x2="100%" y2="30%" stroke="#4a5568" strokeWidth="1.5"/>
+                    <line x1="0" y1="70%" x2="100%" y2="70%" stroke="#4a5568" strokeWidth="1.5"/>
+                  </svg>
                 </div>
-                {/* Route line */}
+                
+                {/* Route line connecting all points */}
                 <svg className="absolute inset-0 w-full h-full">
                   <path
-                    d="M 80 70 L 150 90 L 240 120 L 280 180"
+                    d="M 60 60 L 130 80 L 200 110 L 280 160"
                     stroke="rgba(34, 211, 238, 0.6)"
                     strokeWidth="3"
                     fill="none"
                     className="animate-pulse"
+                    strokeLinecap="round"
                   />
                 </svg>
-                {/* Pins */}
-                <div className="absolute top-16 left-16">
+                
+                {/* Pins with better positioning */}
+                <div className="absolute" style={{ top: '60px', left: '60px' }}>
                   <div className="w-8 h-8 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-sm shadow-lg shadow-cyan-electric/50">1</div>
                 </div>
-                <div className="absolute top-20 left-36">
+                <div className="absolute" style={{ top: '80px', left: '130px' }}>
                   <div className="w-8 h-8 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-sm shadow-lg shadow-cyan-electric/50">2</div>
                 </div>
-                <div className="absolute top-28 right-20">
+                <div className="absolute" style={{ top: '110px', left: '200px' }}>
                   <div className="w-8 h-8 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-sm shadow-lg shadow-cyan-electric/50">3</div>
                 </div>
-                <div className="absolute bottom-16 right-12">
+                <div className="absolute" style={{ top: '160px', left: '280px' }}>
                   <div className="w-8 h-8 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-sm shadow-lg shadow-cyan-electric/50">4</div>
                 </div>
               </div>
@@ -208,14 +236,14 @@ const DashboardPreview = () => {
                   <div className="w-6 h-6 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-xs flex-shrink-0">2</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-foreground truncate">Industrie Plus</p>
-                    <p className="text-[10px] text-muted-foreground truncate">Vitrolles</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Aix-en-Provence</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-2 rounded-lg bg-cyan-electric/10 border border-cyan-electric/20">
                   <div className="w-6 h-6 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-xs flex-shrink-0">3</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-foreground truncate">Green Solutions</p>
-                    <p className="text-[10px] text-muted-foreground truncate">Gardanne</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Marseille</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-2 rounded-lg bg-cyan-electric/10 border border-cyan-electric/20">
