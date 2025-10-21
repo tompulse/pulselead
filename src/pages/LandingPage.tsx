@@ -96,41 +96,45 @@ const Index = () => {
               <span className="text-sm text-accent font-bold">Données en temps réel</span>
             </div>
             
-            {/* Titre principal optimisé pour conversion */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
-              <span className="text-foreground">L'outil ultime pour les</span>
+            {/* Titre principal - focus sur le bénéfice unique */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight">
+              <span className="text-foreground">Prospectez les nouvelles</span>
               <br />
-              <span className="gradient-text">commerciaux terrain</span>
+              <span className="gradient-text">entreprises</span>
+              <span className="text-foreground"> avant vos</span>
               <br />
-              <span className="text-foreground">qui veulent performer</span>
+              <span className="text-foreground">concurrents</span>
             </h1>
             
-            {/* Sous-titre optimisé */}
+            {/* Sous-titre clair et orienté bénéfice */}
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium">
-              Organisez vos tournées, gérez vos prospects et suivez votre pipeline commercial.
+              Accédez aux créations d'entreprises en <span className="text-accent font-semibold">temps réel</span>, 
+              organisez vos tournées terrain et pilotez votre activité commerciale.
               <br className="hidden sm:block" />
-              <span className="text-accent font-semibold">+ Accès aux créations d'entreprises en temps réel.</span>
+              <span className="text-foreground/90 text-base sm:text-lg mt-2 block">Tout en un seul outil.</span>
             </p>
             
-            {/* CTA optimisé */}
+            {/* CTA principal unique et puissant */}
             <div className="flex flex-col items-center gap-5 pt-6">
               <Button 
                 onClick={handleExplorerClick}
                 size="lg"
                 className="btn-hero w-full sm:w-auto min-w-[280px] h-16 text-xl font-bold group"
               >
-                Commencer gratuitement
+                Démarrer gratuitement
                 <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1.5">
+              
+              {/* Trust indicators réels et crédibles */}
+              <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent" />
-                  <span className="font-medium">Essai gratuit 7 jours</span>
+                  <span className="font-medium">Sans carte bancaire</span>
                 </div>
-                <span className="text-accent/50">•</span>
-                <div className="flex items-center gap-1.5">
+                <span className="text-accent/30 hidden sm:inline">•</span>
+                <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent" />
-                  <span className="font-medium">Accès immédiat</span>
+                  <span className="font-medium">Prêt en 2 minutes</span>
                 </div>
               </div>
             </div>
@@ -160,6 +164,7 @@ const Index = () => {
       >
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+            {/* Trust indicators crédibles - focus sur les faits vérifiables */}
             <div className={`flex items-center gap-4 group transition-all duration-700 ${
               socialProof.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
             }`} style={{ transitionDelay: '200ms' }}>
@@ -170,8 +175,8 @@ const Index = () => {
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-lg font-bold text-foreground">Données officielles</div>
-                <div className="text-sm text-muted-foreground font-medium">Sources INPI & INSEE</div>
+                <div className="text-xl font-bold text-foreground">Sources officielles</div>
+                <div className="text-sm text-muted-foreground font-medium">INPI & INSEE vérifiées</div>
               </div>
             </div>
 
@@ -181,12 +186,12 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
                 <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <CheckCircle className="w-7 h-7 text-accent" />
+                  <Zap className="w-7 h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-lg font-bold text-foreground">+1000 entreprises</div>
-                <div className="text-sm text-muted-foreground font-medium">Ajoutées chaque semaine</div>
+                <div className="text-xl font-bold text-foreground">Temps réel</div>
+                <div className="text-sm text-muted-foreground font-medium">Mise à jour continue</div>
               </div>
             </div>
 
@@ -196,12 +201,12 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
                 <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <Star className="w-7 h-7 text-accent fill-accent" />
+                  <Target className="w-7 h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-lg font-bold text-foreground">4.8/5 ★★★★★</div>
-                <div className="text-sm text-muted-foreground font-medium">Note utilisateurs</div>
+                <div className="text-xl font-bold text-foreground">France entière</div>
+                <div className="text-sm text-muted-foreground font-medium">Tous les départements</div>
               </div>
             </div>
           </div>
@@ -223,10 +228,10 @@ const Index = () => {
               <span className="text-sm font-bold text-destructive uppercase tracking-wide">Le constat</span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              Les <span className="text-destructive">problèmes</span> des commerciaux terrain
+              Le problème des <span className="text-destructive">commerciaux terrain</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Vous perdez un temps précieux avec des outils dispersés et aucune vision d'ensemble. Résultat : moins de ventes, plus de frustration.
+              Outils dispersés, prospects qui échappent, tournées non optimisées. Vous perdez du temps et des opportunités.
             </p>
           </div>
 
@@ -240,8 +245,8 @@ const Index = () => {
                 <AlertCircle className="w-8 h-8 text-destructive" />
               </div>
               <h3 className="text-xl font-bold text-foreground">Outils dispersés</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Suivi commercial sur un outil, tournées sur un autre, prospects ailleurs. Impossible de s'y retrouver efficacement.
+              <p className="text-muted-foreground leading-relaxed">
+                CRM, cartographie, fichiers Excel... Jongler entre 5 outils ralentit votre prospection.
               </p>
             </div>
 
@@ -251,9 +256,9 @@ const Index = () => {
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <Clock className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Gestion chronophage</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Trop de temps administratif au lieu de vendre. Planification de tournées, suivi client, reporting manuel.
+              <h3 className="text-xl font-bold text-foreground">Prospects perdus</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Vos concurrents contactent les nouvelles entreprises avant vous. Vous arrivez trop tard.
               </p>
             </div>
 
@@ -263,9 +268,9 @@ const Index = () => {
               <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
                 <Target className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Manque de visibilité</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Aucune vue claire sur votre territoire, vos prospects, votre pipeline. Vous naviguez à l'aveugle.
+              <h3 className="text-xl font-bold text-foreground">Tournées inefficaces</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Des heures perdues sur la route. Pas de vision claire de votre territoire commercial.
               </p>
             </div>
           </div>
@@ -282,10 +287,10 @@ const Index = () => {
               <span className="text-sm font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              LUMA <span className="gradient-text">centralise et simplifie</span> votre travail
+              LUMA <span className="gradient-text">centralise</span> votre prospection
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Un seul outil pour gérer vos prospects, optimiser vos tournées terrain, piloter votre activité commerciale et accéder aux nouvelles entreprises en temps réel.
+              Toutes vos données au même endroit : nouvelles entreprises, tournées, CRM et suivi commercial.
             </p>
           </div>
 
@@ -299,8 +304,8 @@ const Index = () => {
                 <Map className="w-9 h-9 text-accent" />
               </div>
               <h3 className="text-xl font-bold text-foreground">Tournées optimisées</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Planifiez vos visites terrain efficacement. Itinéraires optimisés, GPS intégré. Gagnez du temps.
+              <p className="text-muted-foreground leading-relaxed">
+                Planifiez vos visites en quelques clics. Itinéraire optimal, GPS intégré. Économisez des heures chaque semaine.
               </p>
             </div>
 
@@ -310,9 +315,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <TrendingUp className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Suivi commercial intégré</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Suivez vos prospects, interactions et opportunités. Pipeline clair, historique complet, zéro oubli.
+              <h3 className="text-xl font-bold text-foreground">CRM intelligent</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Suivez vos prospects, historiques des contacts, relances programmées. Rien ne vous échappe.
               </p>
             </div>
 
@@ -322,9 +327,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Sparkles className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Créations en temps réel</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Le + qui fait la différence : accédez aux nouvelles entreprises avant vos concurrents.
+              <h3 className="text-xl font-bold text-foreground">Données en temps réel</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Prospectez les créations d'entreprises dès leur apparition. Soyez le premier à les contacter.
               </p>
             </div>
           </div>
