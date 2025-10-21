@@ -567,7 +567,7 @@ const Index = () => {
                   </div>
                   <div className="flex-1">
                     <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Méthode manuelle</div>
-                    <div className="text-2xl md:text-3xl font-bold text-destructive">~100h</div>
+                    <div className="text-2xl md:text-3xl font-bold text-destructive">~6h</div>
                     <div className="text-xs text-muted-foreground">recherche et organisation</div>
                   </div>
                 </div>
@@ -590,7 +590,7 @@ const Index = () => {
               <div className="text-center pt-2">
                 <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
                   <TrendingUp className="w-4 h-4 text-cyan-electric" />
-                  <span className="text-sm font-semibold gradient-text">×600 de productivité</span>
+                  <span className="text-sm font-semibold gradient-text">×36 de productivité</span>
                 </div>
               </div>
             </div>
