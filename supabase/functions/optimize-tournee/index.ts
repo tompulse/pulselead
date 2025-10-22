@@ -61,15 +61,34 @@ serve(async (req) => {
       lng: entreprises[0].longitude
     };
 
-    // Trier les entreprises par distance depuis le point de départ (plus proche d'abord)
-    const entreprisesWithDistance = entreprises.map(e => ({
-      ...e,
-      distance: calculateDistance(startPoint.lat, startPoint.lng, e.latitude, e.longitude)
-    }));
+    // Algorithme du plus proche voisin pour optimiser l'itinéraire
+    const sortedEntreprises: Entreprise[] = [];
+    const remaining = [...entreprises];
+    let currentLat = startPoint.lat;
+    let currentLng = startPoint.lng;
     
-    entreprisesWithDistance.sort((a, b) => a.distance - b.distance);
-    
-    const sortedEntreprises = entreprisesWithDistance.map(({ distance, ...e }) => e);
+    // À chaque étape, on va vers le point le plus proche non visité
+    while (remaining.length > 0) {
+      let nearestIndex = 0;
+      let nearestDistance = calculateDistance(currentLat, currentLng, remaining[0].latitude, remaining[0].longitude);
+      
+      // Trouver le point le plus proche de la position actuelle
+      for (let i = 1; i < remaining.length; i++) {
+        const distance = calculateDistance(currentLat, currentLng, remaining[i].latitude, remaining[i].longitude);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = i;
+        }
+      }
+      
+      // Ajouter le point le plus proche à l'itinéraire
+      const nearest = remaining.splice(nearestIndex, 1)[0];
+      sortedEntreprises.push(nearest);
+      
+      // Mettre à jour la position actuelle
+      currentLat = nearest.latitude;
+      currentLng = nearest.longitude;
+    }
     
     // Créer l'itinéraire avec les entreprises triées par proximité
     const coordinates = [
@@ -80,7 +99,7 @@ serve(async (req) => {
     // API Mapbox Directions pour obtenir l'itinéraire
     const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
     
-    console.log('🎯 Appel Mapbox Directions API avec ordre par proximité:', sortedEntreprises.length + 1, 'points');
+    console.log('🎯 Appel Mapbox Directions API avec ordre optimisé (plus proche voisin):', sortedEntreprises.length + 1, 'points');
     
     const mapboxResponse = await fetch(directionsUrl);
     
@@ -99,14 +118,14 @@ serve(async (req) => {
 
     const route = mapboxData.routes[0];
     
-    console.log('✅ Ordre par proximité:', sortedEntreprises.map((e: Entreprise) => e.nom));
+    console.log('✅ Ordre optimisé (plus proche voisin):', sortedEntreprises.map((e: Entreprise) => e.nom));
 
     const distanceKm = route.distance / 1000; // Conversion mètres -> km
     const tempsTrajetMinutes = route.duration / 60; // Conversion secondes -> minutes
     const tempsVisites = sortedEntreprises.length * 15; // 15 min par visite
     const tempsTotal = tempsTrajetMinutes + tempsVisites;
 
-    console.log('✅ Itinéraire calculé par proximité:', {
+    console.log('✅ Itinéraire optimisé calculé:', {
       distance: Math.round(distanceKm) + ' km',
       temps: Math.round(tempsTotal) + ' min',
       arrêts: sortedEntreprises.length
@@ -119,7 +138,7 @@ serve(async (req) => {
         distance_totale_km: Math.round(distanceKm * 10) / 10,
         temps_estime_minutes: Math.round(tempsTotal),
         temps_trajet_minutes: Math.round(tempsTrajetMinutes),
-        explication: `Itinéraire par proximité: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
+        explication: `Itinéraire optimisé: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
         route_geometry: route.geometry, // GeoJSON de la route complète
         waypoints: mapboxData.waypoints, // Points de passage avec données GPS
         legs: route.legs, // Détails de chaque segment
