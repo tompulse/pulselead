@@ -23,7 +23,8 @@ import {
   TrendingUp,
   Plus,
   Locate,
-  List
+  List,
+  Edit2
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -345,37 +346,13 @@ export const TourneesView = () => {
     return (
       <div className="h-full flex flex-col gap-3 overflow-hidden">
         <Card className="border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent shadow-lg shadow-accent/5">
-          <CardContent className="pt-4 pb-4 flex gap-2">
+          <CardContent className="pt-4 pb-4">
             <Button 
               variant="outline" 
               onClick={() => setSelectedTournee(null)}
-              className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
+              className="w-full border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
             >
               ← Retour aux tournées
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                const newName = prompt('Nouveau nom de la tournée:', selectedTournee.nom);
-                if (newName && newName.trim()) {
-                  supabase
-                    .from('tournees')
-                    .update({ nom: newName })
-                    .eq('id', selectedTournee.id)
-                    .then(() => {
-                      setSelectedTournee({ ...selectedTournee, nom: newName });
-                      fetchTournees();
-                      toast({
-                        title: "✅ Nom modifié",
-                        description: "Le nom de la tournée a été mis à jour",
-                        duration: 2500,
-                      });
-                    });
-                }
-              }}
-              className="border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
-            >
-              Modifier le nom
             </Button>
           </CardContent>
         </Card>
@@ -702,6 +679,30 @@ export const TourneesView = () => {
                             <div className="font-medium text-sm truncate flex items-center gap-2">
                               <Route className="w-3.5 h-3.5 text-accent" />
                               {tournee.nom}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const newName = prompt('Nouveau nom de la tournée:', tournee.nom);
+                                  if (newName && newName.trim()) {
+                                    supabase
+                                      .from('tournees')
+                                      .update({ nom: newName })
+                                      .eq('id', tournee.id)
+                                      .then(() => {
+                                        fetchTournees();
+                                        toast({
+                                          title: "✅ Nom modifié",
+                                          description: "Le nom de la tournée a été mis à jour",
+                                          duration: 2500,
+                                        });
+                                      });
+                                  }
+                                }}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent/10 rounded"
+                                title="Modifier le nom"
+                              >
+                                <Edit2 className="w-3 h-3 text-accent" />
+                              </button>
                             </div>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                               <Calendar className="w-3 h-3" />
