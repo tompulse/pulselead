@@ -174,57 +174,7 @@ const DashboardContent = () => {
         onLogout={handleLogout}
       />
       
-      {/* Mobile Filter Button */}
-      {isMobile && showSidebar && (
-        <div className="glass-card border-b border-accent/20 px-3 py-2 shrink-0">
-          <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full h-9 border-accent/50 hover:bg-accent/10 justify-between"
-              >
-                <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-accent" />
-                  <span className="text-sm font-medium">Filtres</span>
-                </div>
-                {activeFiltersCount > 0 && (
-                  <Badge variant="secondary" className="bg-accent/20 text-accent h-5 px-2">
-                    {activeFiltersCount}
-                  </Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-screen p-0">
-              <SheetHeader className="px-6 py-4 border-b border-accent/20 bg-gradient-to-b from-accent/5 to-transparent">
-                <SheetTitle className="flex items-center gap-3 text-xl">
-                  <div className="p-2 bg-accent/10 rounded-lg">
-                    <Filter className="w-5 h-5 text-accent" />
-                  </div>
-                  Filtrer les résultats
-                </SheetTitle>
-              </SheetHeader>
-              <div className="h-[calc(100vh-72px)] overflow-hidden">
-                <Sidebar 
-                  filters={filters} 
-                  setFilters={setFilters}
-                  onFilterChange={() => setFilterSheetOpen(false)}
-                  isMobileSheet={true}
-                />
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      )}
-
       <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
-        {!isMobile && showSidebar && (
-          <Sidebar 
-            filters={filters} 
-            setFilters={setFilters}
-          />
-        )}
-
         <main className="flex-1 overflow-hidden min-h-0">
           {view === 'prospects' && userId && (
             <ProspectsViewContainer 
