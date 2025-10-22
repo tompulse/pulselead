@@ -484,52 +484,6 @@ export const ListView = ({
                           {item.nom}
                         </h4>
                       </div>
-                      {!selectionMode && (
-                      <div className="flex items-center gap-1.5 flex-shrink-0 min-w-[108px]">
-                        {/* Action icons - filled if action exists, outline otherwise - Now toggleable */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCRMAction(item.id, 'appeler');
-                          }}
-                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors shadow-sm ${
-                            crm?.hasAppel 
-                              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white' 
-                              : 'border border-blue-500/30 text-blue-500/60 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-500/5'
-                          }`}
-                        >
-                          <Phone className="h-4 w-4" />
-                        </button>
-                        
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCRMAction(item.id, 'visite');
-                          }}
-                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors shadow-sm ${
-                            crm?.hasVisite 
-                              ? 'bg-gradient-to-br from-green-500 to-green-600 text-white' 
-                              : 'border border-green-500/30 text-green-500/60 hover:border-green-500 hover:text-green-500 hover:bg-green-500/5'
-                          }`}
-                        >
-                          <Car className="h-4 w-4" />
-                        </button>
-                        
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCRMAction(item.id, 'rdv');
-                          }}
-                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors shadow-sm ${
-                            crm?.hasRdv 
-                              ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white' 
-                              : 'border border-purple-500/30 text-purple-500/60 hover:border-purple-500 hover:text-purple-500 hover:bg-purple-500/5'
-                          }`}
-                        >
-                          <CalendarCheck className="h-4 w-4" />
-                        </button>
-                      </div>
-                      )}
                     </div>
 
                     <div className="relative space-y-2 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
@@ -645,13 +599,19 @@ export const ListView = ({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-card border-accent/20 z-50">
                           <DropdownMenuItem 
-                            onClick={() => openGoogleMaps(item.latitude, item.longitude)}
+                            onClick={() => {
+                              openGoogleMaps(item.latitude, item.longitude);
+                              handleCRMAction(item.id, 'visite');
+                            }}
                           >
                             <Map className="w-4 h-4 mr-2" />
                             Google Maps
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            onClick={() => openWaze(item.latitude, item.longitude)}
+                            onClick={() => {
+                              openWaze(item.latitude, item.longitude);
+                              handleCRMAction(item.id, 'visite');
+                            }}
                           >
                             <Navigation className="w-4 h-4 mr-2" />
                             Waze
