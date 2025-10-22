@@ -43,7 +43,7 @@ export const TourneeFilters = ({
   onOptimize,
   isOptimizing = false
 }: TourneeFiltersProps) => {
-  const [departmentsOpen, setDepartmentsOpen] = useState(true);
+  const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [datesOpen, setDatesOpen] = useState(false);
   const handleCategoryToggle = (categoryKey: string) => {
