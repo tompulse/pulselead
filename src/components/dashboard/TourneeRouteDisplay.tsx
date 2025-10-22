@@ -169,7 +169,7 @@ export const TourneeRouteDisplay = ({
 
   const updateManualOrder = async (newOrder: Entreprise[]) => {
     try {
-      // Simplement sauvegarder le nouvel ordre sans recalculer
+      // Sauvegarder le nouvel ordre
       await supabase
         .from('tournees')
         .update({
@@ -179,9 +179,12 @@ export const TourneeRouteDisplay = ({
 
       toast({
         title: "Ordre mis à jour",
-        description: "L'ordre de visite a été modifié",
+        description: "Recalcul de l'itinéraire en cours...",
         duration: 2000,
       });
+
+      // Recalculer automatiquement les distances et durées
+      await calculateRoutes();
 
       onUpdate?.();
     } catch (error) {
@@ -299,6 +302,22 @@ export const TourneeRouteDisplay = ({
         withTolls: data.withTolls,
         withoutTolls: data.withoutTolls
       });
+
+      // Mettre à jour les distances et temps affichés
+      const withTollsData = data.withTolls;
+      if (withTollsData) {
+        setDistanceTotaleKm(parseFloat(withTollsData.distance_km));
+        setTempsEstimeMinutes(withTollsData.duration_minutes);
+
+        // Sauvegarder dans la base de données
+        await supabase
+          .from('tournees')
+          .update({
+            distance_totale_km: parseFloat(withTollsData.distance_km),
+            temps_estime_minutes: withTollsData.duration_minutes,
+          })
+          .eq('id', tourneeId);
+      }
     } catch (error) {
       console.error('Error calculating routes:', error);
       toast({
@@ -582,7 +601,7 @@ export const TourneeRouteDisplay = ({
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <span>{routeOptions.withTolls.distance_km} km</span>
                       <span>•</span>
-                      <span>{routeOptions.withTolls.duration_minutes} min</span>
+                      <span>{Math.floor(routeOptions.withTolls.duration_minutes / 60)}h{Math.round(routeOptions.withTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
                     </div>
                   </div>
                 )}
@@ -595,7 +614,7 @@ export const TourneeRouteDisplay = ({
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <span>{routeOptions.withoutTolls.distance_km} km</span>
                       <span>•</span>
-                      <span>{routeOptions.withoutTolls.duration_minutes} min</span>
+                      <span>{Math.floor(routeOptions.withoutTolls.duration_minutes / 60)}h{Math.round(routeOptions.withoutTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
                     </div>
                   </div>
                 )}
