@@ -562,9 +562,36 @@ export const TourneeRouteDisplay = ({
                   ← Retour
                 </Button>
               )}
-              <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
+              <Button
+                variant={statut === 'terminee' ? "outline" : "secondary"}
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const newStatut = statut === 'terminee' ? 'planifiee' : 'terminee';
+                    await supabase
+                      .from('tournees')
+                      .update({ statut: newStatut })
+                      .eq('id', tourneeId);
+                    
+                    setStatut(newStatut);
+                    toast({
+                      title: newStatut === 'terminee' ? "✅ Tournée terminée" : "📋 Tournée réactivée",
+                      duration: 2000,
+                    });
+                    onUpdate?.();
+                  } catch (error) {
+                    console.error('Error updating statut:', error);
+                    toast({
+                      title: "Erreur",
+                      description: "Impossible de modifier le statut",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                className="text-xs shadow-sm transition-all"
+              >
                 {statusConfig.label}
-              </Badge>
+              </Button>
             </div>
           </div>
           <div className="space-y-2">
@@ -629,20 +656,20 @@ export const TourneeRouteDisplay = ({
 
             {/* Bouton optimiser */}
             <Button
-              variant="ghost"
+              variant="default"
               size="sm"
               onClick={handleOptimizeTournee}
               disabled={isOptimizing || entreprises.length < 2}
-              className="w-full h-8 text-xs text-primary hover:text-primary hover:bg-primary/10 transition-all font-medium"
+              className="w-full h-9 text-xs bg-accent text-accent-foreground hover:bg-accent/90 transition-all font-medium shadow-md"
             >
               {isOptimizing ? (
                 <>
-                  <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                   Optimisation...
                 </>
               ) : (
                 <>
-                  <TrendingUp className="w-3 h-3 mr-1.5" />
+                  <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
                   Optimiser l'itinéraire
                 </>
               )}
