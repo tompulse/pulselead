@@ -61,71 +61,56 @@ serve(async (req) => {
       lng: entreprises[0].longitude
     };
 
-    // Algorithme du plus proche voisin pour optimiser l'itinéraire
-    const sortedEntreprises: Entreprise[] = [];
-    const remaining = [...entreprises];
-    let currentLat = startPoint.lat;
-    let currentLng = startPoint.lng;
+    // Utiliser l'API Mapbox Optimization pour résoudre le TSP (Traveling Salesman Problem)
+    // Cette API trouve automatiquement le meilleur ordre pour minimiser le temps de trajet
+    const coordinates = entreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
     
-    // À chaque étape, on va vers le point le plus proche non visité
-    while (remaining.length > 0) {
-      let nearestIndex = 0;
-      let nearestDistance = calculateDistance(currentLat, currentLng, remaining[0].latitude, remaining[0].longitude);
-      
-      // Trouver le point le plus proche de la position actuelle
-      for (let i = 1; i < remaining.length; i++) {
-        const distance = calculateDistance(currentLat, currentLng, remaining[i].latitude, remaining[i].longitude);
-        if (distance < nearestDistance) {
-          nearestDistance = distance;
-          nearestIndex = i;
-        }
-      }
-      
-      // Ajouter le point le plus proche à l'itinéraire
-      const nearest = remaining.splice(nearestIndex, 1)[0];
-      sortedEntreprises.push(nearest);
-      
-      // Mettre à jour la position actuelle
-      currentLat = nearest.latitude;
-      currentLng = nearest.longitude;
-    }
+    // Si on a un point de départ différent, on l'ajoute comme premier point fixe
+    const optimizationUrl = point_depart
+      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`
+      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
     
-    // Créer l'itinéraire avec les entreprises triées par proximité
-    const coordinates = [
-      `${startPoint.lng},${startPoint.lat}`,
-      ...sortedEntreprises.map(e => `${e.longitude},${e.latitude}`)
-    ].join(';');
-
-    // API Mapbox Directions pour obtenir l'itinéraire
-    const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
+    console.log('🎯 Appel Mapbox Optimization API pour optimisation réelle du temps de trajet');
     
-    console.log('🎯 Appel Mapbox Directions API avec ordre optimisé (plus proche voisin):', sortedEntreprises.length + 1, 'points');
-    
-    const mapboxResponse = await fetch(directionsUrl);
+    const mapboxResponse = await fetch(optimizationUrl);
     
     if (!mapboxResponse.ok) {
-      console.error('❌ Erreur Mapbox Directions:', mapboxResponse.status);
+      console.error('❌ Erreur Mapbox Optimization:', mapboxResponse.status);
       const errorText = await mapboxResponse.text();
       console.error('Détails:', errorText);
-      throw new Error(`Mapbox Directions API error: ${mapboxResponse.status}`);
+      throw new Error(`Mapbox Optimization API error: ${mapboxResponse.status}`);
     }
 
     const mapboxData = await mapboxResponse.json();
     
-    if (!mapboxData.routes || mapboxData.routes.length === 0) {
-      throw new Error("Aucun itinéraire trouvé par Mapbox");
+    if (!mapboxData.trips || mapboxData.trips.length === 0) {
+      throw new Error("Aucun itinéraire optimisé trouvé par Mapbox");
     }
 
-    const route = mapboxData.routes[0];
+    const trip = mapboxData.trips[0];
     
-    console.log('✅ Ordre optimisé (plus proche voisin):', sortedEntreprises.map((e: Entreprise) => e.nom));
+    // Récupérer l'ordre optimisé des waypoints
+    const waypointOrder = mapboxData.waypoints
+      .filter((wp: any) => wp.waypoint_index !== undefined)
+      .sort((a: any, b: any) => a.waypoint_index - b.waypoint_index);
+    
+    // Si on a un point de départ, on enlève le premier waypoint (qui est le point de départ)
+    const relevantWaypoints = point_depart ? waypointOrder.slice(1) : waypointOrder;
+    
+    // Réorganiser les entreprises selon l'ordre optimisé de Mapbox
+    const sortedEntreprises = relevantWaypoints.map((wp: any) => {
+      const originalIndex = point_depart ? wp.waypoint_index - 1 : wp.waypoint_index;
+      return entreprises[originalIndex];
+    });
+    
+    console.log('✅ Ordre optimisé par Mapbox (minimum de temps de trajet):', sortedEntreprises.map((e: Entreprise) => e.nom));
 
-    const distanceKm = route.distance / 1000; // Conversion mètres -> km
-    const tempsTrajetMinutes = route.duration / 60; // Conversion secondes -> minutes
+    const distanceKm = trip.distance / 1000; // Conversion mètres -> km
+    const tempsTrajetMinutes = trip.duration / 60; // Conversion secondes -> minutes
     const tempsVisites = sortedEntreprises.length * 15; // 15 min par visite
     const tempsTotal = tempsTrajetMinutes + tempsVisites;
 
-    console.log('✅ Itinéraire optimisé calculé:', {
+    console.log('✅ Itinéraire optimisé (minimum de temps):', {
       distance: Math.round(distanceKm) + ' km',
       temps: Math.round(tempsTotal) + ' min',
       arrêts: sortedEntreprises.length
@@ -138,10 +123,10 @@ serve(async (req) => {
         distance_totale_km: Math.round(distanceKm * 10) / 10,
         temps_estime_minutes: Math.round(tempsTotal),
         temps_trajet_minutes: Math.round(tempsTrajetMinutes),
-        explication: `Itinéraire optimisé: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
-        route_geometry: route.geometry, // GeoJSON de la route complète
+        explication: `Itinéraire optimisé pour temps minimum: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
+        route_geometry: trip.geometry, // GeoJSON de la route complète
         waypoints: mapboxData.waypoints, // Points de passage avec données GPS
-        legs: route.legs, // Détails de chaque segment
+        legs: trip.legs, // Détails de chaque segment
         fallback: false
       }),
       {
