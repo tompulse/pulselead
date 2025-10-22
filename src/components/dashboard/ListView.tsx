@@ -618,11 +618,11 @@ export const ListView = ({
 
                     <div className="flex gap-2 justify-center mt-auto">
                       <Button
-                        variant="outline"
                         size="sm"
-                        className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                        className="flex-1 h-11 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 hover:border-blue-500/40 transition-all"
                         disabled={!item.telephone}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           if (item.telephone) {
                             window.location.href = `tel:${item.telephone}`;
                             handleCRMAction(item.id, 'appeler');
@@ -635,10 +635,10 @@ export const ListView = ({
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
-                            variant="outline"
                             size="sm"
-                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                            className="flex-1 h-11 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
                             disabled={!hasCoordinates}
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Car className="w-5 h-5" />
                           </Button>
@@ -662,9 +662,9 @@ export const ListView = ({
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
-                            variant="outline"
                             size="sm"
-                            className="flex-1 border-accent/30 hover:bg-accent/10 hover:border-accent"
+                            className="flex-1 h-11 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 hover:border-purple-500/40 transition-all"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Calendar className="w-5 h-5" />
                           </Button>
