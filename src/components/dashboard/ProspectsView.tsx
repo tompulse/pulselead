@@ -1,5 +1,10 @@
+import { useState } from "react";
 import { List } from "lucide-react";
 import { ListView } from "./ListView";
+import { TourneeCreationPanel } from "./TourneeCreationPanel";
+import { useTourneeManager } from "@/hooks/useTourneeManager";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProspectsViewProps {
   filters: {
@@ -19,31 +24,134 @@ export const ProspectsView = ({
   filters,
   userId,
   onEntrepriseSelect,
-  selectionMode = false,
-  selectedEntreprises = [],
-  onToggleSelection,
+  selectionMode: externalSelectionMode = false,
+  selectedEntreprises: externalSelectedEntreprises = [],
+  onToggleSelection: externalOnToggleSelection,
 }: ProspectsViewProps) => {
+  const { toast } = useToast();
+  const [tourneeActive, setTourneeActive] = useState(false);
+  const [tourneeName, setTourneeName] = useState("");
+  const [tourneeDate, setTourneeDate] = useState("");
+  
+  const {
+    selectedEntreprises,
+    toggleEntreprise,
+    clearSelection,
+    createTournee,
+    optimizeTournee,
+    isOptimizing,
+    isCreating
+  } = useTourneeManager(userId);
+
+  const handleCreateTournee = () => {
+    setTourneeActive(!tourneeActive);
+    if (tourneeActive) {
+      clearSelection();
+      setTourneeName("");
+      setTourneeDate("");
+    }
+  };
+
+  const handleOptimize = async () => {
+    if (selectedEntreprises.length < 2) {
+      return;
+    }
+    
+    if (!tourneeName.trim()) {
+      return;
+    }
+
+    // Obtenir la position de l'utilisateur
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+
+      const result = await optimizeTournee(
+        selectedEntreprises,
+        position.coords.latitude,
+        position.coords.longitude
+      );
+
+      if (result) {
+        // Créer la tournée avec le résultat optimisé
+        await createTournee({
+          nom: tourneeName,
+          date: tourneeDate || new Date().toISOString().split('T')[0],
+          entreprises: result.optimizedOrder.map((id: string) => 
+            selectedEntreprises.find(e => e.id === id)
+          ).filter(Boolean)
+        });
+
+        // Succès - réinitialiser
+        setTourneeActive(false);
+        clearSelection();
+        setTourneeName("");
+        setTourneeDate("");
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'obtenir votre position",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const internalSelectionMode = externalSelectionMode || tourneeActive;
+  const internalSelectedEntreprises = externalSelectionMode ? externalSelectedEntreprises : selectedEntreprises;
+  const internalOnToggleSelection = externalSelectionMode ? externalOnToggleSelection : toggleEntreprise;
+
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden gap-3">
       {/* Header */}
-      <div className="glass-card border-b border-accent/20 px-4 py-2.5 shrink-0 flex items-center">
+      <div className="glass-card border-b border-accent/20 px-4 py-2.5 shrink-0 flex items-center justify-between">
         <h2 className="text-base font-bold gradient-text flex items-center gap-2">
           <div className="p-1.5 bg-accent/10 rounded-lg">
             <List className="h-4 w-4 text-accent" />
           </div>
           Prospects
         </h2>
+        
+        {!externalSelectionMode && (
+          <Button
+            onClick={handleCreateTournee}
+            variant={tourneeActive ? "default" : "outline"}
+            size="sm"
+            className={tourneeActive ? "bg-gradient-to-r from-accent to-accent/80" : ""}
+          >
+            {tourneeActive ? "Annuler" : "Créer une tournée"}
+          </Button>
+        )}
       </div>
 
-      {/* Content - Liste uniquement */}
-      <div className="flex-1 overflow-hidden min-h-0">
-        <ListView
-          filters={filters}
-          onEntrepriseSelect={onEntrepriseSelect}
-          selectionMode={selectionMode}
-          selectedEntreprises={selectedEntreprises}
-          onToggleSelection={onToggleSelection}
-        />
+      <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
+        {/* Panneau de création de tournée */}
+        {tourneeActive && !externalSelectionMode && (
+          <div className="w-80 shrink-0">
+            <TourneeCreationPanel
+              onCreateTournee={handleCreateTournee}
+              tourneeActive={tourneeActive}
+              tourneeName={tourneeName}
+              setTourneeName={setTourneeName}
+              tourneeDate={tourneeDate}
+              setTourneeDate={setTourneeDate}
+              selectedCount={selectedEntreprises.length}
+              onOptimize={handleOptimize}
+            />
+          </div>
+        )}
+
+        {/* Content - Liste */}
+        <div className="flex-1 overflow-hidden min-h-0">
+          <ListView
+            filters={filters}
+            onEntrepriseSelect={onEntrepriseSelect}
+            selectionMode={internalSelectionMode}
+            selectedEntreprises={internalSelectedEntreprises}
+            onToggleSelection={internalOnToggleSelection}
+          />
+        </div>
       </div>
     </div>
   );
