@@ -28,7 +28,6 @@ import {
   Phone,
   Route as RouteIcon,
   Coins,
-  Home,
   X,
   Loader2,
   TrendingUp,
@@ -112,10 +111,6 @@ export const TourneeRouteDisplay = ({
   const [distanceTotaleKm, setDistanceTotaleKm] = useState(initialDistance);
   const [tempsEstimeMinutes, setTempsEstimeMinutes] = useState(initialTemps);
   const [navigatingEntreprise, setNavigatingEntreprise] = useState<Entreprise | null>(null);
-  const [pointArriveeLat, setPointArriveeLat] = useState<number | null>(null);
-  const [pointArriveeLng, setPointArriveeLng] = useState<number | null>(null);
-  const [adresseArrivee, setAdresseArrivee] = useState("");
-  const [memePointDepartArrivee, setMemePointDepartArrivee] = useState(false);
   const { toast } = useToast();
 
   const sensors = useSensors(
@@ -593,17 +588,20 @@ export const TourneeRouteDisplay = ({
             {routeCalculating ? (
               <div className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground bg-accent/5 rounded-lg">
                 <Loader2 className="w-3 h-3 animate-spin" />
-                <span>Calcul des itinéraires...</span>
+                <span>Calcul...</span>
               </div>
             ) : (routeOptions.withTolls || routeOptions.withoutTolls) && (
               <div className="space-y-1.5">
                 {routeOptions.withTolls && (
-                  <div className="flex items-center justify-between text-xs bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2 hover:bg-blue-500/15 transition-colors cursor-pointer" onClick={() => handleNavigateFullRoute(false)}>
+                  <div 
+                    className="flex items-center justify-between text-xs bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2 hover:bg-blue-500/15 transition-colors cursor-pointer" 
+                    onClick={() => handleNavigateFullRoute(false)}
+                  >
                     <div className="flex items-center gap-2">
                       <Coins className="w-3 h-3 text-blue-500" />
-                      <span className="font-medium text-blue-600 dark:text-blue-400">Avec péages</span>
+                      <span className="font-medium text-blue-600 dark:text-blue-400">Péages</span>
                     </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 text-muted-foreground font-medium">
                       <span>{routeOptions.withTolls.distance_km} km</span>
                       <span>•</span>
                       <span>{Math.floor(routeOptions.withTolls.duration_minutes / 60)}h{Math.round(routeOptions.withTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
@@ -611,12 +609,15 @@ export const TourneeRouteDisplay = ({
                   </div>
                 )}
                 {routeOptions.withoutTolls && (
-                  <div className="flex items-center justify-between text-xs bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2 hover:bg-green-500/15 transition-colors cursor-pointer" onClick={() => handleNavigateFullRoute(true)}>
+                  <div 
+                    className="flex items-center justify-between text-xs bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2 hover:bg-green-500/15 transition-colors cursor-pointer" 
+                    onClick={() => handleNavigateFullRoute(true)}
+                  >
                     <div className="flex items-center gap-2">
                       <RouteIcon className="w-3 h-3 text-green-500" />
                       <span className="font-medium text-green-600 dark:text-green-400">Sans péages</span>
                     </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 text-muted-foreground font-medium">
                       <span>{routeOptions.withoutTolls.distance_km} km</span>
                       <span>•</span>
                       <span>{Math.floor(routeOptions.withoutTolls.duration_minutes / 60)}h{Math.round(routeOptions.withoutTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
@@ -626,48 +627,13 @@ export const TourneeRouteDisplay = ({
               </div>
             )}
 
-            {/* Section point d'arrivée */}
-            <div className="space-y-2 pt-2 border-t border-border/40">
-              <div className="text-[10px] font-medium text-muted-foreground px-1">Point d'arrivée</div>
-              <div className="flex gap-2">
-                <Button
-                  variant={memePointDepartArrivee ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => {
-                    setMemePointDepartArrivee(!memePointDepartArrivee);
-                    if (!memePointDepartArrivee) {
-                      setPointArriveeLat(pointDepartLat || null);
-                      setPointArriveeLng(pointDepartLng || null);
-                      setAdresseArrivee("");
-                    } else {
-                      setPointArriveeLat(null);
-                      setPointArriveeLng(null);
-                    }
-                  }}
-                  className="flex-1 h-8 text-xs"
-                >
-                  <Home className="w-3 h-3 mr-1.5" />
-                  Même point
-                </Button>
-              </div>
-              {!memePointDepartArrivee && (
-                <input
-                  type="text"
-                  placeholder="Adresse de fin (optionnel)"
-                  value={adresseArrivee}
-                  onChange={(e) => setAdresseArrivee(e.target.value)}
-                  className="w-full h-8 px-3 text-xs bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-              )}
-            </div>
-
             {/* Bouton optimiser */}
             <Button
               variant="ghost"
               size="sm"
               onClick={handleOptimizeTournee}
               disabled={isOptimizing || entreprises.length < 2}
-              className="w-full h-8 text-xs text-muted-foreground hover:text-accent hover:bg-accent/5 transition-all"
+              className="w-full h-8 text-xs text-primary hover:text-primary hover:bg-primary/10 transition-all font-medium"
             >
               {isOptimizing ? (
                 <>
@@ -677,7 +643,7 @@ export const TourneeRouteDisplay = ({
               ) : (
                 <>
                   <TrendingUp className="w-3 h-3 mr-1.5" />
-                  Optimiser ma tournée
+                  Optimiser l'itinéraire
                 </>
               )}
             </Button>
