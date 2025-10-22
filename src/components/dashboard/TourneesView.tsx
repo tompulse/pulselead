@@ -389,43 +389,21 @@ export const TourneesView = () => {
   // View détaillée d'une tournée
   if (selectedTournee) {
     return (
-      <div className="h-full flex flex-col gap-3 overflow-hidden">
-        <Card className="border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent shadow-lg shadow-accent/5">
-          <CardContent className="pt-4 pb-4 flex items-center justify-between gap-4">
-            <div className="flex-1">
-              <h3 className="font-bold text-lg gradient-text flex items-center gap-2">
-                <Route className="w-5 h-5 text-accent" />
-                {selectedTournee.nom}
-              </h3>
-              <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5" />
-                {selectedTournee.entreprises_ids.length} arrêts
-              </p>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setSelectedTournee(null)}
-              className="border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all h-8"
-            >
-              ← Retour
-            </Button>
-          </CardContent>
-        </Card>
-        <div className="flex-1 min-h-0">
-          <TourneeRouteDisplay
-            tourneeId={selectedTournee.id}
-            ordreOptimise={selectedTournee.ordre_optimise}
-            distanceTotaleKm={selectedTournee.distance_totale_km}
-            tempsEstimeMinutes={selectedTournee.temps_estime_minutes}
-            pointDepartLat={selectedTournee.point_depart_lat}
-            pointDepartLng={selectedTournee.point_depart_lng}
-            statut={selectedTournee.statut}
-            notes={selectedTournee.notes}
-            heureDebut={(selectedTournee as any).heure_debut}
-            onUpdate={fetchTournees}
-          />
-        </div>
+      <div className="h-full flex flex-col overflow-hidden">
+        <TourneeRouteDisplay
+          tourneeId={selectedTournee.id}
+          tourneeName={selectedTournee.nom}
+          ordreOptimise={selectedTournee.ordre_optimise}
+          distanceTotaleKm={selectedTournee.distance_totale_km}
+          tempsEstimeMinutes={selectedTournee.temps_estime_minutes}
+          pointDepartLat={selectedTournee.point_depart_lat}
+          pointDepartLng={selectedTournee.point_depart_lng}
+          statut={selectedTournee.statut}
+          notes={selectedTournee.notes}
+          heureDebut={(selectedTournee as any).heure_debut}
+          onUpdate={fetchTournees}
+          onBack={() => setSelectedTournee(null)}
+        />
       </div>
     );
   }

@@ -64,6 +64,7 @@ type Entreprise = {
 
 interface TourneeRouteDisplayProps {
   tourneeId: string;
+  tourneeName: string;
   ordreOptimise: string[];
   distanceTotaleKm: number;
   tempsEstimeMinutes: number;
@@ -73,10 +74,12 @@ interface TourneeRouteDisplayProps {
   notes?: string;
   heureDebut?: string;
   onUpdate?: () => void;
+  onBack?: () => void;
 }
 
 export const TourneeRouteDisplay = ({
   tourneeId,
+  tourneeName,
   ordreOptimise: initialOrdre,
   distanceTotaleKm: initialDistance,
   tempsEstimeMinutes: initialTemps,
@@ -84,6 +87,7 @@ export const TourneeRouteDisplay = ({
   pointDepartLng,
   statut: initialStatut,
   onUpdate,
+  onBack,
 }: TourneeRouteDisplayProps) => {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
@@ -449,7 +453,7 @@ export const TourneeRouteDisplay = ({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-8rem)] max-h-[900px]">
+    <div className="flex flex-col lg:flex-row gap-4 h-full">
       {/* Carte à gauche */}
       <div className="relative flex-1 min-h-[400px] lg:min-h-0 rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5 bg-card">
         <TourneeMap
@@ -460,18 +464,34 @@ export const TourneeRouteDisplay = ({
       </div>
 
       {/* Liste à droite */}
-      <Card className="border-accent/30 w-full lg:w-[380px] flex flex-col bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm shadow-lg shadow-accent/5">
+      <Card className="border-accent/30 w-full lg:w-[400px] flex flex-col bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm shadow-lg shadow-accent/5">
         <CardHeader className="pb-3 px-4 pt-4 shrink-0 border-b border-accent/10">
-          <div className="flex items-center justify-between mb-2">
-            <CardTitle className="text-base font-bold gradient-text flex items-center gap-2">
-              <div className="p-2 bg-accent/10 rounded-lg">
-                <MapPin className="w-4 h-4 text-accent" />
-              </div>
-              {entreprises.length} arrêts
-            </CardTitle>
-            <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
-              {statusConfig.label}
-            </Badge>
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-lg gradient-text flex items-center gap-2 mb-1">
+                <RouteIcon className="w-5 h-5 text-accent flex-shrink-0" />
+                <span className="truncate">{tourneeName}</span>
+              </h3>
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                {entreprises.length} arrêts
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {onBack && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={onBack}
+                  className="border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all h-8 text-xs"
+                >
+                  ← Retour
+                </Button>
+              )}
+              <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
+                {statusConfig.label}
+              </Badge>
+            </div>
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-3 text-xs text-muted-foreground bg-accent/5 rounded-lg px-3 py-2">
