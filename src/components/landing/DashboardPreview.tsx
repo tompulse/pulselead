@@ -276,7 +276,7 @@ const DashboardPreview = () => {
         <Button
           onClick={() => navigate('/auth')}
           size="sm"
-          className="gap-2 shadow-xl shadow-cyan-electric/30 hover:shadow-2xl hover:shadow-cyan-electric/40 transition-all duration-300 hover:scale-105 bg-gradient-to-r from-cyan-electric to-cyan-glow text-navy-deep font-bold"
+          className="gap-2 shadow-xl shadow-cyan-electric/30 transition-colors duration-300 bg-gradient-to-r from-cyan-electric to-cyan-glow text-navy-deep font-bold"
         >
           <span className="text-xs sm:text-sm">Commencer</span>
           <Target className="w-3 h-3 sm:w-4 sm:h-4" />

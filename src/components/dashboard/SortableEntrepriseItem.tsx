@@ -47,7 +47,7 @@ export const SortableEntrepriseItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative flex items-center gap-2 p-3 rounded-lg bg-gradient-to-br from-card/80 to-card/40 border border-accent/10 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300 cursor-pointer"
+      className="group relative flex items-center gap-2 p-3 rounded-lg bg-gradient-to-br from-card/80 to-card/40 border border-accent/10 hover:border-accent/30 transition-colors duration-300 cursor-pointer"
       onClick={() => onVisiteClick(entreprise)}
     >
       {/* Gradient overlay on hover */}

@@ -500,7 +500,7 @@ export const TourneeRouteDisplay = ({
             <Button 
               onClick={handleCompleteTournee} 
               size="lg"
-              className="relative w-full h-12 text-base font-semibold shrink-0 bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all duration-300 group overflow-hidden"
+              className="relative w-full h-12 text-base font-semibold shrink-0 bg-gradient-to-r from-accent via-accent to-accent/80 transition-colors duration-300 group overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
               <CheckCircle2 className="w-5 h-5 mr-2 relative z-10" />

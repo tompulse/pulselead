@@ -300,7 +300,7 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
                 <CardTitle className="text-xs font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <div className={`p-1 rounded-lg bg-gradient-to-br ${stat.gradient} group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`p-1 rounded-lg bg-gradient-to-br ${stat.gradient} transition-colors duration-300`}>
                   <stat.icon className={`h-3 w-3 md:h-4 md:w-4 ${stat.color}`} />
                 </div>
               </CardHeader>

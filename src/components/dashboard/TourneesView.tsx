@@ -403,7 +403,7 @@ export const TourneesView = () => {
       {!isSelecting && !optimizedResult && (
         <Card className="border-accent/30 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent hover:border-accent/50 transition-all shadow-lg shadow-accent/5">
           <CardContent className="pt-4 pb-4">
-            <Button onClick={() => setIsSelecting(true)} className="w-full h-12 text-base font-semibold bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all">
+            <Button onClick={() => setIsSelecting(true)} className="w-full h-12 text-base font-semibold bg-gradient-to-r from-accent via-accent to-accent/80 transition-colors">
               <Plus className="w-5 h-5 mr-2" />
               Créer une nouvelle tournée
             </Button>
@@ -452,7 +452,7 @@ export const TourneesView = () => {
                     size="sm"
                     onClick={handleOptimize}
                     disabled={optimizing || selectedEntreprises.length < 2 || !tourneeName.trim()}
-                    className="bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all"
+                    className="bg-gradient-to-r from-accent via-accent to-accent/80 transition-colors"
                   >
                     {optimizing ? (
                       <>
@@ -508,7 +508,7 @@ export const TourneesView = () => {
                     onClick={handleOptimize}
                     disabled={optimizing || selectedEntreprises.length < 2 || !tourneeName.trim()}
                     size="sm"
-                    className="ml-auto bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all"
+                    className="ml-auto bg-gradient-to-r from-accent via-accent to-accent/80 transition-colors"
                   >
                     {optimizing ? (
                       <>
@@ -694,7 +694,7 @@ export const TourneesView = () => {
                 {tournees.map((tournee) => {
                   const statutConfig = getStatutBadge(tournee.statut);
                   return (
-                    <Card key={tournee.id} className="group relative border-accent/30 hover:border-accent/50 bg-gradient-to-br from-card/95 to-card/80 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300">
+                    <Card key={tournee.id} className="group relative border-accent/30 hover:border-accent/50 bg-gradient-to-br from-card/95 to-card/80 transition-colors duration-300">
                       <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-lg" />
                       <CardContent className="relative pt-3 pb-3 space-y-2">
                         <div className="flex items-start justify-between gap-2">

@@ -246,7 +246,7 @@ export const InteractionsDialog = ({
                 {interactions.map((interaction) => (
                   <div
                     key={interaction.id}
-                    className="group relative p-4 sm:p-5 rounded-xl border border-accent/20 bg-gradient-to-br from-card/80 to-card/40 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300"
+                    className="group relative p-4 sm:p-5 rounded-xl border border-accent/20 bg-gradient-to-br from-card/80 to-card/40 hover:border-accent/40 transition-colors duration-300"
                   >
                     {/* Gradient overlay based on type */}
                     <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity ${

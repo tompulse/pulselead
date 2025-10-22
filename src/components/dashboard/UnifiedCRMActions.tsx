@@ -146,30 +146,30 @@ export const UnifiedCRMActions = ({
           variant="outline"
           size={size}
           onClick={() => handleQuickAction('appel')}
-          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-all group relative overflow-hidden shadow-sm`}
+          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-colors group relative overflow-hidden shadow-sm`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/5 to-blue-500/0 group-hover:from-blue-500/10 group-hover:to-blue-500/20 transition-all" />
-          <Phone className={`${iconSize} text-blue-500 group-hover:scale-110 transition-transform relative z-10`} />
+          <Phone className={`${iconSize} text-blue-500 relative z-10`} />
           <span className={`${textSize} font-medium relative z-10`}>Appeler</span>
         </Button>
         <Button
           variant="outline"
           size={size}
           onClick={() => handleQuickAction('visite')}
-          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-green-500/30 hover:bg-green-500/10 hover:border-green-500 transition-all group relative overflow-hidden shadow-sm`}
+          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-green-500/30 hover:bg-green-500/10 hover:border-green-500 transition-colors group relative overflow-hidden shadow-sm`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 via-green-500/5 to-green-500/0 group-hover:from-green-500/10 group-hover:to-green-500/20 transition-all" />
-          <MapPin className={`${iconSize} text-green-500 group-hover:scale-110 transition-transform relative z-10`} />
+          <MapPin className={`${iconSize} text-green-500 relative z-10`} />
           <span className={`${textSize} font-medium relative z-10`}>Visiter</span>
         </Button>
         <Button
           variant="outline"
           size={size}
           onClick={() => handleQuickAction('rdv')}
-          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500 transition-all group relative overflow-hidden shadow-sm`}
+          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500 transition-colors group relative overflow-hidden shadow-sm`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/5 to-purple-500/0 group-hover:from-purple-500/10 group-hover:to-purple-500/20 transition-all" />
-          <Calendar className={`${iconSize} text-purple-500 group-hover:scale-110 transition-transform relative z-10`} />
+          <Calendar className={`${iconSize} text-purple-500 relative z-10`} />
           <span className={`${textSize} font-medium relative z-10`}>RDV</span>
         </Button>
         {mode === 'inline' && (
@@ -177,10 +177,10 @@ export const UnifiedCRMActions = ({
             variant="outline"
             size={size}
             onClick={() => handleQuickAction('autre')}
-            className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500 transition-all group relative overflow-hidden shadow-sm`}
+            className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500 transition-colors group relative overflow-hidden shadow-sm`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/5 to-amber-500/0 group-hover:from-amber-500/10 group-hover:to-amber-500/20 transition-all" />
-            <StickyNote className={`${iconSize} text-amber-500 group-hover:scale-110 transition-transform relative z-10`} />
+            <StickyNote className={`${iconSize} text-amber-500 relative z-10`} />
             <span className={`${textSize} font-medium relative z-10`}>Note</span>
           </Button>
         )}

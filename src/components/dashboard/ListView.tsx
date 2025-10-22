@@ -458,12 +458,12 @@ export const ListView = ({
                         onToggleSelection(item);
                       }
                     }}
-                    className={`group relative rounded-xl p-4 md:p-5 shadow-lg border transition-all bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[280px] overflow-hidden ${
+                    className={`group relative rounded-xl p-4 md:p-5 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[280px] overflow-hidden ${
                       selectionMode 
                         ? isSelected
                           ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15'
                           : 'border-accent/30 from-card/95 to-card/80 cursor-pointer hover:border-accent/50 hover:bg-accent/5'
-                        : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50 hover:shadow-xl hover:shadow-accent/10'
+                        : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50'
                     }`}
                   >
                     {/* Gradient overlay on hover */}
@@ -492,9 +492,9 @@ export const ListView = ({
                             e.stopPropagation();
                             handleCRMAction(item.id, 'appeler');
                           }}
-                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${
+                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors shadow-sm ${
                             crm?.hasAppel 
-                              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-md hover:shadow-blue-500/30' 
+                              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white' 
                               : 'border border-blue-500/30 text-blue-500/60 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-500/5'
                           }`}
                         >
@@ -506,9 +506,9 @@ export const ListView = ({
                             e.stopPropagation();
                             handleCRMAction(item.id, 'visite');
                           }}
-                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${
+                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors shadow-sm ${
                             crm?.hasVisite 
-                              ? 'bg-gradient-to-br from-green-500 to-green-600 text-white hover:shadow-md hover:shadow-green-500/30' 
+                              ? 'bg-gradient-to-br from-green-500 to-green-600 text-white' 
                               : 'border border-green-500/30 text-green-500/60 hover:border-green-500 hover:text-green-500 hover:bg-green-500/5'
                           }`}
                         >
@@ -520,9 +520,9 @@ export const ListView = ({
                             e.stopPropagation();
                             handleCRMAction(item.id, 'rdv');
                           }}
-                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${
+                          className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors shadow-sm ${
                             crm?.hasRdv 
-                              ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:shadow-md hover:shadow-purple-500/30' 
+                              ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white' 
                               : 'border border-purple-500/30 text-purple-500/60 hover:border-purple-500 hover:text-purple-500 hover:bg-purple-500/5'
                           }`}
                         >

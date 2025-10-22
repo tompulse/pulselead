@@ -49,7 +49,7 @@ export const PhoneButton = ({ phoneNumber, entrepriseName, onClick, size = "sm" 
         }}
       >
         <a href={`tel:${phoneNumber}`} className="flex items-center justify-center">
-          <Phone className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+          <Phone className="w-5 h-5 mr-2" />
           <span className="font-medium">Appeler {phoneNumber}</span>
         </a>
       </Button>
@@ -68,7 +68,7 @@ export const PhoneButton = ({ phoneNumber, entrepriseName, onClick, size = "sm" 
       }}
     >
       <a href={`tel:${phoneNumber}`} className="flex items-center justify-center">
-        <Phone className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+        <Phone className="w-4 h-4 mr-2" />
         Appeler
       </a>
     </Button>

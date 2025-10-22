@@ -8,7 +8,7 @@ const ContactSection = () => {
   return (
     <section className="relative py-12 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto max-w-4xl">
-        <div className="glass-card p-6 flex flex-col sm:flex-row items-center justify-between gap-6 border-accent/30 shadow-lg shadow-accent/10 hover:shadow-xl hover:shadow-accent/20 transition-all">
+        <div className="glass-card p-6 flex flex-col sm:flex-row items-center justify-between gap-6 border-accent/30 shadow-lg shadow-accent/10 transition-colors">
           <div className="flex items-center gap-4">
             <div className="relative flex-shrink-0">
               <div className="absolute inset-0 bg-accent/30 blur-xl animate-pulse"></div>
@@ -29,7 +29,7 @@ const ContactSection = () => {
 
           <Button 
             asChild
-            className="bg-[#25D366] hover:bg-[#20BA5A] text-white flex-shrink-0 hover-scale shadow-lg hover:shadow-xl"
+            className="bg-[#25D366] hover:bg-[#20BA5A] text-white flex-shrink-0 shadow-lg"
           >
             <a
               href={waUrl}

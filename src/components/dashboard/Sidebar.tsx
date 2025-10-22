@@ -168,7 +168,7 @@ export const Sidebar = ({
                   <Button
                     onClick={onOptimize}
                     disabled={selectedCount < 2}
-                    className="w-full h-8 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 transition-all"
+                    className="w-full h-8 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 transition-colors"
                     size="sm"
                   >
                     <Route className="w-3 h-3 mr-1.5" />

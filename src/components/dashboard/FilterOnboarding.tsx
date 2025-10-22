@@ -222,7 +222,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                     return (
                       <div
                         key={regionKey}
-                        className="rounded-xl border-2 transition-all hover:shadow-lg hover:shadow-accent/10"
+                        className="rounded-xl border-2 transition-colors"
                         style={{
                           borderColor: isSelected 
                             ? 'hsl(var(--accent))' 
@@ -298,7 +298,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   {/* Option "Tous les secteurs" */}
                   <button
                     onClick={handleFinish}
-                    className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg hover:shadow-accent/20 bg-gradient-to-br from-accent/15 to-accent/10 border-accent"
+                    className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-colors bg-gradient-to-br from-accent/15 to-accent/10 border-accent"
                   >
                     <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0" />
                     <span className="font-semibold text-left text-base md:text-lg">✨ Tous les secteurs m'intéressent</span>
@@ -308,7 +308,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
                     <label
                       key={key}
-                      className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg hover:shadow-accent/10"
+                      className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-colors"
                       style={{
                         borderColor: selectedCategories.includes(key) 
                           ? 'hsl(var(--accent))' 
@@ -387,7 +387,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                 }
               }}
               disabled={!canProceed}
-              className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-primary flex-1 text-sm h-10 font-bold rounded-full shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-primary flex-1 text-sm h-10 font-bold rounded-full shadow-lg shadow-accent/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {step === 1 ? (
                 <>

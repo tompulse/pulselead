@@ -70,7 +70,7 @@ const LeadCard = ({ lead, onSelect }: { lead: Lead; onSelect: (lead: Lead) => vo
       onClick={() => onSelect(lead)}
       className="mb-2 cursor-move"
     >
-      <Card className="hover:shadow-lg transition-all border-accent/20 hover:border-accent/50">
+      <Card className="transition-colors border-accent/20 hover:border-accent/50">
         <CardContent className="p-3 space-y-2">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">

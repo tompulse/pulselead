@@ -86,7 +86,7 @@ export const InteractionTimeline = ({ interactions }: InteractionTimelineProps) 
       <div className="space-y-3">
         {interactions.map((interaction, index) => (
           <div key={interaction.id} className="relative pl-8 pb-3 border-l-2 border-blue-500/20 last:border-0 group">
-            <div className="absolute left-[-9px] top-0 bg-background border-2 border-blue-500/30 rounded-full p-1.5 shadow-md group-hover:scale-110 group-hover:border-blue-500/50 transition-all">
+            <div className="absolute left-[-9px] top-0 bg-background border-2 border-blue-500/30 rounded-full p-1.5 shadow-md transition-colors group-hover:border-blue-500/50">
               {getTypeIcon(interaction.type)}
             </div>
             
