@@ -360,19 +360,63 @@ export const TourneeRouteDisplay = ({
     setIsOptimizing(true);
     
     try {
+      // Obtenir la géolocalisation en direct de l'utilisateur
+      const getUserLocation = (): Promise<{ lat: number; lng: number }> => {
+        return new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error("La géolocalisation n'est pas supportée"));
+            return;
+          }
+
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              resolve({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              });
+            },
+            (error) => {
+              reject(error);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0
+            }
+          );
+        });
+      };
+
+      let startPoint;
+      try {
+        const currentLocation = await getUserLocation();
+        startPoint = currentLocation;
+        toast({
+          title: "📍 Position détectée",
+          description: "Utilisation de votre position actuelle",
+          duration: 2000,
+        });
+      } catch (geoError) {
+        console.warn('Géolocalisation non disponible:', geoError);
+        // Fallback sur le point de départ sauvegardé
+        if (pointDepartLat && pointDepartLng) {
+          startPoint = { lat: pointDepartLat, lng: pointDepartLng };
+        } else {
+          throw new Error("Aucun point de départ disponible");
+        }
+      }
+
       const { data, error } = await supabase.functions.invoke('optimize-tournee', {
         body: {
           entreprises: entreprises,
-          userLocation: pointDepartLat && pointDepartLng 
-            ? { lat: pointDepartLat, lng: pointDepartLng }
-            : null
+          point_depart: startPoint
         }
       });
 
       if (error) throw error;
 
       // Mettre à jour l'ordre avec le résultat optimisé
-      const optimizedOrder = data.entreprises_ordonnees.map((e: Entreprise) => e.id);
+      const optimizedOrder = data.ordre_optimise;
       const optimizedEntreprises = data.entreprises_ordonnees;
 
       setEntreprises(optimizedEntreprises);
@@ -387,7 +431,7 @@ export const TourneeRouteDisplay = ({
 
       toast({
         title: "✅ Tournée optimisée",
-        description: "L'ordre des arrêts a été optimisé",
+        description: `Itinéraire optimisé depuis votre position actuelle`,
         duration: 2500,
       });
 
@@ -399,7 +443,7 @@ export const TourneeRouteDisplay = ({
       console.error('Error optimizing tournee:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'optimiser la tournée",
+        description: error instanceof Error ? error.message : "Impossible d'optimiser la tournée",
         variant: "destructive",
         duration: 3000,
       });
