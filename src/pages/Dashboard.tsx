@@ -179,6 +179,7 @@ const DashboardContent = () => {
           {view === 'prospects' && userId && (
             <ProspectsViewContainer 
               filters={filters}
+              setFilters={setFilters}
               userId={userId}
               onEntrepriseSelect={handleEntrepriseSelect}
             />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { List } from "lucide-react";
 import { ListView } from "./ListView";
 import { TourneeFilters } from "./TourneeFilters";
@@ -12,6 +12,7 @@ interface ProspectsViewProps {
     categories: string[];
     departments: string[];
   };
+  setFilters: Dispatch<SetStateAction<any>>;
   userId: string;
   onEntrepriseSelect?: (entreprise: any) => void;
   selectionMode?: boolean;
@@ -21,6 +22,7 @@ interface ProspectsViewProps {
 
 export const ProspectsView = ({
   filters,
+  setFilters,
   userId,
   onEntrepriseSelect,
   selectionMode: externalSelectionMode = false,
@@ -118,7 +120,7 @@ export const ProspectsView = ({
         <div className="w-64 shrink-0 glass-card overflow-y-auto">
           <TourneeFilters
             filters={filters}
-            setFilters={() => {}}
+            setFilters={setFilters}
             tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
             onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
             tourneeName={tourneeName}
