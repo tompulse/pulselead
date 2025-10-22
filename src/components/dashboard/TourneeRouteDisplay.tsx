@@ -15,7 +15,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { MapView } from "./MapView";
+import { TourneeMap } from "./TourneeMap";
 import { cn } from "@/lib/utils";
 import {
   Navigation,
@@ -408,22 +408,12 @@ export const TourneeRouteDisplay = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 h-full min-h-[600px]">
-      {/* Carte à gauche avec border améliorée */}
-      <div className="relative h-full min-h-[600px] rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/5 pointer-events-none" />
-        <MapView
-          filters={{
-            dateFrom: "",
-            dateTo: "",
-            categories: [],
-            departments: []
-          }}
-          tourneeRoute={{
-            entreprises,
-            pointDepartLat,
-            pointDepartLng
-          }}
-          fullHeight={true}
+      {/* Carte à gauche - Design simplifié et fonctionnel */}
+      <div className="relative h-full min-h-[600px] rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5 bg-card">
+        <TourneeMap
+          entreprises={entreprises}
+          pointDepartLat={pointDepartLat}
+          pointDepartLng={pointDepartLng}
         />
       </div>
 
