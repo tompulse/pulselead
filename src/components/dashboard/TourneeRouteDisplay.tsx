@@ -402,9 +402,9 @@ export const TourneeRouteDisplay = ({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 h-full">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 h-full min-h-[600px]">
       {/* Carte à gauche avec border améliorée */}
-      <div className="relative h-full rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5">
+      <div className="relative h-full min-h-[600px] rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5">
         <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/5 pointer-events-none" />
         <MapView
           filters={{
@@ -418,6 +418,7 @@ export const TourneeRouteDisplay = ({
             pointDepartLat,
             pointDepartLng
           }}
+          fullHeight={true}
         />
       </div>
 
