@@ -469,8 +469,8 @@ export const ListView = ({
                     {/* Gradient overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
                     
-                    <div className="relative flex items-start justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-2 flex-1">
+                    <div className="relative flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
                         {selectionMode && (
                           <div className={`flex-shrink-0 w-5 h-5 rounded border-2 transition-all ${
                             isSelected 
@@ -480,12 +480,12 @@ export const ListView = ({
                             {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
                           </div>
                         )}
-                        <h4 className="font-bold text-base md:text-lg gradient-text break-words" title={item.nom}>
+                        <h4 className="font-bold text-base md:text-lg gradient-text truncate" title={item.nom}>
                           {item.nom}
                         </h4>
                       </div>
                       {!selectionMode && (
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <div className="flex items-center gap-1.5 flex-shrink-0 min-w-[108px]">
                         {/* Action icons - filled if action exists, outline otherwise - Now toggleable */}
                         <button
                           onClick={(e) => {
