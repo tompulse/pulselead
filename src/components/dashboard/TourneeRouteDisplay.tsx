@@ -145,35 +145,31 @@ export const TourneeRouteDisplay = ({
     }
   };
 
-  const recalculateRoute = async (newOrder: Entreprise[]) => {
+  const updateManualOrder = async (newOrder: Entreprise[]) => {
     try {
-      const { data, error } = await supabase.functions.invoke('optimize-tournee', {
-        body: {
-          entreprises: newOrder,
-          point_depart: pointDepartLat && pointDepartLng ? {
-            lat: pointDepartLat,
-            lng: pointDepartLng
-          } : null,
-        },
-      });
-
-      if (error) throw error;
-
-      setDistanceTotaleKm(data.distance_totale_km);
-      setTempsEstimeMinutes(data.temps_estime_minutes);
-
+      // Simplement sauvegarder le nouvel ordre sans recalculer
       await supabase
         .from('tournees')
         .update({
           ordre_optimise: newOrder.map(e => e.id),
-          distance_totale_km: data.distance_totale_km,
-          temps_estime_minutes: data.temps_estime_minutes,
         })
         .eq('id', tourneeId);
 
+      toast({
+        title: "Ordre mis à jour",
+        description: "L'ordre de visite a été modifié",
+        duration: 2000,
+      });
+
       onUpdate?.();
     } catch (error) {
-      console.error('Error recalculating route:', error);
+      console.error('Error updating manual order:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour l'ordre",
+        variant: "destructive",
+        duration: 3000,
+      });
     }
   };
 
@@ -185,7 +181,7 @@ export const TourneeRouteDisplay = ({
         const oldIndex = items.findIndex((i) => i.id === active.id);
         const newIndex = items.findIndex((i) => i.id === over.id);
         const newOrder = arrayMove(items, oldIndex, newIndex);
-        recalculateRoute(newOrder);
+        updateManualOrder(newOrder);
         return newOrder;
       });
     }
@@ -206,7 +202,6 @@ export const TourneeRouteDisplay = ({
       }
 
       setEntreprises(newEntreprises);
-      await recalculateRoute(newEntreprises);
 
       // Update tournees table
       await supabase
