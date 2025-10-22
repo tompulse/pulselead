@@ -376,24 +376,23 @@ export const TourneeRouteDisplay = ({
       const optimizedEntreprises = data.entreprises_ordonnees;
 
       setEntreprises(optimizedEntreprises);
-      setDistanceTotaleKm(data.distance_totale_km);
-      setTempsEstimeMinutes(data.temps_estime_minutes);
 
-      // Sauvegarder dans la base de données
+      // Sauvegarder l'ordre optimisé dans la base de données
       await supabase
         .from('tournees')
         .update({
           ordre_optimise: optimizedOrder,
-          distance_totale_km: data.distance_totale_km,
-          temps_estime_minutes: data.temps_estime_minutes,
         })
         .eq('id', tourneeId);
 
       toast({
         title: "✅ Tournée optimisée",
-        description: `${Math.round(data.distance_totale_km)} km • ${Math.floor(data.temps_estime_minutes / 60)}h${(data.temps_estime_minutes % 60).toString().padStart(2, '0')}`,
-        duration: 3000,
+        description: "L'ordre des arrêts a été optimisé",
+        duration: 2500,
       });
+
+      // Recalculer les routes pour avoir les vrais chiffres détaillés
+      await calculateRoutes();
 
       onUpdate?.();
     } catch (error) {
