@@ -459,74 +459,44 @@ export const TourneeRouteDisplay = ({
 
       {/* Liste à droite */}
       <Card className="border-accent/30 w-full lg:w-[380px] flex flex-col bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm shadow-lg shadow-accent/5">
-        <CardHeader className="pb-3 px-4 pt-4 shrink-0 border-b border-accent/10 space-y-3">
-          <div className="flex items-center justify-between">
+        <CardHeader className="pb-3 px-4 pt-4 shrink-0 border-b border-accent/10">
+          <div className="flex items-center justify-between mb-2">
             <CardTitle className="text-base font-bold gradient-text flex items-center gap-2">
               <div className="p-2 bg-accent/10 rounded-lg">
                 <MapPin className="w-4 h-4 text-accent" />
               </div>
               {entreprises.length} arrêts
             </CardTitle>
-            <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
-              {statusConfig.label}
-            </Badge>
-          </div>
-
-          {/* Options de route intégrées */}
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-muted-foreground mb-1">Trajet optimisé</div>
-            
-            {routeCalculating ? (
-              <div className="flex items-center justify-center py-4 gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-accent" />
-                <span className="text-xs text-muted-foreground">Calcul en cours...</span>
-              </div>
-            ) : routeOptions.withTolls && routeOptions.withoutTolls ? (
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => handleNavigateFullRoute(false)}
-                  className="flex flex-col gap-1 p-2.5 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 hover:border-blue-500/40 hover:from-blue-500/20 hover:to-blue-500/10 transition-all group"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <MapIconLucide className="w-3.5 h-3.5 text-blue-500" />
-                    <span className="text-xs font-semibold text-blue-500">Rapide</span>
-                  </div>
-                  <div className="text-[10px] text-muted-foreground">Avec péages</div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs font-bold text-green-600">{routeOptions.withTolls.distance_km} km</span>
-                    <span className="text-xs font-bold text-purple-600">{Math.floor(routeOptions.withTolls.duration_minutes / 60)}h{(routeOptions.withTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => handleNavigateFullRoute(true)}
-                  className="flex flex-col gap-1 p-2.5 rounded-lg bg-gradient-to-br from-orange-500/10 to-orange-500/5 border border-orange-500/20 hover:border-orange-500/40 hover:from-orange-500/20 hover:to-orange-500/10 transition-all group"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Coins className="w-3.5 h-3.5 text-orange-500" />
-                    <span className="text-xs font-semibold text-orange-500">Éco</span>
-                  </div>
-                  <div className="text-[10px] text-muted-foreground">Sans péages</div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs font-bold text-green-600">{routeOptions.withoutTolls.distance_km} km</span>
-                    <span className="text-xs font-bold text-purple-600">{Math.floor(routeOptions.withoutTolls.duration_minutes / 60)}h{(routeOptions.withoutTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
-                  </div>
-                </button>
-              </div>
-            ) : (
+            <div className="flex items-center gap-2">
               <Button
-                onClick={calculateRoutes}
                 variant="outline"
                 size="sm"
-                className="w-full h-9 border-accent/30 hover:border-accent hover:bg-accent/10"
+                onClick={calculateRoutes}
+                className="h-7 px-2 text-xs border-accent/30 hover:border-accent hover:bg-accent/10"
+                title="Créer le trajet optimisé"
               >
-                <RouteIcon className="w-3.5 h-3.5 mr-1.5" />
-                Calculer l'itinéraire
+                <RouteIcon className="w-3.5 h-3.5 mr-1" />
+                <span className="hidden sm:inline">Trajet GPS</span>
               </Button>
-            )}
-
-            <div className="text-[10px] text-muted-foreground bg-card/40 rounded-lg px-2.5 py-1.5 flex items-center justify-between">
-              <span>Temps visites: {Math.floor((entreprises.length * 15) / 60)}h{Math.round((entreprises.length * 15) % 60).toString().padStart(2, '0')}</span>
+              <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
+                {statusConfig.label}
+              </Badge>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground bg-accent/5 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-1">
+                <Navigation className="w-3 h-3" />
+                <span className="font-medium">{Math.round(distanceTotaleKm)} km</span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                <span className="font-medium">{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
+              </div>
+            </div>
+            <div className="text-[10px] text-muted-foreground bg-card/40 rounded-lg px-3 py-1.5 flex items-center justify-between">
+              <span>Dont visites: {Math.floor((entreprises.length * 15) / 60)}h{Math.round((entreprises.length * 15) % 60).toString().padStart(2, '0')}</span>
               <span className="opacity-70">(15 min/arrêt)</span>
             </div>
           </div>
