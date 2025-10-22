@@ -6,6 +6,7 @@ import DashboardPreview from "@/components/landing/DashboardPreview";
 import { trackCTAClick } from "@/utils/analytics";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { BookingSection } from "@/components/landing/BookingSection";
+import { ProblemCard } from "@/components/landing/ProblemCard";
 import {
   Accordion,
   AccordionContent,
@@ -234,41 +235,32 @@ const Index = () => {
           <div className={`grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-20 transition-all duration-1000 ${
             problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
           }`}>
-            <div className={`glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-500 group ${
-              problemSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-            }`} style={{ transitionDelay: problemSection.isVisible ? '200ms' : '0ms' }}>
-              <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
-                <AlertCircle className="w-8 h-8 text-destructive" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Outils dispersés</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                CRM, cartographie, fichiers Excel... Jongler entre 5 outils ralentit votre prospection.
-              </p>
-            </div>
-
-            <div className={`glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-500 group ${
-              problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`} style={{ transitionDelay: problemSection.isVisible ? '400ms' : '0ms' }}>
-              <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
-                <Clock className="w-8 h-8 text-destructive" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Prospects perdus</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Vos concurrents contactent les nouvelles entreprises avant vous. Vous arrivez trop tard.
-              </p>
-            </div>
-
-            <div className={`glass-card p-7 space-y-4 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/5 transition-all duration-500 group ${
-              problemSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
-            }`} style={{ transitionDelay: problemSection.isVisible ? '600ms' : '0ms' }}>
-              <div className="w-16 h-16 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-destructive/10">
-                <Target className="w-8 h-8 text-destructive" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Tournées inefficaces</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Des heures perdues sur la route. Pas de vision claire de votre territoire commercial.
-              </p>
-            </div>
+            <ProblemCard
+              icon={AlertCircle}
+              title="Outils dispersés"
+              description="CRM, cartographie, fichiers Excel... Jongler entre 5 outils ralentit votre prospection."
+              isVisible={problemSection.isVisible}
+              delay="200ms"
+              animationClass="-translate-x-10"
+            />
+            
+            <ProblemCard
+              icon={Clock}
+              title="Prospects perdus"
+              description="Vos concurrents contactent les nouvelles entreprises avant vous. Vous arrivez trop tard."
+              isVisible={problemSection.isVisible}
+              delay="400ms"
+              animationClass="translate-y-10"
+            />
+            
+            <ProblemCard
+              icon={Target}
+              title="Tournées inefficaces"
+              description="Des heures perdues sur la route. Pas de vision claire de votre territoire commercial."
+              isVisible={problemSection.isVisible}
+              delay="600ms"
+              animationClass="translate-x-10"
+            />
           </div>
 
           {/* Solution */}
