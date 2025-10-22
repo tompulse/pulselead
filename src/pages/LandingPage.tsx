@@ -105,7 +105,7 @@ const Index = () => {
             
             {/* Sous-titre clair et orienté bénéfice */}
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium px-4">
-              Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold">prospectez efficacement</span>.
+              Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold whitespace-nowrap">prospectez efficacement</span>.
               <br className="hidden sm:block" />
               <span className="text-foreground/90 text-sm sm:text-base md:text-lg mt-2 block">Tout centralisé dans une seule plateforme.</span>
             </p>
