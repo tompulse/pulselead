@@ -595,7 +595,7 @@ export const TourneeRouteDisplay = ({
               />
               <Label htmlFor="appeler" className={cn("flex items-center gap-2", rdvPris ? "opacity-50" : "cursor-pointer")}>
                 <Phone className="w-4 h-4 text-blue-500" />
-                À appeler
+                Appeler
               </Label>
             </div>
             <div className="flex items-center space-x-2">
