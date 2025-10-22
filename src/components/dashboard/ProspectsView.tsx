@@ -115,22 +115,20 @@ export const ProspectsView = ({
 
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
         {/* Filtres avec création de tournée intégrée */}
-        <div className="w-80 shrink-0">
-          <div className="glass-card p-4 h-full overflow-y-auto">
-            <TourneeFilters
-              filters={filters}
-              setFilters={() => {}}
-              tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
-              onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
-              tourneeName={tourneeName}
-              setTourneeName={setTourneeName}
-              tourneeDate={tourneeDate}
-              setTourneeDate={setTourneeDate}
-              selectedCount={selectedEntreprises.length}
-              onOptimize={handleOptimize}
-              isOptimizing={isOptimizing}
-            />
-          </div>
+        <div className="w-80 shrink-0 glass-card overflow-y-auto">
+          <TourneeFilters
+            filters={filters}
+            setFilters={() => {}}
+            tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
+            onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
+            tourneeName={tourneeName}
+            setTourneeName={setTourneeName}
+            tourneeDate={tourneeDate}
+            setTourneeDate={setTourneeDate}
+            selectedCount={selectedEntreprises.length}
+            onOptimize={handleOptimize}
+            isOptimizing={isOptimizing}
+          />
         </div>
 
         {/* Content - Liste */}
