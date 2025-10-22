@@ -66,12 +66,12 @@ serve(async (req) => {
     const coordinates = entreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
     
     // Si on a un point de départ différent, on l'ajoute comme premier point fixe
+    // roundtrip=true est nécessaire pour que l'API fonctionne
     const optimizationUrl = point_depart
-      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`
-      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
+      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=last&roundtrip=true&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`
+      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?source=first&roundtrip=true&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
     
     console.log('🎯 Appel Mapbox Optimization API pour optimisation réelle du temps de trajet');
-    console.log('URL:', optimizationUrl);
     
     const mapboxResponse = await fetch(optimizationUrl);
     

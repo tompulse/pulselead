@@ -28,6 +28,7 @@ import {
   Phone,
   Route as RouteIcon,
   Coins,
+  Home,
   X,
   Loader2,
   TrendingUp,
@@ -111,6 +112,10 @@ export const TourneeRouteDisplay = ({
   const [distanceTotaleKm, setDistanceTotaleKm] = useState(initialDistance);
   const [tempsEstimeMinutes, setTempsEstimeMinutes] = useState(initialTemps);
   const [navigatingEntreprise, setNavigatingEntreprise] = useState<Entreprise | null>(null);
+  const [pointArriveeLat, setPointArriveeLat] = useState<number | null>(null);
+  const [pointArriveeLng, setPointArriveeLng] = useState<number | null>(null);
+  const [adresseArrivee, setAdresseArrivee] = useState("");
+  const [memePointDepartArrivee, setMemePointDepartArrivee] = useState(false);
   const { toast } = useToast();
 
   const sensors = useSensors(
@@ -620,6 +625,41 @@ export const TourneeRouteDisplay = ({
                 )}
               </div>
             )}
+
+            {/* Section point d'arrivée */}
+            <div className="space-y-2 pt-2 border-t border-border/40">
+              <div className="text-[10px] font-medium text-muted-foreground px-1">Point d'arrivée</div>
+              <div className="flex gap-2">
+                <Button
+                  variant={memePointDepartArrivee ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    setMemePointDepartArrivee(!memePointDepartArrivee);
+                    if (!memePointDepartArrivee) {
+                      setPointArriveeLat(pointDepartLat || null);
+                      setPointArriveeLng(pointDepartLng || null);
+                      setAdresseArrivee("");
+                    } else {
+                      setPointArriveeLat(null);
+                      setPointArriveeLng(null);
+                    }
+                  }}
+                  className="flex-1 h-8 text-xs"
+                >
+                  <Home className="w-3 h-3 mr-1.5" />
+                  Même point
+                </Button>
+              </div>
+              {!memePointDepartArrivee && (
+                <input
+                  type="text"
+                  placeholder="Adresse de fin (optionnel)"
+                  value={adresseArrivee}
+                  onChange={(e) => setAdresseArrivee(e.target.value)}
+                  className="w-full h-8 px-3 text-xs bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              )}
+            </div>
 
             {/* Bouton optimiser */}
             <Button
