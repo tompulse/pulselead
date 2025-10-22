@@ -333,19 +333,19 @@ const Index = () => {
           {/* Résultats mesurables - En vert avec tailles réduites */}
           <div className="glass-card p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
             <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center">
               <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-400">6h/semaine</div>
+                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">6h/semaine</div>
                 <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Temps économisé</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre</div>
               </div>
               <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-400">×2.5</div>
+                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">×2.5</div>
                 <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Rendez-vous décrochés</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">Grâce à une organisation optimisée</div>
               </div>
               <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-400">+40%</div>
+                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">+40%</div>
                 <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Croissance du CA</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation</div>
               </div>
@@ -374,7 +374,7 @@ const Index = () => {
           </div>
 
           {/* Toggle de période */}
-          <div className="flex justify-center mb-8 md:mb-16">
+          <div className="flex justify-center mb-12 md:mb-20">
             <div className="glass-card p-1.5 md:p-2 inline-flex flex-wrap gap-1 md:gap-1.5 border-accent/30 justify-center">
               <Button
                 variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
@@ -454,8 +454,8 @@ const Index = () => {
             </div>
 
             {/* Plan Pro - Recommandé */}
-            <div className="relative glass-card p-8 md:p-10 space-y-5 md:space-y-7 border-accent shadow-2xl shadow-accent/40 md:scale-105 lg:scale-110 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
-              <div className="absolute -top-4 md:-top-5 left-1/2 -translate-x-1/2 px-4 md:px-8 py-2 md:py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm md:text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
+            <div className="relative glass-card p-8 md:p-10 space-y-5 md:space-y-7 border-accent shadow-2xl shadow-accent/40 md:scale-100 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
+              <div className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 px-4 md:px-8 py-2 md:py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm md:text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
                 <Sparkles className="w-5 h-5" />
                 Le plus populaire
               </div>
