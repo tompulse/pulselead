@@ -67,10 +67,11 @@ serve(async (req) => {
     
     // Si on a un point de départ différent, on l'ajoute comme premier point fixe
     const optimizationUrl = point_depart
-      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`
+      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`
       : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
     
     console.log('🎯 Appel Mapbox Optimization API pour optimisation réelle du temps de trajet');
+    console.log('URL:', optimizationUrl);
     
     const mapboxResponse = await fetch(optimizationUrl);
     
@@ -78,12 +79,14 @@ serve(async (req) => {
       console.error('❌ Erreur Mapbox Optimization:', mapboxResponse.status);
       const errorText = await mapboxResponse.text();
       console.error('Détails:', errorText);
-      throw new Error(`Mapbox Optimization API error: ${mapboxResponse.status}`);
+      throw new Error(`Erreur Mapbox Optimization (${mapboxResponse.status}): ${errorText}`);
     }
 
     const mapboxData = await mapboxResponse.json();
+    console.log('Response Mapbox:', JSON.stringify(mapboxData, null, 2));
     
     if (!mapboxData.trips || mapboxData.trips.length === 0) {
+      console.error('Pas de trips dans la réponse:', mapboxData);
       throw new Error("Aucun itinéraire optimisé trouvé par Mapbox");
     }
 
