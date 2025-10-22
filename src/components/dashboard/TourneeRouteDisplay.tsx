@@ -501,6 +501,43 @@ export const TourneeRouteDisplay = ({
               <span>Dont visites: {Math.floor((entreprises.length * 15) / 60)}h{Math.round((entreprises.length * 15) % 60).toString().padStart(2, '0')}</span>
               <span className="opacity-70">(15 min/arrêt)</span>
             </div>
+
+            {/* Section itinéraires avec/sans péages */}
+            {routeCalculating ? (
+              <div className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground bg-accent/5 rounded-lg">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Calcul des itinéraires...</span>
+              </div>
+            ) : (routeOptions.withTolls || routeOptions.withoutTolls) && (
+              <div className="space-y-1.5">
+                {routeOptions.withTolls && (
+                  <div className="flex items-center justify-between text-xs bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2 hover:bg-blue-500/15 transition-colors cursor-pointer" onClick={() => handleNavigateFullRoute(false)}>
+                    <div className="flex items-center gap-2">
+                      <Coins className="w-3 h-3 text-blue-500" />
+                      <span className="font-medium text-blue-600 dark:text-blue-400">Avec péages</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <span>{routeOptions.withTolls.distance_km} km</span>
+                      <span>•</span>
+                      <span>{routeOptions.withTolls.duration_minutes} min</span>
+                    </div>
+                  </div>
+                )}
+                {routeOptions.withoutTolls && (
+                  <div className="flex items-center justify-between text-xs bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2 hover:bg-green-500/15 transition-colors cursor-pointer" onClick={() => handleNavigateFullRoute(true)}>
+                    <div className="flex items-center gap-2">
+                      <RouteIcon className="w-3 h-3 text-green-500" />
+                      <span className="font-medium text-green-600 dark:text-green-400">Sans péages</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <span>{routeOptions.withoutTolls.distance_km} km</span>
+                      <span>•</span>
+                      <span>{routeOptions.withoutTolls.duration_minutes} min</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </CardHeader>
         
