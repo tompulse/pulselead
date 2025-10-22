@@ -26,6 +26,9 @@ import {
   Map as MapIconLucide,
   Clock,
   Phone,
+  Route as RouteIcon,
+  Coins,
+  X,
 } from "lucide-react";
 import {
   DndContext,
@@ -87,6 +90,7 @@ export const TourneeRouteDisplay = ({
   const [showNavigationDialog, setShowNavigationDialog] = useState(false);
   const [showVisiteDialog, setShowVisiteDialog] = useState(false);
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  const [showRouteOptionsDialog, setShowRouteOptionsDialog] = useState(false);
   const [selectedEntreprise, setSelectedEntreprise] = useState<Entreprise | null>(null);
   const [visiteNotes, setVisiteNotes] = useState("");
   const [rdvPris, setRdvPris] = useState(false);
@@ -252,7 +256,7 @@ export const TourneeRouteDisplay = ({
     setNavigatingEntreprise(null);
   };
 
-  const handleNavigateFullRoute = (app: 'google' | 'waze') => {
+  const handleNavigateFullRoute = (app: 'google' | 'waze', avoidTolls: boolean = false) => {
     const waypoints = entreprises.map(e => ({
       lat: e.latitude,
       lng: e.longitude,
@@ -274,14 +278,15 @@ export const TourneeRouteDisplay = ({
         .map(w => `${w.lat},${w.lng}`)
         .join('|');
 
-      url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination.lat},${destination.lng}&waypoints=${waypointsStr}&travelmode=driving`;
+      url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination.lat},${destination.lng}&waypoints=${waypointsStr}&travelmode=driving${avoidTolls ? '&avoid=tolls' : ''}`;
     } else {
       // Waze: seulement la première destination (limitation de Waze)
       const first = waypoints[0];
-      url = `https://waze.com/ul?ll=${first.lat},${first.lng}&navigate=yes`;
+      url = `https://waze.com/ul?ll=${first.lat},${first.lng}&navigate=yes${avoidTolls ? '&avoid=tolls' : ''}`;
     }
 
     window.open(url, '_blank');
+    setShowRouteOptionsDialog(false);
   };
 
   const handleSaveVisite = async () => {
@@ -426,12 +431,12 @@ export const TourneeRouteDisplay = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleNavigateFullRoute('google')}
+                onClick={() => setShowRouteOptionsDialog(true)}
                 className="h-7 px-2 text-xs border-accent/30 hover:border-accent hover:bg-accent/10"
-                title="Ouvrir l'itinéraire complet dans Google Maps"
+                title="Créer le trajet optimisé"
               >
-                <MapIconLucide className="w-3.5 h-3.5 mr-1" />
-                <span className="hidden sm:inline">GPS</span>
+                <RouteIcon className="w-3.5 h-3.5 mr-1" />
+                <span className="hidden sm:inline">Trajet GPS</span>
               </Button>
               <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
                 {statusConfig.label}
@@ -500,6 +505,58 @@ export const TourneeRouteDisplay = ({
           )}
         </CardContent>
       </Card>
+
+      {/* Dialog choix péages */}
+      <Dialog open={showRouteOptionsDialog} onOpenChange={setShowRouteOptionsDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <RouteIcon className="w-5 h-5 text-accent" />
+              Créer le trajet optimisé
+            </DialogTitle>
+            <DialogDescription>
+              Choisissez vos options de navigation
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-4">
+            <div className="text-sm font-medium mb-3">Préférence de trajet :</div>
+            <Button
+              onClick={() => handleNavigateFullRoute('google', false)}
+              className="w-full h-auto flex flex-col gap-2 py-4 hover:border-accent hover:bg-accent/10"
+              variant="outline"
+            >
+              <div className="flex items-center gap-2 w-full">
+                <MapIconLucide className="w-8 h-8 text-accent" />
+                <div className="flex-1 text-left">
+                  <div className="font-semibold">Avec péages</div>
+                  <div className="text-xs text-muted-foreground">Itinéraire le plus rapide (péages autorisés)</div>
+                </div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => handleNavigateFullRoute('google', true)}
+              className="w-full h-auto flex flex-col gap-2 py-4 hover:border-accent hover:bg-accent/10"
+              variant="outline"
+            >
+              <div className="flex items-center gap-2 w-full">
+                <div className="relative">
+                  <Coins className="w-8 h-8 text-orange-500" />
+                  <X className="w-4 h-4 text-red-500 absolute -top-1 -right-1" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-semibold">Sans péages</div>
+                  <div className="text-xs text-muted-foreground">Éviter les routes à péage</div>
+                </div>
+              </div>
+            </Button>
+          </div>
+          <DialogFooter className="sm:justify-center">
+            <Button variant="ghost" onClick={() => setShowRouteOptionsDialog(false)}>
+              Annuler
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog de choix de navigation */}
       <Dialog open={showNavigationDialog} onOpenChange={setShowNavigationDialog}>
