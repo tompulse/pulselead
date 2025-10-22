@@ -480,7 +480,7 @@ export const ListView = ({
                             {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
                           </div>
                         )}
-                        <h4 className="font-bold text-base md:text-lg gradient-text truncate" title={item.nom}>
+                        <h4 className="font-bold text-base md:text-lg gradient-text break-words leading-tight" title={item.nom}>
                           {item.nom}
                         </h4>
                       </div>
