@@ -119,6 +119,13 @@ export const TourneeRouteDisplay = ({
     fetchVisites();
   }, [initialOrdre]);
 
+  // Calculer automatiquement les routes quand les entreprises sont chargées
+  useEffect(() => {
+    if (entreprises.length > 0 && !routeCalculating && !routeOptions.withTolls && !routeOptions.withoutTolls) {
+      calculateRoutes();
+    }
+  }, [entreprises.length]);
+
   const fetchEntreprises = async () => {
     try {
       const { data, error } = await supabase
@@ -133,11 +140,6 @@ export const TourneeRouteDisplay = ({
         .filter(Boolean) as Entreprise[];
 
       setEntreprises(ordered);
-      
-      // Calculer les routes une fois que les entreprises sont chargées
-      if (ordered.length > 0) {
-        setTimeout(() => calculateRoutes(), 300);
-      }
     } catch (error) {
       console.error('Error fetching entreprises:', error);
     } finally {
