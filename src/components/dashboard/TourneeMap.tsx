@@ -30,6 +30,7 @@ export const TourneeMap = ({
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
   const [tokenError, setTokenError] = useState(false);
   const [tokenLoading, setTokenLoading] = useState(true);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
 
   // Fetch Mapbox token
@@ -38,6 +39,7 @@ export const TourneeMap = ({
       try {
         const tempToken = localStorage.getItem('mapbox_temp_token');
         if (tempToken) {
+          console.log('[TourneeMap] Using temp token');
           setMapboxToken(tempToken);
           setTokenLoading(false);
           return;
@@ -46,15 +48,17 @@ export const TourneeMap = ({
         const { data, error } = await supabase.functions.invoke('get-mapbox-token');
         
         if (error || !data?.token) {
+          console.error('[TourneeMap] Token error:', error);
           setTokenError(true);
           setTokenLoading(false);
           return;
         }
 
+        console.log('[TourneeMap] Token fetched successfully');
         setMapboxToken(data.token);
         setTokenError(false);
       } catch (err) {
-        console.error('Error fetching token:', err);
+        console.error('[TourneeMap] Exception:', err);
         setTokenError(true);
       } finally {
         setTokenLoading(false);
@@ -66,30 +70,14 @@ export const TourneeMap = ({
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || tokenError) return;
+    if (!mapContainer.current || !mapboxToken || tokenError || map.current) return;
 
-    // Wait for container to have dimensions
-    const checkContainer = () => {
-      if (!mapContainer.current) return false;
-      const rect = mapContainer.current.getBoundingClientRect();
-      return rect.width > 0 && rect.height > 0;
-    };
+    console.log('[TourneeMap] Initializing map with', entreprises.length, 'entreprises');
 
-    if (!checkContainer()) {
-      const timer = setTimeout(() => {
-        if (checkContainer()) {
-          initMap();
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
+    const initMap = () => {
+      if (!mapContainer.current) return;
 
-    initMap();
-
-    function initMap() {
-      if (!mapContainer.current || map.current) return;
-
-      mapboxgl.accessToken = mapboxToken!;
+      mapboxgl.accessToken = mapboxToken;
 
       // Calculate center
       let center: [number, number] = [2.3522, 46.2276];
@@ -106,45 +94,59 @@ export const TourneeMap = ({
         style: "mapbox://styles/mapbox/dark-v11",
         center,
         zoom: 10,
-        projection: { name: "mercator" },
+        projection: { name: "mercator" } as any,
       });
 
       map.current.on('error', (e: any) => {
-        console.error('Mapbox error:', e);
-        if (e.error?.message?.includes('401') || e.error?.message?.includes('token')) {
-          toast.error('Token Mapbox invalide');
-          setTokenError(true);
-        }
+        console.error('[TourneeMap] Map error:', e);
       });
 
-      map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
-
       map.current.on('load', () => {
+        console.log('[TourneeMap] Map loaded');
+        setMapLoaded(true);
         setTimeout(() => {
           map.current?.resize();
         }, 100);
       });
-    }
+
+      map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+    };
+
+    // Delay map initialization slightly
+    const timer = setTimeout(initMap, 100);
 
     return () => {
+      clearTimeout(timer);
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
-      map.current?.remove();
-      map.current = null;
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+      setMapLoaded(false);
     };
   }, [mapboxToken, tokenError]);
 
-  // Add route and markers
+  // Add route and markers when map is loaded
   useEffect(() => {
-    if (!map.current || !map.current.isStyleLoaded() || entreprises.length === 0) return;
+    if (!map.current || !mapLoaded || entreprises.length === 0) {
+      console.log('[TourneeMap] Not ready:', { 
+        hasMap: !!map.current, 
+        mapLoaded, 
+        entreprisesCount: entreprises.length 
+      });
+      return;
+    }
+
+    console.log('[TourneeMap] Adding route and markers');
 
     const setupRoute = async () => {
-      if (!map.current || !map.current.isStyleLoaded()) {
+      if (!map.current?.isStyleLoaded()) {
         setTimeout(setupRoute, 100);
         return;
       }
 
-      // Remove existing layers and markers
+      // Clean up existing
       if (map.current.getLayer('tournee-route')) {
         map.current.removeLayer('tournee-route');
       }
@@ -161,116 +163,121 @@ export const TourneeMap = ({
       }
       entreprises.forEach(e => waypoints.push([e.longitude, e.latitude]));
 
-      // Get route from Mapbox Directions API
-      const getRoute = async () => {
-        if (waypoints.length < 2) return waypoints;
+      console.log('[TourneeMap] Waypoints:', waypoints.length);
 
-        try {
-          const coords = waypoints.map(c => `${c[0]},${c[1]}`).join(';');
-          const response = await fetch(
-            `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`
-          );
+      // Get route from Mapbox
+      try {
+        const coords = waypoints.map(c => `${c[0]},${c[1]}`).join(';');
+        const response = await fetch(
+          `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`
+        );
 
-          if (!response.ok) return waypoints;
+        let routeCoords = waypoints;
+        if (response.ok) {
           const data = await response.json();
-          return data.routes?.[0]?.geometry?.coordinates || waypoints;
-        } catch (error) {
-          console.error('Error fetching route:', error);
-          return waypoints;
-        }
-      };
-
-      const routeCoords = await getRoute();
-
-      // Add route layer
-      map.current!.addSource('tournee-route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: routeCoords
+          if (data.routes?.[0]?.geometry?.coordinates) {
+            routeCoords = data.routes[0].geometry.coordinates;
+            console.log('[TourneeMap] Route fetched, coords:', routeCoords.length);
           }
         }
-      });
 
-      map.current!.addLayer({
-        id: 'tournee-route',
-        type: 'line',
-        source: 'tournee-route',
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': '#00FFF0',
-          'line-width': 4,
-          'line-opacity': 0.8
+        // Add route layer
+        if (map.current) {
+          map.current.addSource('tournee-route', {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: routeCoords
+              }
+            }
+          });
+
+          map.current.addLayer({
+            id: 'tournee-route',
+            type: 'line',
+            source: 'tournee-route',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#00FFF0',
+              'line-width': 4,
+              'line-opacity': 0.8
+            }
+          });
+
+          console.log('[TourneeMap] Route layer added');
         }
-      });
 
-      // Add start marker
-      if (pointDepartLat && pointDepartLng) {
-        const startEl = document.createElement('div');
-        startEl.innerHTML = `
-          <div style="
-            width: 40px;
-            height: 40px;
-            background: #FF6B00;
-            border: 3px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 2px 8px rgba(255,107,0,0.6);
-          ">🏁</div>
-        `;
-        const startMarker = new mapboxgl.Marker({ element: startEl })
-          .setLngLat([pointDepartLng, pointDepartLat])
-          .addTo(map.current!);
-        markersRef.current.push(startMarker);
+        // Add start marker
+        if (pointDepartLat && pointDepartLng && map.current) {
+          const startEl = document.createElement('div');
+          startEl.style.width = '40px';
+          startEl.style.height = '40px';
+          startEl.style.background = '#FF6B00';
+          startEl.style.border = '3px solid white';
+          startEl.style.borderRadius = '50%';
+          startEl.style.display = 'flex';
+          startEl.style.alignItems = 'center';
+          startEl.style.justifyContent = 'center';
+          startEl.style.fontSize = '20px';
+          startEl.style.boxShadow = '0 2px 8px rgba(255,107,0,0.6)';
+          startEl.textContent = '🏁';
+          
+          const startMarker = new mapboxgl.Marker({ element: startEl })
+            .setLngLat([pointDepartLng, pointDepartLat])
+            .addTo(map.current);
+          markersRef.current.push(startMarker);
+          console.log('[TourneeMap] Start marker added');
+        }
+
+        // Add numbered markers
+        entreprises.forEach((e, idx) => {
+          if (!map.current) return;
+          
+          const el = document.createElement('div');
+          el.style.width = '36px';
+          el.style.height = '36px';
+          el.style.background = '#00FFF0';
+          el.style.border = '3px solid white';
+          el.style.borderRadius = '50%';
+          el.style.display = 'flex';
+          el.style.alignItems = 'center';
+          el.style.justifyContent = 'center';
+          el.style.color = '#0A0F1E';
+          el.style.fontWeight = 'bold';
+          el.style.fontSize = '14px';
+          el.style.boxShadow = '0 2px 8px rgba(0,255,240,0.6)';
+          el.textContent = String(idx + 1);
+          
+          const marker = new mapboxgl.Marker({ element: el })
+            .setLngLat([e.longitude, e.latitude])
+            .addTo(map.current);
+          markersRef.current.push(marker);
+        });
+
+        console.log('[TourneeMap] Markers added:', markersRef.current.length);
+
+        // Fit bounds
+        setTimeout(() => {
+          if (routeCoords.length > 0 && map.current) {
+            const bounds = new mapboxgl.LngLatBounds();
+            routeCoords.forEach((coord: any) => bounds.extend(coord));
+            map.current.fitBounds(bounds, { padding: 80, duration: 1000, maxZoom: 14 });
+            console.log('[TourneeMap] Bounds fitted');
+          }
+        }, 300);
+      } catch (error) {
+        console.error('[TourneeMap] Setup error:', error);
       }
-
-      // Add numbered markers
-      entreprises.forEach((e, idx) => {
-        const el = document.createElement('div');
-        el.innerHTML = `
-          <div style="
-            width: 36px;
-            height: 36px;
-            background: #00FFF0;
-            border: 3px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0A0F1E;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 2px 8px rgba(0,255,240,0.6);
-          ">${idx + 1}</div>
-        `;
-        const marker = new mapboxgl.Marker({ element: el })
-          .setLngLat([e.longitude, e.latitude])
-          .addTo(map.current!);
-        markersRef.current.push(marker);
-      });
-
-      // Fit bounds
-      setTimeout(() => {
-        if (routeCoords.length > 0 && map.current) {
-          const bounds = new mapboxgl.LngLatBounds();
-          routeCoords.forEach(coord => bounds.extend(coord as [number, number]));
-          map.current.fitBounds(bounds, { padding: 80, duration: 1000, maxZoom: 14 });
-        }
-      }, 300);
     };
 
-    const timer = setTimeout(setupRoute, 100);
-    return () => clearTimeout(timer);
-  }, [entreprises, pointDepartLat, pointDepartLng]);
+    setupRoute();
+  }, [mapLoaded, entreprises, pointDepartLat, pointDepartLng]);
 
   if (tokenLoading) {
     return (
