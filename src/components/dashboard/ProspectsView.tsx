@@ -115,7 +115,7 @@ export const ProspectsView = ({
 
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
         {/* Filtres avec création de tournée intégrée */}
-        <div className="w-80 shrink-0 glass-card overflow-y-auto">
+        <div className="w-64 shrink-0 glass-card overflow-y-auto">
           <TourneeFilters
             filters={filters}
             setFilters={() => {}}
