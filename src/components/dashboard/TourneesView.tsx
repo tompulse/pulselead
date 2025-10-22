@@ -26,8 +26,10 @@ import {
   List,
   Edit2,
   Check,
-  X
+  X,
+  CalendarDays
 } from "lucide-react";
+import { DatePicker } from "@/components/ui/date-picker";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { MapView } from "./MapView";
@@ -67,6 +69,7 @@ export const TourneesView = () => {
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [editingTournee, setEditingTournee] = useState<Tournee | null>(null);
   const [editedName, setEditedName] = useState("");
+  const [editedDate, setEditedDate] = useState<Date | undefined>(undefined);
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -323,31 +326,38 @@ export const TourneesView = () => {
     }
   };
 
-  const handleUpdateTourneeName = async () => {
+  const handleUpdateTournee = async () => {
     if (!editingTournee || !editedName.trim()) return;
 
     try {
+      const updates: any = { nom: editedName };
+      
+      if (editedDate) {
+        updates.date_planifiee = format(editedDate, 'yyyy-MM-dd');
+      }
+
       const { error } = await supabase
         .from('tournees')
-        .update({ nom: editedName })
+        .update(updates)
         .eq('id', editingTournee.id);
 
       if (error) throw error;
 
       toast({
-        title: "✅ Nom modifié",
-        description: "Le nom de la tournée a été mis à jour",
+        title: "✅ Tournée modifiée",
+        description: "Les modifications ont été enregistrées",
         duration: 2500,
       });
 
       fetchTournees();
       setEditingTournee(null);
       setEditedName("");
+      setEditedDate(undefined);
     } catch (error) {
       console.error('Error updating tournee:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de modifier le nom",
+        description: "Impossible de modifier la tournée",
         variant: "destructive",
         duration: 3000,
       });
@@ -712,109 +722,142 @@ export const TourneesView = () => {
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
                             {editingTournee?.id === tournee.id ? (
-                              <div className="flex items-center gap-2">
-                                <Input
-                                  value={editedName}
-                                  onChange={(e) => setEditedName(e.target.value)}
-                                  className="h-7 text-sm"
-                                  autoFocus
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handleUpdateTourneeName();
-                                    if (e.key === 'Escape') {
+                              <div className="space-y-2 bg-accent/5 p-3 rounded-lg border border-accent/30">
+                                <div className="space-y-1.5">
+                                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <Route className="w-3 h-3" />
+                                    Nom de la tournée
+                                  </Label>
+                                  <Input
+                                    value={editedName}
+                                    onChange={(e) => setEditedName(e.target.value)}
+                                    className="h-8 text-sm border-accent/30 bg-card/50 focus:border-accent focus:ring-accent/20"
+                                    autoFocus
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') handleUpdateTournee();
+                                      if (e.key === 'Escape') {
+                                        setEditingTournee(null);
+                                        setEditedName("");
+                                        setEditedDate(undefined);
+                                      }
+                                    }}
+                                  />
+                                </div>
+                                <div className="space-y-1.5">
+                                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <CalendarDays className="w-3 h-3" />
+                                    Date planifiée
+                                  </Label>
+                                  <DatePicker
+                                    date={editedDate}
+                                    onSelect={setEditedDate}
+                                    placeholder="Sélectionner une date"
+                                    className="h-8 text-sm"
+                                  />
+                                </div>
+                                <div className="flex gap-2 pt-1">
+                                  <Button
+                                    size="sm"
+                                    onClick={handleUpdateTournee}
+                                    className="flex-1 h-8 bg-gradient-to-r from-accent to-accent/80 hover:shadow-md hover:shadow-accent/30"
+                                  >
+                                    <Check className="w-3.5 h-3.5 mr-1" />
+                                    Enregistrer
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
                                       setEditingTournee(null);
                                       setEditedName("");
-                                    }
-                                  }}
-                                />
-                                <Button
-                                  size="sm"
-                                  onClick={handleUpdateTourneeName}
-                                  className="h-7 w-7 p-0 bg-accent hover:bg-accent/80"
-                                >
-                                  <Check className="w-3.5 h-3.5" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => {
-                                    setEditingTournee(null);
-                                    setEditedName("");
-                                  }}
-                                  className="h-7 w-7 p-0"
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                </Button>
+                                      setEditedDate(undefined);
+                                    }}
+                                    className="h-8 border-accent/30 hover:bg-accent/10"
+                                  >
+                                    <X className="w-3.5 h-3.5 mr-1" />
+                                    Annuler
+                                  </Button>
+                                </div>
                               </div>
                             ) : (
-                              <div className="font-medium text-sm truncate flex items-center gap-2">
-                                <Route className="w-3.5 h-3.5 text-accent" />
-                                {tournee.nom}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditingTournee(tournee);
-                                    setEditedName(tournee.nom);
-                                  }}
-                                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent/10 rounded"
-                                  title="Modifier le nom"
-                                >
-                                  <Edit2 className="w-3 h-3 text-accent" />
-                                </button>
-                              </div>
+                              <>
+                                <div className="font-medium text-sm truncate flex items-center gap-2">
+                                  <Route className="w-3.5 h-3.5 text-accent" />
+                                  {tournee.nom}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEditingTournee(tournee);
+                                      setEditedName(tournee.nom);
+                                      setEditedDate(new Date(tournee.date_planifiee));
+                                    }}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent/10 rounded"
+                                    title="Modifier"
+                                  >
+                                    <Edit2 className="w-3 h-3 text-accent" />
+                                  </button>
+                                </div>
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                                  <Calendar className="w-3 h-3" />
+                                  {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy', { locale: fr })}
+                                </div>
+                              </>
                             )}
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                              <Calendar className="w-3 h-3" />
-                              {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy')}
+                          </div>
+                          {editingTournee?.id !== tournee.id && (
+                            <Badge variant={statutConfig.variant} className="text-xs flex-shrink-0">
+                              {statutConfig.label}
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        {editingTournee?.id !== tournee.id && (
+                          <>
+                            <div className="grid grid-cols-3 gap-1.5 text-xs">
+                              <div className="flex items-center gap-1.5 bg-gradient-to-br from-blue-500/10 to-blue-500/5 p-2 rounded-lg border border-blue-500/20">
+                                <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                                <span className="font-medium">{tournee.entreprises_ids.length}</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 bg-gradient-to-br from-green-500/10 to-green-500/5 p-2 rounded-lg border border-green-500/20">
+                                <Navigation className="w-3.5 h-3.5 text-green-500" />
+                                <span className="font-medium">{Math.round(tournee.distance_totale_km)}km</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 p-2 rounded-lg border border-purple-500/20">
+                                <Clock className="w-3.5 h-3.5 text-purple-500" />
+                                <span className="font-medium">{Math.floor(tournee.temps_estime_minutes / 60)}h{(tournee.temps_estime_minutes % 60).toString().padStart(2, '0')}</span>
+                              </div>
                             </div>
-                          </div>
-                          <Badge variant={statutConfig.variant} className="text-xs flex-shrink-0">
-                            {statutConfig.label}
-                          </Badge>
-                        </div>
-                        
-                        <div className="grid grid-cols-3 gap-1.5 text-xs">
-                          <div className="flex items-center gap-1.5 bg-gradient-to-br from-blue-500/10 to-blue-500/5 p-2 rounded-lg border border-blue-500/20">
-                            <MapPin className="w-3.5 h-3.5 text-blue-500" />
-                            <span className="font-medium">{tournee.entreprises_ids.length}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 bg-gradient-to-br from-green-500/10 to-green-500/5 p-2 rounded-lg border border-green-500/20">
-                            <Navigation className="w-3.5 h-3.5 text-green-500" />
-                            <span className="font-medium">{Math.round(tournee.distance_totale_km)}km</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 p-2 rounded-lg border border-purple-500/20">
-                            <Clock className="w-3.5 h-3.5 text-purple-500" />
-                            <span className="font-medium">{Math.floor(tournee.temps_estime_minutes / 60)}h{(tournee.temps_estime_minutes % 60).toString().padStart(2, '0')}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="default" 
-                            size="sm" 
-                            className="flex-1 h-9 text-xs bg-gradient-to-r from-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 transition-all"
-                            onClick={() => setSelectedTournee(tournee)}
-                          >
-                            <MapIconLucide className="w-3.5 h-3.5 mr-1.5" />
-                            Voir détails
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-9 text-xs border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
-                            onClick={() => handleStartTournee(tournee)}
-                          >
-                            <Locate className="w-3.5 h-3.5 mr-1" />
-                            GPS
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-9 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50 transition-all"
-                            onClick={() => handleDeleteTournee(tournee.id)}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </div>
+                            
+                            <div className="flex gap-2">
+                              <Button 
+                                variant="default" 
+                                size="sm" 
+                                className="flex-1 h-9 text-xs bg-gradient-to-r from-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 transition-all"
+                                onClick={() => setSelectedTournee(tournee)}
+                              >
+                                <MapIconLucide className="w-3.5 h-3.5 mr-1.5" />
+                                Voir détails
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-9 text-xs border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
+                                onClick={() => handleStartTournee(tournee)}
+                              >
+                                <Locate className="w-3.5 h-3.5 mr-1" />
+                                GPS
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-9 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50 transition-all"
+                                onClick={() => handleDeleteTournee(tournee.id)}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </CardContent>
                     </Card>
                   );
