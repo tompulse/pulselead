@@ -85,13 +85,6 @@ export const TourneeFilters = ({
 
   return (
     <div className="space-y-0">
-      {/* Header */}
-      <div className="flex items-center gap-2 p-4 border-b border-accent/20">
-        <Filter className="h-4 w-4 text-accent" />
-        <h3 className="font-bold text-accent">Filtres</h3>
-      </div>
-
-      <div className="space-y-0">
         {/* Création de tournée */}
         {onToggleTournee && (
           <Collapsible open={tourneeActive} onOpenChange={onToggleTournee} className="border-b border-accent/20">
@@ -244,7 +237,6 @@ export const TourneeFilters = ({
             </div>
           </CollapsibleContent>
         </Collapsible>
-      </div>
 
       {/* Footer with reset button */}
       {activeFiltersCount > 0 && (
