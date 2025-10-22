@@ -95,7 +95,7 @@ const Index = () => {
             </div>
             
             {/* Titre principal - focus développement commercial */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-7xl font-bold leading-tight md:leading-tight lg:leading-[1.08] tracking-tight">
               <span className="text-foreground">L'outil ultime pour</span>
               <br />
               <span className="gradient-text">développer votre activité</span>
@@ -104,10 +104,10 @@ const Index = () => {
             </h1>
             
             {/* Sous-titre clair et orienté bénéfice */}
-            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium px-4">
               Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold">prospectez efficacement</span>.
               <br className="hidden sm:block" />
-              <span className="text-foreground/90 text-base sm:text-lg mt-2 block">Tout centralisé dans une seule plateforme.</span>
+              <span className="text-foreground/90 text-sm sm:text-base md:text-lg mt-2 block">Tout centralisé dans une seule plateforme.</span>
             </p>
             
             {/* CTA principal unique et puissant */}
@@ -159,50 +159,50 @@ const Index = () => {
         }}
       >
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-16 max-w-5xl mx-auto">
             {/* Trust indicators - focus outil commercial */}
-            <div className={`flex items-center gap-4 group transition-all duration-700 ${
+            <div className={`flex items-center gap-3 md:gap-4 group transition-all duration-700 ${
               socialProof.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
             }`} style={{ transitionDelay: '200ms' }}>
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <Target className="w-7 h-7 text-accent" />
+                <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
+                  <Target className="w-6 h-6 md:w-7 md:h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">Tournées optimisées</div>
-                <div className="text-sm text-muted-foreground font-medium">GPS & itinéraires intelligents</div>
+                <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">Tournées optimisées</div>
+                <div className="text-xs md:text-sm text-muted-foreground font-medium">GPS & itinéraires intelligents</div>
               </div>
             </div>
 
-            <div className={`flex items-center gap-4 group transition-all duration-700 ${
+            <div className={`flex items-center gap-3 md:gap-4 group transition-all duration-700 ${
               socialProof.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: '400ms' }}>
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <TrendingUp className="w-7 h-7 text-accent" />
+                <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
+                  <TrendingUp className="w-6 h-6 md:w-7 md:h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">CRM complet</div>
-                <div className="text-sm text-muted-foreground font-medium">Pipeline & suivi client</div>
+                <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">CRM complet</div>
+                <div className="text-xs md:text-sm text-muted-foreground font-medium">Pipeline & suivi client</div>
               </div>
             </div>
 
-            <div className={`flex items-center gap-4 group transition-all duration-700 ${
+            <div className={`flex items-center gap-3 md:gap-4 group transition-all duration-700 ${
               socialProof.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
             }`} style={{ transitionDelay: '600ms' }}>
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <Zap className="w-7 h-7 text-accent" />
+                <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
+                  <Zap className="w-6 h-6 md:w-7 md:h-7 text-accent" />
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">Données temps réel</div>
-                <div className="text-sm text-muted-foreground font-medium">Nouvelles entreprises</div>
+                <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">Données temps réel</div>
+                <div className="text-xs md:text-sm text-muted-foreground font-medium">Nouvelles entreprises</div>
               </div>
             </div>
           </div>
@@ -223,10 +223,10 @@ const Index = () => {
               <AlertCircle className="w-4 h-4 text-destructive" />
               <span className="text-sm font-bold text-destructive uppercase tracking-wide">Le constat</span>
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground leading-tight px-4">
               Le problème des <span className="text-destructive">commerciaux terrain</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
               Outils dispersés, prospects qui échappent, tournées non optimisées. Vous perdez du temps et des opportunités.
             </p>
           </div>
@@ -282,10 +282,10 @@ const Index = () => {
               <Sparkles className="w-4 h-4 text-cyan-electric" />
               <span className="text-sm font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold px-4">
               LUMA <span className="gradient-text">booste</span> votre efficacité commerciale
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
               Toutes les fonctionnalités dont vous avez besoin : tournées, CRM, prospection et données terrain.
             </p>
           </div>
@@ -362,42 +362,42 @@ const Index = () => {
         }`}
       >
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-20 space-y-5 animate-fade-in">
-            <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-foreground leading-tight">
+          <div className="text-center mb-12 md:mb-20 space-y-4 md:space-y-5 animate-fade-in px-4">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
               Choisissez le plan qui
               <br />
               <span className="gradient-text">accélère votre croissance</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
           </div>
 
           {/* Toggle de période */}
-          <div className="flex justify-center mb-16">
-            <div className="glass-card p-2 inline-flex gap-1.5 border-accent/30">
+          <div className="flex justify-center mb-8 md:mb-16">
+            <div className="glass-card p-1.5 md:p-2 inline-flex flex-wrap gap-1 md:gap-1.5 border-accent/30 justify-center">
               <Button
                 variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('monthly')}
-                className={billingPeriod === 'monthly' ? 'btn-hero text-base px-6' : 'hover:bg-accent/10 text-base px-6'}
+                className={billingPeriod === 'monthly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}
               >
                 Mensuel
               </Button>
               <Button
                 variant={billingPeriod === 'quarterly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('quarterly')}
-                className={billingPeriod === 'quarterly' ? 'btn-hero text-base px-6' : 'hover:bg-accent/10 text-base px-6'}
+                className={billingPeriod === 'quarterly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}
               >
                 Trimestriel
-                <span className="ml-2 text-xs bg-accent/30 px-2.5 py-1 rounded-full font-bold">-15%</span>
+                <span className="ml-1 md:ml-2 text-xs bg-accent/30 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold">-15%</span>
               </Button>
               <Button
                 variant={billingPeriod === 'yearly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('yearly')}
-                className={billingPeriod === 'yearly' ? 'btn-hero text-base px-6' : 'hover:bg-accent/10 text-base px-6'}
+                className={billingPeriod === 'yearly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}
               >
                 Annuel
-                <span className="ml-2 text-xs bg-accent/30 px-2.5 py-1 rounded-full font-bold">-25%</span>
+                <span className="ml-1 md:ml-2 text-xs bg-accent/30 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold">-25%</span>
               </Button>
             </div>
           </div>
@@ -567,22 +567,22 @@ const Index = () => {
         }`}
       >
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12 space-y-3 animate-fade-in">
+          <div className="text-center mb-8 md:mb-12 space-y-2 md:space-y-3 animate-fade-in px-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-4 h-4 md:w-5 md:h-5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <span className="text-xl font-bold text-foreground">4.8/5</span>
+              <span className="text-lg md:text-xl font-bold text-foreground">4.8/5</span>
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground">
               Ils accélèrent leur <span className="gradient-text">croissance</span>
             </h2>
-            <p className="text-lg text-muted-foreground">Résultats réels et mesurables</p>
+            <p className="text-base md:text-lg text-muted-foreground">Résultats réels et mesurables</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${
               testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: testimonialsSection.isVisible ? '200ms' : '0ms' }}>
@@ -657,14 +657,14 @@ const Index = () => {
         <div className="container mx-auto max-w-4xl">
           <div 
             ref={faqSection.ref}
-            className={`text-center mb-12 space-y-3 transition-all duration-1000 ${
+            className={`text-center mb-8 md:mb-12 space-y-2 md:space-y-3 transition-all duration-1000 px-4 ${
               faqSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
             }`}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground">
               Questions <span className="gradient-text">fréquentes</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
               Tout ce que vous devez savoir sur LUMA
             </p>
           </div>
