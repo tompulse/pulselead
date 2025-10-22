@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { List } from "lucide-react";
 import { ListView } from "./ListView";
-import { TourneeCreationPanel } from "./TourneeCreationPanel";
+import { TourneeFilters } from "./TourneeFilters";
 import { useTourneeManager } from "@/hooks/useTourneeManager";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProspectsViewProps {
@@ -112,35 +111,27 @@ export const ProspectsView = ({
           </div>
           Prospects
         </h2>
-        
-        {!externalSelectionMode && (
-          <Button
-            onClick={handleCreateTournee}
-            variant={tourneeActive ? "default" : "outline"}
-            size="sm"
-            className={tourneeActive ? "bg-gradient-to-r from-accent to-accent/80" : ""}
-          >
-            {tourneeActive ? "Annuler" : "Créer une tournée"}
-          </Button>
-        )}
       </div>
 
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
-        {/* Panneau de création de tournée */}
-        {tourneeActive && !externalSelectionMode && (
-          <div className="w-80 shrink-0">
-            <TourneeCreationPanel
-              onCreateTournee={handleCreateTournee}
-              tourneeActive={tourneeActive}
+        {/* Filtres avec création de tournée intégrée */}
+        <div className="w-80 shrink-0">
+          <div className="glass-card p-4 h-full overflow-y-auto">
+            <TourneeFilters
+              filters={filters}
+              setFilters={() => {}}
+              tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
+              onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
               tourneeName={tourneeName}
               setTourneeName={setTourneeName}
               tourneeDate={tourneeDate}
               setTourneeDate={setTourneeDate}
               selectedCount={selectedEntreprises.length}
               onOptimize={handleOptimize}
+              isOptimizing={isOptimizing}
             />
           </div>
-        )}
+        </div>
 
         {/* Content - Liste */}
         <div className="flex-1 overflow-hidden min-h-0">
