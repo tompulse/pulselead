@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
-import { Route, Calendar } from "lucide-react";
+import { Route, Calendar, ChevronDown, Filter } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface TourneeFiltersProps {
@@ -43,6 +43,9 @@ export const TourneeFilters = ({
   onOptimize,
   isOptimizing = false
 }: TourneeFiltersProps) => {
+  const [departmentsOpen, setDepartmentsOpen] = useState(true);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [datesOpen, setDatesOpen] = useState(false);
   const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
       const currentCategories = prev.categories || [];
@@ -81,146 +84,181 @@ export const TourneeFilters = ({
     (filters.departments?.length || 0);
 
   return (
-    <div className="space-y-3">
-      {/* Création de tournée */}
-      {onToggleTournee && (
-        <Collapsible open={tourneeActive} onOpenChange={onToggleTournee}>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant={tourneeActive ? "default" : "outline"}
-              className={`w-full justify-start gap-2 ${
-                tourneeActive 
-                  ? "bg-gradient-to-r from-accent to-accent/80 shadow-md" 
-                  : "border-accent/30 hover:bg-accent/10 hover:border-accent/50"
-              }`}
-              size="sm"
-            >
-              <Route className="h-4 w-4" />
-              <span className="font-semibold">Créer une tournée</span>
-              {tourneeActive && selectedCount > 0 && (
-                <Badge variant="secondary" className="ml-auto bg-white/20 text-white border-white/30">
-                  {selectedCount} sélectionné{selectedCount > 1 ? 's' : ''}
-                </Badge>
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="space-y-3 pt-3">
-            <div className="space-y-2 p-3 rounded-lg border border-accent/30 bg-gradient-to-br from-card/80 to-card/40">
-              <div className="space-y-1.5">
-                <Label htmlFor="tournee-name" className="text-xs font-semibold">
-                  Nom de la tournée
-                </Label>
-                <Input
-                  id="tournee-name"
-                  value={tourneeName}
-                  onChange={(e) => setTourneeName?.(e.target.value)}
-                  placeholder="Ex: Tournée commerciale Paris"
-                  className="h-9 border-accent/30 bg-navy-deep/50 hover:border-accent/50 focus:border-accent"
-                />
-              </div>
+    <div className="space-y-0">
+      {/* Header */}
+      <div className="flex items-center gap-2 p-4 border-b border-accent/20">
+        <Filter className="h-4 w-4 text-accent" />
+        <h3 className="font-bold text-accent">Filtres</h3>
+      </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="tournee-date" className="text-xs font-semibold">
-                  Date de la tournée
-                </Label>
-                <DatePicker
-                  date={tourneeDate ? new Date(tourneeDate) : undefined}
-                  onSelect={(date) => setTourneeDate?.(date ? date.toISOString().split('T')[0] : "")}
-                  placeholder="Sélectionner une date"
-                  className="h-9"
-                />
+      <div className="space-y-0">
+        {/* Création de tournée */}
+        {onToggleTournee && (
+          <Collapsible open={tourneeActive} onOpenChange={onToggleTournee} className="border-b border-accent/20">
+            <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors group">
+              <div className="flex items-center gap-2">
+                <Route className="h-4 w-4 text-accent" />
+                <span className="font-medium text-sm">Créer une tournée</span>
+                {selectedCount > 0 && (
+                  <Badge variant="secondary" className="ml-2 bg-accent/20 text-accent border-accent/30 text-xs">
+                    {selectedCount}
+                  </Badge>
+                )}
               </div>
+              <ChevronDown className={`h-4 w-4 text-accent transition-transform ${tourneeActive ? 'rotate-180' : ''}`} />
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="px-4 pb-4">
+              <div className="space-y-3 pt-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="tournee-name" className="text-xs">
+                    Nom de la tournée
+                  </Label>
+                  <Input
+                    id="tournee-name"
+                    value={tourneeName}
+                    onChange={(e) => setTourneeName?.(e.target.value)}
+                    placeholder="Ex: Tournée Paris"
+                    className="h-9 text-sm"
+                  />
+                </div>
 
-              {selectedCount > 0 && (
-                <div className="pt-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="tournee-date" className="text-xs">
+                    Date
+                  </Label>
+                  <DatePicker
+                    date={tourneeDate ? new Date(tourneeDate) : undefined}
+                    onSelect={(date) => setTourneeDate?.(date ? date.toISOString().split('T')[0] : "")}
+                    placeholder="Sélectionner"
+                    className="h-9"
+                  />
+                </div>
+
+                {selectedCount > 0 && (
                   <Button
                     onClick={onOptimize}
                     disabled={selectedCount < 2 || !tourneeName.trim() || isOptimizing}
-                    className="w-full bg-gradient-to-r from-accent to-accent/80 hover:shadow-md hover:shadow-accent/30"
+                    className="w-full bg-gradient-to-r from-accent to-accent/80"
                     size="sm"
                   >
-                    {isOptimizing ? "Optimisation..." : `Optimiser (${selectedCount} prospects)`}
+                    {isOptimizing ? "Optimisation..." : `Optimiser (${selectedCount})`}
                   </Button>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
+
+        {/* Départements */}
+        <Collapsible open={departmentsOpen} onOpenChange={setDepartmentsOpen} className="border-b border-accent/20">
+          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+            <span className="font-medium text-sm">Départements</span>
+            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${departmentsOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="px-4 pb-4">
+            <ScrollArea className="h-48 mt-2">
+              <div className="space-y-2 pr-4">
+                {allDepartments.map((deptCode) => {
+                  const selected = filters.departments?.includes(deptCode);
+                  return (
+                    <label
+                      key={deptCode}
+                      className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2 rounded transition-colors"
+                    >
+                      <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                        selected ? 'bg-accent border-accent' : 'border-accent/30'
+                      }`}>
+                        {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                      </div>
+                      <span className="text-sm" onClick={() => handleDepartmentToggle(deptCode)}>
+                        {deptCode} - {DEPARTMENT_NAMES[deptCode]}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </CollapsibleContent>
         </Collapsible>
-      )}
 
-      <div className="flex items-center gap-2">
-        {activeFiltersCount > 0 && (
-          <Badge variant="secondary" className="text-xs bg-accent/20 text-accent border-accent/30">
-            {activeFiltersCount} filtre(s) actif(s)
-          </Badge>
-        )}
-        <Button variant="ghost" size="sm" className="ml-auto h-7 text-xs hover:bg-accent/10 hover:text-accent" onClick={clearFilters}>
-          Effacer
-        </Button>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-3">
-        {/* Catégories */}
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold flex items-center gap-2">
-            <div className="w-1 h-4 bg-gradient-to-b from-accent to-accent/50 rounded-full" />
-            Catégories
-          </Label>
-          <ScrollArea className="h-32 rounded-lg border border-accent/30 bg-gradient-to-br from-card/80 to-card/40 shadow-sm">
-            <div className="p-3 flex flex-wrap gap-2">
+        {/* Catégories d'activité */}
+        <Collapsible open={categoriesOpen} onOpenChange={setCategoriesOpen} className="border-b border-accent/20">
+          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+            <span className="font-medium text-sm">Catégories d'activité</span>
+            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="px-4 pb-4">
+            <div className="space-y-2 mt-2">
               {allCategories.map((categoryKey) => {
                 const selected = filters.categories?.includes(categoryKey);
                 return (
-                  <Button
+                  <label
                     key={categoryKey}
-                    type="button"
-                    size="sm"
-                    variant={selected ? "default" : "outline"}
-                    className={selected 
-                      ? "h-8 px-3 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 border-accent/30 transition-all" 
-                      : "h-8 px-3 text-xs border-accent/20 hover:bg-accent/10 hover:border-accent/30 hover:text-accent transition-all"
-                    }
-                    onClick={() => handleCategoryToggle(categoryKey)}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2 rounded transition-colors"
                   >
-                    {getCategoryLabel(categoryKey)}
-                  </Button>
+                    <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                      selected ? 'bg-accent border-accent' : 'border-accent/30'
+                    }`}>
+                      {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                    </div>
+                    <span className="text-sm" onClick={() => handleCategoryToggle(categoryKey)}>
+                      {getCategoryLabel(categoryKey)}
+                    </span>
+                  </label>
                 );
               })}
             </div>
-          </ScrollArea>
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
 
-        {/* Départements */}
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold flex items-center gap-2">
-            <div className="w-1 h-4 bg-gradient-to-b from-accent to-accent/50 rounded-full" />
-            Départements
-          </Label>
-          <ScrollArea className="h-32 rounded-lg border border-accent/30 bg-gradient-to-br from-card/80 to-card/40 shadow-sm">
-            <div className="p-3 flex flex-wrap gap-2">
-              {allDepartments.map((deptCode) => {
-                const selected = filters.departments?.includes(deptCode);
-                return (
-                  <Button
-                    key={deptCode}
-                    type="button"
-                    size="sm"
-                    variant={selected ? "default" : "outline"}
-                    className={selected 
-                      ? "h-8 px-3 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 border-accent/30 transition-all" 
-                      : "h-8 px-3 text-xs border-accent/20 hover:bg-accent/10 hover:border-accent/30 hover:text-accent transition-all"
-                    }
-                    onClick={() => handleDepartmentToggle(deptCode)}
-                  >
-                    {deptCode} - {DEPARTMENT_NAMES[deptCode]}
-                  </Button>
-                );
-              })}
+        {/* Dates */}
+        <Collapsible open={datesOpen} onOpenChange={setDatesOpen} className="border-b border-accent/20">
+          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+            <span className="font-medium text-sm">Dates</span>
+            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${datesOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="px-4 pb-4">
+            <div className="space-y-3 mt-2">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Du</Label>
+                <DatePicker
+                  date={filters.dateFrom ? new Date(filters.dateFrom) : undefined}
+                  onSelect={(date) => setFilters((prev: any) => ({ ...prev, dateFrom: date?.toISOString().split('T')[0] || '' }))}
+                  placeholder="Date début"
+                  className="h-9"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Au</Label>
+                <DatePicker
+                  date={filters.dateTo ? new Date(filters.dateTo) : undefined}
+                  onSelect={(date) => setFilters((prev: any) => ({ ...prev, dateTo: date?.toISOString().split('T')[0] || '' }))}
+                  placeholder="Date fin"
+                  className="h-9"
+                />
+              </div>
             </div>
-          </ScrollArea>
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
+
+      {/* Footer with reset button */}
+      {activeFiltersCount > 0 && (
+        <div className="p-4 border-t border-accent/20">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={clearFilters}
+            className="w-full border-accent/30 hover:bg-accent/10"
+          >
+            Réinitialiser les filtres
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
