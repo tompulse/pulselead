@@ -24,7 +24,9 @@ import {
   Plus,
   Locate,
   List,
-  Edit2
+  Edit2,
+  Check,
+  X
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -63,6 +65,8 @@ export const TourneesView = () => {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [selectedTournee, setSelectedTournee] = useState<Tournee | null>(null);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
+  const [editingTournee, setEditingTournee] = useState<Tournee | null>(null);
+  const [editedName, setEditedName] = useState("");
   const [filters, setFilters] = useState({
     dateFrom: "2025-09-01",
     dateTo: "",
@@ -313,6 +317,37 @@ export const TourneesView = () => {
       toast({
         title: "Erreur",
         description: "Impossible de supprimer la tournée",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleUpdateTourneeName = async () => {
+    if (!editingTournee || !editedName.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('tournees')
+        .update({ nom: editedName })
+        .eq('id', editingTournee.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "✅ Nom modifié",
+        description: "Le nom de la tournée a été mis à jour",
+        duration: 2500,
+      });
+
+      fetchTournees();
+      setEditingTournee(null);
+      setEditedName("");
+    } catch (error) {
+      console.error('Error updating tournee:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le nom",
         variant: "destructive",
         duration: 3000,
       });
@@ -676,34 +711,57 @@ export const TourneesView = () => {
                       <CardContent className="relative pt-3 pb-3 space-y-2">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-sm truncate flex items-center gap-2">
-                              <Route className="w-3.5 h-3.5 text-accent" />
-                              {tournee.nom}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const newName = prompt('Nouveau nom de la tournée:', tournee.nom);
-                                  if (newName && newName.trim()) {
-                                    supabase
-                                      .from('tournees')
-                                      .update({ nom: newName })
-                                      .eq('id', tournee.id)
-                                      .then(() => {
-                                        fetchTournees();
-                                        toast({
-                                          title: "✅ Nom modifié",
-                                          description: "Le nom de la tournée a été mis à jour",
-                                          duration: 2500,
-                                        });
-                                      });
-                                  }
-                                }}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent/10 rounded"
-                                title="Modifier le nom"
-                              >
-                                <Edit2 className="w-3 h-3 text-accent" />
-                              </button>
-                            </div>
+                            {editingTournee?.id === tournee.id ? (
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  value={editedName}
+                                  onChange={(e) => setEditedName(e.target.value)}
+                                  className="h-7 text-sm"
+                                  autoFocus
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleUpdateTourneeName();
+                                    if (e.key === 'Escape') {
+                                      setEditingTournee(null);
+                                      setEditedName("");
+                                    }
+                                  }}
+                                />
+                                <Button
+                                  size="sm"
+                                  onClick={handleUpdateTourneeName}
+                                  className="h-7 w-7 p-0 bg-accent hover:bg-accent/80"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setEditingTournee(null);
+                                    setEditedName("");
+                                  }}
+                                  className="h-7 w-7 p-0"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="font-medium text-sm truncate flex items-center gap-2">
+                                <Route className="w-3.5 h-3.5 text-accent" />
+                                {tournee.nom}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingTournee(tournee);
+                                    setEditedName(tournee.nom);
+                                  }}
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent/10 rounded"
+                                  title="Modifier le nom"
+                                >
+                                  <Edit2 className="w-3 h-3 text-accent" />
+                                </button>
+                              </div>
+                            )}
                             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                               <Calendar className="w-3 h-3" />
                               {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy')}
