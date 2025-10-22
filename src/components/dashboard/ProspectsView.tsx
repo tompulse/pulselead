@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { List } from "lucide-react";
+import { ListView } from "./ListView";
 import { TourneeFilters } from "./TourneeFilters";
 import { useTourneeManager } from "@/hooks/useTourneeManager";
 import { useToast } from "@/hooks/use-toast";
@@ -100,21 +102,45 @@ export const ProspectsView = ({
   const internalOnToggleSelection = externalSelectionMode ? externalOnToggleSelection : toggleEntreprise;
 
   return (
-    <div className="h-full flex items-start justify-center p-6">
-      <div className="w-96 glass-card overflow-y-auto">
-        <TourneeFilters
-          filters={filters}
-          setFilters={() => {}}
-          tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
-          onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
-          tourneeName={tourneeName}
-          setTourneeName={setTourneeName}
-          tourneeDate={tourneeDate}
-          setTourneeDate={setTourneeDate}
-          selectedCount={selectedEntreprises.length}
-          onOptimize={handleOptimize}
-          isOptimizing={isOptimizing}
-        />
+    <div className="h-full flex flex-col overflow-hidden gap-3">
+      {/* Header */}
+      <div className="glass-card border-b border-accent/20 px-4 py-2.5 shrink-0 flex items-center justify-between">
+        <h2 className="text-base font-bold gradient-text flex items-center gap-2">
+          <div className="p-1.5 bg-accent/10 rounded-lg">
+            <List className="h-4 w-4 text-accent" />
+          </div>
+          Prospects
+        </h2>
+      </div>
+
+      <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
+        {/* Filtres avec création de tournée intégrée */}
+        <div className="w-80 shrink-0 glass-card overflow-y-auto">
+          <TourneeFilters
+            filters={filters}
+            setFilters={() => {}}
+            tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
+            onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
+            tourneeName={tourneeName}
+            setTourneeName={setTourneeName}
+            tourneeDate={tourneeDate}
+            setTourneeDate={setTourneeDate}
+            selectedCount={selectedEntreprises.length}
+            onOptimize={handleOptimize}
+            isOptimizing={isOptimizing}
+          />
+        </div>
+
+        {/* Content - Liste */}
+        <div className="flex-1 overflow-hidden min-h-0">
+          <ListView
+            filters={filters}
+            onEntrepriseSelect={onEntrepriseSelect}
+            selectionMode={internalSelectionMode}
+            selectedEntreprises={internalSelectedEntreprises}
+            onToggleSelection={internalOnToggleSelection}
+          />
+        </div>
       </div>
     </div>
   );
