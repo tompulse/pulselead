@@ -152,23 +152,24 @@ export const TourneeFilters = ({
           
           <CollapsibleContent className="px-4 pb-4">
             <ScrollArea className="h-48 mt-2">
-              <div className="space-y-2 pr-4">
+              <div className="space-y-1 pr-4">
                 {allDepartments.map((deptCode) => {
                   const selected = filters.departments?.includes(deptCode);
                   return (
-                    <label
+                    <div
                       key={deptCode}
-                      className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2 rounded transition-colors"
+                      onClick={() => handleDepartmentToggle(deptCode)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                     >
-                      <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
                         selected ? 'bg-accent border-accent' : 'border-accent/30'
                       }`}>
-                        {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                       </div>
-                      <span className="text-sm" onClick={() => handleDepartmentToggle(deptCode)}>
+                      <span className="text-sm leading-tight">
                         {deptCode} - {DEPARTMENT_NAMES[deptCode]}
                       </span>
-                    </label>
+                    </div>
                   );
                 })}
               </div>
@@ -184,23 +185,24 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            <div className="space-y-2 mt-2">
+            <div className="space-y-1 mt-2">
               {allCategories.map((categoryKey) => {
                 const selected = filters.categories?.includes(categoryKey);
                 return (
-                  <label
+                  <div
                     key={categoryKey}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2 rounded transition-colors"
+                    onClick={() => handleCategoryToggle(categoryKey)}
+                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                   >
-                    <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
                       selected ? 'bg-accent border-accent' : 'border-accent/30'
                     }`}>
-                      {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                     </div>
-                    <span className="text-sm" onClick={() => handleCategoryToggle(categoryKey)}>
+                    <span className="text-sm leading-tight">
                       {getCategoryLabel(categoryKey)}
                     </span>
-                  </label>
+                  </div>
                 );
               })}
             </div>
