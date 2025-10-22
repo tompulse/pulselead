@@ -91,7 +91,6 @@ export const TourneeRouteDisplay = ({
   const [showNavigationDialog, setShowNavigationDialog] = useState(false);
   const [showVisiteDialog, setShowVisiteDialog] = useState(false);
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
-  const [showRouteOptionsDialog, setShowRouteOptionsDialog] = useState(false);
   const [routeCalculating, setRouteCalculating] = useState(false);
   const [routeOptions, setRouteOptions] = useState<{
     withTolls: { distance_km: string; duration_minutes: number } | null;
@@ -134,6 +133,11 @@ export const TourneeRouteDisplay = ({
         .filter(Boolean) as Entreprise[];
 
       setEntreprises(ordered);
+      
+      // Calculer les routes une fois que les entreprises sont chargées
+      if (ordered.length > 0) {
+        setTimeout(() => calculateRoutes(), 300);
+      }
     } catch (error) {
       console.error('Error fetching entreprises:', error);
     } finally {
@@ -300,11 +304,6 @@ export const TourneeRouteDisplay = ({
     }
   };
 
-  const handleOpenRouteDialog = () => {
-    setShowRouteOptionsDialog(true);
-    calculateRoutes();
-  };
-
   const handleNavigateFullRoute = (avoidTolls: boolean = false) => {
     const waypoints = entreprises.map(e => ({
       lat: e.latitude,
@@ -328,7 +327,6 @@ export const TourneeRouteDisplay = ({
     const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination.lat},${destination.lng}&waypoints=${waypointsStr}&travelmode=driving${avoidTolls ? '&avoid=tolls' : ''}`;
 
     window.open(url, '_blank');
-    setShowRouteOptionsDialog(false);
   };
 
   const handleSaveVisite = async () => {
@@ -449,9 +447,9 @@ export const TourneeRouteDisplay = ({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 h-full min-h-[600px]">
-      {/* Carte à gauche - Design simplifié et fonctionnel */}
-      <div className="relative h-full min-h-[600px] rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5 bg-card">
+    <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-8rem)] max-h-[900px]">
+      {/* Carte à gauche */}
+      <div className="relative flex-1 min-h-[400px] lg:min-h-0 rounded-xl overflow-hidden border border-accent/30 shadow-lg shadow-accent/5 bg-card">
         <TourneeMap
           entreprises={entreprises}
           pointDepartLat={pointDepartLat}
@@ -459,54 +457,84 @@ export const TourneeRouteDisplay = ({
         />
       </div>
 
-      {/* Liste à droite - style sexy */}
-      <Card className="border-accent/30 h-full flex flex-col bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm shadow-lg shadow-accent/5">
-        <CardHeader className="pb-3 px-4 pt-4 shrink-0 border-b border-accent/10">
-          <div className="flex items-center justify-between mb-2">
+      {/* Liste à droite */}
+      <Card className="border-accent/30 w-full lg:w-[380px] flex flex-col bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm shadow-lg shadow-accent/5">
+        <CardHeader className="pb-3 px-4 pt-4 shrink-0 border-b border-accent/10 space-y-3">
+          <div className="flex items-center justify-between">
             <CardTitle className="text-base font-bold gradient-text flex items-center gap-2">
               <div className="p-2 bg-accent/10 rounded-lg">
                 <MapPin className="w-4 h-4 text-accent" />
               </div>
               {entreprises.length} arrêts
             </CardTitle>
-            <div className="flex items-center gap-2">
+            <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
+              {statusConfig.label}
+            </Badge>
+          </div>
+
+          {/* Options de route intégrées */}
+          <div className="space-y-2">
+            <div className="text-xs font-medium text-muted-foreground mb-1">Trajet optimisé</div>
+            
+            {routeCalculating ? (
+              <div className="flex items-center justify-center py-4 gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-accent" />
+                <span className="text-xs text-muted-foreground">Calcul en cours...</span>
+              </div>
+            ) : routeOptions.withTolls && routeOptions.withoutTolls ? (
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => handleNavigateFullRoute(false)}
+                  className="flex flex-col gap-1 p-2.5 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 hover:border-blue-500/40 hover:from-blue-500/20 hover:to-blue-500/10 transition-all group"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <MapIconLucide className="w-3.5 h-3.5 text-blue-500" />
+                    <span className="text-xs font-semibold text-blue-500">Rapide</span>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">Avec péages</div>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-xs font-bold text-green-600">{routeOptions.withTolls.distance_km} km</span>
+                    <span className="text-xs font-bold text-purple-600">{Math.floor(routeOptions.withTolls.duration_minutes / 60)}h{(routeOptions.withTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleNavigateFullRoute(true)}
+                  className="flex flex-col gap-1 p-2.5 rounded-lg bg-gradient-to-br from-orange-500/10 to-orange-500/5 border border-orange-500/20 hover:border-orange-500/40 hover:from-orange-500/20 hover:to-orange-500/10 transition-all group"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Coins className="w-3.5 h-3.5 text-orange-500" />
+                    <span className="text-xs font-semibold text-orange-500">Éco</span>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">Sans péages</div>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-xs font-bold text-green-600">{routeOptions.withoutTolls.distance_km} km</span>
+                    <span className="text-xs font-bold text-purple-600">{Math.floor(routeOptions.withoutTolls.duration_minutes / 60)}h{(routeOptions.withoutTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
+                  </div>
+                </button>
+              </div>
+            ) : (
               <Button
+                onClick={calculateRoutes}
                 variant="outline"
                 size="sm"
-                onClick={handleOpenRouteDialog}
-                className="h-7 px-2 text-xs border-accent/30 hover:border-accent hover:bg-accent/10"
-                title="Créer le trajet optimisé"
+                className="w-full h-9 border-accent/30 hover:border-accent hover:bg-accent/10"
               >
-                <RouteIcon className="w-3.5 h-3.5 mr-1" />
-                <span className="hidden sm:inline">Trajet GPS</span>
+                <RouteIcon className="w-3.5 h-3.5 mr-1.5" />
+                Calculer l'itinéraire
               </Button>
-              <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
-                {statusConfig.label}
-              </Badge>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 text-xs text-muted-foreground bg-accent/5 rounded-lg px-3 py-2">
-              <div className="flex items-center gap-1">
-                <Navigation className="w-3 h-3" />
-                <span className="font-medium">{Math.round(distanceTotaleKm)} km</span>
-              </div>
-              <span>•</span>
-              <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                <span className="font-medium">{Math.floor(tempsEstimeMinutes / 60)}h{Math.round(tempsEstimeMinutes % 60).toString().padStart(2, '0')}</span>
-              </div>
-            </div>
-            <div className="text-[10px] text-muted-foreground bg-card/40 rounded-lg px-3 py-1.5 flex items-center justify-between">
-              <span>Dont visites: {Math.floor((entreprises.length * 15) / 60)}h{Math.round((entreprises.length * 15) % 60).toString().padStart(2, '0')}</span>
+            )}
+
+            <div className="text-[10px] text-muted-foreground bg-card/40 rounded-lg px-2.5 py-1.5 flex items-center justify-between">
+              <span>Temps visites: {Math.floor((entreprises.length * 15) / 60)}h{Math.round((entreprises.length * 15) % 60).toString().padStart(2, '0')}</span>
               <span className="opacity-70">(15 min/arrêt)</span>
             </div>
           </div>
         </CardHeader>
         
-        <CardContent className="flex-1 flex flex-col gap-3 px-4 pb-4 overflow-hidden">
+        <CardContent className="flex-1 flex flex-col gap-3 px-4 pb-4 overflow-hidden min-h-0">
           {/* Liste avec drag & drop stylée */}
-          <div className="flex-1 overflow-y-auto -mx-2 px-2">
+          <div className="flex-1 overflow-y-auto -mx-2 px-2 min-h-0">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -548,95 +576,6 @@ export const TourneeRouteDisplay = ({
         </CardContent>
       </Card>
 
-      {/* Dialog choix péages */}
-      <Dialog open={showRouteOptionsDialog} onOpenChange={setShowRouteOptionsDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <RouteIcon className="w-5 h-5 text-accent" />
-              Créer le trajet optimisé
-            </DialogTitle>
-            <DialogDescription>
-              Choisissez votre préférence de trajet
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3 py-4">
-            {routeCalculating ? (
-              <div className="flex flex-col items-center justify-center py-8 gap-3">
-                <div className="animate-spin rounded-full h-10 w-10 border-4 border-accent border-t-transparent" />
-                <p className="text-sm text-muted-foreground">Calcul des itinéraires en cours...</p>
-              </div>
-            ) : (
-              <>
-                <Button
-                  onClick={() => handleNavigateFullRoute(false)}
-                  className="w-full h-auto flex flex-col gap-2 py-4 hover:border-accent hover:bg-accent/10 transition-all"
-                  variant="outline"
-                  disabled={!routeOptions.withTolls}
-                >
-                  <div className="flex items-center gap-3 w-full">
-                    <div className="p-2 bg-gradient-to-br from-blue-500/10 to-blue-500/5 rounded-lg">
-                      <MapIconLucide className="w-6 h-6 text-blue-500" />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <div className="font-semibold text-base">Itinéraire rapide</div>
-                      <div className="text-xs text-muted-foreground mb-2">Péages autorisés</div>
-                      {routeOptions.withTolls && (
-                        <div className="flex items-center gap-3 text-xs font-medium">
-                          <div className="flex items-center gap-1 text-green-600">
-                            <Navigation className="w-3 h-3" />
-                            <span>{routeOptions.withTolls.distance_km} km</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-purple-600">
-                            <Clock className="w-3 h-3" />
-                            <span>{Math.floor(routeOptions.withTolls.duration_minutes / 60)}h{(routeOptions.withTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Button>
-                <Button
-                  onClick={() => handleNavigateFullRoute(true)}
-                  className="w-full h-auto flex flex-col gap-2 py-4 hover:border-accent hover:bg-accent/10 transition-all"
-                  variant="outline"
-                  disabled={!routeOptions.withoutTolls}
-                >
-                  <div className="flex items-center gap-3 w-full">
-                    <div className="p-2 bg-gradient-to-br from-orange-500/10 to-orange-500/5 rounded-lg relative">
-                      <Coins className="w-6 h-6 text-orange-500" />
-                      <div className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5">
-                        <X className="w-3 h-3 text-white" />
-                      </div>
-                    </div>
-                    <div className="flex-1 text-left">
-                      <div className="font-semibold text-base">Itinéraire économique</div>
-                      <div className="text-xs text-muted-foreground mb-2">Sans péages</div>
-                      {routeOptions.withoutTolls && (
-                        <div className="flex items-center gap-3 text-xs font-medium">
-                          <div className="flex items-center gap-1 text-green-600">
-                            <Navigation className="w-3 h-3" />
-                            <span>{routeOptions.withoutTolls.distance_km} km</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-purple-600">
-                            <Clock className="w-3 h-3" />
-                            <span>{Math.floor(routeOptions.withoutTolls.duration_minutes / 60)}h{(routeOptions.withoutTolls.duration_minutes % 60).toString().padStart(2, '0')}</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Button>
-              </>
-            )}
-          </div>
-          <DialogFooter className="sm:justify-center">
-            <Button variant="ghost" onClick={() => setShowRouteOptionsDialog(false)}>
-              Annuler
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Dialog de choix de navigation */}
       <Dialog open={showNavigationDialog} onOpenChange={setShowNavigationDialog}>
