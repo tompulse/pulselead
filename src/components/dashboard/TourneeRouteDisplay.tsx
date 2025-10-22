@@ -30,6 +30,7 @@ import {
   Coins,
   X,
   Loader2,
+  TrendingUp,
 } from "lucide-react";
 import {
   DndContext,
@@ -96,6 +97,7 @@ export const TourneeRouteDisplay = ({
   const [showVisiteDialog, setShowVisiteDialog] = useState(false);
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [routeCalculating, setRouteCalculating] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
   const [routeOptions, setRouteOptions] = useState<{
     withTolls: { distance_km: string; duration_minutes: number } | null;
     withoutTolls: { distance_km: string; duration_minutes: number } | null;
@@ -335,6 +337,59 @@ export const TourneeRouteDisplay = ({
     window.open(url, '_blank');
   };
 
+  const handleOptimizeTournee = async () => {
+    setIsOptimizing(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('optimize-tournee', {
+        body: {
+          entreprises: entreprises,
+          userLocation: pointDepartLat && pointDepartLng 
+            ? { lat: pointDepartLat, lng: pointDepartLng }
+            : null
+        }
+      });
+
+      if (error) throw error;
+
+      // Mettre à jour l'ordre avec le résultat optimisé
+      const optimizedOrder = data.entreprises_ordonnees.map((e: Entreprise) => e.id);
+      const optimizedEntreprises = data.entreprises_ordonnees;
+
+      setEntreprises(optimizedEntreprises);
+      setDistanceTotaleKm(data.distance_totale_km);
+      setTempsEstimeMinutes(data.temps_estime_minutes);
+
+      // Sauvegarder dans la base de données
+      await supabase
+        .from('tournees')
+        .update({
+          ordre_optimise: optimizedOrder,
+          distance_totale_km: data.distance_totale_km,
+          temps_estime_minutes: data.temps_estime_minutes,
+        })
+        .eq('id', tourneeId);
+
+      toast({
+        title: "✅ Tournée optimisée",
+        description: `${Math.round(data.distance_totale_km)} km • ${Math.floor(data.temps_estime_minutes / 60)}h${(data.temps_estime_minutes % 60).toString().padStart(2, '0')}`,
+        duration: 3000,
+      });
+
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error optimizing tournee:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'optimiser la tournée",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+
   const handleSaveVisite = async () => {
     if (!selectedEntreprise) return;
 
@@ -546,6 +601,27 @@ export const TourneeRouteDisplay = ({
                 )}
               </div>
             )}
+
+            {/* Bouton optimiser */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleOptimizeTournee}
+              disabled={isOptimizing || entreprises.length < 2}
+              className="w-full h-8 text-xs text-muted-foreground hover:text-accent hover:bg-accent/5 transition-all"
+            >
+              {isOptimizing ? (
+                <>
+                  <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                  Optimisation...
+                </>
+              ) : (
+                <>
+                  <TrendingUp className="w-3 h-3 mr-1.5" />
+                  Optimiser ma tournée
+                </>
+              )}
+            </Button>
           </div>
         </CardHeader>
         
