@@ -469,21 +469,9 @@ export const TourneeRouteDisplay = ({
               </div>
               {entreprises.length} arrêts
             </CardTitle>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={calculateRoutes}
-                className="h-7 px-2 text-xs border-accent/30 hover:border-accent hover:bg-accent/10"
-                title="Créer le trajet optimisé"
-              >
-                <RouteIcon className="w-3.5 h-3.5 mr-1" />
-                <span className="hidden sm:inline">Trajet GPS</span>
-              </Button>
-              <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
-                {statusConfig.label}
-              </Badge>
-            </div>
+            <Badge variant={statusConfig.variant} className="text-xs shadow-sm">
+              {statusConfig.label}
+            </Badge>
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-3 text-xs text-muted-foreground bg-accent/5 rounded-lg px-3 py-2">

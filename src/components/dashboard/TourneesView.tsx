@@ -391,13 +391,24 @@ export const TourneesView = () => {
     return (
       <div className="h-full flex flex-col gap-3 overflow-hidden">
         <Card className="border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent shadow-lg shadow-accent/5">
-          <CardContent className="pt-4 pb-4">
+          <CardContent className="pt-4 pb-4 flex items-center justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="font-bold text-lg gradient-text flex items-center gap-2">
+                <Route className="w-5 h-5 text-accent" />
+                {selectedTournee.nom}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" />
+                {selectedTournee.entreprises_ids.length} arrêts
+              </p>
+            </div>
             <Button 
               variant="outline" 
+              size="sm"
               onClick={() => setSelectedTournee(null)}
-              className="w-full border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all"
+              className="border-accent/30 hover:bg-accent/10 hover:border-accent/50 transition-all h-8"
             >
-              ← Retour aux tournées
+              ← Retour
             </Button>
           </CardContent>
         </Card>
