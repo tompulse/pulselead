@@ -331,23 +331,23 @@ const Index = () => {
           </div>
 
           {/* Résultats mesurables - En vert avec tailles réduites */}
-          <div className="glass-card p-10 md:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
-            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA</h3>
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="space-y-3">
-                <div className="text-4xl md:text-5xl font-bold text-green-400">6h/semaine</div>
-                <div className="text-lg md:text-xl text-foreground font-bold">Temps économisé</div>
-                <div className="text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre</div>
+          <div className="glass-card p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 text-center">
+              <div className="space-y-2 md:space-y-3">
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-400">6h/semaine</div>
+                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Temps économisé</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre</div>
               </div>
-              <div className="space-y-3">
-                <div className="text-4xl md:text-5xl font-bold text-green-400">×2.5</div>
-                <div className="text-lg md:text-xl text-foreground font-bold">Rendez-vous décrochés</div>
-                <div className="text-sm text-muted-foreground">Grâce à une organisation optimisée</div>
+              <div className="space-y-2 md:space-y-3">
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-400">×2.5</div>
+                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Rendez-vous décrochés</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Grâce à une organisation optimisée</div>
               </div>
-              <div className="space-y-3">
-                <div className="text-4xl md:text-5xl font-bold text-green-400">+40%</div>
-                <div className="text-lg md:text-xl text-foreground font-bold">Croissance du CA</div>
-                <div className="text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation</div>
+              <div className="space-y-2 md:space-y-3">
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-400">+40%</div>
+                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Croissance du CA</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation</div>
               </div>
             </div>
           </div>
@@ -357,7 +357,7 @@ const Index = () => {
       {/* Section Prix */}
       <section 
         ref={pricingSection.ref}
-        className={`relative py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000 ${
+        className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000 ${
           pricingSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
         }`}
       >
@@ -402,9 +402,9 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mb-12 md:mb-20">
             {/* Plan Starter */}
-            <div className="glass-card p-8 space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
+            <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Starter</h3>
                 <p className="text-muted-foreground font-medium">Pour tester la prospection ciblée</p>
@@ -454,57 +454,57 @@ const Index = () => {
             </div>
 
             {/* Plan Pro - Recommandé */}
-            <div className="relative glass-card p-10 space-y-7 border-accent shadow-2xl shadow-accent/40 scale-110 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
-              <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-8 py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
+            <div className="relative glass-card p-8 md:p-10 space-y-5 md:space-y-7 border-accent shadow-2xl shadow-accent/40 md:scale-105 lg:scale-110 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
+              <div className="absolute -top-4 md:-top-5 left-1/2 -translate-x-1/2 px-4 md:px-8 py-2 md:py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm md:text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
                 <Sparkles className="w-5 h-5" />
                 Le plus populaire
               </div>
               <div className="space-y-2">
-                <h3 className="text-3xl font-bold gradient-text">Pro</h3>
-                <p className="text-foreground font-semibold">Pour développer rapidement</p>
+                <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
+                <p className="text-sm md:text-base text-foreground font-semibold">Pour développer rapidement</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-6xl font-bold gradient-text drop-shadow-lg">
+                <div className="flex items-baseline gap-2 mb-2 md:mb-3">
+                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">
                     {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '169' : '149'}€
                   </span>
-                  <span className="text-foreground font-semibold text-lg">/mois</span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
                 </div>
-                <div className="text-base text-accent font-bold">Multi-secteurs illimité</div>
+                <div className="text-sm md:text-base text-accent font-bold">Multi-secteurs illimité</div>
               </div>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-lg">✨ <strong>50 créations/mois</strong></span>
+              <ul className="space-y-3 md:space-y-4">
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">✨ <strong>50 créations/mois</strong></span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-lg">🎯 <strong>Tous les secteurs</strong></span>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">🎯 <strong>Tous les secteurs</strong></span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-lg">💎 <strong>Contacts dirigeants</strong></span>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">💎 <strong>Contacts dirigeants</strong></span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-lg">🤖 <strong>Filtres IA avancés</strong></span>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">🤖 <strong>Filtres IA avancés</strong></span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold">📊 Analytics & prévisions</span>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-sm md:text-base">📊 Analytics & prévisions</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-lg">⚡ <strong>Support prioritaire 24h</strong></span>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">⚡ <strong>Support prioritaire 24h</strong></span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-lg py-7 hover:scale-105 transition-transform" size="lg">
+              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
                 Essai gratuit 7 jours
               </Button>
             </div>
 
             {/* Plan Entreprise */}
-            <div className="glass-card p-8 space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
+            <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Entreprise</h3>
                 <p className="text-muted-foreground font-medium">Pour les équipes commerciales</p>
