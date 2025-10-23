@@ -62,10 +62,21 @@ export const ImportDialog = () => {
         description: responseData.message,
       });
 
-      // Reload page after 2 seconds
+      // Show qualification notification if new entreprises
+      if (responseData.newEntreprises > 0) {
+        setTimeout(() => {
+          toast({
+            title: "🤖 Qualification IA en cours",
+            description: `${Math.min(responseData.newEntreprises, 100)} nouvelles entreprises en cours d'analyse automatique...`,
+            duration: 5000,
+          });
+        }, 1500);
+      }
+
+      // Reload page after 3 seconds
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 3000);
 
     } catch (error) {
       console.error('Import error:', error);

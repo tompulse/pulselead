@@ -6,6 +6,96 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Background task to qualify entreprises
+async function qualifyEntreprisesBackground(
+  supabase: any,
+  lovableApiKey: string,
+  entrepriseIds: string[]
+) {
+  console.log(`Qualifying ${entrepriseIds.length} entreprises in background...`);
+  
+  // Process in small batches to respect rate limits
+  const batchSize = 10;
+  let qualified = 0;
+  
+  for (let i = 0; i < entrepriseIds.length; i += batchSize) {
+    const batch = entrepriseIds.slice(i, i + batchSize);
+    
+    // Get entreprise details
+    const { data: entreprises } = await supabase
+      .from('entreprises')
+      .select('id, activite, administration, forme_juridique')
+      .in('id', batch);
+    
+    if (!entreprises) continue;
+    
+    // Qualify each in parallel
+    await Promise.all(
+      entreprises.map(async (ent: any) => {
+        try {
+          const prompt = `Analyse cette entreprise et détermine sa catégorie d'activité principale.
+
+CONTEXTE:
+- Activité: ${ent.activite || 'Non spécifiée'}
+- Administration: ${ent.administration || 'Non spécifiée'}
+- Forme juridique: ${ent.forme_juridique || 'Non spécifiée'}
+
+CATÉGORIES:
+livraison, restauration, construction, immobilier, commerce, energie, transport, technologie, services, sante, industrie, communication, other
+
+RÈGLES:
+- Restaurant avec local = "restauration"
+- Coursier vélo indépendant = "livraison"
+- SCI = "immobilier"
+
+Réponds: "categorie|confidence" (ex: "restauration|95")`;
+
+          const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${lovableApiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'google/gemini-2.5-flash-lite',
+              messages: [{ role: 'user', content: prompt }],
+            }),
+          });
+
+          if (!aiResponse.ok) {
+            console.error(`AI error for ${ent.id}: ${aiResponse.status}`);
+            return;
+          }
+
+          const aiData = await aiResponse.json();
+          const response = aiData.choices[0].message.content.trim();
+          const [categorie, confidenceStr] = response.split('|');
+          const confidence = parseInt(confidenceStr) || 50;
+
+          await supabase
+            .from('entreprises')
+            .update({
+              categorie_qualifiee: categorie.toLowerCase().trim(),
+              categorie_confidence: confidence,
+              date_qualification: new Date().toISOString(),
+            })
+            .eq('id', ent.id);
+
+          qualified++;
+          console.log(`Qualified ${ent.id}: ${categorie} (${confidence}%)`);
+        } catch (err) {
+          console.error(`Error qualifying ${ent.id}:`, err);
+        }
+      })
+    );
+    
+    // Wait between batches to respect rate limits
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+  
+  console.log(`Background qualification complete: ${qualified}/${entrepriseIds.length}`);
+}
+
 interface EntrepriseInput {
   nom?: string;
   siret?: string;
@@ -44,6 +134,7 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Verify user
@@ -167,32 +258,66 @@ serve(async (req) => {
     const batchSize = 500;
     let totalInserted = 0;
     let totalUpdated = 0;
+    const newEntrepriseIds: string[] = [];
 
     for (let i = 0; i < uniqueData.length; i += batchSize) {
       const batch = uniqueData.slice(i, i + batchSize);
       
-      const { error: upsertError, count } = await supabase
+      // Get existing SIRETs before upsert
+      const existingSirets = new Set(
+        (await supabase
+          .from('entreprises')
+          .select('siret')
+          .in('siret', batch.map(e => e.siret)))
+          .data?.map(e => e.siret) || []
+      );
+
+      const { error: upsertError, data: upsertedData } = await supabase
         .from('entreprises')
         .upsert(batch, { 
           onConflict: 'siret',
-          count: 'exact'
-        });
+        })
+        .select('id, siret');
 
       if (upsertError) {
         console.error(`Error upserting batch ${i}-${i + batch.length}:`, upsertError);
         throw upsertError;
       }
 
-      totalInserted += count || 0;
-      console.log(`Processed batch ${i / batchSize + 1}: ${count} records`);
+      // Track new insertions for qualification
+      if (upsertedData) {
+        const newIds = upsertedData
+          .filter(e => !existingSirets.has(e.siret))
+          .map(e => e.id);
+        newEntrepriseIds.push(...newIds);
+        totalInserted += newIds.length;
+      }
+
+      console.log(`Processed batch ${i / batchSize + 1}: ${upsertedData?.length} records`);
     }
+
+    // Qualify new entreprises in background (max 100 to control costs)
+    if (newEntrepriseIds.length > 0) {
+      const toQualify = newEntrepriseIds.slice(0, 100);
+      console.log(`Starting background qualification for ${toQualify.length} new entreprises...`);
+      
+      // Launch background task without blocking response
+      qualifyEntreprisesBackground(supabase, lovableApiKey, toQualify).catch(err => {
+        console.error('Background qualification error:', err);
+      });
+    }
+
+    const qualificationMessage = newEntrepriseIds.length > 0
+      ? ` (${Math.min(newEntrepriseIds.length, 100)} seront qualifiées automatiquement par IA)`
+      : '';
 
     return new Response(
       JSON.stringify({
         success: true,
         total: uniqueData.length,
         inserted: totalInserted,
-        message: `Import réussi : ${totalInserted} entreprises synchronisées`
+        newEntreprises: newEntrepriseIds.length,
+        message: `Import réussi : ${totalInserted} nouvelles entreprises${qualificationMessage}`
       }),
       { 
         status: 200, 
