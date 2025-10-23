@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { ImportDialog } from "./ImportDialog";
 
 export const SyncButton = () => {
   const [loading, setLoading] = useState(false);
@@ -37,15 +38,18 @@ export const SyncButton = () => {
   };
 
   return (
-    <Button
-      onClick={handleSync}
-      disabled={loading}
-      variant="outline"
-      size="sm"
-      className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
-    >
-      <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-      <span className="hidden lg:inline ml-1">{loading ? "Sync..." : "Sync"}</span>
-    </Button>
+    <div className="flex gap-2">
+      <ImportDialog />
+      <Button
+        onClick={handleSync}
+        disabled={loading}
+        variant="outline"
+        size="sm"
+        className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
+      >
+        <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+        <span className="hidden lg:inline ml-1">{loading ? "Sync..." : "Sync"}</span>
+      </Button>
+    </div>
   );
 };
