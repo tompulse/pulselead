@@ -53,6 +53,8 @@ interface Entreprise {
   activite?: string;
   code_naf: string;
   forme_juridique?: string;
+  categorie_qualifiee?: string;
+  categorie_confidence?: number;
 }
 
 export const MapView = ({ 
@@ -197,7 +199,7 @@ export const MapView = ({
         // Filter by categories using the same logic as FilterOnboarding
         if (filters.categories && filters.categories.length > 0) {
           filtered = filtered.filter((ent: Entreprise) => {
-            const category = categorizeActivity(ent.activite);
+            const category = categorizeActivity(ent.activite, ent.categorie_qualifiee);
             return filters.categories.includes(category);
           });
         }

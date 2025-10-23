@@ -130,7 +130,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         // Filtre par catégories si sélectionnées
         if (selectedCategories.length > 0) {
           filteredData = filteredData.filter((entreprise: any) => {
-            const category = categorizeActivity(entreprise.activite);
+            const category = categorizeActivity(entreprise.activite, entreprise.categorie_qualifiee);
             return selectedCategories.includes(category);
           });
         }

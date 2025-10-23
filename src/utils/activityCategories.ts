@@ -50,12 +50,17 @@ export const ACTIVITY_CATEGORIES = {
   }
 };
 
-export function categorizeActivity(activity: string | null): string {
+export function categorizeActivity(activity: string | null, qualifiedCategory?: string | null): string {
+  // Si une catégorie qualifiée par l'IA existe, l'utiliser en priorité
+  if (qualifiedCategory && qualifiedCategory !== 'other') {
+    return qualifiedCategory;
+  }
+  
+  // Sinon, fallback sur la méthode par mots-clés
   if (!activity) return "other";
   
   const activityLower = activity.toLowerCase();
   
-  // Chercher la première catégorie qui match
   for (const [key, category] of Object.entries(ACTIVITY_CATEGORIES)) {
     if (category.keywords.some(keyword => activityLower.includes(keyword))) {
       return key;

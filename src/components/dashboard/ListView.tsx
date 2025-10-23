@@ -51,6 +51,8 @@ interface Entreprise {
   effectifs?: number;
   chiffre_affaires?: number;
   site_web?: string;
+  categorie_qualifiee?: string;
+  categorie_confidence?: number;
 }
 
 export const ListView = ({ 
@@ -115,7 +117,7 @@ export const ListView = ({
         // Filter by categories using the same logic as FilterOnboarding
         if (filters.categories && filters.categories.length > 0) {
           filtered = filtered.filter((ent: Entreprise) => {
-            const category = categorizeActivity(ent.activite);
+            const category = categorizeActivity(ent.activite, ent.categorie_qualifiee);
             return filters.categories.includes(category);
           });
         }
@@ -230,8 +232,8 @@ export const ListView = ({
     );
   });
 
-  const getCategoryInfo = (activity: string | null): { emoji: string; label: string } => {
-    const category = categorizeActivity(activity);
+  const getCategoryInfo = (activity: string | null, qualifiedCategory?: string | null): { emoji: string; label: string } => {
+    const category = categorizeActivity(activity, qualifiedCategory);
     const fullLabel = getCategoryLabel(category);
     const parts = fullLabel.split(' ');
     return {
@@ -405,7 +407,7 @@ export const ListView = ({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">{filteredEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
-                const categoryInfo = getCategoryInfo(item.activite);
+                const categoryInfo = getCategoryInfo(item.activite, item.categorie_qualifiee);
                 const crm = crmData[item.id];
                 
                 // Format address

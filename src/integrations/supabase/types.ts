@@ -19,7 +19,7 @@ export type Database = {
           action: string
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           new_values: Json | null
           old_values: Json | null
           resource_id: string | null
@@ -31,7 +31,7 @@ export type Database = {
           action: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           resource_id?: string | null
@@ -43,7 +43,7 @@ export type Database = {
           action?: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           resource_id?: string | null
@@ -59,12 +59,15 @@ export type Database = {
           administration: string | null
           adresse: string | null
           capital: number | null
+          categorie_confidence: number | null
+          categorie_qualifiee: string | null
           chiffre_affaires: number | null
           code_naf: string | null
           code_postal: string | null
           created_at: string | null
           date_demarrage: string | null
           date_enrichissement: string | null
+          date_qualification: string | null
           dirigeant: string | null
           effectifs: number | null
           email: string | null
@@ -91,12 +94,15 @@ export type Database = {
           administration?: string | null
           adresse?: string | null
           capital?: number | null
+          categorie_confidence?: number | null
+          categorie_qualifiee?: string | null
           chiffre_affaires?: number | null
           code_naf?: string | null
           code_postal?: string | null
           created_at?: string | null
           date_demarrage?: string | null
           date_enrichissement?: string | null
+          date_qualification?: string | null
           dirigeant?: string | null
           effectifs?: number | null
           email?: string | null
@@ -123,12 +129,15 @@ export type Database = {
           administration?: string | null
           adresse?: string | null
           capital?: number | null
+          categorie_confidence?: number | null
+          categorie_qualifiee?: string | null
           chiffre_affaires?: number | null
           code_naf?: string | null
           code_postal?: string | null
           created_at?: string | null
           date_demarrage?: string | null
           date_enrichissement?: string | null
+          date_qualification?: string | null
           dirigeant?: string | null
           effectifs?: number | null
           email?: string | null
@@ -446,10 +455,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_old_audit_logs: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_old_audit_logs: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

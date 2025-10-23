@@ -2,6 +2,7 @@ import { useState, Dispatch, SetStateAction } from "react";
 import { List } from "lucide-react";
 import { ListView } from "./ListView";
 import { TourneeFilters } from "./TourneeFilters";
+import { QualificationPanel } from "./QualificationPanel";
 import { useTourneeManager } from "@/hooks/useTourneeManager";
 import { useToast } from "@/hooks/use-toast";
 
@@ -116,21 +117,24 @@ export const ProspectsView = ({
       </div>
 
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
-        {/* Filtres avec création de tournée intégrée */}
-        <div className="w-52 shrink-0 glass-card overflow-y-auto">
-          <TourneeFilters
-            filters={filters}
-            setFilters={setFilters}
-            tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
-            onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
-            tourneeName={tourneeName}
-            setTourneeName={setTourneeName}
-            tourneeDate={tourneeDate}
-            setTourneeDate={setTourneeDate}
-            selectedCount={selectedEntreprises.length}
-            onOptimize={handleOptimize}
-            isOptimizing={isOptimizing}
-          />
+        {/* Filtres et qualification */}
+        <div className="w-72 shrink-0 space-y-3 overflow-y-auto">
+          <QualificationPanel />
+          <div className="glass-card">
+            <TourneeFilters
+              filters={filters}
+              setFilters={setFilters}
+              tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
+              onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
+              tourneeName={tourneeName}
+              setTourneeName={setTourneeName}
+              tourneeDate={tourneeDate}
+              setTourneeDate={setTourneeDate}
+              selectedCount={selectedEntreprises.length}
+              onOptimize={handleOptimize}
+              isOptimizing={isOptimizing}
+            />
+          </div>
         </div>
 
         {/* Content - Liste */}

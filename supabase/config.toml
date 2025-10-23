@@ -1,5 +1,8 @@
 project_id = "pcrxbfbktmekkkqhppjn"
 
+[functions.qualify-entreprise]
+verify_jwt = true
+
 [functions.format-lead-details]
 verify_jwt = true
 
