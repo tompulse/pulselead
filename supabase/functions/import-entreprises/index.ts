@@ -75,45 +75,72 @@ serve(async (req) => {
 
     console.log(`Starting import of ${entreprises.length} entreprises...`);
 
-    // Clean and transform data
+    // Clean and transform data (supports BODACC & standard format)
     const cleanedData = entreprises
-      .map((ent: EntrepriseInput) => {
-        // Clean SIRET
-        const siret = String(ent.siret || '').replace(/\s+/g, '').trim();
+      .map((ent: any) => {
+        // Handle BODACC format: registre is an array with SIRET
+        let siret = '';
+        if (Array.isArray(ent.registre) && ent.registre.length > 0) {
+          siret = String(ent.registre[0]).replace(/\s+/g, '').trim();
+        } else if (ent.siret) {
+          siret = String(ent.siret).replace(/\s+/g, '').trim();
+        }
         
-        if (!siret || siret.length < 14) {
+        if (!siret || siret.length < 9) {
           return null;
+        }
+
+        // Parse JSON strings from BODACC
+        let personneData: any = {};
+        let etablissementData: any = {};
+        
+        try {
+          if (typeof ent.listepersonnes === 'string') {
+            const parsed = JSON.parse(ent.listepersonnes);
+            personneData = parsed.personne || {};
+          }
+          if (typeof ent.listeetablissements === 'string') {
+            const parsed = JSON.parse(ent.listeetablissements);
+            etablissementData = parsed.etablissement || {};
+          }
+        } catch (e) {
+          // Ignore parsing errors
         }
 
         // Parse numeric fields
         const parseNumber = (value: any): number | null => {
           if (value === null || value === undefined || value === '') return null;
-          const num = typeof value === 'string' ? parseFloat(value.replace(/[^\\d.-]/g, '')) : Number(value);
+          const num = typeof value === 'string' ? parseFloat(value.replace(/[^\d.-]/g, '')) : Number(value);
           return isNaN(num) ? null : num;
         };
 
+        // Extract address from BODACC format
+        const adresseSiege = personneData.adresseSiegeSocial || etablissementData.adresse || {};
+        const capital = personneData.capital?.montantCapital || ent.capital;
+
         return {
           siret,
-          nom: String(ent.nom || '').trim() || null,
-          adresse: String(ent.adresse || '').trim() || null,
-          numero_voie: String(ent.numero_voie || '').trim() || null,
-          type_voie: String(ent.type_voie || '').trim() || null,
-          nom_voie: String(ent.nom_voie || '').trim() || null,
-          code_postal: String(ent.code_postal || '').trim() || null,
-          ville: String(ent.ville || '').trim() || null,
-          telephone: String(ent.telephone || '').trim() || null,
-          email: String(ent.email || '').trim() || null,
-          site_web: String(ent.site_web || '').trim() || null,
-          activite: String(ent.activite || '').trim() || null,
-          forme_juridique: String(ent.forme_juridique || '').trim() || null,
-          dirigeant: String(ent.dirigeant || '').trim() || null,
-          code_naf: String(ent.code_naf || '').trim() || null,
-          date_demarrage: ent.date_demarrage || null,
-          capital: parseNumber(ent.capital),
+          nom: ent.commercant || personneData.denomination || ent.nom || null,
+          adresse: ent.adresse || null,
+          numero_voie: adresseSiege.numeroVoie || ent.numero_voie || null,
+          type_voie: adresseSiege.typeVoie || ent.type_voie || null,
+          nom_voie: adresseSiege.nomVoie || ent.nom_voie || null,
+          code_postal: ent.cp || adresseSiege.codePostal || ent.code_postal || null,
+          ville: ent.ville || adresseSiege.ville || null,
+          telephone: ent.telephone || null,
+          email: ent.email || null,
+          site_web: ent.site_web || null,
+          activite: etablissementData.activite || ent.activite || null,
+          forme_juridique: personneData.formeJuridique || ent.forme_juridique || null,
+          dirigeant: ent.dirigeant || null,
+          code_naf: ent.code_naf || null,
+          date_demarrage: ent.dateparution || ent.date_demarrage || null,
+          capital: parseNumber(capital),
           effectifs: parseNumber(ent.effectifs),
           chiffre_affaires: parseNumber(ent.chiffre_affaires),
           latitude: parseNumber(ent.latitude),
           longitude: parseNumber(ent.longitude),
+          administration: personneData.administration || ent.administration || null,
           enrichi: false,
           score_lead: 0,
         };
