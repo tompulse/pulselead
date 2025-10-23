@@ -6,11 +6,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// List of valid categories
+// List of valid categories (extended)
 const VALID_CATEGORIES = [
   'livraison', 'restauration', 'construction', 'immobilier', 
   'commerce', 'energie', 'transport', 'technologie', 
-  'services', 'sante', 'industrie', 'communication'
+  'services', 'sante', 'industrie', 'communication',
+  'agriculture', 'education', 'artisanat', 'finance',
+  'culture', 'juridique', 'activité non précisée'
 ];
 
 // Background task to qualify entreprises
@@ -56,14 +58,20 @@ CATÉGORIES DISPONIBLES (tu DOIS choisir UNE de ces catégories):
 - energie: Électricité, gaz, panneaux solaires, énergie renouvelable
 - transport: Taxis, VTC, transporteurs, déménagement
 - technologie: IT, développement, services numériques
-- services: Conseil, formation, services aux entreprises
+- services: Conseil, formation, services aux entreprises, holdings
 - sante: Professions médicales, paramédicales, bien-être
 - industrie: Fabrication, production, usines
 - communication: Marketing, publicité, médias, graphisme
+- agriculture: Exploitation agricole, viticulture, élevage
+- education: Enseignement, formation, cours
+- artisanat: Artisans, réparation, services à la personne
+- finance: Banque, assurance, gestion de patrimoine
+- culture: Spectacles, événementiel, sport, loisirs
+- juridique: Avocats, notaires, services juridiques
 
 RÈGLES IMPORTANTES:
 - Tu DOIS choisir la catégorie la PLUS PROCHE même si ce n'est pas parfait
-- NE retourne JAMAIS "other" ou "autre"
+- NE retourne JAMAIS "other", "autre" ou "activité non précisée"
 - Si l'activité n'est pas claire, choisis "services" par défaut
 - Privilégie toujours une catégorie spécifique
 
@@ -136,11 +144,11 @@ async function requalifyInvalidCategories(
 ) {
   console.log('Checking for invalid categories...');
   
-  // Find all entreprises with invalid categories
+  // Find all entreprises with invalid categories (excluding "activité non précisée" which is now valid)
   const { data: invalidEntreprises } = await supabase
     .from('entreprises')
     .select('id, nom, siret, activite, forme_juridique, administration')
-    .or(`categorie_qualifiee.is.null,categorie_qualifiee.eq.other,categorie_qualifiee.eq.autre,categorie_qualifiee.eq.Autre,categorie_qualifiee.like.%impossible%,categorie_qualifiee.like.exploitation%,categorie_qualifiee.like.compte tenu%,categorie_qualifiee.like.il est impossible%`)
+    .or(`categorie_qualifiee.eq.autre,categorie_qualifiee.eq.Autre,categorie_qualifiee.like.%impossible%,categorie_qualifiee.like.exploitation%,categorie_qualifiee.like.compte tenu%,categorie_qualifiee.like.il est impossible%`)
     .limit(100);
 
   if (!invalidEntreprises || invalidEntreprises.length === 0) {
@@ -177,14 +185,20 @@ CATÉGORIES DISPONIBLES (tu DOIS choisir UNE de ces catégories):
 - energie: Électricité, gaz, panneaux solaires, énergie renouvelable
 - transport: Taxis, VTC, transporteurs, déménagement
 - technologie: IT, développement, services numériques
-- services: Conseil, formation, services aux entreprises
+- services: Conseil, formation, services aux entreprises, holdings
 - sante: Professions médicales, paramédicales, bien-être
-- industrie: Fabrication, production, usines, agriculture
+- industrie: Fabrication, production, usines
 - communication: Marketing, publicité, médias, graphisme
+- agriculture: Exploitation agricole, viticulture, élevage
+- education: Enseignement, formation, cours
+- artisanat: Artisans, réparation, services à la personne
+- finance: Banque, assurance, gestion de patrimoine
+- culture: Spectacles, événementiel, sport, loisirs
+- juridique: Avocats, notaires, services juridiques
 
 RÈGLES IMPORTANTES:
 - Tu DOIS choisir la catégorie la PLUS PROCHE même si ce n'est pas parfait
-- NE retourne JAMAIS "other" ou "autre"
+- NE retourne JAMAIS "other", "autre" ou "activité non précisée"
 - Si l'activité n'est pas claire, choisis "services" par défaut
 - Privilégie toujours une catégorie spécifique
 

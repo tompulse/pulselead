@@ -1,76 +1,109 @@
-// Catégories d'activités avec leurs mots-clés
+// Catégories d'activités étendues avec leurs mots-clés
 export const ACTIVITY_CATEGORIES = {
-  livraison: {
-    label: "🚴 Livraison / Coursier",
-    keywords: ["coursier", "livraison", "livreur", "vélo", "repas", "uber", "deliveroo"]
+  "activité non précisée": {
+    label: "❓ Activité non précisée",
+    keywords: []
+  },
+  services: {
+    label: "💼 Services & Holdings",
+    keywords: ["conseil", "consulting", "formation", "audit", "expertise", "holding", "gestion", "participations", "services"]
   },
   immobilier: {
     label: "🏠 Immobilier & SCI",
     keywords: ["immobil", "location", "agence", "foncier", "bail", "propriété", "lotissement", "sci", "civile immobilière"]
   },
+  commerce: {
+    label: "🛍️ Commerce & Distribution",
+    keywords: ["commerce", "vente", "magasin", "boutique", "négoce", "retail", "distribution", "e-commerce"]
+  },
+  livraison: {
+    label: "🚴 Livraison / Coursier",
+    keywords: ["coursier", "livraison", "livreur", "vélo", "repas", "uber", "deliveroo", "plateformes"]
+  },
+  restauration: {
+    label: "🍴 Restauration & Alimentation",
+    keywords: ["restaura", "café", "bar", "alimentation", "traiteur", "boulang", "pâtiss", "food", "cuisine"]
+  },
+  technologie: {
+    label: "💻 Technologie & Numérique",
+    keywords: ["informatique", "logiciel", "digital", "web", "développement", "software", "numérique", "tech", "it"]
+  },
   construction: {
     label: "🏗️ BTP / Construction",
     keywords: ["construction", "bâtiment", "travaux", "maçon", "plomberie", "électricité", "menuiserie", "carrelage", "peinture", "rénovation", "chantier"]
   },
-  restauration: {
-    label: "🍴 Restauration",
-    keywords: ["restaura", "café", "bar", "alimentation", "traiteur", "boulang", "pâtiss"]
-  },
-  commerce: {
-    label: "🛍️ Commerce",
-    keywords: ["commerce", "vente", "magasin", "boutique", "négoce", "retail", "distribution"]
-  },
-  energie: {
-    label: "⚡ Énergie",
-    keywords: ["énergie", "électrique", "photovoltaïque", "pompe à chaleur", "renouvelable", "solaire"]
-  },
   transport: {
     label: "🚗 Transport & Logistique",
-    keywords: ["transport", "vtc", "logistique", "déménagement", "taxi", "location de véhicules"]
-  },
-  technologie: {
-    label: "💻 Technologie",
-    keywords: ["informatique", "logiciel", "digital", "web", "développement", "software", "numérique", "tech"]
-  },
-  services: {
-    label: "💼 Services & Holdings",
-    keywords: ["conseil", "consulting", "formation", "audit", "expertise", "holding", "gestion", "participations"]
-  },
-  sante: {
-    label: "⚕️ Santé / Bien-être",
-    keywords: ["santé", "médical", "pharmacie", "cosmétique", "beauté", "coiffure", "esthétique"]
+    keywords: ["transport", "vtc", "logistique", "déménagement", "taxi", "location de véhicules", "fret"]
   },
   industrie: {
-    label: "🏭 Industrie",
-    keywords: ["industrie", "fabrication", "production", "manufacture", "usine"]
+    label: "🏭 Industrie & Production",
+    keywords: ["industrie", "fabrication", "production", "manufacture", "usine", "producteur"]
   },
   communication: {
-    label: "📢 Communication",
-    keywords: ["communication", "marketing", "publicité", "média", "agence"]
+    label: "📢 Communication & Marketing",
+    keywords: ["communication", "marketing", "publicité", "média", "agence", "pub"]
+  },
+  energie: {
+    label: "⚡ Énergie & Environnement",
+    keywords: ["énergie", "électrique", "photovoltaïque", "pompe à chaleur", "renouvelable", "solaire", "environnement"]
+  },
+  sante: {
+    label: "⚕️ Santé & Bien-être",
+    keywords: ["santé", "médical", "pharmacie", "cosmétique", "beauté", "coiffure", "esthétique", "paramédical"]
+  },
+  agriculture: {
+    label: "🌾 Agriculture & Viticulture",
+    keywords: ["agricole", "agriculture", "exploitation", "viticulteur", "viticole", "culture", "élevage"]
+  },
+  education: {
+    label: "📚 Éducation & Formation",
+    keywords: ["éducation", "enseignement", "école", "formation", "cours", "soutien", "apprentissage"]
+  },
+  artisanat: {
+    label: "🔧 Artisanat & Services à la personne",
+    keywords: ["artisan", "artisanat", "réparation", "entretien", "ménage", "nettoyage", "jardinage"]
+  },
+  finance: {
+    label: "💰 Finance & Assurance",
+    keywords: ["finance", "banque", "assurance", "crédit", "gestion patrimoine", "comptabilité"]
+  },
+  culture: {
+    label: "🎨 Culture & Loisirs",
+    keywords: ["culture", "spectacle", "événementiel", "sport", "loisirs", "divertissement", "art"]
+  },
+  juridique: {
+    label: "⚖️ Juridique & Administratif",
+    keywords: ["juridique", "avocat", "notaire", "droit", "administratif", "légal"]
   }
 };
 
 export function categorizeActivity(activity: string | null, qualifiedCategory?: string | null): string {
   // Si une catégorie qualifiée par l'IA existe, l'utiliser en priorité
-  if (qualifiedCategory && qualifiedCategory !== 'other') {
+  if (qualifiedCategory) {
+    // Normaliser les variations
+    if (qualifiedCategory === 'other') return "activité non précisée";
+    if (qualifiedCategory === 'santé') return "sante";
+    if (qualifiedCategory === 'énergie') return "energie";
     return qualifiedCategory;
   }
   
   // Sinon, fallback sur la méthode par mots-clés
-  if (!activity) return "other";
+  if (!activity) return "activité non précisée";
   
   const activityLower = activity.toLowerCase();
   
   for (const [key, category] of Object.entries(ACTIVITY_CATEGORIES)) {
+    if (key === "activité non précisée") continue; // Skip la catégorie par défaut
     if (category.keywords.some(keyword => activityLower.includes(keyword))) {
       return key;
     }
   }
   
-  return "other";
+  return "activité non précisée";
 }
 
 export function getCategoryLabel(categoryKey: string): string {
-  if (categoryKey === "other") return "🔹 Autre";
-  return ACTIVITY_CATEGORIES[categoryKey as keyof typeof ACTIVITY_CATEGORIES]?.label || "🔹 Autre";
+  const category = ACTIVITY_CATEGORIES[categoryKey as keyof typeof ACTIVITY_CATEGORIES];
+  return category?.label || "❓ Activité non précisée";
 }
