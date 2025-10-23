@@ -2,10 +2,8 @@ import { useState, Dispatch, SetStateAction } from "react";
 import { List } from "lucide-react";
 import { ListView } from "./ListView";
 import { TourneeFilters } from "./TourneeFilters";
-import { QualificationStatus } from "./QualificationStatus";
 import { useTourneeManager } from "@/hooks/useTourneeManager";
 import { useToast } from "@/hooks/use-toast";
-import { useAutoQualification } from "@/hooks/useAutoQualification";
 
 interface ProspectsViewProps {
   filters: {
@@ -35,7 +33,6 @@ export const ProspectsView = ({
   const [tourneeActive, setTourneeActive] = useState(false);
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState("");
-  const { isQualifying, results: qualificationResults } = useAutoQualification();
   
   const {
     selectedEntreprises,
@@ -117,16 +114,6 @@ export const ProspectsView = ({
           Prospects
         </h2>
       </div>
-
-      {/* Statut de qualification */}
-      {(isQualifying || qualificationResults) && (
-        <div className="shrink-0 px-3">
-          <QualificationStatus 
-            isQualifying={isQualifying} 
-            results={qualificationResults} 
-          />
-        </div>
-      )}
 
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
         {/* Filtres */}

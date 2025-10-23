@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LogOut, MapIcon, Navigation, TrendingUp } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { SyncButton } from "./SyncButton";
+import { QualificationProgress } from "./QualificationProgress";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardHeaderProps {
@@ -10,9 +11,18 @@ interface DashboardHeaderProps {
   onViewChange: (view: 'prospects' | 'tournees' | 'crm') => void;
   isAdmin: boolean;
   onLogout: () => void;
+  isQualifying?: boolean;
+  qualificationResults?: any;
 }
 
-export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: DashboardHeaderProps) => {
+export const DashboardHeader = ({ 
+  view, 
+  onViewChange, 
+  isAdmin, 
+  onLogout,
+  isQualifying,
+  qualificationResults 
+}: DashboardHeaderProps) => {
   const isMobile = useIsMobile();
 
   const handleViewChange = (newView: typeof view) => {
@@ -62,6 +72,10 @@ export const DashboardHeader = ({ view, onViewChange, isAdmin, onLogout }: Dashb
 
         <div className="flex items-center gap-2">
           {isAdmin && !isMobile && <SyncButton />}
+          <QualificationProgress 
+            isQualifying={isQualifying || false} 
+            results={qualificationResults} 
+          />
           <Button
             variant="outline"
             size="sm"

@@ -199,6 +199,8 @@ const DashboardContent = () => {
         onViewChange={setView}
         isAdmin={isAdmin}
         onLogout={handleLogout}
+        isQualifying={isQualifying}
+        qualificationResults={qualificationResults}
       />
       
       <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
