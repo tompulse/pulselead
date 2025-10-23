@@ -29,18 +29,6 @@ export const entrepriseService = {
         query = query.lte('date_demarrage', filters.dateTo);
       }
       
-      // Filter by departments (code postal starts with department code)
-      if (filters.departments && filters.departments.length > 0) {
-        const deptFilters = filters.departments.map(dept => {
-          // Handle Corsica special cases
-          if (dept === '2A' || dept === '2B') {
-            return `code_postal.like.${dept}%`;
-          }
-          return `code_postal.like.${dept}%`;
-        }).join(',');
-        query = query.or(deptFilters);
-      }
-
       // Filtre pour activité définie/non définie
       if (filters.activiteDefinie === true) {
         query = query.not('activite', 'is', null).neq('activite', '');
@@ -54,6 +42,21 @@ export const entrepriseService = {
       
       // Filter client-side for more complex filters
       let filteredData = data || [];
+      
+      // Filter by departments (code postal starts with department code)
+      if (filters.departments && filters.departments.length > 0) {
+        filteredData = filteredData.filter(e => {
+          if (!e.code_postal) return false;
+          return filters.departments!.some(dept => {
+            // Handle Corsica special cases
+            if (dept === '2A' || dept === '2B') {
+              return e.code_postal.startsWith(dept);
+            }
+            // For standard departments (01-95), match the first 2 digits
+            return e.code_postal.startsWith(dept);
+          });
+        });
+      }
       
       // Filter by categories using categorie_qualifiee
       if (filters.categories && filters.categories.length > 0) {
