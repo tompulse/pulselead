@@ -3,12 +3,12 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Locate } from "lucide-react";
 import { categorizeActivity } from "@/utils/activityCategories";
-import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { offlineStorage } from "@/utils/offlineStorage";
+import { useDashboardData } from "@/hooks/useDashboardData";
 
 // Lazy load mapbox pour optimiser le chargement initial
 const loadMapbox = () => import("mapbox-gl");
@@ -21,6 +21,8 @@ interface MapViewProps {
     departments: string[];
     formesJuridiques?: string[];
     searchQuery?: string;
+    typeEvenement?: string[];
+    activiteDefinie?: boolean | null;
   };
   onEntrepriseSelect?: (entreprise: Entreprise) => void;
   selectionMode?: boolean;
@@ -68,8 +70,6 @@ export const MapView = ({
 }: MapViewProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
-  const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
-  const [loading, setLoading] = useState(true);
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
   const markersRef = useRef<any[]>([]);
   const isMobile = useIsMobile();
@@ -78,6 +78,10 @@ export const MapView = ({
   const [mapboxgl, setMapboxgl] = useState<any>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const userMarkerRef = useRef<any>(null);
+  
+  // Use the dashboard data hook with the service - only show entreprises with coordinates
+  const { entreprises: allEntreprises, isLoading: loading } = useDashboardData(filters);
+  const entreprises = allEntreprises.filter(e => e.latitude && e.longitude);
   const [geolocating, setGeolocating] = useState(false);
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
   const [tokenError, setTokenError] = useState(false);
@@ -131,113 +135,6 @@ export const MapView = ({
 
     fetchToken();
   }, []);
-
-  // Fetch entreprises from Supabase with offline cache
-  useEffect(() => {
-    const fetchEntreprises = async () => {
-      setLoading(true);
-      
-      const cacheKey = `entreprises_${JSON.stringify(filters)}`;
-      
-      // Essayer de charger depuis le cache d'abord
-      try {
-        const cachedData = await offlineStorage.get<Entreprise[]>(cacheKey);
-        if (cachedData) {
-          setEntreprises(cachedData);
-          setLoading(false);
-          // Continuer à charger les données fraîches en arrière-plan
-        }
-      } catch (error) {
-        console.error('Erreur de lecture du cache:', error);
-      }
-      
-      // Charger les données depuis Supabase
-      let query = (supabase as any)
-        .from("entreprises")
-        .select("*")
-        .not("latitude", "is", null)
-        .not("longitude", "is", null);
-
-      // Apply date filters
-      if (filters.dateFrom || filters.dateTo) {
-        query = query.or(`date_demarrage.is.null,and(date_demarrage.gte.${filters.dateFrom || "1900-01-01"},date_demarrage.lte.${filters.dateTo || "2100-12-31"})`);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Error fetching entreprises:", error);
-        // Si on a des données en cache et qu'il y a une erreur réseau, utiliser le cache
-        const cachedData = await offlineStorage.get<Entreprise[]>(cacheKey);
-        if (cachedData) {
-          toast.info("Mode hors-ligne: affichage des données en cache");
-          setEntreprises(cachedData);
-        } else {
-          setEntreprises([]);
-        }
-      } else {
-        let filtered = data || [];
-        
-        // Filter by departments first
-        if (filters.departments && filters.departments.length > 0) {
-          filtered = filtered.filter((ent: Entreprise) => {
-            const codePostal = ent.code_postal;
-            if (!codePostal) return false;
-            
-            const normalizedCP = codePostal.length === 4 ? '0' + codePostal : codePostal;
-            const dept = normalizedCP.substring(0, 2);
-            
-            if (normalizedCP.startsWith('20')) {
-              // Corse: impossible de distinguer 2A vs 2B via le code postal => on inclut si l'un des deux est sélectionné
-              return filters.departments.includes('2A') || filters.departments.includes('2B');
-            }
-            
-            return filters.departments.includes(dept);
-          });
-        }
-        
-        // Filter by categories using the same logic as FilterOnboarding
-        if (filters.categories && filters.categories.length > 0) {
-          filtered = filtered.filter((ent: Entreprise) => {
-            const category = categorizeActivity(ent.activite, ent.categorie_qualifiee);
-            return filters.categories.includes(category);
-          });
-        }
-
-        // Filter by formes juridiques
-        if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
-          filtered = filtered.filter((ent: Entreprise) => {
-            const forme = normalizeFormeJuridique(ent.forme_juridique);
-            return filters.formesJuridiques!.includes(forme);
-          });
-        }
-
-        // Filter by search query
-        if (filters.searchQuery) {
-          const query = filters.searchQuery.toLowerCase();
-          filtered = filtered.filter((ent: Entreprise) => 
-            ent.nom?.toLowerCase().includes(query) ||
-            ent.ville?.toLowerCase().includes(query) ||
-            ent.code_postal?.includes(query) ||
-            ent.activite?.toLowerCase().includes(query) ||
-            ent.forme_juridique?.toLowerCase().includes(query)
-          );
-        }
-        
-        setEntreprises(filtered);
-        
-        // Sauvegarder dans le cache
-        try {
-          await offlineStorage.set(cacheKey, filtered);
-        } catch (error) {
-          console.error('Erreur de sauvegarde du cache:', error);
-        }
-      }
-      setLoading(false);
-    };
-
-    fetchEntreprises();
-  }, [filters]);
 
   // Lazy load Mapbox library
   useEffect(() => {

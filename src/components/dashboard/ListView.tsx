@@ -2,7 +2,6 @@ import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calend
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
-import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { useDashboardData } from "@/hooks/useDashboardData";
 
 interface ListViewProps {
   filters: {
@@ -20,6 +20,8 @@ interface ListViewProps {
     departments: string[];
     formesJuridiques?: string[];
     searchQuery?: string;
+    typeEvenement?: string[];
+    activiteDefinie?: boolean | null;
   };
   onEntrepriseSelect?: (entreprise: Entreprise) => void;
   selectionMode?: boolean;
@@ -62,8 +64,6 @@ export const ListView = ({
   selectedEntreprises = [],
   onToggleSelection
 }: ListViewProps) => {
-  const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
-  const [loading, setLoading] = useState(true);
   const [crmData, setCrmData] = useState<Record<string, { 
     status: any; 
     interactionCount: number; 
@@ -74,69 +74,11 @@ export const ListView = ({
   }>>({});
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  
+  // Use the dashboard data hook with the service
+  const { entreprises, isLoading: loading } = useDashboardData(filters);
 
   useEffect(() => {
-    const fetchEntreprises = async () => {
-      setLoading(true);
-      
-      let query = (supabase as any)
-        .from("entreprises")
-        .select("*");
-
-      // Apply date filters with null handling
-      if (filters.dateFrom || filters.dateTo) {
-        query = query.or(`date_demarrage.is.null,and(date_demarrage.gte.${filters.dateFrom || "1900-01-01"},date_demarrage.lte.${filters.dateTo || "2100-12-31"})`);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Error fetching entreprises:", error);
-        setEntreprises([]);
-      } else {
-        let filtered = data || [];
-        
-        // Filter by departments first
-        if (filters.departments && filters.departments.length > 0) {
-          filtered = filtered.filter((ent: Entreprise) => {
-            const codePostal = ent.code_postal;
-            if (!codePostal) return false;
-            
-            const normalizedCP = codePostal.length === 4 ? '0' + codePostal : codePostal;
-            const dept = normalizedCP.substring(0, 2);
-            
-            if (normalizedCP.startsWith('20')) {
-              // Corse: inclure si 2A ou 2B est sélectionné (impossible de différencier via CP)
-              return filters.departments.includes('2A') || filters.departments.includes('2B');
-            }
-            
-            return filters.departments.includes(dept);
-          });
-        }
-
-        // Filter by categories using the same logic as FilterOnboarding
-        if (filters.categories && filters.categories.length > 0) {
-          filtered = filtered.filter((ent: Entreprise) => {
-            const category = categorizeActivity(ent.activite, ent.categorie_qualifiee);
-            return filters.categories.includes(category);
-          });
-        }
-
-        // Filter by formes juridiques
-        if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
-          filtered = filtered.filter((ent: Entreprise) => {
-            const forme = normalizeFormeJuridique(ent.forme_juridique);
-            return filters.formesJuridiques!.includes(forme);
-          });
-        }
-
-        setEntreprises(filtered);
-      }
-      setLoading(false);
-    };
-
-    fetchEntreprises();
-
     // Fetch CRM data for all entreprises
     const fetchCRMData = async () => {
       const { data: { user } } = await supabase.auth.getUser();

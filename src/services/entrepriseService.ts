@@ -1,4 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
+import { categorizeActivity } from "@/utils/activityCategories";
+import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
 
 export interface EntrepriseFilters {
   dateFrom?: string;
@@ -7,6 +9,8 @@ export interface EntrepriseFilters {
   departments?: string[];
   typeEvenement?: string[];
   activiteDefinie?: boolean | null;
+  formesJuridiques?: string[];
+  searchQuery?: string;
 }
 
 export const entrepriseService = {
@@ -24,8 +28,17 @@ export const entrepriseService = {
       if (filters.dateTo) {
         query = query.lte('date_demarrage', filters.dateTo);
       }
+      
+      // Filter by departments (code postal starts with department code)
       if (filters.departments && filters.departments.length > 0) {
-        query = query.in('code_postal', filters.departments.map(d => d));
+        const deptFilters = filters.departments.map(dept => {
+          // Handle Corsica special cases
+          if (dept === '2A' || dept === '2B') {
+            return `code_postal.like.${dept}%`;
+          }
+          return `code_postal.like.${dept}%`;
+        }).join(',');
+        query = query.or(deptFilters);
       }
 
       // Filtre pour activité définie/non définie
@@ -39,11 +52,34 @@ export const entrepriseService = {
       
       if (error) throw error;
       
-      // Filter by categories client-side (if needed)
+      // Filter client-side for more complex filters
       let filteredData = data || [];
+      
+      // Filter by categories using categorie_qualifiee
       if (filters.categories && filters.categories.length > 0) {
+        filteredData = filteredData.filter(e => {
+          const category = categorizeActivity(e.activite, e.categorie_qualifiee);
+          return filters.categories!.includes(category);
+        });
+      }
+      
+      // Filter by formes juridiques
+      if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
+        filteredData = filteredData.filter(e => {
+          const forme = normalizeFormeJuridique(e.forme_juridique);
+          return filters.formesJuridiques!.includes(forme);
+        });
+      }
+      
+      // Filter by search query
+      if (filters.searchQuery && filters.searchQuery.trim()) {
+        const searchLower = filters.searchQuery.toLowerCase();
         filteredData = filteredData.filter(e => 
-          filters.categories!.some(cat => e.activite?.toLowerCase().includes(cat.toLowerCase()))
+          e.nom?.toLowerCase().includes(searchLower) ||
+          e.siret?.includes(filters.searchQuery!) ||
+          e.ville?.toLowerCase().includes(searchLower) ||
+          e.adresse?.toLowerCase().includes(searchLower) ||
+          e.activite?.toLowerCase().includes(searchLower)
         );
       }
 
