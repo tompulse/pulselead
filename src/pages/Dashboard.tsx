@@ -28,7 +28,7 @@ const DashboardContent = () => {
   const [showWizard, setShowWizard] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [filters, setFilters] = useState({
-    dateFrom: "2025-09-01",
+    dateFrom: "",
     dateTo: "",
     categories: [] as string[],
     departments: [] as string[],

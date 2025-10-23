@@ -71,7 +71,7 @@ export const TourneesView = () => {
   const [editedName, setEditedName] = useState("");
   const [editedDate, setEditedDate] = useState<Date | undefined>(undefined);
   const [filters, setFilters] = useState({
-    dateFrom: "2025-09-01",
+    dateFrom: "",
     dateTo: "",
     categories: [] as string[],
     departments: [] as string[],

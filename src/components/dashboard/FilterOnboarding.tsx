@@ -100,11 +100,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           .not('latitude', 'is', null)
           .not('longitude', 'is', null);
 
-        // Aligner avec le dashboard: inclure dates nulles ou démarrées après 2025-09-01
-        query = query.or(`date_demarrage.is.null,and(date_demarrage.gte.2025-09-01,date_demarrage.lte.2100-12-31)`);
-
-        // Le filtrage par départements est fait côté client pour permettre une logique cohérente (et gérer la Corse)
-        // Ancien filtre SQL supprimé pour éviter les conflits avec le filtre de date.
+        // Pas de filtre de date - on affiche toutes les entreprises
 
         const { data, error } = await query;
 

@@ -1,8 +1,12 @@
 // Catégories d'activités avec leurs mots-clés
 export const ACTIVITY_CATEGORIES = {
+  livraison: {
+    label: "🚴 Livraison / Coursier",
+    keywords: ["coursier", "livraison", "livreur", "vélo", "repas", "uber", "deliveroo"]
+  },
   immobilier: {
-    label: "🏠 Immobilier",
-    keywords: ["immobil", "location", "agence", "foncier", "bail", "propriété", "lotissement"]
+    label: "🏠 Immobilier & SCI",
+    keywords: ["immobil", "location", "agence", "foncier", "bail", "propriété", "lotissement", "sci", "civile immobilière"]
   },
   construction: {
     label: "🏗️ BTP / Construction",
@@ -21,16 +25,16 @@ export const ACTIVITY_CATEGORIES = {
     keywords: ["énergie", "électrique", "photovoltaïque", "pompe à chaleur", "renouvelable", "solaire"]
   },
   transport: {
-    label: "🚗 Transport",
-    keywords: ["transport", "vtc", "logistique", "livraison", "déménagement"]
+    label: "🚗 Transport & Logistique",
+    keywords: ["transport", "vtc", "logistique", "déménagement", "taxi", "location de véhicules"]
   },
   technologie: {
     label: "💻 Technologie",
     keywords: ["informatique", "logiciel", "digital", "web", "développement", "software", "numérique", "tech"]
   },
   services: {
-    label: "💼 Services pro",
-    keywords: ["conseil", "consulting", "formation", "audit", "expertise", "holding", "gestion"]
+    label: "💼 Services & Holdings",
+    keywords: ["conseil", "consulting", "formation", "audit", "expertise", "holding", "gestion", "participations"]
   },
   sante: {
     label: "⚕️ Santé / Bien-être",

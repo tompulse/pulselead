@@ -15,6 +15,7 @@ export const entrepriseService = {
         .select('*')
         .order('created_at', { ascending: false });
 
+      // Appliquer les filtres de date uniquement s'ils sont définis
       if (filters.dateFrom) {
         query = query.gte('date_demarrage', filters.dateFrom);
       }
