@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,21 +9,61 @@ export const QualifyAllButton = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [stats, setStats] = useState<any>(null);
+  const [processedCount, setProcessedCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const { toast } = useToast();
+  const pollingIntervalRef = useRef<number | null>(null);
+
+  const pollProgress = async (initialUnqualified: number) => {
+    // Vérifier combien d'entreprises ont été qualifiées
+    const { count } = await supabase
+      .from('entreprises')
+      .select('*', { count: 'exact', head: true })
+      .not('categorie_qualifiee', 'is', null);
+
+    const qualified = count || 0;
+    const processed = qualified;
+    const progressPercent = Math.min(Math.round((processed / initialUnqualified) * 100), 99);
+    
+    setProcessedCount(processed);
+    setProgress(progressPercent);
+  };
 
   const handleQualify = async () => {
     setLoading(true);
     setProgress(0);
     setStats(null);
+    setProcessedCount(0);
 
     try {
+      // Compter les entreprises non qualifiées au départ
+      const { count: unqualifiedCount } = await supabase
+        .from('entreprises')
+        .select('*', { count: 'exact', head: true })
+        .is('categorie_qualifiee', null);
+
+      const total = unqualifiedCount || 0;
+      setTotalCount(total);
+
       toast({
         title: "🤖 Qualification en cours",
-        description: "L'IA qualifie toutes les entreprises non qualifiées...",
+        description: `Qualification de ${total} entreprises en cours...`,
         duration: 3000,
       });
 
+      // Démarrer le polling toutes les 2 secondes
+      pollingIntervalRef.current = window.setInterval(() => {
+        pollProgress(total);
+      }, 2000);
+
+      // Lancer la qualification
       const { data, error } = await supabase.functions.invoke("qualify-all-entreprises");
+
+      // Arrêter le polling
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
 
       if (error) throw error;
 
@@ -40,6 +80,13 @@ export const QualifyAllButton = () => {
       setTimeout(() => window.location.reload(), 2000);
     } catch (error) {
       console.error("Erreur de qualification:", error);
+      
+      // Arrêter le polling en cas d'erreur
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+      
       toast({
         title: "❌ Erreur de qualification",
         description: error instanceof Error ? error.message : "Erreur inconnue",
@@ -67,8 +114,11 @@ export const QualifyAllButton = () => {
       </Button>
       
       {loading && (
-        <div className="w-full">
+        <div className="w-full space-y-1">
           <Progress value={progress} className="h-1" />
+          <div className="text-xs text-muted-foreground text-center">
+            {progress}% - {processedCount}/{totalCount} entreprises
+          </div>
         </div>
       )}
       
