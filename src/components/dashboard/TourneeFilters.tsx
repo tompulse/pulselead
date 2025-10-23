@@ -5,7 +5,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
-import { getCategoryLabel } from "@/utils/activityCategories";
+import { getCategoryLabel, ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
+import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -55,42 +56,9 @@ export const TourneeFilters = ({
   const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
   const [activiteOpen, setActiviteOpen] = useState(false);
   
-  // Récupération dynamique des valeurs depuis la base de données
-  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
-  const [availableFormes, setAvailableFormes] = useState<string[]>([]);
-  const [loadingOptions, setLoadingOptions] = useState(true);
-
-  useEffect(() => {
-    const fetchDistinctValues = async () => {
-      setLoadingOptions(true);
-      
-      // Récupérer les catégories distinctes
-      const { data: categoriesData } = await supabase
-        .from('entreprises')
-        .select('categorie_qualifiee')
-        .not('categorie_qualifiee', 'is', null);
-      
-      const uniqueCategories = Array.from(
-        new Set(categoriesData?.map(e => e.categorie_qualifiee).filter(Boolean))
-      ).sort();
-      
-      // Récupérer les formes juridiques distinctes
-      const { data: formesData } = await supabase
-        .from('entreprises')
-        .select('forme_juridique')
-        .not('forme_juridique', 'is', null);
-      
-      const uniqueFormes = Array.from(
-        new Set(formesData?.map(e => e.forme_juridique).filter(Boolean))
-      ).sort();
-      
-      setAvailableCategories(uniqueCategories);
-      setAvailableFormes(uniqueFormes);
-      setLoadingOptions(false);
-    };
-    
-    fetchDistinctValues();
-  }, []);
+  // Utilisation des catégories statiques complètes au lieu de récupérer uniquement celles en base
+  const availableCategories = Object.keys(ACTIVITY_CATEGORIES);
+  const availableFormes = FORMES_JURIDIQUES;
   
   const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
@@ -290,11 +258,7 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            {loadingOptions ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Chargement...
-              </div>
-            ) : availableCategories.length === 0 ? (
+            {availableCategories.length === 0 ? (
               <div className="text-sm text-muted-foreground text-center py-4">
                 Aucune catégorie disponible
               </div>
@@ -334,11 +298,7 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            {loadingOptions ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Chargement...
-              </div>
-            ) : availableFormes.length === 0 ? (
+            {availableFormes.length === 0 ? (
               <div className="text-sm text-muted-foreground text-center py-4">
                 Aucune forme juridique disponible
               </div>
@@ -346,11 +306,11 @@ export const TourneeFilters = ({
               <ScrollArea className="h-64 mt-2 overscroll-contain">
                 <div className="space-y-1 pr-4">
                   {availableFormes.map((forme) => {
-                    const selected = filters.formesJuridiques?.includes(forme);
+                    const selected = filters.formesJuridiques?.includes(forme.value);
                     return (
                       <div
-                        key={forme}
-                        onClick={() => handleFormeToggle(forme)}
+                        key={forme.value}
+                        onClick={() => handleFormeToggle(forme.value)}
                         className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                       >
                         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
@@ -359,7 +319,7 @@ export const TourneeFilters = ({
                           {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                         </div>
                         <span className="text-sm leading-tight">
-                          {forme}
+                          {forme.label}
                         </span>
                       </div>
                     );
