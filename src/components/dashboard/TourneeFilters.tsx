@@ -20,6 +20,7 @@ interface TourneeFiltersProps {
     formesJuridiques?: string[];
     searchQuery?: string;
     typeEvenement?: string[];
+    activiteDefinie?: boolean | null;
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   // Tournée props
@@ -52,6 +53,7 @@ export const TourneeFilters = ({
   const [formesOpen, setFormesOpen] = useState(false);
   const [datesOpen, setDatesOpen] = useState(false);
   const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
+  const [activiteOpen, setActiviteOpen] = useState(false);
   
   // Récupération dynamique des valeurs depuis la base de données
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
@@ -146,12 +148,20 @@ export const TourneeFilters = ({
     });
   };
 
+  const handleActiviteToggle = (value: boolean) => {
+    setFilters((prev: any) => ({
+      ...prev,
+      activiteDefinie: prev.activiteDefinie === value ? null : value
+    }));
+  };
+
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
     categories: [], 
     departments: [], 
     formesJuridiques: [],
     typeEvenement: [],
+    activiteDefinie: null,
     searchQuery: ""
   }));
 
@@ -161,7 +171,8 @@ export const TourneeFilters = ({
     (filters.categories?.length || 0) + 
     (filters.departments?.length || 0) +
     (filters.formesJuridiques?.length || 0) +
-    (filters.typeEvenement?.length || 0);
+    (filters.typeEvenement?.length || 0) +
+    (filters.activiteDefinie !== null && filters.activiteDefinie !== undefined ? 1 : 0);
 
   return (
     <div className="space-y-0">
@@ -369,15 +380,50 @@ export const TourneeFilters = ({
           <CollapsibleContent className="px-4 pb-4">
             <div className="space-y-1 mt-2">
               {[
-                { key: 'creation', label: '🏗️ Création' },
-                { key: 'immatriculation', label: '📋 Immatriculation' },
-                { key: 'cession', label: '🤝 Cession / Vente' }
+                { key: 'immatriculation', label: '📋 Immatriculation (transfert de siège)' },
+                { key: 'creation', label: '🆕 Création d\'entreprise' },
+                { key: 'cession', label: '💼 Vente / Cession de fonds' }
               ].map(({ key, label }) => {
                 const selected = filters.typeEvenement?.includes(key);
                 return (
                   <div
                     key={key}
                     onClick={() => handleTypeEvenementToggle(key)}
+                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                  >
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                      selected ? 'bg-accent border-accent' : 'border-accent/30'
+                    }`}>
+                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                    </div>
+                    <span className="text-sm leading-tight">
+                      {label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Statut de l'activité */}
+        <Collapsible open={activiteOpen} onOpenChange={setActiviteOpen} className="border-b border-accent/20">
+          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+            <span className="font-medium text-sm">Statut de l'activité</span>
+            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${activiteOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="px-4 pb-4">
+            <div className="space-y-1 mt-2">
+              {[
+                { key: true, label: '✅ Activité définie' },
+                { key: false, label: '⚠️ Activité non définie' }
+              ].map(({ key, label }) => {
+                const selected = filters.activiteDefinie === key;
+                return (
+                  <div
+                    key={String(key)}
+                    onClick={() => handleActiviteToggle(key)}
                     className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                   >
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${

@@ -6,6 +6,7 @@ export interface EntrepriseFilters {
   categories?: string[];
   departments?: string[];
   typeEvenement?: string[];
+  activiteDefinie?: boolean | null;
 }
 
 export const entrepriseService = {
@@ -25,6 +26,13 @@ export const entrepriseService = {
       }
       if (filters.departments && filters.departments.length > 0) {
         query = query.in('code_postal', filters.departments.map(d => d));
+      }
+
+      // Filtre pour activité définie/non définie
+      if (filters.activiteDefinie === true) {
+        query = query.not('activite', 'is', null).neq('activite', '');
+      } else if (filters.activiteDefinie === false) {
+        query = query.or('activite.is.null,activite.eq.');
       }
 
       const { data, error } = await query;
