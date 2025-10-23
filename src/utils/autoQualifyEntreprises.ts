@@ -1,10 +1,20 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export async function autoQualifyAllEntreprises() {
+export type QualificationResults = {
+  total: number;
+  processed: number;
+  succeeded: number;
+  failed: number;
+  categories: Record<string, number>;
+  alreadyQualified?: boolean;
+};
+
+export async function autoQualifyAllEntreprises(
+  onProgress?: (partial: QualificationResults) => void
+) {
   console.log('🤖 Démarrage de la qualification automatique...');
   
   try {
-    // Vérifier combien d'entreprises ne sont pas qualifiées
     const { count, error: countError } = await supabase
       .from('entreprises')
       .select('*', { count: 'exact', head: true })
@@ -16,16 +26,14 @@ export async function autoQualifyAllEntreprises() {
     }
 
     if (!count || count === 0) {
+      const done: QualificationResults = { alreadyQualified: true, total: 0, processed: 0, succeeded: 0, failed: 0, categories: {} };
+      onProgress?.(done);
       console.log('✅ Toutes les entreprises sont déjà qualifiées');
-      return {
-        alreadyQualified: true,
-        total: 0,
-      };
+      return done;
     }
 
     console.log(`📊 ${count} entreprises à qualifier`);
 
-    // Récupérer toutes les entreprises non qualifiées par batches
     const batchSize = 50;
     let totalProcessed = 0;
     let totalSucceeded = 0;
@@ -63,11 +71,10 @@ export async function autoQualifyAllEntreprises() {
           totalSucceeded += data.succeeded || 0;
           totalFailed += data.failed || 0;
           
-          // Compter les catégories
           if (data.results) {
             for (const result of data.results) {
               if (result.success && result.categorie) {
-                const cat = result.categorie.toLowerCase();
+                const cat = String(result.categorie).toLowerCase();
                 categoryStats[cat] = (categoryStats[cat] || 0) + 1;
               }
             }
@@ -75,19 +82,34 @@ export async function autoQualifyAllEntreprises() {
         }
 
         totalProcessed += ids.length;
-        const progress = Math.round((totalProcessed / count) * 100);
-        console.log(`⏳ Progression: ${totalProcessed}/${count} (${progress}%) - Batch ${batch + 1}/${totalBatches}`);
+        const snapshot: QualificationResults = {
+          total: count,
+          processed: totalProcessed,
+          succeeded: totalSucceeded,
+          failed: totalFailed,
+          categories: { ...categoryStats },
+        };
+        onProgress?.(snapshot);
+        
+        console.log(`⏳ Progression: ${totalProcessed}/${count} (${Math.round((totalProcessed / count) * 100)}%) - Batch ${batch + 1}/${totalBatches}`);
 
       } catch (err) {
         console.error(`Exception batch ${batch + 1}:`, err);
         totalFailed += ids.length;
+        const snapshot: QualificationResults = {
+          total: count,
+          processed: totalProcessed,
+          succeeded: totalSucceeded,
+          failed: totalFailed,
+          categories: { ...categoryStats },
+        };
+        onProgress?.(snapshot);
       }
 
-      // Pause entre les batches pour éviter rate limiting
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    const results = {
+    const results: QualificationResults = {
       total: count,
       processed: totalProcessed,
       succeeded: totalSucceeded,
@@ -95,6 +117,7 @@ export async function autoQualifyAllEntreprises() {
       categories: categoryStats,
     };
 
+    onProgress?.(results);
     console.log('✅ Qualification terminée:', results);
     return results;
 
