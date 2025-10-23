@@ -5,6 +5,7 @@ export interface EntrepriseFilters {
   dateTo?: string;
   categories?: string[];
   departments?: string[];
+  typeEvenement?: string[];
 }
 
 export const entrepriseService = {
@@ -36,6 +37,23 @@ export const entrepriseService = {
         filteredData = filteredData.filter(e => 
           filters.categories!.some(cat => e.activite?.toLowerCase().includes(cat.toLowerCase()))
         );
+      }
+
+      // Filter by event type
+      if (filters.typeEvenement && filters.typeEvenement.length > 0) {
+        filteredData = filteredData.filter(e => {
+          const activite = e.activite?.toLowerCase() || '';
+          return filters.typeEvenement!.some(type => {
+            if (type === 'creation') {
+              return activite.includes('création') || activite.includes('creation');
+            } else if (type === 'immatriculation') {
+              return activite.includes('immatriculation');
+            } else if (type === 'cession') {
+              return activite.includes('cession') || activite.includes('vente de fonds');
+            }
+            return false;
+          });
+        });
       }
 
       return { data: filteredData, error: null };
