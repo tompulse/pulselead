@@ -40,15 +40,35 @@ CONTEXTE:
 - Administration: ${ent.administration || 'Non spécifiée'}
 - Forme juridique: ${ent.forme_juridique || 'Non spécifiée'}
 
-CATÉGORIES:
-livraison, restauration, construction, immobilier, commerce, energie, transport, technologie, services, sante, industrie, communication, other
+CATÉGORIES DISPONIBLES (tu DOIS choisir UNE de ces catégories):
+- livraison: Coursiers, livreurs, transport de colis
+- restauration: Restaurants, traiteurs, food trucks, cafés
+- construction: BTP, travaux, rénovation, maçonnerie
+- immobilier: SCI, agences, gestion locative, promotion
+- commerce: Boutiques, vente, négoce, distribution
+- energie: Électricité, gaz, panneaux solaires, énergie renouvelable
+- transport: Taxis, VTC, transporteurs, déménagement
+- technologie: IT, développement, services numériques
+- services: Conseil, formation, services aux entreprises
+- sante: Professions médicales, paramédicales, bien-être
+- industrie: Fabrication, production, usines
+- communication: Marketing, publicité, médias, graphisme
 
-RÈGLES:
-- Restaurant avec local = "restauration"
-- Coursier vélo indépendant = "livraison"
+RÈGLES IMPORTANTES:
+- Tu DOIS choisir la catégorie la PLUS PROCHE même si ce n'est pas parfait
+- NE retourne JAMAIS "other" ou "autre"
+- Si l'activité n'est pas claire, choisis "services" par défaut
+- Privilégie toujours une catégorie spécifique
+
+EXEMPLES:
+- Restaurant = "restauration"
+- Coursier vélo = "livraison"
 - SCI = "immobilier"
+- Plombier = "construction"
+- Développeur freelance = "technologie"
+- Coach = "services"
 
-Réponds: "categorie|confidence" (ex: "restauration|95")`;
+Réponds UNIQUEMENT: "categorie|confidence" (ex: "restauration|95")`;
 
           const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
