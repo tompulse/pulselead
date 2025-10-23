@@ -32,10 +32,8 @@ serve(async (req) => {
 
     if (fetchError) throw fetchError;
 
-    const results = [];
-
-    // Qualifier chaque entreprise
-    for (const entreprise of entreprises || []) {
+    // Qualifier toutes les entreprises en parallèle pour éviter les timeouts
+    const qualificationPromises = (entreprises || []).map(async (entreprise) => {
       try {
         const prompt = `Analyse cette entreprise et détermine SA VRAIE catégorie d'activité principale.
 
@@ -111,23 +109,25 @@ Exemple: "restauration|95" ou "livraison|90"`;
           throw updateError;
         }
 
-        results.push({
+        return {
           id: entreprise.id,
           categorie,
           confidence,
           success: true,
-        });
+        };
 
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         console.error(`Error qualifying ${entreprise.id}:`, errorMessage);
-        results.push({
+        return {
           id: entreprise.id,
           success: false,
           error: errorMessage,
-        });
+        };
       }
-    }
+    });
+
+    const results = await Promise.all(qualificationPromises);
 
     return new Response(
       JSON.stringify({ 

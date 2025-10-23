@@ -34,7 +34,7 @@ export async function autoQualifyAllEntreprises(
 
     console.log(`📊 ${count} entreprises à qualifier`);
 
-    const batchSize = 50;
+    const batchSize = 10; // Réduit pour éviter les timeouts
     let totalProcessed = 0;
     let totalSucceeded = 0;
     let totalFailed = 0;
