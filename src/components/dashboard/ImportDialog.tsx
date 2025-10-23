@@ -5,6 +5,7 @@ import { Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import JSZip from "jszip";
 
 export const ImportDialog = () => {
   const [open, setOpen] = useState(false);
@@ -17,10 +18,10 @@ export const ImportDialog = () => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.name.endsWith('.json')) {
+    if (!file.name.endsWith('.json') && !file.name.endsWith('.zip')) {
       toast({
         title: "Format invalide",
-        description: "Veuillez sélectionner un fichier JSON",
+        description: "Veuillez sélectionner un fichier JSON ou ZIP",
         variant: "destructive",
       });
       return;
@@ -31,9 +32,35 @@ export const ImportDialog = () => {
     setResult(null);
 
     try {
-      // Read file
-      const text = await file.text();
-      setProgress(30);
+      let text: string;
+      
+      // Si c'est un fichier ZIP, extraire le JSON
+      if (file.name.endsWith('.zip')) {
+        setProgress(15);
+        const zip = new JSZip();
+        const zipContent = await zip.loadAsync(file);
+        
+        // Trouver le premier fichier .json dans le ZIP
+        const jsonFileName = Object.keys(zipContent.files).find(name => name.endsWith('.json'));
+        
+        if (!jsonFileName) {
+          throw new Error("Aucun fichier JSON trouvé dans l'archive ZIP");
+        }
+        
+        setProgress(25);
+        text = await zipContent.files[jsonFileName].async("text");
+        
+        toast({
+          title: "📦 ZIP extrait",
+          description: `Fichier ${jsonFileName} extrait avec succès`,
+          duration: 2000,
+        });
+        setProgress(30);
+      } else {
+        // Read file directly
+        text = await file.text();
+        setProgress(30);
+      }
       
       // Parse JSON
       const data = JSON.parse(text);
@@ -113,7 +140,7 @@ export const ImportDialog = () => {
         
         <div className="space-y-4">
           <div className="text-sm text-muted-foreground">
-            Sélectionnez un fichier JSON contenant un tableau d'entreprises à importer.
+            Sélectionnez un fichier JSON ou ZIP (contenant un JSON) avec un tableau d'entreprises à importer.
           </div>
 
           {loading && (
@@ -143,7 +170,7 @@ export const ImportDialog = () => {
           <div className="flex flex-col gap-2">
             <input
               type="file"
-              accept=".json"
+              accept=".json,.zip"
               onChange={handleFileSelect}
               disabled={loading}
               className="hidden"
@@ -158,7 +185,7 @@ export const ImportDialog = () => {
               >
                 <span>
                   <Upload className="w-4 h-4 mr-2" />
-                  {loading ? 'Import en cours...' : 'Sélectionner un fichier JSON'}
+                  {loading ? 'Import en cours...' : 'Sélectionner un fichier (JSON/ZIP)'}
                 </span>
               </Button>
             </label>
