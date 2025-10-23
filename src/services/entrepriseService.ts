@@ -19,6 +19,7 @@ export const entrepriseService = {
       let query = supabase
         .from('entreprises')
         .select('*')
+        .limit(100000) // Increase limit to fetch all enterprises
         .order('created_at', { ascending: false });
 
       // Appliquer les filtres de date uniquement s'ils sont définis
