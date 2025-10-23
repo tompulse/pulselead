@@ -70,31 +70,59 @@ export const ImportDialog = () => {
         throw new Error("Le fichier doit contenir un tableau d'entreprises");
       }
 
-      // Call import function
-      const { data: responseData, error } = await supabase.functions.invoke('import-entreprises', {
-        body: { entreprises: data }
-      });
+      // Process in batches to avoid memory limits
+      const BATCH_SIZE = 1000;
+      const totalBatches = Math.ceil(data.length / BATCH_SIZE);
+      let totalInserted = 0;
+      let totalFailed = 0;
+
+      for (let i = 0; i < data.length; i += BATCH_SIZE) {
+        const batch = data.slice(i, i + BATCH_SIZE);
+        const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
+        
+        console.log(`Processing batch ${batchNumber}/${totalBatches} (${batch.length} entreprises)...`);
+        
+        const { data: responseData, error } = await supabase.functions.invoke('import-entreprises', {
+          body: { entreprises: batch }
+        });
+
+        if (error) {
+          console.error(`Error in batch ${batchNumber}:`, error);
+          totalFailed += batch.length;
+          continue;
+        }
+
+        totalInserted += responseData?.inserted || 0;
+        
+        // Update progress
+        const progress = 50 + Math.floor((i + batch.length) / data.length * 50);
+        setProgress(progress);
+      }
 
       setProgress(100);
 
-      if (error) throw error;
+      if (totalFailed === data.length) {
+        throw new Error("Toutes les importations ont échoué");
+      }
 
+      const successMessage = `${totalInserted} entreprises importées avec succès${totalFailed > 0 ? ` (${totalFailed} échecs)` : ''}`;
+      
       setResult({
         success: true,
-        message: responseData.message || `${responseData.inserted} entreprises importées`
+        message: successMessage
       });
 
       toast({
         title: "✅ Import réussi",
-        description: responseData.message,
+        description: successMessage,
       });
 
-      // Show qualification notification if new entreprises
-      if (responseData.newEntreprises > 0) {
+      // Show qualification notification
+      if (totalInserted > 0) {
         setTimeout(() => {
           toast({
             title: "🤖 Qualification IA en cours",
-            description: `${Math.min(responseData.newEntreprises, 100)} nouvelles entreprises en cours d'analyse automatique...`,
+            description: `${Math.min(totalInserted, 100)} nouvelles entreprises en cours d'analyse automatique...`,
             duration: 5000,
           });
         }, 1500);

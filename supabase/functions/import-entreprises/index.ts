@@ -409,10 +409,9 @@ serve(async (req) => {
       );
     }
 
-    // Batch insert (500 at a time to avoid timeouts)
-    const batchSize = 500;
+    // Batch insert (250 at a time to reduce memory)
+    const batchSize = 250;
     let totalInserted = 0;
-    let totalUpdated = 0;
     const newEntrepriseIds: string[] = [];
 
     for (let i = 0; i < uniqueData.length; i += batchSize) {
@@ -439,7 +438,7 @@ serve(async (req) => {
         throw upsertError;
       }
 
-      // Track new insertions for qualification
+      // Track new insertions
       if (upsertedData) {
         const newIds = upsertedData
           .filter(e => !existingSirets.has(e.siret))
@@ -448,7 +447,10 @@ serve(async (req) => {
         totalInserted += newIds.length;
       }
 
-      console.log(`Processed batch ${i / batchSize + 1}: ${upsertedData?.length} records`);
+      console.log(`DB batch ${i / batchSize + 1}/${Math.ceil(uniqueData.length / batchSize)}: inserted/updated ${upsertedData?.length} records`);
+      
+      // Clear batch from memory
+      batch.length = 0;
     }
 
     // Qualify new entreprises in background (max 100 to control costs)
