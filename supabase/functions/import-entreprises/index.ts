@@ -6,6 +6,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// List of valid categories
+const VALID_CATEGORIES = [
+  'livraison', 'restauration', 'construction', 'immobilier', 
+  'commerce', 'energie', 'transport', 'technologie', 
+  'services', 'sante', 'industrie', 'communication'
+];
+
 // Background task to qualify entreprises
 async function qualifyEntreprisesBackground(
   supabase: any,
@@ -92,17 +99,23 @@ Réponds UNIQUEMENT: "categorie|confidence" (ex: "restauration|95")`;
           const [categorie, confidenceStr] = response.split('|');
           const confidence = parseInt(confidenceStr) || 50;
 
+          // Validate category
+          const cleanedCategory = categorie.toLowerCase().trim();
+          const finalCategory = VALID_CATEGORIES.includes(cleanedCategory) 
+            ? cleanedCategory 
+            : 'services';
+
           await supabase
             .from('entreprises')
             .update({
-              categorie_qualifiee: categorie.toLowerCase().trim(),
-              categorie_confidence: confidence,
+              categorie_qualifiee: finalCategory,
+              categorie_confidence: VALID_CATEGORIES.includes(cleanedCategory) ? confidence : 50,
               date_qualification: new Date().toISOString(),
             })
             .eq('id', ent.id);
 
           qualified++;
-          console.log(`Qualified ${ent.id}: ${categorie} (${confidence}%)`);
+          console.log(`Qualified ${ent.id}: ${finalCategory} (${confidence}%)`);
         } catch (err) {
           console.error(`Error qualifying ${ent.id}:`, err);
         }
@@ -114,6 +127,128 @@ Réponds UNIQUEMENT: "categorie|confidence" (ex: "restauration|95")`;
   }
   
   console.log(`Background qualification complete: ${qualified}/${entrepriseIds.length}`);
+}
+
+// Requalify entreprises with invalid categories
+async function requalifyInvalidCategories(
+  supabase: any,
+  lovableApiKey: string
+) {
+  console.log('Checking for invalid categories...');
+  
+  // Find all entreprises with invalid categories
+  const { data: invalidEntreprises } = await supabase
+    .from('entreprises')
+    .select('id, nom, siret, activite, forme_juridique, administration')
+    .or(`categorie_qualifiee.is.null,categorie_qualifiee.eq.other,categorie_qualifiee.eq.autre,categorie_qualifiee.eq.Autre,categorie_qualifiee.like.%impossible%,categorie_qualifiee.like.exploitation%,categorie_qualifiee.like.compte tenu%,categorie_qualifiee.like.il est impossible%`)
+    .limit(100);
+
+  if (!invalidEntreprises || invalidEntreprises.length === 0) {
+    console.log('No invalid categories found');
+    return;
+  }
+
+  console.log(`Found ${invalidEntreprises.length} entreprises with invalid categories, requalifying...`);
+  
+  // Process in small batches
+  const batchSize = 10;
+  let requalified = 0;
+
+  for (let i = 0; i < invalidEntreprises.length; i += batchSize) {
+    const batch = invalidEntreprises.slice(i, i + batchSize);
+    
+    await Promise.all(
+      batch.map(async (ent: any) => {
+        try {
+          const prompt = `Analyse cette entreprise et détermine sa catégorie d'activité principale.
+
+CONTEXTE:
+- Nom: ${ent.nom}
+- Activité: ${ent.activite || 'Non spécifiée'}
+- Administration: ${ent.administration || 'Non spécifiée'}
+- Forme juridique: ${ent.forme_juridique || 'Non spécifiée'}
+
+CATÉGORIES DISPONIBLES (tu DOIS choisir UNE de ces catégories):
+- livraison: Coursiers, livreurs, transport de colis
+- restauration: Restaurants, traiteurs, food trucks, cafés
+- construction: BTP, travaux, rénovation, maçonnerie
+- immobilier: SCI, agences, gestion locative, promotion
+- commerce: Boutiques, vente, négoce, distribution
+- energie: Électricité, gaz, panneaux solaires, énergie renouvelable
+- transport: Taxis, VTC, transporteurs, déménagement
+- technologie: IT, développement, services numériques
+- services: Conseil, formation, services aux entreprises
+- sante: Professions médicales, paramédicales, bien-être
+- industrie: Fabrication, production, usines, agriculture
+- communication: Marketing, publicité, médias, graphisme
+
+RÈGLES IMPORTANTES:
+- Tu DOIS choisir la catégorie la PLUS PROCHE même si ce n'est pas parfait
+- NE retourne JAMAIS "other" ou "autre"
+- Si l'activité n'est pas claire, choisis "services" par défaut
+- Privilégie toujours une catégorie spécifique
+
+Réponds UNIQUEMENT: "categorie|confidence" (ex: "restauration|95")`;
+
+          const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${lovableApiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'google/gemini-2.5-flash-lite',
+              messages: [{ role: 'user', content: prompt }],
+            }),
+          });
+
+          if (!aiResponse.ok) {
+            console.error(`AI error for ${ent.id}: ${aiResponse.status}`);
+            // Fallback to services
+            await supabase
+              .from('entreprises')
+              .update({
+                categorie_qualifiee: 'services',
+                categorie_confidence: 50,
+                date_qualification: new Date().toISOString(),
+              })
+              .eq('id', ent.id);
+            return;
+          }
+
+          const aiData = await aiResponse.json();
+          const response = aiData.choices[0].message.content.trim();
+          const [categorie, confidenceStr] = response.split('|');
+          const confidence = parseInt(confidenceStr) || 50;
+
+          // Validate category
+          const cleanedCategory = categorie.toLowerCase().trim();
+          const finalCategory = VALID_CATEGORIES.includes(cleanedCategory) 
+            ? cleanedCategory 
+            : 'services';
+
+          await supabase
+            .from('entreprises')
+            .update({
+              categorie_qualifiee: finalCategory,
+              categorie_confidence: VALID_CATEGORIES.includes(cleanedCategory) ? confidence : 50,
+              date_qualification: new Date().toISOString(),
+            })
+            .eq('id', ent.id);
+
+          requalified++;
+          console.log(`Requalified ${ent.id}: ${finalCategory} (${confidence}%)`);
+        } catch (err) {
+          console.error(`Error requalifying ${ent.id}:`, err);
+        }
+      })
+    );
+    
+    // Wait between batches to respect rate limits
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+  
+  console.log(`Requalification complete: ${requalified}/${invalidEntreprises.length}`);
 }
 
 interface EntrepriseInput {
@@ -321,9 +456,20 @@ serve(async (req) => {
       const toQualify = newEntrepriseIds.slice(0, 100);
       console.log(`Starting background qualification for ${toQualify.length} new entreprises...`);
       
-      // Launch background task without blocking response
-      qualifyEntreprisesBackground(supabase, lovableApiKey, toQualify).catch(err => {
-        console.error('Background qualification error:', err);
+      // Launch background tasks without blocking response
+      qualifyEntreprisesBackground(supabase, lovableApiKey, toQualify)
+        .then(() => {
+          // After qualifying new enterprises, requalify invalid categories
+          console.log('Starting requalification of invalid categories...');
+          return requalifyInvalidCategories(supabase, lovableApiKey);
+        })
+        .catch((err: Error) => {
+          console.error('Background qualification error:', err);
+        });
+    } else {
+      // Even if no new entreprises, check for invalid categories
+      requalifyInvalidCategories(supabase, lovableApiKey).catch((err: Error) => {
+        console.error('Requalification error:', err);
       });
     }
 

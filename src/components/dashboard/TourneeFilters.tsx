@@ -7,10 +7,9 @@ import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { getCategoryLabel } from "@/utils/activityCategories";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
-import { Route, Calendar, ChevronDown, Filter, Search, Building2, RefreshCw } from "lucide-react";
+import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
 
 interface TourneeFiltersProps {
   filters: {
@@ -138,44 +137,6 @@ export const TourneeFilters = ({
     formesJuridiques: [],
     searchQuery: ""
   }));
-
-  const handleRequalify = async () => {
-    try {
-      toast({
-        title: "Requalification en cours",
-        description: "Cette opération peut prendre quelques minutes...",
-      });
-
-      const { data, error } = await supabase.functions.invoke('requalify-entreprises');
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Requalification terminée",
-        description: `${data.processed} entreprises requalifiées avec succès`,
-      });
-      
-      // Recharger les catégories
-      const { data: newCategories } = await supabase
-        .from('entreprises')
-        .select('categorie_qualifiee')
-        .not('categorie_qualifiee', 'is', null);
-      
-      if (newCategories) {
-        const uniqueCategories = Array.from(
-          new Set(newCategories.map(e => e.categorie_qualifiee).filter(Boolean))
-        ).sort();
-        setAvailableCategories(uniqueCategories);
-      }
-    } catch (error) {
-      console.error('Requalify error:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de requalifier les entreprises",
-        variant: "destructive",
-      });
-    }
-  };
 
   const allDepartments = Object.keys(DEPARTMENT_NAMES).sort();
 
@@ -411,19 +372,9 @@ export const TourneeFilters = ({
           </CollapsibleContent>
         </Collapsible>
 
-      {/* Footer with requalify and reset buttons */}
-      <div className="p-4 border-t border-accent/20 space-y-2">
-        <Button 
-          variant="secondary" 
-          size="sm" 
-          onClick={handleRequalify}
-          className="w-full"
-        >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Requalifier les catégories invalides
-        </Button>
-        
-        {activeFiltersCount > 0 && (
+      {/* Footer with reset button */}
+      {activeFiltersCount > 0 && (
+        <div className="p-4 border-t border-accent/20">
           <Button 
             variant="outline" 
             size="sm" 
@@ -432,8 +383,8 @@ export const TourneeFilters = ({
           >
             Réinitialiser les filtres
           </Button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
