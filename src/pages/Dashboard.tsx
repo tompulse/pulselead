@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useAutoQualification } from "@/hooks/useAutoQualification";
+
 import { DashboardProvider, useDashboard } from "@/contexts/DashboardContext";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Sidebar } from "@/components/dashboard/Sidebar";
@@ -41,7 +41,6 @@ const DashboardContent = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const { isQualifying, results: qualificationResults } = useAutoQualification();
 
   const activeFiltersCount = 
     (filters.categories?.length || 0) + 
@@ -122,28 +121,6 @@ const DashboardContent = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // Notifications de qualification automatique
-  useEffect(() => {
-    if (isQualifying) {
-      toast({
-        title: "🤖 Qualification IA en cours",
-        description: "Analyse intelligente de vos entreprises en arrière-plan...",
-      });
-    } else if (qualificationResults && !qualificationResults.alreadyQualified) {
-      const { succeeded, failed, categories } = qualificationResults;
-      const topCategories = Object.entries(categories as Record<string, number>)
-        .sort(([,a], [,b]) => (b as number) - (a as number))
-        .slice(0, 3)
-        .map(([cat, count]) => `${cat} (${count})`)
-        .join(', ');
-
-      toast({
-        title: "✅ Qualification terminée !",
-        description: `${succeeded} entreprises qualifiées. Top catégories: ${topCategories}`,
-        duration: 8000,
-      });
-    }
-  }, [isQualifying, qualificationResults, toast]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -199,8 +176,6 @@ const DashboardContent = () => {
         onViewChange={setView}
         isAdmin={isAdmin}
         onLogout={handleLogout}
-        isQualifying={isQualifying}
-        qualificationResults={qualificationResults}
       />
       
       <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
