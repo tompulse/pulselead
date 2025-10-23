@@ -191,7 +191,7 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            <ScrollArea className="h-48 mt-2">
+            <ScrollArea className="max-h-64 mt-2">
               <div className="space-y-1 pr-4">
                 {allDepartments.map((deptCode) => {
                   const selected = filters.departments?.includes(deptCode);
@@ -225,27 +225,29 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            <div className="space-y-1 mt-2">
-              {allCategories.map((categoryKey) => {
-                const selected = filters.categories?.includes(categoryKey);
-                return (
-                  <div
-                    key={categoryKey}
-                    onClick={() => handleCategoryToggle(categoryKey)}
-                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                  >
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                      selected ? 'bg-accent border-accent' : 'border-accent/30'
-                    }`}>
-                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+            <ScrollArea className="max-h-64 mt-2">
+              <div className="space-y-1 pr-4">
+                {allCategories.map((categoryKey) => {
+                  const selected = filters.categories?.includes(categoryKey);
+                  return (
+                    <div
+                      key={categoryKey}
+                      onClick={() => handleCategoryToggle(categoryKey)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                    >
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                        selected ? 'bg-accent border-accent' : 'border-accent/30'
+                      }`}>
+                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                      </div>
+                      <span className="text-sm leading-tight">
+                        {getCategoryLabel(categoryKey)}
+                      </span>
                     </div>
-                    <span className="text-sm leading-tight">
-                      {getCategoryLabel(categoryKey)}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </CollapsibleContent>
         </Collapsible>
 
