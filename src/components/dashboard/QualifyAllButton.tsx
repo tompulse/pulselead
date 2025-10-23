@@ -14,19 +14,12 @@ export const QualifyAllButton = () => {
   const { toast } = useToast();
   const pollingIntervalRef = useRef<number | null>(null);
 
-  const pollProgress = async (initialUnqualified: number) => {
-    // Vérifier combien d'entreprises ont été qualifiées
+  const getUnqualifiedCount = async () => {
     const { count } = await supabase
       .from('entreprises')
       .select('*', { count: 'exact', head: true })
-      .not('categorie_qualifiee', 'is', null);
-
-    const qualified = count || 0;
-    const processed = qualified;
-    const progressPercent = Math.min(Math.round((processed / initialUnqualified) * 100), 99);
-    
-    setProcessedCount(processed);
-    setProgress(progressPercent);
+      .is('categorie_qualifiee', null);
+    return count || 0;
   };
 
   const handleQualify = async () => {
@@ -37,42 +30,51 @@ export const QualifyAllButton = () => {
 
     try {
       // Compter les entreprises non qualifiées au départ
-      const { count: unqualifiedCount } = await supabase
-        .from('entreprises')
-        .select('*', { count: 'exact', head: true })
-        .is('categorie_qualifiee', null);
-
-      const total = unqualifiedCount || 0;
-      setTotalCount(total);
+      const initialCount = await getUnqualifiedCount();
+      setTotalCount(initialCount);
 
       toast({
         title: "🤖 Qualification en cours",
-        description: `Qualification de ${total} entreprises en cours...`,
+        description: `Qualification de ${initialCount} entreprises en lots de 50...`,
         duration: 3000,
       });
 
-      // Démarrer le polling toutes les 2 secondes
-      pollingIntervalRef.current = window.setInterval(() => {
-        pollProgress(total);
-      }, 2000);
+      let totalProcessed = 0;
+      let totalSucceeded = 0;
+      let totalFailed = 0;
+      let remainingCount = initialCount;
 
-      // Lancer la qualification
-      const { data, error } = await supabase.functions.invoke("qualify-all-entreprises");
+      // Appeler la fonction en boucle tant qu'il reste des entreprises à qualifier
+      while (remainingCount > 0) {
+        const { data, error } = await supabase.functions.invoke("qualify-all-entreprises");
 
-      // Arrêter le polling
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
+        if (error) {
+          console.error("Erreur lors d'un appel:", error);
+          totalFailed += 50; // Estimer les échecs
+        } else {
+          totalProcessed += data.processed || 0;
+          totalSucceeded += data.succeeded || 0;
+          totalFailed += data.failed || 0;
+        }
+
+        // Mettre à jour le progrès
+        remainingCount = await getUnqualifiedCount();
+        const processed = initialCount - remainingCount;
+        setProcessedCount(processed);
+        setProgress(Math.min(Math.round((processed / initialCount) * 100), 99));
+
+        // Petite pause entre les appels pour éviter de surcharger
+        if (remainingCount > 0) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
 
-      if (error) throw error;
-
-      setStats(data);
       setProgress(100);
+      setStats({ total: initialCount, succeeded: totalSucceeded, failed: totalFailed });
 
       toast({
         title: "✅ Qualification terminée",
-        description: `${data.succeeded}/${data.total} entreprises qualifiées avec succès`,
+        description: `${totalSucceeded}/${initialCount} entreprises qualifiées avec succès`,
         duration: 5000,
       });
 
@@ -80,12 +82,6 @@ export const QualifyAllButton = () => {
       setTimeout(() => window.location.reload(), 2000);
     } catch (error) {
       console.error("Erreur de qualification:", error);
-      
-      // Arrêter le polling en cas d'erreur
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
-      }
       
       toast({
         title: "❌ Erreur de qualification",

@@ -18,12 +18,12 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Récupérer TOUTES les entreprises non qualifiées
+    // Récupérer UN PETIT BATCH d'entreprises non qualifiées (50 max pour éviter timeout)
     const { data: entreprises, error: fetchError } = await supabase
       .from('entreprises')
       .select('id, activite, administration, forme_juridique')
       .is('categorie_qualifiee', null)
-      .limit(10000);
+      .limit(50);
 
     if (fetchError) throw fetchError;
 
@@ -39,13 +39,8 @@ serve(async (req) => {
       errors: [] as string[],
     };
 
-    // Traiter par batch de 100 pour éviter les timeouts
-    const batchSize = 100;
-    
-    for (let i = 0; i < entreprises.length; i += batchSize) {
-      const batch = entreprises.slice(i, i + batchSize);
-      
-      for (const entreprise of batch) {
+    // Traiter toutes les entreprises du batch
+    for (const entreprise of entreprises) {
         try {
           const prompt = `Analyse cette entreprise et détermine SA VRAIE catégorie d'activité principale.
 
@@ -127,11 +122,6 @@ Exemple: "restauration|95" ou "livraison|90"`;
 
           results.processed++;
 
-          // Log progress every 100
-          if (results.processed % 100 === 0) {
-            console.log(`Progress: ${results.processed}/${total} (${Math.round(results.processed/total*100)}%)`);
-          }
-
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           console.error(`Error qualifying ${entreprise.id}:`, errorMessage);
@@ -139,10 +129,6 @@ Exemple: "restauration|95" ou "livraison|90"`;
           results.errors.push(`${entreprise.id}: ${errorMessage}`);
         }
       }
-      
-      // Petite pause entre les batches
-      await new Promise(resolve => setTimeout(resolve, 200));
-    }
 
     console.log('Qualification complete:', results);
 
