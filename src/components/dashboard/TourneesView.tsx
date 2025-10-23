@@ -75,6 +75,8 @@ export const TourneesView = () => {
     dateTo: "",
     categories: [] as string[],
     departments: [] as string[],
+    formesJuridiques: [] as string[],
+    searchQuery: "",
   });
   const { toast } = useToast();
 

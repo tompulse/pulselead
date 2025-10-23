@@ -32,6 +32,8 @@ const DashboardContent = () => {
     dateTo: "",
     categories: [] as string[],
     departments: [] as string[],
+    formesJuridiques: [] as string[],
+    searchQuery: "",
   });
 
   const { view, setView, selectedEntreprise, setSelectedEntreprise, crmPanelOpen, setCrmPanelOpen } = useDashboard();

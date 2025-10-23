@@ -3,6 +3,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Locate } from "lucide-react";
 import { categorizeActivity } from "@/utils/activityCategories";
+import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,8 @@ interface MapViewProps {
     dateTo: string;
     categories: string[];
     departments: string[];
+    formesJuridiques?: string[];
+    searchQuery?: string;
   };
   onEntrepriseSelect?: (entreprise: Entreprise) => void;
   selectionMode?: boolean;
@@ -49,6 +52,7 @@ interface Entreprise {
   capital?: number;
   activite?: string;
   code_naf: string;
+  forme_juridique?: string;
 }
 
 export const MapView = ({ 
@@ -196,6 +200,26 @@ export const MapView = ({
             const category = categorizeActivity(ent.activite);
             return filters.categories.includes(category);
           });
+        }
+
+        // Filter by formes juridiques
+        if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
+          filtered = filtered.filter((ent: Entreprise) => {
+            const forme = normalizeFormeJuridique(ent.forme_juridique);
+            return filters.formesJuridiques!.includes(forme);
+          });
+        }
+
+        // Filter by search query
+        if (filters.searchQuery) {
+          const query = filters.searchQuery.toLowerCase();
+          filtered = filtered.filter((ent: Entreprise) => 
+            ent.nom?.toLowerCase().includes(query) ||
+            ent.ville?.toLowerCase().includes(query) ||
+            ent.code_postal?.includes(query) ||
+            ent.activite?.toLowerCase().includes(query) ||
+            ent.forme_juridique?.toLowerCase().includes(query)
+          );
         }
         
         setEntreprises(filtered);

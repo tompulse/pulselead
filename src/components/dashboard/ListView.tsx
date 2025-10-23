@@ -2,6 +2,7 @@ import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calend
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
+import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,8 @@ interface ListViewProps {
     dateTo: string;
     categories: string[];
     departments: string[];
+    formesJuridiques?: string[];
+    searchQuery?: string;
   };
   onEntrepriseSelect?: (entreprise: Entreprise) => void;
   selectionMode?: boolean;
@@ -59,7 +62,6 @@ export const ListView = ({
 }: ListViewProps) => {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const [crmData, setCrmData] = useState<Record<string, { 
     status: any; 
     interactionCount: number; 
@@ -115,6 +117,14 @@ export const ListView = ({
           filtered = filtered.filter((ent: Entreprise) => {
             const category = categorizeActivity(ent.activite);
             return filters.categories.includes(category);
+          });
+        }
+
+        // Filter by formes juridiques
+        if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
+          filtered = filtered.filter((ent: Entreprise) => {
+            const forme = normalizeFormeJuridique(ent.forme_juridique);
+            return filters.formesJuridiques!.includes(forme);
           });
         }
 
@@ -208,13 +218,15 @@ export const ListView = ({
 
   // Filter by search query
   const filteredEntreprises = entreprises.filter((ent) => {
+    const searchQuery = filters.searchQuery || "";
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
       ent.nom?.toLowerCase().includes(query) ||
       ent.ville?.toLowerCase().includes(query) ||
       ent.code_postal?.includes(query) ||
-      ent.activite?.toLowerCase().includes(query)
+      ent.activite?.toLowerCase().includes(query) ||
+      ent.forme_juridique?.toLowerCase().includes(query)
     );
   });
 
@@ -378,34 +390,6 @@ export const ListView = ({
   return (
     <>
       <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
-        {/* Header with search - More colorful */}
-        <div className="glass-card rounded-xl p-3 md:p-4 border border-accent/30 flex-shrink-0 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent shadow-lg shadow-accent/5">
-          <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2.5 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg shadow-sm">
-                <Building2 className="w-4 h-4 md:w-5 md:h-5 text-accent" />
-              </div>
-              <div>
-                <h3 className="text-base md:text-lg font-bold gradient-text">Liste des entreprises</h3>
-                <p className="text-xs md:text-sm text-muted-foreground font-medium">
-                  {filteredEntreprises.length} résultat{filteredEntreprises.length > 1 ? 's' : ''}
-                </p>
-              </div>
-            </div>
-            
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Rechercher une entreprise..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 bg-background/50 border-accent/20 focus:border-accent h-9"
-              />
-            </div>
-          </div>
-        </div>
-
         {/* Cards Grid - Scrollable */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2">
           {filteredEntreprises.length === 0 ? (
@@ -415,7 +399,7 @@ export const ListView = ({
               </div>
               <h3 className="text-2xl font-bold mb-3">Aucune entreprise trouvée</h3>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                {searchQuery ? "Essayez de modifier votre recherche" : "Cliquez sur 'Synchroniser les données' pour importer vos entreprises"}
+                {filters.searchQuery ? "Essayez de modifier votre recherche" : "Cliquez sur 'Synchroniser les données' pour importer vos entreprises"}
               </p>
             </div>
           ) : (

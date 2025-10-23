@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
+import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
-import { Route, Calendar, ChevronDown, Filter } from "lucide-react";
+import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface TourneeFiltersProps {
@@ -16,6 +17,8 @@ interface TourneeFiltersProps {
     dateTo: string;
     categories: string[];
     departments: string[];
+    formesJuridiques?: string[];
+    searchQuery?: string;
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   // Tournée props
@@ -45,7 +48,9 @@ export const TourneeFilters = ({
 }: TourneeFiltersProps) => {
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [formesOpen, setFormesOpen] = useState(false);
   const [datesOpen, setDatesOpen] = useState(false);
+  
   const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
       const currentCategories = prev.categories || [];
@@ -56,6 +61,20 @@ export const TourneeFilters = ({
         categories: isSelected
           ? currentCategories.filter((c: string) => c !== categoryKey)
           : [...currentCategories, categoryKey]
+      };
+    });
+  };
+
+  const handleFormeToggle = (formeValue: string) => {
+    setFilters((prev: any) => {
+      const currentFormes = prev.formesJuridiques || [];
+      const isSelected = currentFormes.includes(formeValue);
+      
+      return {
+        ...prev,
+        formesJuridiques: isSelected
+          ? currentFormes.filter((f: string) => f !== formeValue)
+          : [...currentFormes, formeValue]
       };
     });
   };
@@ -74,17 +93,38 @@ export const TourneeFilters = ({
     });
   };
 
-  const clearFilters = () => setFilters((prev: any) => ({ ...prev, categories: [], departments: [] }));
+  const clearFilters = () => setFilters((prev: any) => ({ 
+    ...prev, 
+    categories: [], 
+    departments: [], 
+    formesJuridiques: [],
+    searchQuery: ""
+  }));
 
   const allCategories = Object.keys(ACTIVITY_CATEGORIES);
   const allDepartments = Object.keys(DEPARTMENT_NAMES).sort();
 
   const activeFiltersCount = 
     (filters.categories?.length || 0) + 
-    (filters.departments?.length || 0);
+    (filters.departments?.length || 0) +
+    (filters.formesJuridiques?.length || 0);
 
   return (
     <div className="space-y-0">
+        {/* Barre de recherche */}
+        <div className="p-4 border-b border-accent/20">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Rechercher une entreprise..."
+              value={filters.searchQuery || ""}
+              onChange={(e) => setFilters((prev: any) => ({ ...prev, searchQuery: e.target.value }))}
+              className="pl-9 h-9 bg-background/50 border-accent/20 focus:border-accent/40"
+            />
+          </div>
+        </div>
+
         {/* Création de tournée */}
         {onToggleTournee && (
           <Collapsible open={tourneeActive} onOpenChange={onToggleTournee} className="border-b border-accent/20">
@@ -206,6 +246,40 @@ export const TourneeFilters = ({
                 );
               })}
             </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Formes juridiques */}
+        <Collapsible open={formesOpen} onOpenChange={setFormesOpen} className="border-b border-accent/20">
+          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+            <span className="font-medium text-sm">Formes juridiques</span>
+            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${formesOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="px-4 pb-4">
+            <ScrollArea className="max-h-64 mt-2">
+              <div className="space-y-1 pr-4">
+                {FORMES_JURIDIQUES.map((forme) => {
+                  const selected = filters.formesJuridiques?.includes(forme.value);
+                  return (
+                    <div
+                      key={forme.value}
+                      onClick={() => handleFormeToggle(forme.value)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                    >
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                        selected ? 'bg-accent border-accent' : 'border-accent/30'
+                      }`}>
+                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                      </div>
+                      <span className="text-sm leading-tight">
+                        {forme.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </CollapsibleContent>
         </Collapsible>
 
