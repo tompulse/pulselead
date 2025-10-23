@@ -191,7 +191,7 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            <ScrollArea className="max-h-64 mt-2">
+            <ScrollArea className="h-64 mt-2 overscroll-contain">
               <div className="space-y-1 pr-4">
                 {allDepartments.map((deptCode) => {
                   const selected = filters.departments?.includes(deptCode);
@@ -225,7 +225,7 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            <ScrollArea className="max-h-64 mt-2">
+            <ScrollArea className="h-64 mt-2 overscroll-contain">
               <div className="space-y-1 pr-4">
                 {allCategories.map((categoryKey) => {
                   const selected = filters.categories?.includes(categoryKey);
@@ -259,7 +259,7 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            <ScrollArea className="max-h-64 mt-2">
+            <ScrollArea className="h-64 mt-2 overscroll-contain">
               <div className="space-y-1 pr-4">
                 {FORMES_JURIDIQUES.map((forme) => {
                   const selected = filters.formesJuridiques?.includes(forme.value);
