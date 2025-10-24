@@ -113,11 +113,17 @@ export const entrepriseService = {
         });
       }
 
+      // Compute qualified count (global, updates as background job runs)
+      const { count: qualifiedCount } = await supabase
+        .from('entreprises')
+        .select('id', { count: 'exact', head: true })
+        .not('categorie_qualifiee', 'is', null);
+
       const clientFiltersActive = (filters.departments?.length || 0) + (filters.categories?.length || 0) + (filters.formesJuridiques?.length || 0) + (filters.typeEvenement?.length || 0) > 0;
 
       const total = clientFiltersActive ? filteredData.length : (count ?? filteredData.length);
 
-      return { data: filteredData, total, error: null };
+      return { data: filteredData, total, qualifiedCount, error: null };
     } catch (error) {
       console.error('Error fetching entreprises:', error);
       return { data: null, error };

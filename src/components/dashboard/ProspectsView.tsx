@@ -39,7 +39,7 @@ export const ProspectsView = ({
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState("");
   
-  const { entreprises, totalCount } = useDashboardData(filters);
+  const { entreprises, totalCount, qualifiedCount } = useDashboardData(filters);
   
   // Filter by search query to match ListView behavior (server already filters search; this is a safe fallback)
   const filteredEntreprises = entreprises.filter((ent) => {
@@ -60,7 +60,7 @@ export const ProspectsView = ({
     || (filters.formesJuridiques?.length || 0) > 0 
     || (filters.typeEvenement?.length || 0) > 0;
 
-  const resultsCount = clientOnlyFiltersActive ? filteredEntreprises.length : (totalCount ?? filteredEntreprises.length);
+  const resultsCount = qualifiedCount ?? (clientOnlyFiltersActive ? filteredEntreprises.length : (totalCount ?? filteredEntreprises.length));
   
   const {
     selectedEntreprises,

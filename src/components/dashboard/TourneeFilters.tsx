@@ -163,7 +163,7 @@ export const TourneeFilters = ({
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Building2 className="w-4 h-4 text-accent" />
               <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
-              <span>prospect{resultsCount > 1 ? 's' : ''} trouvé{resultsCount > 1 ? 's' : ''}</span>
+              <span>entreprise{resultsCount > 1 ? 's' : ''} qualifiée{resultsCount > 1 ? 's' : ''}</span>
             </div>
           )}
         </div>
