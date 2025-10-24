@@ -249,6 +249,48 @@ export type Database = {
           },
         ]
       }
+      qualification_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          failed_count: number
+          id: string
+          processed_count: number
+          started_at: string
+          status: string
+          succeeded_count: number
+          total_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          failed_count?: number
+          id?: string
+          processed_count?: number
+          started_at?: string
+          status?: string
+          succeeded_count?: number
+          total_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          failed_count?: number
+          id?: string
+          processed_count?: number
+          started_at?: string
+          status?: string
+          succeeded_count?: number
+          total_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       rate_limits: {
         Row: {
           created_at: string | null

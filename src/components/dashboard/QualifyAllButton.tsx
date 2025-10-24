@@ -1,126 +1,152 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Sparkles, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress";
+
+interface QualificationJob {
+  id: string;
+  status: string;
+  total_count: number;
+  processed_count: number;
+  succeeded_count: number;
+  failed_count: number;
+}
 
 export const QualifyAllButton = () => {
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [stats, setStats] = useState<any>(null);
-  const [processedCount, setProcessedCount] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
+  const [activeJob, setActiveJob] = useState<QualificationJob | null>(null);
   const { toast } = useToast();
-  const pollingIntervalRef = useRef<number | null>(null);
 
-  const getUnqualifiedCount = async () => {
-    const { count } = await supabase
-      .from('entreprises')
-      .select('*', { count: 'exact', head: true })
-      .is('categorie_qualifiee', null);
-    return count || 0;
-  };
+  // Subscribe to job updates via Realtime
+  useEffect(() => {
+    if (!activeJob) return;
+
+    const channel = supabase
+      .channel(`qualification_job_${activeJob.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'qualification_jobs',
+          filter: `id=eq.${activeJob.id}`,
+        },
+        (payload) => {
+          const updated = payload.new as QualificationJob;
+          setActiveJob(updated);
+
+          // Show completion notification
+          if (updated.status === 'completed') {
+            toast({
+              title: "✅ Qualification terminée !",
+              description: `${updated.succeeded_count} entreprises qualifiées avec succès`,
+              duration: 5000,
+            });
+            setLoading(false);
+            
+            // Reload after a short delay
+            setTimeout(() => window.location.reload(), 2000);
+          }
+
+          if (updated.status === 'failed') {
+            toast({
+              title: "❌ Erreur de qualification",
+              description: "Le processus a rencontré une erreur",
+              variant: "destructive",
+              duration: 5000,
+            });
+            setLoading(false);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activeJob, toast]);
 
   const handleQualify = async () => {
     setLoading(true);
-    setProgress(0);
-    setStats(null);
-    setProcessedCount(0);
+    setActiveJob(null);
 
     try {
-      // Compter les entreprises non qualifiées au départ
-      const initialCount = await getUnqualifiedCount();
-      setTotalCount(initialCount);
+      const { data, error } = await supabase.functions.invoke("qualify-entreprises-background", {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
+
+      if (error) throw error;
 
       toast({
-        title: "🤖 Qualification en cours",
-        description: `Qualification de ${initialCount} entreprises en lots de 50...`,
+        title: "🤖 Qualification démarrée",
+        description: `${data.totalCount} entreprises seront traitées en arrière-plan`,
         duration: 3000,
       });
 
-      let totalProcessed = 0;
-      let totalSucceeded = 0;
-      let totalFailed = 0;
-      let remainingCount = initialCount;
+      // Fetch the job to start tracking
+      const { data: job, error: jobError } = await supabase
+        .from('qualification_jobs')
+        .select('*')
+        .eq('id', data.jobId)
+        .single();
 
-      // Appeler la fonction en boucle tant qu'il reste des entreprises à qualifier
-      while (remainingCount > 0) {
-        const { data, error } = await supabase.functions.invoke("qualify-all-entreprises");
+      if (jobError) throw jobError;
 
-        if (error) {
-          console.error("Erreur lors d'un appel:", error);
-          totalFailed += 50; // Estimer les échecs
-        } else {
-          totalProcessed += data.processed || 0;
-          totalSucceeded += data.succeeded || 0;
-          totalFailed += data.failed || 0;
-        }
+      setActiveJob(job);
 
-        // Mettre à jour le progrès
-        remainingCount = await getUnqualifiedCount();
-        const processed = initialCount - remainingCount;
-        setProcessedCount(processed);
-        setProgress(Math.min(Math.round((processed / initialCount) * 100), 99));
-
-        // Petite pause entre les appels pour éviter de surcharger
-        if (remainingCount > 0) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-      }
-
-      setProgress(100);
-      setStats({ total: initialCount, succeeded: totalSucceeded, failed: totalFailed });
-
-      toast({
-        title: "✅ Qualification terminée",
-        description: `${totalSucceeded}/${initialCount} entreprises qualifiées avec succès`,
-        duration: 5000,
-      });
-
-      // Recharger après 2 secondes
-      setTimeout(() => window.location.reload(), 2000);
     } catch (error) {
-      console.error("Erreur de qualification:", error);
-      
+      console.error("Erreur:", error);
       toast({
-        title: "❌ Erreur de qualification",
+        title: "❌ Erreur",
         description: error instanceof Error ? error.message : "Erreur inconnue",
         variant: "destructive",
-        duration: 4000,
+        duration: 3000,
       });
-    } finally {
       setLoading(false);
     }
   };
 
+  const progress = activeJob
+    ? Math.round((activeJob.processed_count / activeJob.total_count) * 100)
+    : 0;
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="relative">
       <Button
         onClick={handleQualify}
         disabled={loading}
         variant="outline"
         size="sm"
-        className="h-7 px-2 text-xs border-primary/50 hover:bg-primary/10"
+        className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
       >
-        <Sparkles className={`w-3.5 h-3.5 ${loading ? "animate-pulse" : ""}`} />
+        {activeJob?.status === 'completed' ? (
+          <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+        ) : (
+          <Sparkles className={`w-3.5 h-3.5 ${loading ? "animate-pulse" : ""}`} />
+        )}
         <span className="hidden lg:inline ml-1">
-          {loading ? "Qualification..." : "Qualifier tout"}
+          {loading ? "En cours..." : "Qualifier tout"}
         </span>
       </Button>
-      
-      {loading && (
-        <div className="w-full space-y-1">
-          <Progress value={progress} className="h-1" />
-          <div className="text-xs text-muted-foreground text-center">
-            {progress}% - {processedCount}/{totalCount} entreprises
+
+      {activeJob && activeJob.status === 'running' && (
+        <div className="absolute top-full left-0 mt-2 w-64 bg-background border rounded-md p-3 shadow-lg z-50">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-medium">Qualification IA</p>
+            <p className="text-xs text-muted-foreground">{progress}%</p>
           </div>
-        </div>
-      )}
-      
-      {stats && (
-        <div className="text-xs text-muted-foreground">
-          {stats.succeeded} qualifiées / {stats.failed} erreurs
+          <Progress value={progress} className="w-full mb-2" />
+          <div className="space-y-1 text-xs text-muted-foreground">
+            <p>Traité: {activeJob.processed_count} / {activeJob.total_count}</p>
+            <p>✅ Succès: {activeJob.succeeded_count} | ❌ Échecs: {activeJob.failed_count}</p>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">
+            💡 Vous pouvez fermer cette page, le processus continue en arrière-plan
+          </p>
         </div>
       )}
     </div>

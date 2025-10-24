@@ -3,6 +3,9 @@ project_id = "pcrxbfbktmekkkqhppjn"
 [functions.qualify-all-entreprises]
 verify_jwt = false
 
+[functions.qualify-entreprises-background]
+verify_jwt = true
+
 [functions.format-lead-details]
 verify_jwt = true
 
