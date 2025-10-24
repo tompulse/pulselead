@@ -47,6 +47,24 @@ export const entrepriseService = {
         );
       }
 
+      // Server-side departments filter (postal code prefixes)
+      if (filters.departments && filters.departments.length > 0) {
+        const deptPatterns = filters.departments
+          .map((d) => {
+            const dl = d.toString().toUpperCase();
+            // Handle Corsica codes gracefully by mapping to 20xxx (no precise split needed here)
+            if (dl === '2A' || dl === '2B') return '20%';
+            // Zero-pad single-digit departments
+            const norm = dl.length === 1 ? `0${dl}` : dl;
+            return `${norm}%`;
+          })
+          .filter(Boolean);
+        if (deptPatterns.length > 0) {
+          const orExpr = deptPatterns.map((p) => `code_postal.ilike.${p}`).join(',');
+          query = query.or(orExpr);
+        }
+      }
+
       const { data, error, count } = await query; 
       if (error) throw error;
       

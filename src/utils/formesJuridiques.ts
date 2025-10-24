@@ -26,7 +26,23 @@ export function normalizeFormeJuridique(forme: string | null): string {
   if (formeExacte) return forme;
   
   // Sinon normaliser avec les variations communes
-  const formeLower = forme.toLowerCase();
+  const formeLower = forme.toLowerCase().trim();
+
+  // Abréviations courantes
+  if (formeLower === 'sas') return 'Société par actions simplifiée';
+  if (formeLower === 'sasu') return 'Société par actions simplifiée (à associé unique)';
+  if (formeLower === 'sarl') return 'Société à responsabilité limitée';
+  if (formeLower === 'eurl') return 'Société à responsabilité limitée (à associé unique)';
+  if (formeLower === 'sci') return 'Société civile immobilière';
+  if (formeLower === 'sc') return 'Société civile';
+  if (formeLower === 'snc') return 'Société en Nom Collectif';
+  if (formeLower === 'earl') return 'Exploitation agricole à responsabilité limitée';
+  if (formeLower === 'sccv') return 'Société civile de construction vente';
+  if (formeLower === 'scm') return 'Société civile de moyens';
+  if (formeLower === 'scea') return "Société civile d'exploitation agricole";
+  if (formeLower === 'gfa') return 'Groupement foncier agricole';
+  if (formeLower === 'selarl') return "Société d'exercice libéral à responsabilité limitée";
+  if (formeLower === 'gie') return "Groupement d'intérêt économique";
   
   if (formeLower.includes("civile immobilière")) return "Société civile immobilière";
   if (formeLower.includes("actions simplifiée") && formeLower.includes("associé unique")) return "Société par actions simplifiée (à associé unique)";
