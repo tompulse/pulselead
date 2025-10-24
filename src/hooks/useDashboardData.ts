@@ -7,8 +7,9 @@ export const useDashboardData = (filters: EntrepriseFilters) => {
   const { data: entreprises, isLoading, error } = useQuery({
     queryKey: ['entreprises', filters],
     queryFn: () => entrepriseService.fetchEntreprises(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+    staleTime: 30 * 1000, // 30 seconds - refresh frequently to show qualified enterprises
+    gcTime: 2 * 60 * 1000, // 2 minutes
+    refetchInterval: 30 * 1000, // Auto-refetch every 30 seconds
   });
 
   const enrichMutation = useMutation({
