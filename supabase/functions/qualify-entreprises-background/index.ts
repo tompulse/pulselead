@@ -27,8 +27,8 @@ serve(async (req) => {
       // no body is fine
     }
 
-    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 50));
-    const PARALLEL_REQUESTS = 10; // Process 10 entreprises in parallel
+    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 30));
+    const PARALLEL_REQUESTS = 3; // Process 3 entreprises in parallel to avoid rate limits
 
     // Helper to self invoke the function to process the next batch, fire-and-forget
     const scheduleNext = (jobId: string) => {
@@ -94,11 +94,19 @@ serve(async (req) => {
           });
 
           if (!aiResponse.ok) {
-            return { success: false };
+            const errorText = await aiResponse.text();
+            console.error(`AI API error for ${e.id}: ${aiResponse.status} - ${errorText}`);
+            return { success: false, error: `AI API ${aiResponse.status}` };
           }
 
           const aiData = await aiResponse.json();
           const response: string = aiData.choices?.[0]?.message?.content?.trim?.() ?? '';
+          
+          if (!response) {
+            console.error(`Empty AI response for ${e.id}`);
+            return { success: false, error: 'Empty response' };
+          }
+
           const [categorieRaw, confidenceStr] = response.split('|');
           const categorie = (categorieRaw || 'other').toLowerCase().trim();
           const confidence = Math.max(0, Math.min(100, parseInt(confidenceStr || '50')));
@@ -113,17 +121,18 @@ serve(async (req) => {
             .eq('id', e.id);
 
           if (updateError) {
-            return { success: false };
+            console.error(`DB update error for ${e.id}:`, updateError);
+            return { success: false, error: 'DB update failed' };
           }
           return { success: true };
         } catch (err) {
-          console.error('AI/process error for entreprise', e.id, err);
-          return { success: false };
+          console.error('Process error for entreprise', e.id, ':', err);
+          return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
         }
       };
 
       if (entreprises && entreprises.length > 0) {
-        // Process in parallel batches
+        // Process in parallel batches with delay between batches
         for (let i = 0; i < entreprises.length; i += PARALLEL_REQUESTS) {
           if (Date.now() - startTime > TIME_BUDGET_MS) break;
 
@@ -138,7 +147,14 @@ serve(async (req) => {
               failed++;
             }
           }
+
+          // Small delay between parallel batches to avoid rate limits (200ms)
+          if (i + PARALLEL_REQUESTS < entreprises.length) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+          }
         }
+
+        console.log(`Batch completed: ${succeeded} succeeded, ${failed} failed out of ${processed} processed`);
       }
 
       // Update job counters
