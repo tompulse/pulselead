@@ -27,7 +27,7 @@ serve(async (req) => {
       // no body is fine
     }
 
-    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 50));
+    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 20));
 
     // Helper to self invoke the function to process the next batch, fire-and-forget
     const scheduleNext = (jobId: string) => {
@@ -72,7 +72,8 @@ serve(async (req) => {
       let processed = 0;
       let succeeded = 0;
       let failed = 0;
-
+      const startTime = Date.now();
+      const TIME_BUDGET_MS = 45000;
       if (entreprises && entreprises.length > 0) {
         for (const e of entreprises) {
           try {
@@ -117,10 +118,16 @@ serve(async (req) => {
               succeeded++;
             }
             processed++;
+            if (Date.now() - startTime > TIME_BUDGET_MS) {
+              break;
+            }
           } catch (err) {
             console.error('AI/process error for entreprise', e.id, err);
             failed++;
             processed++;
+            if (Date.now() - startTime > TIME_BUDGET_MS) {
+              break;
+            }
           }
         }
       }
