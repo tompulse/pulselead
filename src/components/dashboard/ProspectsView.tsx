@@ -41,26 +41,7 @@ export const ProspectsView = ({
   
   const { entreprises, totalCount, qualifiedCount } = useDashboardData(filters);
   
-  // Filter by search query to match ListView behavior (server already filters search; this is a safe fallback)
-  const filteredEntreprises = entreprises.filter((ent) => {
-    const searchQuery = filters.searchQuery || "";
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      ent.nom?.toLowerCase().includes(query) ||
-      ent.ville?.toLowerCase().includes(query) ||
-      ent.code_postal?.includes(query) ||
-      ent.activite?.toLowerCase().includes(query) ||
-      ent.forme_juridique?.toLowerCase().includes(query)
-    );
-  });
-
-  const clientOnlyFiltersActive = (filters.departments?.length || 0) > 0 
-    || (filters.categories?.length || 0) > 0 
-    || (filters.formesJuridiques?.length || 0) > 0 
-    || (filters.typeEvenement?.length || 0) > 0;
-
-  const resultsCount = qualifiedCount ?? (clientOnlyFiltersActive ? filteredEntreprises.length : (totalCount ?? filteredEntreprises.length));
+  const resultsCount = totalCount ?? entreprises.length;
   
   const {
     selectedEntreprises,
