@@ -59,6 +59,15 @@ export const QualifyAllButton = () => {
             });
             setLoading(false);
           }
+
+          if (updated.status === 'paused') {
+            toast({
+              title: "⏸️ Qualification mise en pause",
+              description: "Crédits IA insuffisants ou limite de requêtes atteinte. Réessayez plus tard.",
+              duration: 6000,
+            });
+            setLoading(false);
+          }
         }
       )
       .subscribe();
@@ -133,10 +142,10 @@ export const QualifyAllButton = () => {
         </span>
       </Button>
 
-      {activeJob && activeJob.status === 'running' && (
+      {activeJob && (activeJob.status === 'running' || activeJob.status === 'paused') && (
         <div className="absolute top-full left-0 mt-2 w-64 bg-background border rounded-md p-3 shadow-lg z-50">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-medium">Qualification IA</p>
+            <p className="text-xs font-medium">Qualification IA {activeJob.status === 'paused' ? '(en pause)' : ''}</p>
             <p className="text-xs text-muted-foreground">{progress}%</p>
           </div>
           <Progress value={progress} className="w-full mb-2" />
@@ -144,9 +153,15 @@ export const QualifyAllButton = () => {
             <p>Traité: {activeJob.processed_count} / {activeJob.total_count}</p>
             <p>✅ Succès: {activeJob.succeeded_count} | ❌ Échecs: {activeJob.failed_count}</p>
           </div>
-          <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">
-            💡 Vous pouvez fermer cette page, le processus continue en arrière-plan
-          </p>
+          {activeJob.status === 'paused' ? (
+            <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">
+              ⏸️ En pause: crédits IA insuffisants ou limite de requêtes atteinte
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">
+              💡 Vous pouvez fermer cette page, le processus continue en arrière-plan
+            </p>
+          )}
         </div>
       )}
     </div>

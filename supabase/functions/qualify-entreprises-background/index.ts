@@ -27,9 +27,9 @@ serve(async (req) => {
       // no body is fine
     }
 
-    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 15));
-    const PARALLEL_REQUESTS = 1; // Process 1 entreprise at a time to maximize success rate
-    const DELAY_BETWEEN_REQUESTS = 500; // 500ms delay between each request
+    const BATCH_SIZE = Math.max(15, Math.min(100, body.batchSize ?? 30));
+    const PARALLEL_REQUESTS = 5; // Process up to 5 entreprises in parallel for better speed
+    const DELAY_BETWEEN_REQUESTS = 200; // 200ms delay between chunks to avoid rate limits
 
     // Helper to self invoke the function to process the next batch, fire-and-forget
     const scheduleNext = (jobId: string) => {
@@ -76,6 +76,8 @@ serve(async (req) => {
       let failed = 0;
       const startTime = Date.now();
       const TIME_BUDGET_MS = 50000; // Extended to 50 seconds
+      let pauseNeeded = false;
+      let pauseCode = 0;
 
       // Process function for a single entreprise
       const processEntreprise = async (e: any) => {
@@ -96,8 +98,13 @@ serve(async (req) => {
 
           if (!aiResponse.ok) {
             const errorText = await aiResponse.text();
-            console.error(`AI API error for ${e.id}: ${aiResponse.status} - ${errorText}`);
-            return { success: false, error: `AI API ${aiResponse.status}` };
+            const status = aiResponse.status;
+            if (status === 402 || status === 429) {
+              console.log(`AI soft-fail for ${e.id}: ${status} - ${errorText}`);
+              return { success: false, error: `AI API ${status}`, softFail: true, code: status };
+            }
+            console.error(`AI API error for ${e.id}: ${status} - ${errorText}`);
+            return { success: false, error: `AI API ${status}` };
           }
 
           const aiData = await aiResponse.json();
@@ -133,23 +140,34 @@ serve(async (req) => {
       };
 
       if (entreprises && entreprises.length > 0) {
-        // Process sequentially with delays to maximize success rate
-        for (let i = 0; i < entreprises.length; i++) {
+        for (let i = 0; i < entreprises.length; i += PARALLEL_REQUESTS) {
           if (Date.now() - startTime > TIME_BUDGET_MS) break;
 
-          const result = await processEntreprise(entreprises[i]);
-          processed++;
-          
-          if (result.success) {
-            succeeded++;
-          } else {
-            failed++;
-            console.log(`Failed to process entreprise ${entreprises[i].id}: ${result.error}`);
+          const slice = entreprises.slice(i, i + PARALLEL_REQUESTS);
+          const results = await Promise.all(slice.map(processEntreprise));
+          processed += results.length;
+
+          for (let r = 0; r < results.length; r++) {
+            const result: any = results[r];
+            const ent = slice[r];
+            if (result?.success) {
+              succeeded++;
+            } else if (result?.softFail && (result.code === 402 || result.code === 429)) {
+              pauseNeeded = true;
+              pauseCode = result.code;
+              console.log(`Pausing job due to AI ${result.code} on entreprise ${ent.id}`);
+              break;
+            } else {
+              failed++;
+              console.log(`Failed to process entreprise ${ent.id}: ${result?.error}`);
+            }
           }
 
-          // Delay between each request to avoid rate limits
-          if (i < entreprises.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_REQUESTS));
+          if (pauseNeeded) break;
+
+          // Small delay between chunks to avoid rate limits
+          if (i + PARALLEL_REQUESTS < entreprises.length) {
+            await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_REQUESTS));
           }
         }
 
@@ -170,6 +188,20 @@ serve(async (req) => {
           updated_at: new Date().toISOString(),
         })
         .eq('id', jobId);
+
+      // If we hit rate limits or ran out of credits, pause the job instead of failing
+      if (pauseNeeded) {
+        await serviceClient
+          .from('qualification_jobs')
+          .update({ status: 'paused', updated_at: new Date().toISOString() })
+          .eq('id', jobId);
+
+        const reason = pauseCode === 402 ? 'insufficient_credits' : 'rate_limited';
+        return new Response(
+          JSON.stringify({ message: 'paused', reason, jobId }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
 
       // If batch was empty, we're done
       if (!entreprises || entreprises.length === 0) {
