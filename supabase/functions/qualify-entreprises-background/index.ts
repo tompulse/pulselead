@@ -27,7 +27,8 @@ serve(async (req) => {
       // no body is fine
     }
 
-    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 20));
+    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 50));
+    const PARALLEL_REQUESTS = 10; // Process 10 entreprises in parallel
 
     // Helper to self invoke the function to process the next batch, fire-and-forget
     const scheduleNext = (jobId: string) => {
@@ -74,59 +75,67 @@ serve(async (req) => {
       let failed = 0;
       const startTime = Date.now();
       const TIME_BUDGET_MS = 45000;
+
+      // Process function for a single entreprise
+      const processEntreprise = async (e: any) => {
+        try {
+          const prompt = `Analyse cette entreprise et détermine SA VRAIE catégorie d'activité principale.\n\nCONTEXTE:\n- Activité: ${e.activite || 'Non spécifiée'}\n- Administration: ${e.administration || 'Non spécifiée'}\n- Forme juridique: ${e.forme_juridique || 'Non spécifiée'}\n\nCATÉGORIES DISPONIBLES:\n- livraison: Coursier à vélo, livreur indépendant, auto-entrepreneur livraison (PAS de local commercial fixe)\n- restauration: Restaurant, bar, brasserie, snack avec LOCAL COMMERCIAL (même s'ils font aussi de la livraison)\n- construction: BTP, maçonnerie, plomberie, électricité, menuiserie, travaux\n- immobilier: SCI, location immobilière, agence immobilière, gestion de biens (PAS construction)\n- commerce: Magasin, boutique, vente au détail, négoce\n- energie: Énergie, électricité, photovoltaïque, pompe à chaleur\n- transport: VTC, taxi, transport de marchandises, logistique (PAS coursier vélo)\n- technologie: Informatique, logiciel, développement, web, digital\n- services: Conseil, consulting, formation, expertise, holding, gestion\n- sante: Médical, pharmacie, cosmétique, beauté, coiffure\n- industrie: Fabrication, production, manufacture, usine\n- communication: Marketing, publicité, communication, média\n- other: Aucune catégorie ne correspond\n\nRÈGLES IMPORTANTES:\n1. Un restaurant avec livraison = "restauration" (pas "livraison")\n2. Un coursier vélo indépendant = "livraison" (pas "restauration")\n3. Une SCI = "immobilier" (pas "construction")\n4. Un holding = "services" (pas la catégorie des entreprises détenues)\n\nRéponds UNIQUEMENT avec la catégorie (un seul mot) et ta confiance (0-100) au format: "categorie|confidence"\nExemple: "restauration|95" ou "livraison|90"`;
+
+          const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${lovableApiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'google/gemini-2.5-flash-lite',
+              messages: [{ role: 'user', content: prompt }],
+            }),
+          });
+
+          if (!aiResponse.ok) {
+            return { success: false };
+          }
+
+          const aiData = await aiResponse.json();
+          const response: string = aiData.choices?.[0]?.message?.content?.trim?.() ?? '';
+          const [categorieRaw, confidenceStr] = response.split('|');
+          const categorie = (categorieRaw || 'other').toLowerCase().trim();
+          const confidence = Math.max(0, Math.min(100, parseInt(confidenceStr || '50')));
+
+          const { error: updateError } = await serviceClient
+            .from('entreprises')
+            .update({
+              categorie_qualifiee: categorie,
+              categorie_confidence: confidence,
+              date_qualification: new Date().toISOString(),
+            })
+            .eq('id', e.id);
+
+          if (updateError) {
+            return { success: false };
+          }
+          return { success: true };
+        } catch (err) {
+          console.error('AI/process error for entreprise', e.id, err);
+          return { success: false };
+        }
+      };
+
       if (entreprises && entreprises.length > 0) {
-        for (const e of entreprises) {
-          try {
-            const prompt = `Analyse cette entreprise et détermine SA VRAIE catégorie d'activité principale.\n\nCONTEXTE:\n- Activité: ${e.activite || 'Non spécifiée'}\n- Administration: ${e.administration || 'Non spécifiée'}\n- Forme juridique: ${e.forme_juridique || 'Non spécifiée'}\n\nCATÉGORIES DISPONIBLES:\n- livraison: Coursier à vélo, livreur indépendant, auto-entrepreneur livraison (PAS de local commercial fixe)\n- restauration: Restaurant, bar, brasserie, snack avec LOCAL COMMERCIAL (même s'ils font aussi de la livraison)\n- construction: BTP, maçonnerie, plomberie, électricité, menuiserie, travaux\n- immobilier: SCI, location immobilière, agence immobilière, gestion de biens (PAS construction)\n- commerce: Magasin, boutique, vente au détail, négoce\n- energie: Énergie, électricité, photovoltaïque, pompe à chaleur\n- transport: VTC, taxi, transport de marchandises, logistique (PAS coursier vélo)\n- technologie: Informatique, logiciel, développement, web, digital\n- services: Conseil, consulting, formation, expertise, holding, gestion\n- sante: Médical, pharmacie, cosmétique, beauté, coiffure\n- industrie: Fabrication, production, manufacture, usine\n- communication: Marketing, publicité, communication, média\n- other: Aucune catégorie ne correspond\n\nRÈGLES IMPORTANTES:\n1. Un restaurant avec livraison = "restauration" (pas "livraison")\n2. Un coursier vélo indépendant = "livraison" (pas "restauration")\n3. Une SCI = "immobilier" (pas "construction")\n4. Un holding = "services" (pas la catégorie des entreprises détenues)\n\nRéponds UNIQUEMENT avec la catégorie (un seul mot) et ta confiance (0-100) au format: "categorie|confidence"\nExemple: "restauration|95" ou "livraison|90"`;
+        // Process in parallel batches
+        for (let i = 0; i < entreprises.length; i += PARALLEL_REQUESTS) {
+          if (Date.now() - startTime > TIME_BUDGET_MS) break;
 
-            const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                Authorization: `Bearer ${lovableApiKey}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                model: 'google/gemini-2.5-flash-lite',
-                messages: [{ role: 'user', content: prompt }],
-              }),
-            });
+          const chunk = entreprises.slice(i, i + PARALLEL_REQUESTS);
+          const results = await Promise.all(chunk.map(processEntreprise));
 
-            if (!aiResponse.ok) {
-              failed++;
-              processed++;
-              continue;
-            }
-
-            const aiData = await aiResponse.json();
-            const response: string = aiData.choices?.[0]?.message?.content?.trim?.() ?? '';
-            const [categorieRaw, confidenceStr] = response.split('|');
-            const categorie = (categorieRaw || 'other').toLowerCase().trim();
-            const confidence = Math.max(0, Math.min(100, parseInt(confidenceStr || '50')));
-
-            const { error: updateError } = await serviceClient
-              .from('entreprises')
-              .update({
-                categorie_qualifiee: categorie,
-                categorie_confidence: confidence,
-                date_qualification: new Date().toISOString(),
-              })
-              .eq('id', e.id);
-
-            if (updateError) {
-              failed++;
-            } else {
+          for (const result of results) {
+            processed++;
+            if (result.success) {
               succeeded++;
-            }
-            processed++;
-            if (Date.now() - startTime > TIME_BUDGET_MS) {
-              break;
-            }
-          } catch (err) {
-            console.error('AI/process error for entreprise', e.id, err);
-            failed++;
-            processed++;
-            if (Date.now() - startTime > TIME_BUDGET_MS) {
-              break;
+            } else {
+              failed++;
             }
           }
         }
