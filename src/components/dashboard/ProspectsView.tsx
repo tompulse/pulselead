@@ -4,6 +4,7 @@ import { ListView } from "./ListView";
 import { TourneeFilters } from "./TourneeFilters";
 import { useTourneeManager } from "@/hooks/useTourneeManager";
 import { useToast } from "@/hooks/use-toast";
+import { useDashboardData } from "@/hooks/useDashboardData";
 
 interface ProspectsViewProps {
   filters: {
@@ -11,6 +12,10 @@ interface ProspectsViewProps {
     dateTo: string;
     categories: string[];
     departments: string[];
+    formesJuridiques?: string[];
+    searchQuery?: string;
+    typeEvenement?: string[];
+    activiteDefinie?: boolean | null;
   };
   setFilters: Dispatch<SetStateAction<any>>;
   userId: string;
@@ -33,6 +38,22 @@ export const ProspectsView = ({
   const [tourneeActive, setTourneeActive] = useState(false);
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState("");
+  
+  const { entreprises } = useDashboardData(filters);
+  
+  // Filter by search query to match ListView behavior
+  const filteredEntreprises = entreprises.filter((ent) => {
+    const searchQuery = filters.searchQuery || "";
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      ent.nom?.toLowerCase().includes(query) ||
+      ent.ville?.toLowerCase().includes(query) ||
+      ent.code_postal?.includes(query) ||
+      ent.activite?.toLowerCase().includes(query) ||
+      ent.forme_juridique?.toLowerCase().includes(query)
+    );
+  });
   
   const {
     selectedEntreprises,
@@ -130,6 +151,7 @@ export const ProspectsView = ({
             selectedCount={selectedEntreprises.length}
             onOptimize={handleOptimize}
             isOptimizing={isOptimizing}
+            resultsCount={filteredEntreprises.length}
           />
         </div>
 

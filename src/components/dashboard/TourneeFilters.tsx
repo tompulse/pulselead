@@ -34,6 +34,8 @@ interface TourneeFiltersProps {
   selectedCount?: number;
   onOptimize?: () => void;
   isOptimizing?: boolean;
+  // Results count
+  resultsCount?: number;
 }
 
 export const TourneeFilters = ({ 
@@ -47,7 +49,8 @@ export const TourneeFilters = ({
   setTourneeDate,
   selectedCount = 0,
   onOptimize,
-  isOptimizing = false
+  isOptimizing = false,
+  resultsCount = 0
 }: TourneeFiltersProps) => {
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
@@ -145,7 +148,7 @@ export const TourneeFilters = ({
   return (
     <div className="space-y-0">
         {/* Barre de recherche */}
-        <div className="p-4 border-b border-accent/20">
+        <div className="p-4 border-b border-accent/20 space-y-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -156,6 +159,13 @@ export const TourneeFilters = ({
               className="pl-9 h-9 bg-background/50 border-accent/20 focus:border-accent/40"
             />
           </div>
+          {resultsCount !== undefined && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Building2 className="w-4 h-4 text-accent" />
+              <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
+              <span>prospect{resultsCount > 1 ? 's' : ''} trouvé{resultsCount > 1 ? 's' : ''}</span>
+            </div>
+          )}
         </div>
 
         {/* Création de tournée */}
