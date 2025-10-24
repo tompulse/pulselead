@@ -16,29 +16,42 @@ export interface EntrepriseFilters {
 export const entrepriseService = {
   async fetchEntreprises(filters: EntrepriseFilters = {}) {
     try {
-      let query = supabase
-        .from('entreprises')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false });
+      const PAGE_SIZE = 1000;
+      let from = 0;
+      let allData: any[] = [];
 
-      // Appliquer les filtres de date uniquement s'ils sont définis
-      if (filters.dateFrom) {
-        query = query.gte('date_demarrage', filters.dateFrom);
-      }
-      if (filters.dateTo) {
-        query = query.lte('date_demarrage', filters.dateTo);
-      }
-      
-      // Filtre pour activité définie/non définie
-      if (filters.activiteDefinie === true) {
-        query = query.not('activite', 'is', null).neq('activite', '');
-      } else if (filters.activiteDefinie === false) {
-        query = query.or('activite.is.null,activite.eq.');
+      while (true) {
+        let page = supabase
+          .from('entreprises')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(from, from + PAGE_SIZE - 1);
+
+        // Appliquer les filtres de date uniquement s'ils sont définis
+        if (filters.dateFrom) {
+          page = page.gte('date_demarrage', filters.dateFrom);
+        }
+        if (filters.dateTo) {
+          page = page.lte('date_demarrage', filters.dateTo);
+        }
+        
+        // Filtre pour activité définie/non définie
+        if (filters.activiteDefinie === true) {
+          page = page.not('activite', 'is', null).neq('activite', '');
+        } else if (filters.activiteDefinie === false) {
+          page = page.or('activite.is.null,activite.eq.');
+        }
+
+        const { data: batch, error } = await page;
+        if (error) throw error;
+
+        allData = allData.concat(batch || []);
+        if (!batch || batch.length < PAGE_SIZE) break;
+        from += PAGE_SIZE;
+        if (from >= 100000) break; // safety cap to avoid huge loads
       }
 
-      const { data, error } = await query;
-      
-      if (error) throw error;
+      const data = allData;
       
       // Filter client-side for more complex filters
       let filteredData = data || [];
