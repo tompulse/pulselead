@@ -16,42 +16,39 @@ export interface EntrepriseFilters {
 export const entrepriseService = {
   async fetchEntreprises(filters: EntrepriseFilters = {}) {
     try {
-      const PAGE_SIZE = 1000;
-      let from = 0;
-      let allData: any[] = [];
+      // Single request with server-side filters and exact count
+      let query = supabase
+        .from('entreprises')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(0, 999); // fetch first 1000 rows for the list
 
-      while (true) {
-        let page = supabase
-          .from('entreprises')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .range(from, from + PAGE_SIZE - 1);
-
-        // Appliquer les filtres de date uniquement s'ils sont définis
-        if (filters.dateFrom) {
-          page = page.gte('date_demarrage', filters.dateFrom);
-        }
-        if (filters.dateTo) {
-          page = page.lte('date_demarrage', filters.dateTo);
-        }
-        
-        // Filtre pour activité définie/non définie
-        if (filters.activiteDefinie === true) {
-          page = page.not('activite', 'is', null).neq('activite', '');
-        } else if (filters.activiteDefinie === false) {
-          page = page.or('activite.is.null,activite.eq.');
-        }
-
-        const { data: batch, error } = await page;
-        if (error) throw error;
-
-        allData = allData.concat(batch || []);
-        if (!batch || batch.length < PAGE_SIZE) break;
-        from += PAGE_SIZE;
-        if (from >= 100000) break; // safety cap to avoid huge loads
+      // Date filters
+      if (filters.dateFrom) {
+        query = query.gte('date_demarrage', filters.dateFrom);
+      }
+      if (filters.dateTo) {
+        query = query.lte('date_demarrage', filters.dateTo);
       }
 
-      const data = allData;
+      // Activity defined filter
+      if (filters.activiteDefinie === true) {
+        query = query.not('activite', 'is', null).neq('activite', '');
+      } else if (filters.activiteDefinie === false) {
+        query = query.or('activite.is.null,activite.eq.');
+      }
+
+      // Server-side search across common fields
+      if (filters.searchQuery && filters.searchQuery.trim()) {
+        const q = filters.searchQuery.trim();
+        const like = `%${q}%`;
+        query = query.or(
+          `nom.ilike.${like},ville.ilike.${like},adresse.ilike.${like},activite.ilike.${like},siret.eq.${q}`
+        );
+      }
+
+      const { data, error, count } = await query; 
+      if (error) throw error;
       
       // Filter client-side for more complex filters
       let filteredData = data || [];
@@ -116,7 +113,11 @@ export const entrepriseService = {
         });
       }
 
-      return { data: filteredData, error: null };
+      const clientFiltersActive = (filters.departments?.length || 0) + (filters.categories?.length || 0) + (filters.formesJuridiques?.length || 0) + (filters.typeEvenement?.length || 0) > 0;
+
+      const total = clientFiltersActive ? filteredData.length : (count ?? filteredData.length);
+
+      return { data: filteredData, total, error: null };
     } catch (error) {
       console.error('Error fetching entreprises:', error);
       return { data: null, error };

@@ -21,6 +21,7 @@ export const useDashboardData = (filters: EntrepriseFilters) => {
 
   return {
     entreprises: entreprises?.data || [],
+    totalCount: entreprises?.total,
     isLoading,
     error: error || entreprises?.error,
     enrichEntreprise: enrichMutation.mutate,

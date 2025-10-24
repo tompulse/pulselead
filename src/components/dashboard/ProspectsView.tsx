@@ -39,9 +39,9 @@ export const ProspectsView = ({
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState("");
   
-  const { entreprises } = useDashboardData(filters);
+  const { entreprises, totalCount } = useDashboardData(filters);
   
-  // Filter by search query to match ListView behavior
+  // Filter by search query to match ListView behavior (server already filters search; this is a safe fallback)
   const filteredEntreprises = entreprises.filter((ent) => {
     const searchQuery = filters.searchQuery || "";
     if (!searchQuery) return true;
@@ -54,6 +54,13 @@ export const ProspectsView = ({
       ent.forme_juridique?.toLowerCase().includes(query)
     );
   });
+
+  const clientOnlyFiltersActive = (filters.departments?.length || 0) > 0 
+    || (filters.categories?.length || 0) > 0 
+    || (filters.formesJuridiques?.length || 0) > 0 
+    || (filters.typeEvenement?.length || 0) > 0;
+
+  const resultsCount = clientOnlyFiltersActive ? filteredEntreprises.length : (totalCount ?? filteredEntreprises.length);
   
   const {
     selectedEntreprises,
@@ -64,7 +71,6 @@ export const ProspectsView = ({
     isOptimizing,
     isCreating
   } = useTourneeManager(userId);
-
   const handleCreateTournee = () => {
     setTourneeActive(!tourneeActive);
     if (tourneeActive) {
@@ -151,7 +157,7 @@ export const ProspectsView = ({
             selectedCount={selectedEntreprises.length}
             onOptimize={handleOptimize}
             isOptimizing={isOptimizing}
-            resultsCount={filteredEntreprises.length}
+            resultsCount={resultsCount}
           />
         </div>
 
