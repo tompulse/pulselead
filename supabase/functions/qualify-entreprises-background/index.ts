@@ -27,8 +27,9 @@ serve(async (req) => {
       // no body is fine
     }
 
-    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 30));
-    const PARALLEL_REQUESTS = 3; // Process 3 entreprises in parallel to avoid rate limits
+    const BATCH_SIZE = Math.max(10, Math.min(200, body.batchSize ?? 15));
+    const PARALLEL_REQUESTS = 1; // Process 1 entreprise at a time to maximize success rate
+    const DELAY_BETWEEN_REQUESTS = 500; // 500ms delay between each request
 
     // Helper to self invoke the function to process the next batch, fire-and-forget
     const scheduleNext = (jobId: string) => {
@@ -74,7 +75,7 @@ serve(async (req) => {
       let succeeded = 0;
       let failed = 0;
       const startTime = Date.now();
-      const TIME_BUDGET_MS = 45000;
+      const TIME_BUDGET_MS = 50000; // Extended to 50 seconds
 
       // Process function for a single entreprise
       const processEntreprise = async (e: any) => {
@@ -132,25 +133,23 @@ serve(async (req) => {
       };
 
       if (entreprises && entreprises.length > 0) {
-        // Process in parallel batches with delay between batches
-        for (let i = 0; i < entreprises.length; i += PARALLEL_REQUESTS) {
+        // Process sequentially with delays to maximize success rate
+        for (let i = 0; i < entreprises.length; i++) {
           if (Date.now() - startTime > TIME_BUDGET_MS) break;
 
-          const chunk = entreprises.slice(i, i + PARALLEL_REQUESTS);
-          const results = await Promise.all(chunk.map(processEntreprise));
-
-          for (const result of results) {
-            processed++;
-            if (result.success) {
-              succeeded++;
-            } else {
-              failed++;
-            }
+          const result = await processEntreprise(entreprises[i]);
+          processed++;
+          
+          if (result.success) {
+            succeeded++;
+          } else {
+            failed++;
+            console.log(`Failed to process entreprise ${entreprises[i].id}: ${result.error}`);
           }
 
-          // Small delay between parallel batches to avoid rate limits (200ms)
-          if (i + PARALLEL_REQUESTS < entreprises.length) {
-            await new Promise(resolve => setTimeout(resolve, 200));
+          // Delay between each request to avoid rate limits
+          if (i < entreprises.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_REQUESTS));
           }
         }
 
