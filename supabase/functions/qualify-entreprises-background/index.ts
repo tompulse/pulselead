@@ -20,7 +20,7 @@ serve(async (req) => {
     const serviceClient = createClient(supabaseUrl, serviceRoleKey);
 
     // Parse body if present
-    let body: { jobId?: string; batchSize?: number } = {};
+    let body: { jobId?: string; batchSize?: number; backoffMs?: number; parallel?: number } = {};
     try {
       body = await req.json();
     } catch {
@@ -28,14 +28,22 @@ serve(async (req) => {
     }
 
     const BATCH_SIZE = Math.max(15, Math.min(100, body.batchSize ?? 30));
-    const PARALLEL_REQUESTS = 3; // Reduced to 3 for better stability and to avoid rate limits
-    const DELAY_BETWEEN_REQUESTS = 400; // Increased to 400ms to respect rate limits
+    const DEFAULT_PARALLEL_REQUESTS = 3; // base parallelism
+    const DEFAULT_DELAY_BETWEEN_REQUESTS = 400; // base inter-chunk delay
+    const MAX_BACKOFF_MS = 60000; // 60s cap
+    const backoffMs = Math.max(0, Math.min(MAX_BACKOFF_MS, body.backoffMs ?? 0));
+    // Reduce parallelism under backoff to ease pressure
+    const PARALLEL_REQUESTS = Math.max(1, Math.min(5, body.parallel ?? (backoffMs > 0 ? 2 : DEFAULT_PARALLEL_REQUESTS)));
+    // When rate-limited, increase delay proportionally
+    const DELAY_BETWEEN_REQUESTS = backoffMs > 0
+      ? Math.max(DEFAULT_DELAY_BETWEEN_REQUESTS, Math.floor(backoffMs / 2))
+      : DEFAULT_DELAY_BETWEEN_REQUESTS;
 
     // Helper to self invoke the function to process the next batch, fire-and-forget
-    const scheduleNext = (jobId: string) => {
+    const scheduleNext = (jobId: string, nextBackoffMs: number = 0) => {
       // Intentionally not awaited to avoid holding the current request open
       serviceClient.functions
-        .invoke('qualify-entreprises-background', { body: { jobId, batchSize: BATCH_SIZE } })
+        .invoke('qualify-entreprises-background', { body: { jobId, batchSize: BATCH_SIZE, backoffMs: nextBackoffMs } })
         .then(({ error }) => {
           if (error) console.error('Self-invoke error:', error);
         })
@@ -61,6 +69,12 @@ serve(async (req) => {
         });
       }
 
+      // Respect backoff before processing, if any
+      if (backoffMs > 0) {
+        console.log(`Backoff ${backoffMs}ms before processing next batch for job ${jobId}`);
+        await new Promise((resolve) => setTimeout(resolve, backoffMs));
+      }
+
       // Fetch one batch of unqualified entreprises
       const { data: entreprises, error: fetchError, count } = await serviceClient
         .from('entreprises')
@@ -76,8 +90,9 @@ serve(async (req) => {
       let failed = 0;
       const startTime = Date.now();
       const TIME_BUDGET_MS = 50000; // Extended to 50 seconds
-      let pauseNeeded = false;
+      let pauseNeeded = false; // only for 402 (credits)
       let pauseCode = 0;
+      let rateLimited = false; // 429 handling with adaptive backoff
 
       // Process function for a single entreprise
       const processEntreprise = async (e: any) => {
@@ -145,25 +160,30 @@ serve(async (req) => {
 
           const slice = entreprises.slice(i, i + PARALLEL_REQUESTS);
           const results = await Promise.all(slice.map(processEntreprise));
-          processed += results.length;
 
           for (let r = 0; r < results.length; r++) {
             const result: any = results[r];
             const ent = slice[r];
             if (result?.success) {
               succeeded++;
-            } else if (result?.softFail && (result.code === 402 || result.code === 429)) {
+              processed++;
+            } else if (result?.softFail && result.code === 402) {
               pauseNeeded = true;
-              pauseCode = result.code;
-              console.log(`Pausing job due to AI ${result.code} on entreprise ${ent.id}`);
+              pauseCode = 402;
+              console.log(`Pausing job due to insufficient credits (402) on entreprise ${ent.id}`);
+              break;
+            } else if (result?.softFail && result.code === 429) {
+              rateLimited = true;
+              console.log(`Rate limited (429) on entreprise ${ent.id}, will retry with backoff`);
               break;
             } else {
               failed++;
+              processed++;
               console.log(`Failed to process entreprise ${ent.id}: ${result?.error}`);
             }
           }
 
-          if (pauseNeeded) break;
+          if (pauseNeeded || rateLimited) break;
 
           // Small delay between chunks to avoid rate limits
           if (i + PARALLEL_REQUESTS < entreprises.length) {
@@ -199,6 +219,16 @@ serve(async (req) => {
         const reason = pauseCode === 402 ? 'insufficient_credits' : 'rate_limited';
         return new Response(
           JSON.stringify({ message: 'paused', reason, jobId }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // If we were rate limited, retry automatically with adaptive backoff
+      if (rateLimited) {
+        const nextBackoff = Math.min(backoffMs > 0 ? backoffMs * 2 : 2000, MAX_BACKOFF_MS);
+        scheduleNext(jobId, nextBackoff);
+        return new Response(
+          JSON.stringify({ message: 'rate_limited_retry', jobId, backoffMs: nextBackoff }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
