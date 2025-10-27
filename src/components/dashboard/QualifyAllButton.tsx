@@ -19,6 +19,26 @@ export const QualifyAllButton = () => {
   const [activeJob, setActiveJob] = useState<QualificationJob | null>(null);
   const { toast } = useToast();
 
+  // Check for existing running job on mount
+  useEffect(() => {
+    const checkForRunningJob = async () => {
+      const { data: job } = await supabase
+        .from('qualification_jobs')
+        .select('*')
+        .in('status', ['running', 'paused'])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (job) {
+        setActiveJob(job);
+        setLoading(job.status === 'running');
+      }
+    };
+
+    checkForRunningJob();
+  }, []);
+
   // Subscribe to job updates via Realtime
   useEffect(() => {
     if (!activeJob) return;
