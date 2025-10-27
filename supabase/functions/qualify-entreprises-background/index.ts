@@ -28,8 +28,8 @@ serve(async (req) => {
     }
 
     const BATCH_SIZE = Math.max(15, Math.min(100, body.batchSize ?? 30));
-    const PARALLEL_REQUESTS = 5; // Process up to 5 entreprises in parallel for better speed
-    const DELAY_BETWEEN_REQUESTS = 200; // 200ms delay between chunks to avoid rate limits
+    const PARALLEL_REQUESTS = 3; // Reduced to 3 for better stability and to avoid rate limits
+    const DELAY_BETWEEN_REQUESTS = 400; // Increased to 400ms to respect rate limits
 
     // Helper to self invoke the function to process the next batch, fire-and-forget
     const scheduleNext = (jobId: string) => {
