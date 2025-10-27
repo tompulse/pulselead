@@ -254,7 +254,7 @@ serve(async (req) => {
       );
     }
 
-    // START MODE: First call from the UI creates a job and kicks off background batches
+    // START MODE: First call from the UI creates a job, or resumes an existing one
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'No authorization header' }), {
@@ -268,6 +268,49 @@ serve(async (req) => {
     if (authError || !authData?.user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // If there's an existing job (running or paused), resume/continue instead of creating a new one
+    const { data: existingJobs, error: existingErr } = await serviceClient
+      .from('qualification_jobs')
+      .select('*')
+      .eq('user_id', authData.user.id)
+      .in('status', ['running', 'paused'])
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    const existing = existingJobs?.[0];
+
+    if (existing) {
+      // If counters indicate completion but status isn't, finalize
+      if ((existing.processed_count ?? 0) >= (existing.total_count ?? 0) && existing.total_count > 0 && existing.status !== 'completed') {
+        await serviceClient
+          .from('qualification_jobs')
+          .update({ status: 'completed', completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          .eq('id', existing.id);
+        return new Response(JSON.stringify({ message: 'already_completed', jobId: existing.id, totalCount: existing.total_count }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (existing.status === 'paused') {
+        await serviceClient
+          .from('qualification_jobs')
+          .update({ status: 'running', updated_at: new Date().toISOString() })
+          .eq('id', existing.id);
+        console.log(`Resuming paused job ${existing.id}`);
+        scheduleNext(existing.id);
+        return new Response(JSON.stringify({ message: 'resumed', jobId: existing.id, totalCount: existing.total_count }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // If already running, nudge it by scheduling another batch
+      console.log(`Job ${existing.id} already running, continuing`);
+      scheduleNext(existing.id);
+      return new Response(JSON.stringify({ message: 'already_running', jobId: existing.id, totalCount: existing.total_count }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
