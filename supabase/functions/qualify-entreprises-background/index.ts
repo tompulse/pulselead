@@ -27,7 +27,7 @@ serve(async (req) => {
       // no body is fine
     }
 
-    const BATCH_SIZE = Math.max(15, Math.min(100, body.batchSize ?? 30));
+    const BATCH_SIZE = Math.max(10, Math.min(60, body.batchSize ?? 30));
     const DEFAULT_PARALLEL_REQUESTS = 3; // base parallelism
     const DEFAULT_DELAY_BETWEEN_REQUESTS = 400; // base inter-chunk delay
     const MAX_BACKOFF_MS = 60000; // 60s cap
@@ -43,7 +43,7 @@ serve(async (req) => {
     const scheduleNext = (jobId: string, nextBackoffMs: number = 0) => {
       // Intentionally not awaited to avoid holding the current request open
       serviceClient.functions
-        .invoke('qualify-entreprises-background', { body: { jobId, batchSize: BATCH_SIZE, backoffMs: nextBackoffMs } })
+        .invoke('qualify-entreprises-background', { body: { jobId, batchSize: BATCH_SIZE, backoffMs: nextBackoffMs, parallel: PARALLEL_REQUESTS } })
         .then(({ error }) => {
           if (error) console.error('Self-invoke error:', error);
         })
