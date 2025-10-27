@@ -110,9 +110,13 @@ export const QualifyAllButton = () => {
 
       if (error) throw error;
 
+      const message = data.message === 'resumed' ? '▶️ Qualification reprise' : 
+                      data.message === 'already_running' ? '🔄 Qualification en cours' :
+                      '🤖 Qualification démarrée';
+
       toast({
-        title: "🤖 Qualification démarrée",
-        description: `${data.totalCount} entreprises seront traitées en arrière-plan`,
+        title: message,
+        description: `${data.totalCount} entreprises au total`,
         duration: 3000,
       });
 
@@ -121,11 +125,10 @@ export const QualifyAllButton = () => {
         .from('qualification_jobs')
         .select('*')
         .eq('id', data.jobId)
-        .single();
+        .maybeSingle();
 
       if (jobError) throw jobError;
-
-      setActiveJob(job);
+      if (job) setActiveJob(job);
 
     } catch (error) {
       console.error("Erreur:", error);
@@ -139,15 +142,46 @@ export const QualifyAllButton = () => {
     }
   };
 
+  const handleStop = async () => {
+    if (!activeJob) return;
+    
+    try {
+      const { error } = await supabase
+        .from('qualification_jobs')
+        .update({ status: 'paused', updated_at: new Date().toISOString() })
+        .eq('id', activeJob.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "⏸️ Qualification mise en pause",
+        description: "Vous pouvez la reprendre plus tard",
+        duration: 3000,
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error("Erreur:", error);
+      toast({
+        title: "❌ Erreur",
+        description: error instanceof Error ? error.message : "Erreur lors de l'arrêt",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
   const progress = activeJob
     ? Math.round((activeJob.processed_count / activeJob.total_count) * 100)
     : 0;
 
+  const isRunning = activeJob?.status === 'running' && loading;
+  const isPaused = activeJob?.status === 'paused';
+
   return (
-    <div className="relative">
+    <div className="relative flex gap-2">
       <Button
         onClick={handleQualify}
-        disabled={loading}
+        disabled={isRunning}
         variant="outline"
         size="sm"
         className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
@@ -155,12 +189,23 @@ export const QualifyAllButton = () => {
         {activeJob?.status === 'completed' ? (
           <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
         ) : (
-          <Sparkles className={`w-3.5 h-3.5 ${loading ? "animate-pulse" : ""}`} />
+          <Sparkles className={`w-3.5 h-3.5 ${isRunning ? "animate-pulse" : ""}`} />
         )}
         <span className="hidden lg:inline ml-1">
-          {loading ? "En cours..." : "Qualifier tout"}
+          {isPaused ? "Reprendre" : isRunning ? "En cours..." : "Qualifier tout"}
         </span>
       </Button>
+
+      {isRunning && (
+        <Button
+          onClick={handleStop}
+          variant="outline"
+          size="sm"
+          className="h-7 px-2 text-xs border-destructive/50 hover:bg-destructive/10"
+        >
+          <span className="hidden lg:inline">Arrêter</span>
+        </Button>
+      )}
 
       {activeJob && (activeJob.status === 'running' || activeJob.status === 'paused') && (
         <div className="absolute top-full left-0 mt-2 w-64 bg-background border rounded-md p-3 shadow-lg z-50">
