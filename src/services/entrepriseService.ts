@@ -131,11 +131,50 @@ export const entrepriseService = {
         });
       }
 
-      // Compute qualified count from the filtered data
-      const qualifiedCount = filteredData.filter(e => e.categorie_qualifiee != null).length;
+      // Get qualified count with a separate query to count ALL qualified entreprises matching filters
+      let countQuery = supabase
+        .from('entreprises')
+        .select('id', { count: 'exact', head: true })
+        .not('categorie_qualifiee', 'is', null);
+
+      // Apply same filters to count query
+      if (filters.dateFrom) {
+        countQuery = countQuery.gte('date_demarrage', filters.dateFrom);
+      }
+      if (filters.dateTo) {
+        countQuery = countQuery.lte('date_demarrage', filters.dateTo);
+      }
+      if (filters.activiteDefinie === true) {
+        countQuery = countQuery.not('activite', 'is', null).neq('activite', '');
+      } else if (filters.activiteDefinie === false) {
+        countQuery = countQuery.or('activite.is.null,activite.eq.');
+      }
+      if (filters.searchQuery && filters.searchQuery.trim()) {
+        const q = filters.searchQuery.trim();
+        const like = `%${q}%`;
+        countQuery = countQuery.or(
+          `nom.ilike.${like},ville.ilike.${like},adresse.ilike.${like},activite.ilike.${like},siret.eq.${q}`
+        );
+      }
+      if (filters.departments && filters.departments.length > 0) {
+        const deptPatterns = filters.departments
+          .map((d) => {
+            const dl = d.toString().toUpperCase();
+            if (dl === '2A' || dl === '2B') return '20%';
+            const norm = dl.length === 1 ? `0${dl}` : dl;
+            return `${norm}%`;
+          })
+          .filter(Boolean);
+        if (deptPatterns.length > 0) {
+          const orExpr = deptPatterns.map((p) => `code_postal.ilike.${p}`).join(',');
+          countQuery = countQuery.or(orExpr);
+        }
+      }
+
+      const { count: qualifiedCount } = await countQuery;
       const total = filteredData.length;
 
-      return { data: filteredData, total, qualifiedCount, error: null };
+      return { data: filteredData, total, qualifiedCount: qualifiedCount ?? 0, error: null };
     } catch (error) {
       console.error('Error fetching entreprises:', error);
       return { data: null, error };

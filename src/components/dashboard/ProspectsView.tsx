@@ -41,7 +41,7 @@ export const ProspectsView = ({
   
   const { entreprises, totalCount, qualifiedCount } = useDashboardData(filters);
   
-  const resultsCount = totalCount ?? entreprises.length;
+  const resultsCount = qualifiedCount ?? 0;
   
   const {
     selectedEntreprises,
