@@ -83,6 +83,7 @@ export type Database = {
           score_lead: number | null
           siret: string
           site_web: string | null
+          sous_categorie: string | null
           statut: string | null
           telephone: string | null
           type_voie: string | null
@@ -118,6 +119,7 @@ export type Database = {
           score_lead?: number | null
           siret: string
           site_web?: string | null
+          sous_categorie?: string | null
           statut?: string | null
           telephone?: string | null
           type_voie?: string | null
@@ -153,6 +155,7 @@ export type Database = {
           score_lead?: number | null
           siret?: string
           site_web?: string | null
+          sous_categorie?: string | null
           statut?: string | null
           telephone?: string | null
           type_voie?: string | null
