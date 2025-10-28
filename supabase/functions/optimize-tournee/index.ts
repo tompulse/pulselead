@@ -55,15 +55,39 @@ serve(async (req) => {
       throw new Error('MAPBOX_ACCESS_TOKEN is not configured');
     }
 
-    // Déterminer le point de départ
-    const startPoint = point_depart || {
-      lat: entreprises[0].latitude,
-      lng: entreprises[0].longitude
-    };
+    // Normaliser le point de départ (accepter lat/lng ou latitude/longitude)
+    const rawStart = point_depart as any;
+    const startPoint = rawStart
+      ? { 
+          lat: rawStart.lat ?? rawStart.latitude, 
+          lng: rawStart.lng ?? rawStart.longitude 
+        }
+      : { 
+          lat: entreprises[0].latitude, 
+          lng: entreprises[0].longitude 
+        };
+    
+    // Valider le point de départ
+    if (!Number.isFinite(startPoint.lat) || !Number.isFinite(startPoint.lng)) {
+      throw new Error(`Point de départ invalide: lat=${startPoint.lat}, lng=${startPoint.lng}`);
+    }
+    
+    // Filtrer les entreprises avec coordonnées invalides
+    const validEntreprises = entreprises.filter(e => 
+      Number.isFinite(e.latitude) && Number.isFinite(e.longitude)
+    );
+    
+    if (validEntreprises.length === 0) {
+      throw new Error("Aucune entreprise avec des coordonnées GPS valides");
+    }
+    
+    if (validEntreprises.length < entreprises.length) {
+      console.warn(`⚠️ ${entreprises.length - validEntreprises.length} entreprise(s) ignorée(s) (coordonnées invalides)`);
+    }
 
     // Utiliser l'API Mapbox Optimization pour résoudre le TSP (Traveling Salesman Problem)
     // Cette API trouve automatiquement le meilleur ordre pour minimiser le temps de trajet
-    const coordinates = entreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
+    const coordinates = validEntreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
     
     // Si on a un point de départ différent, on l'ajoute comme premier point fixe
     // roundtrip=true est nécessaire pour que l'API fonctionne
@@ -103,7 +127,7 @@ serve(async (req) => {
     // Réorganiser les entreprises selon l'ordre optimisé de Mapbox
     const sortedEntreprises = relevantWaypoints.map((wp: any) => {
       const originalIndex = point_depart ? wp.waypoint_index - 1 : wp.waypoint_index;
-      return entreprises[originalIndex];
+      return validEntreprises[originalIndex];
     });
     
     console.log('✅ Ordre optimisé par Mapbox (minimum de temps de trajet):', sortedEntreprises.map((e: Entreprise) => e.nom));

@@ -139,20 +139,20 @@ export const useTourneeManager = (userId: string) => {
           entreprises: entreprisesWithCoords.map(e => ({
             id: e.id,
             nom: e.nom,
-            latitude: e.latitude,
-            longitude: e.longitude,
+            latitude: typeof e.latitude === 'string' ? parseFloat(e.latitude) : e.latitude,
+            longitude: typeof e.longitude === 'string' ? parseFloat(e.longitude) : e.longitude,
             adresse: e.adresse
           })),
-          point_depart: { latitude: userLat, longitude: userLng }
+          point_depart: { lat: userLat, lng: userLng }
         }
       });
 
       if (error) throw error;
       
       return {
-        optimizedOrder: data.optimized_route || [],
-        distance: data.total_distance_km || 0,
-        time: data.estimated_time_minutes || 0
+        optimizedOrder: data.ordre_optimise || [],
+        distance: data.distance_totale_km || 0,
+        time: data.temps_estime_minutes || 0
       };
     } catch (error) {
       console.error('Optimization error:', error);
