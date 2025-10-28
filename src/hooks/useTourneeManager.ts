@@ -65,9 +65,78 @@ export const useTourneeManager = (userId: string) => {
   const optimizeTournee = async (entreprises: any[], userLat: number, userLng: number) => {
     setIsOptimizing(true);
     try {
+      // Étape 1: Détecter et géocoder les entreprises sans coordonnées
+      const entreprisesToGeocode = entreprises.filter(e => !e.latitude || !e.longitude);
+      
+      if (entreprisesToGeocode.length > 0) {
+        toast({
+          title: "Géocodage en cours...",
+          description: `Recherche des coordonnées GPS pour ${entreprisesToGeocode.length} entreprise(s)...`
+        });
+
+        // Géocoder chaque entreprise
+        for (const entreprise of entreprisesToGeocode) {
+          try {
+            const { data: geoData, error: geoError } = await supabase.functions.invoke('geocode-entreprise', {
+              body: {
+                adresse: entreprise.adresse,
+                ville: entreprise.ville,
+                code_postal: entreprise.code_postal
+              }
+            });
+
+            if (geoError || !geoData?.latitude || !geoData?.longitude) {
+              console.warn(`Géocodage échoué pour ${entreprise.nom}:`, geoError);
+              continue;
+            }
+
+            // Mettre à jour les coordonnées dans la DB
+            const { error: updateError } = await supabase
+              .from('entreprises')
+              .update({
+                latitude: geoData.latitude,
+                longitude: geoData.longitude
+              })
+              .eq('id', entreprise.id);
+
+            if (updateError) {
+              console.error(`Erreur mise à jour coordonnées pour ${entreprise.nom}:`, updateError);
+            } else {
+              // Mettre à jour l'objet local
+              entreprise.latitude = geoData.latitude;
+              entreprise.longitude = geoData.longitude;
+              console.log(`✅ Coordonnées sauvegardées pour ${entreprise.nom}`);
+            }
+          } catch (error) {
+            console.error(`Erreur géocodage ${entreprise.nom}:`, error);
+          }
+        }
+      }
+
+      // Étape 2: Vérifier que toutes les entreprises ont maintenant des coordonnées
+      const entreprisesWithCoords = entreprises.filter(e => e.latitude && e.longitude);
+      
+      if (entreprisesWithCoords.length === 0) {
+        toast({
+          title: "Impossible d'optimiser",
+          description: "Aucune entreprise n'a de coordonnées GPS valides",
+          variant: "destructive"
+        });
+        return null;
+      }
+
+      if (entreprisesWithCoords.length < entreprises.length) {
+        toast({
+          title: "Géocodage partiel",
+          description: `${entreprises.length - entreprisesWithCoords.length} entreprise(s) sans coordonnées valides seront exclues`,
+          variant: "default"
+        });
+      }
+
+      // Étape 3: Optimiser la tournée avec les entreprises géocodées
       const { data, error } = await supabase.functions.invoke('optimize-tournee', {
         body: {
-          entreprises: entreprises.map(e => ({
+          entreprises: entreprisesWithCoords.map(e => ({
             id: e.id,
             nom: e.nom,
             latitude: e.latitude,
