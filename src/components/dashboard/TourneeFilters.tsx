@@ -8,6 +8,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { getCategoryLabel, ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
 import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
+import { ACTIVITY_HIERARCHY } from "@/utils/activitySubcategories";
 import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +22,7 @@ interface TourneeFiltersProps {
     formesJuridiques?: string[];
     searchQuery?: string;
     typeEvenement?: string[];
-    activiteDefinie?: boolean | null;
+    subcategories?: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   // Tournée props
@@ -54,10 +55,10 @@ export const TourneeFilters = ({
 }: TourneeFiltersProps) => {
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [subcategoriesOpen, setSubcategoriesOpen] = useState(false);
   const [formesOpen, setFormesOpen] = useState(false);
   const [datesOpen, setDatesOpen] = useState(false);
   const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
-  const [activiteOpen, setActiviteOpen] = useState(false);
   
   // Utilisation des catégories statiques complètes au lieu de récupérer uniquement celles en base
   const availableCategories = Object.keys(ACTIVITY_CATEGORIES);
@@ -119,11 +120,18 @@ export const TourneeFilters = ({
     });
   };
 
-  const handleActiviteToggle = (value: boolean) => {
-    setFilters((prev: any) => ({
-      ...prev,
-      activiteDefinie: prev.activiteDefinie === value ? null : value
-    }));
+  const handleSubcategoryToggle = (subcategoryId: string) => {
+    setFilters((prev: any) => {
+      const currentSubcategories = prev.subcategories || [];
+      const isSelected = currentSubcategories.includes(subcategoryId);
+      
+      return {
+        ...prev,
+        subcategories: isSelected
+          ? currentSubcategories.filter((s: string) => s !== subcategoryId)
+          : [...currentSubcategories, subcategoryId]
+      };
+    });
   };
 
   const clearFilters = () => setFilters((prev: any) => ({ 
@@ -132,7 +140,7 @@ export const TourneeFilters = ({
     departments: [], 
     formesJuridiques: [],
     typeEvenement: [],
-    activiteDefinie: null,
+    subcategories: [],
     searchQuery: ""
   }));
 
@@ -143,7 +151,7 @@ export const TourneeFilters = ({
     (filters.departments?.length || 0) +
     (filters.formesJuridiques?.length || 0) +
     (filters.typeEvenement?.length || 0) +
-    (filters.activiteDefinie !== null && filters.activiteDefinie !== undefined ? 1 : 0);
+    (filters.subcategories?.length || 0);
 
   return (
     <div className="space-y-0">
@@ -300,6 +308,47 @@ export const TourneeFilters = ({
           </CollapsibleContent>
         </Collapsible>
 
+        {/* Sous-catégories détaillées */}
+        <Collapsible open={subcategoriesOpen} onOpenChange={setSubcategoriesOpen} className="border-b border-accent/20">
+          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+            <span className="font-medium text-sm">Sous-catégories</span>
+            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${subcategoriesOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="px-4 pb-4">
+            <ScrollArea className="h-80 mt-2 overscroll-contain">
+              <div className="space-y-3 pr-4">
+                {Object.entries(ACTIVITY_HIERARCHY).map(([categoryKey, categoryData]) => (
+                  <div key={categoryKey} className="space-y-1">
+                    <div className="text-xs font-semibold text-accent/70 uppercase px-2 py-1 bg-accent/5 rounded">
+                      {categoryData.label}
+                    </div>
+                    {categoryData.subcategories.map((subcategory) => {
+                      const selected = filters.subcategories?.includes(subcategory.id);
+                      return (
+                        <div
+                          key={subcategory.id}
+                          onClick={() => handleSubcategoryToggle(subcategory.id)}
+                          className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98] ml-2"
+                        >
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                            selected ? 'bg-accent border-accent' : 'border-accent/30'
+                          }`}>
+                            {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                          </div>
+                          <span className="text-sm leading-tight">
+                            {subcategory.emoji} {subcategory.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </CollapsibleContent>
+        </Collapsible>
+
         {/* Formes juridiques */}
         <Collapsible open={formesOpen} onOpenChange={setFormesOpen} className="border-b border-accent/20">
           <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
@@ -376,40 +425,6 @@ export const TourneeFilters = ({
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Statut de l'activité */}
-        <Collapsible open={activiteOpen} onOpenChange={setActiviteOpen} className="border-b border-accent/20">
-          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Statut de l'activité</span>
-            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${activiteOpen ? 'rotate-180' : ''}`} />
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="px-4 pb-4">
-            <div className="space-y-1 mt-2">
-              {[
-                { key: true, label: '✅ Activité définie' },
-                { key: false, label: '⚠️ Activité non définie' }
-              ].map(({ key, label }) => {
-                const selected = filters.activiteDefinie === key;
-                return (
-                  <div
-                    key={String(key)}
-                    onClick={() => handleActiviteToggle(key)}
-                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                  >
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                      selected ? 'bg-accent border-accent' : 'border-accent/30'
-                    }`}>
-                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                    </div>
-                    <span className="text-sm leading-tight">
-                      {label}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
 
         {/* Dates */}
         <Collapsible open={datesOpen} onOpenChange={setDatesOpen} className="border-b border-accent/20">

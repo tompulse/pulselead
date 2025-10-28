@@ -11,6 +11,7 @@ export interface EntrepriseFilters {
   activiteDefinie?: boolean | null;
   formesJuridiques?: string[];
   searchQuery?: string;
+  subcategories?: string[];
 }
 
 export const entrepriseService = {
@@ -91,6 +92,13 @@ export const entrepriseService = {
         filteredData = filteredData.filter(e => {
           const category = categorizeActivity(e.activite, e.categorie_qualifiee);
           return filters.categories!.includes(category);
+        });
+      }
+
+      // Filter by subcategories
+      if (filters.subcategories && filters.subcategories.length > 0) {
+        filteredData = filteredData.filter(e => {
+          return e.sous_categorie && filters.subcategories!.includes(e.sous_categorie);
         });
       }
       
