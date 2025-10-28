@@ -28,15 +28,86 @@ export const useTourneeManager = (userId: string) => {
   // Create tournee mutation
   const createTourneeMutation = useMutation({
     mutationFn: async ({ nom, date, entreprises }: { nom: string; date: string; entreprises: any[] }) => {
+      // Étape 1: Géocoder les entreprises sans coordonnées
+      toast({
+        title: "Préparation de la tournée...",
+        description: "Géocodage des adresses en cours...",
+      });
+
+      const entreprisesToGeocode = entreprises.filter(e => !e.latitude || !e.longitude);
+      
+      if (entreprisesToGeocode.length > 0) {
+        for (const entreprise of entreprisesToGeocode) {
+          try {
+            const { data: geoData, error: geoError } = await supabase.functions.invoke('geocode-entreprise', {
+              body: {
+                adresse: entreprise.adresse,
+                ville: entreprise.ville,
+                code_postal: entreprise.code_postal
+              }
+            });
+
+            if (geoError || !geoData?.latitude || !geoData?.longitude) {
+              console.warn(`Géocodage échoué pour ${entreprise.nom}`);
+              continue;
+            }
+
+            // Mettre à jour les coordonnées dans la DB
+            await supabase
+              .from('entreprises')
+              .update({
+                latitude: geoData.latitude,
+                longitude: geoData.longitude
+              })
+              .eq('id', entreprise.id);
+
+            // Mettre à jour l'objet local
+            entreprise.latitude = geoData.latitude;
+            entreprise.longitude = geoData.longitude;
+          } catch (error) {
+            console.error(`Erreur géocodage ${entreprise.nom}:`, error);
+          }
+        }
+      }
+
+      // Étape 2: Calculer les itinéraires
+      const entreprisesWithCoords = entreprises.filter(e => e.latitude && e.longitude);
+      
+      if (entreprisesWithCoords.length === 0) {
+        throw new Error("Aucune entreprise n'a de coordonnées GPS valides");
+      }
+
+      toast({
+        title: "Calcul de l'itinéraire...",
+        description: "Optimisation du parcours en cours...",
+      });
+
+      const waypoints = entreprisesWithCoords.map(e => ({
+        lat: typeof e.latitude === 'string' ? parseFloat(e.latitude) : e.latitude,
+        lng: typeof e.longitude === 'string' ? parseFloat(e.longitude) : e.longitude,
+      }));
+
+      const { data: routeData, error: routeError } = await supabase.functions.invoke('calculate-routes', {
+        body: {
+          waypoints,
+          startPoint: null
+        }
+      });
+
+      if (routeError) throw routeError;
+
+      // Étape 3: Créer la tournée avec les données calculées
       const { data, error } = await supabase
         .from('tournees')
         .insert({
           user_id: userId,
           nom,
           date_planifiee: date,
-          entreprises_ids: entreprises.map(e => e.id),
-          ordre_optimise: entreprises.map(e => e.id),
-          statut: 'planifiee'
+          entreprises_ids: entreprisesWithCoords.map(e => e.id),
+          ordre_optimise: entreprisesWithCoords.map(e => e.id),
+          statut: 'planifiee',
+          distance_totale_km: routeData?.withTolls?.distance_km ? parseFloat(routeData.withTolls.distance_km) : null,
+          temps_estime_minutes: routeData?.withTolls?.duration_minutes || null,
         })
         .select()
         .single();
@@ -47,8 +118,9 @@ export const useTourneeManager = (userId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
       toast({
-        title: "Tournée créée",
-        description: "La tournée a été enregistrée avec succès"
+        title: "✅ Tournée créée",
+        description: "Votre tournée est prête et optimisée",
+        duration: 3000,
       });
       setSelectedEntreprises([]);
     },
