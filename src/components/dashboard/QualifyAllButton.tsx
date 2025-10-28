@@ -17,6 +17,7 @@ interface QualificationJob {
 export const QualifyAllButton = () => {
   const [loading, setLoading] = useState(false);
   const [activeJob, setActiveJob] = useState<QualificationJob | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
   const { toast } = useToast();
 
   // Check for existing running job on mount
@@ -33,6 +34,7 @@ export const QualifyAllButton = () => {
       if (job) {
         setActiveJob(job);
         setLoading(job.status === 'running');
+        setShowPopup(true);
       }
     };
 
@@ -98,8 +100,15 @@ export const QualifyAllButton = () => {
   }, [activeJob, toast]);
 
   const handleQualify = async () => {
+    // Si un job est actif, on toggle la popup
+    if (activeJob && (activeJob.status === 'running' || activeJob.status === 'paused')) {
+      setShowPopup(!showPopup);
+      return;
+    }
+
     setLoading(true);
     setActiveJob(null);
+    setShowPopup(true);
 
     try {
       const { data, error } = await supabase.functions.invoke("qualify-entreprises-background", {
@@ -208,7 +217,7 @@ export const QualifyAllButton = () => {
         </Button>
       )}
 
-      {activeJob && (activeJob.status === 'running' || activeJob.status === 'paused') && !isCompleted && (
+      {activeJob && (activeJob.status === 'running' || activeJob.status === 'paused') && !isCompleted && showPopup && (
         <div className="absolute top-full left-0 mt-2 w-64 bg-background border rounded-md p-3 shadow-lg z-50">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-medium">Qualification IA {activeJob.status === 'paused' ? '(en pause)' : ''}</p>
@@ -231,7 +240,7 @@ export const QualifyAllButton = () => {
         </div>
       )}
 
-      {isCompleted && (
+      {isCompleted && showPopup && (
         <div className="absolute top-full left-0 mt-2 w-64 bg-background border rounded-md p-3 shadow-lg z-50">
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle2 className="w-4 h-4 text-green-500" />

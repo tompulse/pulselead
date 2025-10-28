@@ -282,7 +282,59 @@ export const TourneeRouteDisplay = ({
     setRouteOptions({ withTolls: null, withoutTolls: null });
 
     try {
-      const waypoints = entreprises.map(e => ({
+      // Géocoder les entreprises sans coordonnées
+      const entreprisesToGeocode = entreprises.filter(e => !e.latitude || !e.longitude);
+      
+      if (entreprisesToGeocode.length > 0) {
+        console.log(`🔍 Géocodage de ${entreprisesToGeocode.length} entreprise(s)...`);
+        
+        for (const entreprise of entreprisesToGeocode) {
+          try {
+            const { data: geoData, error: geoError } = await supabase.functions.invoke('geocode-entreprise', {
+              body: {
+                adresse: entreprise.adresse,
+                ville: entreprise.ville,
+                code_postal: entreprise.code_postal
+              }
+            });
+
+            if (geoError || !geoData?.latitude || !geoData?.longitude) {
+              console.warn(`Géocodage échoué pour ${entreprise.nom}:`, geoError);
+              continue;
+            }
+
+            // Mettre à jour les coordonnées dans la DB et localement
+            await supabase
+              .from('entreprises')
+              .update({
+                latitude: geoData.latitude,
+                longitude: geoData.longitude
+              })
+              .eq('id', entreprise.id);
+
+            // Mettre à jour l'objet local
+            entreprise.latitude = geoData.latitude;
+            entreprise.longitude = geoData.longitude;
+          } catch (error) {
+            console.error(`Erreur géocodage ${entreprise.nom}:`, error);
+          }
+        }
+      }
+
+      // Filtrer uniquement les entreprises avec coordonnées valides
+      const validEntreprises = entreprises.filter(e => e.latitude && e.longitude);
+      
+      if (validEntreprises.length === 0) {
+        toast({
+          title: "Impossible de calculer",
+          description: "Aucune entreprise n'a de coordonnées GPS valides",
+          variant: "destructive",
+          duration: 3000,
+        });
+        return;
+      }
+
+      const waypoints = validEntreprises.map(e => ({
         lat: e.latitude,
         lng: e.longitude,
       }));
