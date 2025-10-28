@@ -1,5 +1,5 @@
 import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, memo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { LeadStatusBadge } from "./LeadStatusBadge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface ListViewProps {
   filters: {
@@ -160,21 +161,23 @@ export const ListView = ({
     };
   }, [filters]);
 
-  // Filter by search query
-  const filteredEntreprises = entreprises.filter((ent) => {
-    const searchQuery = filters.searchQuery || "";
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
+  // Debounce search query for better performance
+  const debouncedSearchQuery = useDebounce(filters.searchQuery || "", 300);
+  
+  // Filter by search query with useMemo for optimization
+  const filteredEntreprises = useMemo(() => {
+    if (!debouncedSearchQuery) return entreprises;
+    const query = debouncedSearchQuery.toLowerCase();
+    return entreprises.filter((ent) =>
       ent.nom?.toLowerCase().includes(query) ||
       ent.ville?.toLowerCase().includes(query) ||
       ent.code_postal?.includes(query) ||
       ent.activite?.toLowerCase().includes(query) ||
       ent.forme_juridique?.toLowerCase().includes(query)
     );
-  });
+  }, [entreprises, debouncedSearchQuery]);
 
-  const getCategoryInfo = (activity: string | null, qualifiedCategory?: string | null): { emoji: string; label: string } => {
+  const getCategoryInfo = useCallback((activity: string | null, qualifiedCategory?: string | null): { emoji: string; label: string } => {
     const category = categorizeActivity(activity, qualifiedCategory);
     const fullLabel = getCategoryLabel(category);
     const parts = fullLabel.split(' ');
@@ -182,7 +185,7 @@ export const ListView = ({
       emoji: parts[0],
       label: parts.slice(1).join(' ')
     };
-  };
+  }, []);
 
   const handleCRMAction = async (entrepriseId: string, actionType: 'appeler' | 'visite' | 'rdv' | 'note') => {
     const { data: { user } } = await supabase.auth.getUser();

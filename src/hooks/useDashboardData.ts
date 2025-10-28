@@ -9,9 +9,8 @@ export const useDashboardData = (filters: EntrepriseFilters) => {
   const { data: entreprises, isLoading, error } = useQuery({
     queryKey: ['entreprises', filters],
     queryFn: () => entrepriseService.fetchEntreprises(filters),
-    staleTime: 30 * 1000, // 30 seconds - refresh frequently to show qualified enterprises
-    gcTime: 2 * 60 * 1000, // 2 minutes
-    refetchInterval: 30 * 1000, // Auto-refetch every 30 seconds
+    staleTime: 5 * 60 * 1000, // 5 minutes - longer cache for better performance
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   const enrichMutation = useMutation({
@@ -26,7 +25,12 @@ export const useDashboardData = (filters: EntrepriseFilters) => {
       .channel('entreprises-qualif')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'entreprises' },
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'entreprises',
+          filter: 'categorie_qualifiee=neq.null' // Only listen to qualification updates
+        },
         () => {
           queryClient.invalidateQueries({ queryKey: ['entreprises'] });
         }
