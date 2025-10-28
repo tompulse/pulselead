@@ -74,6 +74,12 @@ export const TourneeMap = ({
 
     console.log('[TourneeMap] Initializing map with', entreprises.length, 'entreprises');
 
+    // Filtrer les entreprises avec coordonnées valides
+    const validEntreprises = entreprises.filter(e => 
+      Number.isFinite(e.latitude) && Number.isFinite(e.longitude)
+    );
+    console.log('[TourneeMap] Valid entreprises:', validEntreprises.length);
+
     const initMap = () => {
       if (!mapContainer.current) return;
 
@@ -81,11 +87,12 @@ export const TourneeMap = ({
 
       // Calculate center
       let center: [number, number] = [2.3522, 46.2276];
-      if (pointDepartLat && pointDepartLng) {
+      if (pointDepartLat && pointDepartLng && 
+          Number.isFinite(pointDepartLat) && Number.isFinite(pointDepartLng)) {
         center = [pointDepartLng, pointDepartLat];
-      } else if (entreprises.length > 0) {
-        const avgLng = entreprises.reduce((sum, e) => sum + e.longitude, 0) / entreprises.length;
-        const avgLat = entreprises.reduce((sum, e) => sum + e.latitude, 0) / entreprises.length;
+      } else if (validEntreprises.length > 0) {
+        const avgLng = validEntreprises.reduce((sum, e) => sum + e.longitude, 0) / validEntreprises.length;
+        const avgLat = validEntreprises.reduce((sum, e) => sum + e.latitude, 0) / validEntreprises.length;
         center = [avgLng, avgLat];
       }
 
@@ -156,14 +163,24 @@ export const TourneeMap = ({
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
 
-      // Build waypoints
+      // Filtrer entreprises valides et construire waypoints
+      const validEntreprises = entreprises.filter(e => 
+        Number.isFinite(e.latitude) && Number.isFinite(e.longitude)
+      );
+
+      if (validEntreprises.length === 0) {
+        console.warn('[TourneeMap] Aucune entreprise avec coordonnées GPS valides');
+        return;
+      }
+
       const waypoints: [number, number][] = [];
-      if (pointDepartLat && pointDepartLng) {
+      if (pointDepartLat && pointDepartLng && 
+          Number.isFinite(pointDepartLat) && Number.isFinite(pointDepartLng)) {
         waypoints.push([pointDepartLng, pointDepartLat]);
       }
-      entreprises.forEach(e => waypoints.push([e.longitude, e.latitude]));
+      validEntreprises.forEach(e => waypoints.push([e.longitude, e.latitude]));
 
-      console.log('[TourneeMap] Waypoints:', waypoints.length);
+      console.log('[TourneeMap] Waypoints valides:', waypoints.length, 'entreprises:', validEntreprises.length);
 
       // Get route from Mapbox
       try {
@@ -235,8 +252,8 @@ export const TourneeMap = ({
           console.log('[TourneeMap] Start marker added');
         }
 
-        // Add numbered markers
-        entreprises.forEach((e, idx) => {
+        // Add numbered markers (only valid entreprises)
+        validEntreprises.forEach((e, idx) => {
           if (!map.current) return;
           
           const el = document.createElement('div');

@@ -319,6 +319,10 @@ export const TourneeRouteDisplay = ({
             console.error(`Erreur géocodage ${entreprise.nom}:`, error);
           }
         }
+        
+        // Forcer le re-render de la carte avec les nouvelles coordonnées
+        setEntreprises([...entreprises]);
+        console.log(`✅ ${entreprisesToGeocode.length} entreprise(s) géocodée(s)`);
       }
 
       // Filtrer uniquement les entreprises avec coordonnées valides
