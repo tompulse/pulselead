@@ -11,24 +11,17 @@ export interface EntrepriseFilters {
   activiteDefinie?: boolean | null;
   formesJuridiques?: string[];
   searchQuery?: string;
-  page?: number;
-  pageSize?: number;
 }
 
 export const entrepriseService = {
   async fetchEntreprises(filters: EntrepriseFilters = {}) {
     try {
-      const page = filters.page || 0;
-      const pageSize = filters.pageSize || 100;
-      const from = page * pageSize;
-      const to = from + pageSize - 1;
-
       // Single request with server-side filters and exact count
       let query = supabase
         .from('entreprises')
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
-        .range(from, to); // Paginated fetch
+        .range(0, 999); // fetch first 1000 rows for the list
 
       // Date filters
       if (filters.dateFrom) {
