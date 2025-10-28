@@ -176,23 +176,24 @@ export const QualifyAllButton = () => {
 
   const isRunning = activeJob?.status === 'running' && loading;
   const isPaused = activeJob?.status === 'paused';
+  const isCompleted = activeJob?.status === 'completed' && progress === 100;
 
   return (
     <div className="relative flex gap-2">
       <Button
         onClick={handleQualify}
-        disabled={isRunning}
+        disabled={isRunning || isCompleted}
         variant="outline"
         size="sm"
         className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
       >
-        {activeJob?.status === 'completed' ? (
+        {isCompleted ? (
           <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
         ) : (
           <Sparkles className={`w-3.5 h-3.5 ${isRunning ? "animate-pulse" : ""}`} />
         )}
         <span className="hidden lg:inline ml-1">
-          {isPaused ? "Reprendre" : isRunning ? "En cours..." : "Qualifier tout"}
+          {isCompleted ? "Toutes qualifiées" : isPaused ? "Reprendre" : isRunning ? "En cours..." : "Qualifier tout"}
         </span>
       </Button>
 
@@ -207,7 +208,7 @@ export const QualifyAllButton = () => {
         </Button>
       )}
 
-      {activeJob && (activeJob.status === 'running' || activeJob.status === 'paused') && (
+      {activeJob && (activeJob.status === 'running' || activeJob.status === 'paused') && !isCompleted && (
         <div className="absolute top-full left-0 mt-2 w-64 bg-background border rounded-md p-3 shadow-lg z-50">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-medium">Qualification IA {activeJob.status === 'paused' ? '(en pause)' : ''}</p>
@@ -227,6 +228,19 @@ export const QualifyAllButton = () => {
               💡 Vous pouvez fermer cette page, le processus continue en arrière-plan
             </p>
           )}
+        </div>
+      )}
+
+      {isCompleted && (
+        <div className="absolute top-full left-0 mt-2 w-64 bg-background border rounded-md p-3 shadow-lg z-50">
+          <div className="flex items-center gap-2 mb-2">
+            <CheckCircle2 className="w-4 h-4 text-green-500" />
+            <p className="text-xs font-medium text-green-600">Toutes les entreprises sont qualifiées !</p>
+          </div>
+          <div className="space-y-1 text-xs text-muted-foreground">
+            <p>✅ {activeJob.succeeded_count} entreprises qualifiées avec succès</p>
+            {activeJob.failed_count > 0 && <p>❌ {activeJob.failed_count} échecs</p>}
+          </div>
         </div>
       )}
     </div>
