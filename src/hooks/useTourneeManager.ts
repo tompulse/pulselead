@@ -102,7 +102,7 @@ export const useTourneeManager = (userId: string) => {
             if (updateError) {
               console.error(`Erreur mise à jour coordonnées pour ${entreprise.nom}:`, updateError);
             } else {
-              // Mettre à jour l'objet local
+              // CRITICAL: Mettre à jour l'objet local avec les nouvelles coordonnées
               entreprise.latitude = geoData.latitude;
               entreprise.longitude = geoData.longitude;
               console.log(`✅ Coordonnées sauvegardées pour ${entreprise.nom}`);
