@@ -292,11 +292,16 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
         console.log(`Batch completed: ${succeeded} succeeded, ${failed} failed out of ${processed} processed`);
       }
 
-      // Update job counters and keep total_count aligned with actual remaining scope
+      // Update job counters - total_count is now dynamically updated based on remaining
       const newProcessed = (job.processed_count || 0) + processed;
       const newSucceeded = (job.succeeded_count || 0) + succeeded;
       const newFailed = (job.failed_count || 0) + failed;
-      const effectiveTotal = (job.processed_count || 0) + (count || 0);
+      
+      // Calculate remaining after this batch
+      const remainingAfterBatch = Math.max(0, (count || 0) - processed);
+      const updatedTotal = newProcessed + remainingAfterBatch;
+
+      console.log(`Batch update: processed=${newProcessed}, succeeded=${newSucceeded}, failed=${newFailed}, remaining=${remainingAfterBatch}, updatedTotal=${updatedTotal}`);
 
       await serviceClient
         .from('qualification_jobs')
@@ -304,7 +309,7 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
           processed_count: newProcessed,
           succeeded_count: newSucceeded,
           failed_count: newFailed,
-          total_count: effectiveTotal,
+          total_count: updatedTotal,
           updated_at: new Date().toISOString(),
         })
         .eq('id', jobId);
@@ -401,7 +406,15 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
       );
     }
 
-    // If there's an existing job (running or paused), resume/continue instead of creating a new one
+    // CRITICAL: Get the REAL current count from the database
+    const { count: actualUnqualifiedCount } = await serviceClient
+      .from('entreprises')
+      .select('*', { count: 'exact', head: true })
+      .is('categorie_qualifiee', null);
+
+    console.log(`Actual unqualified count in database: ${actualUnqualifiedCount}`);
+
+    // If there's an existing job (running or paused), check if it's valid or needs cleanup
     const { data: existingJobs, error: existingErr } = await serviceClient
       .from('qualification_jobs')
       .select('*')
@@ -413,36 +426,36 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
     const existing = existingJobs?.[0];
 
     if (existing) {
-      // Recalculate remaining unqualified to keep totals in sync with the current dataset
-      const { count: remaining, error: remErr } = await serviceClient
-        .from('entreprises')
-        .select('*', { count: 'exact', head: true })
-        .is('categorie_qualifiee', null);
-
-      const processed = existing.processed_count ?? 0;
-      const currentRemaining = remErr ? 0 : (remaining ?? 0);
-      const effectiveTotal = processed + currentRemaining;
-
-      // If there is nothing left to process, finalize the job
-      if (currentRemaining === 0) {
+      // If nothing left to qualify, finalize the job immediately
+      if (actualUnqualifiedCount === 0) {
         await serviceClient
           .from('qualification_jobs')
-          .update({ status: 'completed', total_count: processed, completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          .update({ 
+            status: 'completed',
+            total_count: existing.processed_count,
+            completed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
           .eq('id', existing.id);
 
         return new Response(
-          JSON.stringify({ message: 'already_completed', jobId: existing.id, totalCount: processed }),
+          JSON.stringify({ message: 'already_completed', jobId: existing.id, totalCount: existing.processed_count }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // Keep total_count accurate to current scope
-      if (effectiveTotal !== existing.total_count) {
-        await serviceClient
-          .from('qualification_jobs')
-          .update({ total_count: effectiveTotal, updated_at: new Date().toISOString() })
-          .eq('id', existing.id);
-      }
+      // Update the total_count to reflect current reality: processed + remaining
+      const correctedTotal = (existing.processed_count || 0) + actualUnqualifiedCount;
+      
+      console.log(`Existing job ${existing.id}: processed=${existing.processed_count}, remaining=${actualUnqualifiedCount}, correctedTotal=${correctedTotal}`);
+
+      await serviceClient
+        .from('qualification_jobs')
+        .update({ 
+          total_count: correctedTotal,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', existing.id);
 
       if (existing.status === 'paused') {
         await serviceClient
@@ -452,41 +465,42 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
         console.log(`Resuming paused job ${existing.id}`);
         scheduleNext(existing.id);
         return new Response(
-          JSON.stringify({ message: 'resumed', jobId: existing.id, totalCount: effectiveTotal }),
+          JSON.stringify({ message: 'resumed', jobId: existing.id, totalCount: correctedTotal }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // If already running, nudge it by scheduling another batch
+      // If already running, nudge it
       console.log(`Job ${existing.id} already running, continuing`);
       scheduleNext(existing.id);
       return new Response(
-        JSON.stringify({ message: 'already_running', jobId: existing.id, totalCount: effectiveTotal }),
+        JSON.stringify({ message: 'already_running', jobId: existing.id, totalCount: correctedTotal }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Count remaining to set total_count
-    const { count: totalCount, error: countError } = await serviceClient
-      .from('entreprises')
-      .select('*', { count: 'exact', head: true })
-      .is('categorie_qualifiee', null);
-    if (countError) throw countError;
+    // No existing job - create a new one with accurate count
+    if (actualUnqualifiedCount === 0) {
+      return new Response(
+        JSON.stringify({ message: 'nothing_to_qualify', totalCount: 0 }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const { data: job, error: jobError } = await serviceClient
       .from('qualification_jobs')
-      .insert({ user_id: authData.user.id, status: 'running', total_count: totalCount || 0 })
+      .insert({ user_id: authData.user.id, status: 'running', total_count: actualUnqualifiedCount })
       .select()
       .single();
     if (jobError) throw jobError;
 
-    console.log(`Created job ${job.id} for ${totalCount} entreprises`);
+    console.log(`Created job ${job.id} for ${actualUnqualifiedCount} entreprises`);
 
     // Kick off the first batch
     scheduleNext(job.id);
 
     return new Response(
-      JSON.stringify({ message: 'started', jobId: job.id, totalCount: totalCount || 0 }),
+      JSON.stringify({ message: 'started', jobId: job.id, totalCount: actualUnqualifiedCount }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
