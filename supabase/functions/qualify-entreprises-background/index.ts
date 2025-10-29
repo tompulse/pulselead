@@ -292,10 +292,11 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
         console.log(`Batch completed: ${succeeded} succeeded, ${failed} failed out of ${processed} processed`);
       }
 
-      // Update job counters
+      // Update job counters and keep total_count aligned with actual remaining scope
       const newProcessed = (job.processed_count || 0) + processed;
       const newSucceeded = (job.succeeded_count || 0) + succeeded;
       const newFailed = (job.failed_count || 0) + failed;
+      const effectiveTotal = (job.processed_count || 0) + (count || 0);
 
       await serviceClient
         .from('qualification_jobs')
@@ -303,6 +304,7 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
           processed_count: newProcessed,
           succeeded_count: newSucceeded,
           failed_count: newFailed,
+          total_count: effectiveTotal,
           updated_at: new Date().toISOString(),
         })
         .eq('id', jobId);
