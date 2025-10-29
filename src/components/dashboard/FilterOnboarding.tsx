@@ -127,11 +127,10 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           });
         }
 
-        // Filtre par catégories si sélectionnées
+        // Filtre par types de bâtiments si sélectionnés
         if (selectedCategories.length > 0) {
           filteredData = filteredData.filter((entreprise: any) => {
-            const category = categorizeActivity(entreprise.activite, entreprise.categorie_qualifiee);
-            return selectedCategories.includes(category);
+            return selectedCategories.includes(entreprise.type_batiment);
           });
         }
 
@@ -300,8 +299,8 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                     <span className="font-semibold text-left text-base md:text-lg">✨ Tous les secteurs m'intéressent</span>
                   </button>
 
-                  {/* Secteurs spécifiques */}
-                  {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
+                  {/* Types de bâtiments spécifiques */}
+                  {Object.entries(BUILDING_TYPES).map(([key, buildingType]) => (
                     <label
                       key={key}
                       className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-colors"
@@ -319,7 +318,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                         onCheckedChange={() => handleCategoryToggle(key)}
                         className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5 md:h-6 md:w-6"
                       />
-                      <span className="font-semibold text-base md:text-lg">{getBuildingTypeLabel(key)}</span>
+                      <span className="font-semibold text-base md:text-lg">{buildingType.label}</span>
                     </label>
                   ))}
                 </div>
