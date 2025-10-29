@@ -34,7 +34,7 @@ export const QualifyAllButton = () => {
       if (job) {
         setActiveJob(job);
         setLoading(job.status === 'running');
-        setShowPopup(true);
+        // Ne pas afficher la popup automatiquement au chargement
       }
     };
 
