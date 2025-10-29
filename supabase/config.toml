@@ -9,6 +9,9 @@ verify_jwt = true
 [functions.qualify-subcategories]
 verify_jwt = false
 
+[functions.qualify-detailed-categories]
+verify_jwt = false
+
 [functions.format-lead-details]
 verify_jwt = true
 

@@ -10,7 +10,7 @@ import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useAvailableSubcategories } from "@/hooks/useAvailableSubcategories";
+
 
 interface TourneeFiltersProps {
   filters: {
@@ -21,7 +21,6 @@ interface TourneeFiltersProps {
     formesJuridiques?: string[];
     searchQuery?: string;
     typeEvenement?: string[];
-    subcategories?: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   // Tournée props
@@ -54,13 +53,9 @@ export const TourneeFilters = ({
 }: TourneeFiltersProps) => {
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [subcategoriesOpen, setSubcategoriesOpen] = useState(false);
   const [formesOpen, setFormesOpen] = useState(false);
   const [datesOpen, setDatesOpen] = useState(false);
   const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
-  
-  // Récupérer les sous-catégories disponibles depuis la base de données
-  const { groupedByCategory, loading: subcategoriesLoading } = useAvailableSubcategories();
   
   // Utilisation des catégories statiques complètes au lieu de récupérer uniquement celles en base
   const availableCategories = Object.keys(ACTIVITY_CATEGORIES);
@@ -122,19 +117,6 @@ export const TourneeFilters = ({
     });
   };
 
-  const handleSubcategoryToggle = (subcategoryId: string) => {
-    setFilters((prev: any) => {
-      const currentSubcategories = prev.subcategories || [];
-      const isSelected = currentSubcategories.includes(subcategoryId);
-      
-      return {
-        ...prev,
-        subcategories: isSelected
-          ? currentSubcategories.filter((s: string) => s !== subcategoryId)
-          : [...currentSubcategories, subcategoryId]
-      };
-    });
-  };
 
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
@@ -142,7 +124,6 @@ export const TourneeFilters = ({
     departments: [], 
     formesJuridiques: [],
     typeEvenement: [],
-    subcategories: [],
     searchQuery: ""
   }));
 
@@ -152,8 +133,7 @@ export const TourneeFilters = ({
     (filters.categories?.length || 0) + 
     (filters.departments?.length || 0) +
     (filters.formesJuridiques?.length || 0) +
-    (filters.typeEvenement?.length || 0) +
-    (filters.subcategories?.length || 0);
+    (filters.typeEvenement?.length || 0);
 
   return (
     <div className="space-y-0">
@@ -310,56 +290,6 @@ export const TourneeFilters = ({
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Sous-catégories détaillées */}
-        <Collapsible open={subcategoriesOpen} onOpenChange={setSubcategoriesOpen} className="border-b border-accent/20">
-          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Sous-catégories</span>
-            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${subcategoriesOpen ? 'rotate-180' : ''}`} />
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="px-4 pb-4">
-            {subcategoriesLoading ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Chargement...
-              </div>
-            ) : Object.keys(groupedByCategory).length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Aucune sous-catégorie disponible
-              </div>
-            ) : (
-              <ScrollArea className="h-80 mt-2 overscroll-contain">
-                <div className="space-y-3 pr-4">
-                  {Object.entries(groupedByCategory).map(([categoryKey, categoryData]) => (
-                    <div key={categoryKey} className="space-y-1">
-                      <div className="text-xs font-semibold text-accent/70 uppercase px-2 py-1 bg-accent/5 rounded">
-                        {categoryData.label}
-                      </div>
-                      {categoryData.subcategories.map((subcategory) => {
-                        const selected = filters.subcategories?.includes(subcategory.id);
-                        return (
-                          <div
-                            key={subcategory.id}
-                            onClick={() => handleSubcategoryToggle(subcategory.id)}
-                            className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98] ml-2"
-                          >
-                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                              selected ? 'bg-accent border-accent' : 'border-accent/30'
-                            }`}>
-                              {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                            </div>
-                            <span className="text-sm leading-tight">
-                              {subcategory.emoji} {subcategory.label}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
 
         {/* Formes juridiques */}
         <Collapsible open={formesOpen} onOpenChange={setFormesOpen} className="border-b border-accent/20">

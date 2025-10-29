@@ -13,7 +13,7 @@ import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategorie
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { useState } from "react";
 import { format } from "date-fns";
-import { useAvailableSubcategories } from "@/hooks/useAvailableSubcategories";
+
 
 interface SidebarProps {
   filters: {
@@ -21,7 +21,6 @@ interface SidebarProps {
     dateTo: string;
     categories: string[];
     departments: string[];
-    subcategories: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   onFilterChange?: () => void;
@@ -58,11 +57,7 @@ export const Sidebar = ({
 }: SidebarProps) => {
   const [isDepartmentsOpen, setIsDepartmentsOpen] = useState(true);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
-  const [isSubcategoriesOpen, setIsSubcategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
-  
-  // Récupérer les sous-catégories disponibles depuis la base de données
-  const { groupedByCategory, loading: subcategoriesLoading } = useAvailableSubcategories();
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev: any) => ({ ...prev, [key]: value }));
@@ -83,20 +78,6 @@ export const Sidebar = ({
     onFilterChange?.();
   };
 
-  const handleSubcategoryToggle = (subcategoryId: string) => {
-    setFilters((prev: any) => {
-      const currentSubcategories = prev.subcategories || [];
-      const isSelected = currentSubcategories.includes(subcategoryId);
-      
-      return {
-        ...prev,
-        subcategories: isSelected
-          ? currentSubcategories.filter((s: string) => s !== subcategoryId)
-          : [...currentSubcategories, subcategoryId]
-      };
-    });
-    onFilterChange?.();
-  };
 
   const allCategories = Object.keys(ACTIVITY_CATEGORIES);
   const allDepartments = Object.keys(DEPARTMENT_NAMES).sort();
@@ -303,68 +284,6 @@ export const Sidebar = ({
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Sous-catégories - Collapsible */}
-        <Collapsible open={isSubcategoriesOpen} onOpenChange={setIsSubcategoriesOpen}>
-          <CollapsibleTrigger className="w-full">
-            <div className={`flex items-center justify-between rounded-lg border border-accent/30 hover:bg-gradient-to-r hover:from-accent/15 hover:to-accent/5 transition-all shadow-sm ${
-              isMobileSheet ? "p-4 bg-gradient-to-br from-accent/10 to-accent/5" : "p-2.5 bg-gradient-to-br from-accent/10 to-accent/5"
-            }`}>
-              <Label className={`font-bold cursor-pointer gradient-text ${isMobileSheet ? "text-base" : "text-xs"}`}>
-                Sous-catégories
-              </Label>
-              <ChevronDown className={`text-accent transition-transform ${
-                isSubcategoriesOpen ? 'rotate-180' : ''
-              } ${isMobileSheet ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
-            </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent className={isMobileSheet ? "mt-2" : "mt-1.5"}>
-            {subcategoriesLoading ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Chargement...
-              </div>
-            ) : Object.keys(groupedByCategory).length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Aucune sous-catégorie disponible
-              </div>
-            ) : (
-              <div className={`overflow-y-auto pr-1 custom-scrollbar ${
-                isMobileSheet ? "space-y-3 max-h-64 px-2" : "space-y-2 max-h-52 px-1"
-              }`}>
-                {Object.entries(groupedByCategory).map(([categoryKey, categoryData]) => (
-                  <div key={categoryKey} className={isMobileSheet ? "space-y-2" : "space-y-1"}>
-                    <div className={`font-semibold text-accent/70 uppercase ${
-                      isMobileSheet ? "text-xs px-2 py-1" : "text-[10px] px-1.5 py-0.5"
-                    } bg-accent/5 rounded`}>
-                      {categoryData.label}
-                    </div>
-                    {categoryData.subcategories.map((subcategory) => (
-                      <div key={subcategory.id} className={`flex items-center rounded hover:bg-accent/5 ${
-                        isMobileSheet ? "space-x-3 p-3 min-h-[48px] ml-2" : "space-x-1.5 p-1 ml-1"
-                      }`}>
-                        <Checkbox
-                          id={`subcat-${subcategory.id}`}
-                          checked={filters.subcategories?.includes(subcategory.id)}
-                          onCheckedChange={() => handleSubcategoryToggle(subcategory.id)}
-                          className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary shrink-0 ${
-                            isMobileSheet ? "h-6 w-6" : "h-3.5 w-3.5"
-                          }`}
-                        />
-                        <label
-                          htmlFor={`subcat-${subcategory.id}`}
-                          className={`font-medium leading-none cursor-pointer flex-1 ${
-                            isMobileSheet ? "text-base" : "text-[11px]"
-                          }`}
-                        >
-                          {subcategory.emoji} {subcategory.label}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
 
         {/* Dates - Collapsible */}
         <Collapsible open={isDatesOpen} onOpenChange={setIsDatesOpen}>
