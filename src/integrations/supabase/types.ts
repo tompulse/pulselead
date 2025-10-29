@@ -255,6 +255,42 @@ export type Database = {
           },
         ]
       }
+      qualification_status: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_running: boolean
+          paused_at: string | null
+          qualified_count: number
+          started_at: string | null
+          total_count: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_running?: boolean
+          paused_at?: string | null
+          qualified_count?: number
+          started_at?: string | null
+          total_count?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_running?: boolean
+          paused_at?: string | null
+          qualified_count?: number
+          started_at?: string | null
+          total_count?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       rate_limits: {
         Row: {
           created_at: string | null

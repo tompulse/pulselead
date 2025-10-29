@@ -4,21 +4,32 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Wand2, Square, Loader2 } from "lucide-react";
+import { Wand2, Square, Loader2, Play, Pause } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+
+interface QualificationStatus {
+  id: string;
+  is_running: boolean;
+  total_count: number;
+  qualified_count: number;
+  started_at: string | null;
+  paused_at: string | null;
+}
 
 export const QualificationProgress = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [qualifiedCount, setQualifiedCount] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [statusId, setStatusId] = useState<string | null>(null);
   const [categories, setCategories] = useState<Record<string, number>>({});
   const shouldContinueRef = useRef(false);
   const { toast } = useToast();
 
-  // Charger les compteurs initiaux
+  // Charger les compteurs et le statut
   useEffect(() => {
-    loadCounts();
+    loadStatus();
   }, []);
 
   // Écouter les mises à jour en temps réel
@@ -43,6 +54,25 @@ export const QualificationProgress = () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  const loadStatus = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Charger le statut existant
+    const { data: status } = await supabase
+      .from('qualification_status')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (status) {
+      setStatusId(status.id);
+      setIsPaused(status.is_running === false && status.started_at !== null);
+    }
+
+    await loadCounts();
+  };
 
   const loadCounts = async () => {
     // Total d'entreprises
@@ -74,6 +104,35 @@ export const QualificationProgress = () => {
     setCategories(catCounts);
   };
 
+  const saveStatus = async (running: boolean) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const statusData = {
+      user_id: user.id,
+      is_running: running,
+      total_count: totalCount,
+      qualified_count: qualifiedCount,
+      started_at: running ? new Date().toISOString() : undefined,
+      paused_at: !running && statusId ? new Date().toISOString() : null,
+    };
+
+    if (statusId) {
+      await supabase
+        .from('qualification_status')
+        .update(statusData)
+        .eq('id', statusId);
+    } else {
+      const { data } = await supabase
+        .from('qualification_status')
+        .insert(statusData)
+        .select()
+        .single();
+      
+      if (data) setStatusId(data.id);
+    }
+  };
+
   const processBatch = async () => {
     const { data, error } = await supabase.functions.invoke('qualify-all-entreprises');
     
@@ -84,15 +143,11 @@ export const QualificationProgress = () => {
     return data;
   };
 
-  const handleStart = async () => {
+  const runQualification = async () => {
     shouldContinueRef.current = true;
     setIsRunning(true);
-    setShowDialog(true);
-
-    toast({
-      title: "🤖 Qualification lancée",
-      description: "Traitement automatique en cours...",
-    });
+    setIsPaused(false);
+    await saveStatus(true);
 
     try {
       while (shouldContinueRef.current) {
@@ -107,6 +162,7 @@ export const QualificationProgress = () => {
             title: "✅ Qualification terminée",
             description: `${qualifiedCount} entreprises qualifiées`,
           });
+          await saveStatus(false);
           break;
         }
 
@@ -120,18 +176,40 @@ export const QualificationProgress = () => {
         description: error instanceof Error ? error.message : "Erreur inconnue",
         variant: "destructive",
       });
+      await saveStatus(false);
     } finally {
-      setIsRunning(false);
-      shouldContinueRef.current = false;
+      if (!shouldContinueRef.current) {
+        setIsRunning(false);
+      }
     }
   };
 
-  const handleStop = () => {
+  const handleStart = async () => {
+    setShowDialog(true);
+    toast({
+      title: "🤖 Qualification lancée",
+      description: "Traitement automatique en cours...",
+    });
+    await runQualification();
+  };
+
+  const handleResume = async () => {
+    setShowDialog(true);
+    toast({
+      title: "▶️ Reprise de la qualification",
+      description: "Le traitement continue...",
+    });
+    await runQualification();
+  };
+
+  const handlePause = async () => {
     shouldContinueRef.current = false;
     setIsRunning(false);
+    setIsPaused(true);
+    await saveStatus(false);
     toast({
-      title: "⏸️ Arrêt demandé",
-      description: "Le traitement s'arrêtera après le batch en cours",
+      title: "⏸️ Qualification mise en pause",
+      description: "Vous pouvez reprendre plus tard",
     });
   };
 
@@ -154,8 +232,17 @@ export const QualificationProgress = () => {
         size="sm"
         className="h-7 px-3 text-xs bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70"
       >
-        <Wand2 className="w-3.5 h-3.5 mr-1.5" />
-        <span>Qualifier IA</span>
+        {isPaused ? (
+          <>
+            <Play className="w-3.5 h-3.5 mr-1.5" />
+            <span>Reprendre IA</span>
+          </>
+        ) : (
+          <>
+            <Wand2 className="w-3.5 h-3.5 mr-1.5" />
+            <span>Qualifier IA</span>
+          </>
+        )}
         {remaining > 0 && (
           <Badge variant="secondary" className="ml-2 bg-white/20 text-white text-[10px] px-1">
             {remaining.toLocaleString('fr-FR')}
@@ -181,16 +268,22 @@ export const QualificationProgress = () => {
             </div>
 
             <div className="flex gap-2">
-              {!isRunning && remaining > 0 && (
+              {!isRunning && !isPaused && remaining > 0 && (
                 <Button onClick={handleStart} className="flex-1">
                   <Wand2 className="w-4 h-4 mr-2" />
                   Démarrer la qualification
                 </Button>
               )}
+              {!isRunning && isPaused && remaining > 0 && (
+                <Button onClick={handleResume} className="flex-1">
+                  <Play className="w-4 h-4 mr-2" />
+                  Reprendre la qualification
+                </Button>
+              )}
               {isRunning && (
-                <Button onClick={handleStop} variant="destructive" className="flex-1">
-                  <Square className="w-4 h-4 mr-2" />
-                  Arrêter
+                <Button onClick={handlePause} variant="outline" className="flex-1">
+                  <Pause className="w-4 h-4 mr-2" />
+                  Mettre en pause
                 </Button>
               )}
             </div>
@@ -199,6 +292,13 @@ export const QualificationProgress = () => {
               <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted p-3 rounded-lg">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Traitement en cours par batch de 50...</span>
+              </div>
+            )}
+
+            {isPaused && !isRunning && (
+              <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg">
+                <Pause className="w-4 h-4" />
+                <span>Qualification en pause - Cliquez sur "Reprendre" pour continuer</span>
               </div>
             )}
 
