@@ -10,10 +10,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
 import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
-import { ACTIVITY_HIERARCHY } from "@/utils/activitySubcategories";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { useState } from "react";
 import { format } from "date-fns";
+import { useAvailableSubcategories } from "@/hooks/useAvailableSubcategories";
 
 interface SidebarProps {
   filters: {
@@ -60,6 +60,9 @@ export const Sidebar = ({
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isSubcategoriesOpen, setIsSubcategoriesOpen] = useState(false);
   const [isDatesOpen, setIsDatesOpen] = useState(false);
+  
+  // Récupérer les sous-catégories disponibles depuis la base de données
+  const { groupedByCategory, loading: subcategoriesLoading } = useAvailableSubcategories();
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev: any) => ({ ...prev, [key]: value }));
@@ -315,41 +318,51 @@ export const Sidebar = ({
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent className={isMobileSheet ? "mt-2" : "mt-1.5"}>
-            <div className={`overflow-y-auto pr-1 custom-scrollbar ${
-              isMobileSheet ? "space-y-3 max-h-64 px-2" : "space-y-2 max-h-52 px-1"
-            }`}>
-              {Object.entries(ACTIVITY_HIERARCHY).map(([categoryKey, categoryData]) => (
-                <div key={categoryKey} className={isMobileSheet ? "space-y-2" : "space-y-1"}>
-                  <div className={`font-semibold text-accent/70 uppercase ${
-                    isMobileSheet ? "text-xs px-2 py-1" : "text-[10px] px-1.5 py-0.5"
-                  } bg-accent/5 rounded`}>
-                    {categoryData.label}
-                  </div>
-                  {categoryData.subcategories.map((subcategory) => (
-                    <div key={subcategory.id} className={`flex items-center rounded hover:bg-accent/5 ${
-                      isMobileSheet ? "space-x-3 p-3 min-h-[48px] ml-2" : "space-x-1.5 p-1 ml-1"
-                    }`}>
-                      <Checkbox
-                        id={`subcat-${subcategory.id}`}
-                        checked={filters.subcategories?.includes(subcategory.id)}
-                        onCheckedChange={() => handleSubcategoryToggle(subcategory.id)}
-                        className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary shrink-0 ${
-                          isMobileSheet ? "h-6 w-6" : "h-3.5 w-3.5"
-                        }`}
-                      />
-                      <label
-                        htmlFor={`subcat-${subcategory.id}`}
-                        className={`font-medium leading-none cursor-pointer flex-1 ${
-                          isMobileSheet ? "text-base" : "text-[11px]"
-                        }`}
-                      >
-                        {subcategory.emoji} {subcategory.label}
-                      </label>
+            {subcategoriesLoading ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Chargement...
+              </div>
+            ) : Object.keys(groupedByCategory).length === 0 ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Aucune sous-catégorie disponible
+              </div>
+            ) : (
+              <div className={`overflow-y-auto pr-1 custom-scrollbar ${
+                isMobileSheet ? "space-y-3 max-h-64 px-2" : "space-y-2 max-h-52 px-1"
+              }`}>
+                {Object.entries(groupedByCategory).map(([categoryKey, categoryData]) => (
+                  <div key={categoryKey} className={isMobileSheet ? "space-y-2" : "space-y-1"}>
+                    <div className={`font-semibold text-accent/70 uppercase ${
+                      isMobileSheet ? "text-xs px-2 py-1" : "text-[10px] px-1.5 py-0.5"
+                    } bg-accent/5 rounded`}>
+                      {categoryData.label}
                     </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+                    {categoryData.subcategories.map((subcategory) => (
+                      <div key={subcategory.id} className={`flex items-center rounded hover:bg-accent/5 ${
+                        isMobileSheet ? "space-x-3 p-3 min-h-[48px] ml-2" : "space-x-1.5 p-1 ml-1"
+                      }`}>
+                        <Checkbox
+                          id={`subcat-${subcategory.id}`}
+                          checked={filters.subcategories?.includes(subcategory.id)}
+                          onCheckedChange={() => handleSubcategoryToggle(subcategory.id)}
+                          className={`border-accent data-[state=checked]:bg-accent data-[state=checked]:text-primary shrink-0 ${
+                            isMobileSheet ? "h-6 w-6" : "h-3.5 w-3.5"
+                          }`}
+                        />
+                        <label
+                          htmlFor={`subcat-${subcategory.id}`}
+                          className={`font-medium leading-none cursor-pointer flex-1 ${
+                            isMobileSheet ? "text-base" : "text-[11px]"
+                          }`}
+                        >
+                          {subcategory.emoji} {subcategory.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
           </CollapsibleContent>
         </Collapsible>
 

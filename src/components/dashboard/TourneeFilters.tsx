@@ -8,10 +8,9 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { getCategoryLabel, ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
 import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
-import { ACTIVITY_HIERARCHY } from "@/utils/activitySubcategories";
 import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { supabase } from "@/integrations/supabase/client";
+import { useAvailableSubcategories } from "@/hooks/useAvailableSubcategories";
 
 interface TourneeFiltersProps {
   filters: {
@@ -59,6 +58,9 @@ export const TourneeFilters = ({
   const [formesOpen, setFormesOpen] = useState(false);
   const [datesOpen, setDatesOpen] = useState(false);
   const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
+  
+  // Récupérer les sous-catégories disponibles depuis la base de données
+  const { groupedByCategory, loading: subcategoriesLoading } = useAvailableSubcategories();
   
   // Utilisation des catégories statiques complètes au lieu de récupérer uniquement celles en base
   const availableCategories = Object.keys(ACTIVITY_CATEGORIES);
@@ -316,36 +318,46 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            <ScrollArea className="h-80 mt-2 overscroll-contain">
-              <div className="space-y-3 pr-4">
-                {Object.entries(ACTIVITY_HIERARCHY).map(([categoryKey, categoryData]) => (
-                  <div key={categoryKey} className="space-y-1">
-                    <div className="text-xs font-semibold text-accent/70 uppercase px-2 py-1 bg-accent/5 rounded">
-                      {categoryData.label}
-                    </div>
-                    {categoryData.subcategories.map((subcategory) => {
-                      const selected = filters.subcategories?.includes(subcategory.id);
-                      return (
-                        <div
-                          key={subcategory.id}
-                          onClick={() => handleSubcategoryToggle(subcategory.id)}
-                          className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98] ml-2"
-                        >
-                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                            selected ? 'bg-accent border-accent' : 'border-accent/30'
-                          }`}>
-                            {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                          </div>
-                          <span className="text-sm leading-tight">
-                            {subcategory.emoji} {subcategory.label}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
+            {subcategoriesLoading ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Chargement...
               </div>
-            </ScrollArea>
+            ) : Object.keys(groupedByCategory).length === 0 ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Aucune sous-catégorie disponible
+              </div>
+            ) : (
+              <ScrollArea className="h-80 mt-2 overscroll-contain">
+                <div className="space-y-3 pr-4">
+                  {Object.entries(groupedByCategory).map(([categoryKey, categoryData]) => (
+                    <div key={categoryKey} className="space-y-1">
+                      <div className="text-xs font-semibold text-accent/70 uppercase px-2 py-1 bg-accent/5 rounded">
+                        {categoryData.label}
+                      </div>
+                      {categoryData.subcategories.map((subcategory) => {
+                        const selected = filters.subcategories?.includes(subcategory.id);
+                        return (
+                          <div
+                            key={subcategory.id}
+                            onClick={() => handleSubcategoryToggle(subcategory.id)}
+                            className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98] ml-2"
+                          >
+                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                              selected ? 'bg-accent border-accent' : 'border-accent/30'
+                            }`}>
+                              {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                            </div>
+                            <span className="text-sm leading-tight">
+                              {subcategory.emoji} {subcategory.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
           </CollapsibleContent>
         </Collapsible>
 
