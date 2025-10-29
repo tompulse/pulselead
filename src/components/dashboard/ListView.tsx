@@ -1,7 +1,7 @@
 import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp } from "lucide-react";
 import { useEffect, useState, useMemo, memo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getBuildingTypeLabel, getZoneTypeLabel } from "@/utils/buildingTypes";
+import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -17,9 +17,9 @@ interface ListViewProps {
   filters: {
     dateFrom: string;
     dateTo: string;
-    buildingTypes?: string[];
-    zoneTypes?: string[];
+    categories: string[];
     departments: string[];
+    formesJuridiques?: string[];
     searchQuery?: string;
     typeEvenement?: string[];
     activiteDefinie?: boolean | null;
@@ -54,8 +54,8 @@ interface Entreprise {
   effectifs?: number;
   chiffre_affaires?: number;
   site_web?: string;
-  type_batiment?: string;
-  zone_type?: string;
+  categorie_qualifiee?: string;
+  categorie_confidence?: number;
 }
 
 export const ListView = ({ 
@@ -177,10 +177,13 @@ export const ListView = ({
     );
   }, [entreprises, debouncedSearchQuery]);
 
-  const getBuildingInfo = useCallback((typeBatiment?: string | null, zoneType?: string | null): { label: string; zone: string } => {
+  const getCategoryInfo = useCallback((activity: string | null, qualifiedCategory?: string | null): { emoji: string; label: string } => {
+    const category = categorizeActivity(activity, qualifiedCategory);
+    const fullLabel = getCategoryLabel(category);
+    const parts = fullLabel.split(' ');
     return {
-      label: typeBatiment ? getBuildingTypeLabel(typeBatiment) : 'Non qualifié',
-      zone: zoneType ? getZoneTypeLabel(zoneType) : ''
+      emoji: parts[0],
+      label: parts.slice(1).join(' ')
     };
   }, []);
 
@@ -349,7 +352,7 @@ export const ListView = ({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">{filteredEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
-                const buildingInfo = getBuildingInfo(item.type_batiment, item.zone_type);
+                const categoryInfo = getCategoryInfo(item.activite, item.categorie_qualifiee);
                 const crm = crmData[item.id];
                 
                 // Format address
@@ -415,18 +418,11 @@ export const ListView = ({
                     </div>
 
                     <div className="relative space-y-2 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
-                      {/* Type de bâtiment et zone */}
-                      {buildingInfo.label && (
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Building2 className="w-3.5 h-3.5 text-accent/60 flex-shrink-0" />
-                            <span className="text-xs text-foreground/60">{buildingInfo.label}</span>
-                          </div>
-                          {buildingInfo.zone && (
-                            <div className="flex items-center gap-2 text-sm pl-5">
-                              <span className="text-xs text-foreground/50">{buildingInfo.zone}</span>
-                            </div>
-                          )}
+                      {/* Activité */}
+                      {categoryInfo.label && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <Briefcase className="w-3.5 h-3.5 text-accent/60 flex-shrink-0" />
+                          <span className="text-xs text-foreground/60">{categoryInfo.label}</span>
                         </div>
                       )}
 

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, ChevronDown, TrendingUp } from "lucide-react";
-import { BUILDING_TYPES, getBuildingTypeLabel } from "@/utils/buildingTypes";
+import { ACTIVITY_CATEGORIES, categorizeActivity } from "@/utils/activityCategories";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -127,10 +127,11 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           });
         }
 
-        // Filtre par types de bâtiments si sélectionnés
+        // Filtre par catégories si sélectionnées
         if (selectedCategories.length > 0) {
           filteredData = filteredData.filter((entreprise: any) => {
-            return selectedCategories.includes(entreprise.type_batiment);
+            const category = categorizeActivity(entreprise.activite, entreprise.categorie_qualifiee);
+            return selectedCategories.includes(category);
           });
         }
 
@@ -185,7 +186,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           </div>
           <div className="flex justify-between mt-1.5 text-xs font-medium">
             <span className={step === 1 ? 'text-accent font-bold' : 'text-muted-foreground'}>Zone géographique</span>
-            <span className={step === 2 ? 'text-accent font-bold' : 'text-muted-foreground'}>Types de bâtiments</span>
+            <span className={step === 2 ? 'text-accent font-bold' : 'text-muted-foreground'}>Secteurs d'activité</span>
           </div>
         </div>
 
@@ -282,9 +283,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                     <Building2 className="w-4 h-4 md:w-5 md:h-5 text-accent shrink-0" />
                   </div>
                   <div>
-                    <h2 className="text-base md:text-lg font-bold gradient-text">Quels types de bâtiments ? <span className="text-muted-foreground text-xs font-medium">(optionnel)</span></h2>
+                    <h2 className="text-base md:text-lg font-bold gradient-text">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-xs font-medium">(optionnel)</span></h2>
                     <p className="text-muted-foreground text-xs md:text-sm font-medium">
-                      Sélectionnez un ou plusieurs types de bâtiments pour affiner votre recherche.
+                      Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche.
                     </p>
                   </div>
                 </div>
@@ -296,11 +297,11 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                     className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-colors bg-gradient-to-br from-accent/15 to-accent/10 border-accent"
                   >
                     <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0" />
-                    <span className="font-semibold text-left text-base md:text-lg">✨ Tous les types m'intéressent</span>
+                    <span className="font-semibold text-left text-base md:text-lg">✨ Tous les secteurs m'intéressent</span>
                   </button>
 
-                  {/* Types de bâtiments spécifiques */}
-                  {Object.entries(BUILDING_TYPES).map(([key, buildingType]) => (
+                  {/* Secteurs spécifiques */}
+                  {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
                     <label
                       key={key}
                       className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-colors"
@@ -318,7 +319,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                         onCheckedChange={() => handleCategoryToggle(key)}
                         className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5 md:h-6 md:w-6"
                       />
-                      <span className="font-semibold text-base md:text-lg">{buildingType.label}</span>
+                      <span className="font-semibold text-base md:text-lg">{category.label}</span>
                     </label>
                   ))}
                 </div>
@@ -338,9 +339,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
               ) : (
                 <span>
                   {selectedCategories.length > 0 ? (
-                    `${selectedCategories.length} type${selectedCategories.length > 1 ? 's' : ''} sélectionné${selectedCategories.length > 1 ? 's' : ''}`
+                    `${selectedCategories.length} secteur${selectedCategories.length > 1 ? 's' : ''} sélectionné${selectedCategories.length > 1 ? 's' : ''}`
                   ) : (
-                    'Aucun type sélectionné (optionnel)'
+                    'Aucun secteur sélectionné (optionnel)'
                   )}
                 </span>
               )}

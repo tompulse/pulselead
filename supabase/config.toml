@@ -1,8 +1,5 @@
 project_id = "pcrxbfbktmekkkqhppjn"
 
-[functions.qualify-building-types]
-verify_jwt = false
-
 [functions.qualify-all-entreprises]
 verify_jwt = false
 
@@ -10,9 +7,6 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.qualify-subcategories]
-verify_jwt = false
-
-[functions.qualify-detailed-categories]
 verify_jwt = false
 
 [functions.format-lead-details]

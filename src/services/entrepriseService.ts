@@ -1,14 +1,17 @@
 import { supabase } from "@/integrations/supabase/client";
+import { categorizeActivity } from "@/utils/activityCategories";
 import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
+import { normalizeSubcategoryId } from "@/utils/activitySubcategories";
 export interface EntrepriseFilters {
   dateFrom?: string;
   dateTo?: string;
-  buildingTypes?: string[];
-  zoneTypes?: string[];
+  categories?: string[];
   departments?: string[];
   typeEvenement?: string[];
   activiteDefinie?: boolean | null;
+  formesJuridiques?: string[];
   searchQuery?: string;
+  subcategories?: string[];
 }
 
 export const entrepriseService = {
@@ -84,17 +87,27 @@ export const entrepriseService = {
         });
       }
       
-      // Filter by building types
-      if (filters.buildingTypes && filters.buildingTypes.length > 0) {
+      // Filter by categories using categorie_qualifiee
+      if (filters.categories && filters.categories.length > 0) {
         filteredData = filteredData.filter(e => {
-          return filters.buildingTypes!.includes(e.type_batiment || '');
+          const category = categorizeActivity(e.activite, e.categorie_qualifiee);
+          return filters.categories!.includes(category);
         });
       }
 
-      // Filter by zone types
-      if (filters.zoneTypes && filters.zoneTypes.length > 0) {
+// Filter by subcategories
+if (filters.subcategories && filters.subcategories.length > 0) {
+  filteredData = filteredData.filter(e => {
+    const normalized = normalizeSubcategoryId(e.sous_categorie);
+    return normalized !== null && filters.subcategories!.includes(normalized);
+  });
+}
+      
+      // Filter by formes juridiques
+      if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
         filteredData = filteredData.filter(e => {
-          return filters.zoneTypes!.includes(e.zone_type || '');
+          const forme = normalizeFormeJuridique(e.forme_juridique);
+          return filters.formesJuridiques!.includes(forme);
         });
       }
       
@@ -131,7 +144,7 @@ export const entrepriseService = {
       let countQuery = supabase
         .from('entreprises')
         .select('id', { count: 'exact', head: true })
-        .not('type_batiment', 'is', null);
+        .not('categorie_qualifiee', 'is', null);
 
       // Apply same filters to count query
       if (filters.dateFrom) {
