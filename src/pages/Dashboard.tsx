@@ -31,11 +31,11 @@ const DashboardContent = () => {
   const [filters, setFilters] = useState({
     dateFrom: "",
     dateTo: "",
-    categories: [] as string[],
+    buildingTypes: [] as string[],
+    zoneTypes: [] as string[],
     departments: [] as string[],
-    formesJuridiques: [] as string[],
     searchQuery: "",
-    subcategories: [] as string[],
+    typeEvenement: [] as string[],
   });
 
   const { view, setView, selectedEntreprise, setSelectedEntreprise, crmPanelOpen, setCrmPanelOpen } = useDashboard();
@@ -44,7 +44,8 @@ const DashboardContent = () => {
   const isMobile = useIsMobile();
 
   const activeFiltersCount = 
-    (filters.categories?.length || 0) + 
+    (filters.buildingTypes?.length || 0) + 
+    (filters.zoneTypes?.length || 0) +
     (filters.departments?.length || 0) + 
     (filters.dateFrom ? 1 : 0) + 
     (filters.dateTo ? 1 : 0);
@@ -99,7 +100,7 @@ const DashboardContent = () => {
             const parsed = JSON.parse(savedFilters);
             setFilters(prev => ({
               ...prev,
-              categories: parsed.categories || [],
+              categories: parsed.buildingTypes || [],
               departments: parsed.departments || []
             }));
           } catch (e) {
@@ -135,7 +136,7 @@ const DashboardContent = () => {
   const handleOnboardingComplete = (newFilters: { categories: string[]; departments: string[] }) => {
     setFilters(prev => ({
       ...prev,
-      categories: newFilters.categories,
+      buildingTypes: newFilters.categories,
       departments: newFilters.departments
     }));
     setShowOnboarding(false);

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Locate } from "lucide-react";
-import { categorizeActivity } from "@/utils/activityCategories";
+import { getBuildingTypeLabel } from "@/utils/buildingTypes";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";

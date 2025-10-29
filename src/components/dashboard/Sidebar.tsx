@@ -9,7 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
-import { ACTIVITY_CATEGORIES, getCategoryLabel } from "@/utils/activityCategories";
+import { BUILDING_TYPES, getBuildingTypeLabel } from "@/utils/buildingTypes";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { useState } from "react";
 import { format } from "date-fns";
@@ -79,7 +79,7 @@ export const Sidebar = ({
   };
 
 
-  const allCategories = Object.keys(ACTIVITY_CATEGORIES);
+  const allCategories = Object.keys(BUILDING_TYPES);
   const allDepartments = Object.keys(DEPARTMENT_NAMES).sort();
 
   const handleDepartmentToggle = (deptCode: string) => {
@@ -276,7 +276,7 @@ export const Sidebar = ({
                       isMobileSheet ? "text-base" : "text-[11px]"
                     }`}
                   >
-                    {getCategoryLabel(categoryKey)}
+                    {getBuildingTypeLabel(categoryKey)}
                   </label>
                 </div>
               ))}

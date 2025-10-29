@@ -1,14 +1,13 @@
 import { supabase } from "@/integrations/supabase/client";
-import { categorizeActivity } from "@/utils/activityCategories";
 import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
 export interface EntrepriseFilters {
   dateFrom?: string;
   dateTo?: string;
-  categories?: string[];
+  buildingTypes?: string[];
+  zoneTypes?: string[];
   departments?: string[];
   typeEvenement?: string[];
   activiteDefinie?: boolean | null;
-  formesJuridiques?: string[];
   searchQuery?: string;
 }
 
@@ -85,20 +84,17 @@ export const entrepriseService = {
         });
       }
       
-      // Filter by categories using categorie_qualifiee
-      if (filters.categories && filters.categories.length > 0) {
+      // Filter by building types
+      if (filters.buildingTypes && filters.buildingTypes.length > 0) {
         filteredData = filteredData.filter(e => {
-          const category = categorizeActivity(e.activite, e.categorie_qualifiee);
-          return filters.categories!.includes(category);
+          return filters.buildingTypes!.includes(e.type_batiment || '');
         });
       }
 
-      
-      // Filter by formes juridiques
-      if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
+      // Filter by zone types
+      if (filters.zoneTypes && filters.zoneTypes.length > 0) {
         filteredData = filteredData.filter(e => {
-          const forme = normalizeFormeJuridique(e.forme_juridique);
-          return filters.formesJuridiques!.includes(forme);
+          return filters.zoneTypes!.includes(e.zone_type || '');
         });
       }
       
@@ -135,7 +131,7 @@ export const entrepriseService = {
       let countQuery = supabase
         .from('entreprises')
         .select('id', { count: 'exact', head: true })
-        .not('categorie_qualifiee', 'is', null);
+        .not('type_batiment', 'is', null);
 
       // Apply same filters to count query
       if (filters.dateFrom) {

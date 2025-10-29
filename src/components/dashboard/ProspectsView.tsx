@@ -10,12 +10,11 @@ interface ProspectsViewProps {
   filters: {
     dateFrom: string;
     dateTo: string;
-    categories: string[];
+    buildingTypes?: string[];
+    zoneTypes?: string[];
     departments: string[];
-    formesJuridiques?: string[];
     searchQuery?: string;
     typeEvenement?: string[];
-    subcategories?: string[];
   };
   setFilters: Dispatch<SetStateAction<any>>;
   userId: string;

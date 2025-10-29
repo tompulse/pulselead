@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, ChevronDown, TrendingUp } from "lucide-react";
-import { ACTIVITY_CATEGORIES, categorizeActivity } from "@/utils/activityCategories";
+import { BUILDING_TYPES, getBuildingTypeLabel } from "@/utils/buildingTypes";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -319,7 +319,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                         onCheckedChange={() => handleCategoryToggle(key)}
                         className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5 md:h-6 md:w-6"
                       />
-                      <span className="font-semibold text-base md:text-lg">{category.label}</span>
+                      <span className="font-semibold text-base md:text-lg">{getBuildingTypeLabel(key)}</span>
                     </label>
                   ))}
                 </div>

@@ -1,24 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
-import { getCategoryLabel, ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
-import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
+import { BUILDING_TYPES, ZONE_TYPES, getBuildingTypeLabel, getZoneTypeLabel } from "@/utils/buildingTypes";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
-import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
+import { Route, ChevronDown, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
 
 interface TourneeFiltersProps {
   filters: {
     dateFrom: string;
     dateTo: string;
-    categories: string[];
+    buildingTypes?: string[];
+    zoneTypes?: string[];
     departments: string[];
-    formesJuridiques?: string[];
     searchQuery?: string;
     typeEvenement?: string[];
   };
@@ -51,40 +49,36 @@ export const TourneeFilters = ({
   isOptimizing = false,
   resultsCount = 0
 }: TourneeFiltersProps) => {
+  const [buildingTypesOpen, setBuildingTypesOpen] = useState(false);
+  const [zoneTypesOpen, setZoneTypesOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [formesOpen, setFormesOpen] = useState(false);
   const [datesOpen, setDatesOpen] = useState(false);
   const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
   
-  // Utilisation des catégories statiques complètes au lieu de récupérer uniquement celles en base
-  const availableCategories = Object.keys(ACTIVITY_CATEGORIES);
-  const availableFormes = FORMES_JURIDIQUES;
-  
-  const handleCategoryToggle = (categoryKey: string) => {
+  const handleBuildingTypeToggle = (typeKey: string) => {
     setFilters((prev: any) => {
-      const currentCategories = prev.categories || [];
-      const isSelected = currentCategories.includes(categoryKey);
+      const currentTypes = prev.buildingTypes || [];
+      const isSelected = currentTypes.includes(typeKey);
       
       return {
         ...prev,
-        categories: isSelected
-          ? currentCategories.filter((c: string) => c !== categoryKey)
-          : [...currentCategories, categoryKey]
+        buildingTypes: isSelected
+          ? currentTypes.filter((t: string) => t !== typeKey)
+          : [...currentTypes, typeKey]
       };
     });
   };
 
-  const handleFormeToggle = (formeValue: string) => {
+  const handleZoneTypeToggle = (zoneKey: string) => {
     setFilters((prev: any) => {
-      const currentFormes = prev.formesJuridiques || [];
-      const isSelected = currentFormes.includes(formeValue);
+      const currentZones = prev.zoneTypes || [];
+      const isSelected = currentZones.includes(zoneKey);
       
       return {
         ...prev,
-        formesJuridiques: isSelected
-          ? currentFormes.filter((f: string) => f !== formeValue)
-          : [...currentFormes, formeValue]
+        zoneTypes: isSelected
+          ? currentZones.filter((z: string) => z !== zoneKey)
+          : [...currentZones, zoneKey]
       };
     });
   };
@@ -117,12 +111,11 @@ export const TourneeFilters = ({
     });
   };
 
-
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
-    categories: [], 
+    buildingTypes: [],
+    zoneTypes: [],
     departments: [], 
-    formesJuridiques: [],
     typeEvenement: [],
     searchQuery: ""
   }));
@@ -130,9 +123,9 @@ export const TourneeFilters = ({
   const allDepartments = Object.keys(DEPARTMENT_NAMES).sort();
 
   const activeFiltersCount = 
-    (filters.categories?.length || 0) + 
+    (filters.buildingTypes?.length || 0) + 
+    (filters.zoneTypes?.length || 0) +
     (filters.departments?.length || 0) +
-    (filters.formesJuridiques?.length || 0) +
     (filters.typeEvenement?.length || 0);
 
   return (
@@ -143,7 +136,7 @@ export const TourneeFilters = ({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Rechercher une entreprise..."
+              placeholder="Rechercher..."
               value={filters.searchQuery || ""}
               onChange={(e) => setFilters((prev: any) => ({ ...prev, searchQuery: e.target.value }))}
               className="pl-9 h-9 bg-background/50 border-accent/20 focus:border-accent/40"
@@ -153,7 +146,7 @@ export const TourneeFilters = ({
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Building2 className="w-4 h-4 text-accent" />
               <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
-              <span>entreprise{resultsCount > 1 ? 's' : ''} qualifiée{resultsCount > 1 ? 's' : ''}</span>
+              <span>local{resultsCount > 1 ? 'aux' : ''} qualifié{resultsCount > 1 ? 's' : ''}</span>
             </div>
           )}
         </div>
@@ -216,10 +209,76 @@ export const TourneeFilters = ({
           </Collapsible>
         )}
 
+        {/* Type de bâtiment */}
+        <Collapsible open={buildingTypesOpen} onOpenChange={setBuildingTypesOpen} className="border-b border-accent/20">
+          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+            <span className="font-medium text-sm">🏗️ Type de bâtiment</span>
+            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${buildingTypesOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="px-4 pb-4">
+            <ScrollArea className="h-64 mt-2 overscroll-contain">
+              <div className="space-y-1 pr-4">
+                {Object.keys(BUILDING_TYPES).map((typeKey) => {
+                  const selected = filters.buildingTypes?.includes(typeKey);
+                  return (
+                    <div
+                      key={typeKey}
+                      onClick={() => handleBuildingTypeToggle(typeKey)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                    >
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                        selected ? 'bg-accent border-accent' : 'border-accent/30'
+                      }`}>
+                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                      </div>
+                      <span className="text-sm leading-tight">
+                        {getBuildingTypeLabel(typeKey)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Zone géographique */}
+        <Collapsible open={zoneTypesOpen} onOpenChange={setZoneTypesOpen} className="border-b border-accent/20">
+          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+            <span className="font-medium text-sm">🗺️ Zone géographique</span>
+            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${zoneTypesOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="px-4 pb-4">
+            <div className="space-y-1 mt-2 pr-4">
+              {Object.keys(ZONE_TYPES).map((zoneKey) => {
+                const selected = filters.zoneTypes?.includes(zoneKey);
+                return (
+                  <div
+                    key={zoneKey}
+                    onClick={() => handleZoneTypeToggle(zoneKey)}
+                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                  >
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                      selected ? 'bg-accent border-accent' : 'border-accent/30'
+                    }`}>
+                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                    </div>
+                    <span className="text-sm leading-tight">
+                      {getZoneTypeLabel(zoneKey)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
         {/* Départements */}
         <Collapsible open={departmentsOpen} onOpenChange={setDepartmentsOpen} className="border-b border-accent/20">
           <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Départements</span>
+            <span className="font-medium text-sm">📍 Départements</span>
             <ChevronDown className={`h-4 w-4 text-accent transition-transform ${departmentsOpen ? 'rotate-180' : ''}`} />
           </CollapsibleTrigger>
           
@@ -250,91 +309,10 @@ export const TourneeFilters = ({
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Catégories d'activité */}
-        <Collapsible open={categoriesOpen} onOpenChange={setCategoriesOpen} className="border-b border-accent/20">
-          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Catégories d'activité</span>
-            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesOpen ? 'rotate-180' : ''}`} />
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="px-4 pb-4">
-            {availableCategories.length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Aucune catégorie disponible
-              </div>
-            ) : (
-              <ScrollArea className="h-64 mt-2 overscroll-contain">
-                <div className="space-y-1 pr-4">
-                  {availableCategories.map((categoryKey) => {
-                    const selected = filters.categories?.includes(categoryKey);
-                    return (
-                      <div
-                        key={categoryKey}
-                        onClick={() => handleCategoryToggle(categoryKey)}
-                        className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                      >
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                          selected ? 'bg-accent border-accent' : 'border-accent/30'
-                        }`}>
-                          {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                        </div>
-                        <span className="text-sm leading-tight">
-                          {getCategoryLabel(categoryKey)}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </ScrollArea>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
-
-
-        {/* Formes juridiques */}
-        <Collapsible open={formesOpen} onOpenChange={setFormesOpen} className="border-b border-accent/20">
-          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Formes juridiques</span>
-            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${formesOpen ? 'rotate-180' : ''}`} />
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="px-4 pb-4">
-            {availableFormes.length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Aucune forme juridique disponible
-              </div>
-            ) : (
-              <ScrollArea className="h-64 mt-2 overscroll-contain">
-                <div className="space-y-1 pr-4">
-                  {availableFormes.map((forme) => {
-                    const selected = filters.formesJuridiques?.includes(forme.value);
-                    return (
-                      <div
-                        key={forme.value}
-                        onClick={() => handleFormeToggle(forme.value)}
-                        className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                      >
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                          selected ? 'bg-accent border-accent' : 'border-accent/30'
-                        }`}>
-                          {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                        </div>
-                        <span className="text-sm leading-tight">
-                          {forme.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </ScrollArea>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
-
         {/* Type d'événement */}
         <Collapsible open={typeEvenementOpen} onOpenChange={setTypeEvenementOpen} className="border-b border-accent/20">
           <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Type d'événement</span>
+            <span className="font-medium text-sm">📋 Type d'événement</span>
             <ChevronDown className={`h-4 w-4 text-accent transition-transform ${typeEvenementOpen ? 'rotate-180' : ''}`} />
           </CollapsibleTrigger>
           
@@ -367,11 +345,10 @@ export const TourneeFilters = ({
           </CollapsibleContent>
         </Collapsible>
 
-
         {/* Dates */}
         <Collapsible open={datesOpen} onOpenChange={setDatesOpen} className="border-b border-accent/20">
           <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Dates</span>
+            <span className="font-medium text-sm">📅 Dates</span>
             <ChevronDown className={`h-4 w-4 text-accent transition-transform ${datesOpen ? 'rotate-180' : ''}`} />
           </CollapsibleTrigger>
           
@@ -415,4 +392,3 @@ export const TourneeFilters = ({
     </div>
   );
 };
-

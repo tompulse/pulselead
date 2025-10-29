@@ -86,9 +86,11 @@ export type Database = {
           sous_categorie: string | null
           statut: string | null
           telephone: string | null
+          type_batiment: string | null
           type_voie: string | null
           updated_at: string | null
           ville: string | null
+          zone_type: string | null
         }
         Insert: {
           activite?: string | null
@@ -122,9 +124,11 @@ export type Database = {
           sous_categorie?: string | null
           statut?: string | null
           telephone?: string | null
+          type_batiment?: string | null
           type_voie?: string | null
           updated_at?: string | null
           ville?: string | null
+          zone_type?: string | null
         }
         Update: {
           activite?: string | null
@@ -158,9 +162,11 @@ export type Database = {
           sous_categorie?: string | null
           statut?: string | null
           telephone?: string | null
+          type_batiment?: string | null
           type_voie?: string | null
           updated_at?: string | null
           ville?: string | null
+          zone_type?: string | null
         }
         Relationships: []
       }

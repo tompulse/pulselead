@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ImportDialog } from "./ImportDialog";
 import { QualifyAllButton } from "./QualifyAllButton";
-import { QualifyDetailedCategoriesButton } from "./QualifyDetailedCategoriesButton";
+import { QualifyBuildingTypesButton } from "./QualifyBuildingTypesButton";
 
 export const SyncButton = () => {
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ export const SyncButton = () => {
     <div className="flex gap-2">
       <ImportDialog />
       <QualifyAllButton />
-      <QualifyDetailedCategoriesButton />
+      <QualifyBuildingTypesButton />
       <Button
         onClick={handleSync}
         disabled={loading}
