@@ -42,9 +42,47 @@ serve(async (req) => {
     // Traiter toutes les entreprises du batch
     for (const entreprise of entreprises) {
         try {
-        const prompt = `Analyse cette entreprise française et détermine sa catégorie d'activité principale.
+        const prompt = `Tu dois classifier cette entreprise dans UNE SEULE des 34 catégories suivantes.
 
-CONTEXTE:
+CATÉGORIES AUTORISÉES (utilise exactement ces clés) :
+- conseil-consulting : Conseil & Consulting
+- holding : Holdings & Participations  
+- immobilier : Immobilier & SCI
+- finance-assurance : Finance & Assurance
+- juridique : Juridique & Notaires
+- maconnerie : Maçonnerie & Gros œuvre
+- plomberie-chauffage : Plomberie & Chauffage
+- electricite : Électricité
+- menuiserie : Menuiserie & Charpente
+- peinture-revetements : Peinture & Revêtements
+- commerce-detail : Commerce de détail
+- commerce-gros : Commerce de gros & Négoce
+- e-commerce : E-commerce
+- restauration : Restaurants & Brasseries
+- cafes-bars : Cafés & Bars
+- snack-fastfood : Snacks & Fast-food
+- traiteur : Traiteur & Pâtisserie
+- livraison-coursier : Livraison / Coursier
+- transport-marchandises : Transport de marchandises
+- vtc-taxi : VTC & Taxis
+- informatique-dev : Informatique & Développement
+- digital-web : Digital & Web
+- marketing-pub : Marketing & Publicité
+- energie-renouvelable : Énergie renouvelable
+- environnement-recyclage : Environnement & Recyclage
+- sante-medical : Santé & Médical
+- beaute-coiffure : Beauté & Coiffure
+- industrie-fabrication : Industrie & Fabrication
+- agriculture : Agriculture & Viticulture
+- education-formation : Éducation & Formation
+- artisanat-reparation : Artisanat & Réparation
+- services-personne : Services à la personne
+- hotellerie : Hôtellerie & Hébergement
+- culture-spectacles : Culture & Spectacles
+- sport-loisirs : Sport & Loisirs
+- autre : Autres activités
+
+ENTREPRISE À QUALIFIER :
 - Nom: ${entreprise.nom || 'Non spécifié'}
 - Activité: ${entreprise.activite || 'Non spécifiée'}
 - Administration: ${entreprise.administration || 'Non spécifiée'}
@@ -52,28 +90,12 @@ CONTEXTE:
 - Code NAF: ${entreprise.code_naf || 'Non spécifié'}
 
 INSTRUCTIONS CRITIQUES:
-1. Crée une catégorie PRÉCISE et DESCRIPTIVE en français (2-4 mots maximum)
-2. Utilise des tirets pour séparer les mots (ex: "restaurant-traditionnel", "plomberie-chauffage")
-3. Sois SPÉCIFIQUE: au lieu de "commerce", utilise "boulangerie-patisserie" ou "bijouterie"
-4. Au lieu de "services", utilise "coiffure-esthetique" ou "pressing-nettoyage"
-5. Réponds UNIQUEMENT au format: "categorie|score"
-6. Score de confiance entre 1 et 100
+1. Tu DOIS utiliser EXACTEMENT l'une des clés ci-dessus (ex: "conseil-consulting", "maconnerie", "restauration")
+2. Réponds UNIQUEMENT au format: "categorie-exacte|score"
+3. Score de confiance entre 1 et 100
+4. Si aucune catégorie ne correspond parfaitement, utilise "autre"
 
-EXEMPLES DE BONNES CATÉGORIES:
-- "restaurant-gastronomique"
-- "plomberie-chauffage"
-- "boulangerie-patisserie"  
-- "coiffure-barbier"
-- "electricite-generale"
-- "maconnerie-renovation"
-- "pizzeria-livraison"
-- "cafe-bar"
-- "pressing-nettoyage"
-- "pharmacie"
-- "immobilier-location"
-- "consultant-informatique"
-
-RÉPONDS UNIQUEMENT: "categorie|score"
+RÉPONDS UNIQUEMENT: "categorie-exacte|score"
 RIEN D'AUTRE. PAS D'EXPLICATION.`;
 
           const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -101,7 +123,25 @@ RIEN D'AUTRE. PAS D'EXPLICATION.`;
           
           const [categorie, confidenceStr] = response.split('|');
           const confidence = parseInt(confidenceStr) || 50;
-          const categorieClean = categorie.toLowerCase().trim();
+          let categorieClean = categorie.toLowerCase().trim();
+
+          // Liste des catégories valides
+          const validCategories = [
+            'conseil-consulting', 'holding', 'immobilier', 'finance-assurance', 'juridique',
+            'maconnerie', 'plomberie-chauffage', 'electricite', 'menuiserie', 'peinture-revetements',
+            'commerce-detail', 'commerce-gros', 'e-commerce', 'restauration', 'cafes-bars',
+            'snack-fastfood', 'traiteur', 'livraison-coursier', 'transport-marchandises', 'vtc-taxi',
+            'informatique-dev', 'digital-web', 'marketing-pub', 'energie-renouvelable',
+            'environnement-recyclage', 'sante-medical', 'beaute-coiffure', 'industrie-fabrication',
+            'agriculture', 'education-formation', 'artisanat-reparation', 'services-personne',
+            'hotellerie', 'culture-spectacles', 'sport-loisirs', 'autre'
+          ];
+
+          // Validation: si la catégorie n'est pas valide, forcer "autre"
+          if (!validCategories.includes(categorieClean)) {
+            console.log(`Invalid category "${categorieClean}" for ${entreprise.id}, forcing "autre"`);
+            categorieClean = 'autre';
+          }
 
           // Mettre à jour l'entreprise
           const { error: updateError } = await supabase

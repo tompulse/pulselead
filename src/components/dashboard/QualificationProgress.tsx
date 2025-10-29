@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Wand2, Square, Loader2, Play, Pause } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getCategoryLabel } from "@/utils/activityCategories";
 
 interface QualificationStatus {
   id: string;
@@ -311,7 +312,7 @@ export const QualificationProgress = () => {
                 <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
                   {topCategories.map(([cat, count]) => (
                     <div key={cat} className="flex items-center justify-between bg-muted/50 p-2 rounded text-xs">
-                      <span className="truncate">{cat}</span>
+                      <span className="truncate">{getCategoryLabel(cat)}</span>
                       <Badge variant="secondary" className="ml-2 shrink-0">
                         {count}
                       </Badge>
