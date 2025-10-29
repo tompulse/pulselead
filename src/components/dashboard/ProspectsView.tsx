@@ -5,6 +5,7 @@ import { TourneeFilters } from "./TourneeFilters";
 import { useTourneeManager } from "@/hooks/useTourneeManager";
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { QualifyBuildingTypesButton } from "./QualifyBuildingTypesButton";
 
 interface ProspectsViewProps {
   filters: {
@@ -120,6 +121,7 @@ export const ProspectsView = ({
           </div>
           Prospects
         </h2>
+        <QualifyBuildingTypesButton />
       </div>
 
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
