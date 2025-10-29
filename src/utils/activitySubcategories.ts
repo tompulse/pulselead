@@ -672,15 +672,36 @@ export function getSubcategories(categoryKey: string): ActivitySubcategory[] {
   return category?.subcategories || [];
 }
 
+// Synonymes de sous-catégories pour compatibilité (backend -> canonique UI)
+export const SUBCATEGORY_SYNONYMS: Record<string, string> = {
+  juridique_admin: "juridique_administratif",
+  finance_holdings: "finance_holding",
+  marketing_comm: "marketing_com",
+  gestion_immo: "gestion_locative",
+  promotion: "promotion_construction",
+  agent_immo: "transaction_agence",
+  commerce_gros: "grossiste",
+  commerce_detail: "detail_non_alimentaire",
+  dev_software: "dev_logiciel",
+  ia_data: "data_ia",
+  // Ajoutez d'autres synonymes si nécessaire
+};
+
+export function normalizeSubcategoryId(id?: string | null): string | null {
+  if (!id) return null;
+  return SUBCATEGORY_SYNONYMS[id] || id;
+}
+
 // Fonction pour obtenir le label d'une sous-catégorie
 export function getSubcategoryLabel(subcategoryId: string): string {
+  const normalized = normalizeSubcategoryId(subcategoryId) || subcategoryId;
   for (const category of Object.values(ACTIVITY_HIERARCHY)) {
-    const subcategory = category.subcategories.find(sub => sub.id === subcategoryId);
+    const subcategory = category.subcategories.find(sub => sub.id === normalized);
     if (subcategory) {
       return `${subcategory.emoji} ${subcategory.label}`;
     }
   }
-  return subcategoryId;
+  return normalized;
 }
 
 // Fonction pour déterminer la sous-catégorie d'une activité
@@ -714,8 +735,8 @@ export function getFullCategoryLabel(
   if (!category) return "❓ Non catégorisé";
   
   if (!subcategoryId) return category.label;
-  
-  const subcategory = category.subcategories.find(sub => sub.id === subcategoryId);
+  const normalized = normalizeSubcategoryId(subcategoryId);
+  const subcategory = category.subcategories.find(sub => sub.id === normalized);
   if (!subcategory) return category.label;
   
   return `${category.emoji} ${category.label.replace(category.emoji, '').trim()} › ${subcategory.emoji} ${subcategory.label}`;
