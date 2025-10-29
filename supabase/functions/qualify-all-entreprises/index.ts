@@ -42,9 +42,9 @@ serve(async (req) => {
     // Traiter toutes les entreprises du batch
     for (const entreprise of entreprises) {
         try {
-        const prompt = `Tu dois classifier cette entreprise dans UNE SEULE des 34 catégories suivantes.
+        const prompt = `Tu dois classifier cette entreprise en utilisant PRIORITAIREMENT l'une des catégories existantes. Tu peux créer une nouvelle catégorie SEULEMENT si aucune ne convient.
 
-CATÉGORIES AUTORISÉES (utilise exactement ces clés) :
+CATÉGORIES EXISTANTES (À UTILISER EN PRIORITÉ) :
 - conseil-consulting : Conseil & Consulting
 - holding : Holdings & Participations  
 - immobilier : Immobilier & SCI
@@ -89,14 +89,16 @@ ENTREPRISE À QUALIFIER :
 - Forme juridique: ${entreprise.forme_juridique || 'Non spécifiée'}
 - Code NAF: ${entreprise.code_naf || 'Non spécifié'}
 
-INSTRUCTIONS CRITIQUES:
-1. Tu DOIS utiliser EXACTEMENT l'une des clés ci-dessus (ex: "conseil-consulting", "maconnerie", "restauration")
-2. Réponds UNIQUEMENT au format: "categorie-exacte|score"
-3. Score de confiance entre 1 et 100
-4. Si aucune catégorie ne correspond parfaitement, utilise "autre"
+RÈGLES STRICTES :
+1. PRIORITÉ ABSOLUE : Utilise une catégorie existante si elle correspond à minimum 70%
+2. Nouvelle catégorie UNIQUEMENT si vraiment nécessaire
+3. Format OBLIGATOIRE pour nouvelle catégorie : "mot1-mot2" (2-3 mots max, kebab-case, minuscules)
+4. INTERDIT de créer des synonymes ou variantes des catégories existantes
+5. Exemples INTERDITS : "consulting-conseil" (doublon de conseil-consulting), "immobilier-location" (déjà couvert par immobilier)
+6. Score de confiance entre 1 et 100
 
-RÉPONDS UNIQUEMENT: "categorie-exacte|score"
-RIEN D'AUTRE. PAS D'EXPLICATION.`;
+RÉPONDS UNIQUEMENT: "categorie|score"
+RIEN D'AUTRE.`;
 
           const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
@@ -125,8 +127,8 @@ RIEN D'AUTRE. PAS D'EXPLICATION.`;
           const confidence = parseInt(confidenceStr) || 50;
           let categorieClean = categorie.toLowerCase().trim();
 
-          // Liste des catégories valides
-          const validCategories = [
+          // Liste des catégories existantes
+          const existingCategories = [
             'conseil-consulting', 'holding', 'immobilier', 'finance-assurance', 'juridique',
             'maconnerie', 'plomberie-chauffage', 'electricite', 'menuiserie', 'peinture-revetements',
             'commerce-detail', 'commerce-gros', 'e-commerce', 'restauration', 'cafes-bars',
@@ -137,10 +139,26 @@ RIEN D'AUTRE. PAS D'EXPLICATION.`;
             'hotellerie', 'culture-spectacles', 'sport-loisirs', 'autre'
           ];
 
-          // Validation: si la catégorie n'est pas valide, forcer "autre"
-          if (!validCategories.includes(categorieClean)) {
-            console.log(`Invalid category "${categorieClean}" for ${entreprise.id}, forcing "autre"`);
-            categorieClean = 'autre';
+          // Si catégorie existante, l'utiliser
+          if (existingCategories.includes(categorieClean)) {
+            console.log(`Using existing category "${categorieClean}" for ${entreprise.id}`);
+          } else {
+            // Nouvelle catégorie : validation du format
+            const isValidFormat = /^[a-z]+(-[a-z]+){1,2}$/.test(categorieClean);
+            
+            // Détecter les doublons potentiels (mots similaires inversés)
+            const words = categorieClean.split('-').sort().join('-');
+            const isDuplicate = existingCategories.some(cat => {
+              const existingWords = cat.split('-').sort().join('-');
+              return words === existingWords;
+            });
+
+            if (!isValidFormat || isDuplicate) {
+              console.log(`Invalid or duplicate category "${categorieClean}" for ${entreprise.id}, forcing "autre"`);
+              categorieClean = 'autre';
+            } else {
+              console.log(`New category created: "${categorieClean}" for ${entreprise.id}`);
+            }
           }
 
           // Mettre à jour l'entreprise
