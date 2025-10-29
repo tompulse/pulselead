@@ -18,10 +18,10 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Récupérer UN PETIT BATCH d'entreprises non qualifiées (50 max pour éviter timeout)
+    // Récupérer 50 entreprises non qualifiées
     const { data: entreprises, error: fetchError } = await supabase
       .from('entreprises')
-      .select('id, activite, administration, forme_juridique, code_naf')
+      .select('id, activite, administration, forme_juridique, code_naf, nom')
       .is('categorie_qualifiee', null)
       .limit(50);
 
@@ -42,42 +42,39 @@ serve(async (req) => {
     // Traiter toutes les entreprises du batch
     for (const entreprise of entreprises) {
         try {
-          const prompt = `Analyse cette entreprise et détermine SA VRAIE catégorie d'activité principale.
+        const prompt = `Analyse cette entreprise française et détermine sa catégorie d'activité principale.
 
 CONTEXTE:
+- Nom: ${entreprise.nom || 'Non spécifié'}
 - Activité: ${entreprise.activite || 'Non spécifiée'}
 - Administration: ${entreprise.administration || 'Non spécifiée'}
 - Forme juridique: ${entreprise.forme_juridique || 'Non spécifiée'}
 - Code NAF: ${entreprise.code_naf || 'Non spécifié'}
 
-CATÉGORIES DISPONIBLES (34 catégories détaillées):
-🏢 TERTIAIRE: conseil-consulting, holding, immobilier, finance-assurance, juridique
-🏗️ CONSTRUCTION: maconnerie, plomberie-chauffage, electricite, menuiserie, peinture-revetements
-🛍️ COMMERCE: commerce-detail, commerce-gros, e-commerce
-🍴 RESTAURATION: restauration, cafes-bars, snack-fastfood, traiteur
-🚴 TRANSPORT: livraison-coursier, transport-marchandises, vtc-taxi
-💻 TECH: informatique-dev, digital-web
-📢 COMMUNICATION: marketing-pub
-⚡ ENERGIE: energie-renouvelable, environnement-recyclage
-⚕️ SANTE: sante-medical, beaute-coiffure
-🏭 INDUSTRIE: industrie-fabrication
-🌾 AGRICULTURE: agriculture
-📚 EDUCATION: education-formation
-🔧 SERVICES: artisanat-reparation, services-personne
-🏨 HOTELLERIE: hotellerie
-🎬 CULTURE: culture-spectacles
-⚽ SPORT: sport-loisirs
-❓ AUTRES: autre, activite-non-precisee
+INSTRUCTIONS CRITIQUES:
+1. Crée une catégorie PRÉCISE et DESCRIPTIVE en français (2-4 mots maximum)
+2. Utilise des tirets pour séparer les mots (ex: "restaurant-traditionnel", "plomberie-chauffage")
+3. Sois SPÉCIFIQUE: au lieu de "commerce", utilise "boulangerie-patisserie" ou "bijouterie"
+4. Au lieu de "services", utilise "coiffure-esthetique" ou "pressing-nettoyage"
+5. Réponds UNIQUEMENT au format: "categorie|score"
+6. Score de confiance entre 1 et 100
 
-RÈGLES:
-1. Restaurant avec livraison = "restauration"
-2. Coursier vélo = "livraison-coursier"
-3. SCI = "immobilier"
-4. Holding = "holding"
-5. Utilise le code NAF pour affiner
+EXEMPLES DE BONNES CATÉGORIES:
+- "restaurant-gastronomique"
+- "plomberie-chauffage"
+- "boulangerie-patisserie"  
+- "coiffure-barbier"
+- "electricite-generale"
+- "maconnerie-renovation"
+- "pizzeria-livraison"
+- "cafe-bar"
+- "pressing-nettoyage"
+- "pharmacie"
+- "immobilier-location"
+- "consultant-informatique"
 
-Format: "categorie|confidence"
-Exemple: "restauration|95"`;
+RÉPONDS UNIQUEMENT: "categorie|score"
+RIEN D'AUTRE. PAS D'EXPLICATION.`;
 
           const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
@@ -88,7 +85,6 @@ Exemple: "restauration|95"`;
             body: JSON.stringify({
               model: 'google/gemini-2.5-flash-lite',
               messages: [{ role: 'user', content: prompt }],
-              temperature: 0.3,
             }),
           });
 

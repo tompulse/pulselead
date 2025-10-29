@@ -87,11 +87,10 @@ export const entrepriseService = {
         });
       }
       
-      // Filter by categories using categorie_qualifiee
+      // Filter by categories using categorie_qualifiee directly
       if (filters.categories && filters.categories.length > 0) {
         filteredData = filteredData.filter(e => {
-          const category = categorizeActivity(e.activite, e.categorie_qualifiee);
-          return filters.categories!.includes(category);
+          return e.categorie_qualifiee && filters.categories!.includes(e.categorie_qualifiee);
         });
       }
 

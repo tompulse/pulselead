@@ -4,8 +4,7 @@ import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ImportDialog } from "./ImportDialog";
-import { QualifyAllButton } from "./QualifyAllButton";
-// Removed QualifySubcategoriesButton import
+import { QualificationProgress } from "./QualificationProgress";
 
 export const SyncButton = () => {
   const [loading, setLoading] = useState(false);
@@ -42,7 +41,7 @@ export const SyncButton = () => {
   return (
     <div className="flex gap-2">
       <ImportDialog />
-      <QualifyAllButton />
+      <QualificationProgress />
       <Button
         onClick={handleSync}
         disabled={loading}
