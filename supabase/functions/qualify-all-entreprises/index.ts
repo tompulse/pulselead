@@ -42,24 +42,42 @@ serve(async (req) => {
     // Traiter toutes les entreprises du batch
     for (const entreprise of entreprises) {
         try {
-          const prompt = `Tu dois répondre UNIQUEMENT avec le format exact: "categorie|confidence"
+          const prompt = `Analyse cette entreprise et détermine SA VRAIE catégorie d'activité principale.
 
-CONTEXTE ENTREPRISE:
-Activité: ${entreprise.activite || 'Non spécifiée'}
-Forme juridique: ${entreprise.forme_juridique || 'Non spécifiée'}
-Code NAF: ${entreprise.code_naf || 'Non spécifié'}
+CONTEXTE:
+- Activité: ${entreprise.activite || 'Non spécifiée'}
+- Administration: ${entreprise.administration || 'Non spécifiée'}
+- Forme juridique: ${entreprise.forme_juridique || 'Non spécifiée'}
+- Code NAF: ${entreprise.code_naf || 'Non spécifié'}
 
-CATÉGORIES (choisis UNE SEULE):
-conseil-consulting, holding, immobilier, finance-assurance, juridique, maconnerie, plomberie-chauffage, electricite, menuiserie, peinture-revetements, commerce-detail, commerce-gros, e-commerce, restauration, cafes-bars, snack-fastfood, traiteur, livraison-coursier, transport-marchandises, vtc-taxi, informatique-dev, digital-web, marketing-pub, energie-renouvelable, environnement-recyclage, sante-medical, beaute-coiffure, industrie-fabrication, agriculture, education-formation, artisanat-reparation, services-personne, hotellerie, culture-spectacles, sport-loisirs, autre
+CATÉGORIES DISPONIBLES (34 catégories détaillées):
+🏢 TERTIAIRE: conseil-consulting, holding, immobilier, finance-assurance, juridique
+🏗️ CONSTRUCTION: maconnerie, plomberie-chauffage, electricite, menuiserie, peinture-revetements
+🛍️ COMMERCE: commerce-detail, commerce-gros, e-commerce
+🍴 RESTAURATION: restauration, cafes-bars, snack-fastfood, traiteur
+🚴 TRANSPORT: livraison-coursier, transport-marchandises, vtc-taxi
+💻 TECH: informatique-dev, digital-web
+📢 COMMUNICATION: marketing-pub
+⚡ ENERGIE: energie-renouvelable, environnement-recyclage
+⚕️ SANTE: sante-medical, beaute-coiffure
+🏭 INDUSTRIE: industrie-fabrication
+🌾 AGRICULTURE: agriculture
+📚 EDUCATION: education-formation
+🔧 SERVICES: artisanat-reparation, services-personne
+🏨 HOTELLERIE: hotellerie
+🎬 CULTURE: culture-spectacles
+⚽ SPORT: sport-loisirs
+❓ AUTRES: autre, activite-non-precisee
 
-RÈGLES STRICTES:
-1. Réponds UNIQUEMENT: "categorie|confidence"
-2. Confidence entre 50 et 100
-3. PAS d'explication, PAS de texte supplémentaire
-4. Exemples valides: "restauration|95" ou "immobilier|88"
+RÈGLES:
+1. Restaurant avec livraison = "restauration"
+2. Coursier vélo = "livraison-coursier"
+3. SCI = "immobilier"
+4. Holding = "holding"
+5. Utilise le code NAF pour affiner
 
-TA RÉPONSE (format strict):`;
-
+Format: "categorie|confidence"
+Exemple: "restauration|95"`;
 
           const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',

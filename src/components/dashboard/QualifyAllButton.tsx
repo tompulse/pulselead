@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Wand2, Loader2, Square } from "lucide-react";
+import { Wand2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress";
 
 interface CategoryCount {
   [key: string]: number;
@@ -13,11 +12,9 @@ interface CategoryCount {
 export const QualifyAllButton = () => {
   const [unqualifiedCount, setUnqualifiedCount] = useState<number>(0);
   const [qualifiedCount, setQualifiedCount] = useState<number>(0);
-  const [totalCount, setTotalCount] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [categoryDistribution, setCategoryDistribution] = useState<CategoryCount>({});
   const { toast } = useToast();
-  const shouldContinue = useRef(false);
 
   // Fetch counts and subscribe to changes
   useEffect(() => {
@@ -32,13 +29,8 @@ export const QualifyAllButton = () => {
         .select('*', { count: 'exact', head: true })
         .not('categorie_qualifiee', 'is', null);
 
-      const { count: total } = await supabase
-        .from('entreprises')
-        .select('*', { count: 'exact', head: true });
-
       setUnqualifiedCount(unqualified || 0);
       setQualifiedCount(qualified || 0);
-      setTotalCount(total || 0);
 
       // Get category distribution
       const { data: categories } = await supabase
@@ -82,23 +74,6 @@ export const QualifyAllButton = () => {
     };
   }, []);
 
-  const processBatch = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke("qualify-all-entreprises", {
-        headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-      });
-
-      if (error) throw error;
-
-      return data;
-    } catch (error) {
-      console.error("Erreur qualification:", error);
-      throw error;
-    }
-  };
-
   const handleQualify = async () => {
     if (unqualifiedCount === 0) {
       toast({
@@ -108,91 +83,78 @@ export const QualifyAllButton = () => {
       return;
     }
 
-    shouldContinue.current = true;
     setIsProcessing(true);
-
     try {
-      while (shouldContinue.current && unqualifiedCount > 0) {
-        const result = await processBatch();
-        
-        if (!shouldContinue.current) break;
+      const { data, error } = await supabase.functions.invoke("qualify-all-entreprises", {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
 
-        // Wait a bit before next batch to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
+      if (error) throw error;
 
-      if (shouldContinue.current) {
-        toast({
-          title: "✅ Qualification terminée",
-          description: `Toutes les entreprises ont été qualifiées`,
-        });
-      }
+      const { total, succeeded, failed } = data;
+
+      toast({
+        title: "🤖 Batch terminé",
+        description: `${succeeded} qualifiées / ${failed} échecs`,
+      });
+
     } catch (error) {
+      console.error("Erreur qualification:", error);
       toast({
         title: "❌ Erreur",
         description: error instanceof Error ? error.message : "Erreur inconnue",
         variant: "destructive",
       });
     } finally {
-      shouldContinue.current = false;
       setIsProcessing(false);
     }
   };
 
-  const handleStop = () => {
-    shouldContinue.current = false;
-    setIsProcessing(false);
-    toast({
-      title: "⏸️ Arrêté",
-      description: "Qualification mise en pause",
-    });
-  };
-
-  if (totalCount === 0) {
+  if (unqualifiedCount === 0 && qualifiedCount === 0) {
     return null;
   }
 
-  const percentage = totalCount > 0 ? Math.round((qualifiedCount / totalCount) * 100) : 0;
+  const percentage = qualifiedCount + unqualifiedCount > 0
+    ? Math.round((qualifiedCount / (qualifiedCount + unqualifiedCount)) * 100)
+    : 0;
 
   return (
     <div className="flex flex-col gap-2">
       <Button
-        onClick={isProcessing ? handleStop : handleQualify}
-        disabled={!isProcessing && unqualifiedCount === 0}
-        variant={isProcessing ? "destructive" : "default"}
+        onClick={handleQualify}
+        disabled={isProcessing || unqualifiedCount === 0}
+        variant="default"
         size="sm"
-        className="h-7 px-3 text-xs"
+        className="h-7 px-3 text-xs bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70"
       >
         {isProcessing ? (
           <>
-            <Square className="w-3.5 h-3.5 mr-1.5" />
-            <span>Arrêter</span>
+            <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+            <span>Qualification en cours...</span>
           </>
         ) : (
           <>
             <Wand2 className="w-3.5 h-3.5 mr-1.5" />
-            <span>Qualifier automatiquement</span>
+            <span>Qualifier 50 entreprises</span>
             {unqualifiedCount > 0 && (
               <Badge variant="secondary" className="ml-2 bg-white/20 text-white text-[10px] px-1">
-                {unqualifiedCount.toLocaleString('fr-FR')}
+                {unqualifiedCount.toLocaleString('fr-FR')} restantes
               </Badge>
             )}
           </>
         )}
       </Button>
       
-      {totalCount > 0 && (
-        <div className="space-y-1">
-          <Progress value={percentage} className="h-2" />
-          <div className="flex justify-between text-[10px] text-muted-foreground">
-            <span className="font-medium">{percentage}% qualifiées</span>
-            <span>{qualifiedCount.toLocaleString('fr-FR')} / {totalCount.toLocaleString('fr-FR')}</span>
-          </div>
+      {qualifiedCount > 0 && (
+        <div className="text-[10px] text-muted-foreground">
+          <span className="font-medium">{percentage}%</span> · {qualifiedCount.toLocaleString('fr-FR')} / {(qualifiedCount + unqualifiedCount).toLocaleString('fr-FR')} qualifiées
         </div>
       )}
 
       {Object.keys(categoryDistribution).length > 0 && (
-        <div className="text-[10px] text-muted-foreground max-h-20 overflow-y-auto space-y-0.5">
+        <div className="text-[10px] text-muted-foreground max-h-20 overflow-y-auto">
           {Object.entries(categoryDistribution)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 5)
