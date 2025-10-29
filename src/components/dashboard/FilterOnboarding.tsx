@@ -185,7 +185,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           </div>
           <div className="flex justify-between mt-1.5 text-xs font-medium">
             <span className={step === 1 ? 'text-accent font-bold' : 'text-muted-foreground'}>Zone géographique</span>
-            <span className={step === 2 ? 'text-accent font-bold' : 'text-muted-foreground'}>Secteurs d'activité</span>
+            <span className={step === 2 ? 'text-accent font-bold' : 'text-muted-foreground'}>Types de bâtiments</span>
           </div>
         </div>
 
@@ -282,9 +282,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                     <Building2 className="w-4 h-4 md:w-5 md:h-5 text-accent shrink-0" />
                   </div>
                   <div>
-                    <h2 className="text-base md:text-lg font-bold gradient-text">Quels secteurs vous intéressent ? <span className="text-muted-foreground text-xs font-medium">(optionnel)</span></h2>
+                    <h2 className="text-base md:text-lg font-bold gradient-text">Quels types de bâtiments ? <span className="text-muted-foreground text-xs font-medium">(optionnel)</span></h2>
                     <p className="text-muted-foreground text-xs md:text-sm font-medium">
-                      Sélectionnez un ou plusieurs secteurs d'activité pour affiner votre recherche.
+                      Sélectionnez un ou plusieurs types de bâtiments pour affiner votre recherche.
                     </p>
                   </div>
                 </div>
@@ -296,7 +296,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                     className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-colors bg-gradient-to-br from-accent/15 to-accent/10 border-accent"
                   >
                     <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-accent shrink-0" />
-                    <span className="font-semibold text-left text-base md:text-lg">✨ Tous les secteurs m'intéressent</span>
+                    <span className="font-semibold text-left text-base md:text-lg">✨ Tous les types m'intéressent</span>
                   </button>
 
                   {/* Types de bâtiments spécifiques */}
@@ -338,9 +338,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
               ) : (
                 <span>
                   {selectedCategories.length > 0 ? (
-                    `${selectedCategories.length} secteur${selectedCategories.length > 1 ? 's' : ''} sélectionné${selectedCategories.length > 1 ? 's' : ''}`
+                    `${selectedCategories.length} type${selectedCategories.length > 1 ? 's' : ''} sélectionné${selectedCategories.length > 1 ? 's' : ''}`
                   ) : (
-                    'Aucun secteur sélectionné (optionnel)'
+                    'Aucun type sélectionné (optionnel)'
                   )}
                 </span>
               )}
