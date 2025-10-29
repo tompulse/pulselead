@@ -260,20 +260,18 @@ Deno.serve(async (req) => {
           entreprise.categorie_qualifiee
         );
 
-        if (subcategory) {
-          const { error: updateError } = await supabase
-            .from('entreprises')
-            .update({ sous_categorie: subcategory })
-            .eq('id', entreprise.id);
+        // Always update to avoid infinite loops - use a default if no match found
+        const finalSubcategory = subcategory || 'autres_services';
+        
+        const { error: updateError } = await supabase
+          .from('entreprises')
+          .update({ sous_categorie: finalSubcategory })
+          .eq('id', entreprise.id);
 
-          if (updateError) {
-            console.error(`Error updating enterprise ${entreprise.id}:`, updateError);
-            failed++;
-          } else {
-            succeeded++;
-          }
+        if (updateError) {
+          console.error(`Error updating enterprise ${entreprise.id}:`, updateError);
+          failed++;
         } else {
-          // No subcategory found, still count as processed
           succeeded++;
         }
       } catch (error) {
@@ -298,7 +296,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Error in qualify-subcategories function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
