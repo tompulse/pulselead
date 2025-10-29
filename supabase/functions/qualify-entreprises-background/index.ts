@@ -69,6 +69,15 @@ serve(async (req) => {
         });
       }
 
+      // If the job is not running (paused/completed/failed), exit without processing
+      if (job.status !== 'running') {
+        console.log(`Job ${jobId} is not running (status=${job.status}). Exiting batch.`);
+        return new Response(
+          JSON.stringify({ message: 'not_running', jobId, status: job.status }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       // Respect backoff before processing, if any
       if (backoffMs > 0) {
         console.log(`Backoff ${backoffMs}ms before processing next batch for job ${jobId}`);
@@ -359,6 +368,35 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    // Control actions from UI (pause)
+    if ((body as any)?.action === 'pause') {
+      const { data: runningJobs } = await serviceClient
+        .from('qualification_jobs')
+        .select('*')
+        .eq('user_id', authData.user.id)
+        .eq('status', 'running')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      const jobToPause = runningJobs?.[0];
+      if (!jobToPause) {
+        return new Response(
+          JSON.stringify({ message: 'no_running_job' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      await serviceClient
+        .from('qualification_jobs')
+        .update({ status: 'paused', updated_at: new Date().toISOString() })
+        .eq('id', jobToPause.id);
+
+      return new Response(
+        JSON.stringify({ message: 'paused', jobId: jobToPause.id }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // If there's an existing job (running or paused), resume/continue instead of creating a new one

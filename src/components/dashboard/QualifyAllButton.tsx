@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Wand2, Loader2 } from "lucide-react";
+import { Wand2, Loader2, Pause } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -49,19 +49,23 @@ export const QualifyAllButton = () => {
     fetchData();
   }, []);
 
-  // Subscribe to job updates with realtime
+  // Subscribe to job updates with realtime (scoped to current job id)
   useEffect(() => {
+    if (!activeJob?.id) return;
+
     const channel = supabase
-      .channel('qualification_jobs_updates')
+      .channel(`qualification_job_${activeJob.id}`)
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
           table: 'qualification_jobs',
+          filter: `id=eq.${activeJob.id}`,
         },
         (payload) => {
           const updated = payload.new as QualificationJob;
+          if (updated.id !== activeJob.id) return; // ignore other jobs
           console.log('Job updated via realtime:', updated);
           setActiveJob(updated);
 
@@ -91,7 +95,7 @@ export const QualifyAllButton = () => {
           if (updated.status === 'paused') {
             toast({
               title: "⏸️ En pause",
-              description: "Crédits insuffisants. Réessayez plus tard.",
+              description: "Traitement mis en pause",
             });
           }
         }
@@ -101,7 +105,7 @@ export const QualifyAllButton = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [toast]);
+  }, [activeJob?.id, toast]);
 
   const handleQualify = async () => {
     try {
@@ -121,7 +125,7 @@ export const QualifyAllButton = () => {
 
       toast({
         title: "🤖 Qualification lancée",
-        description: `${data.totalCount.toLocaleString('fr-FR')} entreprises à traiter`,
+        description: `${data.totalCount?.toLocaleString('fr-FR') ?? ''} entreprises à traiter`,
       });
 
       // Fetch job immediately to show it
@@ -144,6 +148,22 @@ export const QualifyAllButton = () => {
     }
   };
 
+  const handlePause = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("qualify-entreprises-background", {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+        body: { action: 'pause' },
+      });
+      if (error) throw error;
+      toast({ title: '⏸️ Mis en pause', description: 'La qualification a été mise en pause.' });
+    } catch (e) {
+      console.error('Pause error', e);
+      toast({ title: '❌ Erreur', description: 'Impossible de mettre en pause.', variant: 'destructive' });
+    }
+  };
+
   const isRunning = activeJob?.status === 'running';
   const progress = activeJob && activeJob.total_count > 0
     ? Math.round((activeJob.processed_count / activeJob.total_count) * 100)
@@ -155,8 +175,8 @@ export const QualifyAllButton = () => {
 
   return (
     <Button
-      onClick={handleQualify}
-      disabled={isRunning}
+      onClick={isRunning ? handlePause : handleQualify}
+      disabled={false}
       variant="default"
       size="sm"
       className="h-7 px-3 text-xs bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70"
@@ -168,6 +188,7 @@ export const QualifyAllButton = () => {
           <Badge variant="secondary" className="ml-2 bg-white/20 text-white text-[10px] px-1">
             {activeJob.processed_count.toLocaleString('fr-FR')}/{activeJob.total_count.toLocaleString('fr-FR')}
           </Badge>
+          <span className="ml-2 inline-flex items-center"><Pause className="w-3.5 h-3.5 mr-1" />Mettre en pause</span>
         </>
       ) : (
         <>
