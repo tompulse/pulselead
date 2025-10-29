@@ -294,5 +294,19 @@ export function categorizeActivity(activity: string | null, qualifiedCategory?: 
 
 export function getCategoryLabel(categoryKey: string): string {
   const category = ACTIVITY_CATEGORIES[categoryKey as keyof typeof ACTIVITY_CATEGORIES];
-  return category?.label || "❓ Activité non précisée";
+  
+  if (category?.label) {
+    return category.label;
+  }
+  
+  // Pour les nouvelles catégories, formater la clé en label lisible
+  if (categoryKey && categoryKey !== 'autre') {
+    const formatted = categoryKey
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    return `❓ ${formatted}`;
+  }
+  
+  return "❓ Activité non précisée";
 }
