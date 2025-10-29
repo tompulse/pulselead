@@ -32,6 +32,7 @@ export const QualifyAllButton = () => {
         .maybeSingle();
 
       if (job) {
+        console.log('Active job found:', job);
         setActiveJob(job);
       }
 
@@ -41,28 +42,27 @@ export const QualifyAllButton = () => {
         .select('*', { count: 'exact', head: true })
         .is('categorie_qualifiee', null);
 
+      console.log('Unqualified count:', count);
       setUnqualifiedCount(count || 0);
     };
 
     fetchData();
   }, []);
 
-  // Subscribe to job updates
+  // Subscribe to job updates with realtime
   useEffect(() => {
-    if (!activeJob) return;
-
     const channel = supabase
-      .channel(`qualification_job_${activeJob.id}`)
+      .channel('qualification_jobs_updates')
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
           table: 'qualification_jobs',
-          filter: `id=eq.${activeJob.id}`,
         },
         (payload) => {
           const updated = payload.new as QualificationJob;
+          console.log('Job updated via realtime:', updated);
           setActiveJob(updated);
 
           if (updated.status === 'completed') {
@@ -70,7 +70,13 @@ export const QualifyAllButton = () => {
               title: "✅ Qualification terminée",
               description: `${updated.succeeded_count} entreprises qualifiées`,
             });
-            setTimeout(() => window.location.reload(), 1500);
+            setActiveJob(null);
+            // Refresh unqualified count
+            supabase
+              .from('entreprises')
+              .select('*', { count: 'exact', head: true })
+              .is('categorie_qualifiee', null)
+              .then(({ count }) => setUnqualifiedCount(count || 0));
           }
 
           if (updated.status === 'failed') {
@@ -95,34 +101,41 @@ export const QualifyAllButton = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [activeJob, toast]);
+  }, [toast]);
 
   const handleQualify = async () => {
     try {
+      console.log('Starting qualification...');
       const { data, error } = await supabase.functions.invoke("qualify-entreprises-background", {
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Invoke error:', error);
+        throw error;
+      }
+
+      console.log('Function response:', data);
 
       toast({
         title: "🤖 Qualification lancée",
-        description: `${data.totalCount} entreprises à traiter`,
+        description: `${data.totalCount.toLocaleString('fr-FR')} entreprises à traiter`,
       });
 
-      // Fetch job
+      // Fetch job immediately to show it
       const { data: job } = await supabase
         .from('qualification_jobs')
         .select('*')
         .eq('id', data.jobId)
-        .maybeSingle();
+        .single();
 
+      console.log('Job fetched:', job);
       if (job) setActiveJob(job);
 
     } catch (error) {
-      console.error("Erreur:", error);
+      console.error("Erreur qualification:", error);
       toast({
         title: "❌ Erreur",
         description: error instanceof Error ? error.message : "Erreur inconnue",
@@ -132,12 +145,12 @@ export const QualifyAllButton = () => {
   };
 
   const isRunning = activeJob?.status === 'running';
-  const progress = activeJob
+  const progress = activeJob && activeJob.total_count > 0
     ? Math.round((activeJob.processed_count / activeJob.total_count) * 100)
     : 0;
 
   if (unqualifiedCount === 0 && !activeJob) {
-    return null; // Tout est déjà qualifié
+    return null;
   }
 
   return (
@@ -153,7 +166,7 @@ export const QualifyAllButton = () => {
           <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
           <span>{progress}%</span>
           <Badge variant="secondary" className="ml-2 bg-white/20 text-white text-[10px] px-1">
-            {activeJob.processed_count}/{activeJob.total_count}
+            {activeJob.processed_count.toLocaleString('fr-FR')}/{activeJob.total_count.toLocaleString('fr-FR')}
           </Badge>
         </>
       ) : (
