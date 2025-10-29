@@ -217,9 +217,8 @@ export const QualificationProgress = () => {
   const progress = totalCount > 0 ? (qualifiedCount / totalCount) * 100 : 0;
   const remaining = totalCount - qualifiedCount;
 
-  const topCategories = Object.entries(categories)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 15);
+  const allCategories = Object.entries(categories)
+    .sort(([, a], [, b]) => b - a);
 
   if (totalCount === 0) {
     return null;
@@ -303,14 +302,14 @@ export const QualificationProgress = () => {
               </div>
             )}
 
-            {topCategories.length > 0 && (
+            {allCategories.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-medium">Catégories créées</h4>
                   <Badge variant="outline">{Object.keys(categories).length} catégories</Badge>
                 </div>
-                <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
-                  {topCategories.map(([cat, count]) => (
+                <div className="grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto pr-2">
+                  {allCategories.map(([cat, count]) => (
                     <div key={cat} className="flex items-center justify-between bg-muted/50 p-2 rounded text-xs">
                       <span className="truncate">{getCategoryLabel(cat)}</span>
                       <Badge variant="secondary" className="ml-2 shrink-0">
