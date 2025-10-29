@@ -11,14 +11,14 @@ const ACTIVITY_HIERARCHY = {
     label: "Services aux Entreprises",
     emoji: "💼",
     subcategories: [
-      { id: "conseil_management", label: "Conseil & Management", emoji: "📊", keywords: ["conseil", "consulting", "management", "stratégie", "audit", "expertise comptable"], parent: "services" },
-      { id: "rh_formation", label: "RH & Formation", emoji: "👥", keywords: ["formation", "recrutement", "ressources humaines", "rh", "coaching", "consulting rh"], parent: "services" },
-      { id: "finance_holdings", label: "Finance & Holdings", emoji: "🏦", keywords: ["holding", "finance", "investissement", "capital", "gestion patrimoine"], parent: "services" },
-      { id: "juridique_admin", label: "Juridique & Administratif", emoji: "⚖️", keywords: ["juridique", "avocat", "notaire", "administratif", "secrétariat"], parent: "services" },
-      { id: "marketing_comm", label: "Marketing & Communication", emoji: "📢", keywords: ["marketing", "communication", "publicité", "digital", "web", "seo"], parent: "services" },
+      { id: "conseil_management", label: "Conseil & Management", emoji: "📊", keywords: ["conseil", "consulting", "management", "stratégie", "audit", "expertise comptable", "expert comptable", "expert-comptable", "commissaire aux comptes", "comptabilité"], parent: "services" },
+      { id: "rh_formation", label: "RH & Formation", emoji: "👥", keywords: ["formation", "recrutement", "ressources humaines", "rh", "coaching", "consulting rh", "cabinet de recrutement"], parent: "services" },
+      { id: "finance_holdings", label: "Finance & Holdings", emoji: "🏦", keywords: ["holding", "finance", "investissement", "capital", "gestion patrimoine", "participation", "portefeuille", "valeurs mobilières"], parent: "services" },
+      { id: "juridique_admin", label: "Juridique & Administratif", emoji: "⚖️", keywords: ["juridique", "avocat", "notaire", "administratif", "secrétariat", "cabinet juridique", "cabinet d'avocat"], parent: "services" },
+      { id: "marketing_comm", label: "Marketing & Communication", emoji: "📢", keywords: ["marketing", "communication", "publicité", "digital", "web", "seo", "relations presse", "relations publiques", "agence de communication"], parent: "services" },
       { id: "nettoyage_maintenance", label: "Nettoyage & Maintenance", emoji: "🧹", keywords: ["nettoyage", "entretien", "maintenance", "propreté", "hygiène"], parent: "services" },
       { id: "securite", label: "Sécurité", emoji: "🛡️", keywords: ["sécurité", "gardiennage", "surveillance", "protection"], parent: "services" },
-      { id: "evenementiel", label: "Événementiel", emoji: "🎉", keywords: ["événementiel", "traiteur", "réception", "organisation"], parent: "services" },
+      { id: "evenementiel", label: "Événementiel", emoji: "🎉", keywords: ["événementiel", "traiteur", "réception", "organisation", "spectacle vivant"], parent: "services" },
     ]
   },
   immobilier: {
@@ -26,9 +26,9 @@ const ACTIVITY_HIERARCHY = {
     emoji: "🏢",
     subcategories: [
       { id: "promotion", label: "Promotion Immobilière", emoji: "🏗️", keywords: ["promotion immobilière", "promoteur", "construction immobilière"], parent: "immobilier" },
-      { id: "gestion_immo", label: "Gestion Immobilière", emoji: "🔑", keywords: ["gestion immobilière", "syndic", "copropriété", "location"], parent: "immobilier" },
-      { id: "agent_immo", label: "Agent Immobilier", emoji: "🏠", keywords: ["agent immobilier", "transaction immobilière", "vente immobilière"], parent: "immobilier" },
-      { id: "investissement_immo", label: "Investissement Immobilier", emoji: "💰", keywords: ["investissement immobilier", "sci", "foncière"], parent: "immobilier" },
+      { id: "gestion_immo", label: "Gestion Immobilière", emoji: "🔑", keywords: ["gestion immobilière", "syndic", "copropriété", "location", "administrateur de biens"], parent: "immobilier" },
+      { id: "agent_immo", label: "Agent Immobilier", emoji: "🏠", keywords: ["agent immobilier", "transaction immobilière", "vente immobilière", "agence immobilière"], parent: "immobilier" },
+      { id: "investissement_immo", label: "Investissement Immobilier", emoji: "💰", keywords: ["investissement immobilier", "sci", "foncière", "marchand de biens", "société civile immobilière"], parent: "immobilier" },
     ]
   },
   commerce: {
@@ -45,7 +45,7 @@ const ACTIVITY_HIERARCHY = {
     label: "Technologie",
     emoji: "💻",
     subcategories: [
-      { id: "dev_software", label: "Développement Logiciel", emoji: "⚙️", keywords: ["développement", "logiciel", "software", "application", "programmation"], parent: "technologie" },
+      { id: "dev_software", label: "Développement Logiciel", emoji: "⚙️", keywords: ["développement", "logiciel", "software", "application", "programmation", "site internet", "site web", "création de sites", "prestations informatiques", "ingénierie", "systèmes embarqués", "bureau d'étude technique"], parent: "technologie" },
       { id: "infra_it", label: "Infrastructure IT", emoji: "🖥️", keywords: ["infrastructure", "serveur", "cloud", "hébergement", "datacenter"], parent: "technologie" },
       { id: "cybersecurite", label: "Cybersécurité", emoji: "🔒", keywords: ["cybersécurité", "sécurité informatique", "protection données"], parent: "technologie" },
       { id: "ia_data", label: "IA & Data", emoji: "🤖", keywords: ["intelligence artificielle", "ia", "data science", "machine learning", "big data"], parent: "technologie" },
@@ -55,7 +55,7 @@ const ACTIVITY_HIERARCHY = {
     label: "Santé",
     emoji: "🏥",
     subcategories: [
-      { id: "medical", label: "Médical", emoji: "👨‍⚕️", keywords: ["médical", "médecin", "clinique", "cabinet médical", "santé"], parent: "sante" },
+      { id: "medical", label: "Médical", emoji: "👨‍⚕️", keywords: ["médical", "médecin", "clinique", "cabinet médical", "santé", "dentaire", "dentiste", "chirurgien"], parent: "sante" },
       { id: "paramedical", label: "Paramédical", emoji: "💊", keywords: ["infirmier", "kiné", "pharmacie", "paramédical", "orthophonie"], parent: "sante" },
       { id: "services_sante", label: "Services de Santé", emoji: "🩺", keywords: ["laboratoire", "imagerie", "analyse médicale"], parent: "sante" },
     ]
@@ -65,7 +65,7 @@ const ACTIVITY_HIERARCHY = {
     emoji: "🏗️",
     subcategories: [
       { id: "gros_oeuvre", label: "Gros Œuvre", emoji: "🧱", keywords: ["maçonnerie", "gros oeuvre", "charpente", "béton"], parent: "construction" },
-      { id: "second_oeuvre", label: "Second Œuvre", emoji: "🔨", keywords: ["plomberie", "électricité", "menuiserie", "peinture", "carrelage"], parent: "construction" },
+      { id: "second_oeuvre", label: "Second Œuvre", emoji: "🔨", keywords: ["plomberie", "électricité", "menuiserie", "peinture", "carrelage", "tuyauterie", "installation", "chauffage"], parent: "construction" },
       { id: "genie_civil", label: "Génie Civil", emoji: "🛣️", keywords: ["génie civil", "travaux publics", "voirie", "infrastructure"], parent: "construction" },
       { id: "renovation", label: "Rénovation", emoji: "🏡", keywords: ["rénovation", "réhabilitation", "restauration"], parent: "construction" },
     ]
@@ -84,7 +84,7 @@ const ACTIVITY_HIERARCHY = {
     label: "Transport & Logistique",
     emoji: "🚚",
     subcategories: [
-      { id: "transport_routier", label: "Transport Routier", emoji: "🚛", keywords: ["transport routier", "camion", "livraison"], parent: "transport" },
+      { id: "transport_routier", label: "Transport Routier", emoji: "🚛", keywords: ["transport routier", "camion", "livraison", "transport public routier", "transport de marchandises"], parent: "transport" },
       { id: "logistique", label: "Logistique", emoji: "📦", keywords: ["logistique", "entreposage", "stockage", "supply chain"], parent: "transport" },
       { id: "demenagement", label: "Déménagement", emoji: "📦", keywords: ["déménagement", "garde-meuble"], parent: "transport" },
     ]
@@ -111,7 +111,7 @@ const ACTIVITY_HIERARCHY = {
     label: "Artisanat",
     emoji: "🔨",
     subcategories: [
-      { id: "metiers_art", label: "Métiers d'Art", emoji: "🎨", keywords: ["artisan d'art", "création", "artisanat"], parent: "artisanat" },
+      { id: "metiers_art", label: "Métiers d'Art", emoji: "🎨", keywords: ["artisan d'art", "création", "artisanat", "bijouterie", "horlogerie", "joaillerie"], parent: "artisanat" },
       { id: "reparation", label: "Réparation", emoji: "🔧", keywords: ["réparation", "dépannage", "maintenance"], parent: "artisanat" },
       { id: "coiffure_beaute", label: "Coiffure & Beauté", emoji: "💇", keywords: ["coiffure", "esthétique", "beauté", "salon"], parent: "artisanat" },
     ]
@@ -156,9 +156,9 @@ const ACTIVITY_HIERARCHY = {
     label: "Sport & Loisirs",
     emoji: "⚽",
     subcategories: [
-      { id: "equipements_sport", label: "Équipements Sportifs", emoji: "🏋️", keywords: ["salle de sport", "fitness", "équipements sportifs"], parent: "sport" },
+      { id: "equipements_sport", label: "Équipements Sportifs", emoji: "🏋️", keywords: ["salle de sport", "fitness", "équipements sportifs", "karting", "activités sportives"], parent: "sport" },
       { id: "enseignement_sport", label: "Enseignement Sportif", emoji: "🤸", keywords: ["coach sportif", "enseignement sportif"], parent: "sport" },
-      { id: "loisirs", label: "Loisirs", emoji: "🎮", keywords: ["loisirs", "divertissement"], parent: "sport" },
+      { id: "loisirs", label: "Loisirs", emoji: "🎮", keywords: ["loisirs", "divertissement", "récréatives"], parent: "sport" },
     ]
   },
   environnement: {
@@ -175,10 +175,21 @@ const ACTIVITY_HIERARCHY = {
     emoji: "📋",
     subcategories: [
       { id: "association", label: "Association", emoji: "🤝", keywords: ["association", "ong"], parent: "autre" },
-      { id: "autres_services", label: "Autres Services", emoji: "🔧", keywords: ["service", "prestation"], parent: "autre" },
+      { id: "autres_services", label: "Autres Services", emoji: "🔧", keywords: ["service", "prestation", "centre d'appels", "permanence téléphonique"], parent: "autre" },
     ]
   }
 };
+
+// Normalize text for better matching (remove accents, special chars, etc.)
+function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove accents
+    .replace(/[^a-z0-9\s]/g, " ") // Remove special chars
+    .replace(/\s+/g, " ") // Normalize spaces
+    .trim();
+}
 
 function categorizeActivityDetailed(activity: string | null, categoryKey: string | null): string | null {
   if (!activity || !categoryKey) return null;
@@ -186,7 +197,7 @@ function categorizeActivityDetailed(activity: string | null, categoryKey: string
   const category = ACTIVITY_HIERARCHY[categoryKey as keyof typeof ACTIVITY_HIERARCHY];
   if (!category) return null;
 
-  const activityLower = activity.toLowerCase();
+  const activityNormalized = normalizeText(activity);
   
   // Find the best matching subcategory
   let bestMatch: { id: string; score: number } | null = null;
@@ -194,8 +205,9 @@ function categorizeActivityDetailed(activity: string | null, categoryKey: string
   for (const subcat of category.subcategories) {
     let score = 0;
     for (const keyword of subcat.keywords) {
-      if (activityLower.includes(keyword.toLowerCase())) {
-        score += keyword.length; // Longer keywords = more specific match
+      const keywordNormalized = normalizeText(keyword);
+      if (activityNormalized.includes(keywordNormalized)) {
+        score += keywordNormalized.length; // Longer keywords = more specific match
       }
     }
     
