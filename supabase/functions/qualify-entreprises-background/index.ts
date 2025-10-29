@@ -373,15 +373,35 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
     const existing = existingJobs?.[0];
 
     if (existing) {
-      // If counters indicate completion but status isn't, finalize
-      if ((existing.processed_count ?? 0) >= (existing.total_count ?? 0) && existing.total_count > 0 && existing.status !== 'completed') {
+      // Recalculate remaining unqualified to keep totals in sync with the current dataset
+      const { count: remaining, error: remErr } = await serviceClient
+        .from('entreprises')
+        .select('*', { count: 'exact', head: true })
+        .is('categorie_qualifiee', null);
+
+      const processed = existing.processed_count ?? 0;
+      const currentRemaining = remErr ? 0 : (remaining ?? 0);
+      const effectiveTotal = processed + currentRemaining;
+
+      // If there is nothing left to process, finalize the job
+      if (currentRemaining === 0) {
         await serviceClient
           .from('qualification_jobs')
-          .update({ status: 'completed', completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          .update({ status: 'completed', total_count: processed, completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
           .eq('id', existing.id);
-        return new Response(JSON.stringify({ message: 'already_completed', jobId: existing.id, totalCount: existing.total_count }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+
+        return new Response(
+          JSON.stringify({ message: 'already_completed', jobId: existing.id, totalCount: processed }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Keep total_count accurate to current scope
+      if (effectiveTotal !== existing.total_count) {
+        await serviceClient
+          .from('qualification_jobs')
+          .update({ total_count: effectiveTotal, updated_at: new Date().toISOString() })
+          .eq('id', existing.id);
       }
 
       if (existing.status === 'paused') {
@@ -391,17 +411,19 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
           .eq('id', existing.id);
         console.log(`Resuming paused job ${existing.id}`);
         scheduleNext(existing.id);
-        return new Response(JSON.stringify({ message: 'resumed', jobId: existing.id, totalCount: existing.total_count }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return new Response(
+          JSON.stringify({ message: 'resumed', jobId: existing.id, totalCount: effectiveTotal }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       // If already running, nudge it by scheduling another batch
       console.log(`Job ${existing.id} already running, continuing`);
       scheduleNext(existing.id);
-      return new Response(JSON.stringify({ message: 'already_running', jobId: existing.id, totalCount: existing.total_count }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({ message: 'already_running', jobId: existing.id, totalCount: effectiveTotal }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Count remaining to set total_count
