@@ -15,7 +15,7 @@ interface ProspectsViewProps {
     formesJuridiques?: string[];
     searchQuery?: string;
     typeEvenement?: string[];
-    subcategories?: string[];
+    // subcategories removed
   };
   setFilters: Dispatch<SetStateAction<any>>;
   userId: string;

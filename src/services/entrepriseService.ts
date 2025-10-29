@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity } from "@/utils/activityCategories";
 import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
-import { normalizeSubcategoryId } from "@/utils/activitySubcategories";
+// Removed activitySubcategories import
 export interface EntrepriseFilters {
   dateFrom?: string;
   dateTo?: string;
@@ -95,13 +95,7 @@ export const entrepriseService = {
         });
       }
 
-// Filter by subcategories
-if (filters.subcategories && filters.subcategories.length > 0) {
-  filteredData = filteredData.filter(e => {
-    const normalized = normalizeSubcategoryId(e.sous_categorie);
-    return normalized !== null && filters.subcategories!.includes(normalized);
-  });
-}
+// Subcategories removed
       
       // Filter by formes juridiques
       if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {

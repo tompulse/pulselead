@@ -21,7 +21,7 @@ serve(async (req) => {
     // Récupérer UN PETIT BATCH d'entreprises non qualifiées (50 max pour éviter timeout)
     const { data: entreprises, error: fetchError } = await supabase
       .from('entreprises')
-      .select('id, activite, administration, forme_juridique')
+      .select('id, activite, administration, forme_juridique, code_naf')
       .is('categorie_qualifiee', null)
       .limit(50);
 
@@ -48,30 +48,36 @@ CONTEXTE:
 - Activité: ${entreprise.activite || 'Non spécifiée'}
 - Administration: ${entreprise.administration || 'Non spécifiée'}
 - Forme juridique: ${entreprise.forme_juridique || 'Non spécifiée'}
+- Code NAF: ${entreprise.code_naf || 'Non spécifié'}
 
-CATÉGORIES DISPONIBLES:
-- livraison: Coursier à vélo, livreur indépendant, auto-entrepreneur livraison (PAS de local commercial fixe)
-- restauration: Restaurant, bar, brasserie, snack avec LOCAL COMMERCIAL (même s'ils font aussi de la livraison)
-- construction: BTP, maçonnerie, plomberie, électricité, menuiserie, travaux
-- immobilier: SCI, location immobilière, agence immobilière, gestion de biens (PAS construction)
-- commerce: Magasin, boutique, vente au détail, négoce
-- energie: Énergie, électricité, photovoltaïque, pompe à chaleur
-- transport: VTC, taxi, transport de marchandises, logistique (PAS coursier vélo)
-- technologie: Informatique, logiciel, développement, web, digital
-- services: Conseil, consulting, formation, expertise, holding, gestion
-- sante: Médical, pharmacie, cosmétique, beauté, coiffure
-- industrie: Fabrication, production, manufacture, usine
-- communication: Marketing, publicité, communication, média
-- other: Aucune catégorie ne correspond
+CATÉGORIES DISPONIBLES (34 catégories détaillées):
+🏢 TERTIAIRE: conseil-consulting, holding, immobilier, finance-assurance, juridique
+🏗️ CONSTRUCTION: maconnerie, plomberie-chauffage, electricite, menuiserie, peinture-revetements
+🛍️ COMMERCE: commerce-detail, commerce-gros, e-commerce
+🍴 RESTAURATION: restauration, cafes-bars, snack-fastfood, traiteur
+🚴 TRANSPORT: livraison-coursier, transport-marchandises, vtc-taxi
+💻 TECH: informatique-dev, digital-web
+📢 COMMUNICATION: marketing-pub
+⚡ ENERGIE: energie-renouvelable, environnement-recyclage
+⚕️ SANTE: sante-medical, beaute-coiffure
+🏭 INDUSTRIE: industrie-fabrication
+🌾 AGRICULTURE: agriculture
+📚 EDUCATION: education-formation
+🔧 SERVICES: artisanat-reparation, services-personne
+🏨 HOTELLERIE: hotellerie
+🎬 CULTURE: culture-spectacles
+⚽ SPORT: sport-loisirs
+❓ AUTRES: autre, activite-non-precisee
 
-RÈGLES IMPORTANTES:
-1. Un restaurant avec livraison = "restauration" (pas "livraison")
-2. Un coursier vélo indépendant = "livraison" (pas "restauration")
-3. Une SCI = "immobilier" (pas "construction")
-4. Un holding = "services" (pas la catégorie des entreprises détenues)
+RÈGLES:
+1. Restaurant avec livraison = "restauration"
+2. Coursier vélo = "livraison-coursier"
+3. SCI = "immobilier"
+4. Holding = "holding"
+5. Utilise le code NAF pour affiner
 
-Réponds UNIQUEMENT avec la catégorie (un seul mot) et ta confiance (0-100) au format: "categorie|confidence"
-Exemple: "restauration|95" ou "livraison|90"`;
+Format: "categorie|confidence"
+Exemple: "restauration|95"`;
 
           const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',

@@ -78,7 +78,7 @@ serve(async (req) => {
       // Fetch one batch of unqualified entreprises
       const { data: entreprises, error: fetchError, count } = await serviceClient
         .from('entreprises')
-        .select('id, activite, administration, forme_juridique', { count: 'exact' })
+        .select('id, activite, administration, forme_juridique, code_naf', { count: 'exact' })
         .is('categorie_qualifiee', null)
         .order('created_at', { ascending: true })
         .limit(BATCH_SIZE);
@@ -97,7 +97,96 @@ serve(async (req) => {
       // Process function for a single entreprise
       const processEntreprise = async (e: any) => {
         try {
-          const prompt = `Analyse cette entreprise et détermine SA VRAIE catégorie d'activité principale.\n\nCONTEXTE:\n- Activité: ${e.activite || 'Non spécifiée'}\n- Administration: ${e.administration || 'Non spécifiée'}\n- Forme juridique: ${e.forme_juridique || 'Non spécifiée'}\n\nCATÉGORIES DISPONIBLES:\n- livraison: Coursier à vélo, livreur indépendant, auto-entrepreneur livraison (PAS de local commercial fixe)\n- restauration: Restaurant, bar, brasserie, snack avec LOCAL COMMERCIAL (même s'ils font aussi de la livraison)\n- construction: BTP, maçonnerie, plomberie, électricité, menuiserie, travaux\n- immobilier: SCI, location immobilière, agence immobilière, gestion de biens (PAS construction)\n- commerce: Magasin, boutique, vente au détail, négoce\n- energie: Énergie, électricité, photovoltaïque, pompe à chaleur\n- transport: VTC, taxi, transport de marchandises, logistique (PAS coursier vélo)\n- technologie: Informatique, logiciel, développement, web, digital\n- services: Conseil, consulting, formation, expertise, holding, gestion\n- sante: Médical, pharmacie, cosmétique, beauté, coiffure\n- industrie: Fabrication, production, manufacture, usine\n- communication: Marketing, publicité, communication, média\n- other: Aucune catégorie ne correspond\n\nRÈGLES IMPORTANTES:\n1. Un restaurant avec livraison = "restauration" (pas "livraison")\n2. Un coursier vélo indépendant = "livraison" (pas "restauration")\n3. Une SCI = "immobilier" (pas "construction")\n4. Un holding = "services" (pas la catégorie des entreprises détenues)\n\nRéponds UNIQUEMENT avec la catégorie (un seul mot) et ta confiance (0-100) au format: "categorie|confidence"\nExemple: "restauration|95" ou "livraison|90"`;
+          const prompt = `Analyse cette entreprise et détermine SA VRAIE catégorie d'activité principale.
+
+CONTEXTE:
+- Activité: ${e.activite || 'Non spécifiée'}
+- Administration: ${e.administration || 'Non spécifiée'}
+- Forme juridique: ${e.forme_juridique || 'Non spécifiée'}
+- Code NAF: ${e.code_naf || 'Non spécifié'}
+
+CATÉGORIES DISPONIBLES (34 catégories détaillées):
+
+🏢 TERTIAIRE & SERVICES:
+- conseil-consulting: Conseil, consulting, audit, expertise, stratégie
+- holding: Holdings, participations, gestion financière
+- immobilier: SCI, location immobilière, agence, foncier (PAS construction)
+- finance-assurance: Banque, assurance, crédit, comptabilité
+- juridique: Avocat, notaire, huissier, droit
+
+🏗️ CONSTRUCTION & BATIMENT:
+- maconnerie: Maçonnerie, gros œuvre, fondations, béton
+- plomberie-chauffage: Plomberie, chauffage, sanitaire, climatisation
+- electricite: Électricité, installation électrique
+- menuiserie: Menuiserie, charpente, bois, ébénisterie
+- peinture-revetements: Peinture, revêtements, carrelage, façade
+
+🛍️ COMMERCE:
+- commerce-detail: Magasin, boutique, vente détail
+- commerce-gros: Grossiste, négoce, import-export
+- e-commerce: Vente en ligne, marketplace
+
+🍴 RESTAURATION:
+- restauration: Restaurant avec LOCAL COMMERCIAL (même si livraison)
+- cafes-bars: Café, bar, pub, débit de boisson
+- snack-fastfood: Snack, fast-food, sandwicherie, food truck
+- traiteur: Traiteur, pâtisserie, boulangerie
+
+🚴 TRANSPORT & LIVRAISON:
+- livraison-coursier: Coursier vélo, livreur indépendant (PAS de local commercial)
+- transport-marchandises: Transport logistique, fret, déménagement
+- vtc-taxi: VTC, taxi, chauffeur
+
+💻 TECHNOLOGIE:
+- informatique-dev: Informatique, développement, logiciel, programmation
+- digital-web: Digital, web, internet, site web
+
+📢 COMMUNICATION:
+- marketing-pub: Marketing, publicité, communication, média
+
+⚡ ENERGIE & ENVIRONNEMENT:
+- energie-renouvelable: Photovoltaïque, solaire, pompe à chaleur
+- environnement-recyclage: Recyclage, déchets, écologie
+
+⚕️ SANTE:
+- sante-medical: Santé, médical, pharmacie, paramédical
+- beaute-coiffure: Coiffure, beauté, esthétique, cosmétique
+
+🏭 INDUSTRIE:
+- industrie-fabrication: Industrie, fabrication, production, manufacture
+
+🌾 AGRICULTURE:
+- agriculture: Agriculture, exploitation, viticulture, élevage
+
+📚 EDUCATION:
+- education-formation: Éducation, enseignement, formation, cours
+
+🔧 ARTISANAT & SERVICES:
+- artisanat-reparation: Artisanat, réparation, dépannage
+- services-personne: Ménage, nettoyage, jardinage, aide domicile
+
+🏨 HOTELLERIE:
+- hotellerie: Hôtel, hébergement, gîte, chambre d'hôtes
+
+🎬 CULTURE:
+- culture-spectacles: Spectacle, musée, théâtre, cinéma, événementiel
+
+⚽ SPORT:
+- sport-loisirs: Sport, fitness, gym, club, loisirs
+
+❓ AUTRES:
+- autre: Aucune catégorie ne correspond vraiment
+- activite-non-precisee: Impossible de déterminer l'activité
+
+RÈGLES IMPORTANTES:
+1. Restaurant avec livraison = "restauration" (PAS "livraison-coursier")
+2. Coursier vélo indépendant = "livraison-coursier" 
+3. SCI = "immobilier" (PAS "maconnerie")
+4. Holding = "holding" (PAS la catégorie des entreprises détenues)
+5. Utilise le code NAF pour affiner si disponible
+
+Réponds UNIQUEMENT avec la catégorie (avec tirets) et ta confiance (0-100) au format: "categorie|confidence"
+Exemple: "restauration|95" ou "livraison-coursier|90"`;
 
           const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
