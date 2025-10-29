@@ -8,6 +8,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { getCategoryLabel, ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
 import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
+import { useAvailableFilters } from "@/hooks/useAvailableFilters";
 import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 // Removed useAvailableSubcategories import
@@ -58,9 +59,26 @@ export const TourneeFilters = ({
   const [datesOpen, setDatesOpen] = useState(false);
   const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
   
-  // Utilisation des catégories statiques complètes au lieu de récupérer uniquement celles en base
-  const availableCategories = Object.keys(ACTIVITY_CATEGORIES);
-  const availableFormes = FORMES_JURIDIQUES;
+  // Récupérer les filtres disponibles dynamiquement
+  const { data: availableFiltersData, isLoading: filtersLoading } = useAvailableFilters({
+    categories: filters.categories,
+    departments: filters.departments,
+    formesJuridiques: filters.formesJuridiques,
+    searchQuery: filters.searchQuery
+  });
+  
+  // Filtrer les catégories/départements/formes pour n'afficher que ceux qui ont des entreprises
+  const availableCategories = Object.keys(ACTIVITY_CATEGORIES).filter(
+    key => !availableFiltersData || (availableFiltersData.categories[key] || 0) > 0
+  );
+  
+  const availableDepartments = Object.keys(DEPARTMENT_NAMES).filter(
+    dept => !availableFiltersData || (availableFiltersData.departments[dept] || 0) > 0
+  );
+  
+  const availableFormes = FORMES_JURIDIQUES.filter(
+    forme => !availableFiltersData || (availableFiltersData.formes[forme.value] || 0) > 0
+  );
   
   const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
@@ -128,8 +146,6 @@ export const TourneeFilters = ({
     typeEvenement: [],
     searchQuery: ""
   }));
-
-  const allDepartments = Object.keys(DEPARTMENT_NAMES).sort();
 
   const activeFiltersCount = 
     (filters.categories?.length || 0) + 
@@ -226,29 +242,43 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            <ScrollArea className="h-64 mt-2 overscroll-contain">
-              <div className="space-y-1 pr-4">
-                {allDepartments.map((deptCode) => {
-                  const selected = filters.departments?.includes(deptCode);
-                  return (
-                    <div
-                      key={deptCode}
-                      onClick={() => handleDepartmentToggle(deptCode)}
-                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                    >
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                        selected ? 'bg-accent border-accent' : 'border-accent/30'
-                      }`}>
-                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                      </div>
-                      <span className="text-sm leading-tight">
-                        {deptCode} - {DEPARTMENT_NAMES[deptCode]}
-                      </span>
-                    </div>
-                  );
-                })}
+            {filtersLoading ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Chargement...
               </div>
-            </ScrollArea>
+            ) : availableDepartments.length === 0 ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Aucun département disponible
+              </div>
+            ) : (
+              <ScrollArea className="h-64 mt-2 overscroll-contain">
+                <div className="space-y-1 pr-4">
+                  {availableDepartments.map((deptCode) => {
+                    const selected = filters.departments?.includes(deptCode);
+                    const count = availableFiltersData?.departments[deptCode] || 0;
+                    return (
+                      <div
+                        key={deptCode}
+                        onClick={() => handleDepartmentToggle(deptCode)}
+                        className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                      >
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                          selected ? 'bg-accent border-accent' : 'border-accent/30'
+                        }`}>
+                          {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                        </div>
+                        <span className="text-sm leading-tight flex-1">
+                          {deptCode} - {DEPARTMENT_NAMES[deptCode]}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {count}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            )}
           </CollapsibleContent>
         </Collapsible>
 
@@ -260,7 +290,11 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            {availableCategories.length === 0 ? (
+            {filtersLoading ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Chargement...
+              </div>
+            ) : availableCategories.length === 0 ? (
               <div className="text-sm text-muted-foreground text-center py-4">
                 Aucune catégorie disponible
               </div>
@@ -269,6 +303,7 @@ export const TourneeFilters = ({
                 <div className="space-y-1 pr-4">
                   {availableCategories.map((categoryKey) => {
                     const selected = filters.categories?.includes(categoryKey);
+                    const count = availableFiltersData?.categories[categoryKey] || 0;
                     return (
                       <div
                         key={categoryKey}
@@ -280,8 +315,11 @@ export const TourneeFilters = ({
                         }`}>
                           {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                         </div>
-                        <span className="text-sm leading-tight">
+                        <span className="text-sm leading-tight flex-1">
                           {getCategoryLabel(categoryKey)}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {count}
                         </span>
                       </div>
                     );
@@ -301,7 +339,11 @@ export const TourneeFilters = ({
           </CollapsibleTrigger>
           
           <CollapsibleContent className="px-4 pb-4">
-            {availableFormes.length === 0 ? (
+            {filtersLoading ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Chargement...
+              </div>
+            ) : availableFormes.length === 0 ? (
               <div className="text-sm text-muted-foreground text-center py-4">
                 Aucune forme juridique disponible
               </div>
@@ -310,6 +352,7 @@ export const TourneeFilters = ({
                 <div className="space-y-1 pr-4">
                   {availableFormes.map((forme) => {
                     const selected = filters.formesJuridiques?.includes(forme.value);
+                    const count = availableFiltersData?.formes[forme.value] || 0;
                     return (
                       <div
                         key={forme.value}
@@ -321,8 +364,11 @@ export const TourneeFilters = ({
                         }`}>
                           {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                         </div>
-                        <span className="text-sm leading-tight">
+                        <span className="text-sm leading-tight flex-1">
                           {forme.label}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {count}
                         </span>
                       </div>
                     );
