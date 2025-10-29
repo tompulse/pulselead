@@ -36,7 +36,7 @@ export const QualifyBuildingTypesButton = () => {
 
       while (hasMore && !errorOccurred) {
         const { data, error } = await supabase.functions.invoke('qualify-building-types', {
-          body: { batchSize: 50 }
+          body: { batchSize: 100 }
         });
 
         if (error) {
@@ -63,7 +63,7 @@ export const QualifyBuildingTypesButton = () => {
 
         // Small delay between batches to avoid overwhelming the server
         if (hasMore) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 500));
         }
       }
 

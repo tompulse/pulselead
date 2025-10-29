@@ -57,7 +57,8 @@ serve(async (req) => {
     let succeeded = 0;
     let failed = 0;
 
-    for (const entreprise of entreprises) {
+    // Process all entreprises in parallel for maximum speed
+    const qualificationPromises = entreprises.map(async (entreprise) => {
       try {
         const prompt = `Analyse cette entreprise française et détermine :
 
@@ -122,8 +123,7 @@ Réponds UNIQUEMENT au format JSON strict sans markdown :
             throw new Error('Credits exhausted');
           }
           
-          failed++;
-          continue;
+          return { success: false, entreprise };
         }
 
         const aiData = await aiResponse.json();
@@ -165,20 +165,37 @@ Réponds UNIQUEMENT au format JSON strict sans markdown :
           ? result.zone_type 
           : 'centre_ville';
 
-        updates.push({
-          id: entreprise.id,
+        console.log(`[qualify-building-types] Successfully qualified ${entreprise.nom}: ${type_batiment}, ${zone_type}`);
+        
+        return {
+          success: true,
+          entreprise,
           type_batiment,
           zone_type
-        });
-
-        succeeded++;
-        console.log(`[qualify-building-types] Successfully qualified ${entreprise.nom}: ${type_batiment}, ${zone_type}`);
+        };
         
       } catch (error) {
         console.error(`[qualify-building-types] Error processing ${entreprise.nom}:`, error);
+        return { success: false, entreprise };
+      }
+    });
+
+    // Wait for all qualifications to complete in parallel
+    const results = await Promise.all(qualificationPromises);
+
+    // Collect updates and count results
+    results.forEach(result => {
+      if (result.success) {
+        updates.push({
+          id: result.entreprise.id,
+          type_batiment: result.type_batiment,
+          zone_type: result.zone_type
+        });
+        succeeded++;
+      } else {
         failed++;
       }
-    }
+    });
 
     // Batch update all entreprises
     if (updates.length > 0) {
