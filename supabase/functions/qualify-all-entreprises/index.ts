@@ -88,6 +88,7 @@ Exemple: "restauration|95"`;
             body: JSON.stringify({
               model: 'google/gemini-2.5-flash-lite',
               messages: [{ role: 'user', content: prompt }],
+              temperature: 0.3,
             }),
           });
 
