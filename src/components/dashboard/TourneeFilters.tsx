@@ -68,17 +68,23 @@ export const TourneeFilters = ({
   });
   
   // Filtrer les catégories/départements/formes pour n'afficher que ceux qui ont des entreprises
-  const availableCategories = Object.keys(ACTIVITY_CATEGORIES).filter(
-    key => !availableFiltersData || (availableFiltersData.categories[key] || 0) > 0
-  );
+  const availableCategories = availableFiltersData 
+    ? Object.keys(ACTIVITY_CATEGORIES).filter(
+        key => (availableFiltersData.categories[key] || 0) > 0
+      )
+    : [];
   
-  const availableDepartments = Object.keys(DEPARTMENT_NAMES).filter(
-    dept => !availableFiltersData || (availableFiltersData.departments[dept] || 0) > 0
-  );
+  const availableDepartments = availableFiltersData 
+    ? [...new Set(Object.keys(availableFiltersData.departments))].filter(
+        dept => DEPARTMENT_NAMES[dept] && (availableFiltersData.departments[dept] || 0) > 0
+      ).sort()
+    : [];
   
-  const availableFormes = FORMES_JURIDIQUES.filter(
-    forme => !availableFiltersData || (availableFiltersData.formes[forme.value] || 0) > 0
-  );
+  const availableFormes = availableFiltersData
+    ? FORMES_JURIDIQUES.filter(
+        forme => (availableFiltersData.formes[forme.value] || 0) > 0
+      )
+    : [];
   
   const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
