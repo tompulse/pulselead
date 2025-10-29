@@ -504,6 +504,15 @@ export type Database = {
     }
     Functions: {
       cleanup_old_audit_logs: { Args: never; Returns: undefined }
+      get_filter_counts: {
+        Args: {
+          p_categories?: string[]
+          p_departments?: string[]
+          p_formes?: string[]
+          p_search_query?: string
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
