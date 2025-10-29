@@ -85,12 +85,17 @@ serve(async (req) => {
       }
 
       // Fetch one batch of unqualified entreprises
-      const { data: entreprises, error: fetchError, count } = await serviceClient
+      const { data: entreprises, error: fetchError, count, } = await serviceClient
         .from('entreprises')
         .select('id, activite, administration, forme_juridique, code_naf', { count: 'exact' })
         .is('categorie_qualifiee', null)
         .order('created_at', { ascending: true })
         .limit(BATCH_SIZE);
+
+      // Also get the authoritative total row count to clamp totals
+      const { count: totalAllBatch } = await serviceClient
+        .from('entreprises')
+        .select('*', { count: 'exact', head: true });
 
       if (fetchError) throw fetchError;
 
@@ -299,7 +304,8 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
       
       // Calculate remaining after this batch
       const remainingAfterBatch = Math.max(0, (count || 0) - processed);
-      const updatedTotal = newProcessed + remainingAfterBatch;
+      const updatedTotalRaw = newProcessed + remainingAfterBatch;
+      const updatedTotal = Math.min(updatedTotalRaw, totalAllBatch || updatedTotalRaw);
 
       console.log(`Batch update: processed=${newProcessed}, succeeded=${newSucceeded}, failed=${newFailed}, remaining=${remainingAfterBatch}, updatedTotal=${updatedTotal}`);
 
@@ -412,7 +418,11 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
       .select('*', { count: 'exact', head: true })
       .is('categorie_qualifiee', null);
 
-    console.log(`Actual unqualified count in database: ${actualUnqualifiedCount}`);
+    const { count: actualTotalAll } = await serviceClient
+      .from('entreprises')
+      .select('*', { count: 'exact', head: true });
+
+    console.log(`Actual counts -> unqualified: ${actualUnqualifiedCount}, total: ${actualTotalAll}`);
 
     // If there's an existing job (running or paused), check if it's valid or needs cleanup
     const { data: existingJobs, error: existingErr } = await serviceClient
@@ -427,7 +437,7 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
 
     if (existing) {
       // If nothing left to qualify, finalize the job immediately
-      if (actualUnqualifiedCount === 0) {
+      if ((actualUnqualifiedCount || 0) === 0) {
         await serviceClient
           .from('qualification_jobs')
           .update({ 
@@ -444,8 +454,9 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
         );
       }
 
-      // Update the total_count to reflect current reality: processed + remaining
-      const correctedTotal = (existing.processed_count || 0) + actualUnqualifiedCount;
+      // Update the total_count to reflect current reality: processed + remaining, clamped to actual total
+      const correctedTotalRaw = (existing.processed_count || 0) + (actualUnqualifiedCount || 0);
+      const correctedTotal = Math.min(correctedTotalRaw, actualTotalAll || correctedTotalRaw);
       
       console.log(`Existing job ${existing.id}: processed=${existing.processed_count}, remaining=${actualUnqualifiedCount}, correctedTotal=${correctedTotal}`);
 
@@ -480,7 +491,7 @@ Exemple: "restauration|95" ou "livraison-coursier|90"`;
     }
 
     // No existing job - create a new one with accurate count
-    if (actualUnqualifiedCount === 0) {
+    if ((actualUnqualifiedCount || 0) === 0) {
       return new Response(
         JSON.stringify({ message: 'nothing_to_qualify', totalCount: 0 }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
