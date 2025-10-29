@@ -674,17 +674,74 @@ export function getSubcategories(categoryKey: string): ActivitySubcategory[] {
 
 // Synonymes de sous-catégories pour compatibilité (backend -> canonique UI)
 export const SUBCATEGORY_SYNONYMS: Record<string, string> = {
+  // Services
   juridique_admin: "juridique_administratif",
   finance_holdings: "finance_holding",
   marketing_comm: "marketing_com",
+  
+  // Immobilier
   gestion_immo: "gestion_locative",
   promotion: "promotion_construction",
   agent_immo: "transaction_agence",
+  investissement_immo: "sci_investissement",
+  
+  // Commerce
   commerce_gros: "grossiste",
   commerce_detail: "detail_non_alimentaire",
+  
+  // Technologie
   dev_software: "dev_logiciel",
   ia_data: "data_ia",
-  // Ajoutez d'autres synonymes si nécessaire
+  
+  // BTP & Construction  
+  renovation: "renovation_energetique",
+  genie_civil: "travaux_specialises",
+  
+  // Transport
+  transport_routier: "transport_marchandises",
+  
+  // Industrie
+  agro_alimentaire: "industrie_agro",
+  mecanique: "transformation",
+  chimie: "transformation",
+  
+  // Santé
+  services_sante: "materiel_medical",
+  coiffure_beaute: "bien_etre",
+  
+  // Énergie
+  renouvelable: "renovation_energetique",
+  gaz_chauffage: "pompe_chaleur",
+  
+  // Agriculture
+  cultures: "culture",
+  services_agricoles: "culture",
+  
+  // Mapping direct pour les IDs identiques (évite les lookups inutiles)
+  nettoyage_maintenance: "nettoyage_maintenance",
+  conseil_management: "conseil_management",
+  rh_formation: "rh_formation",
+  assurance: "assurance",
+  electricite: "electricite",
+  elevage: "elevage",
+  enseignement: "enseignement",
+  formation_pro: "formation_pro",
+  cybersecurite: "cybersecurite",
+  reparation: "reparation",
+  franchise: "franchise",
+  ecommerce: "ecommerce",
+  fabrication: "fabrication",
+  logistique: "logistique",
+  demenagement: "demenagement",
+  medical: "medical",
+  paramedical: "paramedical",
+  gros_oeuvre: "gros_oeuvre",
+  second_oeuvre: "second_oeuvre",
+  infra_it: "infra_it",
+  
+  // Mapping approximatif pour sous-catégories sans équivalent exact
+  securite: "nettoyage_maintenance",
+  evenementiel: "marketing_com",
 };
 
 export function normalizeSubcategoryId(id?: string | null): string | null {
