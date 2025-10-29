@@ -68,13 +68,29 @@ export const ACTIVITY_CATEGORIES = {
     label: "💰 Finance & Assurance",
     keywords: ["finance", "banque", "assurance", "crédit", "gestion patrimoine", "comptabilité"]
   },
-  culture: {
-    label: "🎨 Culture & Loisirs",
-    keywords: ["culture", "spectacle", "événementiel", "sport", "loisirs", "divertissement", "art"]
+  hotellerie: {
+    label: "🏨 Hôtellerie & Hébergement",
+    keywords: ["hôtel", "hébergement", "gîte", "chambre d'hôtes", "camping", "auberge", "résidence"]
+  },
+  media: {
+    label: "🎬 Médias & Spectacles",
+    keywords: ["média", "spectacle", "musée", "galerie", "théâtre", "cinéma", "événementiel", "exposition"]
+  },
+  sport: {
+    label: "⚽ Sport & Loisirs",
+    keywords: ["sport", "sportif", "loisirs", "fitness", "gym", "club", "activité physique", "recreation"]
+  },
+  environnement: {
+    label: "🌱 Environnement & Écologie",
+    keywords: ["environnement", "écologie", "recyclage", "déchets", "nature", "durable", "bio"]
   },
   juridique: {
     label: "⚖️ Juridique & Administratif",
     keywords: ["juridique", "avocat", "notaire", "droit", "administratif", "légal"]
+  },
+  autre: {
+    label: "🔄 Autres activités",
+    keywords: ["association", "autres", "divers", "non classé"]
   }
 };
 
