@@ -304,9 +304,9 @@ export function getCategoryLabel(categoryKey: string): string {
     const formatted = categoryKey
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-    return `❓ ${formatted}`;
+      .join(' & ');
+    return `🏢 ${formatted}`;
   }
   
-  return "❓ Activité non précisée";
+  return "❓ Autre";
 }
