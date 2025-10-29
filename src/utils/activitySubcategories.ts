@@ -53,7 +53,7 @@ export const ACTIVITY_HIERARCHY: ActivityHierarchy = {
         id: "marketing_com",
         label: "Marketing & Communication",
         emoji: "📢",
-        keywords: ["marketing", "communication", "publicité", "événementiel", "relations publiques", "brand"],
+        keywords: ["marketing", "communication", "publicité", "relations publiques", "brand"],
         parent: "services"
       },
       {
@@ -61,6 +61,20 @@ export const ACTIVITY_HIERARCHY: ActivityHierarchy = {
         label: "Nettoyage & Maintenance",
         emoji: "🧹",
         keywords: ["nettoyage", "entretien", "maintenance", "ménage", "propreté", "désinsectisation", "dératisation"],
+        parent: "services"
+      },
+      {
+        id: "securite",
+        label: "Sécurité",
+        emoji: "🛡️",
+        keywords: ["sécurité", "gardiennage", "surveillance", "protection", "agent sécurité"],
+        parent: "services"
+      },
+      {
+        id: "evenementiel",
+        label: "Événementiel",
+        emoji: "🎉",
+        keywords: ["événementiel", "organisation événements", "réception", "spectacle vivant"],
         parent: "services"
       }
     ]
@@ -603,40 +617,6 @@ export const ACTIVITY_HIERARCHY: ActivityHierarchy = {
       }
     ]
   },
-  culture: {
-    label: "🎨 Culture & Loisirs",
-    emoji: "🎨",
-    subcategories: [
-      {
-        id: "spectacle",
-        label: "Spectacle & Événementiel",
-        emoji: "🎭",
-        keywords: ["spectacle", "concert", "événementiel", "salle spectacle"],
-        parent: "culture"
-      },
-      {
-        id: "sport",
-        label: "Sport & Fitness",
-        emoji: "⚽",
-        keywords: ["sport", "fitness", "salle sport", "coach sportif"],
-        parent: "culture"
-      },
-      {
-        id: "loisirs",
-        label: "Loisirs & Divertissement",
-        emoji: "🎯",
-        keywords: ["loisirs", "divertissement", "activité", "escape game"],
-        parent: "culture"
-      },
-      {
-        id: "musee_galerie",
-        label: "Musée & Galerie",
-        emoji: "🖼️",
-        keywords: ["musée", "galerie", "exposition", "art"],
-        parent: "culture"
-      }
-    ]
-  },
   juridique: {
     label: "⚖️ Juridique",
     emoji: "⚖️",
@@ -661,6 +641,134 @@ export const ACTIVITY_HIERARCHY: ActivityHierarchy = {
         emoji: "⚖️",
         keywords: ["huissier", "constat", "recouvrement"],
         parent: "juridique"
+      }
+    ]
+  },
+  hotellerie: {
+    label: "🏨 Hôtellerie",
+    emoji: "🏨",
+    subcategories: [
+      {
+        id: "hotel",
+        label: "Hôtel & Hébergement",
+        emoji: "🏨",
+        keywords: ["hôtel", "hébergement", "auberge", "gîte"],
+        parent: "hotellerie"
+      },
+      {
+        id: "traiteur",
+        label: "Traiteur",
+        emoji: "🍱",
+        keywords: ["traiteur", "banquet", "réception", "événementiel"],
+        parent: "hotellerie"
+      }
+    ]
+  },
+  media: {
+    label: "📺 Médias & Culture",
+    emoji: "📺",
+    subcategories: [
+      {
+        id: "edition",
+        label: "Édition & Publication",
+        emoji: "📖",
+        keywords: ["édition", "livre", "publication", "presse"],
+        parent: "media"
+      },
+      {
+        id: "audiovisuel",
+        label: "Audiovisuel",
+        emoji: "🎬",
+        keywords: ["audiovisuel", "production", "cinéma", "vidéo", "film"],
+        parent: "media"
+      },
+      {
+        id: "spectacle",
+        label: "Spectacle",
+        emoji: "🎭",
+        keywords: ["spectacle", "théâtre", "concert", "événementiel culturel"],
+        parent: "media"
+      },
+      {
+        id: "musee_galerie",
+        label: "Musée & Galerie",
+        emoji: "🖼️",
+        keywords: ["musée", "galerie", "exposition", "art", "culture"],
+        parent: "media"
+      }
+    ]
+  },
+  sport: {
+    label: "⚽ Sport & Loisirs",
+    emoji: "⚽",
+    subcategories: [
+      {
+        id: "equipements_sport",
+        label: "Équipements Sportifs",
+        emoji: "🏋️",
+        keywords: ["salle de sport", "fitness", "gym", "équipements sportifs", "karting", "activités sportives"],
+        parent: "sport"
+      },
+      {
+        id: "enseignement_sport",
+        label: "Enseignement Sportif",
+        emoji: "🤸",
+        keywords: ["coach sportif", "enseignement sportif", "professeur sport"],
+        parent: "sport"
+      },
+      {
+        id: "loisirs",
+        label: "Loisirs & Divertissement",
+        emoji: "🎮",
+        keywords: ["loisirs", "divertissement", "récréatives", "escape game"],
+        parent: "sport"
+      }
+    ]
+  },
+  environnement: {
+    label: "♻️ Environnement",
+    emoji: "♻️",
+    subcategories: [
+      {
+        id: "recyclage",
+        label: "Recyclage & Déchets",
+        emoji: "♻️",
+        keywords: ["recyclage", "déchets", "tri", "valorisation"],
+        parent: "environnement"
+      },
+      {
+        id: "traitement_eau",
+        label: "Traitement de l'Eau",
+        emoji: "💧",
+        keywords: ["traitement eau", "assainissement", "épuration"],
+        parent: "environnement"
+      },
+      {
+        id: "espaces_verts",
+        label: "Espaces Verts",
+        emoji: "🌳",
+        keywords: ["espaces verts", "paysagiste", "jardinage", "aménagement paysager"],
+        parent: "environnement"
+      }
+    ]
+  },
+  autre: {
+    label: "📋 Autres Activités",
+    emoji: "📋",
+    subcategories: [
+      {
+        id: "association",
+        label: "Association & ONG",
+        emoji: "🤝",
+        keywords: ["association", "ong", "fondation", "organisation"],
+        parent: "autre"
+      },
+      {
+        id: "autres_services",
+        label: "Autres Services",
+        emoji: "🔧",
+        keywords: ["service", "prestation", "centre d'appels", "permanence téléphonique", "autre"],
+        parent: "autre"
       }
     ]
   }
@@ -710,14 +818,32 @@ export const SUBCATEGORY_SYNONYMS: Record<string, string> = {
   coiffure_beaute: "bien_etre",
   
   // Énergie
-  renouvelable: "renovation_energetique",
+  renouvelable: "solaire",
   gaz_chauffage: "pompe_chaleur",
   
   // Agriculture
   cultures: "culture",
   services_agricoles: "culture",
   
-  // Mapping direct pour les IDs identiques (évite les lookups inutiles)
+  // Hôtellerie & Restauration
+  hotellerie: "hotel",
+  restauration: "restaurant_traditionnel",
+  
+  // Sport & Loisirs (mapping des IDs de culture vers sport)
+  sport: "equipements_sport",
+  loisirs: "loisirs",
+  
+  // Éducation
+  cours_particuliers: "soutien_scolaire",
+  
+  // Artisanat
+  metiers_art: "artisanat_art",
+  
+  // Finance
+  banque: "banque",
+  conseil_financier: "gestion_patrimoine",
+  
+  // Mapping direct pour les IDs identiques
   nettoyage_maintenance: "nettoyage_maintenance",
   conseil_management: "conseil_management",
   rh_formation: "rh_formation",
@@ -738,10 +864,19 @@ export const SUBCATEGORY_SYNONYMS: Record<string, string> = {
   gros_oeuvre: "gros_oeuvre",
   second_oeuvre: "second_oeuvre",
   infra_it: "infra_it",
-  
-  // Mapping approximatif pour sous-catégories sans équivalent exact
-  securite: "nettoyage_maintenance",
-  evenementiel: "marketing_com",
+  securite: "securite",
+  evenementiel: "evenementiel",
+  traiteur: "traiteur",
+  recyclage: "recyclage",
+  traitement_eau: "traitement_eau",
+  espaces_verts: "espaces_verts",
+  association: "association",
+  autres_services: "autres_services",
+  edition: "edition",
+  audiovisuel: "audiovisuel",
+  spectacle: "spectacle",
+  equipements_sport: "equipements_sport",
+  enseignement_sport: "enseignement_sport",
 };
 
 export function normalizeSubcategoryId(id?: string | null): string | null {
