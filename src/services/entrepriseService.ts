@@ -48,6 +48,11 @@ export const entrepriseService = {
         );
       }
 
+      // Server-side categories filter (CRITICAL: must be before .range() limit)
+      if (filters.categories && filters.categories.length > 0) {
+        query = query.in('categorie_qualifiee', filters.categories);
+      }
+
       // Server-side departments filter (postal code prefixes)
       if (filters.departments && filters.departments.length > 0) {
         const deptPatterns = filters.departments
@@ -87,12 +92,7 @@ export const entrepriseService = {
         });
       }
       
-      // Filter by categories using categorie_qualifiee directly
-      if (filters.categories && filters.categories.length > 0) {
-        filteredData = filteredData.filter(e => {
-          return e.categorie_qualifiee && filters.categories!.includes(e.categorie_qualifiee);
-        });
-      }
+      // Categories filter now applied server-side, no need for client-side filtering
 
 // Subcategories removed
       
