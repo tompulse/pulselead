@@ -220,9 +220,6 @@ export const QualificationProgress = () => {
   const allCategories = Object.entries(categories)
     .sort(([, a], [, b]) => b - a);
 
-  if (totalCount === 0) {
-    return null;
-  }
 
   return (
     <>
