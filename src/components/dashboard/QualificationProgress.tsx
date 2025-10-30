@@ -87,11 +87,12 @@ export const QualificationProgress = () => {
       .select('*', { count: 'exact', head: true })
       .not('categorie_qualifiee', 'is', null);
 
-    // Répartition par catégorie
+    // Répartition par catégorie - récupérer TOUTES les lignes avec range étendu
     const { data: catData } = await supabase
       .from('entreprises')
       .select('categorie_qualifiee')
-      .not('categorie_qualifiee', 'is', null);
+      .not('categorie_qualifiee', 'is', null)
+      .range(0, 50000); // Récupérer jusqu'à 50k lignes pour avoir tous les vrais totaux
 
     const catCounts: Record<string, number> = {};
     catData?.forEach(item => {
