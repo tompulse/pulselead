@@ -265,13 +265,13 @@ export const QualificationProgress = () => {
             </div>
 
             <div className="flex gap-2">
-              {!isRunning && !isPaused && remaining > 0 && (
+              {!isRunning && !isPaused && (
                 <Button onClick={handleStart} className="flex-1">
                   <Wand2 className="w-4 h-4 mr-2" />
-                  Démarrer la qualification
+                  {remaining > 0 ? 'Démarrer la qualification' : 'Relancer la qualification'}
                 </Button>
               )}
-              {!isRunning && isPaused && remaining > 0 && (
+              {!isRunning && isPaused && (
                 <Button onClick={handleResume} className="flex-1">
                   <Play className="w-4 h-4 mr-2" />
                   Reprendre la qualification
