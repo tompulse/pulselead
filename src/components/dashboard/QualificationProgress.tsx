@@ -302,18 +302,23 @@ export const QualificationProgress = () => {
             {allCategories.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-medium">Catégories créées</h4>
-                  <Badge variant="outline">{Object.keys(categories).length} catégories</Badge>
+                  <h4 className="text-sm font-medium">Répartition par catégorie</h4>
+                  <Badge variant="outline">{Object.keys(categories).length} catégories distinctes</Badge>
                 </div>
                 <div className="grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto pr-2">
-                  {allCategories.map(([cat, count]) => (
+                  {allCategories.slice(0, 20).map(([cat, count]) => (
                     <div key={cat} className="flex items-center justify-between bg-muted/50 p-2 rounded text-xs">
-                      <span className="truncate">{getCategoryLabel(cat)}</span>
-                      <Badge variant="secondary" className="ml-2 shrink-0">
-                        {count}
+                      <span className="truncate font-medium">{getCategoryLabel(cat)}</span>
+                      <Badge variant="secondary" className="ml-2 shrink-0 font-semibold">
+                        {count.toLocaleString('fr-FR')}
                       </Badge>
                     </div>
                   ))}
+                  {allCategories.length > 20 && (
+                    <div className="col-span-2 text-xs text-muted-foreground text-center py-2">
+                      ... et {allCategories.length - 20} autres catégories
+                    </div>
+                  )}
                 </div>
               </div>
             )}
