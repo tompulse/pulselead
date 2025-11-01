@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,50 @@ export const SyncButton = () => {
   const [requalifying, setRequalifying] = useState(false);
   const [harmonizing, setHarmonizing] = useState(false);
   const [enriching, setEnriching] = useState(false);
+  const [enrichProgress, setEnrichProgress] = useState<{ count: number; total: number } | null>(null);
   const { toast } = useToast();
+
+  // Polling pour suivre la progression de l'enrichissement NAF
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    const checkProgress = async () => {
+      try {
+        const [{ count: totalCount }, { count: enrichedCount }] = await Promise.all([
+          supabase.from('entreprises').select('*', { count: 'exact', head: true }),
+          supabase.from('entreprises').select('*', { count: 'exact', head: true }).not('code_naf', 'is', null).neq('code_naf', '')
+        ]);
+        
+        if (totalCount && enrichedCount !== null) {
+          setEnrichProgress({ count: enrichedCount, total: totalCount });
+          
+          // Si l'enrichissement est terminé, arrêter le polling
+          if (enriching && enrichedCount === totalCount) {
+            setEnriching(false);
+            toast({
+              title: "✅ Enrichissement NAF terminé",
+              description: `${enrichedCount} entreprises enrichies`,
+              duration: 3000,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de la vérification de la progression:", error);
+      }
+    };
+
+    // Vérifier la progression au démarrage
+    checkProgress();
+    
+    // Si enrichissement en cours, vérifier toutes les 5 secondes
+    if (enriching) {
+      interval = setInterval(checkProgress, 5000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [enriching, toast]);
 
   const handleSync = async () => {
     setLoading(true);
@@ -111,7 +154,6 @@ export const SyncButton = () => {
         variant: "destructive",
         duration: 3000,
       });
-    } finally {
       setEnriching(false);
     }
   };
@@ -126,10 +168,16 @@ export const SyncButton = () => {
         variant="outline"
         size="sm"
         className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
-        title="Enrichir les codes NAF via l'API INSEE"
+        title={enrichProgress ? `${enrichProgress.count}/${enrichProgress.total} codes NAF enrichis (${Math.round((enrichProgress.count / enrichProgress.total) * 100)}%)` : "Enrichir les codes NAF via l'API INSEE"}
       >
         <RefreshCw className={`w-3.5 h-3.5 ${enriching ? "animate-spin" : ""}`} />
-        <span className="hidden lg:inline ml-1">{enriching ? "NAF..." : "NAF"}</span>
+        <span className="hidden lg:inline ml-1">
+          {enriching && enrichProgress 
+            ? `${Math.round((enrichProgress.count / enrichProgress.total) * 100)}%` 
+            : enrichProgress 
+            ? `${enrichProgress.count}/${enrichProgress.total}` 
+            : "NAF"}
+        </span>
       </Button>
       <Button
         onClick={handleHarmonize}
