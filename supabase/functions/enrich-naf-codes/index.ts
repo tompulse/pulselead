@@ -6,54 +6,55 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+async function processEnrichment(targetTable: string) {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-  try {
-    const { table } = await req.json();
-    const targetTable = table || 'entreprises';
+  let totalSuccess = 0;
+  let totalErrors = 0;
+  let processedCount = 0;
+  const batchSize = 50; // Plus gros lots
+  let hasMore = true;
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  console.log(`Starting NAF enrichment for ${targetTable}...`);
 
-    // Récupérer toutes les entreprises sans code NAF
+  while (hasMore) {
+    // Récupérer un lot d'entreprises sans NAF
     const { data: entreprises, error: fetchError } = await supabase
       .from(targetTable)
       .select('id, siret, code_naf')
-      .or('code_naf.is.null,code_naf.eq.');
+      .or('code_naf.is.null,code_naf.eq.')
+      .limit(batchSize);
 
     if (fetchError) {
       console.error('Fetch error:', fetchError);
-      throw fetchError;
+      break;
     }
 
-    console.log(`Found ${entreprises?.length || 0} ${targetTable} without NAF codes`);
+    if (!entreprises || entreprises.length === 0) {
+      hasMore = false;
+      break;
+    }
 
-    let successCount = 0;
-    let errorCount = 0;
+    console.log(`Processing batch of ${entreprises.length} records...`);
 
-    // Traiter par lots de 10
-    const batchSize = 10;
-    for (let i = 0; i < (entreprises?.length || 0); i += batchSize) {
-      const batch = entreprises!.slice(i, i + batchSize);
+    // Traiter ce lot en parallèle (par groupes de 5 pour respecter rate limits)
+    for (let i = 0; i < entreprises.length; i += 5) {
+      const miniBatch = entreprises.slice(i, i + 5);
       
-      await Promise.all(batch.map(async (entreprise) => {
+      await Promise.all(miniBatch.map(async (entreprise) => {
         try {
           if (!entreprise.siret || entreprise.siret.length !== 14) {
-            errorCount++;
+            totalErrors++;
             return;
           }
 
-          // Appeler l'API Sirene de l'INSEE (gratuite, publique)
+          // Appeler l'API Sirene de l'INSEE (publique, gratuite)
           const sireneUrl = `https://api.insee.fr/entreprises/sirene/V3.11/siret/${entreprise.siret}`;
           
           const sireneResponse = await fetch(sireneUrl, {
-            headers: {
-              'Accept': 'application/json'
-            }
+            headers: { 'Accept': 'application/json' }
           });
 
           if (sireneResponse.ok) {
@@ -61,7 +62,6 @@ serve(async (req) => {
             const codeNaf = sireneData.etablissement?.uniteLegale?.activitePrincipaleUniteLegale;
 
             if (codeNaf) {
-              // Mettre à jour l'entreprise avec le code NAF
               const { error: updateError } = await supabase
                 .from(targetTable)
                 .update({ code_naf: codeNaf })
@@ -69,34 +69,65 @@ serve(async (req) => {
 
               if (updateError) {
                 console.error(`Update error for ${entreprise.id}:`, updateError);
-                errorCount++;
+                totalErrors++;
               } else {
-                successCount++;
+                totalSuccess++;
               }
             } else {
-              errorCount++;
+              totalErrors++;
             }
           } else {
-            console.error(`API error for SIRET ${entreprise.siret}:`, sireneResponse.status);
-            errorCount++;
+            // Si rate limit (429), on attend plus longtemps
+            if (sireneResponse.status === 429) {
+              console.log('Rate limit hit, waiting 2s...');
+              await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+            totalErrors++;
           }
 
-          // Pause pour respecter les rate limits de l'API INSEE
-          await new Promise(resolve => setTimeout(resolve, 300));
         } catch (error) {
           console.error(`Error enriching ${entreprise.id}:`, error);
-          errorCount++;
+          totalErrors++;
         }
       }));
+
+      // Petite pause entre chaque mini-lot de 5
+      await new Promise(resolve => setTimeout(resolve, 200));
     }
 
+    processedCount += entreprises.length;
+    console.log(`Batch complete: ${processedCount} processed, ${totalSuccess} enriched, ${totalErrors} errors`);
+
+    // Si on a moins d'enregistrements que batchSize, on a fini
+    if (entreprises.length < batchSize) {
+      hasMore = false;
+    }
+  }
+
+  console.log(`Enrichment complete: ${processedCount} processed, ${totalSuccess} enriched, ${totalErrors} errors`);
+  return { processedCount, totalSuccess, totalErrors };
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const body = await req.json().catch(() => ({}));
+    const targetTable = body.table || 'entreprises';
+
+    // Lancer en arrière-plan
+    processEnrichment(targetTable).catch(err => {
+      console.error('Background enrichment error:', err);
+    });
+
+    // Réponse immédiate
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Enrichissement NAF terminé: ${successCount} succès, ${errorCount} erreurs`,
-        successCount,
-        errorCount,
-        total: entreprises?.length || 0
+        message: `Enrichissement NAF lancé en arrière-plan pour la table ${targetTable}`,
+        status: 'processing'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

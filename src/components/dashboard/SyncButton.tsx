@@ -10,6 +10,7 @@ export const SyncButton = () => {
   const [loading, setLoading] = useState(false);
   const [requalifying, setRequalifying] = useState(false);
   const [harmonizing, setHarmonizing] = useState(false);
+  const [enriching, setEnriching] = useState(false);
   const { toast } = useToast();
 
   const handleSync = async () => {
@@ -90,10 +91,46 @@ export const SyncButton = () => {
     }
   };
 
+  const handleEnrich = async () => {
+    setEnriching(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("enrich-naf-codes", {
+        body: { table: 'entreprises' }
+      });
+      if (error) throw error;
+      toast({
+        title: "✅ Enrichissement NAF lancé",
+        description: "Récupération des codes NAF via l'API INSEE en cours...",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("Erreur d'enrichissement:", error);
+      toast({
+        title: "❌ Erreur d'enrichissement",
+        description: error instanceof Error ? error.message : "Erreur inconnue",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setEnriching(false);
+    }
+  };
+
   return (
     <div className="flex gap-2">
       <ImportDialog />
       <QualificationProgress />
+      <Button
+        onClick={handleEnrich}
+        disabled={enriching}
+        variant="outline"
+        size="sm"
+        className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
+        title="Enrichir les codes NAF via l'API INSEE"
+      >
+        <RefreshCw className={`w-3.5 h-3.5 ${enriching ? "animate-spin" : ""}`} />
+        <span className="hidden lg:inline ml-1">{enriching ? "NAF..." : "NAF"}</span>
+      </Button>
       <Button
         onClick={handleHarmonize}
         disabled={harmonizing}
