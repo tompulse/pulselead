@@ -24,6 +24,14 @@ interface TourneeAssistantChatProps {
   userId: string;
 }
 
+interface Message {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  parsedResult?: ParsedResult;
+}
+
 interface ParsedResult {
   tourneeName: string;
   tourneeDate: string;
@@ -53,17 +61,23 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [parsedResult, setParsedResult] = useState<ParsedResult | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [clarificationMessage, setClarificationMessage] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleSend = async () => {
     if (!message.trim()) return;
 
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: message,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setMessage("");
     setLoading(true);
-    setParsedResult(null);
-    setClarificationMessage(null);
 
     try {
       const { data, error } = await supabase.functions.invoke('chat-tournee-assistant', {
@@ -78,6 +92,7 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
           description: data.error,
           variant: "destructive"
         });
+        setLoading(false);
         return;
       }
 
@@ -87,30 +102,36 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
           description: data.error,
           variant: "destructive"
         });
+        setLoading(false);
         return;
       }
 
-      if (data.needsClarification) {
-        setClarificationMessage(data.clarificationMessage);
-        setMessage(""); // Clear input for new message
-        return;
-      }
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: data.needsClarification 
+          ? data.clarificationMessage 
+          : "J'ai trouvé une tournée optimisée pour vous !",
+        timestamp: new Date(),
+        parsedResult: data.needsClarification ? undefined : data
+      };
 
-      setParsedResult(data);
-      setMessage(""); // Clear input on success
+      setMessages(prev => [...prev, assistantMessage]);
     } catch (error: any) {
       console.error("Error calling assistant:", error);
-      toast({
-        title: "Erreur",
-        description: error.message || "Impossible de traiter votre demande",
-        variant: "destructive"
-      });
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Désolé, une erreur s'est produite. Pouvez-vous reformuler votre demande ?",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (parsedResult: ParsedResult) => {
     if (!parsedResult?.optimization) return;
     
     setIsSaving(true);
@@ -138,8 +159,7 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
       });
 
       setOpen(false);
-      setMessage("");
-      setParsedResult(null);
+      setMessages([]);
       
     } catch (error) {
       console.error('Save error:', error);
@@ -211,358 +231,211 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {clarificationMessage ? (
-            <>
-              <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <AlertDescription className="text-sm text-amber-800 dark:text-amber-200">
-                  {clarificationMessage}
-                </AlertDescription>
-              </Alert>
-
-              <div className="space-y-2">
-                <Label htmlFor="message">Précisez votre demande</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="message"
-                    placeholder="Ex: Seulement le département 75, secteur restauration"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                    disabled={loading}
-                    autoFocus
-                  />
-                  <Button onClick={handleSend} disabled={loading || !message.trim()}>
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setClarificationMessage(null);
-                  setMessage("");
-                }} 
-                className="w-full"
-              >
-                Recommencer
-              </Button>
-            </>
-          ) : !parsedResult ? (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="message">Votre demande</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="message"
-                    placeholder="Ex: Crée une tournée demain avec les SAS du 75 en restauration"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                    disabled={loading}
-                  />
-                  <Button onClick={handleSend} disabled={loading || !message.trim()}>
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-                <p className="text-sm font-medium">💡 Exemples de requêtes :</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• "Tournée demain avec les SAS du 75"</li>
-                  <li>• "Nouveaux sites en restauration dans le 69 et 01"</li>
-                  <li>• "Planifie vendredi les créations SARL en Île-de-France"</li>
-                  <li>• "Liste-moi les nouveaux sites BTP dans l'Est"</li>
-                </ul>
-              </div>
-            </>
-          ) : parsedResult?.optimization ? (
-            <div className="space-y-4">
-              {/* Statut succès */}
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <h3 className="font-semibold text-green-900 dark:text-green-100">
-                    ✨ Tournée optimisée et prête !
-                  </h3>
-                </div>
-                <p className="text-sm text-green-700 dark:text-green-300">
-                  {parsedResult.optimization.nb_arrets} entreprises trouvées et organisées
-                </p>
-              </div>
-
-              {/* Carte d'informations principales */}
-              <div className="bg-card border rounded-lg p-4 space-y-3">
-                <div>
-                  <Label className="text-sm text-muted-foreground">Nom de la tournée</Label>
-                  <Input 
-                    value={parsedResult.tourneeName}
-                    onChange={(e) => setParsedResult({...parsedResult, tourneeName: e.target.value})}
-                    className="mt-1"
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-sm text-muted-foreground">Date prévue</Label>
-                  <p className="font-medium text-accent">
-                    {format(new Date(parsedResult.tourneeDate), "EEEE d MMMM yyyy", { locale: fr })}
+        <div className="flex flex-col h-[600px]">
+          {/* Messages history */}
+          <ScrollArea className="flex-1 p-4">
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full space-y-4">
+                <Bot className="h-16 w-16 text-muted-foreground/50" />
+                <div className="text-center space-y-2">
+                  <p className="text-sm font-medium">Décrivez votre tournée idéale</p>
+                  <p className="text-xs text-muted-foreground max-w-md">
+                    Exemple : "Crée une tournée demain avec les SAS du 75 en restauration"
                   </p>
                 </div>
-
-                <div>
-                  <Label className="text-sm text-muted-foreground mb-2 block">Type de prospects</Label>
-                  <Badge variant={parsedResult.view === "creations" ? "default" : "secondary"}>
-                    {parsedResult.view === "creations" ? "Créations" : "Nouveaux Sites"}
-                  </Badge>
-                </div>
-
-                {/* Statistiques en grille */}
-                <div className="grid grid-cols-3 gap-3 pt-3 border-t">
-                  <div className="bg-primary/5 rounded-lg p-3 text-center">
-                    <Route className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <p className="text-2xl font-bold text-primary">
-                      {parsedResult.optimization.distance_km.toFixed(1)} km
-                    </p>
-                    <p className="text-xs text-muted-foreground">Distance</p>
-                  </div>
-                  
-                  <div className="bg-accent/5 rounded-lg p-3 text-center">
-                    <Clock className="h-5 w-5 mx-auto mb-1 text-accent" />
-                    <p className="text-2xl font-bold text-accent">
-                      {Math.floor(parsedResult.optimization.temps_total_minutes / 60)}h
-                      {(parsedResult.optimization.temps_total_minutes % 60).toString().padStart(2, '0')}
-                    </p>
-                    <p className="text-xs text-muted-foreground">Durée totale</p>
-                  </div>
-                  
-                  <div className="bg-green-500/5 rounded-lg p-3 text-center">
-                    <MapPin className="h-5 w-5 mx-auto mb-1 text-green-600" />
-                    <p className="text-2xl font-bold text-green-600">
-                      {parsedResult.optimization.nb_arrets}
-                    </p>
-                    <p className="text-xs text-muted-foreground">Prospects</p>
-                  </div>
-                </div>
-
-                {/* Détail des temps */}
-                <div className="text-xs bg-muted/30 rounded-lg p-3 space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">🚗 Temps de trajet :</span>
-                    <span className="font-medium">{parsedResult.optimization.temps_trajet_minutes} min</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">🤝 Temps de visites (15 min × {parsedResult.optimization.nb_arrets}) :</span>
-                    <span className="font-medium">{parsedResult.optimization.temps_visites_minutes} min</span>
-                  </div>
-                  <Separator className="my-1" />
-                  <div className="flex justify-between font-semibold text-foreground pt-1">
-                    <span>⏱️ Total :</span>
-                    <span>{parsedResult.optimization.temps_total_minutes} min</span>
-                  </div>
-                </div>
-
-                {/* Liste ordonnée des entreprises */}
-                <Collapsible>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full py-2 text-sm font-medium hover:text-accent">
-                    <span>🗺️ Voir le parcours détaillé ({parsedResult.optimization.nb_arrets} arrêts)</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <ScrollArea className="h-48 rounded-lg border bg-muted/10 mt-2">
-                      <div className="p-2 space-y-1">
-                        {parsedResult.optimization.entreprises.map((e, idx) => (
-                          <div 
-                            key={e.id} 
-                            className="flex items-start gap-3 text-sm p-3 rounded-lg hover:bg-accent/10 transition-colors border border-transparent hover:border-accent/20"
-                          >
-                            <Badge variant="secondary" className="shrink-0 w-7 h-7 flex items-center justify-center font-bold">
-                              {idx + 1}
-                            </Badge>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-semibold truncate">{e.nom}</p>
-                              <p className="text-xs text-muted-foreground truncate">
-                                📍 {e.adresse}, {e.code_postal} {e.ville}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Alerte si entreprises exclues */}
-                {parsedResult.optimization.excluded_count > 0 && (
-                  <Alert variant="default" className="bg-orange-50 dark:bg-orange-950/30 border-orange-200">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription className="text-xs">
-                      ⚠️ {parsedResult.optimization.excluded_count} entreprise(s) exclue(s) (pas de coordonnées GPS)
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Filtres appliqués */}
-                <Collapsible>
-                  <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <ChevronDown className="h-3 w-3" />
-                    Voir les critères appliqués
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-2 space-y-2 pt-2 border-t">
-                    {parsedResult.filters.categories && parsedResult.filters.categories.length > 0 && (
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Secteurs d'activité</p>
-                        <div className="flex flex-wrap gap-1">
-                          {parsedResult.filters.categories.map((cat) => (
-                            <Badge key={cat} variant="outline" className="text-xs">
-                              {getCategoryLabel(cat)}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {parsedResult.filters.departments && parsedResult.filters.departments.length > 0 && (
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Départements</p>
-                        <div className="flex flex-wrap gap-1">
-                          {parsedResult.filters.departments.map((dept) => (
-                            <Badge key={dept} variant="outline" className="text-xs">{dept}</Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {parsedResult.filters.formesJuridiques && parsedResult.filters.formesJuridiques.length > 0 && (
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Formes juridiques</p>
-                        <div className="flex flex-wrap gap-1">
-                          {parsedResult.filters.formesJuridiques.map((forme) => (
-                            <Badge key={forme} variant="outline" className="text-xs">{forme}</Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CollapsibleContent>
-                </Collapsible>
               </div>
-
-              {/* Boutons d'action */}
-              <div className="flex gap-2 pt-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setParsedResult(null)} 
-                  className="flex-1"
-                  disabled={isSaving}
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Refaire
-                </Button>
-                <Button 
-                  onClick={handleConfirm} 
-                  disabled={isSaving}
-                  className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg shadow-green-500/20"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Création...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      Valider et créer
-                    </>
-                  )}
-                </Button>
-              </div>
-
-              {/* Conseil */}
-              <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
-                <AlertDescription className="text-xs text-blue-700 dark:text-blue-300">
-                  💡 <strong>Astuce :</strong> Si le parcours ne vous convient pas, cliquez sur "Refaire" pour reformuler votre demande.
-                </AlertDescription>
-              </Alert>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
-                <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-accent" />
-                  Tournée configurée
-                </h3>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    {msg.role === "assistant" && (
+                      <div className="flex-shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center">
+                          <Bot className="h-5 w-5 text-white" />
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className={`flex-1 max-w-[80%] ${msg.role === "user" ? "flex justify-end" : ""}`}>
+                      {msg.parsedResult?.optimization ? (
+                        <TourneeResult 
+                          result={msg.parsedResult} 
+                          onConfirm={() => handleConfirm(msg.parsedResult!)}
+                          isSaving={isSaving}
+                          getCategoryLabel={getCategoryLabel}
+                        />
+                      ) : (
+                        <div
+                          className={`rounded-lg px-4 py-3 ${
+                            msg.role === "user"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted"
+                          }`}
+                        >
+                          <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
                 
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Nom de la tournée</p>
-                    <p className="font-medium">{parsedResult.tourneeName}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-muted-foreground">Date prévue</p>
-                    <p className="font-medium">
-                      {format(new Date(parsedResult.tourneeDate), "EEEE d MMMM yyyy", { locale: fr })}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-muted-foreground">Type de prospects</p>
-                    <Badge variant={parsedResult.view === "creations" ? "default" : "secondary"}>
-                      {parsedResult.view === "creations" ? "Créations" : "Nouveaux Sites"}
-                    </Badge>
-                  </div>
-
-                  {parsedResult.filters.categories && parsedResult.filters.categories.length > 0 && (
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Secteurs d'activité</p>
-                      <div className="flex flex-wrap gap-1">
-                        {parsedResult.filters.categories.map((cat) => (
-                          <Badge key={cat} variant="outline">
-                            {getCategoryLabel(cat)}
-                          </Badge>
-                        ))}
+                {loading && (
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center">
+                        <Bot className="h-5 w-5 text-white" />
                       </div>
                     </div>
-                  )}
-
-                  {parsedResult.filters.departments && parsedResult.filters.departments.length > 0 && (
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Départements</p>
-                      <div className="flex flex-wrap gap-1">
-                        {parsedResult.filters.departments.map((dept) => (
-                          <Badge key={dept} variant="outline">{dept}</Badge>
-                        ))}
-                      </div>
+                    <div className="bg-muted rounded-lg px-4 py-3">
+                      <Loader2 className="h-4 w-4 animate-spin" />
                     </div>
-                  )}
-
-                  {parsedResult.filters.formesJuridiques && parsedResult.filters.formesJuridiques.length > 0 && (
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Formes juridiques</p>
-                      <div className="flex flex-wrap gap-1">
-                        {parsedResult.filters.formesJuridiques.map((forme) => (
-                          <Badge key={forme} variant="outline">{forme}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
+            )}
+          </ScrollArea>
 
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setParsedResult(null)} className="flex-1">
-                  Modifier
-                </Button>
-                <Button onClick={handleConfirm} className="flex-1">
-                  Confirmer et créer
-                </Button>
-              </div>
+          {/* Input area */}
+          <div className="border-t p-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Décrivez votre tournée..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+                disabled={loading}
+              />
+              <Button onClick={handleSend} disabled={loading || !message.trim()}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              </Button>
             </div>
-          )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
+  );
+};
+
+// Sous-composant pour afficher le résultat de tournée
+const TourneeResult = ({ 
+  result, 
+  onConfirm, 
+  isSaving,
+  getCategoryLabel 
+}: { 
+  result: ParsedResult; 
+  onConfirm: () => void;
+  isSaving: boolean;
+  getCategoryLabel: (key: string) => string;
+}) => {
+  if (!result.optimization) return null;
+
+  return (
+    <div className="space-y-3 bg-card border rounded-lg p-4">
+      {/* En-tête avec statut */}
+      <div className="flex items-center gap-2 mb-3">
+        <CheckCircle className="h-5 w-5 text-green-600" />
+        <h4 className="font-semibold text-sm">Tournée optimisée</h4>
+      </div>
+
+      <div className="space-y-3">
+        <div>
+          <p className="text-xs text-muted-foreground">Nom</p>
+          <p className="font-medium text-sm">{result.tourneeName}</p>
+        </div>
+
+        <div>
+          <p className="text-xs text-muted-foreground">Date</p>
+          <p className="text-sm">
+            {format(new Date(result.tourneeDate), "EEEE d MMMM yyyy", { locale: fr })}
+          </p>
+        </div>
+
+        <div>
+          <Badge variant={result.view === "creations" ? "default" : "secondary"} className="text-xs">
+            {result.view === "creations" ? "Créations" : "Nouveaux Sites"}
+          </Badge>
+        </div>
+
+        {/* Stats en grille compacte */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-primary/5 rounded p-2 text-center">
+            <Route className="h-4 w-4 mx-auto mb-1 text-primary" />
+            <p className="text-lg font-bold text-primary">
+              {result.optimization.distance_km.toFixed(1)}
+            </p>
+            <p className="text-xs text-muted-foreground">km</p>
+          </div>
+          
+          <div className="bg-accent/5 rounded p-2 text-center">
+            <Clock className="h-4 w-4 mx-auto mb-1 text-accent" />
+            <p className="text-lg font-bold text-accent">
+              {Math.floor(result.optimization.temps_total_minutes / 60)}h
+              {(result.optimization.temps_total_minutes % 60).toString().padStart(2, '0')}
+            </p>
+            <p className="text-xs text-muted-foreground">durée</p>
+          </div>
+          
+          <div className="bg-green-500/5 rounded p-2 text-center">
+            <MapPin className="h-4 w-4 mx-auto mb-1 text-green-600" />
+            <p className="text-lg font-bold text-green-600">
+              {result.optimization.nb_arrets}
+            </p>
+            <p className="text-xs text-muted-foreground">arrêts</p>
+          </div>
+        </div>
+
+        {/* Parcours */}
+        <Collapsible>
+          <CollapsibleTrigger className="flex items-center justify-between w-full text-xs font-medium hover:text-accent">
+            <span>Parcours ({result.optimization.nb_arrets} arrêts)</span>
+            <ChevronDown className="h-3 w-3" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2">
+            <div className="space-y-1 max-h-32 overflow-y-auto">
+              {result.optimization.entreprises.slice(0, 5).map((e, idx) => (
+                <div key={e.id} className="flex gap-2 text-xs p-2 bg-muted/30 rounded">
+                  <Badge variant="outline" className="h-5 w-5 p-0 flex items-center justify-center">
+                    {idx + 1}
+                  </Badge>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate text-xs">{e.nom}</p>
+                    <p className="text-xs text-muted-foreground truncate">{e.ville}</p>
+                  </div>
+                </div>
+              ))}
+              {result.optimization.entreprises.length > 5 && (
+                <p className="text-xs text-muted-foreground text-center py-1">
+                  +{result.optimization.entreprises.length - 5} autres
+                </p>
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Bouton validation */}
+        <Button 
+          onClick={onConfirm} 
+          disabled={isSaving}
+          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+          size="sm"
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+              Création...
+            </>
+          ) : (
+            <>
+              <CheckCircle className="w-3 h-3 mr-2" />
+              Créer cette tournée
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
   );
 };
