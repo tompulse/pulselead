@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState, useMemo, memo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -65,6 +65,9 @@ export const ListView = ({
   selectedEntreprises = [],
   onToggleSelection
 }: ListViewProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 50;
+  
   const [crmData, setCrmData] = useState<Record<string, { 
     status: any; 
     interactionCount: number; 
@@ -176,6 +179,18 @@ export const ListView = ({
       ent.forme_juridique?.toLowerCase().includes(query)
     );
   }, [entreprises, debouncedSearchQuery]);
+
+  // Réinitialiser la page quand les filtres changent
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, debouncedSearchQuery]);
+
+  // Pagination
+  const totalItems = filteredEntreprises.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const displayedEntreprises = filteredEntreprises.slice(startIndex, endIndex);
 
   const getCategoryInfo = useCallback((activity: string | null, qualifiedCategory?: string | null): { emoji: string; label: string } => {
     const category = categorizeActivity(activity, qualifiedCategory);
@@ -337,9 +352,41 @@ export const ListView = ({
   return (
     <>
       <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
+        {/* Pagination en haut */}
+        {totalItems > 0 && (
+          <div className="shrink-0 px-4 py-2 border-b border-accent/20 flex items-center justify-between bg-card/50">
+            <div className="text-xs text-muted-foreground">
+              Affichage {startIndex + 1}-{Math.min(endIndex, totalItems)} sur {totalItems.toLocaleString('fr-FR')} résultat{totalItems > 1 ? 's' : ''}
+            </div>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="h-7 w-7 p-0"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <div className="text-xs px-2">
+                Page {currentPage} / {totalPages}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="h-7 w-7 p-0"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+        
         {/* Cards Grid - Scrollable */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2">
-          {filteredEntreprises.length === 0 ? (
+          {totalItems === 0 ? (
             <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
               <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
                 <Building2 className="w-20 h-20 text-accent opacity-50" />
@@ -350,7 +397,7 @@ export const ListView = ({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">{filteredEntreprises.map((item) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">{displayedEntreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
                 const categoryInfo = getCategoryInfo(item.activite, item.categorie_qualifiee);
                 const crm = crmData[item.id];

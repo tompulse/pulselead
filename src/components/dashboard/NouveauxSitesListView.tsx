@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Building2, Calendar, Factory } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MapPin, Building2, Calendar, Factory, ChevronLeft, ChevronRight } from "lucide-react";
 import { nouveauxSitesService, NouveauxSitesFilters } from "@/services/nouveauxSitesService";
 import { getNafCategory } from "@/utils/nafCategories";
 import { format } from "date-fns";
@@ -18,13 +19,28 @@ export const NouveauxSitesListView = ({
   filters,
   onSiteSelect
 }: NouveauxSitesListViewProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 50;
+
   const { data: sitesData, isLoading } = useQuery({
     queryKey: ['nouveaux-sites', filters],
     queryFn: () => nouveauxSitesService.fetchNouveauxSites(filters),
     staleTime: 5 * 60 * 1000,
   });
 
-  const sites = sitesData?.data || [];
+  // Réinitialiser la page quand les filtres changent
+  useState(() => {
+    setCurrentPage(1);
+  });
+
+  const allSites = sitesData?.data || [];
+  const totalItems = allSites.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  
+  // Calculer les items à afficher pour la page actuelle
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const displayedSites = allSites.slice(startIndex, endIndex);
 
   if (isLoading) {
     return (
@@ -37,7 +53,7 @@ export const NouveauxSitesListView = ({
     );
   }
 
-  if (sites.length === 0) {
+  if (totalItems === 0) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center space-y-2">
@@ -49,9 +65,40 @@ export const NouveauxSitesListView = ({
   }
 
   return (
-    <ScrollArea className="h-full">
-      <div className="p-4 space-y-3">
-        {sites.map((site) => {
+    <div className="h-full flex flex-col">
+      {/* Pagination en haut */}
+      <div className="shrink-0 px-4 py-2 border-b border-accent/20 flex items-center justify-between">
+        <div className="text-xs text-muted-foreground">
+          Affichage {startIndex + 1}-{Math.min(endIndex, totalItems)} sur {totalItems.toLocaleString('fr-FR')} résultat{totalItems > 1 ? 's' : ''}
+        </div>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="h-7 w-7 p-0"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          <div className="text-xs px-2">
+            Page {currentPage} / {totalPages}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="h-7 w-7 p-0"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+
+      <ScrollArea className="flex-1">
+        <div className="p-4 space-y-3">
+          {displayedSites.map((site) => {
           const nafInfo = getNafCategory(site.code_naf);
           
           return (
@@ -125,8 +172,9 @@ export const NouveauxSitesListView = ({
               </div>
             </Card>
           );
-        })}
-      </div>
-    </ScrollArea>
+          })}
+        </div>
+      </ScrollArea>
+    </div>
   );
 };
