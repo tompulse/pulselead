@@ -226,12 +226,12 @@ export const ProspectsView = ({
         <div className="w-80 shrink-0 glass-card overflow-y-auto">
           {/* Sélection de vue */}
           <div className="p-4 border-b border-border/50">
-            <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
               <Button
                 variant={activeView === 'creations' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setActiveView('creations')}
-                className="w-full justify-start"
+                className="flex-1 justify-start"
               >
                 <Building className="w-4 h-4 mr-2" />
                 Créations
@@ -241,7 +241,7 @@ export const ProspectsView = ({
                 variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setActiveView('nouveaux-sites')}
-                className="w-full justify-start"
+                className="flex-1 justify-start"
               >
                 <Factory className="w-4 h-4 mr-2" />
                 Nouveaux Sites
