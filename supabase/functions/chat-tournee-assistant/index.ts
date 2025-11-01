@@ -70,52 +70,33 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    const systemPrompt = `Tu es un assistant IA spécialisé dans la création de tournées commerciales pour le système LUMA.
+    const systemPrompt = `Tu es un assistant IA pour créer des tournées commerciales. Tu extrais simplement les critères demandés.
 
-**Ton rôle:**
-- Analyser les demandes en français des commerciaux
-- Extraire les critères de filtrage (secteurs d'activité, départements, formes juridiques, dates)
-- Générer un nom de tournée pertinent
-- Déterminer la date souhaitée
-- Identifier le type de prospects (créations ou nouveaux sites)
+**IMPORTANT:** Tu ne fais JAMAIS de propositions ou suggestions non sollicitées. Tu réponds uniquement à ce qui t'es demandé.
 
-**Structure des filtres disponibles:**
+**Secteurs d'activité (NAF):**
+${Object.keys(NAF_MAPPING).map(k => `- ${k}`).join("\n")}
 
-1. **Catégories NAF** (secteurs d'activité):
-${Object.keys(NAF_MAPPING).map(k => `   - ${k}: ${NAF_MAPPING[k].join(", ")}`).join("\n")}
+**Départements disponibles:** 01-95, 2A, 2B
 
-2. **Régions et départements:**
-${Object.entries(REGIONS_DEPARTMENTS).map(([region, depts]) => `   - ${region}: ${depts.join(", ")}`).join("\n")}
+**Formes juridiques:** SAS, SARL, SCI, SC, SASU, SNC, EURL
 
-3. **Formes juridiques:**
-   - Société par actions simplifiée (SAS)
-   - Société à responsabilité limitée (SARL)
-   - Société civile immobilière (SCI)
-   - Société civile (SC)
-   - Société par actions simplifiée (à associé unique) (SASU)
-   - Société en Nom Collectif (SNC)
-   - Société à responsabilité limitée (à associé unique) (EURL)
+**Types de prospects:**
+- "creations" = créations d'entreprises (par défaut)
+- "nouveaux-sites" = nouveaux établissements
 
-4. **Types de prospects:**
-   - "creations" = créations d'entreprises
-   - "nouveaux-sites" = nouveaux établissements
-
-**Exemples de conversion:**
-- "restauration" → hotellerie (codes 55, 56)
-- "informatique" → informatique_services (codes 62, 63)
-- "BTP" ou "construction" → construction (codes 41, 42, 43)
+**Conversions courantes:**
+- "restauration" → hotellerie
+- "BTP" ou "construction" → construction
+- "informatique" → informatique_services
 - "Paris" ou "75" → ["75"]
-- "Île-de-France" → ["75", "77", "78", "91", "92", "93", "94", "95"]
 - "demain" → date du lendemain
-- "aujourd'hui" → date du jour
-- "vendredi prochain" → calcul du prochain vendredi
 
 **Règles:**
-- Toujours suggérer "creations" par défaut si non spécifié
-- Si pas de date spécifiée, suggérer demain
-- Générer un nom de tournée descriptif basé sur les critères
-- Retourner les codes NAF en format key (pas les numéros)
-- Si ambiguïté, demander clarification`;
+- Extrait uniquement ce qui est demandé
+- Si données manquantes ou ambiguës, demande clarification de façon concise
+- Génère un nom de tournée descriptif
+- Par défaut: créations, demain`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -297,7 +278,7 @@ ${Object.entries(REGIONS_DEPARTMENTS).map(([region, depts]) => `   - ${region}: 
         JSON.stringify({
           ...result,
           needsClarification: true,
-          clarificationMessage: "Aucune entreprise ne correspond à vos critères. Essayez d'élargir la recherche (plus de départements, moins de filtres)."
+          clarificationMessage: "Aucune entreprise trouvée. Voulez-vous élargir les critères ?"
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
@@ -308,7 +289,7 @@ ${Object.entries(REGIONS_DEPARTMENTS).map(([region, depts]) => `   - ${region}: 
         JSON.stringify({
           ...result,
           needsClarification: true,
-          clarificationMessage: `Trop d'entreprises trouvées (${entreprises.length}). Pour une tournée efficace, précisez vos critères (département spécifique, secteur précis).`
+          clarificationMessage: `${entreprises.length} entreprises trouvées. Voulez-vous préciser les critères pour réduire ?`
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
@@ -329,7 +310,7 @@ ${Object.entries(REGIONS_DEPARTMENTS).map(([region, depts]) => `   - ${region}: 
         JSON.stringify({
           ...result,
           needsClarification: true,
-          clarificationMessage: "Impossible d'optimiser la tournée. Vérifiez que les entreprises ont des adresses valides."
+          clarificationMessage: "Impossible d'optimiser la tournée. Vérifiez les adresses."
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
