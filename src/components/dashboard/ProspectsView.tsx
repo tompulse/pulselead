@@ -89,7 +89,7 @@ export const ProspectsView = ({
     searchQuery: "",
     codesNaf: [] as string[],
     departments: [] as string[],
-    categoriesEntreprise: [] as string[]
+    categories: [] as string[]
   });
 
   // Query pour tous les nouveaux sites (pour le bouton)
@@ -269,7 +269,7 @@ export const ProspectsView = ({
         searchQuery: "",
         codesNaf: params.filters.codesNaf || [],
         departments: params.filters.departments || [],
-        categoriesEntreprise: params.filters.categories || []
+        categories: params.filters.categories || []
       });
       
       // Activer le mode tournée et pré-remplir

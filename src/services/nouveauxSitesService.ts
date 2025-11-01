@@ -4,7 +4,7 @@ export interface NouveauxSitesFilters {
   searchQuery?: string;
   codesNaf?: string[];
   departments?: string[];
-  categoriesEntreprise?: string[];
+  categories?: string[];
 }
 
 export const nouveauxSitesService = {
@@ -36,8 +36,8 @@ export const nouveauxSitesService = {
       }
 
       // Filtre par catégorie détaillée
-      if (filters.categoriesEntreprise && filters.categoriesEntreprise.length > 0) {
-        query = query.in('categorie_detaillee', filters.categoriesEntreprise);
+      if (filters.categories && filters.categories.length > 0) {
+        query = query.in('categorie_detaillee', filters.categories);
       }
 
       const { data, error, count } = await query;

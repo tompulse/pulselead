@@ -3,20 +3,22 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { NAF_CATEGORIES } from "@/utils/nafCategories";
 import { Search, Building2, ChevronDown, X, Route, Calendar as CalendarIcon } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
+import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
+import { getAllCategories } from "@/utils/detailedCategories";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface NafFiltersProps {
   filters: {
     searchQuery?: string;
     codesNaf?: string[];
     departments?: string[];
-    categoriesEntreprise?: string[];
+    categories?: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   resultsCount?: number;
@@ -47,37 +49,47 @@ export const NafFilters = ({
   onOptimize,
   isOptimizing = false
 }: NafFiltersProps) => {
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
-  const [categoriesEntrepriseOpen, setCategoriesEntrepriseOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
-  const [nafSectorsOpen, setNafSectorsOpen] = useState(true);
   
   const { isAdmin } = useAdminStatus();
+  const { data: availableFilters, isLoading } = useAvailableNouveauxSitesFilters({
+    categories: filters.categories,
+    departments: filters.departments,
+    codesNaf: filters.codesNaf,
+    searchQuery: filters.searchQuery
+  });
 
-  const handleNafToggle = (codePrefix: string) => {
-    setFilters((prev: any) => {
-      const currentCodes = prev.codesNaf || [];
-      const isSelected = currentCodes.includes(codePrefix);
-      
-      return {
-        ...prev,
-        codesNaf: isSelected
-          ? currentCodes.filter((c: string) => c !== codePrefix)
-          : [...currentCodes, codePrefix]
-      };
+  const allCategories = getAllCategories();
+  const availableCategories = Object.entries(allCategories)
+    .map(([key, cat]) => ({
+      key,
+      label: cat.label,
+      emoji: cat.emoji,
+      count: availableFilters?.categories[key] || 0
+    }))
+    .filter(cat => cat.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  const availableDepartments = Object.entries(availableFilters?.departments || {})
+    .map(([dept, count]) => ({ dept, count: count as number }))
+    .filter(d => d.count > 0)
+    .sort((a, b) => {
+      const numA = parseInt(a.dept);
+      const numB = parseInt(b.dept);
+      return numA - numB;
     });
-  };
 
-  const handleCategorieEntrepriseToggle = (categorie: string) => {
+  const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
-      const current = prev.categoriesEntreprise || [];
-      const isSelected = current.includes(categorie);
+      const current = prev.categories || [];
+      const isSelected = current.includes(categoryKey);
       
       return {
         ...prev,
-        categoriesEntreprise: isSelected
-          ? current.filter((c: string) => c !== categorie)
-          : [...current, categorie]
+        categories: isSelected
+          ? current.filter((c: string) => c !== categoryKey)
+          : [...current, categoryKey]
       };
     });
   };
@@ -98,16 +110,16 @@ export const NafFilters = ({
 
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
-    codesNaf: [], 
+    categories: [], 
     departments: [],
-    categoriesEntreprise: [],
+    codesNaf: [],
     searchQuery: ""
   }));
 
   const activeFiltersCount = 
-    (filters.codesNaf?.length || 0) + 
+    (filters.categories?.length || 0) + 
     (filters.departments?.length || 0) +
-    (filters.categoriesEntreprise?.length || 0);
+    (filters.codesNaf?.length || 0);
 
   return (
     <div className="space-y-0">
@@ -213,101 +225,91 @@ export const NafFilters = ({
         )}
       </div>
 
-      {/* Catégories d'entreprise (GE/PME/ETI) */}
-      <Collapsible open={categoriesEntrepriseOpen} onOpenChange={setCategoriesEntrepriseOpen} className="border-b border-accent/20">
+      {/* Catégories d'activité */}
+      <Collapsible open={categoriesOpen} onOpenChange={setCategoriesOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <span className="font-medium text-sm">Taille entreprise</span>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesEntrepriseOpen ? 'rotate-180' : ''}`} />
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent className="px-4 pb-4">
-          <div className="space-y-1 mt-2">
-            {[
-              { key: 'GE', label: '🏢 Grande Entreprise (GE)' },
-              { key: 'ETI', label: '🏭 ETI (Entreprise de Taille Intermédiaire)' },
-              { key: 'PME', label: '🏪 PME (Petite et Moyenne Entreprise)' }
-            ].map(({ key, label }) => {
-              const selected = filters.categoriesEntreprise?.includes(key);
-              return (
-                <div
-                  key={key}
-                  onClick={() => handleCategorieEntrepriseToggle(key)}
-                  className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                >
-                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                    selected ? 'bg-accent border-accent' : 'border-accent/30'
-                  }`}>
-                    {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                  </div>
-                  <span className="text-sm leading-tight">{label}</span>
-                </div>
-              );
-            })}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      {/* Secteurs d'activité NAF */}
-      <Collapsible open={nafSectorsOpen} onOpenChange={setNafSectorsOpen} className="border-b border-accent/20">
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <span className="font-medium text-sm">Secteurs d'activité NAF</span>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${nafSectorsOpen ? 'rotate-180' : ''}`} />
+          <span className="font-medium text-sm">Catégories d'activité</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className="h-[calc(100vh-400px)] overscroll-contain">
+          <ScrollArea className="h-[400px]">
             <div className="px-4 pb-4 space-y-1">
-              {Object.entries(NAF_CATEGORIES).map(([categoryKey, category]) => {
-                const isExpanded = expandedCategories[categoryKey];
-                const selectedInCategory = category.codes.filter(code => 
-                  filters.codesNaf?.includes(code.code)
-                ).length;
-
-                return (
-                  <div key={categoryKey} className="border-b border-accent/10 last:border-0 pb-2">
-                    {/* En-tête de catégorie */}
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))
+              ) : availableCategories.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-4">
+                  Aucune catégorie disponible
+                </div>
+              ) : (
+                availableCategories.map((cat) => {
+                  const selected = filters.categories?.includes(cat.key);
+                  return (
                     <div
-                      onClick={() => setExpandedCategories(prev => ({ ...prev, [categoryKey]: !isExpanded }))}
-                      className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2 rounded transition-colors"
+                      key={cat.key}
+                      onClick={() => handleCategoryToggle(cat.key)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                     >
-                      <ChevronDown className={`h-4 w-4 text-accent transition-transform shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
-                      <span className="text-lg">{category.emoji}</span>
-                      <span className="text-sm font-medium flex-1">{category.label}</span>
-                      {selectedInCategory > 0 && (
-                        <span className="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full">
-                          {selectedInCategory}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Codes NAF de la catégorie */}
-                    {isExpanded && (
-                      <div className="ml-6 mt-1 space-y-1">
-                        {category.codes.map((code) => {
-                          const selected = filters.codesNaf?.includes(code.code);
-                          return (
-                            <div
-                              key={code.code}
-                              onClick={() => handleNafToggle(code.code)}
-                              className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
-                            >
-                              <div className={`w-4 h-4 mt-0.5 rounded border-2 flex items-center justify-center shrink-0 ${
-                                selected ? 'bg-accent border-accent' : 'border-accent/30'
-                              }`}>
-                                {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="text-xs font-mono text-accent">{code.code}</div>
-                                <div className="text-xs text-muted-foreground leading-tight">{code.label}</div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                        selected ? 'bg-accent border-accent' : 'border-accent/30'
+                      }`}>
+                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                       </div>
-                    )}
-                  </div>
-                );
-              })}
+                      <span className="text-sm leading-tight flex-1">{cat.label}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {cat.count.toLocaleString('fr-FR')}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </ScrollArea>
+        </CollapsibleContent>
+      </Collapsible>
+
+      {/* Départements */}
+      <Collapsible open={departmentsOpen} onOpenChange={setDepartmentsOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <span className="font-medium text-sm">Départements</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${departmentsOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <ScrollArea className="h-[300px]">
+            <div className="px-4 pb-4 space-y-1">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))
+              ) : availableDepartments.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-4">
+                  Aucun département disponible
+                </div>
+              ) : (
+                availableDepartments.map(({ dept, count }) => {
+                  const selected = filters.departments?.includes(dept);
+                  return (
+                    <div
+                      key={dept}
+                      onClick={() => handleDepartmentToggle(dept)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                    >
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                        selected ? 'bg-accent border-accent' : 'border-accent/30'
+                      }`}>
+                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                      </div>
+                      <span className="text-sm leading-tight flex-1">{dept}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {count.toLocaleString('fr-FR')}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </ScrollArea>
         </CollapsibleContent>
