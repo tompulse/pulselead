@@ -95,6 +95,17 @@ export const SyncButton = () => {
       <ImportDialog />
       <QualificationProgress />
       <Button
+        onClick={handleHarmonize}
+        disabled={harmonizing}
+        variant="outline"
+        size="sm"
+        className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
+        title="Harmoniser toutes les catégories avec NAF + mots-clés"
+      >
+        <RefreshCw className={`w-3.5 h-3.5 ${harmonizing ? "animate-spin" : ""}`} />
+        <span className="hidden lg:inline ml-1">{harmonizing ? "Harmonize..." : "Harmonize"}</span>
+      </Button>
+      <Button
         onClick={handleRequalify}
         disabled={requalifying}
         variant="outline"
