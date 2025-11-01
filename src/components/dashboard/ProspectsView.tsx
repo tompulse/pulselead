@@ -36,6 +36,21 @@ interface ProspectsViewProps {
   onToggleSelection?: (entreprise: any) => void;
 }
 
+// Méthode exposée pour l'assistant IA
+export interface ApplyAIFiltersParams {
+  view: "creations" | "nouveaux-sites";
+  filters: {
+    categories?: string[];
+    departments?: string[];
+    formesJuridiques?: string[];
+    dateFrom?: string;
+    dateTo?: string;
+    codesNaf?: string[];
+  };
+  tourneeName: string;
+  tourneeDate: Date;
+}
+
 export const ProspectsView = ({
   filters,
   setFilters,
@@ -44,7 +59,12 @@ export const ProspectsView = ({
   selectionMode: externalSelectionMode = false,
   selectedEntreprises: externalSelectedEntreprises = [],
   onToggleSelection: externalOnToggleSelection,
-}: ProspectsViewProps) => {
+  onAIFiltersApply,
+  onAIFiltersReady,
+}: ProspectsViewProps & { 
+  onAIFiltersApply?: (params: ApplyAIFiltersParams) => void;
+  onAIFiltersReady?: (applyFn: (params: ApplyAIFiltersParams) => void) => void;
+}) => {
   const { toast } = useToast();
   const [activeView, setActiveView] = useState<'creations' | 'nouveaux-sites'>('creations');
   
@@ -223,6 +243,50 @@ export const ProspectsView = ({
   const internalSelectionMode = externalSelectionMode || tourneeActive;
   const internalSelectedEntreprises = externalSelectionMode ? externalSelectedEntreprises : selectedEntreprises;
   const internalOnToggleSelection = externalSelectionMode ? externalOnToggleSelection : toggleEntreprise;
+
+  // Méthode pour appliquer les filtres de l'IA
+  const applyAIFilters = (params: ApplyAIFiltersParams) => {
+    setActiveView(params.view);
+    
+    if (params.view === 'creations') {
+      // Appliquer les filtres de créations
+      setFilters((prev: any) => ({
+        ...prev,
+        categories: params.filters.categories || [],
+        departments: params.filters.departments || [],
+        formesJuridiques: params.filters.formesJuridiques || [],
+        dateFrom: params.filters.dateFrom || "",
+        dateTo: params.filters.dateTo || ""
+      }));
+      
+      // Activer le mode tournée et pré-remplir
+      setTourneeActive(true);
+      setTourneeName(params.tourneeName);
+      setTourneeDate(format(params.tourneeDate, "yyyy-MM-dd"));
+    } else {
+      // Appliquer les filtres de nouveaux sites
+      setNouveauxSitesFilters({
+        searchQuery: "",
+        codesNaf: params.filters.codesNaf || [],
+        departments: params.filters.departments || [],
+        categoriesEntreprise: params.filters.categories || []
+      });
+      
+      // Activer le mode tournée et pré-remplir
+      setNouveauxSitesTourneeActive(true);
+      setNouveauxSitesTourneeName(params.tourneeName);
+      setNouveauxSitesTourneeDate(format(params.tourneeDate, "yyyy-MM-dd"));
+    }
+    
+    if (onAIFiltersApply) {
+      onAIFiltersApply(params);
+    }
+  };
+
+  // Exposer la fonction au parent
+  if (onAIFiltersReady) {
+    onAIFiltersReady(applyAIFilters);
+  }
 
   return (
     <div className="h-full flex flex-col overflow-hidden gap-3">

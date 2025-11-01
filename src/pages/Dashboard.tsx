@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -13,12 +13,14 @@ import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
 import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
+import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Filter, Loader2, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { trackEntrepriseView } from "@/utils/analytics";
+import type { ApplyAIFiltersParams } from "@/components/dashboard/ProspectsView";
 
 const DashboardContent = () => {
   const [loading, setLoading] = useState(true);
@@ -38,10 +40,23 @@ const DashboardContent = () => {
     subcategories: [] as string[],
   });
 
+  const applyAIFiltersRef = useRef<((params: ApplyAIFiltersParams) => void) | null>(null);
   const { view, setView, selectedEntreprise, setSelectedEntreprise, crmPanelOpen, setCrmPanelOpen } = useDashboard();
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+
+  const handleAIFiltersApply = (params: ApplyAIFiltersParams) => {
+    // Passer au mode prospects si pas déjà le cas
+    if (view !== 'prospects') {
+      setView('prospects');
+    }
+    
+    // Délai pour laisser la vue se charger
+    setTimeout(() => {
+      applyAIFiltersRef.current?.(params);
+    }, 100);
+  };
 
   const activeFiltersCount = 
     (filters.categories?.length || 0) + 
@@ -187,6 +202,9 @@ const DashboardContent = () => {
               setFilters={setFilters}
               userId={userId}
               onEntrepriseSelect={handleEntrepriseSelect}
+              onAIFiltersReady={(applyFn) => {
+                applyAIFiltersRef.current = applyFn;
+              }}
             />
           )}
           {view === 'tournees' && userId && (
@@ -211,6 +229,14 @@ const DashboardContent = () => {
           open={crmPanelOpen}
           onOpenChange={setCrmPanelOpen}
           userId={userId}
+        />
+      )}
+
+      {/* Assistant IA Tournée */}
+      {userId && view === 'prospects' && (
+        <TourneeAssistantChat 
+          userId={userId}
+          onApplyFilters={handleAIFiltersApply}
         />
       )}
     </div>

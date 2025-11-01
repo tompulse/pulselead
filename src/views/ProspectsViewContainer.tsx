@@ -11,6 +11,7 @@ interface ProspectsViewContainerProps {
   selectionMode?: boolean;
   selectedEntreprises?: any[];
   onToggleSelection?: (entreprise: any) => void;
+  onAIFiltersReady?: (applyFn: any) => void;
 }
 
 export const ProspectsViewContainer = (props: ProspectsViewContainerProps) => {
