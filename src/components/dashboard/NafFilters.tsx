@@ -16,12 +16,14 @@ interface NafFiltersProps {
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   resultsCount?: number;
+  totalCount?: number;
 }
 
 export const NafFilters = ({ 
   filters, 
   setFilters,
-  resultsCount = 0
+  resultsCount = 0,
+  totalCount = 0
 }: NafFiltersProps) => {
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [categoriesEntrepriseOpen, setCategoriesEntrepriseOpen] = useState(false);
@@ -96,13 +98,11 @@ export const NafFilters = ({
             className="pl-9 h-9 bg-background/50 border-accent/20 focus:border-accent/40"
           />
         </div>
-        {resultsCount !== undefined && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Building2 className="w-4 h-4 text-accent" />
-            <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
-            <span>site{resultsCount > 1 ? 's' : ''} trouvé{resultsCount > 1 ? 's' : ''}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Building2 className="w-4 h-4 text-accent" />
+          <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
+          <span>/ {totalCount.toLocaleString('fr-FR')} site{totalCount > 1 ? 's' : ''}</span>
+        </div>
         {activeFiltersCount > 0 && (
           <Button 
             variant="ghost" 

@@ -10,6 +10,11 @@ export interface NouveauxSitesFilters {
 export const nouveauxSitesService = {
   async fetchNouveauxSites(filters: NouveauxSitesFilters = {}) {
     try {
+      // Query pour compter TOUS les sites (sans filtres) pour le total
+      const { count: totalCount } = await supabase
+        .from('nouveaux_sites')
+        .select('*', { count: 'exact', head: true });
+
       let query = supabase
         .from('nouveaux_sites')
         .select('*', { count: 'exact' });
@@ -55,8 +60,8 @@ export const nouveauxSitesService = {
 
       return {
         data: filteredData,
-        total: count || 0,
-        filteredCount: filteredData.length,
+        total: totalCount || 0, // Total de TOUS les sites dans la DB
+        filteredCount: filteredData.length, // Nombre après filtres
         error: null
       };
     } catch (error) {

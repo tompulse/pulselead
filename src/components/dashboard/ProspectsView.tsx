@@ -57,6 +57,14 @@ export const ProspectsView = ({
     categoriesEntreprise: [] as string[]
   });
 
+  // Query pour tous les nouveaux sites (pour le bouton)
+  const { data: nouveauxSitesDataAll } = useQuery({
+    queryKey: ['nouveaux-sites-total'],
+    queryFn: () => nouveauxSitesService.fetchNouveauxSites({}),
+    staleTime: 10 * 60 * 1000, // Cache plus long car change rarement
+  });
+
+  // Query avec filtres (pour la vue)
   const { data: nouveauxSitesData } = useQuery({
     queryKey: ['nouveaux-sites', nouveauxSitesFilters],
     queryFn: () => nouveauxSitesService.fetchNouveauxSites(nouveauxSitesFilters),
@@ -64,7 +72,8 @@ export const ProspectsView = ({
     staleTime: 5 * 60 * 1000,
   });
 
-  const nouveauxSitesCount = nouveauxSitesData?.filteredCount ?? 0;
+  const nouveauxSitesTotalCount = nouveauxSitesDataAll?.total ?? 0;
+  const nouveauxSitesFilteredCount = nouveauxSitesData?.filteredCount ?? 0;
   
   const {
     selectedEntreprises,
@@ -166,7 +175,7 @@ export const ProspectsView = ({
             >
               <Factory className="w-3.5 h-3.5 mr-1.5" />
               Nouveaux Sites
-              <span className="ml-1.5 text-xs opacity-70">({nouveauxSitesCount})</span>
+              <span className="ml-1.5 text-xs opacity-70">({nouveauxSitesTotalCount})</span>
             </Button>
           </div>
         </div>
@@ -194,7 +203,8 @@ export const ProspectsView = ({
             <NafFilters
               filters={nouveauxSitesFilters}
               setFilters={setNouveauxSitesFilters}
-              resultsCount={nouveauxSitesCount}
+              resultsCount={nouveauxSitesFilteredCount}
+              totalCount={nouveauxSitesTotalCount}
             />
           )}
         </div>
