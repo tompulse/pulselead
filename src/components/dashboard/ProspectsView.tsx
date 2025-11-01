@@ -42,9 +42,16 @@ export const ProspectsView = ({
 }: ProspectsViewProps) => {
   const { toast } = useToast();
   const [activeView, setActiveView] = useState<'creations' | 'nouveaux-sites'>('creations');
+  
+  // États pour les tournées de créations
   const [tourneeActive, setTourneeActive] = useState(false);
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState("");
+  
+  // États pour les tournées de nouveaux sites
+  const [nouveauxSitesTourneeActive, setNouveauxSitesTourneeActive] = useState(false);
+  const [nouveauxSitesTourneeName, setNouveauxSitesTourneeName] = useState("");
+  const [nouveauxSitesTourneeDate, setNouveauxSitesTourneeDate] = useState("");
   
   const { isAdmin } = useAdminStatus();
   
@@ -78,6 +85,7 @@ export const ProspectsView = ({
   const nouveauxSitesTotalCount = nouveauxSitesDataAll?.total ?? 0;
   const nouveauxSitesFilteredCount = nouveauxSitesData?.filteredCount ?? 0;
   
+  // Managers pour les créations et nouveaux sites
   const {
     selectedEntreprises,
     toggleEntreprise,
@@ -86,6 +94,16 @@ export const ProspectsView = ({
     optimizeTournee,
     isOptimizing,
     isCreating
+  } = useTourneeManager(userId);
+  
+  const {
+    selectedEntreprises: selectedNouveauxSites,
+    toggleEntreprise: toggleNouveauSite,
+    clearSelection: clearNouveauxSitesSelection,
+    createTournee: createNouveauxSitesTournee,
+    optimizeTournee: optimizeNouveauxSitesTournee,
+    isOptimizing: isOptimizingNouveauxSites,
+    isCreating: isCreatingNouveauxSites
   } = useTourneeManager(userId);
   const handleCreateTournee = () => {
     setTourneeActive(!tourneeActive);
@@ -132,6 +150,61 @@ export const ProspectsView = ({
         clearSelection();
         setTourneeName("");
         setTourneeDate("");
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'obtenir votre position",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCreateNouveauxSitesTournee = () => {
+    setNouveauxSitesTourneeActive(!nouveauxSitesTourneeActive);
+    if (nouveauxSitesTourneeActive) {
+      clearNouveauxSitesSelection();
+      setNouveauxSitesTourneeName("");
+      setNouveauxSitesTourneeDate("");
+    }
+  };
+
+  const handleOptimizeNouveauxSites = async () => {
+    if (selectedNouveauxSites.length < 2) {
+      return;
+    }
+    
+    if (!nouveauxSitesTourneeName.trim()) {
+      return;
+    }
+
+    // Obtenir la position de l'utilisateur
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+
+      const result = await optimizeNouveauxSitesTournee(
+        selectedNouveauxSites,
+        position.coords.latitude,
+        position.coords.longitude
+      );
+
+      if (result) {
+        // Créer la tournée avec le résultat optimisé
+        await createNouveauxSitesTournee({
+          nom: nouveauxSitesTourneeName,
+          date: nouveauxSitesTourneeDate || new Date().toISOString().split('T')[0],
+          entreprises: result.optimizedOrder.map((id: string) => 
+            selectedNouveauxSites.find(e => e.id === id)
+          ).filter(Boolean)
+        });
+
+        // Succès - réinitialiser
+        setNouveauxSitesTourneeActive(false);
+        clearNouveauxSitesSelection();
+        setNouveauxSitesTourneeName("");
+        setNouveauxSitesTourneeDate("");
       }
     } catch (error) {
       toast({
@@ -208,6 +281,15 @@ export const ProspectsView = ({
               setFilters={setNouveauxSitesFilters}
               resultsCount={nouveauxSitesFilteredCount}
               totalCount={nouveauxSitesTotalCount}
+              tourneeActive={nouveauxSitesTourneeActive}
+              onToggleTournee={handleCreateNouveauxSitesTournee}
+              tourneeName={nouveauxSitesTourneeName}
+              setTourneeName={setNouveauxSitesTourneeName}
+              tourneeDate={nouveauxSitesTourneeDate}
+              setTourneeDate={setNouveauxSitesTourneeDate}
+              selectedCount={selectedNouveauxSites.length}
+              onOptimize={handleOptimizeNouveauxSites}
+              isOptimizing={isOptimizingNouveauxSites}
             />
           )}
         </div>
@@ -226,6 +308,9 @@ export const ProspectsView = ({
             <NouveauxSitesListView
               filters={nouveauxSitesFilters}
               onSiteSelect={onEntrepriseSelect}
+              selectionMode={nouveauxSitesTourneeActive}
+              selectedSites={selectedNouveauxSites}
+              onToggleSelection={toggleNouveauSite}
             />
           )}
         </div>

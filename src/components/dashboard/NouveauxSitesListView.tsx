@@ -13,11 +13,17 @@ import { openGoogleMaps } from "@/utils/navigation";
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
   onSiteSelect?: (site: any) => void;
+  selectionMode?: boolean;
+  selectedSites?: any[];
+  onToggleSelection?: (site: any) => void;
 }
 
-export const NouveauxSitesListView = ({
-  filters,
-  onSiteSelect
+export const NouveauxSitesListView = ({ 
+  filters, 
+  onSiteSelect,
+  selectionMode = false,
+  selectedSites = [],
+  onToggleSelection
 }: NouveauxSitesListViewProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 50;
@@ -104,6 +110,7 @@ export const NouveauxSitesListView = ({
             {displayedSites.map((site) => {
               const nafInfo = getNafCategory(site.code_naf);
               const hasCoordinates = site.latitude && site.longitude;
+              const isSelected = selectedSites.some(s => s.id === site.id);
               
               // Format address
               const addressParts = [
@@ -119,8 +126,18 @@ export const NouveauxSitesListView = ({
               return (
                 <div
                   key={site.id}
-                  onClick={() => onSiteSelect?.(site)}
-                  className="group relative rounded-xl p-4 md:p-5 shadow-lg border border-accent/30 transition-colors bg-gradient-to-br from-card/95 to-card/80 backdrop-blur w-full flex flex-col min-h-[280px] overflow-hidden hover:border-accent/50 cursor-pointer"
+                  onClick={() => {
+                    if (selectionMode && onToggleSelection) {
+                      onToggleSelection(site);
+                    }
+                  }}
+                  className={`group relative rounded-xl p-4 md:p-5 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[280px] overflow-hidden ${
+                    selectionMode 
+                      ? isSelected
+                        ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15'
+                        : 'border-accent/30 from-card/95 to-card/80 cursor-pointer hover:border-accent/50 hover:bg-accent/5'
+                      : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50'
+                  }`}
                 >
                   {/* Gradient overlay on hover */}
                   <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
@@ -128,6 +145,15 @@ export const NouveauxSitesListView = ({
                   {/* Header */}
                   <div className="relative flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
+                      {selectionMode && (
+                        <div className={`flex-shrink-0 w-5 h-5 rounded border-2 transition-all ${
+                          isSelected 
+                            ? 'bg-accent border-accent' 
+                            : 'border-accent/50'
+                        } flex items-center justify-center`}>
+                          {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
+                        </div>
+                      )}
                       <h4 className="font-bold text-base md:text-lg gradient-text break-words leading-tight" title={site.nom}>
                         {site.nom}
                       </h4>
