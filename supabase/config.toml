@@ -3,6 +3,9 @@ project_id = "pcrxbfbktmekkkqhppjn"
 [functions.chat-tournee-assistant]
 verify_jwt = false
 
+[functions.harmonize-categories]
+verify_jwt = false
+
 [functions.qualify-all-entreprises]
 verify_jwt = false
 

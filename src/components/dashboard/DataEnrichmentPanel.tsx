@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { MapPin, FileSearch, Loader2 } from "lucide-react";
+import { MapPin, FileSearch, Loader2, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 export const DataEnrichmentPanel = () => {
   const [geocoding, setGeocoding] = useState(false);
   const [enriching, setEnriching] = useState(false);
+  const [harmonizing, setHarmonizing] = useState(false);
   const { toast } = useToast();
 
   const handleGeocode = async (table: 'entreprises' | 'nouveaux_sites') => {
@@ -58,6 +59,29 @@ export const DataEnrichmentPanel = () => {
       });
     } finally {
       setEnriching(false);
+    }
+  };
+
+  const handleHarmonize = async () => {
+    setHarmonizing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('harmonize-categories');
+      
+      if (error) throw error;
+
+      toast({
+        title: "✅ Harmonisation réussie",
+        description: data.message,
+      });
+    } catch (error) {
+      console.error('Error harmonizing:', error);
+      toast({
+        title: "❌ Erreur",
+        description: "Échec de l'harmonisation des catégories",
+        variant: "destructive",
+      });
+    } finally {
+      setHarmonizing(false);
     }
   };
 
@@ -146,6 +170,47 @@ export const DataEnrichmentPanel = () => {
               'Enrichir les Nouveaux Sites'
             )}
           </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <RefreshCw className="h-5 w-5" />
+            Harmonisation des catégories
+          </CardTitle>
+          <CardDescription>
+            Uniformise les catégories d'activité entre Créations et Nouveaux Sites
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Cette opération va :
+            </p>
+            <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+              <li>Mapper les codes NAF des "Nouveaux Sites" vers des catégories standards</li>
+              <li>Harmoniser les catégories qualifiées des "Créations" avec les mêmes standards</li>
+              <li>Permettre des filtres cohérents entre les deux tables</li>
+            </ul>
+            <Button
+              onClick={handleHarmonize}
+              disabled={harmonizing}
+              className="w-full"
+            >
+              {harmonizing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Harmonisation en cours...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Harmoniser toutes les catégories
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
