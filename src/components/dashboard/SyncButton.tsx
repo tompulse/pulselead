@@ -26,9 +26,10 @@ export const SyncButton = () => {
         ]);
         
         if (totalCount && enrichedCount !== null) {
+          const prevCount = enrichProgress?.count || 0;
           setEnrichProgress({ count: enrichedCount, total: totalCount });
           
-          // Si l'enrichissement est terminé, arrêter le polling
+          // Si l'enrichissement est terminé
           if (enriching && enrichedCount === totalCount) {
             setEnriching(false);
             toast({
@@ -37,24 +38,25 @@ export const SyncButton = () => {
               duration: 3000,
             });
           }
+          
+          // Si on détecte une progression et qu'on n'est pas en mode enriching, l'activer
+          if (!enriching && prevCount < enrichedCount && enrichedCount < totalCount) {
+            setEnriching(true);
+          }
         }
       } catch (error) {
         console.error("Erreur lors de la vérification de la progression:", error);
       }
     };
 
-    // Vérifier la progression au démarrage
+    // Vérifier la progression au démarrage et toutes les 3 secondes
     checkProgress();
-    
-    // Si enrichissement en cours, vérifier toutes les 5 secondes
-    if (enriching) {
-      interval = setInterval(checkProgress, 5000);
-    }
+    interval = setInterval(checkProgress, 3000);
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [enriching, toast]);
+  }, [enriching, enrichProgress, toast]);
 
   const handleSync = async () => {
     setLoading(true);
@@ -168,14 +170,14 @@ export const SyncButton = () => {
         variant="outline"
         size="sm"
         className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10"
-        title={enrichProgress ? `${enrichProgress.count}/${enrichProgress.total} codes NAF enrichis (${Math.round((enrichProgress.count / enrichProgress.total) * 100)}%)` : "Enrichir les codes NAF via l'API INSEE"}
+        title={enrichProgress ? `${enrichProgress.count.toLocaleString()}/${enrichProgress.total.toLocaleString()} codes NAF enrichis (${Math.round((enrichProgress.count / enrichProgress.total) * 100)}%)` : "Enrichir les codes NAF via l'API INSEE"}
       >
         <RefreshCw className={`w-3.5 h-3.5 ${enriching ? "animate-spin" : ""}`} />
-        <span className="hidden lg:inline ml-1">
-          {enriching && enrichProgress 
-            ? `${Math.round((enrichProgress.count / enrichProgress.total) * 100)}%` 
-            : enrichProgress 
-            ? `${enrichProgress.count}/${enrichProgress.total}` 
+        <span className="ml-1 font-mono text-[10px] lg:text-xs">
+          {enrichProgress 
+            ? enriching 
+              ? `${Math.round((enrichProgress.count / enrichProgress.total) * 100)}% (${enrichProgress.count.toLocaleString()})` 
+              : `${enrichProgress.count.toLocaleString()}/${enrichProgress.total.toLocaleString()}`
             : "NAF"}
         </span>
       </Button>
