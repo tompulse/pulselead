@@ -55,6 +55,7 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
   const [loading, setLoading] = useState(false);
   const [parsedResult, setParsedResult] = useState<ParsedResult | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [clarificationMessage, setClarificationMessage] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleSend = async () => {
@@ -62,6 +63,7 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
 
     setLoading(true);
     setParsedResult(null);
+    setClarificationMessage(null);
 
     try {
       const { data, error } = await supabase.functions.invoke('chat-tournee-assistant', {
@@ -89,15 +91,13 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
       }
 
       if (data.needsClarification) {
-        toast({
-          title: "Besoin de clarification",
-          description: data.clarificationMessage,
-          variant: "default"
-        });
+        setClarificationMessage(data.clarificationMessage);
+        setMessage(""); // Clear input for new message
         return;
       }
 
       setParsedResult(data);
+      setMessage(""); // Clear input on success
     } catch (error: any) {
       console.error("Error calling assistant:", error);
       toast({
@@ -212,7 +212,45 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {!parsedResult ? (
+          {clarificationMessage ? (
+            <>
+              <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-sm text-amber-800 dark:text-amber-200">
+                  {clarificationMessage}
+                </AlertDescription>
+              </Alert>
+
+              <div className="space-y-2">
+                <Label htmlFor="message">Précisez votre demande</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="message"
+                    placeholder="Ex: Seulement le département 75, secteur restauration"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                    disabled={loading}
+                    autoFocus
+                  />
+                  <Button onClick={handleSend} disabled={loading || !message.trim()}>
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setClarificationMessage(null);
+                  setMessage("");
+                }} 
+                className="w-full"
+              >
+                Recommencer
+              </Button>
+            </>
+          ) : !parsedResult ? (
             <>
               <div className="space-y-2">
                 <Label htmlFor="message">Votre demande</Label>
