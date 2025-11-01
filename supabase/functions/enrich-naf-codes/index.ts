@@ -6,6 +6,34 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Obtenir un token OAuth2 de l'INSEE
+async function getInseeToken(): Promise<string> {
+  const consumerKey = Deno.env.get('INSEE_CONSUMER_KEY');
+  const consumerSecret = Deno.env.get('INSEE_CONSUMER_SECRET');
+  
+  if (!consumerKey || !consumerSecret) {
+    throw new Error('INSEE credentials not configured');
+  }
+
+  const credentials = btoa(`${consumerKey}:${consumerSecret}`);
+  
+  const response = await fetch('https://api.insee.fr/token', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${credentials}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'grant_type=client_credentials',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get INSEE token: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.access_token;
+}
+
 async function processEnrichment(targetTable: string) {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -14,10 +42,20 @@ async function processEnrichment(targetTable: string) {
   let totalSuccess = 0;
   let totalErrors = 0;
   let processedCount = 0;
-  const batchSize = 50; // Plus gros lots
+  const batchSize = 50;
   let hasMore = true;
 
   console.log(`Starting NAF enrichment for ${targetTable}...`);
+  
+  // Obtenir le token INSEE
+  let inseeToken: string;
+  try {
+    inseeToken = await getInseeToken();
+    console.log('INSEE token obtained successfully');
+  } catch (error) {
+    console.error('Failed to obtain INSEE token:', error);
+    throw error;
+  }
 
   while (hasMore) {
     // Récupérer un lot d'entreprises sans NAF
@@ -39,9 +77,9 @@ async function processEnrichment(targetTable: string) {
 
     console.log(`Processing batch of ${entreprises.length} records...`);
 
-    // Traiter ce lot en parallèle (par groupes de 5 pour respecter rate limits)
-    for (let i = 0; i < entreprises.length; i += 5) {
-      const miniBatch = entreprises.slice(i, i + 5);
+    // Traiter ce lot en parallèle (par groupes de 3 pour respecter rate limits INSEE: 30/min)
+    for (let i = 0; i < entreprises.length; i += 3) {
+      const miniBatch = entreprises.slice(i, i + 3);
       
       await Promise.all(miniBatch.map(async (entreprise) => {
         try {
@@ -50,11 +88,14 @@ async function processEnrichment(targetTable: string) {
             return;
           }
 
-          // Appeler l'API Sirene de l'INSEE (publique, gratuite)
+          // Appeler l'API Sirene de l'INSEE avec authentification
           const sireneUrl = `https://api.insee.fr/entreprises/sirene/V3.11/siret/${entreprise.siret}`;
           
           const sireneResponse = await fetch(sireneUrl, {
-            headers: { 'Accept': 'application/json' }
+            headers: { 
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${inseeToken}`
+            }
           });
 
           if (sireneResponse.ok) {
@@ -79,9 +120,10 @@ async function processEnrichment(targetTable: string) {
           } else {
             // Si rate limit (429), on attend plus longtemps
             if (sireneResponse.status === 429) {
-              console.log('Rate limit hit, waiting 2s...');
-              await new Promise(resolve => setTimeout(resolve, 2000));
+              console.log('Rate limit hit, waiting 3s...');
+              await new Promise(resolve => setTimeout(resolve, 3000));
             }
+            console.error(`API error for ${entreprise.siret}: ${sireneResponse.status}`);
             totalErrors++;
           }
 
@@ -91,8 +133,8 @@ async function processEnrichment(targetTable: string) {
         }
       }));
 
-      // Petite pause entre chaque mini-lot de 5
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Pause plus longue entre chaque mini-lot pour respecter le rate limit INSEE (30/min = 2s/req)
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
 
     processedCount += entreprises.length;
