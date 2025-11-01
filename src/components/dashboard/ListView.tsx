@@ -1,7 +1,8 @@
 import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState, useMemo, memo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
+import { categorizeActivity, getCategoryFromNaf } from "@/utils/detailedCategories";
+import { getCategoryLabel } from "@/utils/detailedCategories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";

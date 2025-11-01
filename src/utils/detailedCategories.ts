@@ -226,3 +226,51 @@ export const CATEGORIES_BY_KEY = DETAILED_CATEGORIES.reduce((acc, cat) => {
   acc[cat.key] = cat;
   return acc;
 }, {} as Record<string, DetailedCategory>);
+
+// Fonction pour obtenir le label d'une catégorie (avec emoji)
+export function getCategoryLabel(categoryKey: string): string {
+  const category = CATEGORIES_BY_KEY[categoryKey];
+  if (category) {
+    return `${category.emoji} ${category.label}`;
+  }
+  return categoryKey;
+}
+
+// Fonction pour obtenir toutes les catégories sous forme d'objet (compatibilité)
+export function getAllCategories(): Record<string, { label: string; emoji: string }> {
+  return DETAILED_CATEGORIES.reduce((acc, cat) => {
+    acc[cat.key] = { label: cat.label, emoji: cat.emoji };
+    return acc;
+  }, {} as Record<string, { label: string; emoji: string }>);
+}
+
+// Fonction de catégorisation (basée sur NAF et mots-clés)
+export function categorizeActivity(activity: string | null, qualifiedCategory?: string | null, codeNaf?: string | null): string {
+  // Si une catégorie qualifiée existe, vérifier si elle correspond à une catégorie détaillée
+  if (qualifiedCategory) {
+    // Vérifier les mappings QUALIF_TO_DETAILED d'abord
+    if (QUALIF_TO_DETAILED[qualifiedCategory]) {
+      return QUALIF_TO_DETAILED[qualifiedCategory];
+    }
+    // Sinon, si la catégorie existe directement
+    if (CATEGORIES_BY_KEY[qualifiedCategory]) {
+      return qualifiedCategory;
+    }
+  }
+  
+  // Essayer par code NAF si disponible
+  if (codeNaf) {
+    const nafCategory = getCategoryFromNaf(codeNaf);
+    if (nafCategory) return nafCategory;
+  }
+  
+  // Sinon, recherche par mots-clés dans l'activité
+  if (activity) {
+    const categories = findCategoriesByQuery(activity);
+    if (categories.length > 0) {
+      return categories[0].key;
+    }
+  }
+  
+  return "autre";
+}

@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { categorizeActivity } from "@/utils/activityCategories";
+import { categorizeActivity, getCategoryFromNaf } from "@/utils/detailedCategories";
 import { normalizeFormeJuridique } from "@/utils/formesJuridiques";
 // Removed activitySubcategories import
 export interface EntrepriseFilters {

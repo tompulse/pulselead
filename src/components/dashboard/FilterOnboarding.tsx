@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, ChevronDown, TrendingUp } from "lucide-react";
-import { ACTIVITY_CATEGORIES, categorizeActivity } from "@/utils/activityCategories";
+import { DETAILED_CATEGORIES, getCategoryLabel } from "@/utils/detailedCategories";
+import { categorizeActivity, getCategoryFromNaf } from "@/utils/detailedCategories";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -301,25 +302,25 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                   </button>
 
                   {/* Secteurs spécifiques */}
-                  {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
+                  {DETAILED_CATEGORIES.map((category) => (
                     <label
-                      key={key}
+                      key={category.key}
                       className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 cursor-pointer transition-colors"
                       style={{
-                        borderColor: selectedCategories.includes(key) 
+                        borderColor: selectedCategories.includes(category.key) 
                           ? 'hsl(var(--accent))' 
                           : 'hsl(var(--accent) / 0.2)',
-                        backgroundColor: selectedCategories.includes(key) 
+                        backgroundColor: selectedCategories.includes(category.key) 
                           ? 'hsl(var(--accent) / 0.1)' 
                           : 'transparent'
                       }}
                     >
                       <Checkbox
-                        checked={selectedCategories.includes(key)}
-                        onCheckedChange={() => handleCategoryToggle(key)}
+                        checked={selectedCategories.includes(category.key)}
+                        onCheckedChange={() => handleCategoryToggle(category.key)}
                         className="border-accent/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent data-[state=checked]:text-primary h-5 w-5 md:h-6 md:w-6"
                       />
-                      <span className="font-semibold text-base md:text-lg">{category.label}</span>
+                      <span className="font-semibold text-base md:text-lg">{category.emoji} {category.label}</span>
                     </label>
                   ))}
                 </div>

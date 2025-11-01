@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
-import { getCategoryLabel, ACTIVITY_CATEGORIES } from "@/utils/activityCategories";
+import { getCategoryLabel, DETAILED_CATEGORIES } from "@/utils/detailedCategories";
 import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { useAvailableFilters } from "@/hooks/useAvailableFilters";
@@ -72,7 +72,7 @@ export const TourneeFilters = ({
   
   // Filtrer les catégories/départements/formes pour n'afficher que ceux qui ont des entreprises
   const availableCategories = availableFiltersData 
-    ? Object.keys(ACTIVITY_CATEGORIES).filter(
+    ? DETAILED_CATEGORIES.map(cat => cat.key).filter(
         key => (availableFiltersData.categories[key] || 0) > 0
       )
     : [];
