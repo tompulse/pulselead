@@ -110,26 +110,77 @@ const DETAILED_CATEGORIES = [
 
 // Mapping catégories qualifiées (Créations) → catégories détaillées
 const QUALIF_TO_DETAILED: Record<string, string> = {
+  // Immobilier & Finance
   'immobilier': 'immo-agence',
   'holding': 'finance-holding',
-  'commerce-detail': 'commerce-alimentation',
-  'conseil-consulting': 'conseil-management',
-  'commerce-gros': 'gros-produits',
-  'informatique-dev': 'info-developpement',
-  'restauration': 'resto-restaurant',
-  'agriculture': 'agriculture-cultures',
-  'artisanat-reparation': 'service-reparation',
-  'energie-renouvelable': 'energie-renouvelable',
-  'maconnerie': 'btp-gros-oeuvre',
-  'digital-web': 'info-webagency',
-  'education-formation': 'formation-professionnelle',
-  'industrie-fabrication': 'industrie-metallurgie',
-  'snack-fastfood': 'resto-fastfood',
-  'sante-medical': 'sante-medecin',
-  'transport-marchandises': 'transport-routier',
-  'beaute-coiffure': 'service-coiffeur',
-  'services-personne': 'service-nettoyage',
   'finance-assurance': 'finance-assurance',
+  
+  // Commerce
+  'commerce-detail': 'commerce-alimentation',
+  'commerce-gros': 'gros-produits',
+  'e-commerce': 'commerce-alimentation', // e-commerce générique
+  
+  // Conseil & Services pro
+  'conseil-consulting': 'conseil-management',
+  'juridique': 'juridique-avocat',
+  
+  // Tech & Digital
+  'informatique-dev': 'info-developpement',
+  'digital-web': 'info-webagency',
+  
+  // Restauration & Alimentation
+  'restauration': 'resto-restaurant',
+  'snack-fastfood': 'resto-fastfood',
+  'traiteur': 'resto-traiteur',
+  'cafes-bars': 'resto-bar',
+  
+  // BTP
+  'maconnerie': 'btp-gros-oeuvre',
+  'plomberie-chauffage': 'btp-plomberie',
+  'electricite': 'btp-electricite',
+  'menuiserie': 'btp-menuiserie',
+  'peinture-revetements': 'btp-peinture',
+  
+  // Agriculture
+  'agriculture': 'agriculture-cultures',
+  
+  // Services
+  'artisanat-reparation': 'service-reparation',
+  'services-personne': 'service-nettoyage',
+  'beaute-coiffure': 'service-coiffeur',
+  
+  // Energie
+  'energie-renouvelable': 'energie-renouvelable',
+  'environnement-recyclage': 'energie-renouvelable',
+  
+  // Formation & Education
+  'education-formation': 'formation-professionnelle',
+  
+  // Industrie
+  'industrie-fabrication': 'industrie-metallurgie',
+  
+  // Santé
+  'sante-medical': 'sante-medecin',
+  
+  // Transport
+  'transport-marchandises': 'transport-routier',
+  'transport-logistique': 'transport-logistique',
+  'vtc-taxi': 'transport-taxi',
+  'livraison-coursier': 'transport-routier',
+  
+  // Hôtellerie & Tourisme
+  'hotellerie': 'hotellerie-hotel',
+  
+  // Culture & Sport
+  'culture-spectacles': 'culture-spectacle',
+  'sport-loisirs': 'sport-salle',
+  
+  // Marketing
+  'marketing-pub': 'service-publicite',
+  
+  // Autres
+  'autre': 'service-reparation',
+  'activite-non-precisee': 'service-reparation'
 };
 
 function getCategoryFromNaf(codeNaf: string): string | null {
@@ -174,7 +225,7 @@ serve(async (req) => {
       if (category) {
         const { error } = await supabase
           .from('nouveaux_sites')
-          .update({ categorie_entreprise: category })
+          .update({ categorie_detaillee: category })
           .eq('id', site.id);
 
         if (error) {
@@ -186,21 +237,31 @@ serve(async (req) => {
       }
     }
 
-    // 2. Harmoniser les entreprises basé sur categorie_qualifiee
+    // 2. Harmoniser les entreprises basé sur code_naf et categorie_qualifiee
     console.log('Harmonizing entreprises...');
     const { data: entreprises, error: entError } = await supabase
       .from('entreprises')
-      .select('id, categorie_qualifiee')
-      .not('categorie_qualifiee', 'is', null);
+      .select('id, categorie_qualifiee, code_naf');
 
     if (entError) throw entError;
 
     for (const entreprise of entreprises || []) {
-      const category = QUALIF_TO_DETAILED[entreprise.categorie_qualifiee];
+      let category = null;
+      
+      // Essayer d'abord avec le code NAF
+      if (entreprise.code_naf) {
+        category = getCategoryFromNaf(entreprise.code_naf);
+      }
+      
+      // Sinon, mapper depuis categorie_qualifiee
+      if (!category && entreprise.categorie_qualifiee) {
+        category = QUALIF_TO_DETAILED[entreprise.categorie_qualifiee];
+      }
+      
       if (category) {
         const { error } = await supabase
           .from('entreprises')
-          .update({ activite: category })
+          .update({ categorie_detaillee: category })
           .eq('id', entreprise.id);
 
         if (error) {
@@ -211,6 +272,8 @@ serve(async (req) => {
         }
       }
     }
+
+    console.log(`Updated ${successCount} records, ${errorCount} errors`);
 
     return new Response(
       JSON.stringify({

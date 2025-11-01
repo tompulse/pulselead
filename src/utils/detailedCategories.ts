@@ -155,26 +155,77 @@ export const DETAILED_CATEGORIES: DetailedCategory[] = [
 
 // Mapping des catégories qualifiées (Créations) → catégories détaillées
 export const QUALIF_TO_DETAILED: Record<string, string> = {
+  // Immobilier & Finance
   'immobilier': 'immo-agence',
   'holding': 'finance-holding',
-  'commerce-detail': 'commerce-alimentation',
-  'conseil-consulting': 'conseil-management',
-  'commerce-gros': 'gros-produits',
-  'informatique-dev': 'info-developpement',
-  'restauration': 'resto-restaurant',
-  'agriculture': 'agriculture-cultures',
-  'artisanat-reparation': 'service-reparation',
-  'energie-renouvelable': 'energie-renouvelable',
-  'maconnerie': 'btp-gros-oeuvre',
-  'digital-web': 'info-webagency',
-  'education-formation': 'formation-professionnelle',
-  'industrie-fabrication': 'industrie-metallurgie',
-  'snack-fastfood': 'resto-fastfood',
-  'sante-medical': 'sante-medecin',
-  'transport-marchandises': 'transport-routier',
-  'beaute-coiffure': 'service-coiffeur',
-  'services-personne': 'service-nettoyage',
   'finance-assurance': 'finance-assurance',
+  
+  // Commerce
+  'commerce-detail': 'commerce-alimentation',
+  'commerce-gros': 'gros-produits',
+  'e-commerce': 'commerce-alimentation', // e-commerce générique
+  
+  // Conseil & Services pro
+  'conseil-consulting': 'conseil-management',
+  'juridique': 'juridique-avocat',
+  
+  // Tech & Digital
+  'informatique-dev': 'info-developpement',
+  'digital-web': 'info-webagency',
+  
+  // Restauration & Alimentation
+  'restauration': 'resto-restaurant',
+  'snack-fastfood': 'resto-fastfood',
+  'traiteur': 'resto-traiteur',
+  'cafes-bars': 'resto-bar',
+  
+  // BTP
+  'maconnerie': 'btp-gros-oeuvre',
+  'plomberie-chauffage': 'btp-plomberie',
+  'electricite': 'btp-electricite',
+  'menuiserie': 'btp-menuiserie',
+  'peinture-revetements': 'btp-peinture',
+  
+  // Agriculture
+  'agriculture': 'agriculture-cultures',
+  
+  // Services
+  'artisanat-reparation': 'service-reparation',
+  'services-personne': 'service-nettoyage',
+  'beaute-coiffure': 'service-coiffeur',
+  
+  // Energie
+  'energie-renouvelable': 'energie-renouvelable',
+  'environnement-recyclage': 'energie-renouvelable',
+  
+  // Formation & Education
+  'education-formation': 'formation-professionnelle',
+  
+  // Industrie
+  'industrie-fabrication': 'industrie-metallurgie',
+  
+  // Santé
+  'sante-medical': 'sante-medecin',
+  
+  // Transport
+  'transport-marchandises': 'transport-routier',
+  'transport-logistique': 'transport-logistique',
+  'vtc-taxi': 'transport-taxi',
+  'livraison-coursier': 'transport-routier',
+  
+  // Hôtellerie & Tourisme
+  'hotellerie': 'hotellerie-hotel',
+  
+  // Culture & Sport
+  'culture-spectacles': 'culture-spectacle',
+  'sport-loisirs': 'sport-salle',
+  
+  // Marketing
+  'marketing-pub': 'service-publicite',
+  
+  // Autres
+  'autre': 'service-reparation',
+  'activite-non-precisee': 'service-reparation'
 };
 
 // Fonction pour trouver la catégorie à partir d'un code NAF complet

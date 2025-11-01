@@ -60,6 +60,7 @@ export type Database = {
           adresse: string | null
           capital: number | null
           categorie_confidence: number | null
+          categorie_detaillee: string | null
           categorie_qualifiee: string | null
           chiffre_affaires: number | null
           code_naf: string | null
@@ -97,6 +98,7 @@ export type Database = {
           adresse?: string | null
           capital?: number | null
           categorie_confidence?: number | null
+          categorie_detaillee?: string | null
           categorie_qualifiee?: string | null
           chiffre_affaires?: number | null
           code_naf?: string | null
@@ -134,6 +136,7 @@ export type Database = {
           adresse?: string | null
           capital?: number | null
           categorie_confidence?: number | null
+          categorie_detaillee?: string | null
           categorie_qualifiee?: string | null
           chiffre_affaires?: number | null
           code_naf?: string | null
@@ -258,6 +261,7 @@ export type Database = {
       nouveaux_sites: {
         Row: {
           adresse: string | null
+          categorie_detaillee: string | null
           categorie_entreprise: string | null
           categorie_juridique: string | null
           code_naf: string | null
@@ -281,6 +285,7 @@ export type Database = {
         }
         Insert: {
           adresse?: string | null
+          categorie_detaillee?: string | null
           categorie_entreprise?: string | null
           categorie_juridique?: string | null
           code_naf?: string | null
@@ -304,6 +309,7 @@ export type Database = {
         }
         Update: {
           adresse?: string | null
+          categorie_detaillee?: string | null
           categorie_entreprise?: string | null
           categorie_juridique?: string | null
           code_naf?: string | null
@@ -575,6 +581,15 @@ export type Database = {
           p_categories?: string[]
           p_departments?: string[]
           p_formes?: string[]
+          p_search_query?: string
+        }
+        Returns: Json
+      }
+      get_nouveaux_sites_filter_counts: {
+        Args: {
+          p_categories?: string[]
+          p_codes_naf?: string[]
+          p_departments?: string[]
           p_search_query?: string
         }
         Returns: Json

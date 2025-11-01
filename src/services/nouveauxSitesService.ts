@@ -35,9 +35,9 @@ export const nouveauxSitesService = {
         query = query.or(deptConditions);
       }
 
-      // Filtre par catégorie d'entreprise
+      // Filtre par catégorie détaillée
       if (filters.categoriesEntreprise && filters.categoriesEntreprise.length > 0) {
-        query = query.in('categorie_entreprise', filters.categoriesEntreprise);
+        query = query.in('categorie_detaillee', filters.categoriesEntreprise);
       }
 
       const { data, error, count } = await query;

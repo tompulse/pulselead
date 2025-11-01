@@ -50,7 +50,7 @@ export const entrepriseService = {
 
       // Server-side categories filter (CRITICAL: must be before .range() limit)
       if (filters.categories && filters.categories.length > 0) {
-        query = query.in('categorie_qualifiee', filters.categories);
+        query = query.in('categorie_detaillee', filters.categories);
       }
 
       // Server-side departments filter (postal code prefixes)
