@@ -238,8 +238,118 @@ ${Object.entries(REGIONS_DEPARTMENTS).map(([region, depts]) => `   - ${region}: 
 
     const result = JSON.parse(toolCall.function.arguments);
 
+    // Si clarification nécessaire, retourner directement
+    if (result.needsClarification) {
+      return new Response(
+        JSON.stringify(result),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
+    // Créer client Supabase
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+    // Déterminer la table selon le type de vue
+    const tableName = result.view === "creations" ? "entreprises" : "nouveaux_sites";
+
+    // Construire la requête avec les filtres
+    let query = supabaseClient.from(tableName).select('*')
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null);
+
+    // Appliquer filtres NAF (codes à 2 chiffres)
+    if (result.filters.categories && result.filters.categories.length > 0) {
+      const nafCodes: string[] = [];
+      result.filters.categories.forEach((cat: string) => {
+        if (NAF_MAPPING[cat]) {
+          nafCodes.push(...NAF_MAPPING[cat]);
+        }
+      });
+      if (nafCodes.length > 0) {
+        const nafFilters = nafCodes.map(code => `code_naf.like.${code}%`).join(',');
+        query = query.or(nafFilters);
+      }
+    }
+
+    // Appliquer filtres départements
+    if (result.filters.departments && result.filters.departments.length > 0) {
+      const deptFilters = result.filters.departments.map((d: string) => `code_postal.like.${d}%`).join(',');
+      query = query.or(deptFilters);
+    }
+
+    // Appliquer filtres formes juridiques
+    if (result.filters.formesJuridiques && result.filters.formesJuridiques.length > 0) {
+      query = query.in('forme_juridique', result.filters.formesJuridiques);
+    }
+
+    const { data: entreprises, error: dbError } = await query;
+
+    if (dbError) {
+      console.error("Database error:", dbError);
+      throw new Error("Erreur lors de la récupération des entreprises");
+    }
+
+    // Gérer les edge cases
+    if (!entreprises || entreprises.length === 0) {
+      return new Response(
+        JSON.stringify({
+          ...result,
+          needsClarification: true,
+          clarificationMessage: "Aucune entreprise ne correspond à vos critères. Essayez d'élargir la recherche (plus de départements, moins de filtres)."
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
+    if (entreprises.length > 30) {
+      return new Response(
+        JSON.stringify({
+          ...result,
+          needsClarification: true,
+          clarificationMessage: `Trop d'entreprises trouvées (${entreprises.length}). Pour une tournée efficace, précisez vos critères (département spécifique, secteur précis).`
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
+    // Appeler optimize-tournee
+    console.log(`Optimisation de ${entreprises.length} entreprises...`);
+    const { data: optimized, error: optimizeError } = await supabaseClient.functions.invoke('optimize-tournee', {
+      body: {
+        entreprises: entreprises,
+        point_depart: null
+      }
+    });
+
+    if (optimizeError) {
+      console.error("Optimization error:", optimizeError);
+      return new Response(
+        JSON.stringify({
+          ...result,
+          needsClarification: true,
+          clarificationMessage: "Impossible d'optimiser la tournée. Vérifiez que les entreprises ont des adresses valides."
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
+    // Retourner le résultat enrichi
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify({
+        ...result,
+        optimization: {
+          entreprises: optimized.entreprises_ordonnees,
+          entreprises_ids: optimized.ordre_optimise,
+          distance_km: optimized.distance_totale_km,
+          temps_trajet_minutes: optimized.temps_trajet_minutes,
+          temps_visites_minutes: optimized.entreprises_ordonnees.length * 15,
+          temps_total_minutes: optimized.temps_estime_minutes,
+          nb_arrets: optimized.entreprises_ordonnees.length,
+          excluded_count: 0
+        }
+      }),
       { 
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200

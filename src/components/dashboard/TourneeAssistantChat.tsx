@@ -5,10 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Bot, Send, Loader2, Sparkles } from "lucide-react";
+import { Bot, Send, Loader2, Sparkles, CheckCircle, Route, Clock, MapPin, ChevronDown, AlertCircle, RotateCcw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
 
 interface TourneeAssistantChatProps {
   onApplyFilters: (params: {
@@ -31,6 +35,16 @@ interface ParsedResult {
     dateFrom?: string;
     dateTo?: string;
   };
+  optimization?: {
+    entreprises: any[];
+    entreprises_ids: string[];
+    distance_km: number;
+    temps_trajet_minutes: number;
+    temps_visites_minutes: number;
+    temps_total_minutes: number;
+    nb_arrets: number;
+    excluded_count: number;
+  };
   needsClarification?: boolean;
   clarificationMessage?: string;
 }
@@ -40,6 +54,7 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [parsedResult, setParsedResult] = useState<ParsedResult | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
   const handleSend = async () => {
@@ -95,24 +110,47 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
     }
   };
 
-  const handleConfirm = () => {
-    if (!parsedResult) return;
+  const handleConfirm = async () => {
+    if (!parsedResult?.optimization) return;
+    
+    setIsSaving(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Non authentifié");
 
-    onApplyFilters({
-      view: parsedResult.view,
-      filters: parsedResult.filters,
-      tourneeName: parsedResult.tourneeName,
-      tourneeDate: new Date(parsedResult.tourneeDate)
-    });
+      const { error } = await supabase.from('tournees').insert({
+        user_id: user.id,
+        nom: parsedResult.tourneeName,
+        date_planifiee: parsedResult.tourneeDate,
+        entreprises_ids: parsedResult.optimization.entreprises_ids,
+        ordre_optimise: parsedResult.optimization.entreprises_ids,
+        distance_totale_km: parsedResult.optimization.distance_km,
+        temps_estime_minutes: parsedResult.optimization.temps_total_minutes,
+        statut: 'planifiee'
+      });
 
-    toast({
-      title: "Tournée configurée",
-      description: "Les filtres ont été appliqués. Vous pouvez maintenant optimiser votre tournée.",
-    });
+      if (error) throw error;
 
-    setOpen(false);
-    setMessage("");
-    setParsedResult(null);
+      toast({
+        title: "✅ Tournée créée avec succès !",
+        description: `${parsedResult.optimization.nb_arrets} entreprises planifiées pour le ${format(new Date(parsedResult.tourneeDate), "d MMMM", { locale: fr })}`,
+        duration: 5000
+      });
+
+      setOpen(false);
+      setMessage("");
+      setParsedResult(null);
+      
+    } catch (error) {
+      console.error('Save error:', error);
+      toast({
+        title: "❌ Erreur",
+        description: "Impossible de créer la tournée. Réessayez.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const getCategoryLabel = (key: string): string => {
@@ -203,6 +241,213 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
                 </ul>
               </div>
             </>
+          ) : parsedResult?.optimization ? (
+            <div className="space-y-4">
+              {/* Statut succès */}
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <h3 className="font-semibold text-green-900 dark:text-green-100">
+                    ✨ Tournée optimisée et prête !
+                  </h3>
+                </div>
+                <p className="text-sm text-green-700 dark:text-green-300">
+                  {parsedResult.optimization.nb_arrets} entreprises trouvées et organisées
+                </p>
+              </div>
+
+              {/* Carte d'informations principales */}
+              <div className="bg-card border rounded-lg p-4 space-y-3">
+                <div>
+                  <Label className="text-sm text-muted-foreground">Nom de la tournée</Label>
+                  <Input 
+                    value={parsedResult.tourneeName}
+                    onChange={(e) => setParsedResult({...parsedResult, tourneeName: e.target.value})}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-sm text-muted-foreground">Date prévue</Label>
+                  <p className="font-medium text-accent">
+                    {format(new Date(parsedResult.tourneeDate), "EEEE d MMMM yyyy", { locale: fr })}
+                  </p>
+                </div>
+
+                <div>
+                  <Label className="text-sm text-muted-foreground mb-2 block">Type de prospects</Label>
+                  <Badge variant={parsedResult.view === "creations" ? "default" : "secondary"}>
+                    {parsedResult.view === "creations" ? "Créations" : "Nouveaux Sites"}
+                  </Badge>
+                </div>
+
+                {/* Statistiques en grille */}
+                <div className="grid grid-cols-3 gap-3 pt-3 border-t">
+                  <div className="bg-primary/5 rounded-lg p-3 text-center">
+                    <Route className="h-5 w-5 mx-auto mb-1 text-primary" />
+                    <p className="text-2xl font-bold text-primary">
+                      {parsedResult.optimization.distance_km.toFixed(1)} km
+                    </p>
+                    <p className="text-xs text-muted-foreground">Distance</p>
+                  </div>
+                  
+                  <div className="bg-accent/5 rounded-lg p-3 text-center">
+                    <Clock className="h-5 w-5 mx-auto mb-1 text-accent" />
+                    <p className="text-2xl font-bold text-accent">
+                      {Math.floor(parsedResult.optimization.temps_total_minutes / 60)}h
+                      {(parsedResult.optimization.temps_total_minutes % 60).toString().padStart(2, '0')}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Durée totale</p>
+                  </div>
+                  
+                  <div className="bg-green-500/5 rounded-lg p-3 text-center">
+                    <MapPin className="h-5 w-5 mx-auto mb-1 text-green-600" />
+                    <p className="text-2xl font-bold text-green-600">
+                      {parsedResult.optimization.nb_arrets}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Prospects</p>
+                  </div>
+                </div>
+
+                {/* Détail des temps */}
+                <div className="text-xs bg-muted/30 rounded-lg p-3 space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">🚗 Temps de trajet :</span>
+                    <span className="font-medium">{parsedResult.optimization.temps_trajet_minutes} min</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">🤝 Temps de visites (15 min × {parsedResult.optimization.nb_arrets}) :</span>
+                    <span className="font-medium">{parsedResult.optimization.temps_visites_minutes} min</span>
+                  </div>
+                  <Separator className="my-1" />
+                  <div className="flex justify-between font-semibold text-foreground pt-1">
+                    <span>⏱️ Total :</span>
+                    <span>{parsedResult.optimization.temps_total_minutes} min</span>
+                  </div>
+                </div>
+
+                {/* Liste ordonnée des entreprises */}
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full py-2 text-sm font-medium hover:text-accent">
+                    <span>🗺️ Voir le parcours détaillé ({parsedResult.optimization.nb_arrets} arrêts)</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <ScrollArea className="h-48 rounded-lg border bg-muted/10 mt-2">
+                      <div className="p-2 space-y-1">
+                        {parsedResult.optimization.entreprises.map((e, idx) => (
+                          <div 
+                            key={e.id} 
+                            className="flex items-start gap-3 text-sm p-3 rounded-lg hover:bg-accent/10 transition-colors border border-transparent hover:border-accent/20"
+                          >
+                            <Badge variant="secondary" className="shrink-0 w-7 h-7 flex items-center justify-center font-bold">
+                              {idx + 1}
+                            </Badge>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold truncate">{e.nom}</p>
+                              <p className="text-xs text-muted-foreground truncate">
+                                📍 {e.adresse}, {e.code_postal} {e.ville}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Alerte si entreprises exclues */}
+                {parsedResult.optimization.excluded_count > 0 && (
+                  <Alert variant="default" className="bg-orange-50 dark:bg-orange-950/30 border-orange-200">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-xs">
+                      ⚠️ {parsedResult.optimization.excluded_count} entreprise(s) exclue(s) (pas de coordonnées GPS)
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Filtres appliqués */}
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    <ChevronDown className="h-3 w-3" />
+                    Voir les critères appliqués
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-2 space-y-2 pt-2 border-t">
+                    {parsedResult.filters.categories && parsedResult.filters.categories.length > 0 && (
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">Secteurs d'activité</p>
+                        <div className="flex flex-wrap gap-1">
+                          {parsedResult.filters.categories.map((cat) => (
+                            <Badge key={cat} variant="outline" className="text-xs">
+                              {getCategoryLabel(cat)}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {parsedResult.filters.departments && parsedResult.filters.departments.length > 0 && (
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">Départements</p>
+                        <div className="flex flex-wrap gap-1">
+                          {parsedResult.filters.departments.map((dept) => (
+                            <Badge key={dept} variant="outline" className="text-xs">{dept}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {parsedResult.filters.formesJuridiques && parsedResult.filters.formesJuridiques.length > 0 && (
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">Formes juridiques</p>
+                        <div className="flex flex-wrap gap-1">
+                          {parsedResult.filters.formesJuridiques.map((forme) => (
+                            <Badge key={forme} variant="outline" className="text-xs">{forme}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+
+              {/* Boutons d'action */}
+              <div className="flex gap-2 pt-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setParsedResult(null)} 
+                  className="flex-1"
+                  disabled={isSaving}
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Refaire
+                </Button>
+                <Button 
+                  onClick={handleConfirm} 
+                  disabled={isSaving}
+                  className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg shadow-green-500/20"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Création...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Valider et créer
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Conseil */}
+              <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
+                <AlertDescription className="text-xs text-blue-700 dark:text-blue-300">
+                  💡 <strong>Astuce :</strong> Si le parcours ne vous convient pas, cliquez sur "Refaire" pour reformuler votre demande.
+                </AlertDescription>
+              </Alert>
+            </div>
           ) : (
             <div className="space-y-4">
               <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
