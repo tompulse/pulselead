@@ -14,10 +14,12 @@ import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
+import { DataEnrichmentPanel } from "@/components/dashboard/DataEnrichmentPanel";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Filter, Loader2, CheckCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Filter, Loader2, CheckCircle, Database } from "lucide-react";
 import { format } from "date-fns";
 import { trackEntrepriseView } from "@/utils/analytics";
 import type { ApplyAIFiltersParams } from "@/components/dashboard/ProspectsView";
@@ -30,6 +32,7 @@ const DashboardContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [enrichmentOpen, setEnrichmentOpen] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -193,6 +196,26 @@ const DashboardContent = () => {
         isAdmin={isAdmin}
         onLogout={handleLogout}
       />
+
+      {/* Bouton d'enrichissement des données */}
+      {isAdmin && (
+        <div className="px-4 pt-2">
+          <Dialog open={enrichmentOpen} onOpenChange={setEnrichmentOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Database className="h-4 w-4" />
+                Enrichir les données
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Enrichissement automatique des données</DialogTitle>
+              </DialogHeader>
+              <DataEnrichmentPanel />
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
       
       <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
         <main className="flex-1 overflow-hidden min-h-0">
