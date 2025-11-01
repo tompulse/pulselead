@@ -15,10 +15,10 @@ async function getInseeToken(): Promise<string> {
     throw new Error('INSEE credentials not configured');
   }
 
-  // L'INSEE utilise un endpoint OAuth2 standard avec Basic Auth
+  // L'INSEE utilise l'endpoint /token avec Basic Auth
   const credentials = btoa(`${consumerKey}:${consumerSecret}`);
   
-  const response = await fetch('https://api.insee.fr/oauth/v2/token', {
+  const response = await fetch('https://api.insee.fr/token', {
     method: 'POST',
     headers: {
       'Authorization': `Basic ${credentials}`,
