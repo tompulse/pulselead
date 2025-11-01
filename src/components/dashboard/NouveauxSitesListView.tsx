@@ -61,38 +61,6 @@ export const NouveauxSitesListView = ({
 
   return (
     <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
-      {/* Pagination en haut */}
-      {totalItems > 0 && (
-        <div className="shrink-0 px-4 py-2 border-b border-accent/20 flex items-center justify-between bg-card/50">
-          <div className="text-xs text-muted-foreground">
-            Affichage {startIndex + 1}-{Math.min(endIndex, totalItems)} sur {totalItems.toLocaleString('fr-FR')} résultat{totalItems > 1 ? 's' : ''}
-          </div>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="h-7 w-7 p-0"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            <div className="text-xs px-2">
-              Page {currentPage} / {totalPages}
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="h-7 w-7 p-0"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Cards Grid */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2">
         {totalItems === 0 ? (
