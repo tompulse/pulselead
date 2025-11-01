@@ -255,6 +255,78 @@ export type Database = {
           },
         ]
       }
+      nouveaux_sites: {
+        Row: {
+          adresse: string | null
+          categorie_entreprise: string | null
+          categorie_juridique: string | null
+          code_naf: string | null
+          code_postal: string | null
+          complement_adresse: string | null
+          coordonnee_lambert_x: number | null
+          coordonnee_lambert_y: number | null
+          created_at: string | null
+          date_creation: string | null
+          est_siege: boolean | null
+          id: string
+          latitude: number | null
+          libelle_voie: string | null
+          longitude: number | null
+          nom: string
+          numero_voie: string | null
+          siret: string
+          type_voie: string | null
+          updated_at: string | null
+          ville: string | null
+        }
+        Insert: {
+          adresse?: string | null
+          categorie_entreprise?: string | null
+          categorie_juridique?: string | null
+          code_naf?: string | null
+          code_postal?: string | null
+          complement_adresse?: string | null
+          coordonnee_lambert_x?: number | null
+          coordonnee_lambert_y?: number | null
+          created_at?: string | null
+          date_creation?: string | null
+          est_siege?: boolean | null
+          id?: string
+          latitude?: number | null
+          libelle_voie?: string | null
+          longitude?: number | null
+          nom: string
+          numero_voie?: string | null
+          siret: string
+          type_voie?: string | null
+          updated_at?: string | null
+          ville?: string | null
+        }
+        Update: {
+          adresse?: string | null
+          categorie_entreprise?: string | null
+          categorie_juridique?: string | null
+          code_naf?: string | null
+          code_postal?: string | null
+          complement_adresse?: string | null
+          coordonnee_lambert_x?: number | null
+          coordonnee_lambert_y?: number | null
+          created_at?: string | null
+          date_creation?: string | null
+          est_siege?: boolean | null
+          id?: string
+          latitude?: number | null
+          libelle_voie?: string | null
+          longitude?: number | null
+          nom?: string
+          numero_voie?: string | null
+          siret?: string
+          type_voie?: string | null
+          updated_at?: string | null
+          ville?: string | null
+        }
+        Relationships: []
+      }
       qualification_status: {
         Row: {
           created_at: string | null

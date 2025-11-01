@@ -1,10 +1,15 @@
 import { useState, Dispatch, SetStateAction } from "react";
-import { List } from "lucide-react";
+import { List, Building, Factory } from "lucide-react";
 import { ListView } from "./ListView";
+import { NouveauxSitesListView } from "./NouveauxSitesListView";
 import { TourneeFilters } from "./TourneeFilters";
+import { NafFilters } from "./NafFilters";
 import { useTourneeManager } from "@/hooks/useTourneeManager";
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { nouveauxSitesService } from "@/services/nouveauxSitesService";
 
 interface ProspectsViewProps {
   filters: {
@@ -35,13 +40,31 @@ export const ProspectsView = ({
   onToggleSelection: externalOnToggleSelection,
 }: ProspectsViewProps) => {
   const { toast } = useToast();
+  const [activeView, setActiveView] = useState<'creations' | 'nouveaux-sites'>('creations');
   const [tourneeActive, setTourneeActive] = useState(false);
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState("");
   
+  // Filtres pour les créations
   const { entreprises, totalCount, qualifiedCount } = useDashboardData(filters);
-  
   const resultsCount = qualifiedCount ?? 0;
+
+  // Filtres pour les nouveaux sites
+  const [nouveauxSitesFilters, setNouveauxSitesFilters] = useState({
+    searchQuery: "",
+    codesNaf: [] as string[],
+    departments: [] as string[],
+    categoriesEntreprise: [] as string[]
+  });
+
+  const { data: nouveauxSitesData } = useQuery({
+    queryKey: ['nouveaux-sites', nouveauxSitesFilters],
+    queryFn: () => nouveauxSitesService.fetchNouveauxSites(nouveauxSitesFilters),
+    enabled: activeView === 'nouveaux-sites',
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const nouveauxSitesCount = nouveauxSitesData?.filteredCount ?? 0;
   
   const {
     selectedEntreprises,
@@ -113,44 +136,85 @@ export const ProspectsView = ({
 
   return (
     <div className="h-full flex flex-col overflow-hidden gap-3">
-      {/* Header */}
-      <div className="glass-card border-b border-accent/20 px-4 py-2.5 shrink-0 flex items-center justify-between">
-        <h2 className="text-base font-bold gradient-text flex items-center gap-2">
-          <div className="p-1.5 bg-accent/10 rounded-lg">
-            <List className="h-4 w-4 text-accent" />
-          </div>
-          Prospects
-        </h2>
+      {/* Header avec sélection de vue */}
+      <div className="glass-card border-b border-accent/20 px-4 py-2.5 shrink-0">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold gradient-text flex items-center gap-2">
+            <div className="p-1.5 bg-accent/10 rounded-lg">
+              <List className="h-4 w-4 text-accent" />
+            </div>
+            Prospects
+          </h2>
+        </div>
+        
+        {/* Boutons de sélection de vue */}
+        <div className="flex gap-2 mt-3">
+          <Button
+            variant={activeView === 'creations' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setActiveView('creations')}
+            className="flex-1"
+          >
+            <Building className="w-4 h-4 mr-2" />
+            Créations
+            <span className="ml-2 text-xs opacity-70">({resultsCount})</span>
+          </Button>
+          <Button
+            variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setActiveView('nouveaux-sites')}
+            className="flex-1"
+          >
+            <Factory className="w-4 h-4 mr-2" />
+            Nouveaux Sites
+            <span className="ml-2 text-xs opacity-70">({nouveauxSitesCount})</span>
+          </Button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
         {/* Filtres */}
         <div className="w-80 shrink-0 glass-card overflow-y-auto">
-          <TourneeFilters
-            filters={filters}
-            setFilters={setFilters}
-            tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
-            onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
-            tourneeName={tourneeName}
-            setTourneeName={setTourneeName}
-            tourneeDate={tourneeDate}
-            setTourneeDate={setTourneeDate}
-            selectedCount={selectedEntreprises.length}
-            onOptimize={handleOptimize}
-            isOptimizing={isOptimizing}
-            resultsCount={resultsCount}
-          />
+          {activeView === 'creations' ? (
+            <TourneeFilters
+              filters={filters}
+              setFilters={setFilters}
+              tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
+              onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
+              tourneeName={tourneeName}
+              setTourneeName={setTourneeName}
+              tourneeDate={tourneeDate}
+              setTourneeDate={setTourneeDate}
+              selectedCount={selectedEntreprises.length}
+              onOptimize={handleOptimize}
+              isOptimizing={isOptimizing}
+              resultsCount={resultsCount}
+            />
+          ) : (
+            <NafFilters
+              filters={nouveauxSitesFilters}
+              setFilters={setNouveauxSitesFilters}
+              resultsCount={nouveauxSitesCount}
+            />
+          )}
         </div>
 
         {/* Content - Liste */}
-        <div className="flex-1 overflow-hidden min-h-0">
-          <ListView
-            filters={filters}
-            onEntrepriseSelect={onEntrepriseSelect}
-            selectionMode={internalSelectionMode}
-            selectedEntreprises={internalSelectedEntreprises}
-            onToggleSelection={internalOnToggleSelection}
-          />
+        <div className="flex-1 overflow-hidden min-h-0 glass-card">
+          {activeView === 'creations' ? (
+            <ListView
+              filters={filters}
+              onEntrepriseSelect={onEntrepriseSelect}
+              selectionMode={internalSelectionMode}
+              selectedEntreprises={internalSelectedEntreprises}
+              onToggleSelection={internalOnToggleSelection}
+            />
+          ) : (
+            <NouveauxSitesListView
+              filters={nouveauxSitesFilters}
+              onSiteSelect={onEntrepriseSelect}
+            />
+          )}
         </div>
       </div>
     </div>

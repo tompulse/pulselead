@@ -5,6 +5,8 @@ import { Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import JSZip from "jszip";
 
 export const ImportDialog = () => {
@@ -12,19 +14,32 @@ export const ImportDialog = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [importType, setImportType] = useState<'entreprises' | 'nouveaux-sites'>('entreprises');
   const { toast } = useToast();
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.name.endsWith('.json') && !file.name.endsWith('.zip')) {
-      toast({
-        title: "Format invalide",
-        description: "Veuillez sélectionner un fichier JSON ou ZIP",
-        variant: "destructive",
-      });
-      return;
+    // Vérifier le format selon le type d'import
+    if (importType === 'nouveaux-sites') {
+      if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.csv')) {
+        toast({
+          title: "Format invalide",
+          description: "Pour les nouveaux sites, veuillez sélectionner un fichier Excel (.xlsx) ou CSV",
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      if (!file.name.endsWith('.json') && !file.name.endsWith('.zip')) {
+        toast({
+          title: "Format invalide",
+          description: "Pour les créations, veuillez sélectionner un fichier JSON ou ZIP",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setLoading(true);
@@ -32,6 +47,41 @@ export const ImportDialog = () => {
     setResult(null);
 
     try {
+      // Import de nouveaux sites (Excel/CSV)
+      if (importType === 'nouveaux-sites') {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        setProgress(30);
+
+        const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
+          body: formData
+        });
+
+        if (error) throw error;
+
+        setProgress(100);
+
+        const successMessage = `${responseData.inserted} sites importés avec succès${responseData.errors > 0 ? ` (${responseData.errors} échecs)` : ''}`;
+        
+        setResult({
+          success: true,
+          message: successMessage
+        });
+
+        toast({
+          title: "✅ Import réussi",
+          description: successMessage,
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+
+        return;
+      }
+
+      // Import d'entreprises classiques (JSON/ZIP)
       let text: string;
       
       // Si c'est un fichier ZIP, extraire le JSON
@@ -167,8 +217,30 @@ export const ImportDialog = () => {
         </DialogHeader>
         
         <div className="space-y-4">
+          {/* Sélection du type d'import */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Type de données à importer</Label>
+            <RadioGroup value={importType} onValueChange={(v) => setImportType(v as any)}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="entreprises" id="type-entreprises" />
+                <Label htmlFor="type-entreprises" className="font-normal cursor-pointer">
+                  Créations d'entreprises (JSON/ZIP)
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="nouveaux-sites" id="type-nouveaux-sites" />
+                <Label htmlFor="type-nouveaux-sites" className="font-normal cursor-pointer">
+                  Nouveaux sites (Excel/CSV)
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+
           <div className="text-sm text-muted-foreground">
-            Sélectionnez un fichier JSON ou ZIP (contenant un JSON) avec un tableau d'entreprises à importer.
+            {importType === 'entreprises' 
+              ? "Sélectionnez un fichier JSON ou ZIP (contenant un JSON) avec un tableau d'entreprises à importer."
+              : "Sélectionnez un fichier Excel (.xlsx) ou CSV avec les données des nouveaux sites (avec codes NAF, coordonnées Lambert, etc.)."
+            }
           </div>
 
           {loading && (
@@ -198,7 +270,7 @@ export const ImportDialog = () => {
           <div className="flex flex-col gap-2">
             <input
               type="file"
-              accept=".json,.zip"
+              accept={importType === 'entreprises' ? '.json,.zip' : '.xlsx,.csv'}
               onChange={handleFileSelect}
               disabled={loading}
               className="hidden"
@@ -213,7 +285,12 @@ export const ImportDialog = () => {
               >
                 <span>
                   <Upload className="w-4 h-4 mr-2" />
-                  {loading ? 'Import en cours...' : 'Sélectionner un fichier (JSON/ZIP)'}
+                  {loading 
+                    ? 'Import en cours...' 
+                    : importType === 'entreprises' 
+                      ? 'Sélectionner un fichier (JSON/ZIP)'
+                      : 'Sélectionner un fichier (Excel/CSV)'
+                  }
                 </span>
               </Button>
             </label>
@@ -221,7 +298,8 @@ export const ImportDialog = () => {
 
           <div className="text-xs text-muted-foreground">
             <p className="font-semibold mb-1">Format attendu :</p>
-            <pre className="bg-muted p-2 rounded text-[10px] overflow-x-auto">
+            {importType === 'entreprises' ? (
+              <pre className="bg-muted p-2 rounded text-[10px] overflow-x-auto">
 {`[
   {
     "nom": "Entreprise",
@@ -230,7 +308,18 @@ export const ImportDialog = () => {
     ...
   }
 ]`}
-            </pre>
+              </pre>
+            ) : (
+              <pre className="bg-muted p-2 rounded text-[10px] overflow-x-auto">
+{`Colonnes Excel requises:
+- siret
+- Entreprise (nom)
+- activitePrincipaleEtablissement (code NAF)
+- coordonneeLambertAbscisseEtablissement (Lambert X)
+- coordonneeLambertOrdonneeEtablissement (Lambert Y)
+- ...`}
+              </pre>
+            )}
           </div>
         </div>
       </DialogContent>
