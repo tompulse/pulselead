@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import JSZip from "jszip";
+import * as XLSX from "xlsx";
 
 export const ImportDialog = () => {
   const [open, setOpen] = useState(false);
@@ -49,20 +50,45 @@ export const ImportDialog = () => {
     try {
       // Import de nouveaux sites (Excel/CSV)
       if (importType === 'nouveaux-sites') {
-        const formData = new FormData();
-        formData.append('file', file);
+        setProgress(20);
 
-        setProgress(30);
+        // Lire et parser le fichier Excel côté client
+        const buffer = await file.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-        const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
-          body: formData
-        });
+        setProgress(40);
+        console.log(`📊 Parsed ${jsonData.length} rows from Excel`);
 
-        if (error) throw error;
+        // Envoyer les données en JSON à l'edge function par batch de 1000
+        const BATCH_SIZE = 1000;
+        let totalInserted = 0;
+        let totalErrors = 0;
+
+        for (let i = 0; i < jsonData.length; i += BATCH_SIZE) {
+          const batch = jsonData.slice(i, i + BATCH_SIZE);
+          
+          const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
+            body: { entreprises: batch }
+          });
+
+          if (error) {
+            console.error(`❌ Batch error:`, error);
+            totalErrors += batch.length;
+          } else {
+            totalInserted += responseData?.inserted || 0;
+            totalErrors += responseData?.errors || 0;
+          }
+
+          const progress = 40 + Math.floor((i + batch.length) / jsonData.length * 60);
+          setProgress(progress);
+        }
 
         setProgress(100);
 
-        const successMessage = `${responseData.inserted} sites importés avec succès${responseData.errors > 0 ? ` (${responseData.errors} échecs)` : ''}`;
+        const successMessage = `${totalInserted} sites importés avec succès${totalErrors > 0 ? ` (${totalErrors} échecs)` : ''}`;
         
         setResult({
           success: true,
