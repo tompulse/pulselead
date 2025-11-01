@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { entrepriseService, EntrepriseFilters } from '@/services/entrepriseService';
@@ -6,11 +6,22 @@ import { entrepriseService, EntrepriseFilters } from '@/services/entrepriseServi
 export const useDashboardData = (filters: EntrepriseFilters) => {
   const queryClient = useQueryClient();
 
-  const { data: entreprises, isLoading, error } = useQuery({
+  const { 
+    data, 
+    isLoading, 
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
     queryKey: ['entreprises', filters],
-    queryFn: () => entrepriseService.fetchEntreprises(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutes - longer cache for better performance
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    queryFn: ({ pageParam = 0 }) => entrepriseService.fetchEntreprises(filters, pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.hasMore ? allPages.length : undefined;
+    },
+    initialPageParam: 0,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   const enrichMutation = useMutation({
@@ -42,12 +53,17 @@ export const useDashboardData = (filters: EntrepriseFilters) => {
     };
   }, [queryClient]);
 
+  const allEntreprises = data?.pages.flatMap(page => page.data) || [];
+  const totalCount = data?.pages[0]?.total || 0;
+
   return {
-    entreprises: entreprises?.data || [],
-    totalCount: entreprises?.total,
-    qualifiedCount: entreprises?.qualifiedCount,
+    entreprises: allEntreprises,
+    totalCount,
     isLoading,
-    error: error || entreprises?.error,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     enrichEntreprise: enrichMutation.mutate,
     isEnriching: enrichMutation.isPending
   };

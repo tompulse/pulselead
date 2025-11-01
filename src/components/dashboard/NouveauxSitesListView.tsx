@@ -1,14 +1,12 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Card } from "@/components/ui/card";
+import { useEffect } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { MapPin, Building2, Calendar, Factory, ChevronLeft, ChevronRight, User, Phone, Mail, Navigation, Briefcase } from "lucide-react";
+import { MapPin, Building2, Calendar, Factory, Loader2 } from "lucide-react";
 import { nouveauxSitesService, NouveauxSitesFilters } from "@/services/nouveauxSitesService";
 import { getNafCategory } from "@/utils/nafCategories";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { openGoogleMaps } from "@/utils/navigation";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
@@ -25,28 +23,30 @@ export const NouveauxSitesListView = ({
   selectedSites = [],
   onToggleSelection
 }: NouveauxSitesListViewProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 50;
-
-  const { data: sitesData, isLoading } = useQuery({
+  const { 
+    data, 
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
     queryKey: ['nouveaux-sites', filters],
-    queryFn: () => nouveauxSitesService.fetchNouveauxSites(filters),
+    queryFn: ({ pageParam = 0 }) => nouveauxSitesService.fetchNouveauxSites(filters, pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.hasMore ? allPages.length : undefined;
+    },
+    initialPageParam: 0,
     staleTime: 5 * 60 * 1000,
   });
 
-  // Réinitialiser la page quand les filtres changent
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
+  const allSites = data?.pages.flatMap(page => page.data) || [];
+  const totalCount = data?.pages[0]?.total || 0;
 
-  const allSites = sitesData?.data || [];
-  const totalItems = allSites.length;
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  
-  // Calculer les items à afficher pour la page actuelle
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const displayedSites = allSites.slice(startIndex, endIndex);
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: fetchNextPage,
+    hasMore: !!hasNextPage,
+    isLoading: isFetchingNextPage,
+  });
 
   if (isLoading) {
     return (
@@ -61,9 +61,13 @@ export const NouveauxSitesListView = ({
 
   return (
     <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
-      {/* Cards Grid */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2">
-        {totalItems === 0 ? (
+        {isLoading && allSites.length === 0 ? (
+          <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto text-accent mb-4" />
+            <p className="text-muted-foreground text-lg">Chargement des sites...</p>
+          </div>
+        ) : allSites.length === 0 ? (
           <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
             <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
               <Factory className="w-20 h-20 text-accent opacity-50" />
@@ -74,8 +78,9 @@ export const NouveauxSitesListView = ({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">
-            {displayedSites.map((site) => {
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">
+              {allSites.map((site) => {
               const nafInfo = getNafCategory(site.code_naf);
               const hasCoordinates = site.latitude && site.longitude;
               const isSelected = selectedSites.some(s => s.id === site.id);
@@ -189,6 +194,19 @@ export const NouveauxSitesListView = ({
               );
             })}
           </div>
+
+          {/* Sentinel for infinite scroll */}
+          <div ref={sentinelRef} className="h-20 flex items-center justify-center">
+            {isFetchingNextPage && (
+              <Loader2 className="w-8 h-8 animate-spin text-accent" />
+            )}
+          </div>
+
+          {/* Display total count */}
+          <div className="text-center py-4 text-sm text-muted-foreground">
+            {allSites.length} / {totalCount} sites affichés
+          </div>
+        </>
         )}
       </div>
     </div>

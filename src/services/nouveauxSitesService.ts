@@ -8,23 +8,29 @@ export interface NouveauxSitesFilters {
 }
 
 export const nouveauxSitesService = {
-  async fetchNouveauxSites(filters: NouveauxSitesFilters = {}) {
+  async fetchNouveauxSites(filters: NouveauxSitesFilters = {}, page = 0, pageSize = 50) {
     try {
-      // Query pour compter TOUS les sites (sans filtres) pour le total
-      const { count: totalCount } = await supabase
-        .from('nouveaux_sites')
-        .select('*', { count: 'exact', head: true });
-
       let query = supabase
         .from('nouveaux_sites')
-        .select('*', { count: 'exact' });
+        .select('*', { count: 'exact' })
+        .order('date_creation', { ascending: false })
+        .range(page * pageSize, (page + 1) * pageSize - 1);
+
+      // Server-side search across common fields
+      if (filters.searchQuery && filters.searchQuery.trim()) {
+        const q = filters.searchQuery.trim();
+        const like = `%${q}%`;
+        query = query.or(
+          `nom.ilike.${like},ville.ilike.${like},adresse.ilike.${like},siret.eq.${q},code_naf.ilike.${like}`
+        );
+      }
 
       // Filtre par catégorie détaillée
       if (filters.categories && filters.categories.length > 0) {
         query = query.in('categorie_detaillee', filters.categories);
       }
 
-      // Filtre par département (AND avec les catégories)
+      // Filtre par département
       if (filters.departments && filters.departments.length > 0) {
         const deptConditions = filters.departments.map(dept => 
           `code_postal.ilike.${dept}%`
@@ -32,7 +38,7 @@ export const nouveauxSitesService = {
         query = query.or(deptConditions);
       }
 
-      // Filtre par code NAF (AND avec les autres)
+      // Filtre par code NAF
       if (filters.codesNaf && filters.codesNaf.length > 0) {
         const nafConditions = filters.codesNaf.map(code => 
           `code_naf.ilike.${code}%`
@@ -44,24 +50,10 @@ export const nouveauxSitesService = {
 
       if (error) throw error;
 
-      // Filtrage client pour la recherche textuelle
-      let filteredData = data || [];
-
-      if (filters.searchQuery && filters.searchQuery.trim()) {
-        const searchLower = filters.searchQuery.toLowerCase().trim();
-        filteredData = filteredData.filter(site =>
-          site.nom?.toLowerCase().includes(searchLower) ||
-          site.ville?.toLowerCase().includes(searchLower) ||
-          site.adresse?.toLowerCase().includes(searchLower) ||
-          site.siret?.includes(searchLower) ||
-          site.code_naf?.toLowerCase().includes(searchLower)
-        );
-      }
-
       return {
-        data: filteredData,
-        total: totalCount || 0, // Total de TOUS les sites dans la DB
-        filteredCount: filteredData.length, // Nombre après filtres
+        data: data || [],
+        total: count || 0,
+        hasMore: data && data.length === pageSize,
         error: null
       };
     } catch (error) {

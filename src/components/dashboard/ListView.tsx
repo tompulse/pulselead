@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Building2, Navigation, MapPin, User, Calendar, Briefcase, Mail, Loader2, Building, Users, TrendingUp } from "lucide-react";
 import { useEffect, useState, useMemo, memo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryFromNaf } from "@/utils/detailedCategories";
@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 interface ListViewProps {
   filters: {
@@ -66,10 +67,7 @@ export const ListView = ({
   selectedEntreprises = [],
   onToggleSelection
 }: ListViewProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 50;
-  
-  const [crmData, setCrmData] = useState<Record<string, { 
+  const [crmData, setCrmData] = useState<Record<string, {
     status: any; 
     interactionCount: number; 
     hasUpcomingAction: boolean;
@@ -80,8 +78,19 @@ export const ListView = ({
   const isMobile = useIsMobile();
   const { toast } = useToast();
   
-  // Use the dashboard data hook with the service
-  const { entreprises, isLoading: loading } = useDashboardData(filters);
+  const { 
+    entreprises, 
+    isLoading: loading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useDashboardData(filters);
+
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: fetchNextPage,
+    hasMore: !!hasNextPage,
+    isLoading: isFetchingNextPage,
+  });
 
   useEffect(() => {
     // Fetch CRM data for all entreprises
@@ -165,33 +174,6 @@ export const ListView = ({
     };
   }, [filters]);
 
-  // Debounce search query for better performance
-  const debouncedSearchQuery = useDebounce(filters.searchQuery || "", 300);
-  
-  // Filter by search query with useMemo for optimization
-  const filteredEntreprises = useMemo(() => {
-    if (!debouncedSearchQuery) return entreprises;
-    const query = debouncedSearchQuery.toLowerCase();
-    return entreprises.filter((ent) =>
-      ent.nom?.toLowerCase().includes(query) ||
-      ent.ville?.toLowerCase().includes(query) ||
-      ent.code_postal?.includes(query) ||
-      ent.activite?.toLowerCase().includes(query) ||
-      ent.forme_juridique?.toLowerCase().includes(query)
-    );
-  }, [entreprises, debouncedSearchQuery]);
-
-  // Réinitialiser la page quand les filtres changent
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters, debouncedSearchQuery]);
-
-  // Pagination
-  const totalItems = filteredEntreprises.length;
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const displayedEntreprises = filteredEntreprises.slice(startIndex, endIndex);
 
   const getCategoryInfo = useCallback((activity: string | null, qualifiedCategory?: string | null): { emoji: string; label: string } => {
     const category = categorizeActivity(activity, qualifiedCategory);
@@ -332,34 +314,28 @@ export const ListView = ({
     }
   };
 
-  if (loading) {
-    return (
-      <div className="glass-card rounded-2xl p-12 flex items-center justify-center shadow-2xl border border-accent/20">
-        <div className="text-center space-y-4">
-          <div className="animate-spin w-12 h-12 border-4 border-accent border-t-transparent rounded-full mx-auto" />
-          <p className="text-muted-foreground font-medium">Chargement des données...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <>
-      <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
-        {/* Cards Grid - Scrollable */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2">
-          {totalItems === 0 ? (
-            <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
-              <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
-                <Building2 className="w-20 h-20 text-accent opacity-50" />
-              </div>
-              <h3 className="text-2xl font-bold mb-3">Aucune entreprise trouvée</h3>
-              <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                {filters.searchQuery ? "Essayez de modifier votre recherche" : "Cliquez sur 'Synchroniser les données' pour importer vos entreprises"}
-              </p>
+    <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2">
+        {loading && entreprises.length === 0 ? (
+          <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto text-accent mb-4" />
+            <p className="text-muted-foreground text-lg">Chargement des données...</p>
+          </div>
+        ) : entreprises.length === 0 ? (
+          <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
+            <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
+              <Building2 className="w-20 h-20 text-accent opacity-50" />
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">{displayedEntreprises.map((item) => {
+            <h3 className="text-2xl font-bold mb-3">Aucune entreprise trouvée</h3>
+            <p className="text-muted-foreground text-lg max-w-md mx-auto">
+              {filters.searchQuery ? "Essayez de modifier votre recherche" : "Cliquez sur 'Synchroniser les données' pour importer vos entreprises"}
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">
+              {entreprises.map((item) => {
                 const hasCoordinates = item.latitude && item.longitude;
                 const categoryInfo = getCategoryInfo(item.activite, item.categorie_qualifiee);
                 const crm = crmData[item.id];
@@ -506,9 +482,16 @@ export const ListView = ({
                 );
               })}
             </div>
-          )}
-        </div>
+
+            {/* Sentinel for infinite scroll */}
+            <div ref={sentinelRef} className="h-20 flex items-center justify-center">
+              {isFetchingNextPage && (
+                <Loader2 className="w-8 h-8 animate-spin text-accent" />
+              )}
+            </div>
+          </>
+        )}
       </div>
-    </>
+    </div>
   );
 };

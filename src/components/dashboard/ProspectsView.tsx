@@ -81,8 +81,8 @@ export const ProspectsView = ({
   const { isAdmin } = useAdminStatus();
   
   // Filtres pour les créations
-  const { entreprises, totalCount, qualifiedCount } = useDashboardData(filters);
-  const resultsCount = qualifiedCount ?? 0;
+  const { entreprises, totalCount } = useDashboardData(filters);
+  const resultsCount = entreprises.length;
 
   // Filtres pour les nouveaux sites
   const [nouveauxSitesFilters, setNouveauxSitesFilters] = useState({
