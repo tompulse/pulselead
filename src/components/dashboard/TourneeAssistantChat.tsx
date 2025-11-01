@@ -220,18 +220,18 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
           <Bot className="h-6 w-6" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-accent" />
-            Assistant IA - Création de tournée
+            Assistant IA
           </DialogTitle>
           <DialogDescription>
-            Décrivez votre tournée en une phrase, l'IA s'occupe du reste.
+            Créez votre tournée en discutant avec l'IA
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col h-[600px]">
+        <div className="flex flex-col h-[450px]">
           {/* Messages history */}
           <ScrollArea className="flex-1 p-4">
             {messages.length === 0 ? (
