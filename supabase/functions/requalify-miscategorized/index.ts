@@ -6,34 +6,39 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+async function processRequalification() {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-  try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
+  let successCount = 0;
+  let errorCount = 0;
+  let processedCount = 0;
+  const batchSize = 20;
+  let hasMore = true;
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  console.log('Starting background requalification...');
 
-    // Fetch miscategorized businesses (resto-restaurant with NULL NAF code)
+  while (hasMore) {
     const { data: entreprises, error: fetchError } = await supabase
       .from('entreprises')
       .select('id, nom, activite, categorie_qualifiee, categorie_detaillee')
       .eq('categorie_detaillee', 'resto-restaurant')
       .is('code_naf', null)
-      .limit(100); // Process in batches
+      .limit(batchSize);
 
-    if (fetchError) throw fetchError;
+    if (fetchError) {
+      console.error('Fetch error:', fetchError);
+      break;
+    }
 
-    console.log(`Found ${entreprises?.length || 0} miscategorized businesses`);
+    if (!entreprises || entreprises.length === 0) {
+      hasMore = false;
+      break;
+    }
 
-    let successCount = 0;
-    let errorCount = 0;
-
-    for (const entreprise of entreprises || []) {
+    for (const entreprise of entreprises) {
       try {
         const prompt = `Analyse cette entreprise et détermine sa VRAIE catégorie d'activité principale.
 
@@ -88,7 +93,7 @@ Réponds UNIQUEMENT avec le nom de la catégorie, sans explication.`;
 
         console.log(`${entreprise.nom} → ${newCategory}`);
 
-        // Update only if category changed
+        // Update only if category changed and is not restauration
         if (newCategory !== entreprise.categorie_qualifiee && newCategory !== 'restauration') {
           const { error: updateError } = await supabase
             .from('entreprises')
@@ -107,18 +112,46 @@ Réponds UNIQUEMENT avec le nom de la catégorie, sans explication.`;
           }
         }
 
+        processedCount++;
+        
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+
       } catch (error) {
         console.error(`Error processing ${entreprise.id}:`, error);
         errorCount++;
       }
     }
 
+    console.log(`Batch complete: ${processedCount} processed, ${successCount} requalified, ${errorCount} errors`);
+    
+    // If we got fewer than batchSize, we're done
+    if (entreprises.length < batchSize) {
+      hasMore = false;
+    }
+  }
+
+  console.log(`Requalification complete: ${processedCount} processed, ${successCount} requalified, ${errorCount} errors`);
+  return { processedCount, successCount, errorCount };
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    // Start background task - let it run without awaiting
+    processRequalification().catch(err => {
+      console.error('Background requalification error:', err);
+    });
+
+    // Return immediate response
     return new Response(
       JSON.stringify({ 
         success: true, 
-        processed: entreprises?.length || 0,
-        requalified: successCount,
-        errors: errorCount
+        message: 'Re-qualification lancée en arrière-plan',
+        status: 'processing'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
