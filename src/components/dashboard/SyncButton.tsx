@@ -9,6 +9,7 @@ import { QualificationProgress } from "./QualificationProgress";
 export const SyncButton = () => {
   const [loading, setLoading] = useState(false);
   const [requalifying, setRequalifying] = useState(false);
+  const [harmonizing, setHarmonizing] = useState(false);
   const { toast } = useToast();
 
   const handleSync = async () => {
@@ -62,6 +63,30 @@ export const SyncButton = () => {
       });
     } finally {
       setRequalifying(false);
+    }
+  };
+
+  const handleHarmonize = async () => {
+    setHarmonizing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("harmonize-categories");
+      if (error) throw error;
+      toast({
+        title: "✅ Harmonisation terminée",
+        description: `${data?.successCount || 0} mises à jour, ${data?.errorCount || 0} erreurs`,
+        duration: 3000,
+      });
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (error) {
+      console.error("Erreur d'harmonisation:", error);
+      toast({
+        title: "❌ Erreur d'harmonisation",
+        description: error instanceof Error ? error.message : "Erreur inconnue",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setHarmonizing(false);
     }
   };
 

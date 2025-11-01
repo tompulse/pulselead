@@ -198,6 +198,60 @@ function getCategoryFromNaf(codeNaf: string): string | null {
   return null;
 }
 
+// Helpers: normalize, priority keyword mapping and keyword-based categorization
+function normalize(input: string | null | undefined): string {
+  return (input ?? '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+}
+
+const PRIORITY_MAPPINGS: Array<{ regex: RegExp; key: string }> = [
+  { regex: /\bagence(s)?\s+immobili(e|er|ere|ers|eres|eres)?\b/, key: 'immo-agence' },
+  { regex: /\bimmobili(e|er|ere|ers|eres)?\b/, key: 'immo-agence' },
+  { regex: /\bcoiff(eur|ure|eurs|ures)\b/, key: 'service-coiffeur' },
+  { regex: /\bboulanger(ie|ies)?\b|\bpatisser(ie|ies)?\b/, key: 'alimentaire-boulangerie' },
+  { regex: /\b(bar|cafe|cafes|brasserie|brasseries|pub)\b/, key: 'resto-bar' },
+  { regex: /\brestaurant(s)?\b/, key: 'resto-restaurant' },
+  { regex: /\bpharmaci(e|en|enne|ens|ennes)?\b/, key: 'commerce-pharmacie' },
+  { regex: /\bopticien(s)?\b|\boptique\b/, key: 'commerce-optique' },
+];
+
+function getCategoryFromKeywords(nom?: string | null, activite?: string | null): string | null {
+  const text = normalize(`${nom ?? ''} ${activite ?? ''}`);
+  if (!text.trim()) return null;
+
+  // 1) Priority phrases first
+  for (const { regex, key } of PRIORITY_MAPPINGS) {
+    if (regex.test(text)) return key;
+  }
+
+  // 2) Score-based by keywords across all detailed categories
+  let bestKey: string | null = null;
+  let bestScore = 0;
+
+  for (const cat of DETAILED_CATEGORIES) {
+    let score = 0;
+    for (const raw of cat.keywords) {
+      const kw = normalize(raw);
+      if (!kw) continue;
+      // word boundary for short keywords, plain contains for long
+      if (kw.length <= 4) {
+        const boundaryRegex = new RegExp(`(^|\\b)${kw}(\\b|$)`, 'g');
+        if (boundaryRegex.test(text)) score += 1;
+      } else {
+        if (text.includes(kw)) score += 1;
+      }
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = cat.key;
+    }
+  }
+
+  // Require a minimal confidence (>=2 hits) to avoid false positives
+  if (bestScore >= 2) return bestKey;
+  return null;
+}
+
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -211,21 +265,23 @@ serve(async (req) => {
     let successCount = 0;
     let errorCount = 0;
 
-    // 1. Harmoniser les nouveaux_sites basé sur code_naf
+    // 1. Harmoniser les nouveaux_sites basé sur NAF puis mots-clés (nom)
     console.log('Harmonizing nouveaux_sites...');
     const { data: nouveauxSites, error: nsError } = await supabase
       .from('nouveaux_sites')
-      .select('id, code_naf')
-      .not('code_naf', 'is', null);
+      .select('id, code_naf, nom, categorie_detaillee');
 
     if (nsError) throw nsError;
 
     for (const site of nouveauxSites || []) {
-      const category = getCategoryFromNaf(site.code_naf);
-      if (category) {
+      const nafCategory = site.code_naf ? getCategoryFromNaf(site.code_naf) : null;
+      const keywordCategory = getCategoryFromKeywords(site.nom, null);
+      const newCategory = nafCategory || keywordCategory;
+
+      if (newCategory && newCategory !== site.categorie_detaillee) {
         const { error } = await supabase
           .from('nouveaux_sites')
-          .update({ categorie_detaillee: category })
+          .update({ categorie_detaillee: newCategory })
           .eq('id', site.id);
 
         if (error) {
@@ -237,31 +293,24 @@ serve(async (req) => {
       }
     }
 
-    // 2. Harmoniser les entreprises basé sur code_naf et categorie_qualifiee
+    // 2. Harmoniser les entreprises basé sur NAF, mots-clés (nom/activité), puis categorie_qualifiee
     console.log('Harmonizing entreprises...');
     const { data: entreprises, error: entError } = await supabase
       .from('entreprises')
-      .select('id, categorie_qualifiee, code_naf');
+      .select('id, categorie_qualifiee, code_naf, nom, activite, categorie_detaillee');
 
     if (entError) throw entError;
 
     for (const entreprise of entreprises || []) {
-      let category = null;
+      const nafCategory = entreprise.code_naf ? getCategoryFromNaf(entreprise.code_naf) : null;
+      const keywordCategory = getCategoryFromKeywords(entreprise.nom, entreprise.activite);
+      const qualifCategory = entreprise.categorie_qualifiee ? QUALIF_TO_DETAILED[entreprise.categorie_qualifiee] : null;
+      const newCategory = nafCategory || keywordCategory || qualifCategory;
       
-      // Essayer d'abord avec le code NAF
-      if (entreprise.code_naf) {
-        category = getCategoryFromNaf(entreprise.code_naf);
-      }
-      
-      // Sinon, mapper depuis categorie_qualifiee
-      if (!category && entreprise.categorie_qualifiee) {
-        category = QUALIF_TO_DETAILED[entreprise.categorie_qualifiee];
-      }
-      
-      if (category) {
+      if (newCategory && newCategory !== entreprise.categorie_detaillee) {
         const { error } = await supabase
           .from('entreprises')
-          .update({ categorie_detaillee: category })
+          .update({ categorie_detaillee: newCategory })
           .eq('id', entreprise.id);
 
         if (error) {
