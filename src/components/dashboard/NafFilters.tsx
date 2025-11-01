@@ -50,6 +50,7 @@ export const NafFilters = ({
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [categoriesEntrepriseOpen, setCategoriesEntrepriseOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
+  const [nafSectorsOpen, setNafSectorsOpen] = useState(true);
   
   const { isAdmin } = useAdminStatus();
 
@@ -247,66 +248,70 @@ export const NafFilters = ({
       </Collapsible>
 
       {/* Secteurs d'activité NAF */}
-      <div className="border-b border-accent/20">
-        <div className="px-4 py-3">
-          <Label className="font-medium text-sm">Secteurs d'activité NAF</Label>
-        </div>
-        <ScrollArea className="h-[calc(100vh-400px)] overscroll-contain">
-          <div className="px-4 pb-4 space-y-1">
-            {Object.entries(NAF_CATEGORIES).map(([categoryKey, category]) => {
-              const isExpanded = expandedCategories[categoryKey];
-              const selectedInCategory = category.codes.filter(code => 
-                filters.codesNaf?.includes(code.code)
-              ).length;
+      <Collapsible open={nafSectorsOpen} onOpenChange={setNafSectorsOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <span className="font-medium text-sm">Secteurs d'activité NAF</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${nafSectorsOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <ScrollArea className="h-[calc(100vh-400px)] overscroll-contain">
+            <div className="px-4 pb-4 space-y-1">
+              {Object.entries(NAF_CATEGORIES).map(([categoryKey, category]) => {
+                const isExpanded = expandedCategories[categoryKey];
+                const selectedInCategory = category.codes.filter(code => 
+                  filters.codesNaf?.includes(code.code)
+                ).length;
 
-              return (
-                <div key={categoryKey} className="border-b border-accent/10 last:border-0 pb-2">
-                  {/* En-tête de catégorie */}
-                  <div
-                    onClick={() => setExpandedCategories(prev => ({ ...prev, [categoryKey]: !isExpanded }))}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2 rounded transition-colors"
-                  >
-                    <ChevronDown className={`h-4 w-4 text-accent transition-transform shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
-                    <span className="text-lg">{category.emoji}</span>
-                    <span className="text-sm font-medium flex-1">{category.label}</span>
-                    {selectedInCategory > 0 && (
-                      <span className="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full">
-                        {selectedInCategory}
-                      </span>
+                return (
+                  <div key={categoryKey} className="border-b border-accent/10 last:border-0 pb-2">
+                    {/* En-tête de catégorie */}
+                    <div
+                      onClick={() => setExpandedCategories(prev => ({ ...prev, [categoryKey]: !isExpanded }))}
+                      className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2 rounded transition-colors"
+                    >
+                      <ChevronDown className={`h-4 w-4 text-accent transition-transform shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
+                      <span className="text-lg">{category.emoji}</span>
+                      <span className="text-sm font-medium flex-1">{category.label}</span>
+                      {selectedInCategory > 0 && (
+                        <span className="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full">
+                          {selectedInCategory}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Codes NAF de la catégorie */}
+                    {isExpanded && (
+                      <div className="ml-6 mt-1 space-y-1">
+                        {category.codes.map((code) => {
+                          const selected = filters.codesNaf?.includes(code.code);
+                          return (
+                            <div
+                              key={code.code}
+                              onClick={() => handleNafToggle(code.code)}
+                              className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
+                            >
+                              <div className={`w-4 h-4 mt-0.5 rounded border-2 flex items-center justify-center shrink-0 ${
+                                selected ? 'bg-accent border-accent' : 'border-accent/30'
+                              }`}>
+                                {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs font-mono text-accent">{code.code}</div>
+                                <div className="text-xs text-muted-foreground leading-tight">{code.label}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
-
-                  {/* Codes NAF de la catégorie */}
-                  {isExpanded && (
-                    <div className="ml-6 mt-1 space-y-1">
-                      {category.codes.map((code) => {
-                        const selected = filters.codesNaf?.includes(code.code);
-                        return (
-                          <div
-                            key={code.code}
-                            onClick={() => handleNafToggle(code.code)}
-                            className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
-                          >
-                            <div className={`w-4 h-4 mt-0.5 rounded border-2 flex items-center justify-center shrink-0 ${
-                              selected ? 'bg-accent border-accent' : 'border-accent/30'
-                            }`}>
-                              {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-xs font-mono text-accent">{code.code}</div>
-                              <div className="text-xs text-muted-foreground leading-tight">{code.label}</div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </ScrollArea>
-      </div>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 };
