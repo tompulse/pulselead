@@ -136,39 +136,39 @@ export const ProspectsView = ({
 
   return (
     <div className="h-full flex flex-col overflow-hidden gap-3">
-      {/* Header avec sélection de vue */}
+      {/* Header avec sélection de vue sur une seule ligne */}
       <div className="glass-card border-b border-accent/20 px-4 py-2.5 shrink-0">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold gradient-text flex items-center gap-2">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-base font-bold gradient-text flex items-center gap-2 shrink-0">
             <div className="p-1.5 bg-accent/10 rounded-lg">
               <List className="h-4 w-4 text-accent" />
             </div>
             Prospects
           </h2>
-        </div>
-        
-        {/* Boutons de sélection de vue */}
-        <div className="flex gap-2 mt-3">
-          <Button
-            variant={activeView === 'creations' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setActiveView('creations')}
-            className="flex-1"
-          >
-            <Building className="w-4 h-4 mr-2" />
-            Créations
-            <span className="ml-2 text-xs opacity-70">({resultsCount})</span>
-          </Button>
-          <Button
-            variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setActiveView('nouveaux-sites')}
-            className="flex-1"
-          >
-            <Factory className="w-4 h-4 mr-2" />
-            Nouveaux Sites
-            <span className="ml-2 text-xs opacity-70">({nouveauxSitesCount})</span>
-          </Button>
+          
+          {/* Boutons de sélection de vue */}
+          <div className="flex gap-2">
+            <Button
+              variant={activeView === 'creations' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setActiveView('creations')}
+              className="h-8"
+            >
+              <Building className="w-3.5 h-3.5 mr-1.5" />
+              Créations
+              <span className="ml-1.5 text-xs opacity-70">({resultsCount})</span>
+            </Button>
+            <Button
+              variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setActiveView('nouveaux-sites')}
+              className="h-8"
+            >
+              <Factory className="w-3.5 h-3.5 mr-1.5" />
+              Nouveaux Sites
+              <span className="ml-1.5 text-xs opacity-70">({nouveauxSitesCount})</span>
+            </Button>
+          </div>
         </div>
       </div>
 
