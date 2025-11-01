@@ -192,23 +192,6 @@ export const NouveauxSitesListView = ({
                     )}
                   </div>
 
-                  {/* Footer Actions */}
-                  {hasCoordinates && (
-                    <div className="relative mt-auto pt-3 border-t border-accent/10">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openGoogleMaps(site.latitude!, site.longitude!);
-                        }}
-                        className="w-full h-8 text-xs hover:bg-accent/10 border-accent/30"
-                      >
-                        <Navigation className="w-3.5 h-3.5 mr-1.5" />
-                        Itinéraire
-                      </Button>
-                    </div>
-                  )}
                 </div>
               );
             })}

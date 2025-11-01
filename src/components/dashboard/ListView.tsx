@@ -533,67 +533,6 @@ export const ListView = ({
                         </div>
                       )}
                     </div>
-
-                    <div className="flex gap-2 justify-center mt-auto">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            size="sm"
-                            className="flex-1 h-11 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
-                            disabled={!hasCoordinates}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Car className="w-5 h-5" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-card border-accent/20 z-50">
-                          <DropdownMenuItem 
-                            onClick={() => {
-                              openGoogleMaps(item.latitude, item.longitude);
-                              handleCRMAction(item.id, 'visite');
-                            }}
-                          >
-                            <Map className="w-4 h-4 mr-2" />
-                            Google Maps
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => {
-                              openWaze(item.latitude, item.longitude);
-                              handleCRMAction(item.id, 'visite');
-                            }}
-                          >
-                            <Navigation className="w-4 h-4 mr-2" />
-                            Waze
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            size="sm"
-                            className="flex-1 h-11 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 hover:border-purple-500/40 transition-all"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Calendar className="w-5 h-5" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-card border-accent/20 z-50">
-                          <DropdownMenuItem 
-                            onClick={() => handleCRMAction(item.id, 'visite')}
-                          >
-                            <Car className="w-4 h-4 mr-2" />
-                            Visite
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleCRMAction(item.id, 'rdv')}
-                          >
-                            <CalendarCheck className="w-4 h-4 mr-2" />
-                            RDV
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
                   </div>
                 );
               })}
@@ -601,14 +540,6 @@ export const ListView = ({
           )}
         </div>
       </div>
-
-      {isMobile && filteredEntreprises.length > 0 && (
-        <div className="mt-4 p-4 glass-card rounded-lg border border-accent/20">
-          <p className="text-xs text-muted-foreground text-center">
-            💡 Utilisez les 3 boutons pour appeler, visiter ou enregistrer une action
-          </p>
-        </div>
-      )}
     </>
   );
 };
