@@ -19,15 +19,12 @@ export const nouveauxSitesService = {
         .from('nouveaux_sites')
         .select('*', { count: 'exact' });
 
-      // Filtre par code NAF (2 premiers chiffres)
-      if (filters.codesNaf && filters.codesNaf.length > 0) {
-        const nafConditions = filters.codesNaf.map(code => 
-          `code_naf.ilike.${code}%`
-        ).join(',');
-        query = query.or(nafConditions);
+      // Filtre par catégorie détaillée
+      if (filters.categories && filters.categories.length > 0) {
+        query = query.in('categorie_detaillee', filters.categories);
       }
 
-      // Filtre par département
+      // Filtre par département (AND avec les catégories)
       if (filters.departments && filters.departments.length > 0) {
         const deptConditions = filters.departments.map(dept => 
           `code_postal.ilike.${dept}%`
@@ -35,9 +32,12 @@ export const nouveauxSitesService = {
         query = query.or(deptConditions);
       }
 
-      // Filtre par catégorie détaillée
-      if (filters.categories && filters.categories.length > 0) {
-        query = query.in('categorie_detaillee', filters.categories);
+      // Filtre par code NAF (AND avec les autres)
+      if (filters.codesNaf && filters.codesNaf.length > 0) {
+        const nafConditions = filters.codesNaf.map(code => 
+          `code_naf.ilike.${code}%`
+        ).join(',');
+        query = query.or(nafConditions);
       }
 
       const { data, error, count } = await query;

@@ -257,6 +257,7 @@ export const NafFilters = ({
                       }`}>
                         {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                       </div>
+                      <span className="text-lg mr-2">{cat.emoji}</span>
                       <span className="text-sm leading-tight flex-1">{cat.label}</span>
                       <span className="text-xs text-muted-foreground">
                         {cat.count.toLocaleString('fr-FR')}
