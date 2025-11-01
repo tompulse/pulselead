@@ -11,6 +11,7 @@ import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { useAvailableFilters } from "@/hooks/useAvailableFilters";
 import { Route, Calendar, ChevronDown, Filter, Search, Building2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useAdminStatus } from "@/hooks/useAdminStatus";
 // Removed useAvailableSubcategories import
 
 interface TourneeFiltersProps {
@@ -58,6 +59,8 @@ export const TourneeFilters = ({
   const [formesOpen, setFormesOpen] = useState(false);
   const [datesOpen, setDatesOpen] = useState(false);
   const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
+  
+  const { isAdmin } = useAdminStatus();
   
   // Récupérer les filtres disponibles dynamiquement
   const { data: availableFiltersData, isLoading: filtersLoading } = useAvailableFilters({
@@ -171,16 +174,16 @@ export const TourneeFilters = ({
               value={filters.searchQuery || ""}
               onChange={(e) => setFilters((prev: any) => ({ ...prev, searchQuery: e.target.value }))}
               className="pl-9 h-9 bg-background/50 border-accent/20 focus:border-accent/40"
-            />
-          </div>
-          {resultsCount !== undefined && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Building2 className="w-4 h-4 text-accent" />
-              <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
-              <span>entreprise{resultsCount > 1 ? 's' : ''} qualifiée{resultsCount > 1 ? 's' : ''}</span>
-            </div>
-          )}
+          />
         </div>
+        {isAdmin && resultsCount !== undefined && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Building2 className="w-4 h-4 text-accent" />
+            <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
+            <span>entreprise{resultsCount > 1 ? 's' : ''} qualifiée{resultsCount > 1 ? 's' : ''}</span>
+          </div>
+        )}
+      </div>
 
         {/* Création de tournée */}
         {onToggleTournee && (

@@ -10,6 +10,7 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { nouveauxSitesService } from "@/services/nouveauxSitesService";
+import { useAdminStatus } from "@/hooks/useAdminStatus";
 
 interface ProspectsViewProps {
   filters: {
@@ -44,6 +45,8 @@ export const ProspectsView = ({
   const [tourneeActive, setTourneeActive] = useState(false);
   const [tourneeName, setTourneeName] = useState("");
   const [tourneeDate, setTourneeDate] = useState("");
+  
+  const { isAdmin } = useAdminStatus();
   
   // Filtres pour les créations
   const { entreprises, totalCount, qualifiedCount } = useDashboardData(filters);
@@ -165,7 +168,7 @@ export const ProspectsView = ({
             >
               <Building className="w-3.5 h-3.5 mr-1.5" />
               Créations
-              <span className="ml-1.5 text-xs opacity-70">({resultsCount})</span>
+              {isAdmin && <span className="ml-1.5 text-xs opacity-70">({resultsCount})</span>}
             </Button>
             <Button
               variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
@@ -175,7 +178,7 @@ export const ProspectsView = ({
             >
               <Factory className="w-3.5 h-3.5 mr-1.5" />
               Nouveaux Sites
-              <span className="ml-1.5 text-xs opacity-70">({nouveauxSitesTotalCount})</span>
+              {isAdmin && <span className="ml-1.5 text-xs opacity-70">({nouveauxSitesTotalCount})</span>}
             </Button>
           </div>
         </div>

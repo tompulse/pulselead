@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { NAF_CATEGORIES } from "@/utils/nafCategories";
 import { Search, Building2, ChevronDown, X } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useAdminStatus } from "@/hooks/useAdminStatus";
 
 interface NafFiltersProps {
   filters: {
@@ -28,6 +29,8 @@ export const NafFilters = ({
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [categoriesEntrepriseOpen, setCategoriesEntrepriseOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
+  
+  const { isAdmin } = useAdminStatus();
 
   const handleNafToggle = (codePrefix: string) => {
     setFilters((prev: any) => {
@@ -98,11 +101,13 @@ export const NafFilters = ({
             className="pl-9 h-9 bg-background/50 border-accent/20 focus:border-accent/40"
           />
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Building2 className="w-4 h-4 text-accent" />
-          <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
-          <span>/ {totalCount.toLocaleString('fr-FR')} site{totalCount > 1 ? 's' : ''}</span>
-        </div>
+        {isAdmin && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Building2 className="w-4 h-4 text-accent" />
+            <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
+            <span>/ {totalCount.toLocaleString('fr-FR')} site{totalCount > 1 ? 's' : ''}</span>
+          </div>
+        )}
         {activeFiltersCount > 0 && (
           <Button 
             variant="ghost" 
