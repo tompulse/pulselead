@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, Target, Phone, MapPin, Calendar, CheckCircle2, Users, DollarSign } from "lucide-react";
+import { TrendingUp, Target, MapPin, Calendar, CheckCircle2, Users, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfWeek, endOfWeek, startOfMonth } from "date-fns";
@@ -12,7 +12,6 @@ interface SuiviViewProps {
 }
 
 interface ActivityStats {
-  weekCalls: number;
   weekVisits: number;
   weekMeetings: number;
   weekARevoir: number;
@@ -29,7 +28,6 @@ interface AnalyticsData {
 
 export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
   const [activityStats, setActivityStats] = useState<ActivityStats>({
-    weekCalls: 0,
     weekVisits: 0,
     weekMeetings: 0,
     weekARevoir: 0,
@@ -72,20 +70,17 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
 
       const { data: weekVisites } = await supabase
         .from('tournee_visites')
-        .select('rdv_pris, a_revoir')
+        .select('a_revoir')
         .eq('user_id', userId)
         .gte('created_at', weekStart.toISOString())
         .lte('created_at', weekEnd.toISOString());
 
-      const weekCalls = (weekInteractions?.filter(i => i.type === 'appel').length || 0) + 
-                        (weekVisites?.filter(v => v.rdv_pris).length || 0);
       const weekVisits = weekInteractions?.filter(i => i.type === 'visite').length || 0;
       const weekMeetings = weekInteractions?.filter(i => i.type === 'rdv').length || 0;
       const weekARevoir = (weekInteractions?.filter(i => i.type === 'a_revoir').length || 0) +
                           (weekVisites?.filter(v => v.a_revoir).length || 0);
 
       setActivityStats({
-        weekCalls,
         weekVisits,
         weekMeetings,
         weekARevoir,
@@ -209,7 +204,7 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
     {
       title: "Interactions totales",
       value: analytics.totalInteractions,
-      icon: Phone,
+      icon: Users,
       color: "text-purple-500",
       gradient: "from-purple-500/20 to-purple-600/5"
     },
@@ -227,22 +222,7 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
       {/* Section 1: Mes Activités */}
       <div className="space-y-2 shrink-0">
         <h3 className="text-xs md:text-sm font-semibold gradient-text">Activités</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <div 
-            className="glass-card p-2 md:p-4 rounded-lg border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all cursor-pointer"
-            onClick={() => handleCardClick('appel')}
-          >
-            <div className="flex flex-col items-center text-center">
-              <div className="p-1.5 md:p-3 bg-blue-500/10 rounded-full mb-1 md:mb-2">
-                <Phone className="h-4 w-4 md:h-6 md:w-6 text-blue-500" />
-              </div>
-              <span className="text-xs text-muted-foreground mb-0.5 md:mb-1">Appels</span>
-              <div className="text-xl md:text-3xl font-bold text-blue-500">
-                {activityStats.weekCalls}
-              </div>
-            </div>
-          </div>
-
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           <div 
             className="glass-card p-2 md:p-4 rounded-lg border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('visite')}

@@ -25,7 +25,6 @@ import {
   AlertCircle,
   Map as MapIconLucide,
   Clock,
-  Phone,
   Route as RouteIcon,
   Coins,
   X,
@@ -57,7 +56,6 @@ type Entreprise = {
   ville?: string;
   latitude: number;
   longitude: number;
-  telephone?: string;
   siret: string;
   date_demarrage: string;
   code_naf: string;
@@ -106,7 +104,6 @@ export const TourneeRouteDisplay = ({
   const [visiteNotes, setVisiteNotes] = useState("");
   const [rdvPris, setRdvPris] = useState(false);
   const [aRevoir, setARevoir] = useState(false);
-  const [aAppeler, setAAppeler] = useState(false);
   const [visites, setVisites] = useState<any[]>([]);
   const [distanceTotaleKm, setDistanceTotaleKm] = useState(initialDistance);
   const [tempsEstimeMinutes, setTempsEstimeMinutes] = useState(initialTemps);
@@ -480,7 +477,6 @@ export const TourneeRouteDisplay = ({
         notes: visiteNotes,
         rdv_pris: rdvPris,
         a_revoir: aRevoir,
-        a_appeler: aAppeler,
         statut: 'visite',
       };
 
@@ -497,15 +493,15 @@ export const TourneeRouteDisplay = ({
           .insert(visiteData);
       }
 
-      // Créer une interaction dans lead_interactions si RDV pris, À revoir ou À appeler
-      if (rdvPris || aRevoir || aAppeler) {
+      // Créer une interaction dans lead_interactions si RDV pris ou À revoir
+      if (rdvPris || aRevoir) {
         const interactionData = {
           entreprise_id: selectedEntreprise.id,
           user_id: user.id,
-          type: rdvPris ? ('appel' as const) : aAppeler ? ('autre' as const) : ('a_revoir' as const),
+          type: rdvPris ? ('appel' as const) : ('a_revoir' as const),
           statut: 'en_cours' as const,
-          notes: visiteNotes || (rdvPris ? 'RDV pris lors de la tournée' : aAppeler ? 'À appeler suite à la tournée' : 'À revoir suite à la tournée'),
-          prochaine_action: rdvPris ? 'Confirmer le RDV' : aAppeler ? 'Appeler cette entreprise' : 'Revoir cette entreprise',
+          notes: visiteNotes || (rdvPris ? 'RDV pris lors de la tournée' : 'À revoir suite à la tournée'),
+          prochaine_action: rdvPris ? 'Confirmer le RDV' : 'Revoir cette entreprise',
           date_prochaine_action: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         };
 
@@ -521,7 +517,6 @@ export const TourneeRouteDisplay = ({
       setVisiteNotes("");
       setRdvPris(false);
       setARevoir(false);
-      setAAppeler(false);
 
       toast({
         title: "✅ Visite enregistrée",
@@ -546,7 +541,6 @@ export const TourneeRouteDisplay = ({
       setVisiteNotes(existingVisite.notes || "");
       setRdvPris(existingVisite.rdv_pris || false);
       setARevoir(existingVisite.a_revoir || false);
-      setAAppeler(existingVisite.a_appeler || false);
     }
     setShowVisiteDialog(true);
   };
@@ -846,7 +840,6 @@ export const TourneeRouteDisplay = ({
                   setRdvPris(checked as boolean);
                   if (checked) {
                     setARevoir(false);
-                    setAAppeler(false);
                   }
                 }}
               />
@@ -857,27 +850,12 @@ export const TourneeRouteDisplay = ({
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="appeler"
-                checked={aAppeler}
-                disabled={rdvPris}
-                onCheckedChange={(checked) => {
-                  setAAppeler(checked as boolean);
-                  if (checked) setARevoir(false);
-                }}
-              />
-              <Label htmlFor="appeler" className={cn("flex items-center gap-2", rdvPris ? "opacity-50" : "cursor-pointer")}>
-                <Phone className="w-4 h-4 text-blue-500" />
-                Appeler
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
                 id="revoir"
                 checked={aRevoir}
-                disabled={rdvPris || aAppeler}
+                disabled={rdvPris}
                 onCheckedChange={(checked) => setARevoir(checked as boolean)}
               />
-              <Label htmlFor="revoir" className={cn("flex items-center gap-2", (rdvPris || aAppeler) ? "opacity-50" : "cursor-pointer")}>
+              <Label htmlFor="revoir" className={cn("flex items-center gap-2", rdvPris ? "opacity-50" : "cursor-pointer")}>
                 <AlertCircle className="w-4 h-4 text-orange-500" />
                 À revoir
               </Label>

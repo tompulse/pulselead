@@ -8,7 +8,7 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCorners }
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Building2, TrendingUp, TrendingDown, Mail, Phone, Calendar, Plus } from "lucide-react";
+import { Building2, TrendingUp, TrendingDown, Mail, Calendar, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Lead {

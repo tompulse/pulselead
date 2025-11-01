@@ -330,9 +330,6 @@ export const TourneeOptimizationPanel = ({
                           : entreprise.ville || entreprise.adresse || 'Adresse non disponible'
                         }
                       </p>
-                      {entreprise.telephone && (
-                        <p className="text-xs text-accent font-medium">📞 {entreprise.telephone}</p>
-                      )}
                     </div>
                   </div>
                 ))}
