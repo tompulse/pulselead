@@ -1,5 +1,5 @@
 import { useState, Dispatch, SetStateAction } from "react";
-import { List, Building, Factory } from "lucide-react";
+import { List, Building, Factory, Route, Calendar as CalendarIcon } from "lucide-react";
 import { ListView } from "./ListView";
 import { NouveauxSitesListView } from "./NouveauxSitesListView";
 import { TourneeFilters } from "./TourneeFilters";
@@ -8,9 +8,14 @@ import { useTourneeManager } from "@/hooks/useTourneeManager";
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useQuery } from "@tanstack/react-query";
 import { nouveauxSitesService } from "@/services/nouveauxSitesService";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
+import { format } from "date-fns";
 
 interface ProspectsViewProps {
   filters: {
@@ -250,19 +255,139 @@ export const ProspectsView = ({
             </div>
           </div>
 
+          {/* Bouton Créer une tournée unifié */}
+          <div className="p-4 border-b border-accent/20 bg-gradient-to-br from-accent/5 via-transparent to-transparent">
+            <Button
+              onClick={activeView === 'creations' ? handleCreateTournee : handleCreateNouveauxSitesTournee}
+              variant={
+                (activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive) 
+                  ? "default" 
+                  : "outline"
+              }
+              className={`w-full ${
+                (activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
+                  ? "bg-gradient-to-r from-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 text-primary" 
+                  : "border-accent/50 hover:bg-accent/10 hover:border-accent hover:shadow-md"
+              } transition-all h-10 font-semibold`}
+              size="sm"
+            >
+              <Route className="w-4 h-4 mr-2" />
+              {(activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
+                ? "✓ Mode tournée actif" 
+                : "🚀 Créer une tournée"}
+            </Button>
+            
+            {/* Panneau de configuration pour Créations */}
+            {activeView === 'creations' && tourneeActive && (
+              <div className="space-y-3 p-3 mt-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30 shadow-sm">
+                <div className="space-y-2">
+                  <Label htmlFor="tournee-name-creations" className="text-xs font-semibold text-accent">Nom de la tournée</Label>
+                  <Input
+                    id="tournee-name-creations"
+                    placeholder="Ex: Tournée Sud"
+                    value={tourneeName}
+                    onChange={(e) => setTourneeName(e.target.value)}
+                    className="h-9 text-sm border-accent/30 focus:border-accent focus:ring-accent/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tournee-date-creations" className="text-xs font-semibold text-accent">Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {tourneeDate ? format(new Date(tourneeDate), "dd/MM/yyyy") : "Choisir une date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={tourneeDate ? new Date(tourneeDate) : undefined}
+                        onSelect={(date) => setTourneeDate(date ? format(date, "yyyy-MM-dd") : "")}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                {selectedEntreprises.length > 0 && (
+                  <div className="text-xs bg-accent/10 text-accent font-semibold rounded-lg px-3 py-2 border border-accent/20">
+                    {selectedEntreprises.length} entreprise(s) sélectionnée(s)
+                  </div>
+                )}
+                <Button
+                  onClick={handleOptimize}
+                  disabled={selectedEntreprises.length < 2 || isOptimizing || !tourneeName.trim()}
+                  className="w-full h-9 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 transition-colors disabled:opacity-50"
+                  size="sm"
+                >
+                  <Route className="w-3.5 h-3.5 mr-2" />
+                  {isOptimizing ? "Optimisation..." : "Optimiser la tournée"}
+                </Button>
+              </div>
+            )}
+
+            {/* Panneau de configuration pour Nouveaux Sites */}
+            {activeView === 'nouveaux-sites' && nouveauxSitesTourneeActive && (
+              <div className="space-y-3 p-3 mt-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30 shadow-sm">
+                <div className="space-y-2">
+                  <Label htmlFor="tournee-name-sites" className="text-xs font-semibold text-accent">Nom de la tournée</Label>
+                  <Input
+                    id="tournee-name-sites"
+                    placeholder="Ex: Tournée Est"
+                    value={nouveauxSitesTourneeName}
+                    onChange={(e) => setNouveauxSitesTourneeName(e.target.value)}
+                    className="h-9 text-sm border-accent/30 focus:border-accent focus:ring-accent/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tournee-date-sites" className="text-xs font-semibold text-accent">Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {nouveauxSitesTourneeDate ? format(new Date(nouveauxSitesTourneeDate), "dd/MM/yyyy") : "Choisir une date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={nouveauxSitesTourneeDate ? new Date(nouveauxSitesTourneeDate) : undefined}
+                        onSelect={(date) => setNouveauxSitesTourneeDate(date ? format(date, "yyyy-MM-dd") : "")}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                {selectedNouveauxSites.length > 0 && (
+                  <div className="text-xs bg-accent/10 text-accent font-semibold rounded-lg px-3 py-2 border border-accent/20">
+                    {selectedNouveauxSites.length} site(s) sélectionné(s)
+                  </div>
+                )}
+                <Button
+                  onClick={handleOptimizeNouveauxSites}
+                  disabled={selectedNouveauxSites.length < 2 || isOptimizingNouveauxSites || !nouveauxSitesTourneeName.trim()}
+                  className="w-full h-9 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 transition-colors disabled:opacity-50"
+                  size="sm"
+                >
+                  <Route className="w-3.5 h-3.5 mr-2" />
+                  {isOptimizingNouveauxSites ? "Optimisation..." : "Optimiser la tournée"}
+                </Button>
+              </div>
+            )}
+          </div>
+
           {activeView === 'creations' ? (
             <TourneeFilters
               filters={filters}
               setFilters={setFilters}
-              tourneeActive={!externalSelectionMode ? tourneeActive : undefined}
-              onToggleTournee={!externalSelectionMode ? handleCreateTournee : undefined}
-              tourneeName={tourneeName}
-              setTourneeName={setTourneeName}
-              tourneeDate={tourneeDate}
-              setTourneeDate={setTourneeDate}
-              selectedCount={selectedEntreprises.length}
-              onOptimize={handleOptimize}
-              isOptimizing={isOptimizing}
               resultsCount={resultsCount}
             />
           ) : (
@@ -271,15 +396,6 @@ export const ProspectsView = ({
               setFilters={setNouveauxSitesFilters}
               resultsCount={nouveauxSitesFilteredCount}
               totalCount={nouveauxSitesTotalCount}
-              tourneeActive={nouveauxSitesTourneeActive}
-              onToggleTournee={handleCreateNouveauxSitesTournee}
-              tourneeName={nouveauxSitesTourneeName}
-              setTourneeName={setNouveauxSitesTourneeName}
-              tourneeDate={nouveauxSitesTourneeDate}
-              setTourneeDate={setNouveauxSitesTourneeDate}
-              selectedCount={selectedNouveauxSites.length}
-              onOptimize={handleOptimizeNouveauxSites}
-              isOptimizing={isOptimizingNouveauxSites}
             />
           )}
         </div>
