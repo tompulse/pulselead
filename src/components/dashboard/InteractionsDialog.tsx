@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Phone, MapPin, Calendar, StickyNote, Trash2, Navigation, Clock } from "lucide-react";
+import { MapPin, Calendar, StickyNote, Trash2, Navigation, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -181,8 +181,6 @@ export const InteractionsDialog = ({
 
   const getTypeInfo = (type: string) => {
     switch (type) {
-      case 'appel':
-        return { icon: Phone, label: 'Appels', color: 'text-blue-500', bg: 'bg-blue-500/10' };
       case 'visite':
         return { icon: MapPin, label: 'Visites', color: 'text-green-500', bg: 'bg-green-500/10' };
       case 'rdv':
@@ -299,28 +297,6 @@ export const InteractionsDialog = ({
                       
                       {/* Action buttons */}
                       <div className="flex gap-2 pt-2 border-t border-accent/10">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={!interaction.telephone}
-                          className={`flex-1 h-9 gap-2 ${
-                            interaction.telephone 
-                              ? 'border-blue-500/30 text-blue-400 hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-300' 
-                              : 'opacity-40'
-                          }`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (interaction.telephone) {
-                              window.location.href = `tel:${interaction.telephone}`;
-                            }
-                          }}
-                          title={interaction.telephone ? `Appeler ${interaction.telephone}` : "Téléphone non disponible"}
-                        >
-                          <Phone className="h-4 w-4" />
-                          <span className="hidden sm:inline text-xs font-medium">
-                            {interaction.telephone ? 'Appeler' : 'Non dispo'}
-                          </span>
-                        </Button>
                         
                         <Button
                           variant="outline"

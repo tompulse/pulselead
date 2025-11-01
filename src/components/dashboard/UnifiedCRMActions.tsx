@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, MapPin, Calendar, StickyNote } from "lucide-react";
+import { MapPin, Calendar, StickyNote, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -36,7 +36,7 @@ export const UnifiedCRMActions = ({
   size = 'lg',
 }: UnifiedCRMActionsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<'appel' | 'email' | 'visite' | 'rdv' | 'autre'>('appel');
+  const [selectedType, setSelectedType] = useState<'email' | 'visite' | 'rdv' | 'autre'>('visite');
   const [notes, setNotes] = useState('');
   const [prochaine_action, setProchaine_action] = useState('');
   const [date_prochaine_action, setDate_prochaine_action] = useState('');
@@ -49,15 +49,15 @@ export const UnifiedCRMActions = ({
     setSelectedType(type);
     
     // Smart defaults based on action type
-    if (type === 'appel') {
-      setProchaine_action('Envoyer email de suivi');
-      setNouveauStatutLead('contacte');
-    } else if (type === 'visite') {
+    if (type === 'visite') {
       setProchaine_action('Envoyer proposition commerciale');
       setNouveauStatutLead('qualifie');
     } else if (type === 'rdv') {
       setProchaine_action('Préparer la présentation');
       setNouveauStatutLead('proposition');
+    } else if (type === 'email') {
+      setProchaine_action('Relancer dans 3 jours');
+      setNouveauStatutLead('contacte');
     }
     
     setIsDialogOpen(true);
@@ -83,7 +83,6 @@ export const UnifiedCRMActions = ({
       if (error) throw error;
 
       const actionMessages = {
-        appel: { title: "📞 Appel enregistré !", description: "L'interaction téléphonique a été sauvegardée" },
         email: { title: "✉️ Email enregistré !", description: "Votre échange par email a été enregistré" },
         visite: { title: "🚗 Visite enregistrée !", description: "Votre visite sur site a été documentée" },
         rdv: { title: "📅 Rendez-vous confirmé !", description: "Le rendez-vous a été ajouté à votre suivi" },
@@ -129,7 +128,7 @@ export const UnifiedCRMActions = ({
   };
 
   const suggestions = {
-    appel: ['Envoyer email de suivi', 'Planifier un rendez-vous', 'Envoyer la documentation'],
+    email: ['Envoyer la documentation', 'Planifier un appel', 'Demander plus d\'infos'],
     visite: ['Envoyer proposition commerciale', 'Organiser RDV de closing', 'Demander références'],
     rdv: ['Préparer la présentation', 'Envoyer devis personnalisé', 'Relancer sous 3 jours'],
     autre: ['Faire un suivi', 'Vérifier la disponibilité', 'Relancer'],
@@ -142,16 +141,6 @@ export const UnifiedCRMActions = ({
   return (
     <>
       <div className={`grid ${mode === 'inline' ? 'grid-cols-4' : 'grid-cols-3'} gap-3`}>
-        <Button
-          variant="outline"
-          size={size}
-          onClick={() => handleQuickAction('appel')}
-          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-colors group relative overflow-hidden shadow-sm`}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/5 to-blue-500/0 group-hover:from-blue-500/10 group-hover:to-blue-500/20 transition-all" />
-          <Phone className={`${iconSize} text-blue-500 relative z-10`} />
-          <span className={`${textSize} font-medium relative z-10`}>Appeler</span>
-        </Button>
         <Button
           variant="outline"
           size={size}
@@ -171,6 +160,16 @@ export const UnifiedCRMActions = ({
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/5 to-purple-500/0 group-hover:from-purple-500/10 group-hover:to-purple-500/20 transition-all" />
           <Calendar className={`${iconSize} text-purple-500 relative z-10`} />
           <span className={`${textSize} font-medium relative z-10`}>RDV</span>
+        </Button>
+        <Button
+          variant="outline"
+          size={size}
+          onClick={() => handleQuickAction('email')}
+          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-colors group relative overflow-hidden shadow-sm`}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/5 to-blue-500/0 group-hover:from-blue-500/10 group-hover:to-blue-500/20 transition-all" />
+          <Mail className={`${iconSize} text-blue-500 relative z-10`} />
+          <span className={`${textSize} font-medium relative z-10`}>Email</span>
         </Button>
         {mode === 'inline' && (
           <Button

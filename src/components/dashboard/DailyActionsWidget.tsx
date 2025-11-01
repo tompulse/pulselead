@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Phone, MapPin, Calendar, StickyNote, CheckCircle2, Clock } from "lucide-react";
+import { MapPin, Calendar, StickyNote, CheckCircle2, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format, isToday, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -78,8 +78,6 @@ export const DailyActionsWidget = ({ userId, onEntrepriseClick }: DailyActionsWi
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'appel':
-        return <Phone className="h-4 w-4" />;
       case 'visite':
         return <MapPin className="h-4 w-4" />;
       case 'rdv':
@@ -93,7 +91,6 @@ export const DailyActionsWidget = ({ userId, onEntrepriseClick }: DailyActionsWi
 
   const getTypeLabel = (type: string) => {
     const labels = {
-      appel: 'Appel',
       visite: 'Visite',
       rdv: 'Rendez-vous',
       autre: 'Note',
@@ -197,22 +194,8 @@ export const DailyActionsWidget = ({ userId, onEntrepriseClick }: DailyActionsWi
                             {action.entreprise_nom}
                           </p>
                           <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                            {action.prochaine_action}
+                          {action.prochaine_action}
                           </p>
-                          {action.type === 'appel' && action.telephone && (
-                            <Button
-                              asChild
-                              variant="ghost"
-                              size="sm"
-                              className="mt-2 h-7 px-2 text-xs hover:bg-accent/20"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <a href={`tel:${action.telephone}`}>
-                                <Phone className="h-3 w-3 mr-1" />
-                                {action.telephone}
-                              </a>
-                            </Button>
-                          )}
                         </div>
                       </div>
                     </div>

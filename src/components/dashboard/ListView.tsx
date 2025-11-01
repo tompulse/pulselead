@@ -1,4 +1,4 @@
-import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, Phone, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Building2, Navigation, Map, Search, MapPin, MessageSquare, Bell, Calendar, DollarSign, User, Car, CalendarCheck, StickyNote, Briefcase, Clock, Mail, Users, Building, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState, useMemo, memo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { categorizeActivity, getCategoryLabel } from "@/utils/activityCategories";
@@ -202,13 +202,12 @@ export const ListView = ({
     };
   }, []);
 
-  const handleCRMAction = async (entrepriseId: string, actionType: 'appeler' | 'visite' | 'rdv' | 'note') => {
+  const handleCRMAction = async (entrepriseId: string, actionType: 'visite' | 'rdv' | 'note') => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const crm = crmData[entrepriseId];
-    const actionTypeMapping: Record<string, 'hasAppel' | 'hasVisite' | 'hasRdv'> = {
-      appeler: 'hasAppel',
+    const actionTypeMapping: Record<string, 'hasVisite' | 'hasRdv'> = {
       visite: 'hasVisite',
       rdv: 'hasRdv'
     };
@@ -217,8 +216,7 @@ export const ListView = ({
 
     // If action already exists, delete it instead
     if (hasAction && actionType !== 'note') {
-      const interactionTypes: Record<string, 'appel' | 'visite' | 'rdv'> = {
-        appeler: 'appel',
+      const interactionTypes: Record<string, 'visite' | 'rdv'> = {
         visite: 'visite',
         rdv: 'rdv'
       };
@@ -253,7 +251,6 @@ export const ListView = ({
         });
 
         const actionEmojis = {
-          appeler: '📞',
           visite: '🚗',
           rdv: '📅',
         };
@@ -270,14 +267,12 @@ export const ListView = ({
 
     // Otherwise, add the action
     const actionLabels = {
-      appeler: 'Appel planifié',
       visite: 'Visite planifiée',
       rdv: 'Rendez-vous confirmé',
       note: 'Note ajoutée'
     };
 
-    const interactionTypes: Record<string, 'appel' | 'visite' | 'rdv' | 'autre'> = {
-      appeler: 'appel',
+    const interactionTypes: Record<string, 'visite' | 'rdv' | 'autre'> = {
       visite: 'visite',
       rdv: 'rdv',
       note: 'autre'
@@ -308,7 +303,6 @@ export const ListView = ({
           [entrepriseId]: {
             ...current,
             interactionCount: current.interactionCount + 1,
-            hasAppel: actionType === 'appeler' ? true : current.hasAppel,
             hasVisite: actionType === 'visite' ? true : current.hasVisite,
             hasRdv: actionType === 'rdv' ? true : current.hasRdv,
           }
@@ -316,7 +310,6 @@ export const ListView = ({
       });
 
       const actionEmojis = {
-        appeler: '📞',
         visite: '🚗',
         rdv: '📅',
         note: '📝'
@@ -497,13 +490,6 @@ export const ListView = ({
                         </div>
                       )}
 
-                      {item.telephone && (
-                        <div className="flex items-center gap-2 text-sm text-foreground/70">
-                          <Phone className="w-4 h-4 flex-shrink-0 text-accent" />
-                          <span className="text-xs">{item.telephone}</span>
-                        </div>
-                      )}
-
                       {item.email && (
                         <div className="flex items-center gap-2 text-sm text-foreground/70">
                           <Mail className="w-4 h-4 flex-shrink-0 text-accent" />
@@ -549,21 +535,6 @@ export const ListView = ({
                     </div>
 
                     <div className="flex gap-2 justify-center mt-auto">
-                      <Button
-                        size="sm"
-                        className="flex-1 h-11 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 hover:border-blue-500/40 transition-all"
-                        disabled={!item.telephone}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (item.telephone) {
-                            window.location.href = `tel:${item.telephone}`;
-                            handleCRMAction(item.id, 'appeler');
-                          }
-                        }}
-                      >
-                        <Phone className="w-5 h-5" />
-                      </Button>
-
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -608,12 +579,6 @@ export const ListView = ({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-card border-accent/20 z-50">
-                          <DropdownMenuItem 
-                            onClick={() => handleCRMAction(item.id, 'appeler')}
-                          >
-                            <Phone className="w-4 h-4 mr-2" />
-                            Appeler
-                          </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleCRMAction(item.id, 'visite')}
                           >

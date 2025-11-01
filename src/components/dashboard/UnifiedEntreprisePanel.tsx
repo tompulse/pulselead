@@ -11,8 +11,7 @@ import { useCRMActions } from "@/hooks/useCRMActions";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { PhoneButton } from "./PhoneButton";
-import { Building2, MapPin, Calendar, DollarSign, X, Phone, Navigation } from "lucide-react";
+import { Building2, MapPin, Calendar, DollarSign, X, Navigation } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -154,11 +153,6 @@ export const UnifiedEntreprisePanel = ({
             <div className="space-y-2">
               <p className="text-sm font-semibold text-accent">Contact</p>
               <div className="pl-6 space-y-2">
-                {entreprise.telephone ? (
-                  <PhoneButton phoneNumber={entreprise.telephone} entrepriseName={entreprise.nom} />
-                ) : (
-                  <p className="text-sm text-muted-foreground">Téléphone non disponible</p>
-                )}
                 {entreprise.email && (
                   <p className="text-sm">{entreprise.email}</p>
                 )}
@@ -225,19 +219,7 @@ export const UnifiedEntreprisePanel = ({
 
       {/* Actions rapides colorées en bas */}
       <div className="shrink-0 px-6 py-4 border-t border-accent/20 bg-gradient-to-b from-transparent to-accent/5">
-        <div className="grid grid-cols-3 gap-3">
-          <Button
-            onClick={() => {
-              if (entreprise.telephone) {
-                window.open(`tel:${entreprise.telephone}`, '_self');
-              }
-            }}
-            disabled={!entreprise.telephone}
-            className="h-12 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 hover:border-blue-500/40 transition-all"
-          >
-            <Phone className="w-4 h-4" />
-          </Button>
-
+        <div className="grid grid-cols-2 gap-3">
           <Button
             onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
             className="h-12 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
