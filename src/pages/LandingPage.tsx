@@ -142,7 +142,7 @@ const Index = () => {
               </div>
               <div className="text-left">
                 <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">Tournées optimisées</div>
-                <div className="text-xs md:text-sm text-muted-foreground font-medium">GPS & itinéraires intelligents</div>
+                <div className="text-xs md:text-sm text-muted-foreground font-medium">GPS & itinéraires intelligents.</div>
               </div>
             </div>
 
@@ -157,7 +157,7 @@ const Index = () => {
               </div>
               <div className="text-left">
                 <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">CRM complet</div>
-                <div className="text-xs md:text-sm text-muted-foreground font-medium">Pipeline & suivi client</div>
+                <div className="text-xs md:text-sm text-muted-foreground font-medium">Pipeline & suivi client.</div>
               </div>
             </div>
 
@@ -172,7 +172,7 @@ const Index = () => {
               </div>
               <div className="text-left">
                 <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">Données temps réel</div>
-                <div className="text-xs md:text-sm text-muted-foreground font-medium">Nouvelles entreprises</div>
+                <div className="text-xs md:text-sm text-muted-foreground font-medium">Nouvelles entreprises.</div>
               </div>
             </div>
           </div>
@@ -189,10 +189,10 @@ const Index = () => {
               <span className="text-sm font-bold text-destructive uppercase tracking-wide">Le constat</span>
             </div>
             <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground leading-tight px-4">
-              Le problème des <span className="text-destructive">commerciaux terrain</span>
+              Le problème des <span className="text-destructive">commerciaux terrain.</span>
             </h2>
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
-              Outils dispersés, prospects qui échappent, tournées non optimisées. Vous perdez du temps et des opportunités.
+              Outils dispersés, prospects qui vous échappent, tournées non optimisées... Vous perdez du temps et des opportunités commerciales.
             </p>
           </div>
 
@@ -211,10 +211,10 @@ const Index = () => {
               <span className="text-sm font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
             </div>
             <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold px-4">
-              LUMA <span className="gradient-text">booste</span> votre efficacité commerciale
+              LUMA <span className="gradient-text">booste</span> votre efficacité commerciale.
             </h2>
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
-              Toutes les fonctionnalités dont vous avez besoin : tournées, CRM, prospection et données terrain.
+              Toutes les fonctionnalités dont vous avez besoin : Tournées optimisées, CRM intégré, prospection intelligente et données terrain en temps réel.
             </p>
           </div>
 
@@ -227,7 +227,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-bold text-foreground">Tournées optimisées</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Planifiez vos visites en quelques clics. Itinéraire optimal, GPS intégré. Économisez des heures chaque semaine.
+                Planifiez vos visites en quelques clics. Itinéraire optimal avec GPS intégré. Économisez jusqu'à 6 heures chaque semaine sur la route.
               </p>
             </div>
 
@@ -239,7 +239,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-bold text-foreground">CRM intelligent</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Suivez vos prospects, historiques des contacts, relances programmées. Rien ne vous échappe.
+                Suivez vos prospects avec l'historique complet des contacts et les relances programmées. Ne ratez plus jamais une opportunité commerciale.
               </p>
             </div>
 
@@ -251,29 +251,29 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-bold text-foreground">Prospection intelligente</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Accédez aux nouvelles entreprises de votre secteur + filtres avancés pour cibler vos prospects idéaux.
+                Accédez aux nouvelles entreprises de votre secteur en temps réel. Utilisez nos filtres avancés pour cibler précisément vos prospects idéaux.
               </p>
             </div>
           </div>
 
           {/* Résultats mesurables - En vert avec tailles réduites */}
           <div className="glass-card p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA</h3>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA.</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center">
               <div className="space-y-2 md:space-y-3">
                 <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">6h/semaine</div>
                 <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Temps économisé</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre.</div>
               </div>
               <div className="space-y-2 md:space-y-3">
                 <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">×2.5</div>
                 <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Rendez-vous décrochés</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Grâce à une organisation optimisée</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Grâce à une organisation optimisée.</div>
               </div>
               <div className="space-y-2 md:space-y-3">
                 <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">+40%</div>
                 <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Croissance du CA</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation.</div>
               </div>
             </div>
           </div>
@@ -287,7 +287,7 @@ const Index = () => {
             <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
               Choisissez le plan qui
               <br />
-              <span className="gradient-text">accélère votre croissance</span>
+              <span className="gradient-text">accélère votre croissance.</span>
             </h2>
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
@@ -316,7 +316,7 @@ const Index = () => {
             <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground font-medium">Pour tester la prospection ciblée</p>
+                <p className="text-muted-foreground font-medium">Pour tester la prospection ciblée.</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
@@ -325,39 +325,39 @@ const Index = () => {
                   </span>
                   <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">1 secteur géographique</div>
+                <div className="text-sm text-accent font-bold">1 secteur géographique.</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>10 créations/mois</strong></span>
+                  <span className="text-foreground font-medium"><strong>10 créations/mois.</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Carte interactive + filtres</span>
+                  <span className="text-foreground font-medium">Carte interactive + filtres.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Suivi commercial intégré</span>
+                  <span className="text-foreground font-medium">Suivi commercial intégré.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Données officielles</span>
+                  <span className="text-foreground font-medium">Données officielles.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Contact dirigeant</span>
+                  <span className="text-muted-foreground/60">Contact dirigeant.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Filtres avancés IA</span>
+                  <span className="text-muted-foreground/60">Filtres avancés IA.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Support email</span>
+                  <span className="text-foreground font-medium">Support email.</span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
+                <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
                 Essai gratuit 7 jours
               </Button>
             </div>
@@ -370,7 +370,7 @@ const Index = () => {
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
-                <p className="text-sm md:text-base text-foreground font-semibold">Pour développer rapidement</p>
+                <p className="text-sm md:text-base text-foreground font-semibold">Pour développer rapidement.</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2 md:mb-3">
@@ -379,32 +379,32 @@ const Index = () => {
                   </span>
                   <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
                 </div>
-                <div className="text-sm md:text-base text-accent font-bold">Multi-secteurs illimité</div>
+                <div className="text-sm md:text-base text-accent font-bold">Multi-secteurs illimité.</div>
               </div>
               <ul className="space-y-3 md:space-y-4">
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">✨ <strong>50 créations/mois</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">✨ <strong>50 créations/mois.</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">🎯 <strong>Tous les secteurs</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">🎯 <strong>Tous les secteurs.</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">💎 <strong>Contacts dirigeants</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">💎 <strong>Contacts dirigeants.</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">🤖 <strong>Filtres IA avancés</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">🤖 <strong>Filtres IA avancés.</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-sm md:text-base">📊 Analytics & prévisions</span>
+                  <span className="text-foreground font-semibold text-sm md:text-base">📊 Analytics & prévisions.</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">⚡ <strong>Support prioritaire 24h</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">⚡ <strong>Support prioritaire 24h.</strong></span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
@@ -416,42 +416,42 @@ const Index = () => {
             <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Entreprise</h3>
-                <p className="text-muted-foreground font-medium">Pour les équipes commerciales</p>
+                <p className="text-muted-foreground font-medium">Pour les équipes commerciales.</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-1 mb-2">
                   <span className="text-4xl font-bold gradient-text">Sur mesure</span>
                 </div>
-                <div className="text-sm text-accent font-bold">Solution complète équipe</div>
+                <div className="text-sm text-accent font-bold">Solution complète équipe.</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Tout du plan Pro</strong></span>
+                  <span className="text-foreground font-medium"><strong>Tout du plan Pro.</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Couverture nationale</strong></span>
+                  <span className="text-foreground font-medium"><strong>Couverture nationale.</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Utilisateurs illimités</strong></span>
+                  <span className="text-foreground font-medium"><strong>Utilisateurs illimités.</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Dashboard équipe avancé</span>
+                  <span className="text-foreground font-medium">Dashboard équipe avancé.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Gestion des territoires</span>
+                  <span className="text-foreground font-medium">Gestion des territoires.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Formation dédiée</span>
+                  <span className="text-foreground font-medium">Formation dédiée.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Account Manager dédié</strong></span>
+                  <span className="text-foreground font-medium"><strong>Account Manager dédié.</strong></span>
                 </li>
               </ul>
               <Button onClick={() => {
@@ -482,9 +482,9 @@ const Index = () => {
               <span className="text-lg md:text-xl font-bold text-foreground">4.8/5</span>
             </div>
             <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground">
-              Ils accélèrent leur <span className="gradient-text">croissance</span>
+              Ils accélèrent leur <span className="gradient-text">croissance.</span>
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground">Résultats réels et mesurables</p>
+            <p className="text-base md:text-lg text-muted-foreground">Résultats réels et mesurables.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
@@ -556,10 +556,10 @@ const Index = () => {
         <div className="container mx-auto max-w-4xl">
           <div ref={faqSection.ref} className={`text-center mb-8 md:mb-12 space-y-2 md:space-y-3 transition-all duration-1000 px-4 ${faqSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
             <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground">
-              Questions <span className="gradient-text">fréquentes</span>
+              Questions <span className="gradient-text">fréquentes.</span>
             </h2>
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
-              Tout ce que vous devez savoir sur LUMA
+              Tout ce que vous devez savoir sur LUMA.
             </p>
           </div>
 

@@ -27,14 +27,14 @@ export const HeroSection = () => {
         <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-[1.1] tracking-tight px-2">
           Prospectez <span className="gradient-text inline-block">plus malin</span>,
           <br />
-          <span className="sm:inline block">vendez plus vite</span>
+          <span className="sm:inline block">vendez plus vite.</span>
         </h1>
         
         {/* Subheadline - Focus sur les bénéfices globaux */}
         <p className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
           L'outil tout-en-un qui transforme vos prospections terrain en succès : 
           <span className="text-accent font-semibold"> tournées optimisées, CRM intégré et accès direct aux nouvelles entreprises</span> de votre zone.
-          <span className="block mt-1 text-foreground/90">Découvrez comment en 2 minutes ⬇</span>
+          <span className="block mt-1 text-foreground/90">Découvrez comment en 2 minutes. ⬇</span>
         </p>
 
         {/* CTA Principal unique et fort */}
