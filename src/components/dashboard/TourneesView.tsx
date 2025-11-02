@@ -148,7 +148,78 @@ export const TourneesView = () => {
 
     setOptimizing(true);
     try {
-      // Récupérer la position actuelle
+      // Étape 1: Géocoder les entreprises sans coordonnées GPS
+      const entreprisesToGeocode = selectedEntreprises.filter(e => !e.latitude || !e.longitude);
+      
+      if (entreprisesToGeocode.length > 0) {
+        toast({
+          title: "📍 Géocodage en cours...",
+          description: `Recherche des coordonnées GPS pour ${entreprisesToGeocode.length} entreprise(s)...`,
+          duration: 3000,
+        });
+
+        // Géocoder chaque entreprise manquante
+        for (const entreprise of entreprisesToGeocode) {
+          try {
+            const { data: geoData, error: geoError } = await supabase.functions.invoke('geocode-entreprise', {
+              body: {
+                adresse: entreprise.adresse,
+                ville: entreprise.ville,
+                code_postal: entreprise.code_postal
+              }
+            });
+
+            if (!geoError && geoData?.latitude && geoData?.longitude) {
+              // Mettre à jour les coordonnées dans la base de données
+              await supabase
+                .from('entreprises')
+                .update({
+                  latitude: geoData.latitude,
+                  longitude: geoData.longitude
+                })
+                .eq('id', entreprise.id);
+
+              // IMPORTANT: Mettre à jour l'objet local
+              entreprise.latitude = geoData.latitude;
+              entreprise.longitude = geoData.longitude;
+              
+              console.log(`✅ Coordonnées trouvées pour ${entreprise.nom}: ${geoData.latitude}, ${geoData.longitude}`);
+            } else {
+              console.warn(`⚠️ Géocodage échoué pour ${entreprise.nom}`);
+            }
+          } catch (error) {
+            console.error(`Erreur géocodage ${entreprise.nom}:`, error);
+          }
+        }
+      }
+
+      // Étape 2: Vérifier qu'on a au moins quelques entreprises avec coordonnées
+      const entreprisesWithCoords = selectedEntreprises.filter(e => 
+        e.latitude && e.longitude && 
+        Number.isFinite(e.latitude) && Number.isFinite(e.longitude)
+      );
+      
+      if (entreprisesWithCoords.length === 0) {
+        toast({
+          title: "❌ Impossible d'optimiser",
+          description: "Aucune entreprise n'a de coordonnées GPS valides. Vérifiez les adresses.",
+          variant: "destructive",
+          duration: 4000,
+        });
+        setOptimizing(false);
+        return;
+      }
+
+      if (entreprisesWithCoords.length < selectedEntreprises.length) {
+        const excluded = selectedEntreprises.length - entreprisesWithCoords.length;
+        toast({
+          title: "⚠️ Géocodage partiel",
+          description: `${excluded} entreprise(s) sans coordonnées valides seront exclues de la tournée`,
+          duration: 3000,
+        });
+      }
+
+      // Étape 3: Récupérer la position actuelle
       let currentLocation = userLocation;
       try {
         currentLocation = await getUserLocation();
@@ -157,9 +228,25 @@ export const TourneesView = () => {
         console.log("Géolocalisation non disponible, utilisation sans point de départ");
       }
 
+      // Étape 4: Optimiser avec uniquement les entreprises valides
+      toast({
+        title: "🚀 Optimisation en cours...",
+        description: "Calcul du meilleur itinéraire...",
+        duration: 2000,
+      });
+
       const { data, error } = await supabase.functions.invoke('optimize-tournee', {
         body: {
-          entreprises: selectedEntreprises,
+          entreprises: entreprisesWithCoords.map(e => ({
+            id: e.id,
+            nom: e.nom,
+            latitude: typeof e.latitude === 'string' ? parseFloat(e.latitude) : e.latitude,
+            longitude: typeof e.longitude === 'string' ? parseFloat(e.longitude) : e.longitude,
+            adresse: e.adresse,
+            ville: e.ville,
+            code_postal: e.code_postal,
+            telephone: e.telephone
+          })),
           point_depart: currentLocation,
         },
       });
@@ -180,7 +267,7 @@ export const TourneesView = () => {
       console.error('Error optimizing tournee:', error);
       toast({
         title: "Erreur d'optimisation",
-        description: "Impossible d'optimiser la tournée",
+        description: error instanceof Error ? error.message : "Impossible d'optimiser la tournée",
         variant: "destructive",
         duration: 3000,
       });
