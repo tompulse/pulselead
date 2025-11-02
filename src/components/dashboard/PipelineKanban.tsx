@@ -51,9 +51,9 @@ const FAKE_LEADS: Lead[] = [
   },
   {
     entreprise_id: "fake-2",
-    statut_actuel: "proposition",
-    etape_pipeline: 3,
-    probabilite: 60,
+    statut_actuel: "negociation",
+    etape_pipeline: 4,
+    probabilite: 80,
     technologie: "Vidéo",
     entreprise: {
       nom: "Restaurant Le Gourmet",
@@ -63,9 +63,9 @@ const FAKE_LEADS: Lead[] = [
   },
   {
     entreprise_id: "fake-3",
-    statut_actuel: "negociation",
-    etape_pipeline: 4,
-    probabilite: 80,
+    statut_actuel: "gagne",
+    etape_pipeline: 5,
+    probabilite: 100,
     technologie: "PTI",
     entreprise: {
       nom: "Hôtel des Alpes",
@@ -75,50 +75,14 @@ const FAKE_LEADS: Lead[] = [
   },
   {
     entreprise_id: "fake-4",
-    statut_actuel: "negociation",
-    etape_pipeline: 4,
-    probabilite: 80,
+    statut_actuel: "perdu",
+    etape_pipeline: 0,
+    probabilite: 0,
     technologie: "Intrusion",
     entreprise: {
       nom: "Café Central",
       ville: "Marseille",
       activite: "Café-bar"
-    }
-  },
-  {
-    entreprise_id: "fake-5",
-    statut_actuel: "gagne",
-    etape_pipeline: 5,
-    probabilite: 100,
-    technologie: "Vidéo",
-    entreprise: {
-      nom: "Pizzeria Bella Vista",
-      ville: "Nice",
-      activite: "Restauration italienne"
-    }
-  },
-  {
-    entreprise_id: "fake-6",
-    statut_actuel: "gagne",
-    etape_pipeline: 5,
-    probabilite: 100,
-    technologie: "Intrusion",
-    entreprise: {
-      nom: "Brasserie du Port",
-      ville: "Bordeaux",
-      activite: "Brasserie"
-    }
-  },
-  {
-    entreprise_id: "fake-7",
-    statut_actuel: "perdu",
-    etape_pipeline: 0,
-    probabilite: 0,
-    technologie: "PTI",
-    entreprise: {
-      nom: "Snack Express",
-      ville: "Toulouse",
-      activite: "Restauration rapide"
     }
   }
 ];
@@ -167,12 +131,6 @@ const LeadCard = ({ lead, onSelect }: { lead: Lead; onSelect: (lead: Lead) => vo
           <div className="flex items-center gap-1 text-xs text-accent">
             <Badge variant="secondary" className="text-xs">
               {lead.technologie}
-            </Badge>
-          </div>
-
-          <div className="flex items-center gap-1 text-xs">
-            <Badge variant="outline" className="text-xs">
-              {lead.probabilite}%
             </Badge>
           </div>
         </CardContent>
