@@ -65,7 +65,7 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative pt-12 sm:pt-16 md:pt-20 pb-16 sm:pb-20 px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-6 sm:space-y-8 animate-fade-in">
+          <div className="text-center space-y-4 sm:space-y-5 animate-fade-in">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm shadow-lg shadow-accent/10">
               
@@ -74,17 +74,13 @@ const Index = () => {
             
             {/* Titre principal - focus développement commercial */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight md:leading-tight lg:leading-[1.08] tracking-tight px-2">
-              
-              <br />
-              <span className="gradient-text">développer votre activité</span>
-              
-              <span className="text-foreground">commerciale terrain</span>
+              <span className="gradient-text">Développer votre activité </span>
+              <span className="text-foreground">commerciale terrain.</span>
             </h1>
             
             {/* Sous-titre clair et orienté bénéfice */}
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium px-4">
-              Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold whitespace-nowrap">prospectez efficacement</span>.
-              <br className="hidden sm:block" />
+              Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold whitespace-nowrap">prospectez efficacement</span>.<br className="hidden sm:block" />
               <span className="text-foreground/90 text-sm sm:text-base md:text-lg mt-2 block">Tout centralisé dans une seule plateforme.</span>
             </p>
             
