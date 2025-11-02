@@ -23,7 +23,7 @@ const DashboardPreview = () => {
   ];
 
   return (
-    <div className="relative w-full h-full min-h-[250px] bg-gradient-to-br from-navy-deep via-card to-navy-deep rounded-xl border border-cyan-electric/40 overflow-hidden shadow-2xl shadow-cyan-electric/20">
+    <div className="relative w-full h-full min-h-[180px] bg-gradient-to-br from-navy-deep via-card to-navy-deep rounded-xl border border-cyan-electric/40 overflow-hidden shadow-2xl shadow-cyan-electric/20">
       {/* Animated background effects */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-electric/15 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>

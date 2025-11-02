@@ -25,17 +25,16 @@ export const HeroSection = () => {
         
         {/* Main Headline - Focus sur le développement commercial */}
         <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-[1.1] tracking-tight px-2">
-          Développez votre activité
+          Prospectez <span className="gradient-text inline-block">plus malin</span>,
           <br />
-          <span className="gradient-text inline-block">commerciale</span> avec
-          <br className="hidden sm:block" />
-          <span className="sm:inline block">l'outil ultime du terrain</span>
+          <span className="sm:inline block">vendez plus vite</span>
         </h1>
         
         {/* Subheadline - Focus sur les bénéfices globaux */}
         <p className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-          Organisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold">accédez aux nouvelles entreprises</span> de votre secteur.
-          <span className="block mt-1 text-foreground/90">Tout centralisé dans un seul outil.</span>
+          L'outil tout-en-un qui transforme vos prospections terrain en succès : 
+          <span className="text-accent font-semibold"> tournées optimisées, CRM intégré et accès direct aux nouvelles entreprises</span> de votre zone.
+          <span className="block mt-1 text-foreground/90">Découvrez comment en 2 minutes ⬇</span>
         </p>
 
         {/* CTA Principal unique et fort */}
