@@ -1,10 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, Target, MapPin, Calendar, CheckCircle2, Users, DollarSign } from "lucide-react";
+import { MapPin, Calendar, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfWeek, endOfWeek, startOfMonth } from "date-fns";
 import { InteractionsDialog } from "./InteractionsDialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PipelineKanban } from "./PipelineKanban";
 
 interface SuiviViewProps {
   userId: string;
@@ -173,55 +174,10 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
     );
   }
 
-  const analyticsStats = [
-    {
-      title: "Leads totaux",
-      value: analytics.totalLeads,
-      icon: Users,
-      color: "text-blue-500",
-      gradient: "from-blue-500/20 to-blue-600/5"
-    },
-    {
-      title: "Leads qualifiés",
-      value: analytics.qualifiedLeads,
-      icon: Target,
-      color: "text-accent",
-      gradient: "from-accent/20 to-cyan-glow/5"
-    },
-    {
-      title: "Deals gagnés",
-      value: analytics.wonDeals,
-      icon: DollarSign,
-      color: "text-green-500",
-      gradient: "from-green-500/20 to-green-600/5"
-    },
-    {
-      title: "Score moyen",
-      value: analytics.averageScore,
-      icon: TrendingUp,
-      color: "text-yellow-500",
-      gradient: "from-yellow-500/20 to-yellow-600/5"
-    },
-    {
-      title: "Interactions totales",
-      value: analytics.totalInteractions,
-      icon: Users,
-      color: "text-purple-500",
-      gradient: "from-purple-500/20 to-purple-600/5"
-    },
-    {
-      title: "Taux de conversion",
-      value: `${analytics.conversionRate}%`,
-      icon: TrendingUp,
-      color: "text-pink-500",
-      gradient: "from-pink-500/20 to-pink-600/5"
-    }
-  ];
-
   return (
-    <div className="p-2 md:p-4 space-y-2 md:space-y-4 overflow-hidden h-full flex flex-col">
+    <div className="p-2 md:p-3 space-y-2 overflow-hidden h-full flex flex-col">
       {/* Section 1: Mes Activités */}
-      <div className="space-y-2 shrink-0">
+      <div className="space-y-1.5 shrink-0">
         <h3 className="text-xs md:text-sm font-semibold gradient-text">Activités</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           <div 
@@ -271,25 +227,11 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
         </div>
       </div>
 
-      {/* Section 2: Performance & Analytics */}
-      <div className="space-y-2 flex-1 min-h-0">
-        <h3 className="text-xs md:text-sm font-semibold gradient-text">Performance</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {analyticsStats.map((stat, index) => (
-            <Card key={index} className="glass-card border-accent/30 hover:border-accent/50 transition-all duration-300 hover-scale group">
-              <CardHeader className="flex flex-row items-center justify-between pb-1 p-2 md:p-3">
-                <CardTitle className="text-xs font-medium text-muted-foreground">
-                  {stat.title}
-                </CardTitle>
-                <div className={`p-1 rounded-lg bg-gradient-to-br ${stat.gradient} transition-colors duration-300`}>
-                  <stat.icon className={`h-3 w-3 md:h-4 md:w-4 ${stat.color}`} />
-                </div>
-              </CardHeader>
-              <CardContent className="p-2 md:p-3 pt-0">
-                <div className={`text-lg md:text-2xl font-bold ${stat.color}`}>{stat.value}</div>
-              </CardContent>
-            </Card>
-          ))}
+      {/* Section 2: Pipeline */}
+      <div className="flex-1 min-h-0 space-y-1.5">
+        <h3 className="text-xs md:text-sm font-semibold gradient-text">Pipeline</h3>
+        <div className="h-[calc(100%-1.5rem)] overflow-hidden">
+          <PipelineKanban onLeadSelect={onEntrepriseClick} />
         </div>
       </div>
 
