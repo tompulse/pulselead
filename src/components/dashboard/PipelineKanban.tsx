@@ -104,19 +104,19 @@ const LeadCard = ({ lead, onSelect }: { lead: Lead; onSelect: (lead: Lead) => vo
       {...attributes}
       {...listeners}
       onClick={() => onSelect(lead)}
-      className="mb-1 md:mb-2 cursor-move"
+      className="mb-2 md:mb-2 cursor-move"
     >
       <Card className="transition-colors border-accent/20 hover:border-accent/50">
-        <CardContent className="p-2 md:p-3 space-y-1 md:space-y-2">
-          <div className="flex items-start justify-between gap-1 md:gap-2">
+        <CardContent className="p-3 md:p-3 space-y-1 md:space-y-2">
+          <div className="flex items-start justify-between gap-2 md:gap-2">
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-[11px] md:text-sm truncate">{lead.entreprise.nom}</h4>
-              <p className="text-[10px] md:text-xs text-muted-foreground truncate">{lead.entreprise.ville}</p>
+              <h4 className="font-semibold text-sm md:text-sm truncate">{lead.entreprise.nom}</h4>
+              <p className="text-xs md:text-xs text-muted-foreground truncate">{lead.entreprise.ville}</p>
             </div>
           </div>
           
           <div className="flex items-center gap-1 text-xs text-accent">
-            <Badge variant="secondary" className="text-[9px] md:text-xs px-1 py-0">
+            <Badge variant="secondary" className="text-xs md:text-xs px-2 py-0">
               {lead.technologie}
             </Badge>
           </div>
@@ -139,20 +139,20 @@ const PipelineColumn = ({
     <Card className="flex flex-col h-full glass-card border-accent/30">
       <CardHeader className="pb-2 md:pb-3 px-2 md:px-4 pt-2 md:pt-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-[11px] md:text-sm font-bold flex items-center gap-1 md:gap-2">
+          <CardTitle className="text-sm md:text-sm font-bold flex items-center gap-1 md:gap-2">
             <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${stage.color}`} />
             <span className="truncate">{stage.label}</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-[10px] md:text-xs px-1 md:px-2">
+          <Badge variant="secondary" className="text-xs md:text-xs px-1 md:px-2">
             {leads.length}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden p-1 md:p-3 pt-0">
-        <ScrollArea className="h-full pr-1 md:pr-2">
+      <CardContent className="flex-1 overflow-hidden p-2 md:p-3 pt-0">
+        <ScrollArea className="h-full pr-1 md:pr-2 hide-scrollbar">
           <SortableContext items={leads.map(l => l.entreprise_id)} strategy={verticalListSortingStrategy}>
             {leads.length === 0 ? (
-              <div className="flex items-center justify-center h-20 md:h-32 opacity-40">
+              <div className="flex items-center justify-center h-16 md:h-32 opacity-40">
                 <Plus className="w-4 h-4 md:w-6 md:h-6 text-muted-foreground" />
               </div>
             ) : (
@@ -327,7 +327,7 @@ export const PipelineKanban = ({ onLeadSelect }: { onLeadSelect?: (entrepriseId:
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-3 gap-1 md:gap-2 h-full overflow-hidden">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-2 h-full overflow-hidden">
           {PIPELINE_STAGES.map((stage) => (
             <PipelineColumn
               key={stage.id}
