@@ -32,7 +32,6 @@ const PIPELINE_STAGES = [
   { id: "proposition", label: "Proposition", color: "bg-purple-500", etape: 3 },
   { id: "negociation", label: "Négociation", color: "bg-orange-500", etape: 4 },
   { id: "gagne", label: "Gagné", color: "bg-green-500", etape: 5 },
-  { id: "perdu", label: "Perdu", color: "bg-red-500", etape: 0 },
 ];
 
 // Données fictives pour le tutoriel
@@ -71,18 +70,6 @@ const FAKE_LEADS: Lead[] = [
       nom: "Hôtel des Alpes",
       ville: "Grenoble",
       activite: "Hôtellerie"
-    }
-  },
-  {
-    entreprise_id: "fake-4",
-    statut_actuel: "perdu",
-    etape_pipeline: 0,
-    probabilite: 0,
-    technologie: "Intrusion",
-    entreprise: {
-      nom: "Café Central",
-      ville: "Marseille",
-      activite: "Café-bar"
     }
   }
 ];
@@ -340,7 +327,7 @@ export const PipelineKanban = ({ onLeadSelect }: { onLeadSelect?: (entrepriseId:
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full">
           {PIPELINE_STAGES.map((stage) => (
             <PipelineColumn
               key={stage.id}
