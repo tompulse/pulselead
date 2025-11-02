@@ -57,8 +57,6 @@ export const TourneeFilters = ({
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [formesOpen, setFormesOpen] = useState(false);
-  const [datesOpen, setDatesOpen] = useState(false);
-  const [typeEvenementOpen, setTypeEvenementOpen] = useState(false);
   
   const { isAdmin } = useAdminStatus();
   
@@ -131,36 +129,18 @@ export const TourneeFilters = ({
     });
   };
 
-  const handleTypeEvenementToggle = (type: string) => {
-    setFilters((prev: any) => {
-      const currentTypes = prev.typeEvenement || [];
-      const isSelected = currentTypes.includes(type);
-      
-      return {
-        ...prev,
-        typeEvenement: isSelected
-          ? currentTypes.filter((t: string) => t !== type)
-          : [...currentTypes, type]
-      };
-    });
-  };
-
-  // handleSubcategoryToggle removed
-
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
     categories: [], 
     departments: [], 
     formesJuridiques: [],
-    typeEvenement: [],
     searchQuery: ""
   }));
 
   const activeFiltersCount = 
     (filters.categories?.length || 0) + 
     (filters.departments?.length || 0) +
-    (filters.formesJuridiques?.length || 0) +
-    (filters.typeEvenement?.length || 0);
+    (filters.formesJuridiques?.length || 0);
 
   return (
     <div className="space-y-0">
@@ -385,74 +365,6 @@ export const TourneeFilters = ({
                 </div>
               </ScrollArea>
             )}
-          </CollapsibleContent>
-        </Collapsible>
-
-        {/* Type d'événement */}
-        <Collapsible open={typeEvenementOpen} onOpenChange={setTypeEvenementOpen} className="border-b border-accent/20">
-          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Type d'événement</span>
-            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${typeEvenementOpen ? 'rotate-180' : ''}`} />
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="px-4 pb-4">
-            <div className="space-y-1 mt-2">
-              {[
-                { key: 'immatriculation', label: '📋 Immatriculation (transfert de siège)' },
-                { key: 'creation', label: '🆕 Création d\'entreprise' },
-                { key: 'cession', label: '💼 Vente / Cession de fonds' }
-              ].map(({ key, label }) => {
-                const selected = filters.typeEvenement?.includes(key);
-                return (
-                  <div
-                    key={key}
-                    onClick={() => handleTypeEvenementToggle(key)}
-                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                  >
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                      selected ? 'bg-accent border-accent' : 'border-accent/30'
-                    }`}>
-                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                    </div>
-                    <span className="text-sm leading-tight">
-                      {label}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-
-
-        {/* Dates */}
-        <Collapsible open={datesOpen} onOpenChange={setDatesOpen} className="border-b border-accent/20">
-          <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-            <span className="font-medium text-sm">Dates</span>
-            <ChevronDown className={`h-4 w-4 text-accent transition-transform ${datesOpen ? 'rotate-180' : ''}`} />
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="px-4 pb-4">
-            <div className="space-y-3 mt-2">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Du</Label>
-                <DatePicker
-                  date={filters.dateFrom ? new Date(filters.dateFrom) : undefined}
-                  onSelect={(date) => setFilters((prev: any) => ({ ...prev, dateFrom: date?.toISOString().split('T')[0] || '' }))}
-                  placeholder="Date début"
-                  className="h-9"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Au</Label>
-                <DatePicker
-                  date={filters.dateTo ? new Date(filters.dateTo) : undefined}
-                  onSelect={(date) => setFilters((prev: any) => ({ ...prev, dateTo: date?.toISOString().split('T')[0] || '' }))}
-                  placeholder="Date fin"
-                  className="h-9"
-                />
-              </div>
-            </div>
           </CollapsibleContent>
         </Collapsible>
 
