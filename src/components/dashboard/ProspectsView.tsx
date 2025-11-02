@@ -1,5 +1,5 @@
 import { useState, Dispatch, SetStateAction } from "react";
-import { List, Building, Factory, Route, Calendar as CalendarIcon } from "lucide-react";
+import { Route, Calendar as CalendarIcon } from "lucide-react";
 import { ListView } from "./ListView";
 import { NouveauxSitesListView } from "./NouveauxSitesListView";
 import { TourneeFilters } from "./TourneeFilters";
@@ -300,21 +300,17 @@ export const ProspectsView = ({
                 variant={activeView === 'creations' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setActiveView('creations')}
-                className="flex-1 justify-start"
+                className="flex-1 justify-center text-xs"
               >
-                <Building className="w-4 h-4 mr-2" />
                 Créations
-                {isAdmin && <span className="ml-auto text-xs opacity-70">({resultsCount})</span>}
               </Button>
               <Button
                 variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setActiveView('nouveaux-sites')}
-                className="flex-1 justify-start"
+                className="flex-1 justify-center text-xs"
               >
-                <Factory className="w-4 h-4 mr-2" />
                 Nouveaux Sites
-                {isAdmin && <span className="ml-auto text-xs opacity-70">({nouveauxSitesTotalCount})</span>}
               </Button>
             </div>
           </div>
