@@ -65,9 +65,9 @@ export const UnifiedEntreprisePanel = ({
   const content = (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-start justify-between p-6 border-b border-accent/20">
-        <div className="flex-1 pr-4">
-          <h2 className="text-2xl font-bold mb-2">{entreprise.nom}</h2>
+      <div className="flex items-start justify-between p-4 sm:p-6 border-b border-accent/20">
+        <div className="flex-1 pr-2 sm:pr-4">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">{entreprise.nom}</h2>
           {leadStatus && (
             <LeadStatusBadge 
               statut={leadStatus.statut_actuel}
@@ -87,14 +87,14 @@ export const UnifiedEntreprisePanel = ({
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'info' | 'crm')} className="flex-1 flex flex-col">
-        <TabsList className="grid w-full grid-cols-2 mx-6 mt-4">
-          <TabsTrigger value="info">Informations</TabsTrigger>
-          <TabsTrigger value="crm">CRM</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 mx-4 sm:mx-6 mt-3 sm:mt-4">
+          <TabsTrigger value="info" className="text-sm sm:text-base">Informations</TabsTrigger>
+          <TabsTrigger value="crm" className="text-sm sm:text-base">CRM</TabsTrigger>
         </TabsList>
 
-        <ScrollArea className="flex-1 px-6">
+        <ScrollArea className="flex-1 px-4 sm:px-6">
           {/* Informations Tab */}
-          <TabsContent value="info" className="space-y-6 py-4">
+          <TabsContent value="info" className="space-y-4 sm:space-y-6 py-3 sm:py-4">
             {/* Address */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-semibold text-accent">
@@ -102,12 +102,12 @@ export const UnifiedEntreprisePanel = ({
                 <span>Adresse</span>
               </div>
               <p className="text-sm pl-6">{formattedAddress}</p>
-              <div className="flex gap-2 pl-6">
+              <div className="flex flex-col sm:flex-row gap-2 pl-6">
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
-                  className="border-accent/30 hover:bg-accent/10"
+                  className="border-accent/30 hover:bg-accent/10 text-xs sm:text-sm w-full sm:w-auto"
                 >
                   Google Maps
                 </Button>
@@ -115,7 +115,7 @@ export const UnifiedEntreprisePanel = ({
                   size="sm"
                   variant="outline"
                   onClick={() => openWaze(entreprise.latitude, entreprise.longitude)}
-                  className="border-accent/30 hover:bg-accent/10"
+                  className="border-accent/30 hover:bg-accent/10 text-xs sm:text-sm w-full sm:w-auto"
                 >
                   Waze
                 </Button>
@@ -185,7 +185,7 @@ export const UnifiedEntreprisePanel = ({
           </TabsContent>
 
           {/* CRM Tab */}
-          <TabsContent value="crm" className="space-y-6 py-4">
+          <TabsContent value="crm" className="space-y-4 sm:space-y-6 py-3 sm:py-4">
             {isLoading ? (
               <div className="space-y-4">
                 <Skeleton className="h-24 w-full" />
@@ -218,20 +218,20 @@ export const UnifiedEntreprisePanel = ({
       </Tabs>
 
       {/* Actions rapides colorées en bas */}
-      <div className="shrink-0 px-6 py-4 border-t border-accent/20 bg-gradient-to-b from-transparent to-accent/5">
-        <div className="grid grid-cols-2 gap-3">
+      <div className="shrink-0 px-4 sm:px-6 py-3 sm:py-4 border-t border-accent/20 bg-gradient-to-b from-transparent to-accent/5">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <Button
             onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
-            className="h-12 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
+            className="h-10 sm:h-12 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
           >
-            <Navigation className="w-4 h-4" />
+            <Navigation className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
           <Button
             onClick={() => setActiveTab('crm')}
-            className="h-12 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 hover:border-purple-500/40 transition-all"
+            className="h-10 sm:h-12 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 hover:border-purple-500/40 transition-all"
           >
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </div>
       </div>

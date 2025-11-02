@@ -94,21 +94,21 @@ export function BookingSection() {
   };
 
   return (
-    <section id="demo" className="relative py-24 px-4 bg-gradient-to-b from-background via-primary/30 to-background">
+    <section id="demo" className="relative py-12 sm:py-16 md:py-24 px-4 bg-gradient-to-b from-background via-primary/30 to-background">
       <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-16 space-y-4 animate-fade-in">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+        <div className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4 animate-fade-in">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
             Réservez votre <span className="gradient-text">démo personnalisée</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
             Échangez avec notre équipe et découvrez comment LUMA peut transformer votre activité
           </p>
         </div>
 
         {step === "datetime" && (
-          <div className="grid lg:grid-cols-[350px,1fr] gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[350px,1fr] gap-6 sm:gap-8 max-w-6xl mx-auto">
             {/* Left side - Info */}
-            <div className="glass-card p-6 space-y-5 border-cyan-electric/30 animate-fade-in flex flex-col justify-between">
+            <div className="glass-card p-4 sm:p-6 space-y-4 sm:space-y-5 border-cyan-electric/30 animate-fade-in flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-5">
                   <div className="relative">
@@ -186,13 +186,13 @@ export function BookingSection() {
             </div>
 
             {/* Right side - Calendar & Time */}
-            <div className="glass-card p-6 space-y-5 border-cyan-electric/30 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="glass-card p-4 sm:p-6 space-y-4 sm:space-y-5 border-cyan-electric/30 animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <div>
-                <h3 className="text-2xl font-bold text-foreground mb-2">Choisissez votre créneau</h3>
-                <p className="text-muted-foreground text-sm">Sélectionnez une date puis un horaire disponible</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Choisissez votre créneau</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">Sélectionnez une date puis un horaire disponible</p>
               </div>
 
-              <div className="grid lg:grid-cols-[1fr,2fr] gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-4 sm:gap-6">
                 {/* Calendar */}
                 <div className="flex flex-col space-y-3">
                   <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">Date</div>
@@ -214,12 +214,12 @@ export function BookingSection() {
                 </div>
 
                 {/* Time slots - Toujours visibles, sans scrollbar */}
-                <div className="space-y-4">
-                  <div className="text-xs font-semibold text-cyan-electric uppercase tracking-wide">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="text-xs sm:text-sm font-semibold text-cyan-electric uppercase tracking-wide">
                     {selectedDate ? format(selectedDate, "EEEE d MMMM", { locale: fr }) : "Horaires disponibles"}
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-4">
                     {/* Morning slots */}
                     <div className="space-y-2">
                       <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1 mb-2">Matin</div>
@@ -295,10 +295,10 @@ export function BookingSection() {
 
         {step === "details" && (
           <div className="max-w-3xl mx-auto animate-fade-in">
-            <div className="glass-card p-8 md:p-12 space-y-8 border-cyan-electric/30">
+            <div className="glass-card p-6 sm:p-8 md:p-12 space-y-6 sm:space-y-8 border-cyan-electric/30">
               <div className="text-center space-y-2">
-                <h3 className="text-3xl font-bold text-foreground">Vos informations</h3>
-                <p className="text-muted-foreground">Dernière étape pour finaliser votre réservation</p>
+                <h3 className="text-2xl sm:text-3xl font-bold text-foreground">Vos informations</h3>
+                <p className="text-sm sm:text-base text-muted-foreground">Dernière étape pour finaliser votre réservation</p>
               </div>
 
               {/* Selected date/time recap */}

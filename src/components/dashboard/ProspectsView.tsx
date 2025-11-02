@@ -294,15 +294,15 @@ export const ProspectsView = ({
         {/* Filtres */}
         <div className="w-80 shrink-0 glass-card overflow-y-auto">
           {/* Sélection de vue */}
-          <div className="p-4 border-b border-border/50">
-            <div className="flex gap-2">
+          <div className="p-3 sm:p-4 border-b border-border/50">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 variant={activeView === 'creations' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setActiveView('creations')}
-                className="flex-1 justify-start"
+                className="flex-1 justify-start text-xs sm:text-sm"
               >
-                <Building className="w-4 h-4 mr-2" />
+                <Building className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Créations
                 {isAdmin && <span className="ml-auto text-xs opacity-70">({resultsCount})</span>}
               </Button>
@@ -310,9 +310,9 @@ export const ProspectsView = ({
                 variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setActiveView('nouveaux-sites')}
-                className="flex-1 justify-start"
+                className="flex-1 justify-start text-xs sm:text-sm"
               >
-                <Factory className="w-4 h-4 mr-2" />
+                <Factory className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Nouveaux Sites
                 {isAdmin && <span className="ml-auto text-xs opacity-70">({nouveauxSitesTotalCount})</span>}
               </Button>
@@ -320,7 +320,7 @@ export const ProspectsView = ({
           </div>
 
           {/* Bouton Créer une tournée unifié */}
-          <div className="p-4 border-b border-accent/20 bg-gradient-to-br from-accent/5 via-transparent to-transparent">
+          <div className="p-3 sm:p-4 border-b border-accent/20 bg-gradient-to-br from-accent/5 via-transparent to-transparent">
             <Button
               onClick={activeView === 'creations' ? handleCreateTournee : handleCreateNouveauxSitesTournee}
               variant={
@@ -332,10 +332,10 @@ export const ProspectsView = ({
                 (activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
                   ? "bg-gradient-to-r from-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 text-primary" 
                   : "border-accent/50 hover:bg-accent/10 hover:border-accent hover:shadow-md"
-              } transition-all h-10 font-semibold`}
+              } transition-all h-9 sm:h-10 font-semibold text-xs sm:text-sm`}
               size="sm"
             >
-              <Route className="w-4 h-4 mr-2" />
+              <Route className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
               {(activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
                 ? "✓ Mode tournée actif" 
                 : "🚀 Créer une tournée"}
@@ -343,19 +343,19 @@ export const ProspectsView = ({
             
             {/* Panneau de configuration pour Créations */}
             {activeView === 'creations' && tourneeActive && (
-              <div className="space-y-3 p-3 mt-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30 shadow-sm">
-                <div className="space-y-2">
-                  <Label htmlFor="tournee-name-creations" className="text-xs font-semibold text-accent">Nom de la tournée</Label>
+              <div className="space-y-2 sm:space-y-3 p-2 sm:p-3 mt-2 sm:mt-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30 shadow-sm">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="tournee-name-creations" className="text-xs sm:text-sm font-semibold text-accent">Nom de la tournée</Label>
                   <Input
                     id="tournee-name-creations"
                     placeholder="Ex: Tournée Sud"
                     value={tourneeName}
                     onChange={(e) => setTourneeName(e.target.value)}
-                    className="h-9 text-sm border-accent/30 focus:border-accent focus:ring-accent/20"
+                    className="h-8 sm:h-9 text-xs sm:text-sm border-accent/30 focus:border-accent focus:ring-accent/20"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tournee-date-creations" className="text-xs font-semibold text-accent">Date</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="tournee-date-creations" className="text-xs sm:text-sm font-semibold text-accent">Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button

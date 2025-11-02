@@ -6,8 +6,8 @@ export const CTASection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="container mx-auto px-6 py-32">
-      <div className="relative glass-card p-12 md:p-16 text-center space-y-8 overflow-hidden border-accent/40 shadow-2xl shadow-accent/20">
+    <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 md:py-32">
+      <div className="relative glass-card p-6 sm:p-8 md:p-12 lg:p-16 text-center space-y-6 sm:space-y-8 overflow-hidden border-accent/40 shadow-2xl shadow-accent/20">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-transparent to-accent/10 pointer-events-none"></div>
         <div className="absolute -top-20 -right-20 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse"></div>
@@ -22,18 +22,18 @@ export const CTASection = () => {
             <span className="text-sm text-accent font-bold">Offre de lancement</span>
           </div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight">
             Transformez votre façon
-            <br />
-            <span className="gradient-text">de vendre sur le terrain</span>
+            <br className="hidden sm:block" />
+            <span className="gradient-text"> de vendre sur le terrain</span>
           </h2>
           
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto">
             Gagnez du temps, optimisez vos déplacements et développez votre chiffre d'affaires
           </p>
 
           {/* Benefits */}
-          <div className="grid sm:grid-cols-2 gap-6 pt-8 max-w-2xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-6 sm:pt-8 max-w-2xl mx-auto">
             {[
               "Essai gratuit 7 jours",
               "Annulation à tout moment"
@@ -45,13 +45,13 @@ export const CTASection = () => {
             ))}
           </div>
 
-          <div className="pt-4">
+          <div className="pt-2 sm:pt-4">
             <button 
               onClick={() => navigate("/auth")}
-              className="group btn-hero inline-flex items-center gap-3 text-xl px-10 py-5 shadow-2xl shadow-accent/40 hover:shadow-accent/50"
+              className="group btn-hero inline-flex items-center gap-2 sm:gap-3 text-base sm:text-lg md:text-xl px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 shadow-2xl shadow-accent/40 hover:shadow-accent/50 w-full sm:w-auto"
             >
               Démarrer gratuitement
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 
