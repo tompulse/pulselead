@@ -392,18 +392,17 @@ export const NafFilters = ({
       </Collapsible>
 
       {/* Footer with reset button */}
-      {activeFiltersCount > 0 && (
-        <div className="p-4 border-t border-accent/20">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={clearFilters}
-            className="w-full border-accent/30 hover:bg-accent/10"
-          >
-            Réinitialiser les filtres
-          </Button>
-        </div>
-      )}
+      <div className="p-4 border-t border-accent/20">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={clearFilters}
+          disabled={activeFiltersCount === 0}
+          className="w-full border-accent/30 hover:bg-accent/10"
+        >
+          Réinitialiser les filtres
+        </Button>
+      </div>
     </div>
   );
 };
