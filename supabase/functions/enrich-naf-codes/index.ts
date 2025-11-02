@@ -78,6 +78,7 @@ async function processEnrichment(targetTable: string) {
   let processedCount = 0;
   const batchSize = 50;
   let hasMore = true;
+  let loggedErrors = 0;
 
   console.log(`Starting NAF enrichment for ${targetTable}...`);
   
@@ -129,39 +130,54 @@ if (!integrationApiKey) {
             return;
           }
 
-// Préparer l'appel SIRENE (nouvelle API + fallback)
+// Préparer et appeler SIRENE avec fallbacks d'en-têtes et d'URL
 const useIntegration = !!integrationApiKey;
-const headers: Record<string, string> = { Accept: 'application/json' };
+
+// Variantes d'en-têtes à essayer (ordre: intégration, clé simple, OAuth)
+const headerVariants: Array<Record<string, string>> = [];
 if (useIntegration) {
-  headers['X-INSEE-Api-Key-Integration'] = integrationApiKey!;
-} else if (inseeToken) {
-  headers['Authorization'] = `Bearer ${inseeToken}`;
-} else {
-  throw new Error('No INSEE credentials available for SIRENE call');
+  headerVariants.push({ Accept: 'application/json', 'X-INSEE-Api-Key-Integration': integrationApiKey! });
+  headerVariants.push({ Accept: 'application/json', 'X-INSEE-Api-Key': integrationApiKey! });
+}
+if (inseeToken) {
+  headerVariants.push({ Accept: 'application/json', Authorization: `Bearer ${inseeToken}` });
 }
 
 const candidateSireneUrls = [
+  `https://api.insee.fr/api-sirene/3.11/etablissements/${entreprise.siret}`,
   `https://api.insee.fr/api-sirene/3.11/siret/${entreprise.siret}`,
+  `https://api.insee.fr/api-sirene/3.11/siret?q=siret:${entreprise.siret}`,
   `https://api.insee.fr/entreprises/sirene/V3.11/siret/${entreprise.siret}`
 ];
 
 let sireneResponse: Response | null = null;
-for (const url of candidateSireneUrls) {
-  const resp = await fetch(url, { headers });
-  if (resp.ok) {
-    if (url !== candidateSireneUrls[0]) {
-      console.log(`SIRENE fetched via fallback URL for ${entreprise.siret}: ${url}`);
+let usedUrl = '';
+let usedHeaders: Record<string, string> | null = null;
+
+for (const headers of headerVariants) {
+  for (const url of candidateSireneUrls) {
+    const resp = await fetch(url, { headers });
+    if (resp.ok) {
+      sireneResponse = resp;
+      usedUrl = url;
+      usedHeaders = headers;
+      if (url !== candidateSireneUrls[0]) {
+        console.log(`SIRENE fetched via fallback URL for ${entreprise.siret}: ${url}`);
+      }
+      break;
+    } else {
+      if (resp.status === 429) {
+        console.log('Rate limit hit, waiting 3s...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
+      if (loggedErrors < 5) {
+        const bodyText = await resp.text().catch(() => '');
+        console.error(`SIRENE error for ${entreprise.siret} on ${url}: ${resp.status} ${resp.statusText} ${bodyText?.slice(0, 300)}`);
+        loggedErrors++;
+      }
     }
-    sireneResponse = resp;
-    break;
-  } else {
-    // Backoff si rate limit
-    if (resp.status === 429) {
-      console.log('Rate limit hit, waiting 3s...');
-      await new Promise(resolve => setTimeout(resolve, 3000));
-    }
-    console.error(`SIRENE error for ${entreprise.siret} on ${url}: ${resp.status}`);
   }
+  if (sireneResponse) break;
 }
 
 if (!sireneResponse) {
@@ -169,34 +185,33 @@ if (!sireneResponse) {
   return;
 }
 
-          if (sireneResponse.ok) {
-            const sireneData = await sireneResponse.json();
-            const codeNaf = sireneData.etablissement?.uniteLegale?.activitePrincipaleUniteLegale;
+// Parse et extraction du code NAF selon différents schémas possibles
+const raw = await sireneResponse.json();
+const etab = raw?.etablissement || raw?.etablissements?.[0];
+const codeNaf = etab?.uniteLegale?.activitePrincipaleUniteLegale
+  || etab?.periodesEtablissement?.[0]?.activitePrincipaleEtablissement
+  || raw?.uniteLegale?.activitePrincipaleUniteLegale
+  || raw?.etablissement?.activitePrincipaleEtablissement;
 
-            if (codeNaf) {
-              const { error: updateError } = await supabase
-                .from(targetTable)
-                .update({ code_naf: codeNaf })
-                .eq('id', entreprise.id);
+if (codeNaf) {
+  const { error: updateError } = await supabase
+    .from(targetTable)
+    .update({ code_naf: codeNaf })
+    .eq('id', entreprise.id);
 
-              if (updateError) {
-                console.error(`Update error for ${entreprise.id}:`, updateError);
-                totalErrors++;
-              } else {
-                totalSuccess++;
-              }
-            } else {
-              totalErrors++;
-            }
-          } else {
-            // Si rate limit (429), on attend plus longtemps
-            if (sireneResponse.status === 429) {
-              console.log('Rate limit hit, waiting 3s...');
-              await new Promise(resolve => setTimeout(resolve, 3000));
-            }
-            console.error(`API error for ${entreprise.siret}: ${sireneResponse.status}`);
-            totalErrors++;
-          }
+  if (updateError) {
+    console.error(`Update error for ${entreprise.id}:`, updateError);
+    totalErrors++;
+  } else {
+    totalSuccess++;
+  }
+} else {
+  if (loggedErrors < 5) {
+    console.error(`No code NAF found for ${entreprise.siret} (URL used: ${usedUrl})`);
+    loggedErrors++;
+  }
+  totalErrors++;
+}
 
         } catch (error) {
           console.error(`Error enriching ${entreprise.id}:`, error);
