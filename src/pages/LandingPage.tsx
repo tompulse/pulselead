@@ -92,7 +92,7 @@ const Index = () => {
             </div>
             
             {/* Titre principal - focus développement commercial */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight md:leading-tight lg:leading-[1.08] tracking-tight px-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight md:leading-tight lg:leading-[1.08] tracking-tight px-2">
               <span className="text-foreground">L'outil ultime pour</span>
               <br />
               <span className="gradient-text">développer votre activité</span>
@@ -101,10 +101,10 @@ const Index = () => {
             </h1>
             
             {/* Sous-titre clair et orienté bénéfice */}
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium px-4">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium px-4">
               Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold whitespace-nowrap">prospectez efficacement</span>.
               <br className="hidden sm:block" />
-              <span className="text-foreground/90 text-sm sm:text-base md:text-lg mt-2 block">Tout centralisé dans une seule plateforme.</span>
+              <span className="text-foreground/90 text-xs sm:text-sm md:text-base mt-2 block">Tout centralisé dans une seule plateforme.</span>
             </p>
             
             {/* CTA principal unique et puissant */}
@@ -112,10 +112,10 @@ const Index = () => {
               <Button 
                 onClick={handleExplorerClick}
                 size="lg"
-                className="btn-hero w-full sm:w-auto min-w-[280px] h-16 text-xl font-bold group"
+                className="btn-hero w-full sm:w-auto min-w-[280px] h-12 text-base md:text-lg font-bold group"
               >
                 Démarrer gratuitement
-                <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               
               {/* Trust indicators réels et crédibles */}
@@ -220,10 +220,10 @@ const Index = () => {
               <AlertCircle className="w-4 h-4 text-destructive" />
               <span className="text-sm font-bold text-destructive uppercase tracking-wide">Le constat</span>
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground leading-tight px-4">
+            <h2 className="text-xl md:text-2xl lg:text-4xl font-bold text-foreground leading-tight px-4">
               Le problème des <span className="text-destructive">commerciaux terrain</span>
             </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
+            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto font-medium px-4">
               Outils dispersés, prospects qui échappent, tournées non optimisées. Vous perdez du temps et des opportunités.
             </p>
           </div>
@@ -270,10 +270,10 @@ const Index = () => {
               <Sparkles className="w-4 h-4 text-cyan-electric" />
               <span className="text-sm font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold px-4">
+            <h2 className="text-xl md:text-2xl lg:text-4xl font-bold px-4">
               LUMA <span className="gradient-text">booste</span> votre efficacité commerciale
             </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
+            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto font-medium px-4">
               Toutes les fonctionnalités dont vous avez besoin : tournées, CRM, prospection et données terrain.
             </p>
           </div>
@@ -281,38 +281,38 @@ const Index = () => {
           <div className={`grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto transition-all duration-1000 ${
             solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
           }`}>
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
+            <div className={`glass-card p-4 md:p-5 text-center space-y-3 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
               solutionSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
             }`} style={{ transitionDelay: solutionSection.isVisible ? '200ms' : '0ms' }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <Map className="w-9 h-9 text-accent" />
+              <div className="inline-flex w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
+                <Map className="w-7 h-7 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Tournées optimisées</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-lg font-bold text-foreground">Tournées optimisées</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Planifiez vos visites en quelques clics. Itinéraire optimal, GPS intégré. Économisez des heures chaque semaine.
               </p>
             </div>
 
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
+            <div className={`glass-card p-4 md:p-5 text-center space-y-3 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
               solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: solutionSection.isVisible ? '400ms' : '0ms' }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <TrendingUp className="w-9 h-9 text-accent" />
+              <div className="inline-flex w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
+                <TrendingUp className="w-7 h-7 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">CRM intelligent</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-lg font-bold text-foreground">CRM intelligent</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Suivez vos prospects, historiques des contacts, relances programmées. Rien ne vous échappe.
               </p>
             </div>
 
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
+            <div className={`glass-card p-4 md:p-5 text-center space-y-3 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${
               solutionSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
             }`} style={{ transitionDelay: solutionSection.isVisible ? '600ms' : '0ms' }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <Sparkles className="w-9 h-9 text-accent" />
+              <div className="inline-flex w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
+                <Sparkles className="w-7 h-7 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Prospection intelligente</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-lg font-bold text-foreground">Prospection intelligente</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Accédez aux nouvelles entreprises de votre secteur + filtres avancés pour cibler vos prospects idéaux.
               </p>
             </div>

@@ -45,14 +45,14 @@ export const FeaturesSection = () => {
   ];
 
   return (
-    <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 md:py-32">
-      <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 md:mb-20 space-y-3 sm:space-y-4">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-4">
+    <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
+      <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12 md:mb-16 space-y-3 sm:space-y-4">
+        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold px-4">
           Toutes les fonctionnalités
           <br />
           <span className="gradient-text">pour développer votre activité</span>
         </h2>
-        <p className="text-base sm:text-lg md:text-xl text-muted-foreground px-4">
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground px-4">
           Un outil complet pensé pour les commerciaux terrain qui veulent être plus efficaces
         </p>
       </div>
@@ -63,16 +63,16 @@ export const FeaturesSection = () => {
           return (
             <div 
               key={index}
-              className="glass-card p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4 border-accent/30 hover:border-accent/60 transition-colors duration-300 group cursor-pointer"
+              className="glass-card p-3 sm:p-4 md:p-5 space-y-2 sm:space-y-3 border-accent/30 hover:border-accent/60 transition-colors duration-300 group cursor-pointer"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center transition-colors shadow-md shadow-accent/10">
-                <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-accent" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center transition-colors shadow-md shadow-accent/10">
+                <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold gradient-text">
+              <h3 className="text-base sm:text-lg font-bold gradient-text">
                 {feature.title}
               </h3>
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-medium">
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-medium">
                 {feature.description}
               </p>
             </div>

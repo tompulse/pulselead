@@ -24,7 +24,7 @@ export const HeroSection = () => {
         </div>
         
         {/* Main Headline - Focus sur le développement commercial */}
-        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight px-2">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight px-2">
           Développez votre activité
           <br />
           <span className="gradient-text inline-block">commerciale</span> avec
@@ -33,7 +33,7 @@ export const HeroSection = () => {
         </h1>
         
         {/* Subheadline - Focus sur les bénéfices globaux */}
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
           Organisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold">accédez aux nouvelles entreprises</span> de votre secteur.
           <span className="block mt-2 text-foreground/90">Tout centralisé dans un seul outil.</span>
         </p>
@@ -42,10 +42,10 @@ export const HeroSection = () => {
         <div className="flex flex-col items-center gap-4 sm:gap-5 pt-4 sm:pt-6 px-4">
           <button 
             onClick={() => navigate("/auth")}
-            className="group relative btn-hero inline-flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto min-w-[280px] sm:min-w-[320px] px-8 sm:px-10 py-4 sm:py-5 shadow-2xl shadow-accent/40 hover:shadow-accent/50 text-base sm:text-lg md:text-xl"
+            className="group relative btn-hero inline-flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto min-w-[280px] sm:min-w-[320px] px-8 sm:px-10 py-3 sm:py-4 shadow-2xl shadow-accent/40 hover:shadow-accent/50 text-sm sm:text-base md:text-lg"
           >
             Démarrer gratuitement
-            <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
           </button>
           
           {/* Trust indicators réels */}
