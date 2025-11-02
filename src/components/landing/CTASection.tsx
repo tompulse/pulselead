@@ -22,7 +22,7 @@ export const CTASection = () => {
             <span className="text-xs text-accent font-bold">Offre de lancement</span>
           </div>
 
-          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold leading-tight">
+          <h2 className="text-2xl lg:text-3xl font-bold leading-tight">
             Transformez votre façon
             <br />
             <span className="gradient-text">de vendre sur le terrain</span>
@@ -40,7 +40,7 @@ export const CTASection = () => {
             ].map((benefit, index) => (
               <div key={index} className="flex items-center gap-2 text-left">
                 <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0" />
-                <span className="text-[10px] font-medium">{benefit}</span>
+                <span className="text-sm font-medium">{benefit}</span>
               </div>
             ))}
           </div>
@@ -48,10 +48,10 @@ export const CTASection = () => {
           <div className="pt-3">
             <button 
               onClick={() => navigate("/auth")}
-              className="group btn-hero inline-flex items-center gap-2 text-sm md:text-base px-5 py-2.5 shadow-2xl shadow-accent/40 hover:shadow-accent/50"
+              className="group btn-hero inline-flex items-center gap-2 text-base md:text-lg px-6 md:px-8 py-3 md:py-3.5 shadow-2xl shadow-accent/40 hover:shadow-accent/50"
             >
               Démarrer gratuitement
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 

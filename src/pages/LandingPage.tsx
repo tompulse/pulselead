@@ -207,7 +207,7 @@ const Index = () => {
       </section>
 
       {/* Section Problème/Solution */}
-      <section className="relative py-12 px-4">
+      <section className="relative py-12 md:py-16 px-4 md:px-6">
         <div className="container mx-auto max-w-6xl">
           {/* Problème */}
           <div 
@@ -220,10 +220,10 @@ const Index = () => {
               <AlertCircle className="w-3.5 h-3.5 text-destructive" />
               <span className="text-xs font-bold text-destructive uppercase tracking-wide">Le constat</span>
             </div>
-            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-foreground leading-tight px-4">
+            <h2 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight px-4">
               Le problème des <span className="text-destructive">commerciaux terrain</span>
             </h2>
-            <p className="text-xs md:text-sm text-muted-foreground max-w-3xl mx-auto font-medium px-4">
+            <p className="text-sm md:text-base text-muted-foreground max-w-3xl mx-auto font-medium px-4">
               Outils dispersés, prospects qui échappent, tournées non optimisées. Vous perdez du temps et des opportunités.
             </p>
           </div>
@@ -270,10 +270,10 @@ const Index = () => {
               <Sparkles className="w-3.5 h-3.5 text-cyan-electric" />
               <span className="text-xs font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
             </div>
-            <h2 className="text-lg md:text-xl lg:text-2xl font-bold px-4">
+            <h2 className="text-2xl lg:text-3xl font-bold px-4">
               LUMA <span className="gradient-text">booste</span> votre efficacité commerciale
             </h2>
-            <p className="text-xs md:text-sm text-muted-foreground max-w-3xl mx-auto font-medium px-4">
+            <p className="text-sm md:text-base text-muted-foreground max-w-3xl mx-auto font-medium px-4">
               Toutes les fonctionnalités dont vous avez besoin : tournées, CRM, prospection et données terrain.
             </p>
           </div>
@@ -350,8 +350,8 @@ const Index = () => {
         }`}
       >
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-8 md:mb-12 space-y-2 md:space-y-3 animate-fade-in px-4">
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
+          <div className="text-center mb-8 space-y-3 animate-fade-in px-4">
+            <h2 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight">
               Choisissez le plan qui
               <br />
               <span className="gradient-text">accélère votre croissance</span>
@@ -362,40 +362,40 @@ const Index = () => {
           </div>
 
           {/* Toggle de période */}
-          <div className="flex justify-center mb-8 md:mb-12">
-            <div className="glass-card p-1 md:p-1.5 inline-flex flex-wrap gap-1 border-accent/30 justify-center">
+          <div className="flex justify-center mb-8">
+            <div className="glass-card p-1.5 inline-flex flex-wrap gap-1 border-accent/30 justify-center">
               <Button
                 variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('monthly')}
-                className={billingPeriod === 'monthly' ? 'btn-hero text-xs md:text-sm px-3 md:px-4 h-8' : 'hover:bg-accent/10 text-xs md:text-sm px-3 md:px-4 h-8'}
+                className={billingPeriod === 'monthly' ? 'btn-hero text-sm px-4 py-2' : 'hover:bg-accent/10 text-sm px-4 py-2'}
               >
                 Mensuel
               </Button>
               <Button
                 variant={billingPeriod === 'quarterly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('quarterly')}
-                className={billingPeriod === 'quarterly' ? 'btn-hero text-xs md:text-sm px-3 md:px-4 h-8' : 'hover:bg-accent/10 text-xs md:text-sm px-3 md:px-4 h-8'}
+                className={billingPeriod === 'quarterly' ? 'btn-hero text-sm px-4 py-2' : 'hover:bg-accent/10 text-sm px-4 py-2'}
               >
                 Trimestriel
-                <span className="ml-1 text-[10px] bg-accent/30 px-1.5 py-0.5 rounded-full font-bold">-15%</span>
+                <span className="ml-1 text-xs bg-accent/30 px-1.5 py-0.5 rounded-full font-bold">-15%</span>
               </Button>
               <Button
                 variant={billingPeriod === 'yearly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('yearly')}
-                className={billingPeriod === 'yearly' ? 'btn-hero text-xs md:text-sm px-3 md:px-4 h-8' : 'hover:bg-accent/10 text-xs md:text-sm px-3 md:px-4 h-8'}
+                className={billingPeriod === 'yearly' ? 'btn-hero text-sm px-4 py-2' : 'hover:bg-accent/10 text-sm px-4 py-2'}
               >
                 Annuel
-                <span className="ml-1 text-[10px] bg-accent/30 px-1.5 py-0.5 rounded-full font-bold">-25%</span>
+                <span className="ml-1 text-xs bg-accent/30 px-1.5 py-0.5 rounded-full font-bold">-25%</span>
               </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto mb-8 md:mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto mb-8">
             {/* Plan Starter */}
-            <div className="glass-card p-4 md:p-5 space-y-3 md:space-y-4 hover:border-accent/60 transition-all duration-300 border-accent/30">
+            <div className="glass-card p-4 md:p-6 space-y-4 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-1">
-                <h3 className="text-lg md:text-xl font-bold text-foreground">Starter</h3>
-                <p className="text-xs md:text-sm text-muted-foreground font-medium">Pour démarrer la prospection terrain</p>
+                <h3 className="text-base md:text-lg font-bold text-foreground">Starter</h3>
+                <p className="text-sm text-muted-foreground font-medium">Pour démarrer la prospection terrain</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-1">
@@ -409,97 +409,55 @@ const Index = () => {
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Jusqu'à <strong>500 prospects</strong></span>
+                  <span className="text-sm text-foreground font-medium">Jusqu'à <strong>500 prospects</strong></span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Cartographie interactive</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Filtres de base</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">CRM intégré</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium"><strong>3 tournées/mois</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Alertes nouveaux sites</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Support email</span>
-                </li>
+...
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold text-sm h-10" size="lg">
+              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold text-sm px-4 md:px-6 py-2 md:py-2.5" size="lg">
                 Commencer
               </Button>
             </div>
 
             {/* Plan Pro - Recommandé */}
-            <div className="relative glass-card p-5 md:p-6 space-y-3 md:space-y-4 border-accent shadow-2xl shadow-accent/40 md:scale-100 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-xs md:text-sm font-bold rounded-full flex items-center gap-1.5 shadow-xl shadow-accent/50">
+            <div className="relative glass-card p-6 space-y-4 border-accent shadow-2xl shadow-accent/40 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-4 py-2 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm font-bold rounded-full flex items-center gap-1.5 shadow-xl shadow-accent/50">
                 <Sparkles className="w-4 h-4" />
                 Le plus populaire
               </div>
               <div className="space-y-1">
-                <h3 className="text-xl md:text-2xl font-bold gradient-text">Pro</h3>
-                <p className="text-xs md:text-sm text-foreground font-semibold">Pour les commerciaux intensifs</p>
+                <h3 className="text-lg md:text-xl font-bold gradient-text">Pro</h3>
+                <p className="text-sm text-foreground font-semibold">Pour les commerciaux intensifs</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-1.5">
-                  <span className="text-3xl md:text-4xl font-bold gradient-text drop-shadow-lg">
+                  <span className="text-4xl font-bold gradient-text drop-shadow-lg">
                     ???
                   </span>
                   <span className="text-sm text-foreground font-semibold">/mois</span>
                 </div>
-                <div className="text-xs md:text-sm text-accent font-bold">Solution complète</div>
+                <div className="text-sm text-accent font-bold">Solution complète</div>
               </div>
-              <ul className="space-y-2 md:space-y-2.5">
+              <ul className="space-y-2.5">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm md:text-base text-foreground font-semibold"><strong>Prospects illimités</strong></span>
+                  <span className="text-base text-foreground font-semibold"><strong>Prospects illimités</strong></span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm md:text-base text-foreground font-semibold"><strong>Tournées illimitées</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm md:text-base text-foreground font-semibold">Optimisation d'itinéraires</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm md:text-base text-foreground font-semibold">Pipeline de vente complet</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-semibold">Historique & analytics</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm md:text-base text-foreground font-semibold"><strong>Support prioritaire</strong></span>
-                </li>
+...
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-sm md:text-base py-5 md:py-6 hover:scale-105 transition-transform" size="lg">
+              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base px-6 md:px-8 py-3 md:py-3.5 hover:scale-105 transition-transform" size="lg">
                 Commencer
               </Button>
             </div>
 
             {/* Plan Entreprise */}
-            <div className="glass-card p-4 md:p-5 space-y-3 md:space-y-4 hover:border-accent/60 transition-all duration-300 border-accent/30">
+            <div className="glass-card p-4 md:p-6 space-y-4 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-1">
-                <h3 className="text-lg md:text-xl font-bold text-foreground">Entreprise</h3>
-                <p className="text-xs md:text-sm text-muted-foreground font-medium">Pour les équipes commerciales</p>
+                <h3 className="text-base md:text-lg font-bold text-foreground">Entreprise</h3>
+                <p className="text-sm text-muted-foreground font-medium">Pour les équipes commerciales</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-3xl md:text-4xl font-bold gradient-text">???</span>
+                  <span className="text-4xl font-bold gradient-text">???</span>
                   <span className="text-sm text-muted-foreground font-medium">/mois</span>
                 </div>
                 <div className="text-xs text-accent font-bold">Sur mesure</div>
@@ -507,39 +465,16 @@ const Index = () => {
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Tout du plan Pro</span>
+                  <span className="text-sm text-foreground font-medium">Tout du plan Pro</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium"><strong>Multi-utilisateurs</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium"><strong>Gestion des territoires</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Tableaux de bord équipe</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Synchronisation CRM</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium">Formation personnalisée</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-foreground font-medium"><strong>Account Manager dédié</strong></span>
-                </li>
+...
               </ul>
               <Button onClick={() => {
                 const contactSection = document.querySelector('#contact');
                 if (contactSection) {
                   contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-              }} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold text-sm h-10" size="lg">
+              }} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold text-sm px-4 md:px-6 py-2 md:py-2.5" size="lg">
                 Nous contacter
               </Button>
             </div>
@@ -551,28 +486,28 @@ const Index = () => {
       {/* Section Témoignages */}
       <section 
         ref={testimonialsSection.ref}
-        className={`relative py-12 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${
+        className={`relative py-12 md:py-16 px-4 md:px-6 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${
           testimonialsSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
         }`}
       >
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-6 md:mb-8 space-y-1.5 md:space-y-2 animate-fade-in px-4">
+          <div className="text-center mb-8 space-y-2 animate-fade-in px-4">
             <div className="flex items-center justify-center gap-2 mb-1">
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 md:w-4 md:h-4 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
               <span className="text-base md:text-lg font-bold text-foreground">4.8/5</span>
             </div>
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
+            <h2 className="text-2xl lg:text-3xl font-bold text-foreground">
               Ils accélèrent leur <span className="gradient-text">croissance</span>
             </h2>
             <p className="text-sm md:text-base text-muted-foreground">Résultats réels et mesurables</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-            <div className={`glass-card p-4 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            <div className={`glass-card p-4 md:p-6 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
               testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: testimonialsSection.isVisible ? '200ms' : '0ms' }}>
               <Quote className="w-6 h-6 text-cyan-electric/30" />
@@ -581,19 +516,19 @@ const Index = () => {
                   <Star key={i} className="w-3.5 h-3.5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-xs md:text-sm text-foreground leading-relaxed">
+              <p className="text-sm text-foreground leading-relaxed">
                 "Enfin un outil pensé pour les commerciaux terrain ! Tournées optimisées, suivi commercial simple. J'ai doublé mes RDV."
               </p>
               <div className="inline-flex px-2 py-1 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-[10px] md:text-xs font-semibold text-cyan-electric">+100% de RDV</span>
+                <span className="text-xs font-semibold text-cyan-electric">+100% de RDV</span>
               </div>
               <div className="pt-2 border-t border-accent/10">
-                <div className="text-xs md:text-sm font-semibold text-foreground">Sophie Martin</div>
-                <div className="text-[10px] md:text-xs text-muted-foreground">Commerciale BtoB</div>
+                <div className="text-sm font-semibold text-foreground">Sophie Martin</div>
+                <div className="text-xs text-muted-foreground">Commerciale BtoB</div>
               </div>
             </div>
 
-            <div className={`glass-card p-4 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
+            <div className={`glass-card p-4 md:p-6 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
               testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: testimonialsSection.isVisible ? '400ms' : '0ms' }}>
               <Quote className="w-6 h-6 text-cyan-electric/30" />
@@ -602,19 +537,19 @@ const Index = () => {
                   <Star key={i} className="w-3.5 h-3.5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-xs md:text-sm text-foreground leading-relaxed">
+              <p className="text-sm text-foreground leading-relaxed">
                 "Plus besoin de jongler entre 5 outils. Tout est centralisé, je gagne 2h par jour et je vois tout mon secteur."
               </p>
               <div className="inline-flex px-2 py-1 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-[10px] md:text-xs font-semibold text-cyan-electric">2h/jour économisées</span>
+                <span className="text-xs font-semibold text-cyan-electric">2h/jour économisées</span>
               </div>
               <div className="pt-2 border-t border-accent/10">
-                <div className="text-xs md:text-sm font-semibold text-foreground">Thomas Dubois</div>
-                <div className="text-[10px] md:text-xs text-muted-foreground">Responsable commercial</div>
+                <div className="text-sm font-semibold text-foreground">Thomas Dubois</div>
+                <div className="text-xs text-muted-foreground">Responsable commercial</div>
               </div>
             </div>
 
-            <div className={`glass-card p-4 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
+            <div className={`glass-card p-4 md:p-6 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
               testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: testimonialsSection.isVisible ? '600ms' : '0ms' }}>
               <Quote className="w-6 h-6 text-cyan-electric/30" />
@@ -623,15 +558,15 @@ const Index = () => {
                   <Star key={i} className="w-3.5 h-3.5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-xs md:text-sm text-foreground leading-relaxed">
+              <p className="text-sm text-foreground leading-relaxed">
                 "L'outil parfait pour les indépendants. Simple, complet, avec le bonus des créations d'entreprises."
               </p>
               <div className="inline-flex px-2 py-1 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-[10px] md:text-xs font-semibold text-cyan-electric">+15 clients</span>
+                <span className="text-xs font-semibold text-cyan-electric">+15 clients</span>
               </div>
               <div className="pt-2 border-t border-accent/10">
-                <div className="text-xs md:text-sm font-semibold text-foreground">Marie Leroux</div>
-                <div className="text-[10px] md:text-xs text-muted-foreground">Indépendante</div>
+                <div className="text-sm font-semibold text-foreground">Marie Leroux</div>
+                <div className="text-xs text-muted-foreground">Indépendante</div>
               </div>
             </div>
           </div>
@@ -642,15 +577,15 @@ const Index = () => {
       <BookingSection />
 
       {/* Section FAQ + CTA */}
-      <section className="relative py-12 px-4">
+      <section className="relative py-12 md:py-16 px-4 md:px-6">
         <div className="container mx-auto max-w-4xl">
           <div 
             ref={faqSection.ref}
-            className={`text-center mb-6 md:mb-8 space-y-1.5 md:space-y-2 transition-all duration-1000 px-4 ${
+            className={`text-center mb-8 space-y-2 transition-all duration-1000 px-4 ${
               faqSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
             }`}
           >
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
+            <h2 className="text-2xl lg:text-3xl font-bold text-foreground">
               Questions <span className="gradient-text">fréquentes</span>
             </h2>
             <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto font-medium">
@@ -658,72 +593,72 @@ const Index = () => {
             </p>
           </div>
 
-          <Accordion type="single" collapsible className="space-y-2 mb-8">
-            <AccordionItem value="item-1" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
+          <Accordion type="single" collapsible className="space-y-3 mb-8">
+            <AccordionItem value="item-1" className="glass-card px-4 md:px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm md:text-base font-semibold text-foreground hover:text-cyan-electric">
                 D'où viennent les données entreprises ?
               </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
                 <p>Les données proviennent exclusivement de sources officielles françaises : l'INPI (Institut National de la Propriété Industrielle) et l'INSEE (Institut National de la Statistique et des Études Économiques).</p>
                 <p>Ces données sont synchronisées automatiquement chaque jour pour vous garantir un accès aux créations d'entreprises les plus récentes. Vous êtes toujours informé en temps réel des nouvelles opportunités sur votre territoire.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-2" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-2" className="glass-card px-4 md:px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm md:text-base font-semibold text-foreground hover:text-cyan-electric">
                 Comment fonctionne l'essai gratuit ?
               </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
                 <p>L'essai gratuit de 7 jours vous donne accès à toutes les fonctionnalités de LUMA sans aucune limitation.</p>
                 <p>Vous pouvez créer vos tournées, gérer vos prospects, accéder aux données entreprises en temps réel et utiliser les outils de suivi intégrés. À la fin de l'essai, vous choisissez si vous souhaitez continuer avec un abonnement payant ou non.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-3" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-3" className="glass-card px-4 md:px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm md:text-base font-semibold text-foreground hover:text-cyan-electric">
                 Puis-je utiliser LUMA sur mobile ?
               </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
                 <p>Absolument ! LUMA est 100% responsive et s'adapte parfaitement à tous les écrans : ordinateur, tablette et smartphone.</p>
                 <p>L'application mobile vous permet de gérer vos tournées en déplacement, d'ajouter des interactions avec vos prospects directement sur le terrain, et de consulter les informations entreprises où que vous soyez. Le GPS intégré vous guide vers vos rendez-vous.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-4" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-4" className="glass-card px-4 md:px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm md:text-base font-semibold text-foreground hover:text-cyan-electric">
                 Puis-je annuler mon abonnement à tout moment ?
               </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
                 <p>Oui, sans aucun engagement. Vous pouvez annuler votre abonnement en 1 clic depuis votre espace personnel à tout moment.</p>
                 <p>Vos données restent accessibles jusqu'à la fin de la période payée, et vous pouvez exporter toutes vos informations avant de partir. Aucune question posée, aucun frais caché.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-5" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-5" className="glass-card px-4 md:px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm md:text-base font-semibold text-foreground hover:text-cyan-electric">
                 Comment sont calculées les tournées optimisées ?
               </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
                 <p>LUMA utilise des algorithmes d'optimisation avancés pour calculer le meilleur itinéraire en fonction de vos contraintes : localisation des prospects, priorités commerciales, horaires de disponibilité et trafic en temps réel.</p>
                 <p>Vous gagnez du temps sur la route et maximisez le nombre de visites par jour. L'outil s'adapte automatiquement aux changements et vous propose des alternatives en cas d'imprévus.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-6" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-6" className="glass-card px-4 md:px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm md:text-base font-semibold text-foreground hover:text-cyan-electric">
                 Mes données sont-elles sécurisées ?
               </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
                 <p>La sécurité de vos données est notre priorité absolue. Toutes les informations sont chiffrées et hébergées sur des serveurs sécurisés en Europe, conformes au RGPD.</p>
                 <p>Vos données clients, historiques d'interactions et informations commerciales restent 100% privées et ne sont jamais partagées avec des tiers. Vous gardez le contrôle total de vos informations.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-7" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-7" className="glass-card px-4 md:px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm md:text-base font-semibold text-foreground hover:text-cyan-electric">
                 Puis-je importer mes données existantes ?
               </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
                 <p>Oui, vous pouvez importer facilement vos données depuis un fichier Excel ou CSV. LUMA prend en charge les formats standards et vous guide dans le processus d'import.</p>
                 <p>Vous pouvez également exporter vos données à tout moment pour les utiliser dans d'autres outils ou pour conserver une sauvegarde. Import et export illimités sur tous les forfaits.</p>
               </AccordionContent>
