@@ -72,17 +72,8 @@ export const entrepriseService = {
       const { data, error, count } = await query; 
       if (error) throw error;
       
-      // Dédupliquer par ID pour éviter les doublons
-      let filteredData = data || [];
-      const uniqueMap = new Map();
-      filteredData.forEach(e => {
-        if (!uniqueMap.has(e.id)) {
-          uniqueMap.set(e.id, e);
-        }
-      });
-      filteredData = Array.from(uniqueMap.values());
-      
       // Filter client-side for formes juridiques
+      let filteredData = data || [];
       
       if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
         filteredData = filteredData.filter(e => {
@@ -108,8 +99,28 @@ export const entrepriseService = {
         });
       }
 
+      // Grouper par nom pour éviter les doublons d'affichage
+      const nameGroups = new Map<string, any[]>();
+      filteredData.forEach(e => {
+        const normalizedName = e.nom?.toLowerCase().trim() || '';
+        if (!nameGroups.has(normalizedName)) {
+          nameGroups.set(normalizedName, []);
+        }
+        nameGroups.get(normalizedName)!.push(e);
+      });
+
+      // Garder uniquement la première entreprise de chaque groupe avec un compteur
+      const groupedData = Array.from(nameGroups.values()).map(group => {
+        const main = group[0];
+        return {
+          ...main,
+          multipleCreations: group.length > 1 ? group.length : undefined,
+          relatedIds: group.map(e => e.id)
+        };
+      });
+
       return { 
-        data: filteredData, 
+        data: groupedData, 
         total: count || 0,
         hasMore: data && data.length === pageSize, 
         error: null 

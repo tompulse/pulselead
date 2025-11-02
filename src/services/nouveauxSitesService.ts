@@ -57,18 +57,28 @@ export const nouveauxSitesService = {
 
       if (error) throw error;
 
-      // Dédupliquer par ID pour éviter les doublons
-      let uniqueData = data || [];
-      const uniqueMap = new Map();
-      uniqueData.forEach(site => {
-        if (!uniqueMap.has(site.id)) {
-          uniqueMap.set(site.id, site);
+      // Grouper par nom pour éviter les doublons d'affichage
+      const nameGroups = new Map<string, any[]>();
+      (data || []).forEach(site => {
+        const normalizedName = site.nom?.toLowerCase().trim() || '';
+        if (!nameGroups.has(normalizedName)) {
+          nameGroups.set(normalizedName, []);
         }
+        nameGroups.get(normalizedName)!.push(site);
       });
-      uniqueData = Array.from(uniqueMap.values());
+
+      // Garder uniquement le premier site de chaque groupe avec un compteur
+      const groupedData = Array.from(nameGroups.values()).map(group => {
+        const main = group[0];
+        return {
+          ...main,
+          multipleCreations: group.length > 1 ? group.length : undefined,
+          relatedIds: group.map(s => s.id)
+        };
+      });
 
       return {
-        data: uniqueData,
+        data: groupedData,
         total: count || 0,
         hasMore: data && data.length === pageSize,
         error: null

@@ -127,9 +127,16 @@ export const NouveauxSitesListView = ({
                           {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
                         </div>
                       )}
-                      <h4 className="font-bold text-base md:text-lg gradient-text break-words leading-tight" title={site.nom}>
-                        {site.nom}
-                      </h4>
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <h4 className="font-bold text-base md:text-lg gradient-text break-words leading-tight" title={site.nom}>
+                          {site.nom}
+                        </h4>
+                        {(site as any).multipleCreations && (
+                          <Badge variant="secondary" className="text-xs bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 shrink-0">
+                            ×{(site as any).multipleCreations}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
                       {site.est_siege && (
