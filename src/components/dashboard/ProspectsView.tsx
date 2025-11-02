@@ -43,6 +43,7 @@ export interface ApplyAIFiltersParams {
     categories?: string[];
     departments?: string[];
     formesJuridiques?: string[];
+    taillesEntreprise?: string[];
     dateFrom?: string;
     dateTo?: string;
     codesNaf?: string[];
@@ -84,12 +85,13 @@ export const ProspectsView = ({
   const { entreprises, totalCount } = useDashboardData(filters);
   const resultsCount = entreprises.length;
 
-  // Filtres pour les nouveaux sites
   const [nouveauxSitesFilters, setNouveauxSitesFilters] = useState({
     searchQuery: "",
     codesNaf: [] as string[],
     departments: [] as string[],
-    categories: [] as string[]
+    categories: [] as string[],
+    formesJuridiques: [] as string[],
+    taillesEntreprise: [] as string[]
   });
 
   // Query pour tous les nouveaux sites (pour le bouton)
@@ -269,7 +271,9 @@ export const ProspectsView = ({
         searchQuery: "",
         codesNaf: params.filters.codesNaf || [],
         departments: params.filters.departments || [],
-        categories: params.filters.categories || []
+        categories: params.filters.categories || [],
+        formesJuridiques: params.filters.formesJuridiques || [],
+        taillesEntreprise: params.filters.taillesEntreprise || []
       });
       
       // Activer le mode tournée et pré-remplir

@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Building2, ChevronDown, X, Route, Calendar as CalendarIcon } from "lucide-react";
+import { Search, Building2, ChevronDown, X, Route, Calendar as CalendarIcon, Users, Scale } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
@@ -11,6 +11,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { getAllCategories } from "@/utils/detailedCategories";
+import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface NafFiltersProps {
@@ -19,6 +20,8 @@ interface NafFiltersProps {
     codesNaf?: string[];
     departments?: string[];
     categories?: string[];
+    formesJuridiques?: string[];
+    taillesEntreprise?: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   resultsCount?: number;
@@ -51,6 +54,8 @@ export const NafFilters = ({
 }: NafFiltersProps) => {
   const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
+  const [formesJuridiquesOpen, setFormesJuridiquesOpen] = useState(false);
+  const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
   
   const { isAdmin } = useAdminStatus();
   const { data: availableFilters, isLoading } = useAvailableNouveauxSitesFilters({
@@ -108,18 +113,50 @@ export const NafFilters = ({
     });
   };
 
+  const handleFormeJuridiqueToggle = (forme: string) => {
+    setFilters((prev: any) => {
+      const current = prev.formesJuridiques || [];
+      const isSelected = current.includes(forme);
+      
+      return {
+        ...prev,
+        formesJuridiques: isSelected
+          ? current.filter((f: string) => f !== forme)
+          : [...current, forme]
+      };
+    });
+  };
+
+  const handleTailleEntrepriseToggle = (taille: string) => {
+    setFilters((prev: any) => {
+      const current = prev.taillesEntreprise || [];
+      const isSelected = current.includes(taille);
+      
+      return {
+        ...prev,
+        taillesEntreprise: isSelected
+          ? current.filter((t: string) => t !== taille)
+          : [...current, taille]
+      };
+    });
+  };
+
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
     categories: [], 
     departments: [],
     codesNaf: [],
+    formesJuridiques: [],
+    taillesEntreprise: [],
     searchQuery: ""
   }));
 
   const activeFiltersCount = 
     (filters.categories?.length || 0) + 
     (filters.departments?.length || 0) +
-    (filters.codesNaf?.length || 0);
+    (filters.codesNaf?.length || 0) +
+    (filters.formesJuridiques?.length || 0) +
+    (filters.taillesEntreprise?.length || 0);
 
   return (
     <div className="space-y-0">
@@ -313,6 +350,55 @@ export const NafFilters = ({
               )}
             </div>
           </ScrollArea>
+        </CollapsibleContent>
+      </Collapsible>
+
+      {/* Formes juridiques */}
+      <Collapsible open={formesJuridiquesOpen} onOpenChange={setFormesJuridiquesOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <span className="font-medium text-sm">Formes juridiques</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${formesJuridiquesOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <ScrollArea className="h-[300px]">
+            <div className="px-4 pb-4 space-y-1">
+              {FORMES_JURIDIQUES.map((forme) => {
+                const selected = filters.formesJuridiques?.includes(forme.value);
+                return (
+                  <div
+                    key={forme.value}
+                    onClick={() => handleFormeJuridiqueToggle(forme.value)}
+                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                  >
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                      selected ? 'bg-accent border-accent' : 'border-accent/30'
+                    }`}>
+                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                    </div>
+                    <Scale className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm leading-tight flex-1">{forme.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </CollapsibleContent>
+      </Collapsible>
+
+      {/* Taille d'entreprise */}
+      <Collapsible open={taillesEntrepriseOpen} onOpenChange={setTaillesEntrepriseOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <span className="font-medium text-sm">Taille d'entreprise</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${taillesEntrepriseOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <div className="px-4 pb-4">
+            <div className="text-xs text-muted-foreground text-center py-4 bg-accent/5 rounded-lg border border-accent/10">
+              Les données de taille d'entreprise ne sont pas disponibles pour les nouveaux sites.
+            </div>
+          </div>
         </CollapsibleContent>
       </Collapsible>
     </div>

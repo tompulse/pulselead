@@ -5,6 +5,8 @@ export interface NouveauxSitesFilters {
   codesNaf?: string[];
   departments?: string[];
   categories?: string[];
+  formesJuridiques?: string[];
+  taillesEntreprise?: string[];
 }
 
 export const nouveauxSitesService = {
@@ -44,6 +46,11 @@ export const nouveauxSitesService = {
           `code_naf.ilike.${code}%`
         ).join(',');
         query = query.or(nafConditions);
+      }
+
+      // Filtre par forme juridique
+      if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
+        query = query.in('categorie_juridique', filters.formesJuridiques);
       }
 
       const { data, error, count } = await query;

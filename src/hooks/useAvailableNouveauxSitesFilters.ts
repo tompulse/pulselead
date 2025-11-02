@@ -5,12 +5,15 @@ interface FilterCounts {
   categories: Record<string, number>;
   departments: Record<string, number>;
   nafCodes: Record<string, number>;
+  formesJuridiques: Record<string, number>;
 }
 
 export function useAvailableNouveauxSitesFilters(currentFilters: {
   categories?: string[];
   departments?: string[];
   codesNaf?: string[];
+  formesJuridiques?: string[];
+  taillesEntreprise?: string[];
   searchQuery?: string;
 }) {
   return useQuery({
@@ -29,12 +32,14 @@ export function useAvailableNouveauxSitesFilters(currentFilters: {
         categories: Record<string, number>;
         departments: Record<string, number>;
         nafCodes: Record<string, number>;
+        formesJuridiques: Record<string, number>;
       };
 
       return {
         categories: result?.categories || {},
         departments: result?.departments || {},
-        nafCodes: result?.nafCodes || {}
+        nafCodes: result?.nafCodes || {},
+        formesJuridiques: result?.formesJuridiques || {}
       };
     },
     staleTime: 30000,
