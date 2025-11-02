@@ -249,17 +249,6 @@ export const NafFilters = ({
             <span>/ {totalCount.toLocaleString('fr-FR')} site{totalCount > 1 ? 's' : ''}</span>
           </div>
         )}
-        {activeFiltersCount > 0 && (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={clearFilters}
-            className="w-full h-8 text-xs"
-          >
-            <X className="w-3 h-3 mr-1" />
-            Effacer les filtres ({activeFiltersCount})
-          </Button>
-        )}
       </div>
 
       {/* Catégories d'activité */}
@@ -401,6 +390,20 @@ export const NafFilters = ({
           </div>
         </CollapsibleContent>
       </Collapsible>
+
+      {/* Footer with reset button */}
+      {activeFiltersCount > 0 && (
+        <div className="p-4 border-t border-accent/20">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={clearFilters}
+            className="w-full border-accent/30 hover:bg-accent/10"
+          >
+            Réinitialiser les filtres
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
