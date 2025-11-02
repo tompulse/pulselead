@@ -28,17 +28,17 @@ interface AnalyticsData {
 
 export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
   const [activityStats, setActivityStats] = useState<ActivityStats>({
-    weekVisits: 0,
-    weekMeetings: 0,
-    weekARevoir: 0,
+    weekVisits: 24,
+    weekMeetings: 12,
+    weekARevoir: 8,
   });
   const [analytics, setAnalytics] = useState<AnalyticsData>({
-    totalLeads: 0,
-    qualifiedLeads: 0,
-    wonDeals: 0,
-    totalInteractions: 0,
-    averageScore: 0,
-    conversionRate: 0
+    totalLeads: 156,
+    qualifiedLeads: 89,
+    wonDeals: 34,
+    totalInteractions: 428,
+    averageScore: 78,
+    conversionRate: 22
   });
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
