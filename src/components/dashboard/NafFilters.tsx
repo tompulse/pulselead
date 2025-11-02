@@ -196,13 +196,13 @@ export const NafFilters = ({
       {/* Barre de recherche */}
       <div className="p-4 border-b border-accent/20 space-y-2">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Rechercher un site..."
+            placeholder="Rechercher..."
             value={filters.searchQuery || ""}
             onChange={(e) => setFilters((prev: any) => ({ ...prev, searchQuery: e.target.value }))}
-            className="pl-9 h-9 bg-background/50 border-accent/20 focus:border-accent/40"
+            className="pl-8 h-8 text-xs bg-background/50 border-accent/20 focus:border-accent/40"
           />
         </div>
         {isAdmin && (

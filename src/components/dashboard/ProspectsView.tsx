@@ -292,7 +292,7 @@ export const ProspectsView = ({
     <div className="h-full flex flex-col overflow-hidden gap-3">
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
         {/* Filtres */}
-        <div className="w-80 shrink-0 glass-card overflow-y-auto">
+        <div className="w-64 shrink-0 glass-card overflow-y-auto">
           {/* Sélection de vue */}
           <div className="p-4 border-b border-border/50">
             <div className="flex gap-2">
@@ -328,13 +328,13 @@ export const ProspectsView = ({
                 (activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
                   ? "bg-gradient-to-r from-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 text-primary" 
                   : "border-accent/50 hover:bg-accent/10 hover:border-accent hover:shadow-md"
-              } transition-all h-10 font-semibold`}
+              } transition-all h-8 text-xs px-3`}
               size="sm"
             >
-              <Route className="w-4 h-4 mr-2" />
+              <Route className="w-3.5 h-3.5 mr-2" />
               {(activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
                 ? "✓ Mode tournée actif" 
-                : "🚀 Créer une tournée"}
+                : "Créer une tournée"}
             </Button>
             
             {/* Panneau de configuration pour Créations */}
