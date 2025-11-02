@@ -32,7 +32,7 @@ interface Lead {
 const PIPELINE_STAGES = [
   { id: "proposition", label: "Proposition", color: "bg-purple-500", etape: 3 },
   { id: "negociation", label: "Négociation", color: "bg-orange-500", etape: 4 },
-  { id: "gagne", label: "Gagné 🎉", color: "bg-green-500", etape: 5 },
+  { id: "gagne", label: "Gagné", color: "bg-green-500", etape: 5 },
   { id: "perdu", label: "Perdu", color: "bg-red-500", etape: 0 },
 ];
 
