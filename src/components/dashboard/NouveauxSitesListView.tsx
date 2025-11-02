@@ -61,7 +61,7 @@ export const NouveauxSitesListView = ({
 
   return (
     <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
-      <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 hide-scrollbar">
         {isLoading && allSites.length === 0 ? (
           <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
             <Loader2 className="w-12 h-12 animate-spin mx-auto text-accent mb-4" />

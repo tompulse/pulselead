@@ -258,6 +258,17 @@ All colors MUST be HSL.
 
 /* Animations - optimisées pour mobile */
 @media (max-width: 768px) {
+  /* Masquer toutes les scrollbars sur mobile tout en gardant le scroll actif */
+  * {
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;    /* Firefox */
+  }
+  *::-webkit-scrollbar {
+    display: none !important; /* Chrome/Safari */
+    width: 0 !important;
+    height: 0 !important;
+  }
+
   .animate-fade-in,
   .animate-gradient,
   .gradient-text {
