@@ -179,17 +179,17 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
       {/* Section 1: Mes Activités */}
       <div className="space-y-1.5 shrink-0">
         <h3 className="text-xs md:text-sm font-semibold gradient-text">Activités</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <div 
             className="glass-card p-2 md:p-4 rounded-lg border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40 transition-all cursor-pointer"
             onClick={() => handleCardClick('visite')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-1.5 md:p-3 bg-green-500/10 rounded-full mb-1 md:mb-2">
-                <MapPin className="h-4 w-4 md:h-6 md:w-6 text-green-500" />
+              <div className="p-1 md:p-3 bg-green-500/10 rounded-full mb-1 md:mb-2">
+                <MapPin className="h-3 w-3 md:h-6 md:w-6 text-green-500" />
               </div>
-              <span className="text-xs text-muted-foreground mb-0.5 md:mb-1">Visites</span>
-              <div className="text-xl md:text-3xl font-bold text-green-500">
+              <span className="text-[10px] md:text-xs text-muted-foreground mb-0.5 md:mb-1">Visites</span>
+              <div className="text-lg md:text-3xl font-bold text-green-500">
                 {activityStats.weekVisits}
               </div>
             </div>
@@ -200,11 +200,11 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
             onClick={() => handleCardClick('rdv')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-1.5 md:p-3 bg-purple-500/10 rounded-full mb-1 md:mb-2">
-                <Calendar className="h-4 w-4 md:h-6 md:w-6 text-purple-500" />
+              <div className="p-1 md:p-3 bg-purple-500/10 rounded-full mb-1 md:mb-2">
+                <Calendar className="h-3 w-3 md:h-6 md:w-6 text-purple-500" />
               </div>
-              <span className="text-xs text-muted-foreground mb-0.5 md:mb-1">RDV</span>
-              <div className="text-xl md:text-3xl font-bold text-purple-500">
+              <span className="text-[10px] md:text-xs text-muted-foreground mb-0.5 md:mb-1">RDV</span>
+              <div className="text-lg md:text-3xl font-bold text-purple-500">
                 {activityStats.weekMeetings}
               </div>
             </div>
@@ -215,11 +215,11 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
             onClick={() => handleCardClick('a_revoir')}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="p-1.5 md:p-3 bg-orange-500/10 rounded-full mb-1 md:mb-2">
-                <CheckCircle2 className="h-4 w-4 md:h-6 md:w-6 text-orange-500" />
+              <div className="p-1 md:p-3 bg-orange-500/10 rounded-full mb-1 md:mb-2">
+                <CheckCircle2 className="h-3 w-3 md:h-6 md:w-6 text-orange-500" />
               </div>
-              <span className="text-xs text-muted-foreground mb-0.5 md:mb-1">À revoir</span>
-              <div className="text-xl md:text-3xl font-bold text-orange-500">
+              <span className="text-[10px] md:text-xs text-muted-foreground mb-0.5 md:mb-1">À revoir</span>
+              <div className="text-lg md:text-3xl font-bold text-orange-500">
                 {activityStats.weekARevoir}
               </div>
             </div>
