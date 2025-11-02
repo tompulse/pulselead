@@ -51,83 +51,75 @@ const Index = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
       </div>
 
-      {/* Header fixe */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-background/60 border-b border-accent/10">
-        <div className="container mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
-          <div className="flex justify-end items-center">
-            {/* Boutons d'action */}
-            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
-              <Button 
-                onClick={handleConnexionClick}
-                variant="outline"
-                className="border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent transition-all duration-300 px-3 sm:px-4 md:px-6 h-8 sm:h-9 md:h-10 text-xs sm:text-sm md:text-base rounded-full"
-              >
-                Connexion
-              </Button>
-              <Button 
-                onClick={handleCreerCompteClick}
-                className="btn-hero px-3 sm:px-6 md:px-8 h-8 sm:h-9 md:h-10 text-xs sm:text-sm md:text-base"
-              >
-                <span className="hidden sm:inline">Essai gratuit</span>
-                <span className="sm:hidden">Essai</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      {/* Boutons en position absolue dans le hero */}
+      <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+        <Button 
+          onClick={handleConnexionClick}
+          variant="ghost"
+          className="text-foreground hover:bg-accent/10 px-6 py-2 text-base rounded-full backdrop-blur-sm bg-background/20"
+        >
+          Connexion
+        </Button>
+        <Button 
+          onClick={handleCreerCompteClick}
+          className="btn-hero px-8 py-3 text-base font-bold shadow-2xl"
+        >
+          Essai gratuit
+        </Button>
+      </div>
 
       <main>
 
       {/* Hero Section */}
-      <section className="relative pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 px-3 sm:px-4 md:px-6 lg:px-8">
+      <section className="relative pt-32 pb-12 px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-3 sm:space-y-4 animate-fade-in">
+          <div className="text-center space-y-6 animate-fade-in">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm shadow-lg shadow-accent/10">
-              <span className="relative flex h-1.5 w-1.5">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm shadow-lg shadow-accent/10">
+              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
               </span>
-              <span className="text-[10px] sm:text-xs text-accent font-bold">Tout-en-un pour commerciaux terrain</span>
+              <span className="text-sm text-accent font-bold">Tout-en-un pour commerciaux terrain</span>
             </div>
             
-            {/* Titre principal - focus développement commercial */}
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight tracking-tight px-2">
+            {/* Titre principal - BEAUCOUP PLUS IMPACTANT */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight tracking-tight">
               <span className="text-foreground">L'outil ultime pour</span>
               <br />
-              <span className="gradient-text">développer votre activité</span>
+              <span className="gradient-text text-5xl md:text-6xl lg:text-7xl xl:text-8xl">développer votre activité</span>
               <br />
               <span className="text-foreground">commerciale terrain</span>
             </h1>
             
             {/* Sous-titre clair et orienté bénéfice */}
-            <p className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium px-4">
-              Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold whitespace-nowrap">prospectez efficacement</span>.
-              <br className="hidden sm:block" />
-              <span className="text-foreground/90 text-[10px] sm:text-xs md:text-sm mt-1 block">Tout centralisé dans une seule plateforme.</span>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium">
+              Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold">prospectez efficacement</span>.
+              <br />
+              <span className="text-foreground/90 text-base md:text-lg mt-2 block">Tout centralisé dans une seule plateforme.</span>
             </p>
             
             {/* CTA principal unique et puissant */}
-            <div className="flex flex-col items-center gap-3 pt-4">
+            <div className="flex flex-col items-center gap-6 pt-6">
               <Button 
                 onClick={handleExplorerClick}
                 size="lg"
-                className="btn-hero w-full sm:w-auto min-w-[240px] h-10 text-sm md:text-base font-bold group"
+                className="btn-hero min-w-[300px] h-16 text-xl font-extrabold group shadow-2xl shadow-accent/50 hover:shadow-accent/70"
               >
                 Démarrer gratuitement
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               
               {/* Trust indicators réels et crédibles */}
-              <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-accent" />
-                  <span className="font-medium">Sans carte bancaire</span>
+              <div className="flex items-center justify-center gap-6 text-base text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-accent" />
+                  <span className="font-semibold">Sans carte bancaire</span>
                 </div>
-                <span className="text-accent/30 hidden sm:inline">•</span>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-accent" />
-                  <span className="font-medium">Prêt en 2 minutes</span>
+                <span className="text-accent/30">•</span>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-accent" />
+                  <span className="font-semibold">Prêt en 2 minutes</span>
                 </div>
               </div>
             </div>
