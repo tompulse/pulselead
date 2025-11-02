@@ -82,22 +82,12 @@ async function processEnrichment(targetTable: string) {
 
   console.log(`Starting NAF enrichment for ${targetTable}...`);
   
-// Préparer l'authentification
-const integrationApiKey = Deno.env.get('INSEE_API_KEY_INTEGRATION');
-let inseeToken: string | null = null;
-
-if (!integrationApiKey) {
-  // Obtenir le token INSEE (legacy OAuth2 client_credentials)
-  try {
-    inseeToken = await getInseeToken();
-    console.log('INSEE token obtained successfully');
-  } catch (error) {
-    console.error('Failed to obtain INSEE token:', error);
-    throw error;
+  // Utiliser la clé d'intégration INSEE (nouvelle méthode)
+  const inseeApiKey = Deno.env.get('INSEE_API_KEY_INTEGRATION');
+  if (!inseeApiKey) {
+    throw new Error('INSEE_API_KEY_INTEGRATION not configured');
   }
-} else {
-  console.log('Using INSEE integration API key header');
-}
+  console.log('Using INSEE API Key Integration');
 
   while (hasMore) {
     // Récupérer un lot d'entreprises sans NAF
@@ -130,88 +120,55 @@ if (!integrationApiKey) {
             return;
           }
 
-// Préparer et appeler SIRENE avec fallbacks d'en-têtes et d'URL
-const useIntegration = !!integrationApiKey;
+          // Appeler l'API SIRENE avec clé d'intégration
+          const headers = {
+            'Accept': 'application/json',
+            'X-INSEE-Api-Key-Integration': inseeApiKey
+          };
 
-// Variantes d'en-têtes à essayer (ordre: intégration, clé simple, OAuth)
-const headerVariants: Array<Record<string, string>> = [];
-if (useIntegration) {
-  headerVariants.push({ Accept: 'application/json', 'X-INSEE-Api-Key-Integration': integrationApiKey! });
-  headerVariants.push({ Accept: 'application/json', 'X-INSEE-Api-Key': integrationApiKey! });
-}
-if (inseeToken) {
-  headerVariants.push({ Accept: 'application/json', Authorization: `Bearer ${inseeToken}` });
-}
+          const url = `https://api.insee.fr/api-sirene/3.11/siret/${entreprise.siret}`;
+          
+          const sireneResponse = await fetch(url, { headers });
 
-const candidateSireneUrls = [
-  `https://api.insee.fr/api-sirene/3.11/etablissements/${entreprise.siret}`,
-  `https://api.insee.fr/api-sirene/3.11/siret/${entreprise.siret}`,
-  `https://api.insee.fr/api-sirene/3.11/siret?q=siret:${entreprise.siret}`,
-  `https://api.insee.fr/entreprises/sirene/V3.11/siret/${entreprise.siret}`
-];
+          if (!sireneResponse.ok) {
+            if (sireneResponse.status === 429) {
+              console.log('Rate limit hit, waiting 3s...');
+              await new Promise(resolve => setTimeout(resolve, 3000));
+            }
+            if (loggedErrors < 5) {
+              const bodyText = await sireneResponse.text().catch(() => '');
+              console.error(`SIRENE error for ${entreprise.siret}: ${sireneResponse.status} ${bodyText?.slice(0, 200)}`);
+              loggedErrors++;
+            }
+            totalErrors++;
+            return;
+          }
 
-let sireneResponse: Response | null = null;
-let usedUrl = '';
-let usedHeaders: Record<string, string> | null = null;
+          // Parse et extraction du code NAF
+          const raw = await sireneResponse.json();
+          const etab = raw?.etablissement;
+          const codeNaf = etab?.uniteLegale?.activitePrincipaleUniteLegale 
+            || etab?.periodesEtablissement?.[0]?.activitePrincipaleEtablissement;
 
-for (const headers of headerVariants) {
-  for (const url of candidateSireneUrls) {
-    const resp = await fetch(url, { headers });
-    if (resp.ok) {
-      sireneResponse = resp;
-      usedUrl = url;
-      usedHeaders = headers;
-      if (url !== candidateSireneUrls[0]) {
-        console.log(`SIRENE fetched via fallback URL for ${entreprise.siret}: ${url}`);
-      }
-      break;
-    } else {
-      if (resp.status === 429) {
-        console.log('Rate limit hit, waiting 3s...');
-        await new Promise(resolve => setTimeout(resolve, 3000));
-      }
-      if (loggedErrors < 5) {
-        const bodyText = await resp.text().catch(() => '');
-        console.error(`SIRENE error for ${entreprise.siret} on ${url}: ${resp.status} ${resp.statusText} ${bodyText?.slice(0, 300)}`);
-        loggedErrors++;
-      }
-    }
-  }
-  if (sireneResponse) break;
-}
+          if (codeNaf) {
+            const { error: updateError } = await supabase
+              .from(targetTable)
+              .update({ code_naf: codeNaf })
+              .eq('id', entreprise.id);
 
-if (!sireneResponse) {
-  totalErrors++;
-  return;
-}
-
-// Parse et extraction du code NAF selon différents schémas possibles
-const raw = await sireneResponse.json();
-const etab = raw?.etablissement || raw?.etablissements?.[0];
-const codeNaf = etab?.uniteLegale?.activitePrincipaleUniteLegale
-  || etab?.periodesEtablissement?.[0]?.activitePrincipaleEtablissement
-  || raw?.uniteLegale?.activitePrincipaleUniteLegale
-  || raw?.etablissement?.activitePrincipaleEtablissement;
-
-if (codeNaf) {
-  const { error: updateError } = await supabase
-    .from(targetTable)
-    .update({ code_naf: codeNaf })
-    .eq('id', entreprise.id);
-
-  if (updateError) {
-    console.error(`Update error for ${entreprise.id}:`, updateError);
-    totalErrors++;
-  } else {
-    totalSuccess++;
-  }
-} else {
-  if (loggedErrors < 5) {
-    console.error(`No code NAF found for ${entreprise.siret} (URL used: ${usedUrl})`);
-    loggedErrors++;
-  }
-  totalErrors++;
-}
+            if (updateError) {
+              console.error(`Update error for ${entreprise.id}:`, updateError);
+              totalErrors++;
+            } else {
+              totalSuccess++;
+            }
+          } else {
+            if (loggedErrors < 5) {
+              console.error(`No code NAF found for ${entreprise.siret}`);
+              loggedErrors++;
+            }
+            totalErrors++;
+          }
 
         } catch (error) {
           console.error(`Error enriching ${entreprise.id}:`, error);
