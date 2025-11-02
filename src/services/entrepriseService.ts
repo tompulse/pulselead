@@ -72,8 +72,17 @@ export const entrepriseService = {
       const { data, error, count } = await query; 
       if (error) throw error;
       
-      // Filter client-side for formes juridiques
+      // Dédupliquer par ID pour éviter les doublons
       let filteredData = data || [];
+      const uniqueMap = new Map();
+      filteredData.forEach(e => {
+        if (!uniqueMap.has(e.id)) {
+          uniqueMap.set(e.id, e);
+        }
+      });
+      filteredData = Array.from(uniqueMap.values());
+      
+      // Filter client-side for formes juridiques
       
       if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
         filteredData = filteredData.filter(e => {

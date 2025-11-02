@@ -57,8 +57,18 @@ export const nouveauxSitesService = {
 
       if (error) throw error;
 
+      // Dédupliquer par ID pour éviter les doublons
+      let uniqueData = data || [];
+      const uniqueMap = new Map();
+      uniqueData.forEach(site => {
+        if (!uniqueMap.has(site.id)) {
+          uniqueMap.set(site.id, site);
+        }
+      });
+      uniqueData = Array.from(uniqueMap.values());
+
       return {
-        data: data || [],
+        data: uniqueData,
         total: count || 0,
         hasMore: data && data.length === pageSize,
         error: null
