@@ -68,31 +68,31 @@ const LeadCard = ({ lead, onSelect }: { lead: Lead; onSelect: (lead: Lead) => vo
       {...attributes}
       {...listeners}
       onClick={() => onSelect(lead)}
-      className="mb-2 cursor-move touch-manipulation"
+      className="mb-2 cursor-move"
     >
       <Card className="transition-colors border-accent/20 hover:border-accent/50">
-        <CardContent className="p-2 sm:p-3 space-y-1.5 sm:space-y-2">
+        <CardContent className="p-3 space-y-2">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-xs sm:text-sm truncate">{lead.entreprise.nom}</h4>
-              <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{lead.entreprise.ville}</p>
+              <h4 className="font-semibold text-sm truncate">{lead.entreprise.nom}</h4>
+              <p className="text-xs text-muted-foreground truncate">{lead.entreprise.ville}</p>
             </div>
             {lead.entreprise.score_lead && (
-              <Badge className={`${scoreColor(lead.entreprise.score_lead)} text-white text-[10px] sm:text-xs shrink-0`}>
+              <Badge className={`${scoreColor(lead.entreprise.score_lead)} text-white text-xs shrink-0`}>
                 {lead.entreprise.score_lead}
               </Badge>
             )}
           </div>
           
           {lead.valeur_estimee && (
-            <div className="flex items-center gap-1 text-[10px] sm:text-xs text-accent">
+            <div className="flex items-center gap-1 text-xs text-accent">
               <TrendingUp className="w-3 h-3" />
               {lead.valeur_estimee.toLocaleString('fr-FR')} €
             </div>
           )}
 
-          <div className="flex items-center gap-1">
-            <Badge variant="outline" className="text-[10px] sm:text-xs">
+          <div className="flex items-center gap-1 text-xs">
+            <Badge variant="outline" className="text-xs">
               {lead.probabilite}%
             </Badge>
           </div>
@@ -114,25 +114,25 @@ const PipelineColumn = ({
   const totalValue = leads.reduce((sum, lead) => sum + (lead.valeur_estimee || 0), 0);
 
   return (
-    <Card className="flex flex-col h-full glass-card border-accent/30 min-w-[200px] sm:min-w-[240px]">
-      <CardHeader className="pb-2 sm:pb-3 p-2 sm:p-4">
+    <Card className="flex flex-col h-full glass-card border-accent/30">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2">
-            <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${stage.color}`} />
-            <span className="truncate">{stage.label}</span>
+          <CardTitle className="text-sm font-bold flex items-center gap-2">
+            <div className={`w-3 h-3 rounded-full ${stage.color}`} />
+            {stage.label}
           </CardTitle>
-          <Badge variant="secondary" className="text-[10px] sm:text-xs shrink-0">
+          <Badge variant="secondary" className="text-xs">
             {leads.length}
           </Badge>
         </div>
         {totalValue > 0 && (
-          <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground">
             {totalValue.toLocaleString('fr-FR')} €
           </p>
         )}
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden p-2 sm:p-3 pt-0">
-        <ScrollArea className="h-full pr-1 sm:pr-2">
+      <CardContent className="flex-1 overflow-hidden p-3 pt-0">
+        <ScrollArea className="h-full pr-2">
           <SortableContext items={leads.map(l => l.entreprise_id)} strategy={verticalListSortingStrategy}>
             {leads.length === 0 ? (
               <div className="flex items-center justify-center h-32 opacity-40">

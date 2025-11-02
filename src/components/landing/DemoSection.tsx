@@ -6,76 +6,73 @@ export const DemoSection = () => {
   const [activeTab, setActiveTab] = useState<'map' | 'filter' | 'list'>('map');
 
   return (
-    <section id="demo" className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 md:py-32">
-      <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-3 sm:space-y-4">
+    <section id="demo" className="container mx-auto px-6 py-32">
+      <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-4">
           <Target className="w-4 h-4 text-accent" />
           <span className="text-sm text-accent font-medium">Démo Interactive</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+        <h2 className="text-4xl md:text-5xl font-bold">
           Découvrez LUMA en action
         </h2>
-        <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
+        <p className="text-xl text-muted-foreground">
           Une plateforme complète pour transformer votre prospection commerciale
         </p>
       </div>
 
       {/* Interactive Demo Tabs */}
       <div className="max-w-6xl mx-auto">
-        <div className="flex gap-2 sm:gap-3 md:gap-4 mb-6 sm:mb-8 justify-center flex-wrap">
+        <div className="flex gap-4 mb-8 justify-center flex-wrap">
           <button
             onClick={() => setActiveTab('map')}
-            className={`px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl text-sm sm:text-base font-semibold transition-all ${
+            className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activeTab === 'map' 
                 ? 'bg-accent text-primary shadow-lg shadow-accent/50' 
                 : 'glass-card hover:border-accent/50'
             }`}
           >
-            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1.5 sm:mr-2" />
-            <span className="hidden sm:inline">Cartographie</span>
-            <span className="sm:hidden">Carte</span>
+            <MapPin className="w-5 h-5 inline mr-2" />
+            Cartographie
           </button>
           <button
             onClick={() => setActiveTab('filter')}
-            className={`px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl text-sm sm:text-base font-semibold transition-all ${
+            className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activeTab === 'filter' 
                 ? 'bg-accent text-primary shadow-lg shadow-accent/50' 
                 : 'glass-card hover:border-accent/50'
             }`}
           >
-            <Filter className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1.5 sm:mr-2" />
-            <span className="hidden sm:inline">Filtres Intelligents</span>
-            <span className="sm:hidden">Filtres</span>
+            <Filter className="w-5 h-5 inline mr-2" />
+            Filtres Intelligents
           </button>
           <button
             onClick={() => setActiveTab('list')}
-            className={`px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl text-sm sm:text-base font-semibold transition-all ${
+            className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activeTab === 'list' 
                 ? 'bg-accent text-primary shadow-lg shadow-accent/50' 
                 : 'glass-card hover:border-accent/50'
             }`}
           >
-            <List className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1.5 sm:mr-2" />
-            <span className="hidden sm:inline">Vue Liste</span>
-            <span className="sm:hidden">Liste</span>
+            <List className="w-5 h-5 inline mr-2" />
+            Vue Liste
           </button>
         </div>
 
         {/* Demo Content */}
-        <Card className="glass-card p-4 sm:p-6 md:p-8 min-h-[400px] sm:min-h-[500px] relative overflow-hidden">
+        <Card className="glass-card p-8 min-h-[500px] relative overflow-hidden">
           {activeTab === 'map' && (
-            <div className="space-y-4 sm:space-y-6 animate-fade-in">
-              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-accent/20 flex items-center justify-center">
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+            <div className="space-y-6 animate-fade-in">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                  <MapPin className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold">Cartographie Interactive</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground">Visualisez toutes vos leads sur une carte en temps réel</p>
+                  <h3 className="text-2xl font-bold">Cartographie Interactive</h3>
+                  <p className="text-muted-foreground">Visualisez toutes vos leads sur une carte en temps réel</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <div className="glass-card p-6 border-l-4 border-accent">
                     <h4 className="font-semibold text-lg mb-2">📍 Géolocalisation précise</h4>
@@ -112,18 +109,18 @@ export const DemoSection = () => {
           )}
 
           {activeTab === 'filter' && (
-            <div className="space-y-4 sm:space-y-6 animate-fade-in">
-              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-accent/20 flex items-center justify-center">
-                  <Filter className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+            <div className="space-y-6 animate-fade-in">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                  <Filter className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold">Filtres Intelligents</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground">Affinez votre recherche avec une précision chirurgicale</p>
+                  <h3 className="text-2xl font-bold">Filtres Intelligents</h3>
+                  <p className="text-muted-foreground">Affinez votre recherche avec une précision chirurgicale</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid md:grid-cols-3 gap-6">
                 <div className="glass-card p-6 space-y-3 hover:border-accent/50 transition-all">
                   <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
                     <Search className="w-5 h-5 text-accent" />
@@ -185,14 +182,14 @@ export const DemoSection = () => {
           )}
 
           {activeTab === 'list' && (
-            <div className="space-y-4 sm:space-y-6 animate-fade-in">
-              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-accent/20 flex items-center justify-center">
-                  <List className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+            <div className="space-y-6 animate-fade-in">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                  <List className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold">Vue Liste Détaillée</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground">Accédez à toutes les informations en un coup d'œil</p>
+                  <h3 className="text-2xl font-bold">Vue Liste Détaillée</h3>
+                  <p className="text-muted-foreground">Accédez à toutes les informations en un coup d'œil</p>
                 </div>
               </div>
 
