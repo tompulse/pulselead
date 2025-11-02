@@ -10,6 +10,7 @@ interface Entreprise {
   id: string;
   nom: string;
   adresse: string;
+  ville?: string;
   latitude: number;
   longitude: number;
 }
@@ -233,20 +234,31 @@ export const TourneeMap = ({
         // Add start marker
         if (pointDepartLat && pointDepartLng && map.current) {
           const startEl = document.createElement('div');
-          startEl.style.width = '40px';
-          startEl.style.height = '40px';
-          startEl.style.background = '#FF6B00';
-          startEl.style.border = '3px solid white';
+          startEl.style.width = '48px';
+          startEl.style.height = '48px';
+          startEl.style.background = 'linear-gradient(135deg, #FF6B00 0%, #FF8533 100%)';
+          startEl.style.border = '4px solid white';
           startEl.style.borderRadius = '50%';
           startEl.style.display = 'flex';
           startEl.style.alignItems = 'center';
           startEl.style.justifyContent = 'center';
-          startEl.style.fontSize = '20px';
-          startEl.style.boxShadow = '0 2px 8px rgba(255,107,0,0.6)';
+          startEl.style.fontSize = '24px';
+          startEl.style.boxShadow = '0 4px 12px rgba(255,107,0,0.8), 0 0 20px rgba(255,107,0,0.4)';
+          startEl.style.cursor = 'pointer';
+          startEl.style.transition = 'transform 0.2s';
           startEl.textContent = '🏁';
+          startEl.title = 'Point de départ';
+          
+          startEl.onmouseover = () => {
+            startEl.style.transform = 'scale(1.15)';
+          };
+          startEl.onmouseout = () => {
+            startEl.style.transform = 'scale(1)';
+          };
           
           const startMarker = new mapboxgl.Marker({ element: startEl })
             .setLngLat([pointDepartLng, pointDepartLat])
+            .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML('<strong>🏁 Départ</strong><br/>Votre position actuelle'))
             .addTo(map.current);
           markersRef.current.push(startMarker);
           console.log('[TourneeMap] Start marker added');
@@ -256,23 +268,44 @@ export const TourneeMap = ({
         validEntreprises.forEach((e, idx) => {
           if (!map.current) return;
           
+          const isLastStop = idx === validEntreprises.length - 1;
+          
           const el = document.createElement('div');
-          el.style.width = '36px';
-          el.style.height = '36px';
-          el.style.background = '#00FFF0';
-          el.style.border = '3px solid white';
+          el.style.width = isLastStop ? '48px' : '40px';
+          el.style.height = isLastStop ? '48px' : '40px';
+          el.style.background = isLastStop 
+            ? 'linear-gradient(135deg, #10B981 0%, #34D399 100%)'
+            : 'linear-gradient(135deg, #00FFF0 0%, #00D4C8 100%)';
+          el.style.border = isLastStop ? '4px solid white' : '3px solid white';
           el.style.borderRadius = '50%';
           el.style.display = 'flex';
           el.style.alignItems = 'center';
           el.style.justifyContent = 'center';
-          el.style.color = '#0A0F1E';
+          el.style.color = isLastStop ? 'white' : '#0A0F1E';
           el.style.fontWeight = 'bold';
-          el.style.fontSize = '14px';
-          el.style.boxShadow = '0 2px 8px rgba(0,255,240,0.6)';
-          el.textContent = String(idx + 1);
+          el.style.fontSize = isLastStop ? '24px' : '16px';
+          el.style.boxShadow = isLastStop 
+            ? '0 4px 12px rgba(16,185,129,0.8), 0 0 20px rgba(16,185,129,0.4)'
+            : '0 2px 8px rgba(0,255,240,0.6)';
+          el.style.cursor = 'pointer';
+          el.style.transition = 'transform 0.2s';
+          el.textContent = isLastStop ? '🏁' : String(idx + 1);
+          el.title = isLastStop ? `Arrivée: ${e.nom}` : `Arrêt ${idx + 1}: ${e.nom}`;
+          
+          el.onmouseover = () => {
+            el.style.transform = 'scale(1.15)';
+          };
+          el.onmouseout = () => {
+            el.style.transform = 'scale(1)';
+          };
+          
+          const popupContent = isLastStop
+            ? `<strong>🏁 Arrivée - Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.adresse || e.ville || ''}</small>`
+            : `<strong>Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.adresse || e.ville || ''}</small>`;
           
           const marker = new mapboxgl.Marker({ element: el })
             .setLngLat([e.longitude, e.latitude])
+            .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent))
             .addTo(map.current);
           markersRef.current.push(marker);
         });
