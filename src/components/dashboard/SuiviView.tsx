@@ -28,19 +28,19 @@ interface AnalyticsData {
 
 export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
   const [activityStats, setActivityStats] = useState<ActivityStats>({
-    weekVisits: 24,
-    weekMeetings: 12,
-    weekARevoir: 8,
+    weekVisits: 12,
+    weekMeetings: 5,
+    weekARevoir: 1,
   });
   const [analytics, setAnalytics] = useState<AnalyticsData>({
-    totalLeads: 156,
-    qualifiedLeads: 89,
-    wonDeals: 34,
-    totalInteractions: 428,
-    averageScore: 78,
-    conversionRate: 22
+    totalLeads: 47,
+    qualifiedLeads: 23,
+    wonDeals: 8,
+    totalInteractions: 3,
+    averageScore: 72,
+    conversionRate: 17
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<'appel' | 'visite' | 'rdv' | 'a_revoir' | null>(null);
 
@@ -129,28 +129,29 @@ export const SuiviView = ({ userId, onEntrepriseClick }: SuiviViewProps) => {
   };
 
   useEffect(() => {
-    fetchAllData();
+    // DEMO MODE: Données factices pour tutoriel - décommenter fetchAllData() pour utiliser les vraies données
+    // fetchAllData();
 
-    // Realtime subscription
-    const channel = supabase
-      .channel('suivi_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'tournee_visites',
-          filter: `user_id=eq.${userId}`
-        },
-        () => {
-          fetchAllData();
-        }
-      )
-      .subscribe();
+    // // Realtime subscription
+    // const channel = supabase
+    //   .channel('suivi_changes')
+    //   .on(
+    //     'postgres_changes',
+    //     {
+    //       event: '*',
+    //       schema: 'public',
+    //       table: 'tournee_visites',
+    //       filter: `user_id=eq.${userId}`
+    //     },
+    //     () => {
+    //       fetchAllData();
+    //     }
+    //   )
+    //   .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    // return () => {
+    //   supabase.removeChannel(channel);
+    // };
   }, [userId]);
 
   if (loading) {
