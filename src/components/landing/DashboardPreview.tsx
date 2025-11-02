@@ -7,10 +7,10 @@ const DashboardPreview = () => {
   const [currentScene, setCurrentScene] = useState(0);
   const navigate = useNavigate();
 
-  // Animation loop: 4 scenes, 4 seconds each
+  // Animation loop: 3 scenes, 4 seconds each
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentScene((prev) => (prev + 1) % 4);
+      setCurrentScene((prev) => (prev + 1) % 3);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -71,49 +71,8 @@ const DashboardPreview = () => {
         </div>
       </div>
 
-      {/* Scene 1: Carte avec pins */}
+      {/* Scene 1: Statistiques d'activités */}
       <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <div className="w-full h-full flex items-center justify-center p-1">
-          <div className="w-full max-w-2xl bg-navy-deep/80 backdrop-blur-xl border border-cyan-electric/40 rounded-lg p-1.5 animate-scale-in shadow-2xl shadow-cyan-electric/20">
-            <h3 className="text-[10px] font-bold text-center mb-1 text-cyan-electric">Visualisez votre territoire</h3>
-            {/* Map with realistic background */}
-            <div className="relative h-16 bg-gradient-to-br from-gray-900 to-gray-800 rounded overflow-hidden border border-cyan-electric/20">
-              {/* Realistic map background */}
-              <div className="absolute inset-0 opacity-30" style={{
-                backgroundImage: `
-                  linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px)
-                `,
-                backgroundSize: '20px 20px',
-                backgroundColor: '#1a2332'
-              }}>
-                {/* Simulated roads */}
-                <svg className="w-full h-full opacity-20">
-                  <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#4a5568" strokeWidth="2"/>
-                  <line x1="30%" y1="0" x2="30%" y2="100%" stroke="#4a5568" strokeWidth="2"/>
-                  <line x1="70%" y1="0" x2="70%" y2="100%" stroke="#4a5568" strokeWidth="2"/>
-                  <line x1="0" y1="30%" x2="100%" y2="30%" stroke="#4a5568" strokeWidth="1.5"/>
-                  <line x1="0" y1="70%" x2="100%" y2="70%" stroke="#4a5568" strokeWidth="1.5"/>
-                </svg>
-              </div>
-              
-              {/* Map pins */}
-              <div className="absolute top-1/4 left-1/3 animate-pulse">
-                <MapPin className="w-2 h-2 text-cyan-electric fill-cyan-electric/50" />
-              </div>
-              <div className="absolute top-1/2 right-1/3 animate-pulse" style={{ animationDelay: '0.5s' }}>
-                <MapPin className="w-2 h-2 text-cyan-electric fill-cyan-electric/50" />
-              </div>
-              <div className="absolute bottom-1/4 left-1/2 animate-pulse" style={{ animationDelay: '1s' }}>
-                <MapPin className="w-2 h-2 text-cyan-electric fill-cyan-electric/50" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Scene 2: Statistiques d'activités */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 2 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full flex items-center justify-center p-1">
           <div className="w-full max-w-2xl">
             <h3 className="text-[10px] font-bold text-center mb-1 text-cyan-electric">Mes Activités</h3>
@@ -140,8 +99,8 @@ const DashboardPreview = () => {
         </div>
       </div>
 
-      {/* Scene 3: Tournée optimisée */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 3 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      {/* Scene 2: Tournée optimisée */}
+      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 2 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full flex items-center justify-center p-1">
           <div className="w-full max-w-3xl grid grid-cols-[1fr,90px] gap-1">
             {/* Map */}
@@ -216,7 +175,7 @@ const DashboardPreview = () => {
 
       {/* Progress indicators */}
       <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-1 z-10">
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1, 2].map((i) => (
           <div
             key={i}
             className={`h-0.5 w-3 rounded-full transition-all duration-300 ${
