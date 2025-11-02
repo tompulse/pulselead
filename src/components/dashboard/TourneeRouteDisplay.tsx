@@ -110,6 +110,7 @@ export const TourneeRouteDisplay = ({
   const [pointDepartLat, setPointDepartLat] = useState(initialPointDepartLat);
   const [pointDepartLng, setPointDepartLng] = useState(initialPointDepartLng);
   const [navigatingEntreprise, setNavigatingEntreprise] = useState<Entreprise | null>(null);
+  const [hasAutoOptimized, setHasAutoOptimized] = useState(false);
   const { toast } = useToast();
 
   const sensors = useSensors(
@@ -123,6 +124,20 @@ export const TourneeRouteDisplay = ({
     fetchEntreprises();
     fetchVisites();
   }, [initialOrdre]);
+
+  // Auto-optimiser la tournée au premier chargement
+  useEffect(() => {
+    if (
+      entreprises.length >= 2 && 
+      !hasAutoOptimized && 
+      !isOptimizing && 
+      !loading &&
+      entreprises.every(e => e.id)
+    ) {
+      setHasAutoOptimized(true);
+      handleOptimizeTournee();
+    }
+  }, [entreprises, loading, hasAutoOptimized, isOptimizing]);
 
   // Calculer automatiquement les routes quand les entreprises sont chargées
   useEffect(() => {
@@ -713,39 +728,6 @@ export const TourneeRouteDisplay = ({
               </div>
             )}
 
-            {/* Indication du point de départ */}
-            <div className="flex items-center gap-2 text-xs bg-orange-500/10 border border-orange-500/20 rounded-lg px-3 py-2">
-              <div className="text-lg">🏁</div>
-              <div className="flex-1">
-                <div className="font-medium text-orange-600 dark:text-orange-400">Point de départ</div>
-                <div className="text-muted-foreground text-[10px]">
-                  {pointDepartLat && pointDepartLng 
-                    ? `Position: ${pointDepartLat.toFixed(4)}, ${pointDepartLng.toFixed(4)}`
-                    : "Utilise votre position actuelle lors de l'optimisation"}
-                </div>
-              </div>
-            </div>
-
-            {/* Bouton optimiser */}
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleOptimizeTournee}
-              disabled={isOptimizing || entreprises.length < 2}
-              className="w-full h-9 text-xs bg-accent text-accent-foreground hover:bg-accent/90 transition-all font-medium shadow-md"
-            >
-              {isOptimizing ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                  Optimisation...
-                </>
-              ) : (
-                <>
-                  <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-                  Optimiser depuis ma position
-                </>
-              )}
-            </Button>
           </div>
         </CardHeader>
         
