@@ -400,7 +400,7 @@ const Index = () => {
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">
-                    {billingPeriod === 'monthly' ? '129' : billingPeriod === 'quarterly' ? '109' : '99'}€
+                    ???
                   </span>
                   <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
@@ -454,7 +454,7 @@ const Index = () => {
               <div>
                 <div className="flex items-baseline gap-2 mb-2 md:mb-3">
                   <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">
-                    {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '169' : '149'}€
+                    ???
                   </span>
                   <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
                 </div>
@@ -498,8 +498,9 @@ const Index = () => {
                 <p className="text-muted-foreground font-medium">Pour les équipes commerciales</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-4xl font-bold gradient-text">Sur mesure</span>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-5xl font-bold gradient-text">???</span>
+                  <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
                 <div className="text-sm text-accent font-bold">Solution complète équipe</div>
               </div>
