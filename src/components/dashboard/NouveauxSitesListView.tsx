@@ -60,8 +60,8 @@ export const NouveauxSitesListView = ({
   }
 
   return (
-    <div className="space-y-4 h-full flex flex-col overflow-hidden overflow-x-hidden">
-      <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 hide-scrollbar">
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto hide-scrollbar">
         {isLoading && allSites.length === 0 ? (
           <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
             <Loader2 className="w-12 h-12 animate-spin mx-auto text-accent mb-4" />
@@ -79,7 +79,7 @@ export const NouveauxSitesListView = ({
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4 pr-2">
+            <div className="grid grid-cols-1 gap-3">
               {allSites.map((site) => {
               const nafInfo = getNafCategory(site.code_naf);
               const hasCoordinates = site.latitude && site.longitude;
