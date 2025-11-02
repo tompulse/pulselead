@@ -55,11 +55,6 @@ const Index = () => {
       <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-background/60 border-b border-accent/10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            {/* Logo */}
-            <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <span className="text-xl sm:text-2xl font-bold gradient-text">LUMA</span>
-            </div>
-            
             {/* Boutons d'action */}
             <div className="flex items-center gap-2 sm:gap-4">
               <Button 

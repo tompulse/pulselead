@@ -29,10 +29,6 @@ export const DashboardHeader = ({
     <header className="glass-card border-b border-accent/20 px-3 md:px-4 py-2 md:py-3 z-10 backdrop-blur-xl shrink-0 shadow-md">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 md:gap-4">
-          <div className="flex items-center gap-2 md:gap-3">
-            <span className="text-lg md:text-xl font-bold gradient-text">LUMA</span>
-          </div>
-          
           {/* View Toggle */}
           <div className="flex gap-1 p-0.5 bg-card/50 rounded-lg border border-accent/20 shadow-sm">
             <Button
