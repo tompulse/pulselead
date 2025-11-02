@@ -293,8 +293,8 @@ export const ProspectsView = ({
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
         {/* Filtres */}
         <div className="w-64 shrink-0 glass-card overflow-y-auto">
-          {/* Sélection de vue */}
-          <div className="p-4 border-b border-border/50">
+          {/* Sélection de vue et création de tournée */}
+          <div className="p-4 border-b border-border/50 space-y-3">
             <div className="flex gap-2">
               <Button
                 variant={activeView === 'creations' ? 'default' : 'outline'}
@@ -313,10 +313,8 @@ export const ProspectsView = ({
                 Nouveaux Sites
               </Button>
             </div>
-          </div>
-
-          {/* Bouton Créer une tournée unifié */}
-          <div className="p-4 border-b border-accent/20 bg-gradient-to-br from-accent/5 via-transparent to-transparent">
+            
+            {/* Bouton Créer une tournée */}
             <Button
               onClick={activeView === 'creations' ? handleCreateTournee : handleCreateNouveauxSitesTournee}
               variant={
@@ -336,7 +334,10 @@ export const ProspectsView = ({
                 ? "✓ Mode tournée actif" 
                 : "Créer une tournée"}
             </Button>
-            
+          </div>
+
+          {/* Panneaux de configuration de tournée */}
+          <div className="border-b border-accent/20">
             {/* Panneau de configuration pour Créations */}
             {activeView === 'creations' && tourneeActive && (
               <div className="space-y-3 p-3 mt-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30 shadow-sm">
