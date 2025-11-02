@@ -448,7 +448,7 @@ export const ProspectsView = ({
         </div>
 
         {/* Liste mobile - une carte par ligne */}
-        <div className="flex-1 overflow-y-auto px-3 pb-3">
+        <div className="flex-1 overflow-y-auto px-3 pb-3 hide-scrollbar">
           {activeView === 'creations' ? (
             <ListView
               filters={filters}
