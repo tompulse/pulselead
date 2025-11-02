@@ -16,12 +16,11 @@ interface Lead {
   statut_actuel: string;
   etape_pipeline: number;
   probabilite: number;
-  valeur_estimee: number | null;
+  technologie: string;
   entreprise: {
     nom: string;
     ville: string;
     activite: string;
-    score_lead: number | null;
   };
   derniere_interaction?: {
     type: string;
@@ -43,12 +42,11 @@ const FAKE_LEADS: Lead[] = [
     statut_actuel: "proposition",
     etape_pipeline: 3,
     probabilite: 60,
-    valeur_estimee: 15000,
+    technologie: "Intrusion",
     entreprise: {
       nom: "Boulangerie Martin",
       ville: "Paris",
-      activite: "Boulangerie-pâtisserie",
-      score_lead: 75
+      activite: "Boulangerie-pâtisserie"
     }
   },
   {
@@ -56,12 +54,11 @@ const FAKE_LEADS: Lead[] = [
     statut_actuel: "proposition",
     etape_pipeline: 3,
     probabilite: 60,
-    valeur_estimee: 8500,
+    technologie: "Vidéo",
     entreprise: {
       nom: "Restaurant Le Gourmet",
       ville: "Lyon",
-      activite: "Restauration",
-      score_lead: 68
+      activite: "Restauration"
     }
   },
   {
@@ -69,12 +66,11 @@ const FAKE_LEADS: Lead[] = [
     statut_actuel: "negociation",
     etape_pipeline: 4,
     probabilite: 80,
-    valeur_estimee: 25000,
+    technologie: "PTI",
     entreprise: {
       nom: "Hôtel des Alpes",
       ville: "Grenoble",
-      activite: "Hôtellerie",
-      score_lead: 82
+      activite: "Hôtellerie"
     }
   },
   {
@@ -82,12 +78,11 @@ const FAKE_LEADS: Lead[] = [
     statut_actuel: "negociation",
     etape_pipeline: 4,
     probabilite: 80,
-    valeur_estimee: 18000,
+    technologie: "Intrusion",
     entreprise: {
       nom: "Café Central",
       ville: "Marseille",
-      activite: "Café-bar",
-      score_lead: 71
+      activite: "Café-bar"
     }
   },
   {
@@ -95,12 +90,11 @@ const FAKE_LEADS: Lead[] = [
     statut_actuel: "gagne",
     etape_pipeline: 5,
     probabilite: 100,
-    valeur_estimee: 32000,
+    technologie: "Vidéo",
     entreprise: {
       nom: "Pizzeria Bella Vista",
       ville: "Nice",
-      activite: "Restauration italienne",
-      score_lead: 88
+      activite: "Restauration italienne"
     }
   },
   {
@@ -108,12 +102,11 @@ const FAKE_LEADS: Lead[] = [
     statut_actuel: "gagne",
     etape_pipeline: 5,
     probabilite: 100,
-    valeur_estimee: 22000,
+    technologie: "Intrusion",
     entreprise: {
       nom: "Brasserie du Port",
       ville: "Bordeaux",
-      activite: "Brasserie",
-      score_lead: 85
+      activite: "Brasserie"
     }
   },
   {
@@ -121,12 +114,11 @@ const FAKE_LEADS: Lead[] = [
     statut_actuel: "perdu",
     etape_pipeline: 0,
     probabilite: 0,
-    valeur_estimee: null,
+    technologie: "PTI",
     entreprise: {
       nom: "Snack Express",
       ville: "Toulouse",
-      activite: "Restauration rapide",
-      score_lead: 45
+      activite: "Restauration rapide"
     }
   }
 ];
@@ -170,19 +162,13 @@ const LeadCard = ({ lead, onSelect }: { lead: Lead; onSelect: (lead: Lead) => vo
               <h4 className="font-semibold text-sm truncate">{lead.entreprise.nom}</h4>
               <p className="text-xs text-muted-foreground truncate">{lead.entreprise.ville}</p>
             </div>
-            {lead.entreprise.score_lead && (
-              <Badge className={`${scoreColor(lead.entreprise.score_lead)} text-white text-xs shrink-0`}>
-                {lead.entreprise.score_lead}
-              </Badge>
-            )}
           </div>
           
-          {lead.valeur_estimee && (
-            <div className="flex items-center gap-1 text-xs text-accent">
-              <TrendingUp className="w-3 h-3" />
-              {lead.valeur_estimee.toLocaleString('fr-FR')} €
-            </div>
-          )}
+          <div className="flex items-center gap-1 text-xs text-accent">
+            <Badge variant="secondary" className="text-xs">
+              {lead.technologie}
+            </Badge>
+          </div>
 
           <div className="flex items-center gap-1 text-xs">
             <Badge variant="outline" className="text-xs">
@@ -204,8 +190,6 @@ const PipelineColumn = ({
   leads: Lead[];
   onSelect: (lead: Lead) => void;
 }) => {
-  const totalValue = leads.reduce((sum, lead) => sum + (lead.valeur_estimee || 0), 0);
-
   return (
     <Card className="flex flex-col h-full glass-card border-accent/30">
       <CardHeader className="pb-3">
@@ -218,11 +202,6 @@ const PipelineColumn = ({
             {leads.length}
           </Badge>
         </div>
-        {totalValue > 0 && (
-          <p className="text-xs text-muted-foreground">
-            {totalValue.toLocaleString('fr-FR')} €
-          </p>
-        )}
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden p-3 pt-0">
         <ScrollArea className="h-full pr-2">
@@ -298,6 +277,7 @@ export const PipelineKanban = ({ onLeadSelect }: { onLeadSelect?: (entrepriseId:
             ...lead,
             entreprise: Array.isArray(lead.entreprises) ? lead.entreprises[0] : lead.entreprises,
             derniere_interaction: interaction,
+            technologie: "Intrusion", // Valeur par défaut
           };
         })
       );
