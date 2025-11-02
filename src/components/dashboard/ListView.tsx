@@ -374,7 +374,7 @@ export const ListView = ({
                         onToggleSelection(item);
                       }
                     }}
-                    className={`group relative rounded-xl p-4 md:p-5 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[280px] overflow-hidden ${
+                    className={`group relative rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[240px] sm:min-h-[260px] md:min-h-[280px] overflow-hidden ${
                       selectionMode 
                         ? isSelected
                           ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15'

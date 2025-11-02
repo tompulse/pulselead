@@ -199,17 +199,18 @@ const DashboardContent = () => {
 
       {/* Bouton d'enrichissement des données */}
       {isAdmin && (
-        <div className="px-4 pt-2">
+        <div className="px-2 sm:px-4 pt-2">
           <Dialog open={enrichmentOpen} onOpenChange={setEnrichmentOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Database className="h-4 w-4" />
-                Enrichir les données
+              <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
+                <Database className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Enrichir</span>
+                <span className="xs:hidden">Données</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl mx-2 sm:mx-auto">
               <DialogHeader>
-                <DialogTitle>Enrichissement automatique des données</DialogTitle>
+                <DialogTitle className="text-base sm:text-lg">Enrichissement automatique des données</DialogTitle>
               </DialogHeader>
               <DataEnrichmentPanel />
             </DialogContent>

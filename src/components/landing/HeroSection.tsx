@@ -6,55 +6,55 @@ export const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative container mx-auto px-6 pt-32 pb-20 overflow-hidden">
+    <section className="relative container mx-auto px-4 sm:px-6 pt-20 sm:pt-28 md:pt-36 pb-12 sm:pb-16 md:pb-20 overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/4 -left-20 w-64 sm:w-80 md:w-96 h-64 sm:h-80 md:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 -right-20 w-64 sm:w-80 md:w-96 h-64 sm:h-80 md:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      <div className="relative text-center max-w-5xl mx-auto space-y-8 animate-fade-in">
+      <div className="relative text-center max-w-5xl mx-auto space-y-6 sm:space-y-8 animate-fade-in">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm mb-6 shadow-lg shadow-accent/10">
+        <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm mb-4 sm:mb-6 shadow-lg shadow-accent/10">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
           </span>
-          <span className="text-sm text-accent font-bold tracking-wide">L'outil tout-en-un des commerciaux terrain</span>
+          <span className="text-xs sm:text-sm text-accent font-bold tracking-wide">L'outil tout-en-un des commerciaux terrain</span>
         </div>
         
         {/* Main Headline - Focus sur le développement commercial */}
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight px-2">
           Développez votre activité
           <br />
           <span className="gradient-text inline-block">commerciale</span> avec
-          <br />
-          l'outil ultime du terrain
+          <br className="hidden sm:block" />
+          <span className="sm:inline block">l'outil ultime du terrain</span>
         </h1>
         
         {/* Subheadline - Focus sur les bénéfices globaux */}
-        <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
           Organisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold">accédez aux nouvelles entreprises</span> de votre secteur.
           <span className="block mt-2 text-foreground/90">Tout centralisé dans un seul outil.</span>
         </p>
 
         {/* CTA Principal unique et fort */}
-        <div className="flex flex-col items-center gap-5 pt-6">
+        <div className="flex flex-col items-center gap-4 sm:gap-5 pt-4 sm:pt-6 px-4">
           <button 
             onClick={() => navigate("/auth")}
-            className="group relative btn-hero inline-flex items-center gap-3 px-10 py-5 shadow-2xl shadow-accent/40 hover:shadow-accent/50 text-xl"
+            className="group relative btn-hero inline-flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto min-w-[280px] sm:min-w-[320px] px-8 sm:px-10 py-4 sm:py-5 shadow-2xl shadow-accent/40 hover:shadow-accent/50 text-base sm:text-lg md:text-xl"
           >
             Démarrer gratuitement
-            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
           </button>
           
           {/* Trust indicators réels */}
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-accent" />
               <span className="font-medium">Aucune carte bancaire</span>
             </div>
-            <span className="text-accent/30">•</span>
+            <span className="hidden sm:inline text-accent/30">•</span>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-accent" />
               <span className="font-medium">Configuration en 2 min</span>
@@ -64,34 +64,34 @@ export const HeroSection = () => {
           {/* Secondary CTA subtil */}
           <button
             onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
-            className="text-accent hover:text-accent/80 text-sm font-medium flex items-center gap-2 group transition-all mt-2"
+            className="text-accent hover:text-accent/80 text-xs sm:text-sm font-medium flex items-center gap-2 group transition-all mt-1 sm:mt-2"
           >
-            <Play className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
             Voir comment ça marche
           </button>
         </div>
 
         {/* Trust badges - focus outil commercial */}
-        <div className="flex flex-wrap items-center justify-center gap-6 pt-16 max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-card/60 border border-accent/20">
-            <Target className="w-5 h-5 text-accent" />
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 pt-12 sm:pt-16 max-w-4xl mx-auto px-4">
+          <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl bg-card/60 border border-accent/20">
+            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" />
             <div className="text-left">
-              <div className="text-xs text-muted-foreground">Tournées</div>
-              <div className="text-sm font-bold text-foreground">Optimisées</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Tournées</div>
+              <div className="text-xs sm:text-sm font-bold text-foreground">Optimisées</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-card/60 border border-accent/20">
-            <Zap className="w-5 h-5 text-accent" />
+          <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl bg-card/60 border border-accent/20">
+            <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" />
             <div className="text-left">
-              <div className="text-xs text-muted-foreground">CRM</div>
-              <div className="text-sm font-bold text-foreground">Intégré</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">CRM</div>
+              <div className="text-xs sm:text-sm font-bold text-foreground">Intégré</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-card/60 border border-accent/20">
-            <Shield className="w-5 h-5 text-accent" />
+          <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl bg-card/60 border border-accent/20">
+            <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" />
             <div className="text-left">
-              <div className="text-xs text-muted-foreground">Données</div>
-              <div className="text-sm font-bold text-foreground">Officielles</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Données</div>
+              <div className="text-xs sm:text-sm font-bold text-foreground">Officielles</div>
             </div>
           </div>
         </div>

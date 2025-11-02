@@ -233,6 +233,52 @@ All colors MUST be HSL.
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Responsive tables */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--accent) / 0.5) transparent;
+  }
+
+  .table-responsive::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: hsl(var(--accent) / 0.5);
+    border-radius: 4px;
+  }
+
+  .table-responsive table {
+    min-width: 100%;
+  }
+}
+
+/* Animations - optimisées pour mobile */
+@media (max-width: 768px) {
+  .animate-fade-in,
+  .animate-gradient,
+  .gradient-text {
+    animation-duration: 0.3s;
+  }
+  
+  .btn-hero {
+    box-shadow: 0 4px 12px hsl(var(--accent) / 0.3);
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+  
+  /* Réduire les animations lourdes */
+  .animate-pulse {
+    animation-duration: 3s;
+  }
+
+  /* Optimiser les grids */
+  .grid {
+    gap: 0.75rem !important;
+  }
 }
 
 /* Style personnalisé pour les popups Mapbox */
@@ -245,3 +291,4 @@ All colors MUST be HSL.
 .mapboxgl-popup-tip {
   display: none !important;
 }
+

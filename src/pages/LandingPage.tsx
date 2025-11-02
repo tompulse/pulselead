@@ -53,22 +53,23 @@ const Index = () => {
 
       {/* Header fixe */}
       <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-background/60 border-b border-accent/10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
+          <div className="flex justify-end items-center">
             {/* Boutons d'action */}
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
               <Button 
                 onClick={handleConnexionClick}
                 variant="outline"
-                className="border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent transition-all duration-300 px-4 sm:px-6 h-9 sm:h-10 text-sm sm:text-base rounded-full"
+                className="border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent transition-all duration-300 px-3 sm:px-4 md:px-6 h-8 sm:h-9 md:h-10 text-xs sm:text-sm md:text-base rounded-full"
               >
                 Connexion
               </Button>
               <Button 
                 onClick={handleCreerCompteClick}
-                className="btn-hero px-4 sm:px-8 h-9 sm:h-10 text-sm sm:text-base"
+                className="btn-hero px-3 sm:px-6 md:px-8 h-8 sm:h-9 md:h-10 text-xs sm:text-sm md:text-base"
               >
-                Essai gratuit
+                <span className="hidden sm:inline">Essai gratuit</span>
+                <span className="sm:hidden">Essai</span>
               </Button>
             </div>
           </div>
@@ -78,20 +79,20 @@ const Index = () => {
       <main>
 
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-40 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-24 sm:pt-32 md:pt-40 pb-16 sm:pb-20 px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-8 animate-fade-in">
+          <div className="text-center space-y-6 sm:space-y-8 animate-fade-in">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm shadow-lg shadow-accent/10">
+            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm shadow-lg shadow-accent/10">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
               </span>
-              <span className="text-sm text-accent font-bold">Tout-en-un pour commerciaux terrain</span>
+              <span className="text-xs sm:text-sm text-accent font-bold">Tout-en-un pour commerciaux terrain</span>
             </div>
             
             {/* Titre principal - focus développement commercial */}
-            <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-7xl font-bold leading-tight md:leading-tight lg:leading-[1.08] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight md:leading-tight lg:leading-[1.08] tracking-tight px-2">
               <span className="text-foreground">L'outil ultime pour</span>
               <br />
               <span className="gradient-text">développer votre activité</span>
