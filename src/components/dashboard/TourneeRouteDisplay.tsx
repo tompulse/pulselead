@@ -704,6 +704,19 @@ export const TourneeRouteDisplay = ({
               </div>
             )}
 
+            {/* Indication du point de départ */}
+            <div className="flex items-center gap-2 text-xs bg-orange-500/10 border border-orange-500/20 rounded-lg px-3 py-2">
+              <div className="text-lg">🏁</div>
+              <div className="flex-1">
+                <div className="font-medium text-orange-600 dark:text-orange-400">Point de départ</div>
+                <div className="text-muted-foreground text-[10px]">
+                  {pointDepartLat && pointDepartLng 
+                    ? `Position: ${pointDepartLat.toFixed(4)}, ${pointDepartLng.toFixed(4)}`
+                    : "Utilise votre position actuelle lors de l'optimisation"}
+                </div>
+              </div>
+            </div>
+
             {/* Bouton optimiser */}
             <Button
               variant="default"
@@ -720,7 +733,7 @@ export const TourneeRouteDisplay = ({
               ) : (
                 <>
                   <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-                  Optimiser l'itinéraire
+                  Optimiser depuis ma position
                 </>
               )}
             </Button>

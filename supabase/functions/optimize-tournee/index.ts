@@ -89,13 +89,14 @@ serve(async (req) => {
     // Cette API trouve automatiquement le meilleur ordre pour minimiser le temps de trajet
     const coordinates = validEntreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
     
-    // Si on a un point de départ différent, on l'ajoute comme premier point fixe
-    // roundtrip=true est nécessaire pour que l'API fonctionne
+    // Construire l'URL d'optimisation
+    // Si on a un point de départ, on l'ajoute comme premier point fixe (source=first)
+    // On ne fait PAS de roundtrip pour avoir un circuit linéaire du début à la fin
     const optimizationUrl = point_depart
-      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=last&roundtrip=true&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`
-      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?source=first&roundtrip=true&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
+      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`
+      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&steps=true&access_token=${MAPBOX_TOKEN}`;
     
-    console.log('🎯 Appel Mapbox Optimization API pour optimisation réelle du temps de trajet');
+    console.log('🎯 Appel Mapbox Optimization API pour optimisation en circuit (pas de retour au départ)');
     
     const mapboxResponse = await fetch(optimizationUrl);
     
@@ -137,7 +138,7 @@ serve(async (req) => {
     const tempsVisites = sortedEntreprises.length * 15; // 15 min par visite
     const tempsTotal = tempsTrajetMinutes + tempsVisites;
 
-    console.log('✅ Itinéraire optimisé (minimum de temps):', {
+    console.log('✅ Itinéraire optimisé (circuit du 1er au dernier prospect):', {
       distance: Math.round(distanceKm) + ' km',
       temps: Math.round(tempsTotal) + ' min',
       arrêts: sortedEntreprises.length
@@ -150,7 +151,7 @@ serve(async (req) => {
         distance_totale_km: Math.round(distanceKm * 10) / 10,
         temps_estime_minutes: Math.round(tempsTotal),
         temps_trajet_minutes: Math.round(tempsTrajetMinutes),
-        explication: `Itinéraire optimisé pour temps minimum: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
+        explication: `Itinéraire optimisé en circuit: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
         route_geometry: trip.geometry, // GeoJSON de la route complète
         waypoints: mapboxData.waypoints, // Points de passage avec données GPS
         legs: trip.legs, // Détails de chaque segment
