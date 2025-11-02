@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, X, Map } from "lucide-react";
-import DashboardPreview from "@/components/landing/DashboardPreview";
+
 import { trackCTAClick } from "@/utils/analytics";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { BookingSection } from "@/components/landing/BookingSection";
@@ -105,17 +105,6 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Visuel */}
-            <div className="pt-16 animate-fade-in" style={{
-              animationDelay: '0.3s'
-            }}>
-              <div className="glass-card p-4 sm:p-6 max-w-5xl mx-auto relative group border-accent/30">
-                <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
-                <div className="relative aspect-video rounded-lg overflow-hidden ring-1 ring-accent/20">
-                  <DashboardPreview />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
