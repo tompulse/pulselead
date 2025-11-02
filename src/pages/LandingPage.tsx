@@ -59,28 +59,11 @@ const Index = () => {
       }}></div>
       </div>
 
-      {/* Header fixe */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-background/60 border-b border-accent/10">
-        <div className="container mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
-          <div className="flex justify-end items-center">
-            {/* Boutons d'action */}
-            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
-              <Button onClick={handleConnexionClick} variant="outline" className="border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent transition-all duration-300 px-3 sm:px-4 md:px-6 h-8 sm:h-9 md:h-10 text-xs sm:text-sm md:text-base rounded-full">
-                Connexion
-              </Button>
-              <Button onClick={handleCreerCompteClick} className="btn-hero px-3 sm:px-6 md:px-8 h-8 sm:h-9 md:h-10 text-xs sm:text-sm md:text-base">
-                <span className="hidden sm:inline">Essai gratuit</span>
-                <span className="sm:hidden">Essai</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <main>
 
       {/* Hero Section */}
-      <section className="relative pt-24 sm:pt-32 md:pt-40 pb-16 sm:pb-20 px-3 sm:px-4 md:px-6 lg:px-8">
+      <section className="relative pt-12 sm:pt-16 md:pt-20 pb-16 sm:pb-20 px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-6 sm:space-y-8 animate-fade-in">
             {/* Badge */}

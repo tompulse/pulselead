@@ -60,14 +60,23 @@ export const HeroSection = () => {
             </div>
           </div>
           
-          {/* Secondary CTA subtil */}
-          <button
-            onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
-            className="text-accent hover:text-accent/80 text-xs sm:text-sm font-medium flex items-center gap-2 group transition-all mt-1 sm:mt-2"
-          >
-            <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
-            Voir comment ça marche
-          </button>
+          {/* Secondary CTA - Connexion */}
+          <div className="flex items-center gap-4 mt-1 sm:mt-2">
+            <button
+              onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
+              className="text-accent hover:text-accent/80 text-xs sm:text-sm font-medium flex items-center gap-2 group transition-all"
+            >
+              <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
+              Voir comment ça marche
+            </button>
+            <span className="text-accent/30">•</span>
+            <button
+              onClick={() => navigate("/auth")}
+              className="text-muted-foreground hover:text-foreground text-xs sm:text-sm font-medium transition-colors"
+            >
+              Connexion
+            </button>
+          </div>
         </div>
 
         {/* Trust badges - focus outil commercial */}
