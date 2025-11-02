@@ -33,6 +33,68 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 }
 
+// Géocodage Mapbox pour compléter les coordonnées manquantes
+async function geocodeOne(query: string, token: string): Promise<{ lat: number; lng: number } | null> {
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${token}&limit=1&language=fr`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    console.warn('[optimize-tournee] Geocoding error status:', res.status);
+    return null;
+  }
+  const data = await res.json();
+  const feature = data.features?.[0];
+  if (!feature?.center) return null;
+  const [lng, lat] = feature.center;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return { lat, lng };
+}
+
+function buildQuery(e: Entreprise): string | null {
+  // Priorité à l'adresse complète, sinon ville + CP
+  const parts: string[] = [];
+  if (e.adresse) parts.push(e.adresse);
+  if (e.code_postal) parts.push(e.code_postal);
+  if (e.ville) parts.push(e.ville);
+  parts.push('France');
+  const query = parts.filter(Boolean).join(', ');
+  return query.trim().length > 0 ? query : null;
+}
+
+async function hydrateCoordinates(entreprises: Entreprise[], token: string): Promise<Entreprise[]> {
+  let geocodedCount = 0;
+  const enriched: Entreprise[] = [];
+
+  for (const e of entreprises) {
+    const hasCoords = Number.isFinite(e.latitude) && Number.isFinite(e.longitude);
+    if (hasCoords) {
+      enriched.push(e);
+      continue;
+    }
+
+    const query = buildQuery(e);
+    if (!query) {
+      enriched.push(e);
+      continue;
+    }
+
+    try {
+      const result = await geocodeOne(query, token);
+      if (result) {
+        geocodedCount++;
+        enriched.push({ ...e, latitude: result.lat, longitude: result.lng });
+      } else {
+        enriched.push(e);
+      }
+    } catch (err) {
+      console.warn('[optimize-tournee] Geocoding exception for', e.nom, err);
+      enriched.push(e);
+    }
+  }
+
+  console.log(`[optimize-tournee] Géocodage effectué pour ${geocodedCount}/${entreprises.length} entreprise(s) sans coordonnées`);
+  return enriched;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -55,34 +117,49 @@ serve(async (req) => {
       throw new Error('MAPBOX_ACCESS_TOKEN is not configured');
     }
 
-    // Normaliser le point de départ (accepter lat/lng ou latitude/longitude)
+    // Enrichir automatiquement les coordonnées manquantes avec le géocodage
+    console.log('🔍 Enrichissement automatique des coordonnées manquantes...');
+    const enrichedEntreprises = await hydrateCoordinates(entreprises, MAPBOX_TOKEN);
+
+    // Normaliser le point de départ
     const rawStart = point_depart as any;
-    const startPoint = rawStart
-      ? { 
-          lat: rawStart.lat ?? rawStart.latitude, 
-          lng: rawStart.lng ?? rawStart.longitude 
-        }
-      : { 
-          lat: entreprises[0].latitude, 
-          lng: entreprises[0].longitude 
-        };
     
-    // Valider le point de départ
-    if (!Number.isFinite(startPoint.lat) || !Number.isFinite(startPoint.lng)) {
-      throw new Error(`Point de départ invalide: lat=${startPoint.lat}, lng=${startPoint.lng}`);
-    }
-    
-    // Filtrer les entreprises avec coordonnées invalides
-    const validEntreprises = entreprises.filter(e => 
+    // Filtrer les entreprises avec coordonnées valides
+    const validEntreprises = enrichedEntreprises.filter(e => 
       Number.isFinite(e.latitude) && Number.isFinite(e.longitude)
     );
     
     if (validEntreprises.length === 0) {
-      throw new Error("Aucune entreprise avec des coordonnées GPS valides");
+      return new Response(
+        JSON.stringify({ 
+          error: "Aucune coordonnée GPS valide trouvée",
+          message: "Impossible de géocoder les adresses fournies. Vérifiez que les entreprises ont des adresses ou villes valides.",
+          fallback: true,
+          ordre_optimise: entreprises.map(e => e.id),
+          entreprises_ordonnees: entreprises
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Calcul du point de départ final (utilisateur si fourni, sinon 1er prospect)
+    const startPoint = rawStart
+      ? { lat: rawStart.lat ?? rawStart.latitude, lng: rawStart.lng ?? rawStart.longitude }
+      : { lat: validEntreprises[0].latitude, lng: validEntreprises[0].longitude };
+
+    if (!Number.isFinite(startPoint.lat) || !Number.isFinite(startPoint.lng)) {
+      throw new Error(`Point de départ invalide: lat=${startPoint.lat}, lng=${startPoint.lng}`);
+    }
+
+    if (!rawStart) {
+      console.log('📍 Point de départ par défaut: première entreprise');
     }
     
-    if (validEntreprises.length < entreprises.length) {
-      console.warn(`⚠️ ${entreprises.length - validEntreprises.length} entreprise(s) ignorée(s) (coordonnées invalides)`);
+    if (validEntreprises.length < enrichedEntreprises.length) {
+      console.warn(`⚠️ ${enrichedEntreprises.length - validEntreprises.length} entreprise(s) ignorée(s) (géocodage impossible)`);
     }
 
     // Utiliser l'API Mapbox Optimization pour résoudre le TSP (Traveling Salesman Problem)
