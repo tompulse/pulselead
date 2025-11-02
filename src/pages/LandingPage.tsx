@@ -319,23 +319,23 @@ const Index = () => {
           </div>
 
           {/* Résultats mesurables - En vert avec tailles réduites */}
-          <div className="glass-card p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center">
-              <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">6h/semaine</div>
-                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Temps économisé</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre</div>
+          <div className="glass-card p-4 sm:p-5 md:p-6 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
+            <h3 className="text-base sm:text-lg md:text-xl font-bold text-center mb-4 md:mb-6 text-green-400">Ce que nos utilisateurs réalisent avec LUMA</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 text-center">
+              <div className="space-y-1 md:space-y-2">
+                <div className="text-2xl md:text-3xl font-bold text-green-400">6h/semaine</div>
+                <div className="text-sm md:text-base text-foreground font-bold">Temps économisé</div>
+                <div className="text-[10px] sm:text-xs text-muted-foreground">Moins d'administratif, plus de temps pour vendre</div>
               </div>
-              <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">×2.5</div>
-                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Rendez-vous décrochés</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Grâce à une organisation optimisée</div>
+              <div className="space-y-1 md:space-y-2">
+                <div className="text-2xl md:text-3xl font-bold text-green-400">×2.5</div>
+                <div className="text-sm md:text-base text-foreground font-bold">Rendez-vous décrochés</div>
+                <div className="text-[10px] sm:text-xs text-muted-foreground">Grâce à une organisation optimisée</div>
               </div>
-              <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">+40%</div>
-                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Croissance du CA</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation</div>
+              <div className="space-y-1 md:space-y-2">
+                <div className="text-2xl md:text-3xl font-bold text-green-400">+40%</div>
+                <div className="text-sm md:text-base text-foreground font-bold">Croissance du CA</div>
+                <div className="text-[10px] sm:text-xs text-muted-foreground">En moyenne après 6 mois d'utilisation</div>
               </div>
             </div>
           </div>
@@ -345,193 +345,193 @@ const Index = () => {
       {/* Section Prix */}
       <section 
         ref={pricingSection.ref}
-        className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000 ${
+        className={`relative py-12 md:py-16 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000 ${
           pricingSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
         }`}
       >
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12 md:mb-20 space-y-4 md:space-y-5 animate-fade-in px-4">
-            <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
+          <div className="text-center mb-8 md:mb-12 space-y-2 md:space-y-3 animate-fade-in px-4">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
               Choisissez le plan qui
               <br />
               <span className="gradient-text">accélère votre croissance</span>
             </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
+            <p className="text-sm md:text-base text-muted-foreground max-w-3xl mx-auto font-medium">
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
           </div>
 
           {/* Toggle de période */}
-          <div className="flex justify-center mb-12 md:mb-20">
-            <div className="glass-card p-1.5 md:p-2 inline-flex flex-wrap gap-1 md:gap-1.5 border-accent/30 justify-center">
+          <div className="flex justify-center mb-8 md:mb-12">
+            <div className="glass-card p-1 md:p-1.5 inline-flex flex-wrap gap-1 border-accent/30 justify-center">
               <Button
                 variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('monthly')}
-                className={billingPeriod === 'monthly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}
+                className={billingPeriod === 'monthly' ? 'btn-hero text-xs md:text-sm px-3 md:px-4 h-8' : 'hover:bg-accent/10 text-xs md:text-sm px-3 md:px-4 h-8'}
               >
                 Mensuel
               </Button>
               <Button
                 variant={billingPeriod === 'quarterly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('quarterly')}
-                className={billingPeriod === 'quarterly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}
+                className={billingPeriod === 'quarterly' ? 'btn-hero text-xs md:text-sm px-3 md:px-4 h-8' : 'hover:bg-accent/10 text-xs md:text-sm px-3 md:px-4 h-8'}
               >
                 Trimestriel
-                <span className="ml-1 md:ml-2 text-xs bg-accent/30 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold">-15%</span>
+                <span className="ml-1 text-[10px] bg-accent/30 px-1.5 py-0.5 rounded-full font-bold">-15%</span>
               </Button>
               <Button
                 variant={billingPeriod === 'yearly' ? 'default' : 'ghost'}
                 onClick={() => setBillingPeriod('yearly')}
-                className={billingPeriod === 'yearly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}
+                className={billingPeriod === 'yearly' ? 'btn-hero text-xs md:text-sm px-3 md:px-4 h-8' : 'hover:bg-accent/10 text-xs md:text-sm px-3 md:px-4 h-8'}
               >
                 Annuel
-                <span className="ml-1 md:ml-2 text-xs bg-accent/30 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold">-25%</span>
+                <span className="ml-1 text-[10px] bg-accent/30 px-1.5 py-0.5 rounded-full font-bold">-25%</span>
               </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mb-12 md:mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto mb-8 md:mb-12">
             {/* Plan Starter */}
-            <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground font-medium">Pour démarrer la prospection terrain</p>
+            <div className="glass-card p-4 md:p-5 space-y-3 md:space-y-4 hover:border-accent/60 transition-all duration-300 border-accent/30">
+              <div className="space-y-1">
+                <h3 className="text-lg md:text-xl font-bold text-foreground">Starter</h3>
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">Pour démarrer la prospection terrain</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold gradient-text">
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-3xl md:text-4xl font-bold gradient-text">
                     ???
                   </span>
-                  <span className="text-muted-foreground font-medium">/mois</span>
+                  <span className="text-sm text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">Idéal pour indépendants</div>
+                <div className="text-xs text-accent font-bold">Idéal pour indépendants</div>
               </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Jusqu'à <strong>500 prospects</strong></span>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Jusqu'à <strong>500 prospects</strong></span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Cartographie interactive</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Cartographie interactive</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Filtres de base</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Filtres de base</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">CRM intégré</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">CRM intégré</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>3 tournées/mois</strong></span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium"><strong>3 tournées/mois</strong></span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Alertes nouveaux sites</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Alertes nouveaux sites</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Support email</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Support email</span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
+              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold text-sm h-10" size="lg">
                 Commencer
               </Button>
             </div>
 
             {/* Plan Pro - Recommandé */}
-            <div className="relative glass-card p-8 md:p-10 space-y-5 md:space-y-7 border-accent shadow-2xl shadow-accent/40 md:scale-100 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
-              <div className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 px-4 md:px-8 py-2 md:py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm md:text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
-                <Sparkles className="w-5 h-5" />
+            <div className="relative glass-card p-5 md:p-6 space-y-3 md:space-y-4 border-accent shadow-2xl shadow-accent/40 md:scale-100 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-xs md:text-sm font-bold rounded-full flex items-center gap-1.5 shadow-xl shadow-accent/50">
+                <Sparkles className="w-4 h-4" />
                 Le plus populaire
               </div>
-              <div className="space-y-2">
-                <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
-                <p className="text-sm md:text-base text-foreground font-semibold">Pour les commerciaux intensifs</p>
+              <div className="space-y-1">
+                <h3 className="text-xl md:text-2xl font-bold gradient-text">Pro</h3>
+                <p className="text-xs md:text-sm text-foreground font-semibold">Pour les commerciaux intensifs</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-2 mb-2 md:mb-3">
-                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">
+                <div className="flex items-baseline gap-2 mb-1.5">
+                  <span className="text-3xl md:text-4xl font-bold gradient-text drop-shadow-lg">
                     ???
                   </span>
-                  <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
+                  <span className="text-sm text-foreground font-semibold">/mois</span>
                 </div>
-                <div className="text-sm md:text-base text-accent font-bold">Solution complète</div>
+                <div className="text-xs md:text-sm text-accent font-bold">Solution complète</div>
               </div>
-              <ul className="space-y-3 md:space-y-4">
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg"><strong>Prospects illimités</strong></span>
+              <ul className="space-y-2 md:space-y-2.5">
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-sm md:text-base text-foreground font-semibold"><strong>Prospects illimités</strong></span>
                 </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg"><strong>Tournées illimitées</strong></span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-sm md:text-base text-foreground font-semibold"><strong>Tournées illimitées</strong></span>
                 </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Optimisation d'itinéraires</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-sm md:text-base text-foreground font-semibold">Optimisation d'itinéraires</span>
                 </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Pipeline de vente complet</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-sm md:text-base text-foreground font-semibold">Pipeline de vente complet</span>
                 </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-sm md:text-base">Historique & analytics</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-semibold">Historique & analytics</span>
                 </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg"><strong>Support prioritaire</strong></span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-sm md:text-base text-foreground font-semibold"><strong>Support prioritaire</strong></span>
                 </li>
               </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
+              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-sm md:text-base py-5 md:py-6 hover:scale-105 transition-transform" size="lg">
                 Commencer
               </Button>
             </div>
 
             {/* Plan Entreprise */}
-            <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Entreprise</h3>
-                <p className="text-muted-foreground font-medium">Pour les équipes commerciales</p>
+            <div className="glass-card p-4 md:p-5 space-y-3 md:space-y-4 hover:border-accent/60 transition-all duration-300 border-accent/30">
+              <div className="space-y-1">
+                <h3 className="text-lg md:text-xl font-bold text-foreground">Entreprise</h3>
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">Pour les équipes commerciales</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold gradient-text">???</span>
-                  <span className="text-muted-foreground font-medium">/mois</span>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-3xl md:text-4xl font-bold gradient-text">???</span>
+                  <span className="text-sm text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">Sur mesure</div>
+                <div className="text-xs text-accent font-bold">Sur mesure</div>
               </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Tout du plan Pro</span>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Tout du plan Pro</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Multi-utilisateurs</strong></span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium"><strong>Multi-utilisateurs</strong></span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Gestion des territoires</strong></span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium"><strong>Gestion des territoires</strong></span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Tableaux de bord équipe</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Tableaux de bord équipe</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Synchronisation CRM</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Synchronisation CRM</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Formation personnalisée</span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium">Formation personnalisée</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Account Manager dédié</strong></span>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-foreground font-medium"><strong>Account Manager dédié</strong></span>
                 </li>
               </ul>
               <Button onClick={() => {
@@ -539,7 +539,7 @@ const Index = () => {
                 if (contactSection) {
                   contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-              }} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
+              }} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold text-sm h-10" size="lg">
                 Nous contacter
               </Button>
             </div>
@@ -551,87 +551,87 @@ const Index = () => {
       {/* Section Témoignages */}
       <section 
         ref={testimonialsSection.ref}
-        className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${
+        className={`relative py-12 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${
           testimonialsSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
         }`}
       >
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-8 md:mb-12 space-y-2 md:space-y-3 animate-fade-in px-4">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <div className="flex gap-1">
+          <div className="text-center mb-6 md:mb-8 space-y-1.5 md:space-y-2 animate-fade-in px-4">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 md:w-5 md:h-5 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-3.5 h-3.5 md:w-4 md:h-4 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <span className="text-lg md:text-xl font-bold text-foreground">4.8/5</span>
+              <span className="text-base md:text-lg font-bold text-foreground">4.8/5</span>
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
               Ils accélèrent leur <span className="gradient-text">croissance</span>
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground">Résultats réels et mesurables</p>
+            <p className="text-sm md:text-base text-muted-foreground">Résultats réels et mesurables</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            <div className={`glass-card p-4 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
               testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: testimonialsSection.isVisible ? '200ms' : '0ms' }}>
-              <Quote className="w-8 h-8 text-cyan-electric/30" />
-              <div className="flex gap-1">
+              <Quote className="w-6 h-6 text-cyan-electric/30" />
+              <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-base text-foreground leading-relaxed">
+              <p className="text-xs md:text-sm text-foreground leading-relaxed">
                 "Enfin un outil pensé pour les commerciaux terrain ! Tournées optimisées, suivi commercial simple. J'ai doublé mes RDV."
               </p>
-              <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">+100% de RDV</span>
+              <div className="inline-flex px-2 py-1 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
+                <span className="text-[10px] md:text-xs font-semibold text-cyan-electric">+100% de RDV</span>
               </div>
-              <div className="pt-3 border-t border-accent/10">
-                <div className="font-semibold text-foreground">Sophie Martin</div>
-                <div className="text-sm text-muted-foreground">Commerciale BtoB</div>
+              <div className="pt-2 border-t border-accent/10">
+                <div className="text-xs md:text-sm font-semibold text-foreground">Sophie Martin</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground">Commerciale BtoB</div>
               </div>
             </div>
 
-            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${
+            <div className={`glass-card p-4 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
               testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: testimonialsSection.isVisible ? '400ms' : '0ms' }}>
-              <Quote className="w-8 h-8 text-cyan-electric/30" />
-              <div className="flex gap-1">
+              <Quote className="w-6 h-6 text-cyan-electric/30" />
+              <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-base text-foreground leading-relaxed">
+              <p className="text-xs md:text-sm text-foreground leading-relaxed">
                 "Plus besoin de jongler entre 5 outils. Tout est centralisé, je gagne 2h par jour et je vois tout mon secteur."
               </p>
-              <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">2h/jour économisées</span>
+              <div className="inline-flex px-2 py-1 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
+                <span className="text-[10px] md:text-xs font-semibold text-cyan-electric">2h/jour économisées</span>
               </div>
-              <div className="pt-3 border-t border-accent/10">
-                <div className="font-semibold text-foreground">Thomas Dubois</div>
-                <div className="text-sm text-muted-foreground">Responsable commercial</div>
+              <div className="pt-2 border-t border-accent/10">
+                <div className="text-xs md:text-sm font-semibold text-foreground">Thomas Dubois</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground">Responsable commercial</div>
               </div>
             </div>
 
-            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${
+            <div className={`glass-card p-4 space-y-3 hover:border-cyan-electric/40 transition-all duration-500 ${
               testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`} style={{ transitionDelay: testimonialsSection.isVisible ? '600ms' : '0ms' }}>
-              <Quote className="w-8 h-8 text-cyan-electric/30" />
-              <div className="flex gap-1">
+              <Quote className="w-6 h-6 text-cyan-electric/30" />
+              <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-cyan-electric text-cyan-electric" />
                 ))}
               </div>
-              <p className="text-base text-foreground leading-relaxed">
+              <p className="text-xs md:text-sm text-foreground leading-relaxed">
                 "L'outil parfait pour les indépendants. Simple, complet, avec le bonus des créations d'entreprises."
               </p>
-              <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">+15 clients</span>
+              <div className="inline-flex px-2 py-1 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
+                <span className="text-[10px] md:text-xs font-semibold text-cyan-electric">+15 clients</span>
               </div>
-              <div className="pt-3 border-t border-accent/10">
-                <div className="font-semibold text-foreground">Marie Leroux</div>
-                <div className="text-sm text-muted-foreground">Indépendante</div>
+              <div className="pt-2 border-t border-accent/10">
+                <div className="text-xs md:text-sm font-semibold text-foreground">Marie Leroux</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground">Indépendante</div>
               </div>
             </div>
           </div>
@@ -642,88 +642,88 @@ const Index = () => {
       <BookingSection />
 
       {/* Section FAQ + CTA */}
-      <section className="relative py-20 px-4">
+      <section className="relative py-12 px-4">
         <div className="container mx-auto max-w-4xl">
           <div 
             ref={faqSection.ref}
-            className={`text-center mb-8 md:mb-12 space-y-2 md:space-y-3 transition-all duration-1000 px-4 ${
+            className={`text-center mb-6 md:mb-8 space-y-1.5 md:space-y-2 transition-all duration-1000 px-4 ${
               faqSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'
             }`}
           >
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
               Questions <span className="gradient-text">fréquentes</span>
             </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto font-medium">
               Tout ce que vous devez savoir sur LUMA
             </p>
           </div>
 
-          <Accordion type="single" collapsible className="space-y-3 mb-12">
-            <AccordionItem value="item-1" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+          <Accordion type="single" collapsible className="space-y-2 mb-8">
+            <AccordionItem value="item-1" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
                 D'où viennent les données entreprises ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
                 <p>Les données proviennent exclusivement de sources officielles françaises : l'INPI (Institut National de la Propriété Industrielle) et l'INSEE (Institut National de la Statistique et des Études Économiques).</p>
                 <p>Ces données sont synchronisées automatiquement chaque jour pour vous garantir un accès aux créations d'entreprises les plus récentes. Vous êtes toujours informé en temps réel des nouvelles opportunités sur votre territoire.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-2" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-2" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
                 Comment fonctionne l'essai gratuit ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
                 <p>L'essai gratuit de 7 jours vous donne accès à toutes les fonctionnalités de LUMA sans aucune limitation.</p>
                 <p>Vous pouvez créer vos tournées, gérer vos prospects, accéder aux données entreprises en temps réel et utiliser les outils de suivi intégrés. À la fin de l'essai, vous choisissez si vous souhaitez continuer avec un abonnement payant ou non.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-3" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-3" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
                 Puis-je utiliser LUMA sur mobile ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
                 <p>Absolument ! LUMA est 100% responsive et s'adapte parfaitement à tous les écrans : ordinateur, tablette et smartphone.</p>
                 <p>L'application mobile vous permet de gérer vos tournées en déplacement, d'ajouter des interactions avec vos prospects directement sur le terrain, et de consulter les informations entreprises où que vous soyez. Le GPS intégré vous guide vers vos rendez-vous.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-4" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-4" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
                 Puis-je annuler mon abonnement à tout moment ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
                 <p>Oui, sans aucun engagement. Vous pouvez annuler votre abonnement en 1 clic depuis votre espace personnel à tout moment.</p>
                 <p>Vos données restent accessibles jusqu'à la fin de la période payée, et vous pouvez exporter toutes vos informations avant de partir. Aucune question posée, aucun frais caché.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-5" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-5" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
                 Comment sont calculées les tournées optimisées ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
                 <p>LUMA utilise des algorithmes d'optimisation avancés pour calculer le meilleur itinéraire en fonction de vos contraintes : localisation des prospects, priorités commerciales, horaires de disponibilité et trafic en temps réel.</p>
                 <p>Vous gagnez du temps sur la route et maximisez le nombre de visites par jour. L'outil s'adapte automatiquement aux changements et vous propose des alternatives en cas d'imprévus.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-6" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-6" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
                 Mes données sont-elles sécurisées ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
                 <p>La sécurité de vos données est notre priorité absolue. Toutes les informations sont chiffrées et hébergées sur des serveurs sécurisés en Europe, conformes au RGPD.</p>
                 <p>Vos données clients, historiques d'interactions et informations commerciales restent 100% privées et ne sont jamais partagées avec des tiers. Vous gardez le contrôle total de vos informations.</p>
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-7" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
+            <AccordionItem value="item-7" className="glass-card px-4 py-0.5 border-accent/20 hover:border-cyan-electric/40 transition-all">
+              <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-cyan-electric">
                 Puis-je importer mes données existantes ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-1.5 space-y-1.5">
                 <p>Oui, vous pouvez importer facilement vos données depuis un fichier Excel ou CSV. LUMA prend en charge les formats standards et vous guide dans le processus d'import.</p>
                 <p>Vous pouvez également exporter vos données à tout moment pour les utiliser dans d'autres outils ou pour conserver une sauvegarde. Import et export illimités sur tous les forfaits.</p>
               </AccordionContent>
@@ -735,23 +735,23 @@ const Index = () => {
       </main>
 
       {/* Footer complet */}
-      <footer className="relative py-12 px-4 bg-primary/50 border-t border-accent/10">
+      <footer className="relative py-8 px-4 bg-primary/50 border-t border-accent/10">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
             {/* Logo et description */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <span className="text-lg font-bold gradient-text">LUMA</span>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <span className="text-base font-bold gradient-text">LUMA</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 L'outil tout-en-un des commerciaux terrain pour optimiser leurs tournées et développer leur portefeuille.
               </p>
             </div>
 
             {/* Produit */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Produit</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className="space-y-2">
+              <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Produit</h3>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
                 <li>
                   <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-accent transition-colors">
                     Fonctionnalités
@@ -774,9 +774,9 @@ const Index = () => {
             </div>
 
             {/* Entreprise */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Entreprise</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className="space-y-2">
+              <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Entreprise</h3>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
                 <li>
                   <a href="#" className="hover:text-accent transition-colors">À propos</a>
                 </li>
@@ -792,9 +792,9 @@ const Index = () => {
             </div>
 
             {/* Légal */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Légal</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className="space-y-2">
+              <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Légal</h3>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
                 <li>
                   <a href="/mentions-legales" className="hover:text-accent transition-colors">Mentions légales</a>
                 </li>
@@ -812,8 +812,8 @@ const Index = () => {
           </div>
 
           {/* Copyright */}
-          <div className="pt-8 border-t border-accent/10">
-            <div className="flex justify-center items-center text-sm text-muted-foreground">
+          <div className="pt-6 border-t border-accent/10">
+            <div className="flex justify-center items-center text-xs text-muted-foreground">
               <p>© 2025 LUMA. Tous droits réservés.</p>
             </div>
           </div>
