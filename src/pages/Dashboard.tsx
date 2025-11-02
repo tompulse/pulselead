@@ -196,6 +196,27 @@ const DashboardContent = () => {
         isAdmin={isAdmin}
         onLogout={handleLogout}
       />
+
+      {/* Bouton d'enrichissement des données */}
+      {isAdmin && (
+        <div className="px-2 sm:px-4 pt-2">
+          <Dialog open={enrichmentOpen} onOpenChange={setEnrichmentOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
+                <Database className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Enrichir</span>
+                <span className="xs:hidden">Données</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl mx-2 sm:mx-auto">
+              <DialogHeader>
+                <DialogTitle className="text-base sm:text-lg">Enrichissement automatique des données</DialogTitle>
+              </DialogHeader>
+              <DataEnrichmentPanel />
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
       
       <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
         <main className="flex-1 overflow-hidden min-h-0">
@@ -221,12 +242,6 @@ const DashboardContent = () => {
                 handleEntrepriseSelect(entreprise);
               }}
             />
-          )}
-          {view === 'donnees' && isAdmin && (
-            <div className="glass-card p-4 sm:p-6 md:p-8 h-full overflow-auto">
-              <h2 className="text-2xl sm:text-3xl font-bold gradient-text mb-4 sm:mb-6">Enrichissement des données</h2>
-              <DataEnrichmentPanel />
-            </div>
           )}
         </main>
       </div>

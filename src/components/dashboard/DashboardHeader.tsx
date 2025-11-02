@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu, MapIcon, Navigation, TrendingUp, LogOut, Database } from "lucide-react";
+import { Menu, MapIcon, Navigation, TrendingUp, LogOut } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { SyncButton } from "./SyncButton";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -7,8 +7,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useState } from "react";
 
 interface DashboardHeaderProps {
-  view: 'prospects' | 'tournees' | 'crm' | 'donnees';
-  onViewChange: (view: 'prospects' | 'tournees' | 'crm' | 'donnees') => void;
+  view: 'prospects' | 'tournees' | 'crm';
+  onViewChange: (view: 'prospects' | 'tournees' | 'crm') => void;
   isAdmin: boolean;
   onLogout: () => void;
 }
@@ -32,7 +32,6 @@ export const DashboardHeader = ({
     { key: 'prospects' as const, label: 'Prospects', icon: MapIcon },
     { key: 'tournees' as const, label: 'Tournées', icon: Navigation },
     { key: 'crm' as const, label: 'CRM', icon: TrendingUp },
-    ...(isAdmin ? [{ key: 'donnees' as const, label: 'Données', icon: Database }] : []),
   ];
 
   return (
