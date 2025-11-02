@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, X, Map } from "lucide-react";
+import { ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Sparkles, Quote, Map } from "lucide-react";
 
 import { trackCTAClick } from "@/utils/analytics";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -10,8 +10,6 @@ import { ProblemCard } from "@/components/landing/ProblemCard";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const Index = () => {
   const navigate = useNavigate();
-  const [selectedRegion, setSelectedRegion] = React.useState<'1' | 'plusieurs' | 'france'>('plusieurs');
-  const [billingPeriod, setBillingPeriod] = React.useState<'monthly' | 'quarterly' | 'yearly'>('yearly');
 
   // Animations au scroll - effets plus percutants
   const socialProof = useScrollAnimation({
@@ -21,9 +19,6 @@ const Index = () => {
     threshold: 0.1
   });
   const solutionSection = useScrollAnimation({
-    threshold: 0.1
-  });
-  const pricingSection = useScrollAnimation({
     threshold: 0.1
   });
   const testimonialsSection = useScrollAnimation({
@@ -203,44 +198,6 @@ const Index = () => {
             </p>
           </div>
 
-          <div className={`grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto transition-all duration-1000 ${solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${solutionSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`} style={{
-              transitionDelay: solutionSection.isVisible ? '200ms' : '0ms'
-            }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <Map className="w-9 h-9 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Tournées optimisées</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Planifiez vos visites en quelques clics. Itinéraire optimal avec GPS intégré. Économisez jusqu'à 6 heures chaque semaine sur la route.
-              </p>
-            </div>
-
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{
-              transitionDelay: solutionSection.isVisible ? '400ms' : '0ms'
-            }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <TrendingUp className="w-9 h-9 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">CRM intelligent</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Suivez vos prospects avec l'historique complet des contacts et les relances programmées. Ne ratez plus jamais une opportunité commerciale.
-              </p>
-            </div>
-
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${solutionSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`} style={{
-              transitionDelay: solutionSection.isVisible ? '600ms' : '0ms'
-            }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <Sparkles className="w-9 h-9 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Prospection intelligente</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Accédez aux nouvelles entreprises de votre secteur en temps réel. Utilisez nos filtres avancés pour cibler précisément vos prospects idéaux.
-              </p>
-            </div>
-          </div>
-
           {/* Résultats mesurables - En vert avec tailles réduites */}
           <div className="glass-card p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
             <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA.</h3>
@@ -262,197 +219,6 @@ const Index = () => {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Section Prix */}
-      <section ref={pricingSection.ref} className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000 ${pricingSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
-        <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12 md:mb-20 space-y-4 md:space-y-5 animate-fade-in px-4">
-            <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
-              Choisissez le plan qui
-              <br />
-              <span className="gradient-text">accélère votre croissance.</span>
-            </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
-            </p>
-          </div>
-
-          {/* Toggle de période */}
-          <div className="flex justify-center mb-12 md:mb-20">
-            <div className="glass-card p-1.5 md:p-2 inline-flex flex-wrap gap-1 md:gap-1.5 border-accent/30 justify-center">
-              <Button variant={billingPeriod === 'monthly' ? 'default' : 'ghost'} onClick={() => setBillingPeriod('monthly')} className={billingPeriod === 'monthly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}>
-                Mensuel
-              </Button>
-              <Button variant={billingPeriod === 'quarterly' ? 'default' : 'ghost'} onClick={() => setBillingPeriod('quarterly')} className={billingPeriod === 'quarterly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}>
-                Trimestriel
-                <span className="ml-1 md:ml-2 text-xs bg-accent/30 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold">-15%</span>
-              </Button>
-              <Button variant={billingPeriod === 'yearly' ? 'default' : 'ghost'} onClick={() => setBillingPeriod('yearly')} className={billingPeriod === 'yearly' ? 'btn-hero text-sm md:text-base px-4 md:px-6' : 'hover:bg-accent/10 text-sm md:text-base px-4 md:px-6'}>
-                Annuel
-                <span className="ml-1 md:ml-2 text-xs bg-accent/30 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold">-25%</span>
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mb-12 md:mb-20">
-            {/* Plan Starter */}
-            <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground font-medium">Pour tester la prospection ciblée.</p>
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold gradient-text">
-                    {billingPeriod === 'monthly' ? '129' : billingPeriod === 'quarterly' ? '109' : '99'}€
-                  </span>
-                  <span className="text-muted-foreground font-medium">/mois</span>
-                </div>
-                <div className="text-sm text-accent font-bold">1 secteur géographique.</div>
-              </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>10 créations/mois.</strong></span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Carte interactive + filtres.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Suivi commercial intégré.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Données officielles.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Contact dirigeant.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Filtres avancés IA.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Support email.</span>
-                </li>
-              </ul>
-                <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
-                Essai gratuit 7 jours
-              </Button>
-            </div>
-
-            {/* Plan Pro - Recommandé */}
-            <div className="relative glass-card p-8 md:p-10 space-y-5 md:space-y-7 border-accent shadow-2xl shadow-accent/40 md:scale-100 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
-              <div className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 px-4 md:px-8 py-2 md:py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm md:text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
-                <Sparkles className="w-5 h-5" />
-                Le plus populaire
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
-                <p className="text-sm md:text-base text-foreground font-semibold">Pour développer rapidement.</p>
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2 mb-2 md:mb-3">
-                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">
-                    {billingPeriod === 'monthly' ? '199' : billingPeriod === 'quarterly' ? '169' : '149'}€
-                  </span>
-                  <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
-                </div>
-                <div className="text-sm md:text-base text-accent font-bold">Multi-secteurs illimité.</div>
-              </div>
-              <ul className="space-y-3 md:space-y-4">
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">✨ <strong>50 créations/mois.</strong></span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">🎯 <strong>Tous les secteurs.</strong></span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">💎 <strong>Contacts dirigeants.</strong></span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">🤖 <strong>Filtres IA avancés.</strong></span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-sm md:text-base">📊 Analytics & prévisions.</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">⚡ <strong>Support prioritaire 24h.</strong></span>
-                </li>
-              </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
-                Essai gratuit 7 jours
-              </Button>
-            </div>
-
-            {/* Plan Entreprise */}
-            <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Entreprise</h3>
-                <p className="text-muted-foreground font-medium">Pour les équipes commerciales.</p>
-              </div>
-              <div>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-4xl font-bold gradient-text">Sur mesure</span>
-                </div>
-                <div className="text-sm text-accent font-bold">Solution complète équipe.</div>
-              </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Tout du plan Pro.</strong></span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Couverture nationale.</strong></span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Utilisateurs illimités.</strong></span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Dashboard équipe avancé.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Gestion des territoires.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Formation dédiée.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Account Manager dédié.</strong></span>
-                </li>
-              </ul>
-              <Button onClick={() => {
-                const contactSection = document.querySelector('#contact');
-                if (contactSection) {
-                  contactSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                  });
-                }
-              }} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
-                Nous contacter
-              </Button>
-            </div>
-          </div>
-
         </div>
       </section>
 
