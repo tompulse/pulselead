@@ -121,7 +121,7 @@ const Index = () => {
                 <span className="text-accent/30 hidden sm:inline">•</span>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent" />
-                  <span className="font-medium">Prêt en 2 minutes</span>
+                  
                 </div>
               </div>
             </div>
