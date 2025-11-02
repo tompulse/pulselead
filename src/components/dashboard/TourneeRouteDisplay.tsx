@@ -82,8 +82,8 @@ export const TourneeRouteDisplay = ({
   ordreOptimise: initialOrdre,
   distanceTotaleKm: initialDistance,
   tempsEstimeMinutes: initialTemps,
-  pointDepartLat,
-  pointDepartLng,
+  pointDepartLat: initialPointDepartLat,
+  pointDepartLng: initialPointDepartLng,
   statut: initialStatut,
   onUpdate,
   onBack,
@@ -107,6 +107,8 @@ export const TourneeRouteDisplay = ({
   const [visites, setVisites] = useState<any[]>([]);
   const [distanceTotaleKm, setDistanceTotaleKm] = useState(initialDistance);
   const [tempsEstimeMinutes, setTempsEstimeMinutes] = useState(initialTemps);
+  const [pointDepartLat, setPointDepartLat] = useState(initialPointDepartLat);
+  const [pointDepartLng, setPointDepartLng] = useState(initialPointDepartLng);
   const [navigatingEntreprise, setNavigatingEntreprise] = useState<Entreprise | null>(null);
   const { toast } = useToast();
 
@@ -431,22 +433,29 @@ export const TourneeRouteDisplay = ({
 
       setEntreprises(optimizedEntreprises);
 
-      // Sauvegarder l'ordre optimisé dans la base de données
+      // Sauvegarder l'ordre optimisé ET le point de départ dans la base de données
       await supabase
         .from('tournees')
         .update({
           ordre_optimise: optimizedOrder,
+          point_depart_lat: startPoint.lat,
+          point_depart_lng: startPoint.lng,
+          distance_totale_km: data.distance_totale_km,
+          temps_estime_minutes: data.temps_estime_minutes,
         })
         .eq('id', tourneeId);
 
       toast({
         title: "✅ Tournée optimisée",
-        description: `Itinéraire optimisé depuis votre position actuelle`,
+        description: `Circuit optimisé depuis votre position : ${Math.round(data.distance_totale_km)} km`,
         duration: 2500,
       });
 
-      // Recalculer les routes pour avoir les vrais chiffres détaillés
-      await calculateRoutes();
+      // Mettre à jour les états locaux
+      setDistanceTotaleKm(data.distance_totale_km);
+      setTempsEstimeMinutes(data.temps_estime_minutes);
+      setPointDepartLat(startPoint.lat);
+      setPointDepartLng(startPoint.lng);
 
       onUpdate?.();
     } catch (error) {
