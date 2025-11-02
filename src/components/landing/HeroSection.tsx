@@ -24,7 +24,7 @@ export const HeroSection = () => {
         </div>
         
         {/* Main Headline - Focus sur le développement commercial */}
-        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-[1.1] tracking-tight px-2">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight px-2">
           Développez votre activité
           <br />
           <span className="gradient-text inline-block">commerciale</span> avec
