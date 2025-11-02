@@ -30,12 +30,105 @@ interface Lead {
 }
 
 const PIPELINE_STAGES = [
-  { id: "nouveau", label: "Nouveau", color: "bg-slate-500", etape: 1 },
-  { id: "qualifie", label: "Qualifié", color: "bg-blue-500", etape: 2 },
   { id: "proposition", label: "Proposition", color: "bg-purple-500", etape: 3 },
   { id: "negociation", label: "Négociation", color: "bg-orange-500", etape: 4 },
   { id: "gagne", label: "Gagné 🎉", color: "bg-green-500", etape: 5 },
   { id: "perdu", label: "Perdu", color: "bg-red-500", etape: 0 },
+];
+
+// Données fictives pour le tutoriel
+const FAKE_LEADS: Lead[] = [
+  {
+    entreprise_id: "fake-1",
+    statut_actuel: "proposition",
+    etape_pipeline: 3,
+    probabilite: 60,
+    valeur_estimee: 15000,
+    entreprise: {
+      nom: "Boulangerie Martin",
+      ville: "Paris",
+      activite: "Boulangerie-pâtisserie",
+      score_lead: 75
+    }
+  },
+  {
+    entreprise_id: "fake-2",
+    statut_actuel: "proposition",
+    etape_pipeline: 3,
+    probabilite: 60,
+    valeur_estimee: 8500,
+    entreprise: {
+      nom: "Restaurant Le Gourmet",
+      ville: "Lyon",
+      activite: "Restauration",
+      score_lead: 68
+    }
+  },
+  {
+    entreprise_id: "fake-3",
+    statut_actuel: "negociation",
+    etape_pipeline: 4,
+    probabilite: 80,
+    valeur_estimee: 25000,
+    entreprise: {
+      nom: "Hôtel des Alpes",
+      ville: "Grenoble",
+      activite: "Hôtellerie",
+      score_lead: 82
+    }
+  },
+  {
+    entreprise_id: "fake-4",
+    statut_actuel: "negociation",
+    etape_pipeline: 4,
+    probabilite: 80,
+    valeur_estimee: 18000,
+    entreprise: {
+      nom: "Café Central",
+      ville: "Marseille",
+      activite: "Café-bar",
+      score_lead: 71
+    }
+  },
+  {
+    entreprise_id: "fake-5",
+    statut_actuel: "gagne",
+    etape_pipeline: 5,
+    probabilite: 100,
+    valeur_estimee: 32000,
+    entreprise: {
+      nom: "Pizzeria Bella Vista",
+      ville: "Nice",
+      activite: "Restauration italienne",
+      score_lead: 88
+    }
+  },
+  {
+    entreprise_id: "fake-6",
+    statut_actuel: "gagne",
+    etape_pipeline: 5,
+    probabilite: 100,
+    valeur_estimee: 22000,
+    entreprise: {
+      nom: "Brasserie du Port",
+      ville: "Bordeaux",
+      activite: "Brasserie",
+      score_lead: 85
+    }
+  },
+  {
+    entreprise_id: "fake-7",
+    statut_actuel: "perdu",
+    etape_pipeline: 0,
+    probabilite: 0,
+    valeur_estimee: null,
+    entreprise: {
+      nom: "Snack Express",
+      ville: "Toulouse",
+      activite: "Restauration rapide",
+      score_lead: 45
+    }
+  }
 ];
 
 const LeadCard = ({ lead, onSelect }: { lead: Lead; onSelect: (lead: Lead) => void }) => {
@@ -157,7 +250,12 @@ export const PipelineKanban = ({ onLeadSelect }: { onLeadSelect?: (entrepriseId:
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchLeads();
+    // DEMO MODE: Données fictives pour le tutoriel
+    setLeads(FAKE_LEADS);
+    setLoading(false);
+    
+    // Pour utiliser les vraies données, décommenter ci-dessous:
+    // fetchLeads();
   }, []);
 
   const fetchLeads = async () => {
@@ -304,7 +402,7 @@ export const PipelineKanban = ({ onLeadSelect }: { onLeadSelect?: (entrepriseId:
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-full">
           {PIPELINE_STAGES.map((stage) => (
             <PipelineColumn
               key={stage.id}
