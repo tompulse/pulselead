@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Obtenir un token OAuth2 de l'INSEE
+// Obtenir un token OAuth2 de l'INSEE (avec fallbacks si l'URL change)
 async function getInseeToken(): Promise<string> {
   const consumerKey = Deno.env.get('INSEE_CONSUMER_KEY');
   const consumerSecret = Deno.env.get('INSEE_CONSUMER_SECRET');
@@ -15,32 +15,57 @@ async function getInseeToken(): Promise<string> {
     throw new Error('INSEE credentials not configured');
   }
 
-  // L'INSEE utilise l'endpoint /token avec Basic Auth
   const credentials = btoa(`${consumerKey}:${consumerSecret}`);
-  
-  const response = await fetch('https://api.insee.fr/token', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Basic ${credentials}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: 'grant_type=client_credentials',
-  });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('INSEE token error:', {
-      status: response.status,
-      statusText: response.statusText,
-      body: errorText,
-      consumerKey: consumerKey.substring(0, 8) + '...' // Log only first chars for debug
-    });
-    throw new Error(`Failed to get INSEE token: ${response.status} - ${errorText}`);
+  // Plusieurs hôtes/chemins observés dans la doc et migrations récentes
+  const candidateEndpoints = [
+    'https://portail-api.insee.fr/token',
+    'https://api.insee.fr/token',
+    'https://api.insee.fr/oauth/token',
+    'https://api.insee.fr/oauth/v2/token',
+  ];
+
+  let lastErrorText = '';
+  let lastStatus = 0;
+
+  for (const url of candidateEndpoints) {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: 'grant_type=client_credentials',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`INSEE token obtained successfully via ${url}`);
+        return data.access_token;
+      }
+
+      lastStatus = response.status;
+      lastErrorText = await response.text();
+      console.error('INSEE token error:', {
+        tried: url,
+        status: response.status,
+        statusText: response.statusText,
+        body: lastErrorText,
+        consumerKey: consumerKey.substring(0, 8) + '...'
+      });
+
+      // Si 404 avec message de dépréciation, on tente l'URL suivante
+      // Pour 401 (credentials invalides), inutile d'essayer les autres
+      if (response.status === 401) break;
+    } catch (e) {
+      console.error(`INSEE token fetch exception on ${url}:`, e);
+      lastErrorText = e instanceof Error ? e.message : String(e);
+    }
   }
 
-  const data = await response.json();
-  console.log('INSEE token obtained successfully');
-  return data.access_token;
+  throw new Error(`Failed to get INSEE token after trying ${candidateEndpoints.length} endpoints. Last status: ${lastStatus} - ${lastErrorText}`);
 }
 
 async function processEnrichment(targetTable: string) {
@@ -56,8 +81,12 @@ async function processEnrichment(targetTable: string) {
 
   console.log(`Starting NAF enrichment for ${targetTable}...`);
   
-  // Obtenir le token INSEE
-  let inseeToken: string;
+// Préparer l'authentification
+const integrationApiKey = Deno.env.get('INSEE_API_KEY_INTEGRATION');
+let inseeToken: string | null = null;
+
+if (!integrationApiKey) {
+  // Obtenir le token INSEE (legacy OAuth2 client_credentials)
   try {
     inseeToken = await getInseeToken();
     console.log('INSEE token obtained successfully');
@@ -65,6 +94,9 @@ async function processEnrichment(targetTable: string) {
     console.error('Failed to obtain INSEE token:', error);
     throw error;
   }
+} else {
+  console.log('Using INSEE integration API key header');
+}
 
   while (hasMore) {
     // Récupérer un lot d'entreprises sans NAF
@@ -97,15 +129,45 @@ async function processEnrichment(targetTable: string) {
             return;
           }
 
-          // Appeler l'API Sirene de l'INSEE avec authentification
-          const sireneUrl = `https://api.insee.fr/entreprises/sirene/V3.11/siret/${entreprise.siret}`;
-          
-          const sireneResponse = await fetch(sireneUrl, {
-            headers: { 
-              'Accept': 'application/json',
-              'Authorization': `Bearer ${inseeToken}`
-            }
-          });
+// Préparer l'appel SIRENE (nouvelle API + fallback)
+const useIntegration = !!integrationApiKey;
+const headers: Record<string, string> = { Accept: 'application/json' };
+if (useIntegration) {
+  headers['X-INSEE-Api-Key-Integration'] = integrationApiKey!;
+} else if (inseeToken) {
+  headers['Authorization'] = `Bearer ${inseeToken}`;
+} else {
+  throw new Error('No INSEE credentials available for SIRENE call');
+}
+
+const candidateSireneUrls = [
+  `https://api.insee.fr/api-sirene/3.11/siret/${entreprise.siret}`,
+  `https://api.insee.fr/entreprises/sirene/V3.11/siret/${entreprise.siret}`
+];
+
+let sireneResponse: Response | null = null;
+for (const url of candidateSireneUrls) {
+  const resp = await fetch(url, { headers });
+  if (resp.ok) {
+    if (url !== candidateSireneUrls[0]) {
+      console.log(`SIRENE fetched via fallback URL for ${entreprise.siret}: ${url}`);
+    }
+    sireneResponse = resp;
+    break;
+  } else {
+    // Backoff si rate limit
+    if (resp.status === 429) {
+      console.log('Rate limit hit, waiting 3s...');
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+    console.error(`SIRENE error for ${entreprise.siret} on ${url}: ${resp.status}`);
+  }
+}
+
+if (!sireneResponse) {
+  totalErrors++;
+  return;
+}
 
           if (sireneResponse.ok) {
             const sireneData = await sireneResponse.json();
