@@ -29,15 +29,15 @@ export const DashboardHeader = ({
   };
 
   const viewConfig = [
-    { key: 'prospects' as const, label: 'Prospects', icon: MapIcon },
-    { key: 'tournees' as const, label: 'Tournées', icon: Navigation },
     { key: 'crm' as const, label: 'CRM', icon: TrendingUp },
+    { key: 'tournees' as const, label: 'Tournées', icon: Navigation },
+    { key: 'prospects' as const, label: 'Prospects', icon: MapIcon },
   ];
 
   return (
     <header className="glass-card border-b border-accent/20 px-4 py-3 z-10 backdrop-blur-xl shrink-0 shadow-md">
       <div className="flex items-center justify-between">
-        {/* Mobile Menu */}
+        {/* Mobile View */}
         {isMobile ? (
           <>
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -51,26 +51,8 @@ export const DashboardHeader = ({
                   <SheetTitle className="text-left gradient-text">Menu</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col p-4 gap-2">
-                  {viewConfig.map((v) => {
-                    const Icon = v.icon;
-                    return (
-                      <Button
-                        key={v.key}
-                        variant={view === v.key ? "default" : "ghost"}
-                        onClick={() => handleViewChange(v.key)}
-                        className={`justify-start h-12 text-base gap-3 ${
-                          view === v.key 
-                            ? "bg-accent text-primary hover:bg-accent/90" 
-                            : "hover:bg-accent/10"
-                        }`}
-                      >
-                        <Icon className="w-5 h-5" />
-                        {v.label}
-                      </Button>
-                    );
-                  })}
                   {isAdmin && (
-                    <div className="pt-4 border-t border-accent/20">
+                    <div className="pb-4 border-b border-accent/20">
                       <SyncButton />
                     </div>
                   )}
@@ -131,6 +113,27 @@ export const DashboardHeader = ({
           </>
         )}
       </div>
+      
+      {/* Mobile Navigation Buttons */}
+      {isMobile && (
+        <div className="grid grid-cols-3 gap-2 mt-3">
+          {viewConfig.map((v) => (
+            <Button
+              key={v.key}
+              variant={view === v.key ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleViewChange(v.key)}
+              className={`h-10 text-xs font-medium transition-all ${
+                view === v.key 
+                  ? "bg-accent text-primary hover:bg-accent/90" 
+                  : "hover:bg-accent/10"
+              }`}
+            >
+              {v.label}
+            </Button>
+          ))}
+        </div>
+      )}
     </header>
   );
 };

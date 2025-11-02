@@ -18,7 +18,6 @@ import { nouveauxSitesService } from "@/services/nouveauxSitesService";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useDashboard } from "@/contexts/DashboardContext";
 
 interface ProspectsViewProps {
   filters: {
@@ -71,7 +70,6 @@ export const ProspectsView = ({
 }) => {
   const { toast } = useToast();
   const [activeView, setActiveView] = useState<'creations' | 'nouveaux-sites'>('creations');
-  const { setView } = useDashboard();
   
   // États pour les tournées de créations
   const [tourneeActive, setTourneeActive] = useState(false);
@@ -302,35 +300,6 @@ export const ProspectsView = ({
   if (isMobile) {
     return (
       <div className="h-full flex flex-col overflow-hidden">
-        {/* Navigation principale en haut */}
-        <div className="shrink-0 px-3 pt-3 pb-2">
-          <div className="grid grid-cols-3 gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setView('crm')}
-              className="h-10 text-xs font-medium"
-            >
-              CRM
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setView('tournees')}
-              className="h-10 text-xs font-medium"
-            >
-              Tournées
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              className="h-10 text-xs font-medium"
-            >
-              Prospects
-            </Button>
-          </div>
-        </div>
-
         {/* Header mobile avec tabs et bouton tournée */}
         <div className="shrink-0 space-y-2 px-3 pb-2">
           <div className="flex gap-2">
