@@ -409,7 +409,7 @@ const Index = () => {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Jusqu'à 500 prospects</strong></span>
+                  <span className="text-foreground font-medium">Jusqu'à <strong>500 prospects</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
@@ -417,7 +417,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Filtres de base (région, NAF)</span>
+                  <span className="text-foreground font-medium">Filtres de base</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
@@ -463,31 +463,27 @@ const Index = () => {
               <ul className="space-y-3 md:space-y-4">
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">✨ <strong>Prospects illimités</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg"><strong>Prospects illimités</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">🗺️ <strong>Tournées illimitées</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg"><strong>Tournées illimitées</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">🎯 <strong>Optimisation d'itinéraires</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">Optimisation d'itinéraires</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">📊 <strong>Pipeline de vente complet</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">Pipeline de vente complet</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-sm md:text-base">📈 Historique & analytics</span>
+                  <span className="text-foreground font-semibold text-sm md:text-base">Historique & analytics</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">💾 <strong>Export des données</strong></span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">⚡ <strong>Support prioritaire</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg"><strong>Support prioritaire</strong></span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
@@ -511,7 +507,7 @@ const Index = () => {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Tout du plan Pro</strong></span>
+                  <span className="text-foreground font-medium">Tout du plan Pro</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
