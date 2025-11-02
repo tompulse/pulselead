@@ -395,7 +395,7 @@ const Index = () => {
             <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground font-medium">Pour tester la prospection ciblée</p>
+                <p className="text-muted-foreground font-medium">Pour démarrer la prospection terrain</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
@@ -404,32 +404,32 @@ const Index = () => {
                   </span>
                   <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">1 secteur géographique</div>
+                <div className="text-sm text-accent font-bold">Idéal pour indépendants</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>10 créations/mois</strong></span>
+                  <span className="text-foreground font-medium"><strong>Jusqu'à 500 prospects</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Carte interactive + filtres</span>
+                  <span className="text-foreground font-medium">Cartographie interactive</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Suivi commercial intégré</span>
+                  <span className="text-foreground font-medium">Filtres de base (région, NAF)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Données officielles</span>
+                  <span className="text-foreground font-medium">CRM intégré</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Contact dirigeant</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium"><strong>3 tournées/mois</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-muted-foreground/30 mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground/60">Filtres avancés IA</span>
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Alertes nouveaux sites</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
@@ -437,7 +437,7 @@ const Index = () => {
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
-                Essai gratuit 7 jours
+                Commencer
               </Button>
             </div>
 
@@ -449,7 +449,7 @@ const Index = () => {
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
-                <p className="text-sm md:text-base text-foreground font-semibold">Pour développer rapidement</p>
+                <p className="text-sm md:text-base text-foreground font-semibold">Pour les commerciaux intensifs</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2 md:mb-3">
@@ -458,36 +458,40 @@ const Index = () => {
                   </span>
                   <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
                 </div>
-                <div className="text-sm md:text-base text-accent font-bold">Multi-secteurs illimité</div>
+                <div className="text-sm md:text-base text-accent font-bold">Solution complète</div>
               </div>
               <ul className="space-y-3 md:space-y-4">
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">✨ <strong>50 créations/mois</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">✨ <strong>Prospects illimités</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">🎯 <strong>Tous les secteurs</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">🗺️ <strong>Tournées illimitées</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">💎 <strong>Contacts dirigeants</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">🎯 <strong>Optimisation d'itinéraires</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">🤖 <strong>Filtres IA avancés</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">📊 <strong>Pipeline de vente complet</strong></span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-sm md:text-base">📊 Analytics & prévisions</span>
+                  <span className="text-foreground font-semibold text-sm md:text-base">📈 Historique & analytics</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">⚡ <strong>Support prioritaire 24h</strong></span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">💾 <strong>Export des données</strong></span>
+                </li>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">⚡ <strong>Support prioritaire</strong></span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
-                Essai gratuit 7 jours
+                Commencer
               </Button>
             </div>
 
@@ -502,7 +506,7 @@ const Index = () => {
                   <span className="text-5xl font-bold gradient-text">???</span>
                   <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">Solution complète équipe</div>
+                <div className="text-sm text-accent font-bold">Sur mesure</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -511,23 +515,23 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Couverture nationale</strong></span>
+                  <span className="text-foreground font-medium"><strong>Multi-utilisateurs</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Utilisateurs illimités</strong></span>
+                  <span className="text-foreground font-medium"><strong>Gestion des territoires</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Dashboard équipe avancé</span>
+                  <span className="text-foreground font-medium">Tableaux de bord équipe</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Gestion des territoires</span>
+                  <span className="text-foreground font-medium">Synchronisation CRM</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Formation dédiée</span>
+                  <span className="text-foreground font-medium">Formation personnalisée</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
