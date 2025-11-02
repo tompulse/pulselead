@@ -264,12 +264,12 @@ const Index = () => {
       <section className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000`}>
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12 md:mb-20 space-y-4 md:space-y-5 animate-fade-in px-4">
-            <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
+            <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground leading-tight">
               Choisissez le plan qui
               <br />
               <span className="gradient-text">accélère votre croissance.</span>
             </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
+            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto font-medium">
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
           </div>
