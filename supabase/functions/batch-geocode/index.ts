@@ -28,7 +28,7 @@ serve(async (req) => {
     // Récupérer toutes les entreprises sans coordonnées
     const { data: entreprises, error: fetchError } = await supabase
       .from(targetTable)
-      .select('id, adresse, ville, code_postal, latitude, longitude')
+      .select('id, adresse, numero_voie, type_voie, nom_voie, ville, code_postal, latitude, longitude')
       .or('latitude.is.null,longitude.is.null');
 
     if (fetchError) {
@@ -48,14 +48,27 @@ serve(async (req) => {
       
       await Promise.all(batch.map(async (entreprise) => {
         try {
+          // Construire l'adresse complète
+          let adresseComplete = entreprise.adresse;
+          
+          // Si pas d'adresse mais des champs séparés, construire l'adresse
+          if (!adresseComplete && (entreprise.numero_voie || entreprise.type_voie || entreprise.nom_voie)) {
+            adresseComplete = [
+              entreprise.numero_voie,
+              entreprise.type_voie,
+              entreprise.nom_voie
+            ].filter(Boolean).join(' ');
+          }
+          
           // Construire l'adresse de recherche
           const searchQuery = [
-            entreprise.adresse,
+            adresseComplete,
             entreprise.ville,
             entreprise.code_postal
           ].filter(Boolean).join(', ');
 
           if (!searchQuery) {
+            console.warn(`No search query for ${entreprise.id}`);
             errorCount++;
             return;
           }
@@ -69,10 +82,18 @@ serve(async (req) => {
           if (geocodeData.features && geocodeData.features.length > 0) {
             const [longitude, latitude] = geocodeData.features[0].center;
 
+            // Préparer les updates
+            const updates: any = { latitude, longitude };
+            
+            // Si l'adresse était null mais qu'on l'a construite, la sauvegarder
+            if (!entreprise.adresse && adresseComplete) {
+              updates.adresse = adresseComplete;
+            }
+
             // Mettre à jour l'entreprise
             const { error: updateError } = await supabase
               .from(targetTable)
-              .update({ latitude, longitude })
+              .update(updates)
               .eq('id', entreprise.id);
 
             if (updateError) {
