@@ -205,9 +205,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Map className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">???</h3>
+              <h3 className="text-xl font-bold text-foreground">Tournées optimisées</h3>
               <p className="text-muted-foreground leading-relaxed">
-                ???
+                Planifiez vos tournées commerciales en quelques clics. Jusqu'à 40% de temps de route économisé.
               </p>
             </div>
 
@@ -217,9 +217,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <TrendingUp className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">???</h3>
+              <h3 className="text-xl font-bold text-foreground">CRM intelligent</h3>
               <p className="text-muted-foreground leading-relaxed">
-                ???
+                Gérez toutes vos interactions client sur une plateforme unifiée. +60% de taux de conversion.
               </p>
             </div>
 
@@ -229,9 +229,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Sparkles className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">???</h3>
+              <h3 className="text-xl font-bold text-foreground">Prospection intelligente</h3>
               <p className="text-muted-foreground leading-relaxed">
-                ???
+                Identifiez les meilleures opportunités avec l'IA. 3x plus de rendez-vous qualifiés.
               </p>
             </div>
           </div>
