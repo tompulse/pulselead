@@ -54,7 +54,7 @@ export interface ApplyAIFiltersParams {
   tourneeDate: Date;
 }
 
-export const ProspectsView = ({
+const ProspectsView = ({
   filters,
   setFilters,
   userId,
@@ -671,3 +671,6 @@ export const ProspectsView = ({
     </div>
   );
 };
+
+export default ProspectsView;
+export { ProspectsView };
