@@ -70,7 +70,6 @@ const ProspectsView = ({
 }) => {
   const { toast } = useToast();
   const [activeView, setActiveView] = useState<'creations' | 'nouveaux-sites'>('creations');
-  const [filtersOpen, setFiltersOpen] = useState(false);
   
   // États pour les tournées de créations
   const [tourneeActive, setTourneeActive] = useState(false);
@@ -479,8 +478,7 @@ const ProspectsView = ({
     <div className="h-full flex flex-col overflow-hidden gap-3">
       <div className="flex-1 overflow-hidden min-h-0 flex gap-3">
         {/* Filtres */}
-        {filtersOpen && (
-          <div className="w-64 shrink-0 glass-card overflow-y-auto">
+        <div className="w-64 shrink-0 glass-card overflow-y-auto">
           {/* Sélection de vue et création de tournée */}
           <div className="p-4 border-b border-border/50 space-y-3">
             <div className="flex gap-2">
@@ -647,42 +645,27 @@ const ProspectsView = ({
               totalCount={nouveauxSitesTotalCount}
             />
           )}
-          </div>
-        )}
+        </div>
 
         {/* Content - Liste */}
         <div className="flex-1 overflow-hidden min-h-0 glass-card">
-          {/* Bouton pour ouvrir/fermer les filtres */}
-          <div className="p-3 border-b border-border/50 flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setFiltersOpen(!filtersOpen)}
-              className="h-8"
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              {filtersOpen ? "Masquer les filtres" : "Afficher les filtres"}
-            </Button>
-          </div>
-          <div className="h-[calc(100%-56px)] overflow-hidden">
-            {activeView === 'creations' ? (
-              <ListView
-                filters={filters}
-                onEntrepriseSelect={onEntrepriseSelect}
-                selectionMode={internalSelectionMode}
-                selectedEntreprises={internalSelectedEntreprises}
-                onToggleSelection={internalOnToggleSelection}
-              />
-            ) : (
-              <NouveauxSitesListView
-                filters={nouveauxSitesFilters}
-                onSiteSelect={onEntrepriseSelect}
-                selectionMode={nouveauxSitesTourneeActive}
-                selectedSites={selectedNouveauxSites}
-                onToggleSelection={toggleNouveauSite}
-              />
-            )}
-          </div>
+          {activeView === 'creations' ? (
+            <ListView
+              filters={filters}
+              onEntrepriseSelect={onEntrepriseSelect}
+              selectionMode={internalSelectionMode}
+              selectedEntreprises={internalSelectedEntreprises}
+              onToggleSelection={internalOnToggleSelection}
+            />
+          ) : (
+            <NouveauxSitesListView
+              filters={nouveauxSitesFilters}
+              onSiteSelect={onEntrepriseSelect}
+              selectionMode={nouveauxSitesTourneeActive}
+              selectedSites={selectedNouveauxSites}
+              onToggleSelection={toggleNouveauSite}
+            />
+          )}
         </div>
       </div>
     </div>
