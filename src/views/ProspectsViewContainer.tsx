@@ -1,7 +1,7 @@
 import { lazy, Suspense, Dispatch, SetStateAction } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ProspectsView = lazy(() => import('@/components/dashboard/ProspectsView').then(m => ({ default: m.ProspectsView })));
+const ProspectsView = lazy(() => import('@/components/dashboard/ProspectsView'));
 
 interface ProspectsViewContainerProps {
   filters: any;
