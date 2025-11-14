@@ -29,9 +29,9 @@ export const DashboardHeader = ({
   };
 
   const viewConfig = [
-    { key: 'crm' as const, label: 'CRM', icon: TrendingUp },
-    { key: 'tournees' as const, label: 'Tournées', icon: Navigation },
     { key: 'prospects' as const, label: 'Prospects', icon: MapIcon },
+    { key: 'tournees' as const, label: 'Tournées', icon: Navigation },
+    { key: 'crm' as const, label: 'CRM', icon: TrendingUp },
   ];
 
   return (
