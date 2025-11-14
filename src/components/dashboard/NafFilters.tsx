@@ -52,7 +52,7 @@ export const NafFilters = ({
   onOptimize,
   isOptimizing = false
 }: NafFiltersProps) => {
-  const [categoriesOpen, setCategoriesOpen] = useState(true);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [formesJuridiquesOpen, setFormesJuridiquesOpen] = useState(false);
   const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
