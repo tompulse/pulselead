@@ -205,9 +205,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Map className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Tournées optimisées</h3>
+              <h3 className="text-xl font-bold text-foreground">???</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Planifiez vos tournées commerciales en quelques clics. Jusqu'à 40% de temps de route économisé.
+                ???
               </p>
             </div>
 
@@ -217,9 +217,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <TrendingUp className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">CRM intelligent</h3>
+              <h3 className="text-xl font-bold text-foreground">???</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Gérez toutes vos interactions client sur une plateforme unifiée. +60% de taux de conversion.
+                ???
               </p>
             </div>
 
@@ -229,9 +229,9 @@ const Index = () => {
               <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
                 <Sparkles className="w-9 h-9 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Prospection intelligente</h3>
+              <h3 className="text-xl font-bold text-foreground">???</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Identifiez les meilleures opportunités avec l'IA. 3x plus de rendez-vous qualifiés.
+                ???
               </p>
             </div>
           </div>
@@ -264,12 +264,12 @@ const Index = () => {
       <section className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000`}>
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12 md:mb-20 space-y-4 md:space-y-5 animate-fade-in px-4">
-            <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground leading-tight">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
               Choisissez le plan qui
               <br />
               <span className="gradient-text">accélère votre croissance.</span>
             </h2>
-            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto font-medium">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
           </div>
