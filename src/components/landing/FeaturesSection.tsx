@@ -1,4 +1,4 @@
-import { MapPin, Target, TrendingUp, Zap, Shield, Clock, Users, BarChart } from "lucide-react";
+import { MapPin, Target, TrendingUp, Zap, Shield, Clock, BarChart } from "lucide-react";
 
 export const FeaturesSection = () => {
   const features = [
@@ -31,11 +31,6 @@ export const FeaturesSection = () => {
       icon: Shield,
       title: "Données sécurisées",
       description: "Vos données commerciales protégées avec un chiffrement de niveau bancaire. Hébergement en France."
-    },
-    {
-      icon: Users,
-      title: "Mode équipe",
-      description: "Gérez votre équipe commerciale avec des accès différenciés et un suivi des performances de chacun."
     },
     {
       icon: BarChart,
