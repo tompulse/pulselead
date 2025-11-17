@@ -33,12 +33,12 @@ export const HeroSection = () => {
         
         {/* Main Headline - Focus sur le développement commercial */}
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] tracking-tight px-2">
-          L'outil que les meilleurs commerciaux <span className="gradient-text inline-block">utilisent pour dominer</span> leur secteur.
+          L'outil que les <span className="text-primary">meilleurs commerciaux</span> utilisent pour <span className="text-primary">dominer</span> leur secteur.
         </h1>
         
         {/* Subheadline - Focus sur les bénéfices avec chiffre clé */}
         <p className="text-xs sm:text-sm md:text-base text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed px-4">
-          LUMA transforme vos prospections terrain en machine à revenus. Accédez directement aux prospects récemment créés de votre zone, optimisez vos tournées à la perfection, et capturez chaque opportunité avec notre CRM intégré. Résultat : <span className="text-accent font-bold">+30% de commissions en moyenne</span> pour nos utilisateurs.
+          Accédez aux nouvelles entreprises de votre zone avant vos concurrents, optimisez chaque kilomètre, générez plus de rendez-vous.
         </p>
         
         {/* Badge résultat */}
