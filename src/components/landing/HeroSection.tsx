@@ -6,7 +6,7 @@ export const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative container mx-auto px-4 sm:px-6 pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-10 md:pb-12 overflow-hidden min-h-screen flex items-center">
+    <section className="relative container mx-auto px-4 sm:px-6 pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-10 md:pb-12 overflow-hidden min-h-screen flex items-center">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -left-20 w-72 sm:w-96 md:w-[500px] h-72 sm:h-96 md:h-[500px] bg-accent/20 rounded-full blur-3xl animate-pulse"></div>
