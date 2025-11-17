@@ -1,15 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import React from "react";
-import { ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map } from "lucide-react";
+import React, { useState } from "react";
+import { ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User } from "lucide-react";
 
 import { trackCTAClick } from "@/utils/analytics";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { BookingSection } from "@/components/landing/BookingSection";
 import { ProblemCard } from "@/components/landing/ProblemCard";
+import { HeroSection } from "@/components/landing/HeroSection";
+import { ROICalculator } from "@/components/landing/ROICalculator";
+import { CaseStudies } from "@/components/landing/CaseStudies";
+import { ProblemSolutionMapping } from "@/components/landing/ProblemSolutionMapping";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const Index = () => {
   const navigate = useNavigate();
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+
+  // Calculs de prix avec remise annuelle (-20%)
+  const starterPrice = billingPeriod === 'monthly' ? 49 : 39;
+  const proPrice = billingPeriod === 'monthly' ? 99 : 79;
+  const enterprisePrice = billingPeriod === 'monthly' ? 199 : 159;
 
   // Animations au scroll - effets plus percutants
   const socialProof = useScrollAnimation({
@@ -58,106 +68,7 @@ const Index = () => {
       <main>
 
       {/* Hero Section */}
-      <section className="relative pt-12 sm:pt-16 md:pt-20 pb-16 sm:pb-20 px-3 sm:px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-4 sm:space-y-5 animate-fade-in">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-accent/10 border border-accent/30 backdrop-blur-sm shadow-lg shadow-accent/10">
-              
-              <span className="text-xs sm:text-sm text-accent font-bold">Tout-en-un pour commerciaux terrain</span>
-            </div>
-            
-            {/* Titre principal - focus développement commercial */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight md:leading-tight lg:leading-[1.08] tracking-tight px-2">
-              <span className="gradient-text">Développer votre activité </span>
-              <span className="text-foreground">commerciale terrain.</span>
-            </h1>
-            
-            {/* Sous-titre clair et orienté bénéfice */}
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium px-4">
-              Optimisez vos tournées, gérez votre pipeline et <span className="text-accent font-semibold whitespace-nowrap">prospectez efficacement</span>.<br className="hidden sm:block" />
-              <span className="text-foreground/90 text-sm sm:text-base md:text-lg mt-2 block">Tout centralisé dans une seule plateforme.</span>
-            </p>
-            
-            {/* CTA principal unique et puissant */}
-            <div className="flex flex-col items-center gap-5 pt-6">
-              <Button onClick={handleExplorerClick} size="lg" className="btn-hero w-full sm:w-auto min-w-[280px] h-16 text-xl font-bold group">
-                Démarrer gratuitement
-                <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              
-              {/* Trust indicators réels et crédibles */}
-              <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-accent" />
-                  <span className="font-medium">Sans carte bancaire</span>
-                </div>
-                <span className="text-accent/30 hidden sm:inline">•</span>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-accent" />
-                  
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof */}
-      <section ref={socialProof.ref} className={`relative py-16 px-4 border-y border-accent/10 bg-gradient-to-r from-primary/50 to-primary/30 backdrop-blur-sm transition-all duration-1000 ${socialProof.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`} style={{
-        transitionDelay: socialProof.isVisible ? '100ms' : '0ms'
-      }}>
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-16 max-w-5xl mx-auto">
-            {/* Trust indicators - focus outil commercial */}
-            <div className={`flex items-center gap-3 md:gap-4 group transition-all duration-700 ${socialProof.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`} style={{
-              transitionDelay: '200ms'
-            }}>
-              <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <Target className="w-6 h-6 md:w-7 md:h-7 text-accent" />
-                </div>
-              </div>
-              <div className="text-left">
-                <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">Tournées optimisées</div>
-                <div className="text-xs md:text-sm text-muted-foreground font-medium">GPS & itinéraires intelligents.</div>
-              </div>
-            </div>
-
-            <div className={`flex items-center gap-3 md:gap-4 group transition-all duration-700 ${socialProof.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{
-              transitionDelay: '400ms'
-            }}>
-              <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <TrendingUp className="w-6 h-6 md:w-7 md:h-7 text-accent" />
-                </div>
-              </div>
-              <div className="text-left">
-                <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">CRM complet</div>
-                <div className="text-xs md:text-sm text-muted-foreground font-medium">Pipeline & suivi client.</div>
-              </div>
-            </div>
-
-            <div className={`flex items-center gap-3 md:gap-4 group transition-all duration-700 ${socialProof.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`} style={{
-              transitionDelay: '600ms'
-            }}>
-              <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 bg-accent/20 blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center shadow-lg shadow-accent/10">
-                  <Zap className="w-6 h-6 md:w-7 md:h-7 text-accent" />
-                </div>
-              </div>
-              <div className="text-left">
-                <div className="text-base md:text-lg lg:text-xl font-bold text-foreground">Données temps réel</div>
-                <div className="text-xs md:text-sm text-muted-foreground font-medium">Nouvelles entreprises.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* Section Problème/Solution */}
       <section className="relative py-24 px-4">
@@ -260,10 +171,13 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Mapping Problème → Solution */}
+      <ProblemSolutionMapping />
+
       {/* Section Prix */}
       <section className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000`}>
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12 md:mb-20 space-y-4 md:space-y-5 animate-fade-in px-4">
+          <div className="text-center mb-8 md:mb-12 space-y-4 md:space-y-5 animate-fade-in px-4">
             <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
               Choisissez le plan qui
               <br />
@@ -272,6 +186,29 @@ const Index = () => {
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
+            
+            {/* Toggle Annuel/Mensuel */}
+            <div className="flex items-center justify-center gap-3 pt-4">
+              <span className={`text-sm font-medium transition-colors ${billingPeriod === 'monthly' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                Mensuel
+              </span>
+              <button
+                onClick={() => setBillingPeriod(prev => prev === 'monthly' ? 'yearly' : 'monthly')}
+                className={`relative w-14 h-7 rounded-full transition-colors ${
+                  billingPeriod === 'yearly' ? 'bg-accent' : 'bg-muted'
+                }`}
+              >
+                <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform ${
+                  billingPeriod === 'yearly' ? 'translate-x-7' : 'translate-x-0'
+                }`} />
+              </button>
+              <span className={`text-sm font-medium transition-colors ${billingPeriod === 'yearly' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                Annuel
+              </span>
+              <span className="inline-flex px-2 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-xs font-bold text-green-500">
+                -20%
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mb-12 md:mb-20">
@@ -386,6 +323,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Calculateur ROI */}
+      <ROICalculator />
+
       {/* Section Témoignages */}
       <section ref={testimonialsSection.ref} className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${testimonialsSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
         <div className="container mx-auto max-w-6xl">
@@ -416,9 +356,14 @@ const Index = () => {
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
                 <span className="text-sm font-semibold text-cyan-electric">+100% de RDV</span>
               </div>
-              <div className="pt-3 border-t border-accent/10">
-                <div className="font-semibold text-foreground">Sophie Martin</div>
-                <div className="text-sm text-muted-foreground">Commerciale BtoB</div>
+              <div className="pt-3 border-t border-accent/10 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center">
+                  <User className="w-6 h-6 text-accent" />
+                </div>
+                <div>
+                  <div className="font-semibold text-foreground">Sophie Martin</div>
+                  <div className="text-sm text-muted-foreground">Commerciale BtoB</div>
+                </div>
               </div>
             </div>
 
@@ -435,9 +380,14 @@ const Index = () => {
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
                 <span className="text-sm font-semibold text-cyan-electric">2h/jour économisées</span>
               </div>
-              <div className="pt-3 border-t border-accent/10">
-                <div className="font-semibold text-foreground">Thomas Dubois</div>
-                <div className="text-sm text-muted-foreground">Responsable commercial</div>
+              <div className="pt-3 border-t border-accent/10 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center">
+                  <User className="w-6 h-6 text-accent" />
+                </div>
+                <div>
+                  <div className="font-semibold text-foreground">Thomas Dubois</div>
+                  <div className="text-sm text-muted-foreground">Responsable commercial</div>
+                </div>
               </div>
             </div>
 
@@ -454,14 +404,22 @@ const Index = () => {
               <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
                 <span className="text-sm font-semibold text-cyan-electric">+15 clients</span>
               </div>
-              <div className="pt-3 border-t border-accent/10">
-                <div className="font-semibold text-foreground">Marie Leroux</div>
-                <div className="text-sm text-muted-foreground">Indépendante</div>
+              <div className="pt-3 border-t border-accent/10 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center">
+                  <User className="w-6 h-6 text-accent" />
+                </div>
+                <div>
+                  <div className="font-semibold text-foreground">Marie Leroux</div>
+                  <div className="text-sm text-muted-foreground">Indépendante</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Cas d'études détaillés */}
+      <CaseStudies />
 
       {/* Section Réservation - Avant FAQ */}
       <BookingSection />
@@ -483,9 +441,16 @@ const Index = () => {
               <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
                 D'où viennent les données entreprises ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
-                <p>Les données proviennent exclusivement de sources officielles françaises : l'INPI (Institut National de la Propriété Industrielle) et l'INSEE (Institut National de la Statistique et des Études Économiques).</p>
-                <p>Ces données sont synchronisées automatiquement chaque jour pour vous garantir un accès aux créations d'entreprises les plus récentes. Vous êtes toujours informé en temps réel des nouvelles opportunités sur votre territoire.</p>
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-3">
+                <p>Les données proviennent exclusivement de <strong>sources officielles françaises</strong> :</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li><strong>INSEE</strong> : Base SIRENE actualisée <span className="text-accent font-semibold">quotidiennement</span> (mise à jour J+1)</li>
+                  <li><strong>Infogreffe</strong> : Données juridiques et financières</li>
+                  <li><strong>Data.gouv.fr</strong> : Créations d'entreprises en temps réel</li>
+                </ul>
+                <p className="bg-accent/5 p-3 rounded-lg border-l-4 border-accent">
+                  <strong>Exemple concret</strong> : Une entreprise créée aujourd'hui à Lyon apparaîtra dans votre onglet "Nouveaux Sites" <span className="text-accent font-semibold">dès demain matin à 8h</span>.
+                </p>
               </AccordionContent>
             </AccordionItem>
 
@@ -493,9 +458,18 @@ const Index = () => {
               <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
                 Comment fonctionne l'essai gratuit ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
-                <p>L'essai gratuit de 7 jours vous donne accès à toutes les fonctionnalités de LUMA sans aucune limitation.</p>
-                <p>Vous pouvez créer vos tournées, gérer vos prospects, accéder aux données entreprises en temps réel et utiliser les outils de suivi intégrés. À la fin de l'essai, vous choisissez si vous souhaitez continuer avec un abonnement payant ou non.</p>
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-3">
+                <p>Vous bénéficiez de <strong className="text-accent">14 jours d'essai gratuit</strong> sans engagement, avec accès à toutes les fonctionnalités.</p>
+                <p><strong>Timeline de démarrage</strong> :</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li><strong>Jour 1 (2 min)</strong> : Inscription et import de vos premiers prospects</li>
+                  <li><strong>Jour 1 (15 min)</strong> : Configuration de votre première tournée</li>
+                  <li><strong>Jour 2-3</strong> : Prise en main complète du CRM</li>
+                  <li><strong>Jour 14</strong> : Décision sans pression, résiliation en 1 clic</li>
+                </ul>
+                <p className="bg-green-500/5 p-3 rounded-lg border-l-4 border-green-500">
+                  <strong>Résultat moyen</strong> : Nos utilisateurs économisent <span className="text-green-500 font-semibold">6h/semaine dès la 2ème semaine</span>.
+                </p>
               </AccordionContent>
             </AccordionItem>
 
@@ -523,29 +497,18 @@ const Index = () => {
               <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
                 Comment sont calculées les tournées optimisées ?
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
-                <p>LUMA utilise des algorithmes d'optimisation avancés pour calculer le meilleur itinéraire en fonction de vos contraintes : localisation des prospects, priorités commerciales, horaires de disponibilité et trafic en temps réel.</p>
-                <p>Vous gagnez du temps sur la route et maximisez le nombre de visites par jour. L'outil s'adapte automatiquement aux changements et vous propose des alternatives en cas d'imprévus.</p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-6" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Mes données sont-elles sécurisées ?
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
-                <p>La sécurité de vos données est notre priorité absolue. Toutes les informations sont chiffrées et hébergées sur des serveurs sécurisés en Europe, conformes au RGPD.</p>
-                <p>Vos données clients, historiques d'interactions et informations commerciales restent 100% privées et ne sont jamais partagées avec des tiers. Vous gardez le contrôle total de vos informations.</p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-7" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Puis-je importer mes données existantes ?
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
-                <p>Oui, vous pouvez importer facilement vos données depuis un fichier Excel ou CSV. LUMA prend en charge les formats standards et vous guide dans le processus d'import.</p>
-                <p>Vous pouvez également exporter vos données à tout moment pour les utiliser dans d'autres outils ou pour conserver une sauvegarde. Import et export illimités sur tous les forfaits.</p>
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-3">
+                <p>LUMA utilise des algorithmes d'optimisation avancés qui calculent l'itinéraire optimal en <strong className="text-accent">moins de 3 secondes</strong>.</p>
+                <p><strong>Critères d'optimisation</strong> :</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Distance et temps de trajet (données Mapbox temps réel)</li>
+                  <li>Priorités commerciales (prospects chauds en premier)</li>
+                  <li>Horaires d'ouverture des entreprises</li>
+                  <li>Trafic en temps réel</li>
+                </ul>
+                <p className="bg-accent/5 p-3 rounded-lg border-l-4 border-accent">
+                  <strong>Exemple réel</strong> : Un commercial avec 12 rendez-vous/jour économise en moyenne <span className="text-accent font-semibold">45 min de route</span> et peut caser <span className="text-accent font-semibold">2-3 visites supplémentaires</span>.
+                </p>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
