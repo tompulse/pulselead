@@ -33,7 +33,7 @@ export const HeroSection = () => {
         
         {/* Main Headline - Focus sur le développement commercial */}
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] tracking-tight px-2">
-          L'outil que les <span className="text-accent">meilleurs commerciaux</span> utilisent pour <span className="text-accent">dominer</span> leur secteur.
+          L'outil que les <span className="text-primary">meilleurs commerciaux</span> utilisent pour <span className="text-primary">dominer</span> leur secteur.
         </h1>
         
         {/* Subheadline - Focus sur les bénéfices avec chiffre clé */}
@@ -56,6 +56,19 @@ export const HeroSection = () => {
             Démarrer gratuitement
             <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
           </button>
+          
+          {/* Trust indicators réels */}
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground/80">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-accent" />
+              <span className="text-foreground font-medium">Aucune carte bancaire</span>
+            </div>
+            <span className="hidden sm:inline text-muted-foreground/40">•</span>
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-accent" />
+              <span className="text-foreground font-medium">Configuration en 2 min</span>
+            </div>
+          </div>
           
           {/* Navigation secondaire */}
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground/80">
