@@ -29,11 +29,11 @@ export const CaseStudies = () => {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">6-8 visites/jour, 15h de travail effectif</span>
+                  <span className="text-sm sm:text-base text-foreground">Tournées de 3h de prospection non optimisées</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">2h perdues en trajets non optimisés</span>
+                  <span className="text-sm sm:text-base text-foreground">Taux de conversion RDV : <strong>7%</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
@@ -60,11 +60,11 @@ export const CaseStudies = () => {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">10-12 visites/jour, 13h de travail</span>
+                  <span className="text-sm sm:text-base text-foreground">Tournées optimisées : <strong>45 min économisées</strong> sur 3h</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">Trajets optimisés, 45min économisées</span>
+                  <span className="text-sm sm:text-base text-foreground">Taux de conversion RDV : <strong>18%</strong> (+11 points)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
@@ -138,10 +138,10 @@ export const CaseStudies = () => {
             
             {/* Après */}
             <div className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-bold text-accent flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                Après LUMA (6 mois)
-              </h3>
+            <h3 className="text-xl sm:text-2xl font-bold text-accent flex items-center gap-2">
+              <CheckCircle className="w-5 h-5" />
+              Après LUMA (3 mois)
+            </h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
