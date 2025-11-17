@@ -8,7 +8,6 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { BookingSection } from "@/components/landing/BookingSection";
 import { ProblemCard } from "@/components/landing/ProblemCard";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { ROICalculator } from "@/components/landing/ROICalculator";
 import { CaseStudies } from "@/components/landing/CaseStudies";
 import { ProblemSolutionMapping } from "@/components/landing/ProblemSolutionMapping";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -322,9 +321,6 @@ const Index = () => {
 
         </div>
       </section>
-
-      {/* Calculateur ROI */}
-      <ROICalculator />
 
       {/* Section Témoignages */}
       <section ref={testimonialsSection.ref} className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${testimonialsSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
