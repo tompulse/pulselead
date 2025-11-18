@@ -16,17 +16,17 @@ const Index = () => {
   const navigate = useNavigate();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'quarterly' | 'annual'>('annual');
 
-  // Structure de prix se terminant par 9
+  // Structure de prix
   const pricing = {
     starter: {
       monthly: { price: 39, total: 39, period: "mois" },
-      quarterly: { price: 36, total: 109, period: "3 mois", discount: "7%" },
-      annual: { price: 32, total: 379, period: "an", discount: "19%" }
+      quarterly: { price: 29, total: 87, period: "3 mois" },
+      annual: { price: 19, total: 228, period: "an" }
     },
     pro: {
-      monthly: { price: 49, total: 49, period: "mois" },
-      quarterly: { price: 46, total: 139, period: "3 mois", discount: "6%" },
-      annual: { price: 40, total: 479, period: "an", discount: "18%" }
+      monthly: { price: 59, total: 59, period: "mois" },
+      quarterly: { price: 49, total: 147, period: "3 mois" },
+      annual: { price: 39, total: 468, period: "an" }
     }
   };
   
@@ -225,7 +225,6 @@ const Index = () => {
                 }`}
               >
                 Trimestriel
-                <span className="ml-2 text-xs text-accent">-7%</span>
               </button>
               <button
                 onClick={() => setBillingPeriod('annual')}
@@ -236,7 +235,6 @@ const Index = () => {
                 }`}
               >
                 Annuel
-                <span className="ml-2 text-xs text-accent">-19%</span>
               </button>
             </div>
           </div>
@@ -276,10 +274,6 @@ const Index = () => {
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-foreground font-medium">Optimisation de tournées</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Export CSV</span>
-                </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
                 Commencer
@@ -290,7 +284,7 @@ const Index = () => {
             <div className="relative glass-card p-8 md:p-10 space-y-5 md:space-y-7 border-accent shadow-2xl shadow-accent/40 md:scale-100 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
               <div className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 px-4 md:px-8 py-2 md:py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm md:text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
                 <Sparkles className="w-5 h-5" />
-                ⭐ Meilleur rapport qualité/prix
+                Le plus populaire
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
@@ -319,14 +313,6 @@ const Index = () => {
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-foreground font-semibold text-base md:text-lg">Nouveaux sites en temps réel</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Qualification automatique IA</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Export avancé + API</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
