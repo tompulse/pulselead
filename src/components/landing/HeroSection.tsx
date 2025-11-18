@@ -33,7 +33,7 @@ export const HeroSection = () => {
         
         {/* Main Headline - Focus sur le développement commercial */}
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] tracking-tight px-2">
-          L'outil que les <span className="text-cyan-500">meilleurs commerciaux</span> utilisent pour <span className="text-cyan-500">dominer</span> leur secteur.
+          L'outil que les <span className="text-primary">meilleurs commerciaux</span> utilisent pour <span className="text-primary">dominer</span> leur secteur.
         </h1>
         
         {/* Subheadline - Focus sur les bénéfices avec chiffre clé */}
