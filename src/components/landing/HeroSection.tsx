@@ -103,14 +103,6 @@ export const HeroSection = () => {
           </div>
           
           <div className="flex flex-col items-center justify-center gap-2 p-3 sm:p-4 rounded-xl border border-border/60 bg-card/50 backdrop-blur-md hover:border-accent/60 hover:bg-card/70 transition-all duration-300 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
-            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
-            <div className="text-center">
-              <div className="text-sm sm:text-base font-bold text-foreground">35</div>
-              <div className="text-[10px] sm:text-xs text-muted-foreground font-medium">Commerciaux</div>
-            </div>
-          </div>
-          
-          <div className="flex flex-col items-center justify-center gap-2 p-3 sm:p-4 rounded-xl border border-border/60 bg-card/50 backdrop-blur-md hover:border-accent/60 hover:bg-card/70 transition-all duration-300 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
             <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
             <div className="text-center">
               <div className="text-sm sm:text-base font-bold text-foreground">2 min</div>
