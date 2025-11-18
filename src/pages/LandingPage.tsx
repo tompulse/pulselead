@@ -17,9 +17,9 @@ const Index = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
 
   // Calculs de prix avec remise annuelle (-20%)
-  const starterPrice = billingPeriod === 'monthly' ? 49 : 39;
-  const proPrice = billingPeriod === 'monthly' ? 99 : 79;
-  const enterprisePrice = billingPeriod === 'monthly' ? 199 : 159;
+  const starterPrice = billingPeriod === 'monthly' ? 39 : 31;
+  const proPrice = billingPeriod === 'monthly' ? 69 : 55;
+  const enterprisePrice = "Sur mesure";
 
   // Animations au scroll - effets plus percutants
   const socialProof = useScrollAnimation({
@@ -177,6 +177,9 @@ const Index = () => {
       {/* Mapping Problème → Solution */}
       <ProblemSolutionMapping />
 
+      {/* Cas clients - après le mapping */}
+      <CaseStudies />
+
       {/* Section Prix */}
       <section id="pricing-section" className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000`}>
         <div className="container mx-auto max-w-7xl">
@@ -219,27 +222,37 @@ const Index = () => {
             <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground font-medium">???</p>
+                <p className="text-muted-foreground font-medium">Pour démarrer votre prospection</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold gradient-text">???€</span>
+                  <span className="text-5xl font-bold gradient-text">{starterPrice}€</span>
                   <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">???</div>
+                <div className="text-sm text-accent font-bold">
+                  {billingPeriod === 'yearly' ? 'Facturé annuellement' : 'Facturé mensuellement'}
+                </div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">???</span>
+                  <span className="text-foreground font-medium">Jusqu'à 500 entreprises</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">???</span>
+                  <span className="text-foreground font-medium">Cartographie interactive</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">???</span>
+                  <span className="text-foreground font-medium">CRM basique</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Optimisation de tournées</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Export CSV</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
@@ -255,27 +268,41 @@ const Index = () => {
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
-                <p className="text-sm md:text-base text-foreground font-semibold">???</p>
+                <p className="text-sm md:text-base text-foreground font-semibold">Complet pour professionnels</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2 md:mb-3">
-                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">???€</span>
+                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{proPrice}€</span>
                   <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
                 </div>
-                <div className="text-sm md:text-base text-accent font-bold">???</div>
+                <div className="text-sm md:text-base text-accent font-bold">
+                  {billingPeriod === 'yearly' ? 'Facturé annuellement - Économisez 20%' : 'Facturé mensuellement'}
+                </div>
               </div>
               <ul className="space-y-3 md:space-y-4">
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">???</span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">Entreprises illimitées</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">???</span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">CRM complet + Pipeline</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">???</span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">Nouveaux sites en temps réel</span>
+                </li>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">Qualification automatique IA</span>
+                </li>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">Export avancé + API</span>
+                </li>
+                <li className="flex items-start gap-2 md:gap-3">
+                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-semibold text-base md:text-lg">Support prioritaire</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
@@ -287,26 +314,34 @@ const Index = () => {
             <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-foreground">Entreprise</h3>
-                <p className="text-muted-foreground font-medium">???</p>
+                <p className="text-muted-foreground font-medium">Solution personnalisée</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-1 mb-2">
                   <span className="text-4xl font-bold gradient-text">Sur mesure</span>
                 </div>
-                <div className="text-sm text-accent font-bold">???</div>
+                <div className="text-sm text-accent font-bold">Contactez-nous pour un devis</div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">???</span>
+                  <span className="text-foreground font-medium">Tout du plan Pro inclus</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">???</span>
+                  <span className="text-foreground font-medium">Utilisateurs illimités</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">???</span>
+                  <span className="text-foreground font-medium">Intégrations sur mesure</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Formation dédiée</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground font-medium">Account manager dédié</span>
                 </li>
               </ul>
               <Button onClick={() => {
@@ -417,9 +452,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      {/* Cas d'études détaillés */}
-      <CaseStudies />
 
       {/* Section Réservation - Avant FAQ */}
       <div id="demo-section">

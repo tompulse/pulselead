@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import lumaLogo from "@/assets/luma-logo.png";
+import lumaLogo from "@/assets/luma-logo-cyan.png";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <img src={lumaLogo} alt="LUMA" className="h-10 w-auto" />
+            <img src={lumaLogo} alt="LUMA" className="h-14 w-auto drop-shadow-[0_0_8px_rgba(0,255,240,0.5)]" />
           </div>
 
           {/* Navigation Desktop */}
