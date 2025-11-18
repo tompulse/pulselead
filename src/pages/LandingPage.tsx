@@ -14,19 +14,21 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const Index = () => {
   const navigate = useNavigate();
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'quarterly' | 'annual'>('annual');
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'quarterly' | 'annual' | 'once'>('annual');
 
   // Structure de prix
   const pricing = {
     starter: {
-      monthly: { price: 39, total: 39, period: "mois" },
-      quarterly: { price: 29, total: 87, period: "3 mois" },
-      annual: { price: 19, total: 228, period: "an" }
+      monthly: { price: 39, period: "mois", isRecurring: true },
+      quarterly: { price: 29, period: "3 mois", isRecurring: true },
+      annual: { price: 19, period: "an", isRecurring: true },
+      once: { price: 351, period: "paiement unique", isRecurring: false }
     },
     pro: {
-      monthly: { price: 59, total: 59, period: "mois" },
-      quarterly: { price: 49, total: 147, period: "3 mois" },
-      annual: { price: 39, total: 468, period: "an" }
+      monthly: { price: 59, period: "mois", isRecurring: true },
+      quarterly: { price: 49, period: "3 mois", isRecurring: true },
+      annual: { price: 39, period: "an", isRecurring: true },
+      once: { price: 531, period: "paiement unique", isRecurring: false }
     }
   };
   
@@ -204,8 +206,8 @@ const Index = () => {
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
             
-            {/* Toggle Mensuel/Trimestriel/Annuel */}
-            <div className="inline-flex items-center gap-2 p-1 bg-muted/50 rounded-full border border-border/50">
+            {/* Toggle Mensuel/Trimestriel/Annuel/Payer en une fois */}
+            <div className="inline-flex items-center gap-2 p-1 bg-muted/50 rounded-full border border-border/50 flex-wrap justify-center">
               <button
                 onClick={() => setBillingPeriod('monthly')}
                 className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
@@ -236,6 +238,17 @@ const Index = () => {
               >
                 Annuel
               </button>
+              <button
+                onClick={() => setBillingPeriod('once')}
+                className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
+                  billingPeriod === 'once'
+                    ? 'bg-background shadow-md text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Payer en une fois
+                <span className="ml-2 text-xs text-green-500">-25%</span>
+              </button>
             </div>
           </div>
 
@@ -249,13 +262,10 @@ const Index = () => {
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-5xl font-bold gradient-text">{pricing.starter[billingPeriod].price}€</span>
-                  <span className="text-muted-foreground font-medium">/mois</span>
+                  {pricing.starter[billingPeriod].isRecurring && (
+                    <span className="text-muted-foreground font-medium">/mois</span>
+                  )}
                 </div>
-                {billingPeriod !== 'monthly' && (
-                  <div className="text-sm text-accent font-bold">
-                    Soit {pricing.starter[billingPeriod].total}€ facturé par {pricing.starter[billingPeriod].period}
-                  </div>
-                )}
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -293,13 +303,10 @@ const Index = () => {
               <div>
                 <div className="flex items-baseline gap-2 mb-2 md:mb-3">
                   <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{pricing.pro[billingPeriod].price}€</span>
-                  <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
+                  {pricing.pro[billingPeriod].isRecurring && (
+                    <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
+                  )}
                 </div>
-                {billingPeriod !== 'monthly' && (
-                  <div className="text-sm md:text-base text-accent font-bold">
-                    Soit {pricing.pro[billingPeriod].total}€ facturé par {pricing.pro[billingPeriod].period}
-                  </div>
-                )}
               </div>
               <ul className="space-y-3 md:space-y-4">
                 <li className="flex items-start gap-2 md:gap-3">
