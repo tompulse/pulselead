@@ -10,6 +10,7 @@ import { ProblemCard } from "@/components/landing/ProblemCard";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { CaseStudies } from "@/components/landing/CaseStudies";
 import { ProblemSolutionMapping } from "@/components/landing/ProblemSolutionMapping";
+import { Navbar } from "@/components/landing/Navbar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const Index = () => {
   const navigate = useNavigate();
@@ -52,6 +53,9 @@ const Index = () => {
     navigate("/auth");
   };
   return <div className="min-h-screen bg-gradient-to-b from-primary via-primary/80 to-background relative overflow-hidden">
+      {/* Navbar fixe */}
+      <Navbar />
+
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{
@@ -64,13 +68,13 @@ const Index = () => {
       </div>
 
 
-      <main>
+      <main className="pt-16">
 
       {/* Hero Section */}
       <HeroSection />
 
       {/* Section Problème/Solution */}
-      <section className="relative py-24 px-4">
+      <section id="features-section" className="relative py-24 px-4">
         <div className="container mx-auto max-w-6xl">
           {/* Problème */}
           <div ref={problemSection.ref} className={`text-center mb-16 space-y-4 transition-all duration-1000 ${problemSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
@@ -174,7 +178,7 @@ const Index = () => {
       <ProblemSolutionMapping />
 
       {/* Section Prix */}
-      <section className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000`}>
+      <section id="pricing-section" className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000`}>
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-8 md:mb-12 space-y-4 md:space-y-5 animate-fade-in px-4">
             <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
@@ -323,7 +327,7 @@ const Index = () => {
       </section>
 
       {/* Section Témoignages */}
-      <section ref={testimonialsSection.ref} className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${testimonialsSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
+      <section id="testimonials-section" ref={testimonialsSection.ref} className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${testimonialsSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-8 md:mb-12 space-y-2 md:space-y-3 animate-fade-in px-4">
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -418,7 +422,9 @@ const Index = () => {
       <CaseStudies />
 
       {/* Section Réservation - Avant FAQ */}
-      <BookingSection />
+      <div id="demo-section">
+        <BookingSection />
+      </div>
 
       {/* Section FAQ + CTA */}
       <section className="relative py-20 px-4">
