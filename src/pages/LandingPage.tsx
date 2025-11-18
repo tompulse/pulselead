@@ -14,11 +14,22 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const Index = () => {
   const navigate = useNavigate();
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'quarterly' | 'annual'>('annual');
 
-  // Calculs de prix avec remise annuelle (-20%)
-  const starterPrice = billingPeriod === 'monthly' ? 39 : 31;
-  const proPrice = billingPeriod === 'monthly' ? 69 : 55;
+  // Structure de prix se terminant par 9
+  const pricing = {
+    starter: {
+      monthly: { price: 39, total: 39, period: "mois" },
+      quarterly: { price: 36, total: 109, period: "3 mois", discount: "7%" },
+      annual: { price: 32, total: 379, period: "an", discount: "19%" }
+    },
+    pro: {
+      monthly: { price: 49, total: 49, period: "mois" },
+      quarterly: { price: 46, total: 139, period: "3 mois", discount: "6%" },
+      annual: { price: 40, total: 479, period: "an", discount: "18%" }
+    }
+  };
+  
   const enterprisePrice = "Sur mesure";
 
   // Animations au scroll - effets plus percutants
@@ -193,27 +204,40 @@ const Index = () => {
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
             
-            {/* Toggle Annuel/Mensuel */}
-            <div className="flex items-center justify-center gap-3 pt-4">
-              <span className={`text-sm font-medium transition-colors ${billingPeriod === 'monthly' ? 'text-foreground' : 'text-muted-foreground'}`}>
-                Mensuel
-              </span>
+            {/* Toggle Mensuel/Trimestriel/Annuel */}
+            <div className="inline-flex items-center gap-2 p-1 bg-muted/50 rounded-full border border-border/50">
               <button
-                onClick={() => setBillingPeriod(prev => prev === 'monthly' ? 'yearly' : 'monthly')}
-                className={`relative w-14 h-7 rounded-full transition-colors ${
-                  billingPeriod === 'yearly' ? 'bg-accent' : 'bg-muted'
+                onClick={() => setBillingPeriod('monthly')}
+                className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
+                  billingPeriod === 'monthly'
+                    ? 'bg-background shadow-md text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform ${
-                  billingPeriod === 'yearly' ? 'translate-x-7' : 'translate-x-0'
-                }`} />
+                Mensuel
               </button>
-              <span className={`text-sm font-medium transition-colors ${billingPeriod === 'yearly' ? 'text-foreground' : 'text-muted-foreground'}`}>
+              <button
+                onClick={() => setBillingPeriod('quarterly')}
+                className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
+                  billingPeriod === 'quarterly'
+                    ? 'bg-background shadow-md text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Trimestriel
+                <span className="ml-2 text-xs text-accent">-7%</span>
+              </button>
+              <button
+                onClick={() => setBillingPeriod('annual')}
+                className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
+                  billingPeriod === 'annual'
+                    ? 'bg-background shadow-md text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
                 Annuel
-              </span>
-              <span className="inline-flex px-2 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-xs font-bold text-green-500">
-                -20%
-              </span>
+                <span className="ml-2 text-xs text-accent">-19%</span>
+              </button>
             </div>
           </div>
 
@@ -226,12 +250,14 @@ const Index = () => {
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold gradient-text">{starterPrice}€</span>
+                  <span className="text-5xl font-bold gradient-text">{pricing.starter[billingPeriod].price}€</span>
                   <span className="text-muted-foreground font-medium">/mois</span>
                 </div>
-                <div className="text-sm text-accent font-bold">
-                  {billingPeriod === 'yearly' ? 'Facturé annuellement' : 'Facturé mensuellement'}
-                </div>
+                {billingPeriod !== 'monthly' && (
+                  <div className="text-sm text-accent font-bold">
+                    Soit {pricing.starter[billingPeriod].total}€ facturé par {pricing.starter[billingPeriod].period}
+                  </div>
+                )}
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -264,7 +290,7 @@ const Index = () => {
             <div className="relative glass-card p-8 md:p-10 space-y-5 md:space-y-7 border-accent shadow-2xl shadow-accent/40 md:scale-100 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
               <div className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 px-4 md:px-8 py-2 md:py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm md:text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
                 <Sparkles className="w-5 h-5" />
-                Le plus populaire
+                ⭐ Meilleur rapport qualité/prix
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
@@ -272,12 +298,14 @@ const Index = () => {
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2 md:mb-3">
-                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{proPrice}€</span>
+                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{pricing.pro[billingPeriod].price}€</span>
                   <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
                 </div>
-                <div className="text-sm md:text-base text-accent font-bold">
-                  {billingPeriod === 'yearly' ? 'Facturé annuellement - Économisez 20%' : 'Facturé mensuellement'}
-                </div>
+                {billingPeriod !== 'monthly' && (
+                  <div className="text-sm md:text-base text-accent font-bold">
+                    Soit {pricing.pro[billingPeriod].total}€ facturé par {pricing.pro[billingPeriod].period}
+                  </div>
+                )}
               </div>
               <ul className="space-y-3 md:space-y-4">
                 <li className="flex items-start gap-2 md:gap-3">
