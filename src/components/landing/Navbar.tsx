@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import lumaLogo from "@/assets/luma-logo.png";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -14,61 +15,58 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-lg">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-2xl border-b border-border/30 shadow-xl">
       <div className="container mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo et nom - Espace réservé */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center">
-              <span className="text-xl font-bold text-background">L</span>
-            </div>
-            <span className="text-xl font-bold text-foreground hidden sm:block">LUMA</span>
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src={lumaLogo} alt="LUMA" className="h-10 w-auto" />
           </div>
 
           {/* Navigation Desktop */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-2">
             <Button 
               variant="ghost" 
               onClick={() => scrollToSection('features-section')}
-              className="text-sm font-medium"
+              className="text-sm font-semibold hover:text-accent transition-colors"
             >
               Fonctionnalités
             </Button>
             <Button 
               variant="ghost" 
               onClick={() => scrollToSection('demo-section')}
-              className="text-sm font-medium"
+              className="text-sm font-semibold hover:text-accent transition-colors"
             >
               Démo
             </Button>
             <Button 
               variant="ghost" 
               onClick={() => scrollToSection('pricing-section')}
-              className="text-sm font-medium"
+              className="text-sm font-semibold hover:text-accent transition-colors"
             >
               Tarifs
             </Button>
             <Button 
               variant="ghost" 
               onClick={() => scrollToSection('testimonials-section')}
-              className="text-sm font-medium"
+              className="text-sm font-semibold hover:text-accent transition-colors"
             >
               Témoignages
             </Button>
           </div>
 
           {/* CTA Desktop */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             <Button 
               variant="ghost"
               onClick={() => navigate("/auth")}
-              className="text-sm font-medium"
+              className="text-sm font-semibold hover:text-accent transition-colors"
             >
               Connexion
             </Button>
             <Button 
               onClick={() => navigate("/auth")}
-              className="text-sm font-bold shadow-lg shadow-accent/30 hover:shadow-accent/40"
+              className="relative bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold text-sm px-6 py-2.5 rounded-full shadow-lg shadow-accent/40 hover:shadow-xl hover:shadow-accent/60 hover:scale-105 transition-all duration-300"
             >
               Démarrer gratuitement
             </Button>

@@ -32,12 +32,12 @@ export const HeroSection = () => {
         </div>
         
         {/* Main Headline - Focus sur le développement commercial */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] tracking-tight px-2">
-          L'outil que les <span className="text-cyan-500">meilleurs commerciaux</span> utilisent pour <span className="text-cyan-500">dominer</span> leur secteur.
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-extrabold leading-[1.05] tracking-tight px-2">
+          L'outil que les <span className="text-accent bg-gradient-to-r from-accent to-cyan-glow bg-clip-text text-transparent">meilleurs commerciaux</span> utilisent pour <span className="text-accent bg-gradient-to-r from-accent to-cyan-glow bg-clip-text text-transparent">dominer</span> leur secteur.
         </h1>
         
         {/* Subheadline - Focus sur les bénéfices avec chiffre clé */}
-        <p className="text-xs sm:text-sm md:text-base text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed px-4">
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed px-4 font-medium">
           Accédez aux nouvelles entreprises de votre zone avant vos concurrents, optimisez chaque kilomètre, générez plus de rendez-vous.
         </p>
         

@@ -82,7 +82,7 @@ const Index = () => {
               <AlertCircle className="w-4 h-4 text-destructive" />
               <span className="text-sm font-bold text-destructive uppercase tracking-wide">Le constat</span>
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground leading-tight px-4">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl font-display font-extrabold text-foreground leading-tight px-4">
               Le problème des <span className="text-destructive">commerciaux terrain.</span>
             </h2>
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
@@ -104,8 +104,8 @@ const Index = () => {
               <Sparkles className="w-4 h-4 text-cyan-electric" />
               <span className="text-sm font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold px-4">
-              LUMA <span className="gradient-text">booste</span> votre efficacité commerciale.
+            <h2 className="text-2xl md:text-3xl lg:text-5xl font-display font-extrabold px-4">
+              LUMA <span className="gradient-text bg-gradient-to-r from-accent to-cyan-glow bg-clip-text text-transparent">booste</span> votre efficacité commerciale.
             </h2>
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
               Toutes les fonctionnalités dont vous avez besoin : Tournées optimisées, CRM intégré, prospection intelligente et données terrain en temps réel.
@@ -152,7 +152,7 @@ const Index = () => {
 
           {/* Résultats mesurables - En vert avec tailles réduites */}
           <div className="glass-card p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA.</h3>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA.</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center">
               <div className="space-y-2 md:space-y-3">
                 <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">6h/semaine</div>
@@ -181,10 +181,10 @@ const Index = () => {
       <section id="pricing-section" className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000`}>
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-8 md:mb-12 space-y-4 md:space-y-5 animate-fade-in px-4">
-            <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-display font-extrabold text-foreground leading-tight">
               Choisissez le plan qui
               <br />
-              <span className="gradient-text">accélère votre croissance.</span>
+              <span className="gradient-text bg-gradient-to-r from-accent to-cyan-glow bg-clip-text text-transparent">accélère votre croissance.</span>
             </h2>
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
