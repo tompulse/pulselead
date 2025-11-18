@@ -14,22 +14,37 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const Index = () => {
   const navigate = useNavigate();
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'quarterly' | 'annual' | 'once'>('annual');
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'quarterly' | 'annual'>('annual');
+  const [payOnceStarter, setPayOnceStarter] = useState(false);
+  const [payOncePro, setPayOncePro] = useState(false);
 
   // Structure de prix
   const pricing = {
     starter: {
-      monthly: { price: 39, period: "mois", isRecurring: true },
-      quarterly: { price: 29, period: "3 mois", isRecurring: true },
-      annual: { price: 19, period: "an", isRecurring: true },
-      once: { price: 351, period: "paiement unique", isRecurring: false }
+      monthly: { price: 39, yearlyTotal: 468 },
+      quarterly: { price: 29, yearlyTotal: 348 },
+      annual: { price: 19, yearlyTotal: 228 }
     },
     pro: {
-      monthly: { price: 59, period: "mois", isRecurring: true },
-      quarterly: { price: 49, period: "3 mois", isRecurring: true },
-      annual: { price: 39, period: "an", isRecurring: true },
-      once: { price: 531, period: "paiement unique", isRecurring: false }
+      monthly: { price: 59, yearlyTotal: 708 },
+      quarterly: { price: 49, yearlyTotal: 588 },
+      annual: { price: 39, yearlyTotal: 468 }
     }
+  };
+
+  // Calculer le prix avec réduction de 25% si paiement en une fois
+  const getStarterPrice = () => {
+    if (payOnceStarter) {
+      return Math.round(pricing.starter[billingPeriod].yearlyTotal * 0.75);
+    }
+    return pricing.starter[billingPeriod].price;
+  };
+
+  const getProPrice = () => {
+    if (payOncePro) {
+      return Math.round(pricing.pro[billingPeriod].yearlyTotal * 0.75);
+    }
+    return pricing.pro[billingPeriod].price;
   };
   
   const enterprisePrice = "Sur mesure";
@@ -206,8 +221,8 @@ const Index = () => {
               Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
             </p>
             
-            {/* Toggle Mensuel/Trimestriel/Annuel/Payer en une fois */}
-            <div className="inline-flex items-center gap-2 p-1 bg-muted/50 rounded-full border border-border/50 flex-wrap justify-center">
+            {/* Toggle Mensuel/Trimestriel/Annuel */}
+            <div className="inline-flex items-center gap-2 p-1 bg-muted/50 rounded-full border border-border/50">
               <button
                 onClick={() => setBillingPeriod('monthly')}
                 className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
@@ -238,17 +253,6 @@ const Index = () => {
               >
                 Annuel
               </button>
-              <button
-                onClick={() => setBillingPeriod('once')}
-                className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
-                  billingPeriod === 'once'
-                    ? 'bg-background shadow-md text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                Payer en une fois
-                <span className="ml-2 text-xs text-green-500">-25%</span>
-              </button>
             </div>
           </div>
 
@@ -261,10 +265,23 @@ const Index = () => {
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold gradient-text">{pricing.starter[billingPeriod].price}€</span>
-                  {pricing.starter[billingPeriod].isRecurring && (
+                  <span className="text-5xl font-bold gradient-text">{getStarterPrice()}€</span>
+                  {!payOnceStarter && (
                     <span className="text-muted-foreground font-medium">/mois</span>
                   )}
+                </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <input
+                    type="checkbox"
+                    id="payOnceStarter"
+                    checked={payOnceStarter}
+                    onChange={(e) => setPayOnceStarter(e.target.checked)}
+                    className="w-4 h-4 accent-accent cursor-pointer"
+                  />
+                  <label htmlFor="payOnceStarter" className="text-sm font-medium cursor-pointer flex items-center gap-2">
+                    Payer en une fois
+                    <span className="text-xs text-green-500 font-bold">-25%</span>
+                  </label>
                 </div>
               </div>
               <ul className="space-y-3">
@@ -302,10 +319,23 @@ const Index = () => {
               </div>
               <div>
                 <div className="flex items-baseline gap-2 mb-2 md:mb-3">
-                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{pricing.pro[billingPeriod].price}€</span>
-                  {pricing.pro[billingPeriod].isRecurring && (
+                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{getProPrice()}€</span>
+                  {!payOncePro && (
                     <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
                   )}
+                </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <input
+                    type="checkbox"
+                    id="payOncePro"
+                    checked={payOncePro}
+                    onChange={(e) => setPayOncePro(e.target.checked)}
+                    className="w-4 h-4 accent-accent cursor-pointer"
+                  />
+                  <label htmlFor="payOncePro" className="text-sm font-medium cursor-pointer flex items-center gap-2">
+                    Payer en une fois
+                    <span className="text-xs text-green-500 font-bold">-25%</span>
+                  </label>
                 </div>
               </div>
               <ul className="space-y-3 md:space-y-4">
