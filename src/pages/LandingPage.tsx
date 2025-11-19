@@ -15,19 +15,36 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 const Index = () => {
   const navigate = useNavigate();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'quarterly' | 'annual'>('annual');
+  const [payOnceStarter, setPayOnceStarter] = useState(false);
+  const [payOncePro, setPayOncePro] = useState(false);
 
   // Structure de prix
   const pricing = {
     starter: {
-      monthly: 39,
-      quarterly: 29,
-      annual: 19
+      monthly: { price: 39, yearlyTotal: 468 },
+      quarterly: { price: 29, yearlyTotal: 348 },
+      annual: { price: 19, yearlyTotal: 228 }
     },
     pro: {
-      monthly: 59,
-      quarterly: 49,
-      annual: 39
+      monthly: { price: 59, yearlyTotal: 708 },
+      quarterly: { price: 49, yearlyTotal: 588 },
+      annual: { price: 39, yearlyTotal: 468 }
     }
+  };
+
+  // Calculer le prix avec réduction de 25% si paiement en une fois
+  const getStarterPrice = () => {
+    if (payOnceStarter) {
+      return Math.round(pricing.starter[billingPeriod].yearlyTotal * 0.75);
+    }
+    return pricing.starter[billingPeriod].price;
+  };
+
+  const getProPrice = () => {
+    if (payOncePro) {
+      return Math.round(pricing.pro[billingPeriod].yearlyTotal * 0.75);
+    }
+    return pricing.pro[billingPeriod].price;
   };
   
   const enterprisePrice = "Sur mesure";
@@ -247,35 +264,42 @@ const Index = () => {
                 <p className="text-muted-foreground font-medium">Pour démarrer votre prospection</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-5xl font-bold gradient-text">{pricing.starter[billingPeriod]}€</span>
-                  <span className="text-muted-foreground font-medium">/mois</span>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-5xl font-bold gradient-text">{getStarterPrice()}€</span>
+                  {!payOnceStarter && (
+                    <span className="text-muted-foreground font-medium">/mois</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <input
+                    type="checkbox"
+                    id="payOnceStarter"
+                    checked={payOnceStarter}
+                    onChange={(e) => setPayOnceStarter(e.target.checked)}
+                    className="w-4 h-4 accent-accent cursor-pointer"
+                  />
+                  <label htmlFor="payOnceStarter" className="text-sm font-medium cursor-pointer flex items-center gap-2">
+                    Payer en une fois
+                    <span className="text-xs text-green-500 font-bold">-25%</span>
+                  </label>
                 </div>
               </div>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium"><strong>Jusqu'à 100 entreprises</strong> par mois</span>
+                  <span className="text-foreground font-medium">Jusqu'à 500 entreprises</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Qualification intelligente des prospects</span>
+                  <span className="text-foreground font-medium">Cartographie interactive</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Suivi des interactions et relances</span>
+                  <span className="text-foreground font-medium">CRM basique</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Cartographie et itinéraires optimisés</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Pipeline de ventes visuel</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Support email</span>
+                  <span className="text-foreground font-medium">Optimisation de tournées</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
@@ -294,39 +318,42 @@ const Index = () => {
                 <p className="text-sm md:text-base text-foreground font-semibold">Complet pour professionnels</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-2 mb-4 md:mb-6">
-                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{pricing.pro[billingPeriod]}€</span>
-                  <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
+                <div className="flex items-baseline gap-2 mb-2 md:mb-3">
+                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{getProPrice()}€</span>
+                  {!payOncePro && (
+                    <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <input
+                    type="checkbox"
+                    id="payOncePro"
+                    checked={payOncePro}
+                    onChange={(e) => setPayOncePro(e.target.checked)}
+                    className="w-4 h-4 accent-accent cursor-pointer"
+                  />
+                  <label htmlFor="payOncePro" className="text-sm font-medium cursor-pointer flex items-center gap-2">
+                    Payer en une fois
+                    <span className="text-xs text-green-500 font-bold">-25%</span>
+                  </label>
                 </div>
               </div>
               <ul className="space-y-3 md:space-y-4">
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg"><strong>Jusqu'à 300 entreprises</strong> par mois</span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">Entreprises illimitées</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Toutes les fonctionnalités Starter</span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">CRM complet + Pipeline</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Enrichissement automatique des données entreprise</span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">Nouveaux sites en temps réel</span>
                 </li>
                 <li className="flex items-start gap-2 md:gap-3">
                   <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Filtres avancés multi-critères (NAF, forme juridique, zone)</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Nouveaux établissements en temps réel</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Historique complet et analytics avancés</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Support prioritaire et accompagnement</span>
+                  <span className="text-foreground font-semibold text-base md:text-lg">Support prioritaire</span>
                 </li>
               </ul>
               <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
