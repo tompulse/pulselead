@@ -1,699 +1,743 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User } from "lucide-react";
-
-import { trackCTAClick } from "@/utils/analytics";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { BookingSection } from "@/components/landing/BookingSection";
-import { ProblemCard } from "@/components/landing/ProblemCard";
-import { HeroSection } from "@/components/landing/HeroSection";
-import { CaseStudies } from "@/components/landing/CaseStudies";
-import { ProblemSolutionMapping } from "@/components/landing/ProblemSolutionMapping";
-import { Navbar } from "@/components/landing/Navbar";
+import { 
+  ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, 
+  Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User,
+  MapPin, BarChart3, Users, Calculator, ChevronDown, Phone, Mail,
+  TrendingDown, FileText, Database, Search, Route, Smartphone
+} from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-const Index = () => {
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+const LandingPage = () => {
   const navigate = useNavigate();
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'quarterly' | 'annual'>('annual');
-  const [payOnceStarter, setPayOnceStarter] = useState(false);
-  const [payOncePro, setPayOncePro] = useState(false);
-
-  // Structure de prix
-  const pricing = {
-    starter: {
-      monthly: { price: 39, yearlyTotal: 468 },
-      quarterly: { price: 29, yearlyTotal: 348 },
-      annual: { price: 19, yearlyTotal: 228 }
-    },
-    pro: {
-      monthly: { price: 59, yearlyTotal: 708 },
-      quarterly: { price: 49, yearlyTotal: 588 },
-      annual: { price: 39, yearlyTotal: 468 }
-    }
-  };
-
-  // Calculer le prix avec réduction de 25% si paiement en une fois
-  const getStarterPrice = () => {
-    if (payOnceStarter) {
-      return Math.round(pricing.starter[billingPeriod].yearlyTotal * 0.75);
-    }
-    return pricing.starter[billingPeriod].price;
-  };
-
-  const getProPrice = () => {
-    if (payOncePro) {
-      return Math.round(pricing.pro[billingPeriod].yearlyTotal * 0.75);
-    }
-    return pricing.pro[billingPeriod].price;
-  };
+  const [activeView, setActiveView] = useState<'commercial' | 'entreprise'>('commercial');
   
-  const enterprisePrice = "Sur mesure";
+  // ROI Calculator states
+  const [numCommercials, setNumCommercials] = useState(5);
+  const [visitsPerWeek, setVisitsPerWeek] = useState(10);
+  const [conversionRate, setConversionRate] = useState(15);
+  const [avgDealValue, setAvgDealValue] = useState(5000);
 
-  // Animations au scroll - effets plus percutants
-  const socialProof = useScrollAnimation({
-    threshold: 0.1
-  });
-  const problemSection = useScrollAnimation({
-    threshold: 0.1
-  });
-  const solutionSection = useScrollAnimation({
-    threshold: 0.1
-  });
-  const testimonialsSection = useScrollAnimation({
-    threshold: 0.1
-  });
-  const faqSection = useScrollAnimation({
-    threshold: 0.1
-  });
-  const finalCTA = useScrollAnimation({
-    threshold: 0.2
-  });
-  const handleExplorerClick = () => {
-    trackCTAClick('Explorer LUMA', 'hero');
-    navigate("/auth");
+  const calculateROI = () => {
+    const dealsPerMonth = (numCommercials * visitsPerWeek * 4 * conversionRate) / 100;
+    const additionalRevenue = dealsPerMonth * avgDealValue * 0.3; // 30% improvement
+    const monthlyCost = numCommercials * 49; // Assuming team plan
+    const roi = (additionalRevenue / monthlyCost).toFixed(1);
+    
+    return {
+      additionalRevenue: Math.round(additionalRevenue),
+      additionalDeals: Math.round(dealsPerMonth * 0.3),
+      roi: roi
+    };
   };
-  const handleConnexionClick = () => {
-    trackCTAClick('Connexion', 'header');
-    navigate("/auth");
-  };
-  const handleCreerCompteClick = () => {
-    trackCTAClick('Créer un compte', 'header');
-    navigate("/auth");
-  };
-  return <div className="min-h-screen bg-gradient-to-b from-primary via-primary/80 to-background relative overflow-hidden">
-      {/* Navbar fixe */}
-      <Navbar />
 
-      {/* Animated background particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{
-        animationDuration: '4s'
-      }}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{
-        animationDuration: '6s',
-        animationDelay: '2s'
-      }}></div>
-      </div>
+  const roiResults = calculateROI();
 
-
-      <main className="pt-16">
-
-      {/* Hero Section */}
-      <HeroSection />
-
-      {/* Section Problème/Solution */}
-      <section id="features-section" className="relative py-24 px-4">
-        <div className="container mx-auto max-w-6xl">
-          {/* Problème */}
-          <div ref={problemSection.ref} className={`text-center mb-16 space-y-4 transition-all duration-1000 ${problemSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/30 mb-4">
-              <AlertCircle className="w-4 h-4 text-destructive" />
-              <span className="text-sm font-bold text-destructive uppercase tracking-wide">Le constat</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-display font-extrabold text-foreground leading-tight px-4">
-              Le problème des <span className="text-destructive">commerciaux terrain.</span>
-            </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
-              Outils dispersés, prospects qui vous échappent, tournées non optimisées... Vous perdez du temps et des opportunités commerciales.
-            </p>
-          </div>
-
-          <div className={`grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-20 transition-all duration-1000 ${problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
-            <ProblemCard icon={AlertCircle} title="Outils dispersés" description="CRM, cartographie, fichiers Excel... Jongler entre 5 outils ralentit votre prospection." isVisible={problemSection.isVisible} delay="200ms" animationClass="-translate-x-10" />
-            
-            <ProblemCard icon={Clock} title="Prospects perdus" description="Vos concurrents contactent les nouvelles entreprises avant vous. Vous arrivez trop tard." isVisible={problemSection.isVisible} delay="400ms" animationClass="translate-y-10" />
-            
-            <ProblemCard icon={Target} title="Tournées inefficaces" description="Des heures perdues sur la route. Pas de vision claire de votre territoire commercial." isVisible={problemSection.isVisible} delay="600ms" animationClass="translate-x-10" />
-          </div>
-
-          {/* Solution */}
-          <div ref={solutionSection.ref} className={`text-center mb-12 space-y-4 transition-all duration-1000 ${solutionSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-electric/10 border border-cyan-electric/30 mb-4">
-              <Sparkles className="w-4 h-4 text-cyan-electric" />
-              <span className="text-sm font-bold text-cyan-electric uppercase tracking-wide">La solution</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-display font-extrabold px-4">
-              LUMA <span className="gradient-text bg-gradient-to-r from-accent to-cyan-glow bg-clip-text text-transparent">booste</span> votre efficacité commerciale.
-            </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium px-4">
-              Toutes les fonctionnalités dont vous avez besoin : Tournées optimisées, CRM intégré, prospection intelligente et données terrain en temps réel.
-            </p>
-          </div>
-
-          <div className={`grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto transition-all duration-1000 ${solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${solutionSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`} style={{
-              transitionDelay: solutionSection.isVisible ? '200ms' : '0ms'
-            }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <Map className="w-9 h-9 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">???</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                ???
-              </p>
+  return (
+    <div className="min-h-screen bg-black text-white">
+      {/* Header with Switch */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="text-2xl font-bold">
+              <span className="text-white">LUMA</span>
+              <span className="text-accent ml-1">.</span>
             </div>
 
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${solutionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{
-              transitionDelay: solutionSection.isVisible ? '400ms' : '0ms'
-            }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <TrendingUp className="w-9 h-9 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">???</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                ???
-              </p>
+            {/* Switch Toggle */}
+            <div className="flex items-center gap-2 bg-white/5 rounded-full p-1 border border-white/10">
+              <button
+                onClick={() => setActiveView('commercial')}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                  activeView === 'commercial'
+                    ? 'bg-accent text-black shadow-[0_0_20px_hsl(190_100%_50%/0.5)]'
+                    : 'text-white/60 hover:text-white'
+                }`}
+              >
+                Commercial
+              </button>
+              <button
+                onClick={() => setActiveView('entreprise')}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                  activeView === 'entreprise'
+                    ? 'bg-accent text-black shadow-[0_0_20px_hsl(190_100%_50%/0.5)]'
+                    : 'text-white/60 hover:text-white'
+                }`}
+              >
+                Entreprise
+              </button>
             </div>
 
-            <div className={`glass-card p-7 text-center space-y-4 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-500 group ${solutionSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`} style={{
-              transitionDelay: solutionSection.isVisible ? '600ms' : '0ms'
-            }}>
-              <div className="inline-flex w-18 h-18 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">
-                <Sparkles className="w-9 h-9 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">???</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                ???
-              </p>
-            </div>
-          </div>
-
-          {/* Résultats mesurables - En vert avec tailles réduites */}
-          <div className="glass-card p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border-green-500/50 bg-gradient-to-br from-green-500/15 via-green-500/5 to-transparent shadow-2xl shadow-green-500/20">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-center mb-6 md:mb-10 text-green-400">Ce que nos utilisateurs réalisent avec LUMA.</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center">
-              <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">6h/semaine</div>
-                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Temps économisé</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Moins d'administratif, plus de temps pour vendre.</div>
-              </div>
-              <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">×2.5</div>
-                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Rendez-vous décrochés</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Grâce à une organisation optimisée.</div>
-              </div>
-              <div className="space-y-2 md:space-y-3">
-                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-400">+40%</div>
-                <div className="text-base sm:text-lg md:text-xl text-foreground font-bold">Croissance du CA</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">En moyenne après 6 mois d'utilisation.</div>
-              </div>
-            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/auth')}
+              className="border-accent/50 text-accent hover:bg-accent hover:text-black"
+            >
+              Connexion
+            </Button>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Mapping Problème → Solution */}
-      <ProblemSolutionMapping />
+      <main className="pt-20">
+        {/* Hero Section */}
+        {activeView === 'commercial' ? (
+          <section className="py-20 px-6">
+            <div className="container mx-auto max-w-6xl">
+              <div className="text-center space-y-8 animate-fade-in">
+                <h1 className="text-7xl font-bold leading-tight">
+                  Vos commerciaux perdent <span className="gradient-text">8h/semaine</span> en trajets mal optimisés
+                </h1>
+                <p className="text-2xl text-white/70 max-w-3xl mx-auto">
+                  LUMA crée vos tournées parfaites en 30 secondes, pour plus de RDV et moins de km
+                </p>
+                <div className="flex gap-4 justify-center pt-8">
+                  <Button 
+                    size="lg"
+                    onClick={() => navigate('/auth')}
+                    className="btn-hero text-xl px-12 py-6"
+                  >
+                    Démarrer gratuitement
+                    <ArrowRight className="ml-2" />
+                  </Button>
+                  <Button 
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-accent text-accent hover:bg-accent/10 text-xl px-12 py-6"
+                  >
+                    Voir une démo
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="py-20 px-6">
+            <div className="container mx-auto max-w-6xl">
+              <div className="text-center space-y-8 animate-fade-in">
+                <h1 className="text-7xl font-bold leading-tight">
+                  Votre force commerciale <span className="gradient-text">tourne à vide ?</span> Faites plus avec moins
+                </h1>
+                <p className="text-2xl text-white/70 max-w-3xl mx-auto">
+                  Optimisez la prospection terrain de toute votre équipe—plus de visites, moins de temps
+                </p>
+                <div className="flex gap-4 justify-center pt-8">
+                  <Button 
+                    size="lg"
+                    onClick={() => navigate('/auth')}
+                    className="btn-hero text-xl px-12 py-6"
+                  >
+                    Demandez un devis
+                    <ArrowRight className="ml-2" />
+                  </Button>
+                  <Button 
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-accent text-accent hover:bg-accent/10 text-xl px-12 py-6"
+                  >
+                    Contactez-nous
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
-      {/* Cas clients - après le mapping */}
-      <CaseStudies />
+        {/* Problems Section */}
+        {activeView === 'commercial' ? (
+          <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
+            <div className="container mx-auto max-w-6xl">
+              <h2 className="text-5xl font-bold text-center mb-16">Les défis du terrain</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                  <TrendingDown className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-2xl font-bold mb-3">Trajets improductifs</h3>
+                  <p className="text-white/70 text-lg">Perte de 40% du temps en déplacement mal planifié</p>
+                </Card>
+                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                  <FileText className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-2xl font-bold mb-3">Données dispersées</h3>
+                  <p className="text-white/70 text-lg">Notes papier et Excel, tout se perd rapidement</p>
+                </Card>
+                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                  <AlertCircle className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-2xl font-bold mb-3">Informations obsolètes</h3>
+                  <p className="text-white/70 text-lg">Vous arrivez après la concurrence</p>
+                </Card>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
+            <div className="container mx-auto max-w-6xl">
+              <h2 className="text-5xl font-bold text-center mb-16">Les enjeux de votre pipeline commercial</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                  <Users className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-2xl font-bold mb-3">Gestion d'équipe</h3>
+                  <p className="text-white/70 text-lg">Suivi centralisé, moins de perte de leads</p>
+                </Card>
+                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                  <Route className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-2xl font-bold mb-3">Optimisation des tournées</h3>
+                  <p className="text-white/70 text-lg">Visites plus nombreuses, coût réduit</p>
+                </Card>
+                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                  <BarChart3 className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-2xl font-bold mb-3">Reporting avancé</h3>
+                  <p className="text-white/70 text-lg">Performance en temps réel, décisions rapides</p>
+                </Card>
+              </div>
+            </div>
+          </section>
+        )}
 
-      {/* Section Prix */}
-      <section id="pricing-section" className={`relative py-16 md:py-28 px-4 bg-gradient-to-b from-background via-primary/30 to-background transition-all duration-1000`}>
-        <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-8 md:mb-12 space-y-4 md:space-y-5 animate-fade-in px-4">
-            <h2 className="text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-display font-extrabold text-foreground leading-tight">
-              Choisissez le plan qui
-              <br />
-              <span className="gradient-text bg-gradient-to-r from-accent to-cyan-glow bg-clip-text text-transparent">accélère votre croissance.</span>
-            </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto font-medium">
-              Gagnez en efficacité et augmentez vos performances commerciales dès aujourd'hui.
-            </p>
-            
-            {/* Toggle Mensuel/Trimestriel/Annuel */}
-            <div className="inline-flex items-center gap-2 p-1 bg-muted/50 rounded-full border border-border/50">
-              <button
-                onClick={() => setBillingPeriod('monthly')}
-                className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
-                  billingPeriod === 'monthly'
-                    ? 'bg-background shadow-md text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                Mensuel
-              </button>
-              <button
-                onClick={() => setBillingPeriod('quarterly')}
-                className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
-                  billingPeriod === 'quarterly'
-                    ? 'bg-background shadow-md text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                Trimestriel
-              </button>
-              <button
-                onClick={() => setBillingPeriod('annual')}
-                className={`px-4 sm:px-6 py-2 rounded-full text-sm font-semibold transition-all ${
-                  billingPeriod === 'annual'
-                    ? 'bg-background shadow-md text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                Annuel
-              </button>
+        {/* Solution Section */}
+        {activeView === 'commercial' ? (
+          <section className="py-20 px-6">
+            <div className="container mx-auto max-w-6xl">
+              <h2 className="text-5xl font-bold text-center mb-16">
+                Comment LUMA <span className="gradient-text">booste</span> la prospection terrain
+              </h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                    <Search className="w-10 h-10 text-accent" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Détection automatique</h3>
+                  <p className="text-white/70 text-lg">Nouvelles entreprises dans votre zone chaque jour</p>
+                </div>
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                    <Map className="w-10 h-10 text-accent" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Itinéraires optimisés</h3>
+                  <p className="text-white/70 text-lg">Générez en 30s des parcours parfaits</p>
+                </div>
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                    <Smartphone className="w-10 h-10 text-accent" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Suivi micro-CRM</h3>
+                  <p className="text-white/70 text-lg">Notes, relances, historique, tout sur mobile</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="py-20 px-6">
+            <div className="container mx-auto max-w-6xl">
+              <h2 className="text-5xl font-bold text-center mb-16">
+                Une plateforme pour <span className="gradient-text">gérer</span> toute votre équipe
+              </h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                    <Database className="w-10 h-10 text-accent" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Vue d'ensemble</h3>
+                  <p className="text-white/70 text-lg">Liste globale des prospects + nouvelles entreprises</p>
+                </div>
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                    <BarChart3 className="w-10 h-10 text-accent" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Dashboard</h3>
+                  <p className="text-white/70 text-lg">Rapports avancés, KPIs en temps réel</p>
+                </div>
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                    <Target className="w-10 h-10 text-accent" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Organisation</h3>
+                  <p className="text-white/70 text-lg">Gestion et assignation des tournées, alertes</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Before/After Section */}
+        <section className="py-20 px-6 bg-black-deep">
+          <div className="container mx-auto max-w-6xl">
+            <h2 className="text-5xl font-bold text-center mb-16">Votre journée avant/après LUMA</h2>
+            <div className="grid md:grid-cols-2 gap-12">
+              <Card className="glass-card p-10 border-red-500/30">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                    <X className="w-6 h-6 text-red-500" />
+                  </div>
+                  <h3 className="text-3xl font-bold">Avant</h3>
+                </div>
+                <ul className="space-y-4 text-lg text-white/70">
+                  <li className="flex items-start gap-3">
+                    <span className="text-red-500 mt-1">✗</span>
+                    <span>Trajets désorganisés et inefficaces</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-red-500 mt-1">✗</span>
+                    <span>Notes perdues sur papier</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-red-500 mt-1">✗</span>
+                    <span>Peu de visites effectuées</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-red-500 mt-1">✗</span>
+                    <span>Temps perdu en recherche</span>
+                  </li>
+                </ul>
+              </Card>
+              <Card className="glass-card p-10 border-accent/50">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+                    <Check className="w-6 h-6 text-accent" />
+                  </div>
+                  <h3 className="text-3xl font-bold">Après</h3>
+                </div>
+                <ul className="space-y-4 text-lg text-white/70">
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
+                    <span>Itinéraires automatisés et optimaux</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
+                    <span>Notes vocales centralisées</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
+                    <span>+40% de visites en moyenne</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
+                    <span>Ciblage précis et efficace</span>
+                  </li>
+                </ul>
+              </Card>
             </div>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mb-12 md:mb-20">
-            {/* Plan Starter */}
-            <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Starter</h3>
-                <p className="text-muted-foreground font-medium">Pour démarrer votre prospection</p>
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold gradient-text">{getStarterPrice()}€</span>
-                  {!payOnceStarter && (
-                    <span className="text-muted-foreground font-medium">/mois</span>
-                  )}
+        {/* Case Studies */}
+        <section className="py-20 px-6">
+          <div className="container mx-auto max-w-6xl">
+            <h2 className="text-5xl font-bold text-center mb-16">Résultats concrets</h2>
+            <div className="grid md:grid-cols-2 gap-12">
+              <Card className="glass-card p-10 border-white/10 hover:border-accent/50 transition-all">
+                <div className="flex items-center gap-3 mb-6">
+                  <Star className="w-8 h-8 text-accent fill-accent" />
+                  <div>
+                    <h3 className="text-2xl font-bold">SaaS B2B</h3>
+                    <p className="text-white/60">Équipe de 8 commerciaux</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 mb-4">
-                  <input
-                    type="checkbox"
-                    id="payOnceStarter"
-                    checked={payOnceStarter}
-                    onChange={(e) => setPayOnceStarter(e.target.checked)}
-                    className="w-4 h-4 accent-accent cursor-pointer"
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="text-white/70">Visites/semaine</span>
+                    <span className="text-accent font-bold">+20</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="text-white/70">Temps en trajets</span>
+                    <span className="text-accent font-bold">-8h</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="text-white/70">Pipeline</span>
+                    <span className="text-accent font-bold">+180K€</span>
+                  </div>
+                </div>
+                <blockquote className="border-l-4 border-accent pl-4 italic text-white/80">
+                  "LUMA a transformé notre approche terrain. Nous visitons 3x plus de prospects."
+                </blockquote>
+              </Card>
+
+              <Card className="glass-card p-10 border-white/10 hover:border-accent/50 transition-all">
+                <div className="flex items-center gap-3 mb-6">
+                  <Star className="w-8 h-8 text-accent fill-accent" />
+                  <div>
+                    <h3 className="text-2xl font-bold">Fournitures B2B</h3>
+                    <p className="text-white/60">Commercial indépendant</p>
+                  </div>
+                </div>
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="text-white/70">RDV/mois</span>
+                    <span className="text-accent font-bold">+25</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="text-white/70">Coûts essence</span>
+                    <span className="text-accent font-bold">-40%</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="text-white/70">CA augmenté</span>
+                    <span className="text-accent font-bold">+40%</span>
+                  </div>
+                </div>
+                <blockquote className="border-l-4 border-accent pl-4 italic text-white/80">
+                  "LUMA m'a fait gagner 3h par jour et doubler mes rendez-vous qualifiés."
+                </blockquote>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Grid */}
+        <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
+          <div className="container mx-auto max-w-6xl">
+            <h2 className="text-5xl font-bold text-center mb-16">
+              Tout pour <span className="gradient-text">dominer</span> votre prospection
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { icon: Search, title: "Détection auto", desc: "Nouvelles entreprises" },
+                { icon: Route, title: "Optimisation tournées", desc: "Algorithme intelligent" },
+                { icon: Smartphone, title: "Mini CRM mobile", desc: "Notes et historique" },
+                { icon: Users, title: "Gestion équipe", desc: "Dashboards complets" },
+                { icon: Database, title: "Enrichissement data", desc: "Contacts + activités" },
+                { icon: Zap, title: "Sync temps réel", desc: "Équipe synchronisée" },
+              ].map((feature, idx) => (
+                <Card key={idx} className="glass-card p-6 border-white/10 hover:border-accent/50 transition-all">
+                  <feature.icon className="w-10 h-10 text-accent mb-4" />
+                  <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                  <p className="text-white/60">{feature.desc}</p>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing */}
+        {activeView === 'commercial' && (
+          <section className="py-20 px-6">
+            <div className="container mx-auto max-w-6xl">
+              <h2 className="text-5xl font-bold text-center mb-16">Choisissez votre formule</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
+                  <h3 className="text-2xl font-bold mb-4">Solo</h3>
+                  <div className="mb-6">
+                    <span className="text-5xl font-bold">49€</span>
+                    <span className="text-white/60">/mois</span>
+                  </div>
+                  <ul className="space-y-3 mb-8">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">1 commercial</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Fonctionnalités complètes</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Support email</span>
+                    </li>
+                  </ul>
+                  <Button 
+                    className="w-full bg-accent text-black hover:bg-accent/90"
+                    onClick={() => navigate('/auth')}
+                  >
+                    Démarrer
+                  </Button>
+                </Card>
+
+                <Card className="glass-card p-8 border-accent/50 relative">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-black px-4 py-1 rounded-full text-sm font-bold">
+                    BEST SELLER
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4">Équipe</h3>
+                  <div className="mb-6">
+                    <span className="text-5xl font-bold">149€</span>
+                    <span className="text-white/60">/mois</span>
+                  </div>
+                  <ul className="space-y-3 mb-8">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Jusqu'à 10 commerciaux</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Dashboard équipe</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Reporting avancé</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Support prioritaire</span>
+                    </li>
+                  </ul>
+                  <Button 
+                    className="w-full bg-accent text-black hover:bg-accent/90"
+                    onClick={() => navigate('/auth')}
+                  >
+                    Démarrer
+                  </Button>
+                </Card>
+
+                <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
+                  <h3 className="text-2xl font-bold mb-4">Enterprise</h3>
+                  <div className="mb-6">
+                    <span className="text-3xl font-bold">Sur devis</span>
+                  </div>
+                  <ul className="space-y-3 mb-8">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Utilisateurs illimités</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Intégrations sur mesure</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Support premium 24/7</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Formation équipe</span>
+                    </li>
+                  </ul>
+                  <Button 
+                    variant="outline"
+                    className="w-full border-accent text-accent hover:bg-accent hover:text-black"
+                    onClick={() => navigate('/auth')}
+                  >
+                    Contactez-nous
+                  </Button>
+                </Card>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ROI Calculator */}
+        <section className="py-20 px-6 bg-black-deep">
+          <div className="container mx-auto max-w-4xl">
+            <h2 className="text-5xl font-bold text-center mb-4">Calculez votre ROI en 30s</h2>
+            <p className="text-white/60 text-center mb-12 text-lg">Découvrez combien LUMA peut vous rapporter</p>
+            
+            <Card className="glass-card p-10 border-accent/30">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div>
+                  <Label className="text-lg mb-2 block">Nombre de commerciaux</Label>
+                  <Input 
+                    type="number" 
+                    value={numCommercials}
+                    onChange={(e) => setNumCommercials(Number(e.target.value))}
+                    className="bg-white/5 border-white/20 text-white text-lg"
                   />
-                  <label htmlFor="payOnceStarter" className="text-sm font-medium cursor-pointer flex items-center gap-2">
-                    Payer en une fois
-                    <span className="text-xs text-green-500 font-bold">-25%</span>
-                  </label>
                 </div>
-              </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Jusqu'à 500 entreprises</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Cartographie interactive</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">CRM basique</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Optimisation de tournées</span>
-                </li>
-              </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
-                Commencer
-              </Button>
-            </div>
-
-            {/* Plan Pro - Recommandé */}
-            <div className="relative glass-card p-8 md:p-10 space-y-5 md:space-y-7 border-accent shadow-2xl shadow-accent/40 md:scale-100 lg:scale-105 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent ring-2 ring-accent/50">
-              <div className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 px-4 md:px-8 py-2 md:py-3 bg-gradient-to-r from-accent via-accent to-accent/90 text-primary text-sm md:text-base font-bold rounded-full flex items-center gap-2 shadow-xl shadow-accent/50">
-                <Sparkles className="w-5 h-5" />
-                Le plus populaire
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-2xl md:text-3xl font-bold gradient-text">Pro</h3>
-                <p className="text-sm md:text-base text-foreground font-semibold">Complet pour professionnels</p>
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2 mb-2 md:mb-3">
-                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text drop-shadow-lg">{getProPrice()}€</span>
-                  {!payOncePro && (
-                    <span className="text-foreground font-semibold text-base md:text-lg">/mois</span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 mb-4">
-                  <input
-                    type="checkbox"
-                    id="payOncePro"
-                    checked={payOncePro}
-                    onChange={(e) => setPayOncePro(e.target.checked)}
-                    className="w-4 h-4 accent-accent cursor-pointer"
+                <div>
+                  <Label className="text-lg mb-2 block">Visites par semaine</Label>
+                  <Input 
+                    type="number" 
+                    value={visitsPerWeek}
+                    onChange={(e) => setVisitsPerWeek(Number(e.target.value))}
+                    className="bg-white/5 border-white/20 text-white text-lg"
                   />
-                  <label htmlFor="payOncePro" className="text-sm font-medium cursor-pointer flex items-center gap-2">
-                    Payer en une fois
-                    <span className="text-xs text-green-500 font-bold">-25%</span>
-                  </label>
+                </div>
+                <div>
+                  <Label className="text-lg mb-2 block">Taux de conversion (%)</Label>
+                  <Input 
+                    type="number" 
+                    value={conversionRate}
+                    onChange={(e) => setConversionRate(Number(e.target.value))}
+                    className="bg-white/5 border-white/20 text-white text-lg"
+                  />
+                </div>
+                <div>
+                  <Label className="text-lg mb-2 block">CA moyen par deal (€)</Label>
+                  <Input 
+                    type="number" 
+                    value={avgDealValue}
+                    onChange={(e) => setAvgDealValue(Number(e.target.value))}
+                    className="bg-white/5 border-white/20 text-white text-lg"
+                  />
                 </div>
               </div>
-              <ul className="space-y-3 md:space-y-4">
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Entreprises illimitées</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">CRM complet + Pipeline</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Nouveaux sites en temps réel</span>
-                </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <Check className="w-5 h-5 md:w-6 md:h-6 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-semibold text-base md:text-lg">Support prioritaire</span>
-                </li>
-              </ul>
-              <Button onClick={() => navigate("/auth")} className="w-full btn-hero shadow-2xl shadow-accent/60 font-bold text-base md:text-lg py-6 md:py-7 hover:scale-105 transition-transform" size="lg">
-                Commencer
+
+              <div className="border-t border-white/20 pt-8 grid md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-accent text-4xl font-bold mb-2">
+                    +{roiResults.additionalRevenue.toLocaleString()}€
+                  </div>
+                  <div className="text-white/60">Revenus supplémentaires/mois</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-accent text-4xl font-bold mb-2">
+                    +{roiResults.additionalDeals}
+                  </div>
+                  <div className="text-white/60">Deals supplémentaires</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-accent text-4xl font-bold mb-2">
+                    {roiResults.roi}x
+                  </div>
+                  <div className="text-white/60">Retour sur investissement</div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="py-20 px-6">
+          <div className="container mx-auto max-w-4xl">
+            <h2 className="text-5xl font-bold text-center mb-16">Questions fréquentes</h2>
+            <Accordion type="single" collapsible className="space-y-4">
+              <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-6">
+                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
+                  Les données sont-elles fiables ?
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 text-lg">
+                  Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement. 
+                  Nous enrichissons également les informations via nos algorithmes propriétaires.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-2" className="border border-white/10 rounded-lg px-6">
+                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
+                  Peut-on l'utiliser partout en France ?
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 text-lg">
+                  Oui, LUMA couvre l'intégralité du territoire français. Notre base de données contient plus de 
+                  10 millions d'entreprises actives.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-6">
+                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
+                  L'app mobile fonctionne-t-elle hors-ligne ?
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 text-lg">
+                  Oui, vous pouvez consulter vos tournées et ajouter des notes même sans connexion. 
+                  Les données se synchronisent automatiquement dès que vous retrouvez du réseau.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-4" className="border border-white/10 rounded-lg px-6">
+                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
+                  Peut-on intégrer LUMA avec notre CRM ?
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 text-lg">
+                  Oui, nous proposons des intégrations natives avec les principaux CRM (Salesforce, HubSpot, Pipedrive) 
+                  et une API complète pour des intégrations sur mesure.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-5" className="border border-white/10 rounded-lg px-6">
+                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
+                  Quel délai pour voir les premiers résultats ?
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 text-lg">
+                  La plupart de nos clients constatent une amélioration dès la première semaine d'utilisation. 
+                  L'optimisation des tournées est immédiate, et les gains de productivité se mesurent rapidement.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="py-32 px-6 bg-gradient-to-b from-black-deep to-black">
+          <div className="container mx-auto max-w-4xl text-center">
+            <h2 className="text-6xl font-bold mb-6">
+              Prêt à <span className="gradient-text">transformer</span> votre prospection terrain ?
+            </h2>
+            <p className="text-2xl text-white/70 mb-12">
+              Rejoignez +200 équipes qui visitent + de prospects en moins de temps
+            </p>
+            <div className="flex gap-6 justify-center">
+              <Button 
+                size="lg"
+                onClick={() => navigate('/auth')}
+                className="btn-hero text-xl px-12 py-6"
+              >
+                Démarrer gratuit 14j
+                <ArrowRight className="ml-2" />
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-2 border-accent text-accent hover:bg-accent/10 text-xl px-12 py-6"
+              >
+                Réserver une démo
               </Button>
             </div>
+            <div className="flex items-center justify-center gap-8 mt-12 text-white/60">
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                <span>Satisfaction garantie</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                <span>Support inclus</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-            {/* Plan Entreprise */}
-            <div className="glass-card p-6 md:p-8 space-y-4 md:space-y-6 hover:border-accent/60 transition-all duration-300 border-accent/30">
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">Entreprise</h3>
-                <p className="text-muted-foreground font-medium">Solution personnalisée</p>
+        {/* Footer */}
+        <footer className="border-t border-white/10 py-12 px-6">
+          <div className="container mx-auto max-w-6xl">
+            <div className="grid md:grid-cols-4 gap-8 mb-8">
+              <div>
+                <div className="text-2xl font-bold mb-4">
+                  <span className="text-white">LUMA</span>
+                  <span className="text-accent">.</span>
+                </div>
+                <p className="text-white/60">La prospection terrain réinventée</p>
               </div>
               <div>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-4xl font-bold gradient-text">Sur mesure</span>
-                </div>
-                <div className="text-sm text-accent font-bold">Contactez-nous pour un devis</div>
-              </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Tout du plan Pro inclus</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Utilisateurs illimités</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Intégrations sur mesure</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Formation dédiée</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Account manager dédié</span>
-                </li>
-              </ul>
-              <Button onClick={() => {
-                const contactSection = document.querySelector('#contact');
-                if (contactSection) {
-                  contactSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                  });
-                }
-              }} className="w-full bg-card hover:bg-accent/10 text-foreground border-2 border-accent/40 hover:border-accent font-bold" size="lg">
-                Nous contacter
-              </Button>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Section Témoignages */}
-      <section id="testimonials-section" ref={testimonialsSection.ref} className={`relative py-20 px-4 bg-gradient-to-b from-background via-navy-deep/20 to-background transition-all duration-1000 ${testimonialsSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-8 md:mb-12 space-y-2 md:space-y-3 animate-fade-in px-4">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 md:w-5 md:h-5 fill-cyan-electric text-cyan-electric" />)}
-              </div>
-              <span className="text-lg md:text-xl font-bold text-foreground">4.8/5</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground">
-              Ils accélèrent leur <span className="gradient-text">croissance.</span>
-            </h2>
-            <p className="text-base md:text-lg text-muted-foreground">Résultats réels et mesurables.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{
-              transitionDelay: testimonialsSection.isVisible ? '200ms' : '0ms'
-            }}>
-              <Quote className="w-8 h-8 text-cyan-electric/30" />
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />)}
-              </div>
-              <p className="text-base text-foreground leading-relaxed">
-                "Enfin un outil pensé pour les commerciaux terrain ! Tournées optimisées, suivi commercial simple. J'ai doublé mes RDV."
-              </p>
-              <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">+100% de RDV</span>
-              </div>
-              <div className="pt-3 border-t border-accent/10 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center">
-                  <User className="w-6 h-6 text-accent" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">Sophie Martin</div>
-                  <div className="text-sm text-muted-foreground">Commerciale BtoB</div>
-                </div>
-              </div>
-            </div>
-
-            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{
-              transitionDelay: testimonialsSection.isVisible ? '400ms' : '0ms'
-            }}>
-              <Quote className="w-8 h-8 text-cyan-electric/30" />
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />)}
-              </div>
-              <p className="text-base text-foreground leading-relaxed">
-                "Plus besoin de jongler entre 5 outils. Tout est centralisé, je gagne 2h par jour et je vois tout mon secteur."
-              </p>
-              <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">2h/jour économisées</span>
-              </div>
-              <div className="pt-3 border-t border-accent/10 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center">
-                  <User className="w-6 h-6 text-accent" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">Thomas Dubois</div>
-                  <div className="text-sm text-muted-foreground">Responsable commercial</div>
-                </div>
-              </div>
-            </div>
-
-            <div className={`glass-card p-6 space-y-4 hover:border-cyan-electric/40 transition-all duration-500 ${testimonialsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{
-              transitionDelay: testimonialsSection.isVisible ? '600ms' : '0ms'
-            }}>
-              <Quote className="w-8 h-8 text-cyan-electric/30" />
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-cyan-electric text-cyan-electric" />)}
-              </div>
-              <p className="text-base text-foreground leading-relaxed">
-                "L'outil parfait pour les indépendants. Simple, complet, avec le bonus des créations d'entreprises."
-              </p>
-              <div className="inline-flex px-3 py-1.5 rounded-full bg-cyan-electric/10 border border-cyan-electric/30">
-                <span className="text-sm font-semibold text-cyan-electric">+15 clients</span>
-              </div>
-              <div className="pt-3 border-t border-accent/10 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center">
-                  <User className="w-6 h-6 text-accent" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">Marie Leroux</div>
-                  <div className="text-sm text-muted-foreground">Indépendante</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section Réservation - Avant FAQ */}
-      <div id="demo-section">
-        <BookingSection />
-      </div>
-
-      {/* Section FAQ + CTA */}
-      <section className="relative py-20 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div ref={faqSection.ref} className={`text-center mb-8 md:mb-12 space-y-2 md:space-y-3 transition-all duration-1000 px-4 ${faqSection.isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}>
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground">
-              Questions <span className="gradient-text">fréquentes.</span>
-            </h2>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
-              Tout ce que vous devez savoir sur LUMA.
-            </p>
-          </div>
-
-          <Accordion type="single" collapsible className="space-y-3 mb-12">
-            <AccordionItem value="item-1" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                D'où viennent les données entreprises ?
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-3">
-                <p>Les données proviennent exclusivement de <strong>sources officielles françaises</strong> :</p>
-                <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li><strong>INSEE</strong> : Base SIRENE actualisée <span className="text-accent font-semibold">quotidiennement</span> (mise à jour J+1)</li>
-                  <li><strong>Infogreffe</strong> : Données juridiques et financières</li>
-                  <li><strong>Data.gouv.fr</strong> : Créations d'entreprises en temps réel</li>
+                <h4 className="font-bold mb-4">Produit</h4>
+                <ul className="space-y-2 text-white/60">
+                  <li><a href="#" className="hover:text-accent transition-colors">Fonctionnalités</a></li>
+                  <li><a href="#" className="hover:text-accent transition-colors">Tarifs</a></li>
+                  <li><a href="#" className="hover:text-accent transition-colors">Démo</a></li>
                 </ul>
-                <p className="bg-accent/5 p-3 rounded-lg border-l-4 border-accent">
-                  <strong>Exemple concret</strong> : Une entreprise créée aujourd'hui à Lyon apparaîtra dans votre onglet "Nouveaux Sites" <span className="text-accent font-semibold">dès demain matin à 8h</span>.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-2" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Comment fonctionne l'essai gratuit ?
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-3">
-                <p>Vous bénéficiez de <strong className="text-accent">14 jours d'essai gratuit</strong> sans engagement, avec accès à toutes les fonctionnalités.</p>
-                <p><strong>Timeline de démarrage</strong> :</p>
-                <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li><strong>Jour 1 (2 min)</strong> : Inscription et import de vos premiers prospects</li>
-                  <li><strong>Jour 1 (15 min)</strong> : Configuration de votre première tournée</li>
-                  <li><strong>Jour 2-3</strong> : Prise en main complète du CRM</li>
-                  <li><strong>Jour 14</strong> : Décision sans pression, résiliation en 1 clic</li>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4">Entreprise</h4>
+                <ul className="space-y-2 text-white/60">
+                  <li><a href="#" className="hover:text-accent transition-colors">À propos</a></li>
+                  <li><a href="#" className="hover:text-accent transition-colors">Blog</a></li>
+                  <li><a href="#" className="hover:text-accent transition-colors">Carrières</a></li>
                 </ul>
-                <p className="bg-green-500/5 p-3 rounded-lg border-l-4 border-green-500">
-                  <strong>Résultat moyen</strong> : Nos utilisateurs économisent <span className="text-green-500 font-semibold">6h/semaine dès la 2ème semaine</span>.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-3" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Puis-je utiliser LUMA sur mobile ?
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
-                <p>Absolument ! LUMA est 100% responsive et s'adapte parfaitement à tous les écrans : ordinateur, tablette et smartphone.</p>
-                <p>L'application mobile vous permet de gérer vos tournées en déplacement, d'ajouter des interactions avec vos prospects directement sur le terrain, et de consulter les informations entreprises où que vous soyez. Le GPS intégré vous guide vers vos rendez-vous.</p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-4" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Puis-je annuler mon abonnement à tout moment ?
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-2">
-                <p>Oui, sans aucun engagement. Vous pouvez annuler votre abonnement en 1 clic depuis votre espace personnel à tout moment.</p>
-                <p>Vos données restent accessibles jusqu'à la fin de la période payée, et vous pouvez exporter toutes vos informations avant de partir. Aucune question posée, aucun frais caché.</p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-5" className="glass-card px-6 py-1 border-accent/20 hover:border-cyan-electric/40 transition-all">
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:text-cyan-electric">
-                Comment sont calculées les tournées optimisées ?
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pt-2 space-y-3">
-                <p>LUMA utilise des algorithmes d'optimisation avancés qui calculent l'itinéraire optimal en <strong className="text-accent">moins de 3 secondes</strong>.</p>
-                <p><strong>Critères d'optimisation</strong> :</p>
-                <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>Distance et temps de trajet (données Mapbox temps réel)</li>
-                  <li>Priorités commerciales (prospects chauds en premier)</li>
-                  <li>Horaires d'ouverture des entreprises</li>
-                  <li>Trafic en temps réel</li>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4">Contact</h4>
+                <ul className="space-y-2 text-white/60">
+                  <li className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    <span>contact@luma.fr</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    <span>01 23 45 67 89</span>
+                  </li>
                 </ul>
-                <p className="bg-accent/5 p-3 rounded-lg border-l-4 border-accent">
-                  <strong>Exemple réel</strong> : Un commercial avec 12 rendez-vous/jour économise en moyenne <span className="text-accent font-semibold">45 min de route</span> et peut caser <span className="text-accent font-semibold">2-3 visites supplémentaires</span>.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
-        </div>
-      </section>
+              </div>
+            </div>
+            <div className="border-t border-white/10 pt-8 text-center text-white/40">
+              <p>&copy; 2024 LUMA. Tous droits réservés.</p>
+            </div>
+          </div>
+        </footer>
       </main>
-
-      {/* Footer complet */}
-      <footer className="relative py-12 px-4 bg-primary/50 border-t border-accent/10">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            {/* Logo et description */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <span className="text-lg font-bold gradient-text">LUMA</span>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                L'outil tout-en-un des commerciaux terrain pour optimiser leurs tournées et développer leur portefeuille.
-              </p>
-            </div>
-
-            {/* Produit */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Produit</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <button onClick={() => window.scrollTo({
-                  top: 0,
-                  behavior: 'smooth'
-                })} className="hover:text-accent transition-colors">
-                    Fonctionnalités
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => {
-                  const pricingSection = document.querySelector('section:has(h2:contains("investissement"))');
-                  pricingSection?.scrollIntoView({
-                    behavior: 'smooth'
-                  });
-                }} className="hover:text-accent transition-colors">
-                    Tarifs
-                  </button>
-                </li>
-                <li>
-                  <button onClick={handleExplorerClick} className="hover:text-accent transition-colors">
-                    Démo gratuite
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            {/* Entreprise */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Entreprise</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-accent transition-colors">À propos</a>
-                </li>
-                <li>
-                  <a href="#contact" onClick={e => {
-                  e.preventDefault();
-                  document.getElementById('contact')?.scrollIntoView({
-                    behavior: 'smooth'
-                  });
-                }} className="hover:text-accent transition-colors">
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Légal */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Légal</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="/mentions-legales" className="hover:text-accent transition-colors">Mentions légales</a>
-                </li>
-                <li>
-                  <a href="/confidentialite" className="hover:text-accent transition-colors">Politique de confidentialité</a>
-                </li>
-                <li>
-                  <a href="/cgv" className="hover:text-accent transition-colors">CGV</a>
-                </li>
-                <li>
-                  <a href="/cgu" className="hover:text-accent transition-colors">CGU</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Copyright */}
-          <div className="pt-8 border-t border-accent/10">
-            <div className="flex justify-center items-center text-sm text-muted-foreground">
-              <p>© 2025 LUMA. Tous droits réservés.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>;
+    </div>
+  );
 };
-export default Index;
+
+// Import X icon
+const X = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+export default LandingPage;
