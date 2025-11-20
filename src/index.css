@@ -8,59 +8,58 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* LUMA Brand Colors - Bleu Marine → Noir + Cyan */
-    --navy-deep: 220 90% 12%;
-    --navy-darker: 220 70% 8%;
-    --black-deep: 220 20% 5%;
-    --cyan-electric: 190 95% 60%;
-    --cyan-glow: 190 95% 70%;
-    --cyan-subtle: 190 50% 50%;
+    /* LUMA Brand Colors - Noir pur + Cyan électrique */
+    --black-pure: 0 0% 0%;
+    --black-deep: 0 0% 3%;
+    --cyan-electric: 190 100% 50%;
+    --cyan-glow: 190 100% 60%;
+    --cyan-subtle: 190 80% 45%;
     
     /* Core semantic tokens */
-    --background: 220 20% 6%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 220 40% 10%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 220 50% 8%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 220 90% 12%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 60% 15%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 40% 20%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 190 95% 60%;
-    --accent-foreground: 220 90% 12%;
+    --accent: 190 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 40% 15%;
-    --input: 220 40% 15%;
-    --ring: 190 95% 60%;
+    --border: 0 0% 10%;
+    --input: 0 0% 10%;
+    --ring: 190 100% 50%;
 
     /* Shadows & Depth */
-    --shadow-sm: 0 2px 8px -2px hsl(var(--accent) / 0.1);
-    --shadow-md: 0 4px 16px -4px hsl(var(--accent) / 0.2);
-    --shadow-lg: 0 8px 32px -8px hsl(var(--accent) / 0.3);
-    --shadow-glow: 0 0 24px hsl(var(--accent) / 0.4);
+    --shadow-sm: 0 2px 8px -2px hsl(var(--accent) / 0.15);
+    --shadow-md: 0 4px 16px -4px hsl(var(--accent) / 0.25);
+    --shadow-lg: 0 8px 32px -8px hsl(var(--accent) / 0.35);
+    --shadow-glow: 0 0 32px hsl(var(--accent) / 0.5);
     
     --radius: 0.75rem;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(220 90% 12%), hsl(220 20% 5%));
-    --gradient-accent: linear-gradient(135deg, hsl(190 95% 60%), hsl(190 95% 70%));
-    --gradient-card: linear-gradient(180deg, hsl(220 40% 10% / 0.8), hsl(220 40% 10% / 0.5));
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 0%), hsl(0 0% 3%));
+    --gradient-accent: linear-gradient(135deg, hsl(190 100% 50%), hsl(190 100% 60%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 5% / 0.9), hsl(0 0% 5% / 0.6));
     
     /* Glows & Shadows */
-    --glow-cyan: 0 0 40px hsl(190 95% 60% / 0.4);
-    --shadow-elevated: 0 20px 60px -15px hsl(0 0% 0% / 0.8);
+    --glow-cyan: 0 0 48px hsl(190 100% 50% / 0.5);
+    --shadow-elevated: 0 20px 60px -15px hsl(0 0% 0% / 0.95);
   }
 }
 
@@ -131,12 +130,17 @@ All colors MUST be HSL.
   .btn-hero {
     @apply relative px-8 py-4 rounded-full font-bold text-lg;
     @apply bg-gradient-to-r from-accent to-cyan-glow;
-    @apply text-primary transition-all duration-300;
-    box-shadow: 0 0 40px hsl(190 95% 60% / 0.6), 0 8px 24px hsl(190 95% 60% / 0.3);
+    @apply text-accent-foreground transition-all duration-300;
+    box-shadow: 0 0 48px hsl(190 100% 50% / 0.7), 0 8px 28px hsl(190 100% 50% / 0.4);
   }
   
   .btn-hero:hover {
-    box-shadow: 0 0 60px hsl(190 95% 60% / 0.9), 0 12px 32px hsl(190 95% 60% / 0.4);
+    box-shadow: 0 0 64px hsl(190 100% 50% / 1), 0 12px 36px hsl(190 100% 50% / 0.5);
+    transform: translateY(-2px);
+  }
+  
+  .btn-hero:active {
+    transform: translateY(-1px) scale(0.98);
   }
   
   .btn-hero:active {
@@ -157,7 +161,7 @@ All colors MUST be HSL.
   /* Animated gradient text */
   .gradient-text {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(190 95% 60%), hsl(190 95% 70%));
+    background-image: linear-gradient(135deg, hsl(190 100% 50%), hsl(190 100% 60%));
     animation: gradient-shift 4s ease infinite;
     background-size: 200% 200%;
   }
