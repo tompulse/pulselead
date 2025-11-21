@@ -64,10 +64,10 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-8 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <h1 className="text-6xl md:text-7xl font-bold leading-tight">
-                Les <span className="gradient-text">nouvelles entreprises</span> de votre secteur, détectées chaque semaine
+                Multipliez vos <span className="gradient-text">opportunités</span> avec la détection automatique de prospects
               </h1>
               <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
-                Soyez le premier sur place. LUMA détecte les créations d'entreprises dans votre zone et optimise vos tournées commerciales.
+                Chaque semaine, LUMA identifie les nouvelles entreprises de votre secteur. Prospectez les premiers, vendez plus vite.
               </p>
               <div className="flex gap-4 justify-center pt-8">
                 <Button 
@@ -98,22 +98,22 @@ const LandingPage = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-16">Les défis du terrain</h2>
+              <h2 className="text-5xl font-bold text-center mb-16">Ce qui tue votre chiffre d'affaires</h2>
               <div className="grid md:grid-cols-3 gap-8">
               <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
                 <TrendingDown className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Trajets improductifs</h3>
-                <p className="text-white/70 text-lg">Perte de 40% du temps en déplacement mal planifié</p>
+                <h3 className="text-2xl font-bold mb-3">Temps gaspillé</h3>
+                <p className="text-white/70 text-lg">40% de votre journée perdue sur la route au lieu de vendre</p>
               </Card>
               <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
                 <FileText className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Données dispersées</h3>
-                <p className="text-white/70 text-lg">Notes papier et Excel, tout se perd rapidement</p>
+                <h3 className="text-2xl font-bold mb-3">Chaos organisationnel</h3>
+                <p className="text-white/70 text-lg">Impossible de retrouver l'info au bon moment</p>
               </Card>
               <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
                 <AlertCircle className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Informations obsolètes</h3>
-                <p className="text-white/70 text-lg">Vous arrivez après la concurrence</p>
+                <h3 className="text-2xl font-bold mb-3">Concurrence imbattable</h3>
+                <p className="text-white/70 text-lg">Ils signent avant même que vous sachiez que le prospect existe</p>
               </Card>
             </div>
             </div>
@@ -127,37 +127,37 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
-                3 outils pour <span className="gradient-text">maximiser</span> votre prospection
+                Votre arsenal pour <span className="gradient-text">dominer</span> votre territoire
               </h2>
               <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
-                Détectez, planifiez, suivez : tout ce dont vous avez besoin pour prospecter efficacement
+                Détectez avant tout le monde, agissez plus vite, convertissez davantage
               </p>
               <div className="grid md:grid-cols-3 gap-12">
               <div className="text-center space-y-4">
                 <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
                   <Search className="w-12 h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Veille Nouveaux Sites</h3>
+                <h3 className="text-2xl font-bold">Détection Ultra-Rapide</h3>
                 <p className="text-white/70 text-lg leading-relaxed">
-                  Recevez automatiquement les nouvelles créations d'entreprises dans votre zone géographique
+                  Identifiez automatiquement chaque nouvelle entreprise de votre secteur avant vos concurrents
                 </p>
               </div>
               <div className="text-center space-y-4">
                 <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
                   <Route className="w-12 h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Tournées Optimisées</h3>
+                <h3 className="text-2xl font-bold">Itinéraires Redoutables</h3>
                 <p className="text-white/70 text-lg leading-relaxed">
-                  Créez des itinéraires intelligents pour visiter plus de prospects en moins de temps
+                  Visitez 2x plus de prospects par jour grâce à l'optimisation automatique de vos trajets
                 </p>
               </div>
               <div className="text-center space-y-4">
                 <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
                   <Smartphone className="w-12 h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Suivi CRM</h3>
+                <h3 className="text-2xl font-bold">Zéro Opportunité Perdue</h3>
                 <p className="text-white/70 text-lg leading-relaxed">
-                  Centralisez vos interactions, programmez vos relances et ne perdez plus aucune opportunité
+                  Suivez chaque prospect, relancez au bon moment, transformez plus de contacts en contrats signés
                 </p>
               </div>
               </div>
@@ -172,9 +172,9 @@ const LandingPage = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">Transformez votre prospection terrain</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">L'impact immédiat sur vos résultats</h2>
               <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
-                Gagnez du temps, visitez plus de prospects, signez plus de contrats
+                Moins de kilomètres, plus de rendez-vous, meilleure conversion
               </p>
               <div className="grid md:grid-cols-2 gap-12">
               <Card className="glass-card p-10 border-red-500/30">
@@ -187,19 +187,19 @@ const LandingPage = () => {
                 <ul className="space-y-5 text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Vous arrivez après la concurrence</span>
+                    <span>La concurrence signe pendant que vous cherchez des prospects</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>40% du temps perdu en trajets mal planifiés</span>
+                    <span>Des heures de route pour 3 rendez-vous ratés</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Relances oubliées, opportunités perdues</span>
+                    <span>Prospects chauds refroidis faute de suivi</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Notes dispersées entre Excel et papier</span>
+                    <span>Organisation catastrophique = CA en berne</span>
                   </li>
                 </ul>
               </Card>
@@ -213,19 +213,19 @@ const LandingPage = () => {
                 <ul className="space-y-5 text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Alertes hebdomadaires sur les nouvelles entreprises</span>
+                    <span>Prospects qualifiés livrés chaque semaine dans votre boîte</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Tournées optimisées en 30 secondes</span>
+                    <span>Itinéraires calculés en 30 sec : 2x plus de visites/jour</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Rappels automatiques de relance</span>
+                    <span>Aucune relance manquée, conversion maximale</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Historique complet centralisé</span>
+                    <span>Tout centralisé : focus 100% sur la vente</span>
                   </li>
                 </ul>
               </Card>
@@ -243,13 +243,13 @@ const LandingPage = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">Tarifs simples et transparents</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">Investissement rentable dès le premier mois</h2>
               <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
-                Choisissez la formule adaptée à votre activité
+                Un seul contrat signé et l'outil est amorti
               </p>
               <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                 <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
-                  <h3 className="text-2xl font-bold mb-4">Solo</h3>
+                  <h3 className="text-2xl font-bold mb-4">Essentiel</h3>
                   <div className="mb-6">
                     <span className="text-5xl font-bold">99€</span>
                     <span className="text-white/60">/mois</span>
@@ -257,19 +257,19 @@ const LandingPage = () => {
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">1 commercial</span>
+                      <span className="text-white/80">Pour 1 commercial terrain</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Détection auto prospects</span>
+                      <span className="text-white/80">Flux prospects automatique</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Optimisation tournées</span>
+                      <span className="text-white/80">Tournées ultra-optimisées</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Support email</span>
+                      <span className="text-white/80">Support email réactif</span>
                     </li>
                   </ul>
                   <Button 
@@ -284,7 +284,7 @@ const LandingPage = () => {
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-black px-4 py-1 rounded-full text-sm font-bold">
                     BEST SELLER
                   </div>
-                  <h3 className="text-2xl font-bold mb-4">Solo Pro</h3>
+                  <h3 className="text-2xl font-bold mb-4">Performance</h3>
                   <div className="mb-6">
                     <span className="text-5xl font-bold">149€</span>
                     <span className="text-white/60">/mois</span>
@@ -292,23 +292,23 @@ const LandingPage = () => {
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">1 commercial</span>
+                      <span className="text-white/80">Pour 1 commercial ambitieux</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Toutes fonctionnalités Solo</span>
+                      <span className="text-white/80">Tout du plan Essentiel</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">CRM de prospection avancé</span>
+                      <span className="text-white/80">CRM complet + pipeline</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Enrichissement data illimité</span>
+                      <span className="text-white/80">Data enrichie sans limite</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Support prioritaire</span>
+                      <span className="text-white/80">Support prioritaire 24/7</span>
                     </li>
                   </ul>
                   <Button 
@@ -330,7 +330,7 @@ const LandingPage = () => {
         }}>
           <div className="container mx-auto max-w-4xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-16">Questions fréquentes</h2>
+              <h2 className="text-5xl font-bold text-center mb-16">Vos questions, nos réponses</h2>
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
