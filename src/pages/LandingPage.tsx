@@ -41,10 +41,10 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div className="text-center space-y-8 animate-fade-in">
               <h1 className="text-7xl font-bold leading-tight">
-                Stop aux tournées <span className="gradient-text">au hasard</span> : Visitez 2x plus de prospects en 2x moins de temps
+                Les <span className="gradient-text">nouvelles entreprises</span> de votre secteur, détectées et cartographiées chaque semaine
               </h1>
               <p className="text-2xl text-white/70 max-w-3xl mx-auto">
-                LUMA détecte les nouvelles entreprises dans votre zone et optimise vos itinéraires automatiquement. Plus de planning, plus de performances.
+                Soyez le premier sur place. LUMA identifie automatiquement les nouvelles implantations dans votre zone et optimise vos tournées pour les visiter.
               </p>
               <div className="flex gap-4 justify-center pt-8">
                 <Button 
