@@ -2,40 +2,17 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { 
-  ArrowRight, Shield, CheckCircle, Star, AlertCircle, Clock, 
+  ArrowRight, Star, AlertCircle, Clock, 
   Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User,
-  MapPin, BarChart3, Users, Calculator, ChevronDown, Phone, Mail,
+  MapPin, BarChart3, Users, ChevronDown, Phone, Mail,
   TrendingDown, FileText, Database, Search, Route, Smartphone
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState<'commercial' | 'entreprise'>('commercial');
-  
-  // ROI Calculator states
-  const [numCommercials, setNumCommercials] = useState(5);
-  const [visitsPerWeek, setVisitsPerWeek] = useState(10);
-  const [conversionRate, setConversionRate] = useState(15);
-  const [avgDealValue, setAvgDealValue] = useState(5000);
-
-  const calculateROI = () => {
-    const dealsPerMonth = (numCommercials * visitsPerWeek * 4 * conversionRate) / 100;
-    const additionalRevenue = dealsPerMonth * avgDealValue * 0.3; // 30% improvement
-    const monthlyCost = numCommercials * 49; // Assuming team plan
-    const roi = (additionalRevenue / monthlyCost).toFixed(1);
-    
-    return {
-      additionalRevenue: Math.round(additionalRevenue),
-      additionalDeals: Math.round(dealsPerMonth * 0.3),
-      roi: roi
-    };
-  };
-
-  const roiResults = calculateROI();
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -209,7 +186,7 @@ const LandingPage = () => {
                     <Search className="w-10 h-10 text-accent" />
                   </div>
                   <h3 className="text-2xl font-bold">Détection automatique</h3>
-                  <p className="text-white/70 text-lg">Nouvelles entreprises dans votre zone chaque jour</p>
+                  <p className="text-white/70 text-lg">Nouvelles entreprises dans votre zone chaque semaine</p>
                 </div>
                 <div className="text-center space-y-4">
                   <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
@@ -222,8 +199,8 @@ const LandingPage = () => {
                   <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
                     <Smartphone className="w-10 h-10 text-accent" />
                   </div>
-                  <h3 className="text-2xl font-bold">Suivi micro-CRM</h3>
-                  <p className="text-white/70 text-lg">Notes, relances, historique, tout sur mobile</p>
+                  <h3 className="text-2xl font-bold">CRM de prospection</h3>
+                  <p className="text-white/70 text-lg">Notes, relances, historique complet</p>
                 </div>
               </div>
             </div>
@@ -306,7 +283,7 @@ const LandingPage = () => {
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Notes vocales centralisées</span>
+                    <span>Mini compte rendu centralisé</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
@@ -322,67 +299,6 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Case Studies */}
-        <section className="py-20 px-6">
-          <div className="container mx-auto max-w-6xl">
-            <h2 className="text-5xl font-bold text-center mb-16">Résultats concrets</h2>
-            <div className="grid md:grid-cols-2 gap-12">
-              <Card className="glass-card p-10 border-white/10 hover:border-accent/50 transition-all">
-                <div className="flex items-center gap-3 mb-6">
-                  <Star className="w-8 h-8 text-accent fill-accent" />
-                  <div>
-                    <h3 className="text-2xl font-bold">SaaS B2B</h3>
-                    <p className="text-white/60">Équipe de 8 commerciaux</p>
-                  </div>
-                </div>
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="text-white/70">Visites/semaine</span>
-                    <span className="text-accent font-bold">+20</span>
-                  </div>
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="text-white/70">Temps en trajets</span>
-                    <span className="text-accent font-bold">-8h</span>
-                  </div>
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="text-white/70">Pipeline</span>
-                    <span className="text-accent font-bold">+180K€</span>
-                  </div>
-                </div>
-                <blockquote className="border-l-4 border-accent pl-4 italic text-white/80">
-                  "LUMA a transformé notre approche terrain. Nous visitons 3x plus de prospects."
-                </blockquote>
-              </Card>
-
-              <Card className="glass-card p-10 border-white/10 hover:border-accent/50 transition-all">
-                <div className="flex items-center gap-3 mb-6">
-                  <Star className="w-8 h-8 text-accent fill-accent" />
-                  <div>
-                    <h3 className="text-2xl font-bold">Fournitures B2B</h3>
-                    <p className="text-white/60">Commercial indépendant</p>
-                  </div>
-                </div>
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="text-white/70">RDV/mois</span>
-                    <span className="text-accent font-bold">+25</span>
-                  </div>
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="text-white/70">Coûts essence</span>
-                    <span className="text-accent font-bold">-40%</span>
-                  </div>
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="text-white/70">CA augmenté</span>
-                    <span className="text-accent font-bold">+40%</span>
-                  </div>
-                </div>
-                <blockquote className="border-l-4 border-accent pl-4 italic text-white/80">
-                  "LUMA m'a fait gagner 3h par jour et doubler mes rendez-vous qualifiés."
-                </blockquote>
-              </Card>
-            </div>
-          </div>
-        </section>
 
         {/* Features Grid */}
         <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
@@ -394,10 +310,8 @@ const LandingPage = () => {
               {[
                 { icon: Search, title: "Détection auto", desc: "Nouvelles entreprises" },
                 { icon: Route, title: "Optimisation tournées", desc: "Algorithme intelligent" },
-                { icon: Smartphone, title: "Mini CRM mobile", desc: "Notes et historique" },
-                { icon: Users, title: "Gestion équipe", desc: "Dashboards complets" },
+                { icon: Smartphone, title: "CRM de prospection", desc: "Notes et historique" },
                 { icon: Database, title: "Enrichissement data", desc: "Contacts + activités" },
-                { icon: Zap, title: "Sync temps réel", desc: "Équipe synchronisée" },
               ].map((feature, idx) => (
                 <Card key={idx} className="glass-card p-6 border-white/10 hover:border-accent/50 transition-all">
                   <feature.icon className="w-10 h-10 text-accent mb-4" />
@@ -418,7 +332,7 @@ const LandingPage = () => {
                 <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
                   <h3 className="text-2xl font-bold mb-4">Solo</h3>
                   <div className="mb-6">
-                    <span className="text-5xl font-bold">49€</span>
+                    <span className="text-5xl font-bold">99€</span>
                     <span className="text-white/60">/mois</span>
                   </div>
                   <ul className="space-y-3 mb-8">
@@ -428,7 +342,11 @@ const LandingPage = () => {
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Fonctionnalités complètes</span>
+                      <span className="text-white/80">Détection auto prospects</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Optimisation tournées</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
@@ -447,7 +365,7 @@ const LandingPage = () => {
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-black px-4 py-1 rounded-full text-sm font-bold">
                     BEST SELLER
                   </div>
-                  <h3 className="text-2xl font-bold mb-4">Équipe</h3>
+                  <h3 className="text-2xl font-bold mb-4">Solo Pro</h3>
                   <div className="mb-6">
                     <span className="text-5xl font-bold">149€</span>
                     <span className="text-white/60">/mois</span>
@@ -455,15 +373,19 @@ const LandingPage = () => {
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Jusqu'à 10 commerciaux</span>
+                      <span className="text-white/80">1 commercial</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Dashboard équipe</span>
+                      <span className="text-white/80">Toutes fonctionnalités Solo</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Reporting avancé</span>
+                      <span className="text-white/80">CRM de prospection avancé</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Enrichissement data illimité</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
@@ -479,7 +401,7 @@ const LandingPage = () => {
                 </Card>
 
                 <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
-                  <h3 className="text-2xl font-bold mb-4">Enterprise</h3>
+                  <h3 className="text-2xl font-bold mb-4">Entreprise</h3>
                   <div className="mb-6">
                     <span className="text-3xl font-bold">Sur devis</span>
                   </div>
@@ -487,6 +409,10 @@ const LandingPage = () => {
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
                       <span className="text-white/80">Utilisateurs illimités</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-5 h-5 text-accent" />
+                      <span className="text-white/80">Gestion d'équipe complète</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent" />
@@ -514,75 +440,6 @@ const LandingPage = () => {
           </section>
         )}
 
-        {/* ROI Calculator */}
-        <section className="py-20 px-6 bg-black-deep">
-          <div className="container mx-auto max-w-4xl">
-            <h2 className="text-5xl font-bold text-center mb-4">Calculez votre ROI en 30s</h2>
-            <p className="text-white/60 text-center mb-12 text-lg">Découvrez combien LUMA peut vous rapporter</p>
-            
-            <Card className="glass-card p-10 border-accent/30">
-              <div className="grid md:grid-cols-2 gap-8 mb-8">
-                <div>
-                  <Label className="text-lg mb-2 block">Nombre de commerciaux</Label>
-                  <Input 
-                    type="number" 
-                    value={numCommercials}
-                    onChange={(e) => setNumCommercials(Number(e.target.value))}
-                    className="bg-white/5 border-white/20 text-white text-lg"
-                  />
-                </div>
-                <div>
-                  <Label className="text-lg mb-2 block">Visites par semaine</Label>
-                  <Input 
-                    type="number" 
-                    value={visitsPerWeek}
-                    onChange={(e) => setVisitsPerWeek(Number(e.target.value))}
-                    className="bg-white/5 border-white/20 text-white text-lg"
-                  />
-                </div>
-                <div>
-                  <Label className="text-lg mb-2 block">Taux de conversion (%)</Label>
-                  <Input 
-                    type="number" 
-                    value={conversionRate}
-                    onChange={(e) => setConversionRate(Number(e.target.value))}
-                    className="bg-white/5 border-white/20 text-white text-lg"
-                  />
-                </div>
-                <div>
-                  <Label className="text-lg mb-2 block">CA moyen par deal (€)</Label>
-                  <Input 
-                    type="number" 
-                    value={avgDealValue}
-                    onChange={(e) => setAvgDealValue(Number(e.target.value))}
-                    className="bg-white/5 border-white/20 text-white text-lg"
-                  />
-                </div>
-              </div>
-
-              <div className="border-t border-white/20 pt-8 grid md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="text-accent text-4xl font-bold mb-2">
-                    +{roiResults.additionalRevenue.toLocaleString()}€
-                  </div>
-                  <div className="text-white/60">Revenus supplémentaires/mois</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-accent text-4xl font-bold mb-2">
-                    +{roiResults.additionalDeals}
-                  </div>
-                  <div className="text-white/60">Deals supplémentaires</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-accent text-4xl font-bold mb-2">
-                    {roiResults.roi}x
-                  </div>
-                  <div className="text-white/60">Retour sur investissement</div>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </section>
 
         {/* FAQ */}
         <section className="py-20 px-6">
@@ -667,16 +524,6 @@ const LandingPage = () => {
               >
                 Réserver une démo
               </Button>
-            </div>
-            <div className="flex items-center justify-center gap-8 mt-12 text-white/60">
-              <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5" />
-                <span>Satisfaction garantie</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>Support inclus</span>
-              </div>
             </div>
           </div>
         </section>
