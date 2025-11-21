@@ -8,7 +8,9 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* LUMA Brand Colors - Noir pur + Cyan électrique */
+    /* LUMA Brand Colors - Bleu foncé + Cyan électrique */
+    --blue-deep: 220 60% 8%;
+    --blue-darker: 220 50% 5%;
     --black-pure: 0 0% 0%;
     --black-deep: 0 0% 3%;
     --cyan-electric: 190 100% 50%;
@@ -16,19 +18,19 @@ All colors MUST be HSL.
     --cyan-subtle: 190 80% 45%;
     
     /* Core semantic tokens */
-    --background: 0 0% 0%;
+    --background: 220 60% 8%;
     --foreground: 0 0% 100%;
 
-    --card: 0 0% 5%;
+    --card: 220 50% 10%;
     --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 3%;
+    --popover: 220 50% 8%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 0 0% 0%;
+    --primary: 220 60% 8%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 10%;
+    --secondary: 220 50% 15%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 15%;
@@ -53,9 +55,10 @@ All colors MUST be HSL.
     --radius: 0.75rem;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 0%), hsl(0 0% 3%));
+    --gradient-primary: linear-gradient(135deg, hsl(220 60% 8%), hsl(220 50% 5%));
     --gradient-accent: linear-gradient(135deg, hsl(190 100% 50%), hsl(190 100% 60%));
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 5% / 0.9), hsl(0 0% 5% / 0.6));
+    --gradient-card: linear-gradient(180deg, hsl(220 50% 10% / 0.9), hsl(220 50% 10% / 0.6));
+    --gradient-bg: radial-gradient(ellipse at top, hsl(220 60% 12%), hsl(220 60% 8%), hsl(0 0% 0%));
     
     /* Glows & Shadows */
     --glow-cyan: 0 0 48px hsl(190 100% 50% / 0.5);
@@ -189,6 +192,30 @@ All colors MUST be HSL.
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Scroll reveal animation */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .scroll-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scroll-reveal-delay-1 {
+    transition-delay: 0.1s;
+  }
+
+  .scroll-reveal-delay-2 {
+    transition-delay: 0.2s;
+  }
+
+  .scroll-reveal-delay-3 {
+    transition-delay: 0.3s;
   }
 
   /* Gradient animation */
