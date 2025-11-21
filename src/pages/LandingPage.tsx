@@ -46,9 +46,8 @@ const LandingPage = () => {
             </div>
 
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#detection" className="text-white/70 hover:text-accent transition-colors">Détection</a>
-              <a href="#tournees" className="text-white/70 hover:text-accent transition-colors">Tournées</a>
-              <a href="#suivi" className="text-white/70 hover:text-accent transition-colors">Suivi</a>
+              <a href="#solution" className="text-white/70 hover:text-accent transition-colors">Fonctionnalités</a>
+              <a href="#avantages" className="text-white/70 hover:text-accent transition-colors">Avantages</a>
               <a href="#pricing" className="text-white/70 hover:text-accent transition-colors">Tarifs</a>
             </nav>
 
@@ -68,11 +67,11 @@ const LandingPage = () => {
         <section className="py-20 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-8 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
-              <h1 className="text-7xl font-bold leading-tight">
-                <span className="gradient-text">Détectez</span> les nouvelles entreprises, <span className="gradient-text">optimisez</span> vos tournées, <span className="gradient-text">suivez</span> vos relances
+              <h1 className="text-6xl md:text-7xl font-bold leading-tight">
+                Les <span className="gradient-text">nouvelles entreprises</span> de votre secteur, détectées chaque semaine
               </h1>
-              <p className="text-2xl text-white/70 max-w-3xl mx-auto">
-                La prospection terrain automatisée : nouvelles créations d'entreprises dans votre zone + itinéraires parfaits + CRM de suivi intégré
+              <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
+                Soyez le premier sur place. LUMA détecte les créations d'entreprises dans votre zone et optimise vos tournées commerciales.
               </p>
               <div className="flex gap-4 justify-center pt-8">
                 <Button 
@@ -122,33 +121,42 @@ const LandingPage = () => {
         </section>
 
         {/* Solution Section */}
-        <section className="py-20 px-6 relative z-10">
+        <section id="solution" className="py-20 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-16">
-                Comment LUMA <span className="gradient-text">booste</span> la prospection terrain
+              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
+                3 outils pour <span className="gradient-text">maximiser</span> votre prospection
               </h2>
-              <div className="grid md:grid-cols-3 gap-8">
-              <div id="detection" className="text-center space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                  <Search className="w-10 h-10 text-accent" />
+              <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
+                Détectez, planifiez, suivez : tout ce dont vous avez besoin pour prospecter efficacement
+              </p>
+              <div className="grid md:grid-cols-3 gap-12">
+              <div className="text-center space-y-4">
+                <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
+                  <Search className="w-12 h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Détection automatique</h3>
-                <p className="text-white/70 text-lg">Nouvelles entreprises dans votre zone chaque semaine</p>
+                <h3 className="text-2xl font-bold">Veille Nouveaux Sites</h3>
+                <p className="text-white/70 text-lg leading-relaxed">
+                  Recevez automatiquement les nouvelles créations d'entreprises dans votre zone géographique
+                </p>
               </div>
-              <div id="tournees" className="text-center space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                  <Map className="w-10 h-10 text-accent" />
+              <div className="text-center space-y-4">
+                <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
+                  <Route className="w-12 h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Itinéraires optimisés</h3>
-                <p className="text-white/70 text-lg">Générez en 30s des parcours parfaits</p>
+                <h3 className="text-2xl font-bold">Tournées Optimisées</h3>
+                <p className="text-white/70 text-lg leading-relaxed">
+                  Créez des itinéraires intelligents pour visiter plus de prospects en moins de temps
+                </p>
               </div>
-              <div id="suivi" className="text-center space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                  <Smartphone className="w-10 h-10 text-accent" />
+              <div className="text-center space-y-4">
+                <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
+                  <Smartphone className="w-12 h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">CRM de prospection</h3>
-                <p className="text-white/70 text-lg">Notes, relances, historique complet</p>
+                <h3 className="text-2xl font-bold">Suivi CRM</h3>
+                <p className="text-white/70 text-lg leading-relaxed">
+                  Centralisez vos interactions, programmez vos relances et ne perdez plus aucune opportunité
+                </p>
               </div>
               </div>
             </div>
@@ -156,60 +164,63 @@ const LandingPage = () => {
         </section>
 
         {/* Before/After Section */}
-        <section className="py-20 px-6 bg-black-deep/30 relative z-10">
+        <section id="avantages" className="py-20 px-6 bg-black-deep/30 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-16">Votre journée avant/après LUMA</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">Transformez votre prospection terrain</h2>
+              <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
+                Gagnez du temps, visitez plus de prospects, signez plus de contrats
+              </p>
               <div className="grid md:grid-cols-2 gap-12">
               <Card className="glass-card p-10 border-red-500/30">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-8">
                   <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                    <X className="w-6 h-6 text-red-500" />
+                    <TrendingDown className="w-6 h-6 text-red-500" />
                   </div>
-                  <h3 className="text-3xl font-bold">Avant</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold">Sans LUMA</h3>
                 </div>
-                <ul className="space-y-4 text-lg text-white/70">
+                <ul className="space-y-5 text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1">✗</span>
-                    <span>Trajets désorganisés et inefficaces</span>
+                    <span className="text-red-500 mt-1 text-xl">✗</span>
+                    <span>Vous arrivez après la concurrence</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1">✗</span>
-                    <span>Notes perdues sur papier</span>
+                    <span className="text-red-500 mt-1 text-xl">✗</span>
+                    <span>40% du temps perdu en trajets mal planifiés</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1">✗</span>
-                    <span>Peu de visites effectuées</span>
+                    <span className="text-red-500 mt-1 text-xl">✗</span>
+                    <span>Relances oubliées, opportunités perdues</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1">✗</span>
-                    <span>Temps perdu en recherche</span>
+                    <span className="text-red-500 mt-1 text-xl">✗</span>
+                    <span>Notes dispersées entre Excel et papier</span>
                   </li>
                 </ul>
               </Card>
               <Card className="glass-card p-10 border-accent/50">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-8">
                   <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-                    <Check className="w-6 h-6 text-accent" />
+                    <TrendingUp className="w-6 h-6 text-accent" />
                   </div>
-                  <h3 className="text-3xl font-bold">Après</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold">Avec LUMA</h3>
                 </div>
-                <ul className="space-y-4 text-lg text-white/70">
+                <ul className="space-y-5 text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Itinéraires automatisés et optimaux</span>
+                    <span>Alertes hebdomadaires sur les nouvelles entreprises</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Mini compte rendu centralisé</span>
+                    <span>Tournées optimisées en 30 secondes</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>+40% de visites en moyenne</span>
+                    <span>Rappels automatiques de relance</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Ciblage précis et efficace</span>
+                    <span>Historique complet centralisé</span>
                   </li>
                 </ul>
               </Card>
@@ -223,20 +234,23 @@ const LandingPage = () => {
         <section className="py-20 px-6 bg-gradient-to-b from-transparent to-black-deep/30 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={featuresAnimation.ref} className={`scroll-reveal ${featuresAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-16">
-                Tout pour <span className="gradient-text">dominer</span> votre prospection
+              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
+                Fonctionnalités <span className="gradient-text">avancées</span>
               </h2>
-            <div className="grid md:grid-cols-3 gap-6">
+              <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
+                Des outils puissants pour aller plus loin dans votre prospection
+              </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { icon: Search, title: "Détection auto", desc: "Nouvelles entreprises" },
-                { icon: Route, title: "Optimisation tournées", desc: "Algorithme intelligent" },
-                { icon: Smartphone, title: "CRM de prospection", desc: "Notes et historique" },
-                { icon: Database, title: "Enrichissement data", desc: "Contacts + activités" },
+                { icon: MapPin, title: "Cartographie", desc: "Visualisez vos prospects sur carte interactive" },
+                { icon: Database, title: "Enrichissement", desc: "Contacts et infos entreprises automatiques" },
+                { icon: BarChart3, title: "Statistiques", desc: "Suivez vos performances en temps réel" },
+                { icon: Users, title: "Multi-utilisateurs", desc: "Collaborez en équipe efficacement" },
               ].map((feature, idx) => (
                 <Card key={idx} className="glass-card p-6 border-white/10 hover:border-accent/50 transition-all">
                   <feature.icon className="w-10 h-10 text-accent mb-4" />
-                  <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                  <p className="text-white/60">{feature.desc}</p>
+                  <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
+                  <p className="text-white/60 text-sm">{feature.desc}</p>
                 </Card>
               ))}
             </div>
@@ -248,7 +262,10 @@ const LandingPage = () => {
         <section id="pricing" className="py-20 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-16">Choisissez votre formule</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">Tarifs simples et transparents</h2>
+              <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
+                Choisissez la formule adaptée à votre activité
+              </p>
               <div className="grid md:grid-cols-3 gap-8">
                 <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
                   <h3 className="text-2xl font-bold mb-4">Solo</h3>
