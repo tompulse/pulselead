@@ -12,41 +12,16 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [activeView, setActiveView] = useState<'commercial' | 'entreprise'>('commercial');
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header with Switch */}
+      {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
               <span className="text-white">LUMA</span>
               <span className="text-accent ml-1">.</span>
-            </div>
-
-            {/* Switch Toggle */}
-            <div className="flex items-center gap-2 bg-white/5 rounded-full p-1 border border-white/10">
-              <button
-                onClick={() => setActiveView('commercial')}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                  activeView === 'commercial'
-                    ? 'bg-accent text-black shadow-[0_0_20px_hsl(190_100%_50%/0.5)]'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                Commercial
-              </button>
-              <button
-                onClick={() => setActiveView('entreprise')}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                  activeView === 'entreprise'
-                    ? 'bg-accent text-black shadow-[0_0_20px_hsl(190_100%_50%/0.5)]'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                Entreprise
-              </button>
             </div>
 
             <Button 
@@ -62,181 +37,91 @@ const LandingPage = () => {
 
       <main className="pt-20">
         {/* Hero Section */}
-        {activeView === 'commercial' ? (
-          <section className="py-20 px-6">
-            <div className="container mx-auto max-w-6xl">
-              <div className="text-center space-y-8 animate-fade-in">
-                <h1 className="text-7xl font-bold leading-tight">
-                  Vos commerciaux perdent <span className="gradient-text">8h/semaine</span> en trajets mal optimisés
-                </h1>
-                <p className="text-2xl text-white/70 max-w-3xl mx-auto">
-                  LUMA crée vos tournées parfaites en 30 secondes, pour plus de RDV et moins de km
-                </p>
-                <div className="flex gap-4 justify-center pt-8">
-                  <Button 
-                    size="lg"
-                    onClick={() => navigate('/auth')}
-                    className="btn-hero text-xl px-12 py-6"
-                  >
-                    Démarrer gratuitement
-                    <ArrowRight className="ml-2" />
-                  </Button>
-                  <Button 
-                    size="lg"
-                    variant="outline"
-                    className="border-2 border-accent text-accent hover:bg-accent/10 text-xl px-12 py-6"
-                  >
-                    Voir une démo
-                  </Button>
-                </div>
+        <section className="py-20 px-6">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center space-y-8 animate-fade-in">
+              <h1 className="text-7xl font-bold leading-tight">
+                Stop aux tournées <span className="gradient-text">au hasard</span> : Visitez 2x plus de prospects en 2x moins de temps
+              </h1>
+              <p className="text-2xl text-white/70 max-w-3xl mx-auto">
+                LUMA détecte les nouvelles entreprises dans votre zone et optimise vos itinéraires automatiquement. Plus de planning, plus de performances.
+              </p>
+              <div className="flex gap-4 justify-center pt-8">
+                <Button 
+                  size="lg"
+                  onClick={() => navigate('/auth')}
+                  className="btn-hero text-xl px-12 py-6"
+                >
+                  Démarrer gratuitement
+                  <ArrowRight className="ml-2" />
+                </Button>
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-accent text-accent hover:bg-accent/10 text-xl px-12 py-6"
+                >
+                  Voir une démo
+                </Button>
               </div>
             </div>
-          </section>
-        ) : (
-          <section className="py-20 px-6">
-            <div className="container mx-auto max-w-6xl">
-              <div className="text-center space-y-8 animate-fade-in">
-                <h1 className="text-7xl font-bold leading-tight">
-                  Votre force commerciale <span className="gradient-text">tourne à vide ?</span> Faites plus avec moins
-                </h1>
-                <p className="text-2xl text-white/70 max-w-3xl mx-auto">
-                  Optimisez la prospection terrain de toute votre équipe—plus de visites, moins de temps
-                </p>
-                <div className="flex gap-4 justify-center pt-8">
-                  <Button 
-                    size="lg"
-                    onClick={() => navigate('/auth')}
-                    className="btn-hero text-xl px-12 py-6"
-                  >
-                    Demandez un devis
-                    <ArrowRight className="ml-2" />
-                  </Button>
-                  <Button 
-                    size="lg"
-                    variant="outline"
-                    className="border-2 border-accent text-accent hover:bg-accent/10 text-xl px-12 py-6"
-                  >
-                    Contactez-nous
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* Problems Section */}
-        {activeView === 'commercial' ? (
-          <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
-            <div className="container mx-auto max-w-6xl">
-              <h2 className="text-5xl font-bold text-center mb-16">Les défis du terrain</h2>
-              <div className="grid md:grid-cols-3 gap-8">
-                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                  <TrendingDown className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-2xl font-bold mb-3">Trajets improductifs</h3>
-                  <p className="text-white/70 text-lg">Perte de 40% du temps en déplacement mal planifié</p>
-                </Card>
-                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                  <FileText className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-2xl font-bold mb-3">Données dispersées</h3>
-                  <p className="text-white/70 text-lg">Notes papier et Excel, tout se perd rapidement</p>
-                </Card>
-                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                  <AlertCircle className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-2xl font-bold mb-3">Informations obsolètes</h3>
-                  <p className="text-white/70 text-lg">Vous arrivez après la concurrence</p>
-                </Card>
-              </div>
+        <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
+          <div className="container mx-auto max-w-6xl">
+            <h2 className="text-5xl font-bold text-center mb-16">Les défis du terrain</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                <TrendingDown className="w-12 h-12 text-accent mb-4" />
+                <h3 className="text-2xl font-bold mb-3">Trajets improductifs</h3>
+                <p className="text-white/70 text-lg">Perte de 40% du temps en déplacement mal planifié</p>
+              </Card>
+              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                <FileText className="w-12 h-12 text-accent mb-4" />
+                <h3 className="text-2xl font-bold mb-3">Données dispersées</h3>
+                <p className="text-white/70 text-lg">Notes papier et Excel, tout se perd rapidement</p>
+              </Card>
+              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
+                <AlertCircle className="w-12 h-12 text-accent mb-4" />
+                <h3 className="text-2xl font-bold mb-3">Informations obsolètes</h3>
+                <p className="text-white/70 text-lg">Vous arrivez après la concurrence</p>
+              </Card>
             </div>
-          </section>
-        ) : (
-          <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
-            <div className="container mx-auto max-w-6xl">
-              <h2 className="text-5xl font-bold text-center mb-16">Les enjeux de votre pipeline commercial</h2>
-              <div className="grid md:grid-cols-3 gap-8">
-                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                  <Users className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-2xl font-bold mb-3">Gestion d'équipe</h3>
-                  <p className="text-white/70 text-lg">Suivi centralisé, moins de perte de leads</p>
-                </Card>
-                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                  <Route className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-2xl font-bold mb-3">Optimisation des tournées</h3>
-                  <p className="text-white/70 text-lg">Visites plus nombreuses, coût réduit</p>
-                </Card>
-                <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                  <BarChart3 className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-2xl font-bold mb-3">Reporting avancé</h3>
-                  <p className="text-white/70 text-lg">Performance en temps réel, décisions rapides</p>
-                </Card>
-              </div>
-            </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* Solution Section */}
-        {activeView === 'commercial' ? (
-          <section className="py-20 px-6">
-            <div className="container mx-auto max-w-6xl">
-              <h2 className="text-5xl font-bold text-center mb-16">
-                Comment LUMA <span className="gradient-text">booste</span> la prospection terrain
-              </h2>
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                    <Search className="w-10 h-10 text-accent" />
-                  </div>
-                  <h3 className="text-2xl font-bold">Détection automatique</h3>
-                  <p className="text-white/70 text-lg">Nouvelles entreprises dans votre zone chaque semaine</p>
+        <section className="py-20 px-6">
+          <div className="container mx-auto max-w-6xl">
+            <h2 className="text-5xl font-bold text-center mb-16">
+              Comment LUMA <span className="gradient-text">booste</span> la prospection terrain
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center space-y-4">
+                <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                  <Search className="w-10 h-10 text-accent" />
                 </div>
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                    <Map className="w-10 h-10 text-accent" />
-                  </div>
-                  <h3 className="text-2xl font-bold">Itinéraires optimisés</h3>
-                  <p className="text-white/70 text-lg">Générez en 30s des parcours parfaits</p>
+                <h3 className="text-2xl font-bold">Détection automatique</h3>
+                <p className="text-white/70 text-lg">Nouvelles entreprises dans votre zone chaque semaine</p>
+              </div>
+              <div className="text-center space-y-4">
+                <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                  <Map className="w-10 h-10 text-accent" />
                 </div>
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                    <Smartphone className="w-10 h-10 text-accent" />
-                  </div>
-                  <h3 className="text-2xl font-bold">CRM de prospection</h3>
-                  <p className="text-white/70 text-lg">Notes, relances, historique complet</p>
+                <h3 className="text-2xl font-bold">Itinéraires optimisés</h3>
+                <p className="text-white/70 text-lg">Générez en 30s des parcours parfaits</p>
+              </div>
+              <div className="text-center space-y-4">
+                <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
+                  <Smartphone className="w-10 h-10 text-accent" />
                 </div>
+                <h3 className="text-2xl font-bold">CRM de prospection</h3>
+                <p className="text-white/70 text-lg">Notes, relances, historique complet</p>
               </div>
             </div>
-          </section>
-        ) : (
-          <section className="py-20 px-6">
-            <div className="container mx-auto max-w-6xl">
-              <h2 className="text-5xl font-bold text-center mb-16">
-                Une plateforme pour <span className="gradient-text">gérer</span> toute votre équipe
-              </h2>
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                    <Database className="w-10 h-10 text-accent" />
-                  </div>
-                  <h3 className="text-2xl font-bold">Vue d'ensemble</h3>
-                  <p className="text-white/70 text-lg">Liste globale des prospects + nouvelles entreprises</p>
-                </div>
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                    <BarChart3 className="w-10 h-10 text-accent" />
-                  </div>
-                  <h3 className="text-2xl font-bold">Dashboard</h3>
-                  <p className="text-white/70 text-lg">Rapports avancés, KPIs en temps réel</p>
-                </div>
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
-                    <Target className="w-10 h-10 text-accent" />
-                  </div>
-                  <h3 className="text-2xl font-bold">Organisation</h3>
-                  <p className="text-white/70 text-lg">Gestion et assignation des tournées, alertes</p>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* Before/After Section */}
         <section className="py-20 px-6 bg-black-deep">
@@ -324,8 +209,7 @@ const LandingPage = () => {
         </section>
 
         {/* Pricing */}
-        {activeView === 'commercial' && (
-          <section className="py-20 px-6">
+        <section className="py-20 px-6">
             <div className="container mx-auto max-w-6xl">
               <h2 className="text-5xl font-bold text-center mb-16">Choisissez votre formule</h2>
               <div className="grid md:grid-cols-3 gap-8">
@@ -438,7 +322,6 @@ const LandingPage = () => {
               </div>
             </div>
           </section>
-        )}
 
 
         {/* FAQ */}
