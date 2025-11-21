@@ -71,36 +71,8 @@ const DashboardPreview = () => {
         </div>
       </div>
 
-      {/* Scene 1: Statistiques d'activités */}
+      {/* Scene 1: Tournée optimisée */}
       <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <div className="w-full h-full flex items-center justify-center p-1">
-          <div className="w-full max-w-2xl">
-            <h3 className="text-[10px] font-bold text-center mb-1 text-cyan-electric">Mes Activités</h3>
-            <div className="grid grid-cols-4 gap-1">
-              {[
-                { icon: Phone, value: "12" },
-                { icon: MapPin, value: "8" },
-                { icon: Calendar, value: "5" },
-                { icon: Clock, value: "7" }
-              ].map((stat, i) => (
-                <div 
-                  key={i}
-                  className="bg-navy-deep/80 backdrop-blur-xl border border-cyan-electric/40 rounded p-1 text-center animate-fade-in shadow-lg shadow-cyan-electric/10"
-                  style={{ animationDelay: `${i * 0.15}s` }}
-                >
-                  <div className="w-4 h-4 mx-auto mb-0.5 rounded-full bg-cyan-electric/20 flex items-center justify-center">
-                    <stat.icon className="w-2 h-2 text-cyan-electric" />
-                  </div>
-                  <p className="text-[10px] font-bold text-cyan-electric">{stat.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Scene 2: Tournée optimisée */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 2 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full flex items-center justify-center p-1">
           <div className="w-full max-w-3xl grid grid-cols-[1fr,90px] gap-1">
             {/* Map */}
@@ -117,10 +89,10 @@ const DashboardPreview = () => {
                   backgroundColor: '#1a2332'
                 }}></div>
                 
-                {/* Route line */}
+                {/* Route line - parcours réaliste type tournée commerciale */}
                 <svg className="absolute inset-0 w-full h-full">
                   <path
-                    d="M 15 15 L 32 20 L 50 27 L 70 40"
+                    d="M 20 35 L 35 25 L 55 30 L 70 45"
                     stroke="rgba(34, 211, 238, 0.6)"
                     strokeWidth="1"
                     fill="none"
@@ -128,17 +100,17 @@ const DashboardPreview = () => {
                   />
                 </svg>
                 
-                {/* Pins */}
-                <div className="absolute" style={{ top: '15px', left: '15px' }}>
+                {/* Pins - disposés sur un territoire réaliste */}
+                <div className="absolute" style={{ top: '35px', left: '20px' }}>
                   <div className="w-2.5 h-2.5 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-[6px]">1</div>
                 </div>
-                <div className="absolute" style={{ top: '20px', left: '32px' }}>
+                <div className="absolute" style={{ top: '25px', left: '35px' }}>
                   <div className="w-2.5 h-2.5 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-[6px]">2</div>
                 </div>
-                <div className="absolute" style={{ top: '27px', left: '50px' }}>
+                <div className="absolute" style={{ top: '30px', left: '55px' }}>
                   <div className="w-2.5 h-2.5 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-[6px]">3</div>
                 </div>
-                <div className="absolute" style={{ top: '40px', left: '70px' }}>
+                <div className="absolute" style={{ top: '45px', left: '70px' }}>
                   <div className="w-2.5 h-2.5 bg-cyan-electric rounded-full flex items-center justify-center text-navy-deep font-bold text-[6px]">4</div>
                 </div>
               </div>
@@ -168,6 +140,34 @@ const DashboardPreview = () => {
                   <p className="text-[6px] font-semibold text-foreground truncate">Innov Lab</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Scene 2: Statistiques d'activités */}
+      <div className={`absolute inset-0 transition-opacity duration-1000 ${currentScene === 2 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div className="w-full h-full flex items-center justify-center p-1">
+          <div className="w-full max-w-2xl">
+            <h3 className="text-[10px] font-bold text-center mb-1 text-cyan-electric">Mes Activités</h3>
+            <div className="grid grid-cols-4 gap-1">
+              {[
+                { icon: Phone, value: "12" },
+                { icon: MapPin, value: "8" },
+                { icon: Calendar, value: "5" },
+                { icon: Clock, value: "7" }
+              ].map((stat, i) => (
+                <div 
+                  key={i}
+                  className="bg-navy-deep/80 backdrop-blur-xl border border-cyan-electric/40 rounded p-1 text-center animate-fade-in shadow-lg shadow-cyan-electric/10"
+                  style={{ animationDelay: `${i * 0.15}s` }}
+                >
+                  <div className="w-4 h-4 mx-auto mb-0.5 rounded-full bg-cyan-electric/20 flex items-center justify-center">
+                    <stat.icon className="w-2 h-2 text-cyan-electric" />
+                  </div>
+                  <p className="text-[10px] font-bold text-cyan-electric">{stat.value}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
