@@ -24,6 +24,13 @@ const LandingPage = () => {
               <span className="text-accent ml-1">.</span>
             </div>
 
+            <nav className="hidden md:flex items-center gap-8">
+              <a href="#detection" className="text-white/70 hover:text-accent transition-colors">Détection</a>
+              <a href="#tournees" className="text-white/70 hover:text-accent transition-colors">Tournées</a>
+              <a href="#suivi" className="text-white/70 hover:text-accent transition-colors">Suivi</a>
+              <a href="#pricing" className="text-white/70 hover:text-accent transition-colors">Tarifs</a>
+            </nav>
+
             <Button 
               variant="outline" 
               onClick={() => navigate('/auth')}
@@ -41,10 +48,10 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div className="text-center space-y-8 animate-fade-in">
               <h1 className="text-7xl font-bold leading-tight">
-                Les <span className="gradient-text">nouvelles entreprises</span> de votre secteur, détectées et cartographiées chaque semaine
+                <span className="gradient-text">Détectez</span> les nouvelles entreprises, <span className="gradient-text">optimisez</span> vos tournées, <span className="gradient-text">suivez</span> vos relances
               </h1>
               <p className="text-2xl text-white/70 max-w-3xl mx-auto">
-                Soyez le premier sur place. LUMA identifie automatiquement les nouvelles implantations dans votre zone et optimise vos tournées pour les visiter.
+                La prospection terrain automatisée : nouvelles créations d'entreprises dans votre zone + itinéraires parfaits + CRM de suivi intégré
               </p>
               <div className="flex gap-4 justify-center pt-8">
                 <Button 
@@ -98,21 +105,21 @@ const LandingPage = () => {
               Comment LUMA <span className="gradient-text">booste</span> la prospection terrain
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center space-y-4">
+              <div id="detection" className="text-center space-y-4">
                 <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
                   <Search className="w-10 h-10 text-accent" />
                 </div>
                 <h3 className="text-2xl font-bold">Détection automatique</h3>
                 <p className="text-white/70 text-lg">Nouvelles entreprises dans votre zone chaque semaine</p>
               </div>
-              <div className="text-center space-y-4">
+              <div id="tournees" className="text-center space-y-4">
                 <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
                   <Map className="w-10 h-10 text-accent" />
                 </div>
                 <h3 className="text-2xl font-bold">Itinéraires optimisés</h3>
                 <p className="text-white/70 text-lg">Générez en 30s des parcours parfaits</p>
               </div>
-              <div className="text-center space-y-4">
+              <div id="suivi" className="text-center space-y-4">
                 <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
                   <Smartphone className="w-10 h-10 text-accent" />
                 </div>
@@ -209,9 +216,9 @@ const LandingPage = () => {
         </section>
 
         {/* Pricing */}
-        <section className="py-20 px-6">
-            <div className="container mx-auto max-w-6xl">
-              <h2 className="text-5xl font-bold text-center mb-16">Choisissez votre formule</h2>
+        <section id="pricing" className="py-20 px-6">
+          <div className="container mx-auto max-w-6xl">
+            <h2 className="text-5xl font-bold text-center mb-16">Choisissez votre formule</h2>
               <div className="grid md:grid-cols-3 gap-8">
                 <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
                   <h3 className="text-2xl font-bold mb-4">Solo</h3>
