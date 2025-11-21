@@ -9,14 +9,35 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  
+  // Scroll animations
+  const heroAnimation = useScrollAnimation({ threshold: 0.2 });
+  const problemsAnimation = useScrollAnimation({ threshold: 0.2 });
+  const solutionAnimation = useScrollAnimation({ threshold: 0.2 });
+  const beforeAfterAnimation = useScrollAnimation({ threshold: 0.2 });
+  const featuresAnimation = useScrollAnimation({ threshold: 0.2 });
+  const pricingAnimation = useScrollAnimation({ threshold: 0.2 });
+  const faqAnimation = useScrollAnimation({ threshold: 0.2 });
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))' }}>
+      {/* Decorative elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Large glowing orb top right */}
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }}></div>
+        {/* Medium glowing orb bottom left */}
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-glow/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s' }}></div>
+        {/* Small floating elements */}
+        <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-accent rounded-full animate-pulse"></div>
+        <div className="absolute top-1/3 left-1/3 w-1 h-1 bg-cyan-glow rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-1/3 right-1/3 w-2 h-2 bg-accent rounded-full animate-pulse" style={{ animationDelay: '4s' }}></div>
+      </div>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-lg border-b border-white/10">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
@@ -44,9 +65,9 @@ const LandingPage = () => {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="py-20 px-6">
+        <section className="py-20 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
-            <div className="text-center space-y-8 animate-fade-in">
+            <div ref={heroAnimation.ref} className={`text-center space-y-8 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <h1 className="text-7xl font-bold leading-tight">
                 <span className="gradient-text">Détectez</span> les nouvelles entreprises, <span className="gradient-text">optimisez</span> vos tournées, <span className="gradient-text">suivez</span> vos relances
               </h1>
@@ -75,10 +96,11 @@ const LandingPage = () => {
         </section>
 
         {/* Problems Section */}
-        <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
+        <section className="py-20 px-6 bg-gradient-to-b from-transparent to-black-deep/30 relative z-10">
           <div className="container mx-auto max-w-6xl">
-            <h2 className="text-5xl font-bold text-center mb-16">Les défis du terrain</h2>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-5xl font-bold text-center mb-16">Les défis du terrain</h2>
+              <div className="grid md:grid-cols-3 gap-8">
               <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
                 <TrendingDown className="w-12 h-12 text-accent mb-4" />
                 <h3 className="text-2xl font-bold mb-3">Trajets improductifs</h3>
@@ -95,16 +117,18 @@ const LandingPage = () => {
                 <p className="text-white/70 text-lg">Vous arrivez après la concurrence</p>
               </Card>
             </div>
+            </div>
           </div>
         </section>
 
         {/* Solution Section */}
-        <section className="py-20 px-6">
+        <section className="py-20 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
-            <h2 className="text-5xl font-bold text-center mb-16">
-              Comment LUMA <span className="gradient-text">booste</span> la prospection terrain
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-5xl font-bold text-center mb-16">
+                Comment LUMA <span className="gradient-text">booste</span> la prospection terrain
+              </h2>
+              <div className="grid md:grid-cols-3 gap-8">
               <div id="detection" className="text-center space-y-4">
                 <div className="w-20 h-20 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-6">
                   <Search className="w-10 h-10 text-accent" />
@@ -126,15 +150,17 @@ const LandingPage = () => {
                 <h3 className="text-2xl font-bold">CRM de prospection</h3>
                 <p className="text-white/70 text-lg">Notes, relances, historique complet</p>
               </div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Before/After Section */}
-        <section className="py-20 px-6 bg-black-deep">
+        <section className="py-20 px-6 bg-black-deep/30 relative z-10">
           <div className="container mx-auto max-w-6xl">
-            <h2 className="text-5xl font-bold text-center mb-16">Votre journée avant/après LUMA</h2>
-            <div className="grid md:grid-cols-2 gap-12">
+            <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-5xl font-bold text-center mb-16">Votre journée avant/après LUMA</h2>
+              <div className="grid md:grid-cols-2 gap-12">
               <Card className="glass-card p-10 border-red-500/30">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
@@ -188,16 +214,18 @@ const LandingPage = () => {
                 </ul>
               </Card>
             </div>
+            </div>
           </div>
         </section>
 
 
         {/* Features Grid */}
-        <section className="py-20 px-6 bg-gradient-to-b from-black to-black-deep">
+        <section className="py-20 px-6 bg-gradient-to-b from-transparent to-black-deep/30 relative z-10">
           <div className="container mx-auto max-w-6xl">
-            <h2 className="text-5xl font-bold text-center mb-16">
-              Tout pour <span className="gradient-text">dominer</span> votre prospection
-            </h2>
+            <div ref={featuresAnimation.ref} className={`scroll-reveal ${featuresAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-5xl font-bold text-center mb-16">
+                Tout pour <span className="gradient-text">dominer</span> votre prospection
+              </h2>
             <div className="grid md:grid-cols-3 gap-6">
               {[
                 { icon: Search, title: "Détection auto", desc: "Nouvelles entreprises" },
@@ -212,13 +240,15 @@ const LandingPage = () => {
                 </Card>
               ))}
             </div>
+            </div>
           </div>
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-20 px-6">
+        <section id="pricing" className="py-20 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
-            <h2 className="text-5xl font-bold text-center mb-16">Choisissez votre formule</h2>
+            <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-5xl font-bold text-center mb-16">Choisissez votre formule</h2>
               <div className="grid md:grid-cols-3 gap-8">
                 <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
                   <h3 className="text-2xl font-bold mb-4">Solo</h3>
@@ -328,13 +358,15 @@ const LandingPage = () => {
                 </Card>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
 
         {/* FAQ */}
-        <section className="py-20 px-6">
+        <section className="py-20 px-6 relative z-10">
           <div className="container mx-auto max-w-4xl">
-            <h2 className="text-5xl font-bold text-center mb-16">Questions fréquentes</h2>
+            <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-5xl font-bold text-center mb-16">Questions fréquentes</h2>
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
@@ -386,11 +418,12 @@ const LandingPage = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+            </div>
           </div>
         </section>
 
         {/* Final CTA */}
-        <section className="py-32 px-6 bg-gradient-to-b from-black-deep to-black">
+        <section className="py-32 px-6 bg-gradient-to-b from-black-deep/30 to-transparent relative z-10">
           <div className="container mx-auto max-w-4xl text-center">
             <h2 className="text-6xl font-bold mb-6">
               Prêt à <span className="gradient-text">transformer</span> votre prospection terrain ?
