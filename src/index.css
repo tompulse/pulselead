@@ -7,6 +7,18 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+  
   :root {
     /* LUMA Brand Colors - Bleu foncé + Cyan électrique */
     --blue-deep: 220 60% 8%;
