@@ -31,10 +31,6 @@ const LandingPage = () => {
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }}></div>
         {/* Medium glowing orb bottom left */}
         <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-glow/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s' }}></div>
-        {/* Small floating elements */}
-        <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-accent rounded-full animate-pulse"></div>
-        <div className="absolute top-1/3 left-1/3 w-1 h-1 bg-cyan-glow rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-1/3 right-1/3 w-2 h-2 bg-accent rounded-full animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-lg border-b border-white/10">
@@ -95,7 +91,11 @@ const LandingPage = () => {
         </section>
 
         {/* Problems Section */}
-        <section className="py-20 px-6 bg-gradient-to-b from-transparent to-black-deep/30 relative z-10">
+        <section className="py-20 px-6 relative z-10" style={{ 
+          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
+          borderTop: '1px solid rgba(6, 182, 212, 0.1)',
+          borderBottom: '1px solid rgba(6, 182, 212, 0.1)'
+        }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-5xl font-bold text-center mb-16">Les défis du terrain</h2>
@@ -121,7 +121,9 @@ const LandingPage = () => {
         </section>
 
         {/* Solution Section */}
-        <section id="solution" className="py-20 px-6 relative z-10">
+        <section id="solution" className="py-20 px-6 relative z-10" style={{
+          background: 'radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%)'
+        }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
@@ -164,7 +166,10 @@ const LandingPage = () => {
         </section>
 
         {/* Before/After Section */}
-        <section id="avantages" className="py-20 px-6 bg-black-deep/30 relative z-10">
+        <section id="avantages" className="py-20 px-6 relative z-10" style={{
+          background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4)), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(6, 182, 212, 0.03) 50px, rgba(6, 182, 212, 0.03) 51px)',
+          backgroundSize: '100% 100%, 100px 100%'
+        }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">Transformez votre prospection terrain</h2>
@@ -230,43 +235,19 @@ const LandingPage = () => {
         </section>
 
 
-        {/* Features Grid */}
-        <section className="py-20 px-6 bg-gradient-to-b from-transparent to-black-deep/30 relative z-10">
-          <div className="container mx-auto max-w-6xl">
-            <div ref={featuresAnimation.ref} className={`scroll-reveal ${featuresAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
-                Fonctionnalités <span className="gradient-text">avancées</span>
-              </h2>
-              <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
-                Des outils puissants pour aller plus loin dans votre prospection
-              </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { icon: MapPin, title: "Cartographie", desc: "Visualisez vos prospects sur carte interactive" },
-                { icon: Database, title: "Enrichissement", desc: "Contacts et infos entreprises automatiques" },
-                { icon: BarChart3, title: "Statistiques", desc: "Suivez vos performances en temps réel" },
-                { icon: Users, title: "Multi-utilisateurs", desc: "Collaborez en équipe efficacement" },
-              ].map((feature, idx) => (
-                <Card key={idx} className="glass-card p-6 border-white/10 hover:border-accent/50 transition-all">
-                  <feature.icon className="w-10 h-10 text-accent mb-4" />
-                  <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                  <p className="text-white/60 text-sm">{feature.desc}</p>
-                </Card>
-              ))}
-            </div>
-            </div>
-          </div>
-        </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-20 px-6 relative z-10">
+        <section id="pricing" className="py-20 px-6 relative z-10" style={{
+          background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
+          borderTop: '2px solid rgba(6, 182, 212, 0.2)'
+        }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">Tarifs simples et transparents</h2>
               <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
                 Choisissez la formule adaptée à votre activité
               </p>
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                 <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
                   <h3 className="text-2xl font-bold mb-4">Solo</h3>
                   <div className="mb-6">
@@ -337,42 +318,6 @@ const LandingPage = () => {
                     Démarrer
                   </Button>
                 </Card>
-
-                <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
-                  <h3 className="text-2xl font-bold mb-4">Entreprise</h3>
-                  <div className="mb-6">
-                    <span className="text-3xl font-bold">Sur devis</span>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Utilisateurs illimités</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Gestion d'équipe complète</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Intégrations sur mesure</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Support premium 24/7</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Formation équipe</span>
-                    </li>
-                  </ul>
-                  <Button 
-                    variant="outline"
-                    className="w-full border-accent text-accent hover:bg-accent hover:text-black"
-                    onClick={() => navigate('/auth')}
-                  >
-                    Contactez-nous
-                  </Button>
-                </Card>
               </div>
             </div>
           </div>
@@ -380,7 +325,9 @@ const LandingPage = () => {
 
 
         {/* FAQ */}
-        <section className="py-20 px-6 relative z-10">
+        <section className="py-20 px-6 relative z-10" style={{
+          background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.06) 0%, transparent 60%)'
+        }}>
           <div className="container mx-auto max-w-4xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-5xl font-bold text-center mb-16">Questions fréquentes</h2>
@@ -407,16 +354,6 @@ const LandingPage = () => {
 
               <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  L'app mobile fonctionne-t-elle hors-ligne ?
-                </AccordionTrigger>
-                <AccordionContent className="text-white/70 text-lg">
-                  Oui, vous pouvez consulter vos tournées et ajouter des notes même sans connexion. 
-                  Les données se synchronisent automatiquement dès que vous retrouvez du réseau.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" className="border border-white/10 rounded-lg px-6">
-                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
                   Peut-on intégrer LUMA avec notre CRM ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
@@ -425,7 +362,7 @@ const LandingPage = () => {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-5" className="border border-white/10 rounded-lg px-6">
+              <AccordionItem value="item-4" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
                   Quel délai pour voir les premiers résultats ?
                 </AccordionTrigger>
