@@ -254,7 +254,7 @@ const LandingPage = () => {
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Notre offre unique</h2>
               <p className="text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">
-                Un seul contrat signé et l'outil est amorti
+                Choisissez la formule qui correspond à vos ambitions
               </p>
               
               {/* Pricing Cards */}
