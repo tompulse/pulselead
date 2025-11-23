@@ -268,19 +268,11 @@ const LandingPage = () => {
                     </li>
                     <li className="flex items-center gap-3">
                       <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">Tournées optimisées automatiques</span>
+                      <span className="text-white/80 text-lg">Création de tournées optimisées</span>
                     </li>
                     <li className="flex items-center gap-3">
                       <Check className="w-5 h-5 text-accent flex-shrink-0" />
                       <span className="text-white/80 text-lg">CRM complet + pipeline intégré</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">Historique des interactions</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">Notifications temps réel</span>
                     </li>
                     <li className="flex items-center gap-3">
                       <Check className="w-5 h-5 text-accent flex-shrink-0" />
