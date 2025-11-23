@@ -11,10 +11,10 @@ const ContactSection = () => {
         <div className="glass-card p-8 md:p-10 border-accent/30 shadow-2xl shadow-accent/20 transition-colors text-center">
           <div className="space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold gradient-text">
-              Contact avec le fondateur
+              Contactez-moi
             </h2>
             <p className="text-lg md:text-xl text-white/70 font-medium max-w-2xl mx-auto">
-              Contactez directement le fondateur pour programmer une démo personnalisée et discuter de vos besoins spécifiques
+              Contactez-moi pour programmer une démo personnalisée et discuter de vos besoins spécifiques
             </p>
             
             <Button 
