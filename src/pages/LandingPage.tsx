@@ -440,7 +440,7 @@ const LandingPage = () => {
                   className="bg-[#25D366] hover:bg-[#20BA5A] text-white text-xl px-12 py-6 gap-3"
                   asChild
                 >
-                  <a href="https://wa.me/33612345678" target="_blank" rel="noopener noreferrer">
+                  <a href="https://wa.me/33760227532" target="_blank" rel="noopener noreferrer">
                     <Phone className="w-5 h-5" />
                     Écrire sur WhatsApp
                   </a>
