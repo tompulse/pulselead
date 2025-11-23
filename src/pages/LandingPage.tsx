@@ -463,8 +463,7 @@ const LandingPage = () => {
                   Puis-je personnaliser mes critères de recherche ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
-                  Absolument ! PULSE vous permet de filtrer par secteur d'activité, zone géographique, taille d'entreprise 
-                  et de cibler précisément les mouvements qui vous intéressent (créations, déménagements, etc.).
+                  Absolument ! PULSE vous permet de filtrer par secteur d'activité, zone géographique, taille d'entreprise.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
