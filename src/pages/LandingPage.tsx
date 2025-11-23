@@ -306,7 +306,7 @@ const LandingPage = () => {
                     boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                   }}>
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
-                      COMMERCIAL SEUL
+                      COMMERCIAL
                     </div>
                     <div className="p-6 md:p-8 pt-10">
                       <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Performance</h3>
@@ -374,8 +374,8 @@ const LandingPage = () => {
                     border: '2px solid rgba(14, 165, 233, 0.3)',
                     boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                   }}>
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
-                      ÉQUIPES COMMERCIALES
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
+                      ENTREPRISE
                     </div>
                     <div className="p-6 md:p-8 pt-10">
                       <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Enterprise</h3>
