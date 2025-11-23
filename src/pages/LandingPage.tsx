@@ -64,10 +64,10 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-8 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <h1 className="text-6xl md:text-7xl font-bold leading-tight">
-                Multipliez vos <span className="gradient-text">opportunités</span> avec la détection automatique de prospects
+                Prospectez les <span className="gradient-text">créations d'entreprise</span> avant vos concurrents
               </h1>
               <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
-                Chaque semaine, LUMA identifie les nouvelles entreprises de votre secteur. Prospectez les premiers, vendez plus vite.
+                LUMA détecte automatiquement les nouvelles entreprises dans votre zone et génère vos tournées optimisées. Vous arrivez en premier.
               </p>
               <div className="flex gap-4 justify-center pt-8">
                 <Button 
@@ -247,75 +247,51 @@ const LandingPage = () => {
               <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
                 Un seul contrat signé et l'outil est amorti
               </p>
-              <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-                <Card className="glass-card p-8 border-white/10 hover:border-accent/30 transition-all">
-                  <h3 className="text-2xl font-bold mb-4">Essentiel</h3>
-                  <div className="mb-6">
-                    <span className="text-5xl font-bold">99€</span>
-                    <span className="text-white/60">/mois</span>
+              <div className="flex justify-center">
+                <Card className="glass-card p-10 border-accent/50 relative max-w-lg w-full hover:border-accent transition-all">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-2 rounded-full text-sm font-bold">
+                    OFFRE UNIQUE
                   </div>
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Pour 1 commercial terrain</span>
+                  <h3 className="text-3xl font-bold mb-4 text-center">Performance</h3>
+                  <div className="mb-8 text-center">
+                    <span className="text-6xl font-bold">149€</span>
+                    <span className="text-white/60 text-xl">/mois</span>
+                  </div>
+                  <ul className="space-y-4 mb-10">
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                      <span className="text-white/80 text-lg">Détection hebdomadaire des nouvelles entreprises</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Flux prospects automatique</span>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                      <span className="text-white/80 text-lg">Mapping automatique géolocalisé</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Tournées ultra-optimisées</span>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                      <span className="text-white/80 text-lg">Tournées optimisées automatiques</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Support email réactif</span>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                      <span className="text-white/80 text-lg">CRM complet + pipeline intégré</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                      <span className="text-white/80 text-lg">Historique des interactions</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                      <span className="text-white/80 text-lg">Notifications temps réel</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                      <span className="text-white/80 text-lg">Support WhatsApp</span>
                     </li>
                   </ul>
                   <Button 
-                    className="w-full bg-accent text-black hover:bg-accent/90"
+                    className="w-full bg-accent text-black hover:bg-accent/90 text-lg py-6"
                     onClick={() => navigate('/auth')}
                   >
-                    Démarrer
-                  </Button>
-                </Card>
-
-                <Card className="glass-card p-8 border-accent/50 relative">
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-black px-4 py-1 rounded-full text-sm font-bold">
-                    BEST SELLER
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4">Performance</h3>
-                  <div className="mb-6">
-                    <span className="text-5xl font-bold">149€</span>
-                    <span className="text-white/60">/mois</span>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Pour 1 commercial ambitieux</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Tout du plan Essentiel</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">CRM complet + pipeline</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Data enrichie sans limite</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-accent" />
-                      <span className="text-white/80">Support prioritaire 24/7</span>
-                    </li>
-                  </ul>
-                  <Button 
-                    className="w-full bg-accent text-black hover:bg-accent/90"
-                    onClick={() => navigate('/auth')}
-                  >
-                    Démarrer
+                    Démarrer maintenant
                   </Button>
                 </Card>
               </div>
