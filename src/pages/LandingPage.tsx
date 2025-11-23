@@ -395,21 +395,11 @@ const LandingPage = () => {
 
               <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  D'où proviennent les données ?
+                  Puis-je personnaliser mes critères de recherche ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
-                  Nos données proviennent de sources officielles et sont actualisées en temps réel. 
-                  Nous suivons tous les mouvements d'entreprises : créations, déménagements, cessions de fonds de commerce et nouvelles implantations partout en France.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" className="border border-white/10 rounded-lg px-6">
-                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  Quel délai pour voir les premiers résultats ?
-                </AccordionTrigger>
-                <AccordionContent className="text-white/70 text-lg">
-                  La plupart de nos clients constatent une amélioration dès la première semaine d'utilisation. 
-                  L'optimisation des tournées est immédiate, et les gains de productivité se mesurent rapidement.
+                  Absolument ! PULSE vous permet de filtrer par secteur d'activité, zone géographique, taille d'entreprise 
+                  et de cibler précisément les mouvements qui vous intéressent (créations, déménagements, etc.).
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
