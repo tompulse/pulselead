@@ -13,7 +13,7 @@ export const CaseStudies = () => {
             Cas clients : <span className="gradient-text">Résultats mesurables</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Découvrez comment nos utilisateurs ont transformé leur activité avec LUMA
+            Découvrez comment nos utilisateurs ont transformé leur activité avec PULSE
           </p>
         </div>
         
@@ -24,7 +24,7 @@ export const CaseStudies = () => {
             <div className="space-y-4">
               <h3 className="text-xl sm:text-2xl font-bold text-destructive flex items-center gap-2">
                 <AlertCircle className="w-5 h-5" />
-                Avant LUMA
+                Avant PULSE
               </h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -55,7 +55,7 @@ export const CaseStudies = () => {
             <div className="space-y-4">
               <h3 className="text-xl sm:text-2xl font-bold text-accent flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                Après LUMA (3 mois)
+                Après PULSE (3 mois)
               </h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
@@ -87,7 +87,7 @@ export const CaseStudies = () => {
           <div className="p-6 sm:p-8 border-l-4 border-accent bg-accent/5 rounded-r-lg">
             <Quote className="w-8 h-8 text-accent/30 mb-3" />
             <p className="text-base sm:text-lg text-foreground italic mb-4">
-              "LUMA m'a permis de doubler mes RDV et de gagner 2h par jour. Le ROI s'est fait sentir dès le 2ème mois. 
+              "PULSE m'a permis de doubler mes RDV et de gagner 2h par jour. Le ROI s'est fait sentir dès le 2ème mois. 
               J'ai surtout apprécié l'accès aux nouveaux sites, ça m'a permis de cibler des prospects avant mes concurrents."
             </p>
             <div className="flex items-center gap-3">

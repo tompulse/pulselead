@@ -60,7 +60,7 @@ export const ProblemSolutionMapping = () => {
             <span className="text-destructive">Vos défis</span> → <span className="text-accent">Nos solutions</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            LUMA transforme chaque obstacle terrain en opportunité de croissance
+            PULSE transforme chaque obstacle terrain en opportunité de croissance
           </p>
         </div>
         

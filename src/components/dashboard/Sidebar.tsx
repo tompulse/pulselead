@@ -339,8 +339,8 @@ export const Sidebar = ({
           }`}
           onClick={() => {
             // Supprimer l'onboarding et forcer le retour à l'écran de sélection
-            localStorage.removeItem('luma_onboarding_complete');
-            localStorage.removeItem('luma_initial_filters');
+            localStorage.removeItem('pulse_onboarding_complete');
+            localStorage.removeItem('pulse_initial_filters');
             window.location.reload();
           }}
         >

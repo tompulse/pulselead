@@ -81,7 +81,7 @@ const Auth = () => {
 
         toast({
           title: "Connexion réussie",
-          description: "Bienvenue sur LUMA !",
+          description: "Bienvenue sur PULSE !",
         });
       } else {
         const validatedData = validation.data as { email: string; password: string; phone: string };
@@ -122,7 +122,7 @@ const Auth = () => {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-3xl font-bold gradient-text mb-4">LUMA</h1>
+          <h1 className="text-3xl font-bold gradient-text mb-4">PULSE</h1>
           <p className="text-muted-foreground text-base">
             {isLogin ? "Connectez-vous à votre compte" : "Créez votre compte"}
           </p>

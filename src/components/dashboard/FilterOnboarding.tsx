@@ -155,8 +155,8 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
     };
     
     // Sauvegarder dans localStorage
-    localStorage.setItem('luma_onboarding_complete', 'true');
-    localStorage.setItem('luma_initial_filters', JSON.stringify(filters));
+    localStorage.setItem('pulse_onboarding_complete', 'true');
+    localStorage.setItem('pulse_initial_filters', JSON.stringify(filters));
     
     onComplete(filters);
   };
@@ -173,7 +173,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
           <div className="absolute inset-0 bg-grid-pattern opacity-10" />
           <div className="relative flex items-center gap-2 md:gap-3 mb-2">
             <div>
-              <h1 className="text-lg md:text-2xl font-bold gradient-text">Bienvenue sur LUMA</h1>
+              <h1 className="text-lg md:text-2xl font-bold gradient-text">Bienvenue sur PULSE</h1>
               <p className="text-muted-foreground text-xs md:text-sm font-medium">
                 Configurons votre expérience en quelques étapes
               </p>

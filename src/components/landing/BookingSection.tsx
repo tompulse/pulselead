@@ -101,7 +101,7 @@ export function BookingSection() {
             Réservez votre <span className="gradient-text">démo personnalisée</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
-            Découvrez comment LUMA peut transformer votre activité
+            Découvrez comment PULSE peut transformer votre activité
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export function BookingSection() {
                   </div>
                   <div>
                     <div className="text-[10px] text-cyan-electric/70 font-medium">Avec</div>
-                    <div className="text-sm font-bold text-foreground">Le Fondateur de LUMA</div>
+                    <div className="text-sm font-bold text-foreground">Le Fondateur de PULSE</div>
                   </div>
                 </div>
 

@@ -6,7 +6,7 @@ export const ROICalculator = () => {
   const [visitsPerDay, setVisitsPerDay] = useState(8);
   const [avgCommission, setAvgCommission] = useState(200);
   
-  // Calculs basés sur les stats moyennes LUMA
+  // Calculs basés sur les stats moyennes PULSE
   const timeGainedPerWeek = 6; // heures économisées
   const extraVisitsPerWeek = 2.5; // visites supplémentaires possibles
   const conversionRate = 0.15; // 15% de conversion moyenne
@@ -28,7 +28,7 @@ export const ROICalculator = () => {
             Calculez votre <span className="gradient-text">retour sur investissement</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Découvrez combien LUMA peut vous rapporter chaque mois
+            Découvrez combien PULSE peut vous rapporter chaque mois
           </p>
         </div>
         

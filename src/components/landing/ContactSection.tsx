@@ -3,7 +3,7 @@ import { MessageSquare } from "lucide-react";
 import { trackEvent } from "@/utils/analytics";
 
 const ContactSection = () => {
-  const waUrl = `https://wa.me/33760227532?text=${encodeURIComponent("Bonjour, je souhaite en savoir plus sur LUMA.")}`;
+  const waUrl = `https://wa.me/33760227532?text=${encodeURIComponent("Bonjour, je souhaite en savoir plus sur PULSE.")}`;
 
   return (
     <section className="relative py-12 px-4 sm:px-6 lg:px-8">

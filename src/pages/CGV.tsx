@@ -23,7 +23,7 @@ const CGV = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">1. Objet</h2>
             <p>
-              Les présentes Conditions Générales de Vente (CGV) régissent la vente et la fourniture des services LUMA, 
+              Les présentes Conditions Générales de Vente (CGV) régissent la vente et la fourniture des services PULSE, 
               plateforme d'optimisation de tournées commerciales et de gestion de portefeuille client.
             </p>
           </section>
@@ -39,7 +39,7 @@ const CGV = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">3. Services proposés</h2>
-            <p>LUMA propose une plateforme SaaS (Software as a Service) comprenant :</p>
+            <p>PULSE propose une plateforme SaaS (Software as a Service) comprenant :</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               <li>Optimisation intelligente des tournées commerciales</li>
               <li>Suivi et gestion des interactions clients</li>

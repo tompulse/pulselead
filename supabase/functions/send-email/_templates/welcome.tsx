@@ -18,23 +18,23 @@ interface WelcomeEmailProps {
 export const WelcomeEmail = ({ email }: WelcomeEmailProps) => (
   <Html>
     <Head />
-    <Preview>Bienvenue sur LUMA - Éclaire les leviers de ta croissance</Preview>
+    <Preview>Bienvenue sur PULSE - Éclaire les leviers de ta croissance</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>🎉 Bienvenue sur LUMA !</Heading>
+        <Heading style={h1}>🎉 Bienvenue sur PULSE !</Heading>
         
         <Text style={text}>
           Bonjour,
         </Text>
         
         <Text style={text}>
-          Merci de rejoindre LUMA, ta plateforme pour visualiser ton marché, 
+          Merci de rejoindre PULSE, ta plateforme pour visualiser ton marché, 
           comprendre tes prospects et passer à l'action.
         </Text>
 
         <Section style={section}>
           <Text style={text}>
-            <strong>Avec LUMA, tu peux :</strong>
+            <strong>Avec PULSE, tu peux :</strong>
           </Text>
           <Text style={listItem}>✨ Visualiser ton territoire commercial sur une carte interactive</Text>
           <Text style={listItem}>🎯 Prioriser tes prospects avec l'IA</Text>
@@ -56,7 +56,7 @@ export const WelcomeEmail = ({ email }: WelcomeEmailProps) => (
         <Text style={footer}>
           À très bientôt,
           <br />
-          L'équipe LUMA
+          L'équipe PULSE
         </Text>
 
         <Text style={footerSmall}>

@@ -20,7 +20,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <img src={lumaLogo} alt="LUMA" className="h-14 w-auto drop-shadow-[0_0_8px_rgba(0,255,240,0.5)]" />
+            <img src={lumaLogo} alt="PULSE" className="h-14 w-auto drop-shadow-[0_0_8px_rgba(0,255,240,0.5)]" />
           </div>
 
           {/* Navigation Desktop */}
