@@ -365,67 +365,72 @@ const LandingPage = () => {
                 </div>
 
                 {/* Card 2: Équipes Commerciales */}
-                <Card className="relative overflow-visible" style={{
-                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                  border: '2px solid rgba(14, 165, 233, 0.3)',
-                  boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                }}>
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
-                    ÉQUIPES COMMERCIALES
-                  </div>
-                  <div className="p-6 md:p-8 pt-10">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Enterprise</h3>
-                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      border: '1px solid rgba(14, 165, 233, 0.2)'
-                    }}>
-                      <div className="flex items-baseline justify-center gap-2">
-                        <span className="text-4xl md:text-5xl font-bold gradient-text">
-                          Sur devis
-                        </span>
-                      </div>
+                <div className="space-y-4">
+                  {/* Spacer to align with the first card that has the plan toggle */}
+                  <div className="h-[52px]"></div>
+
+                  <Card className="relative overflow-visible" style={{
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                    border: '2px solid rgba(14, 165, 233, 0.3)',
+                    boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
+                      ÉQUIPES COMMERCIALES
                     </div>
-                    <ul className="space-y-2.5 mb-6">
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-glow" />
+                    <div className="p-6 md:p-8 pt-10">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Enterprise</h3>
+                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(14, 165, 233, 0.2)'
+                      }}>
+                        <div className="flex items-baseline justify-center gap-2">
+                          <span className="text-5xl md:text-6xl font-bold gradient-text">
+                            Sur devis
+                          </span>
                         </div>
-                        <span className="text-white text-sm leading-relaxed">Toutes les fonctionnalités Performance</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Gestion multi-utilisateurs</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Tableau de bord manager</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Support prioritaire</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Formation sur mesure</span>
-                      </li>
-                    </ul>
-                    <Button 
-                      className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
-                      onClick={() => window.location.href = '#contact'}
-                    >
-                      Nous contacter
-                      <ArrowRight className="ml-2" />
-                    </Button>
-                  </div>
-                </Card>
+                      </div>
+                      <ul className="space-y-2.5 mb-6">
+                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-sm leading-relaxed">Toutes les fonctionnalités Performance</span>
+                        </li>
+                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-sm leading-relaxed">Gestion multi-utilisateurs</span>
+                        </li>
+                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-sm leading-relaxed">Tableau de bord manager</span>
+                        </li>
+                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-sm leading-relaxed">Support prioritaire</span>
+                        </li>
+                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-sm leading-relaxed">Formation sur mesure</span>
+                        </li>
+                      </ul>
+                      <Button 
+                        className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
+                        onClick={() => window.location.href = '#contact'}
+                      >
+                        Nous contacter
+                        <ArrowRight className="ml-2" />
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
               </div>
             </div>
           </div>
