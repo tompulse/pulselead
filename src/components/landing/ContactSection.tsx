@@ -25,7 +25,7 @@ const ContactSection = () => {
                 className="border-2 border-accent text-accent hover:bg-accent/10 text-lg font-bold px-10 py-6 hover:scale-105 transition-transform"
               >
                 <a
-                  href="https://app.iclosed.com"
+                  href="https://calendly.com/tomiolovpro/30min"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent('demo_click', { source: 'contact_section' })}
