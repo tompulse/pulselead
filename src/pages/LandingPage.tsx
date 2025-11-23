@@ -383,18 +383,17 @@ const LandingPage = () => {
                   <Phone className="w-10 h-10 text-accent" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold mb-2">Support direct</h3>
-                  <p className="text-white/70 text-lg mb-6">
-                    Réponse garantie sous 2h en semaine
-                  </p>
+                  <h3 className="text-2xl font-bold mb-6">Contact avec le fondateur</h3>
                 </div>
                 <Button 
                   size="lg"
                   className="bg-[#25D366] hover:bg-[#20BA5A] text-white text-xl px-12 py-6 gap-3"
-                  onClick={() => window.open('https://wa.me/33123456789', '_blank')}
+                  asChild
                 >
-                  <Phone className="w-5 h-5" />
-                  Écrire sur WhatsApp
+                  <a href="https://wa.me/33612345678" target="_blank" rel="noopener noreferrer">
+                    <Phone className="w-5 h-5" />
+                    Écrire sur WhatsApp
+                  </a>
                 </Button>
               </div>
             </Card>
