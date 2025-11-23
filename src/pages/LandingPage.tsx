@@ -10,6 +10,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import ContactSection from "@/components/landing/ContactSection";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -407,38 +408,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Contact Section */}
-        <section id="contact" className="py-20 px-6 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(0, 0, 0, 0.4) 100%)',
-          borderTop: '1px solid rgba(6, 182, 212, 0.2)'
-        }}>
-          <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Une question ? Parlons-en !</h2>
-            <p className="text-xl text-white/70 mb-12 max-w-2xl mx-auto">
-              Contactez directement le fondateur sur WhatsApp pour discuter de vos besoins
-            </p>
-            <Card className="glass-card p-8 md:p-12 border-accent/30 max-w-2xl mx-auto">
-              <div className="flex flex-col items-center gap-6">
-                <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center">
-                  <Phone className="w-10 h-10 text-accent" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold mb-6">Contact avec le fondateur</h3>
-                </div>
-                <Button 
-                  size="lg"
-                  className="bg-[#25D366] hover:bg-[#20BA5A] text-white text-xl px-12 py-6 gap-3"
-                  asChild
-                >
-                  <a href="https://wa.me/33760227532" target="_blank" rel="noopener noreferrer">
-                    <Phone className="w-5 h-5" />
-                    Écrire sur WhatsApp
-                  </a>
-                </Button>
-              </div>
-            </Card>
-          </div>
-        </section>
+        <ContactSection />
 
         {/* Final CTA */}
         <section className="py-32 px-6 bg-gradient-to-b from-black-deep/30 to-transparent relative z-10">
@@ -447,7 +417,7 @@ const LandingPage = () => {
               Prêt à <span className="gradient-text">transformer</span> votre prospection terrain ?
             </h2>
             <p className="text-2xl text-white/70 mb-12">
-              Rejoignez +200 équipes qui visitent + de prospects en moins de temps
+              Soyez le premier à prospecter vos futurs clients
             </p>
             <div className="flex gap-6 justify-center">
               <Button 
