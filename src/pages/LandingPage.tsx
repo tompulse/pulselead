@@ -99,35 +99,6 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Problems Section */}
-        <section className="py-12 px-6 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
-          borderTop: '1px solid rgba(6, 182, 212, 0.1)',
-          borderBottom: '1px solid rgba(6, 182, 212, 0.1)'
-        }}>
-          <div className="container mx-auto max-w-6xl">
-            <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-8">Ce qui tue votre chiffre d'affaires</h2>
-              <div className="grid md:grid-cols-3 gap-8">
-              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                <TrendingDown className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Temps gaspillé</h3>
-                <p className="text-white/70 text-lg">40% de votre journée perdue sur la route au lieu de vendre</p>
-              </Card>
-              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                <FileText className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Chaos organisationnel</h3>
-                <p className="text-white/70 text-lg">Impossible de retrouver l'info au bon moment</p>
-              </Card>
-              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                <AlertCircle className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Concurrence imbattable</h3>
-                <p className="text-white/70 text-lg">Ils signent avant même que vous sachiez que le prospect existe</p>
-              </Card>
-            </div>
-            </div>
-          </div>
-        </section>
 
         {/* Solution Section */}
         <section id="solution" className="py-12 px-6 relative z-10" style={{
