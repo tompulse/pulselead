@@ -208,7 +208,7 @@ const LandingPage = () => {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Organisation catastrophique = CA en berne</span>
+                    <span>Organisation catastrophique = CA qui stagne</span>
                   </li>
                 </ul>
               </Card>
