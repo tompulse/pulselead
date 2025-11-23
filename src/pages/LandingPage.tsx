@@ -45,6 +45,7 @@ const LandingPage = () => {
               <a href="#solution" className="text-white/70 hover:text-accent transition-colors">Fonctionnalités</a>
               <a href="#avantages" className="text-white/70 hover:text-accent transition-colors">Avantages</a>
               <a href="#pricing" className="text-white/70 hover:text-accent transition-colors">Tarifs</a>
+              <a href="#contact" className="text-white/70 hover:text-accent transition-colors">Contact</a>
             </nav>
 
             <Button 
@@ -248,43 +249,65 @@ const LandingPage = () => {
                 Un seul contrat signé et l'outil est amorti
               </p>
               <div className="flex justify-center">
-                <Card className="glass-card p-10 border-accent/50 relative max-w-lg w-full hover:border-accent transition-all">
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-2 rounded-full text-sm font-bold">
+                <Card className="relative max-w-xl w-full overflow-hidden" style={{
+                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%)',
+                  border: '2px solid rgba(6, 182, 212, 0.3)',
+                  boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                }}>
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-8 py-2.5 rounded-full text-sm font-bold tracking-wide shadow-lg">
                     OFFRE UNIQUE
                   </div>
-                  <h3 className="text-3xl font-bold mb-4 text-center">Performance</h3>
-                  <div className="mb-8 text-center">
-                    <span className="text-6xl font-bold">149€</span>
-                    <span className="text-white/60 text-xl">/mois</span>
+                  <div className="p-10 md:p-12">
+                    <h3 className="text-4xl md:text-5xl font-bold mb-6 text-center gradient-text">Performance</h3>
+                    <div className="mb-10 text-center py-6 px-8 rounded-2xl" style={{
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(6, 182, 212, 0.2)'
+                    }}>
+                      <div className="flex items-baseline justify-center gap-2">
+                        <span className="text-7xl md:text-8xl font-bold gradient-text">149€</span>
+                        <span className="text-2xl text-white/60">/mois</span>
+                      </div>
+                    </div>
+                    <ul className="space-y-5 mb-12">
+                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
+                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-4 h-4 text-accent" />
+                        </div>
+                        <span className="text-white text-lg leading-relaxed">Détection hebdomadaire des nouvelles entreprises</span>
+                      </li>
+                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
+                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-4 h-4 text-accent" />
+                        </div>
+                        <span className="text-white text-lg leading-relaxed">Mapping automatique géolocalisé</span>
+                      </li>
+                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
+                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-4 h-4 text-accent" />
+                        </div>
+                        <span className="text-white text-lg leading-relaxed">Création de tournées optimisées</span>
+                      </li>
+                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
+                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-4 h-4 text-accent" />
+                        </div>
+                        <span className="text-white text-lg leading-relaxed">CRM complet + pipeline intégré</span>
+                      </li>
+                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
+                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-4 h-4 text-accent" />
+                        </div>
+                        <span className="text-white text-lg leading-relaxed">Support WhatsApp</span>
+                      </li>
+                    </ul>
+                    <Button 
+                      className="w-full bg-accent text-black hover:bg-accent/90 text-xl py-7 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
+                      onClick={() => navigate('/auth')}
+                    >
+                      Démarrer maintenant
+                      <ArrowRight className="ml-2" />
+                    </Button>
                   </div>
-                  <ul className="space-y-4 mb-10">
-                    <li className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">Détection hebdomadaire des nouvelles entreprises</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">Mapping automatique géolocalisé</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">Création de tournées optimisées</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">CRM complet + pipeline intégré</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">Support WhatsApp</span>
-                    </li>
-                  </ul>
-                  <Button 
-                    className="w-full bg-accent text-black hover:bg-accent/90 text-lg py-6"
-                    onClick={() => navigate('/auth')}
-                  >
-                    Démarrer maintenant
-                  </Button>
                 </Card>
               </div>
             </div>
@@ -341,6 +364,40 @@ const LandingPage = () => {
               </AccordionItem>
             </Accordion>
             </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="py-20 px-6 relative z-10" style={{
+          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(0, 0, 0, 0.4) 100%)',
+          borderTop: '1px solid rgba(6, 182, 212, 0.2)'
+        }}>
+          <div className="container mx-auto max-w-4xl text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Une question ? Parlons-en !</h2>
+            <p className="text-xl text-white/70 mb-12 max-w-2xl mx-auto">
+              Contactez directement le fondateur sur WhatsApp pour discuter de vos besoins
+            </p>
+            <Card className="glass-card p-8 md:p-12 border-accent/30 max-w-2xl mx-auto">
+              <div className="flex flex-col items-center gap-6">
+                <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center">
+                  <Phone className="w-10 h-10 text-accent" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold mb-2">Support direct</h3>
+                  <p className="text-white/70 text-lg mb-6">
+                    Réponse garantie sous 2h en semaine
+                  </p>
+                </div>
+                <Button 
+                  size="lg"
+                  className="bg-[#25D366] hover:bg-[#20BA5A] text-white text-xl px-12 py-6 gap-3"
+                  onClick={() => window.open('https://wa.me/33123456789', '_blank')}
+                >
+                  <Phone className="w-5 h-5" />
+                  Écrire sur WhatsApp
+                </Button>
+              </div>
+            </Card>
           </div>
         </section>
 
