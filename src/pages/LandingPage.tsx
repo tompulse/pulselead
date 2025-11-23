@@ -378,7 +378,7 @@ const LandingPage = () => {
                       ENTREPRISE
                     </div>
                     <div className="p-6 md:p-8 pt-10">
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Enterprise</h3>
+                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Équipes commerciales</h3>
                       <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                         background: 'rgba(0, 0, 0, 0.3)',
                         border: '1px solid rgba(14, 165, 233, 0.2)'
