@@ -260,7 +260,7 @@ const LandingPage = () => {
                   <ul className="space-y-4 mb-10">
                     <li className="flex items-center gap-3">
                       <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-white/80 text-lg">Détection hebdomadaire des nouvelles entreprises</span>
+                      <span className="text-white/80 text-lg">Nouvelles entreprises chaque semaine</span>
                     </li>
                     <li className="flex items-center gap-3">
                       <Check className="w-5 h-5 text-accent flex-shrink-0" />
