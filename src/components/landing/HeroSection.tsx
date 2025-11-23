@@ -38,7 +38,7 @@ export const HeroSection = () => {
         
         {/* Subheadline - Focus sur les bénéfices avec chiffre clé */}
         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed px-4 font-medium">
-          Accédez aux nouvelles entreprises de votre zone avant vos concurrents, optimisez chaque kilomètre, générez plus de rendez-vous.
+          Détectez les mouvements d'entreprises de votre zone en temps réel, optimisez vos tournées, gagnez du temps sur le terrain.
         </p>
         
         {/* Badge résultat */}
