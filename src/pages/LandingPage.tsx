@@ -51,7 +51,7 @@ const LandingPage = () => {
             <nav className="hidden md:flex items-center gap-8">
               <a href="#solution" className="text-white/70 hover:text-accent transition-colors">Fonctionnalités</a>
               <a href="#avantages" className="text-white/70 hover:text-accent transition-colors">Avantages</a>
-              <a href="#pricing" className="text-white/70 hover:text-accent transition-colors">Tarifs</a>
+              <a href="#pricing" className="text-white/70 hover:text-accent transition-colors">Tarif</a>
               <a href="#contact" className="text-white/70 hover:text-accent transition-colors">Contact</a>
             </nav>
 
@@ -245,26 +245,26 @@ const LandingPage = () => {
 
 
         {/* Pricing */}
-        <section id="pricing" className="py-20 px-6 relative z-10" style={{
+        <section id="pricing" className="py-16 px-6 relative z-10" style={{
           background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
           borderTop: '2px solid rgba(6, 182, 212, 0.2)'
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">Investissement rentable dès le premier mois</h2>
-              <p className="text-xl text-white/60 text-center mb-12 max-w-2xl mx-auto">
+              <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Investissement rentable dès le premier mois</h2>
+              <p className="text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">
                 Un seul contrat signé et l'outil est amorti
               </p>
               
               {/* Plan Toggle */}
-              <div className="flex justify-center mb-12">
+              <div className="flex justify-center mb-8">
                 <div className="inline-flex rounded-lg p-1" style={{
                   background: 'rgba(0, 0, 0, 0.4)',
                   border: '1px solid rgba(6, 182, 212, 0.2)'
                 }}>
                   <button
                     onClick={() => setSelectedPlan('monthly')}
-                    className={`px-6 py-3 rounded-md text-base font-semibold transition-all ${
+                    className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${
                       selectedPlan === 'monthly'
                         ? 'bg-accent text-black shadow-lg'
                         : 'text-white/70 hover:text-white'
@@ -274,7 +274,7 @@ const LandingPage = () => {
                   </button>
                   <button
                     onClick={() => setSelectedPlan('quarterly')}
-                    className={`px-6 py-3 rounded-md text-base font-semibold transition-all ${
+                    className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${
                       selectedPlan === 'quarterly'
                         ? 'bg-accent text-black shadow-lg'
                         : 'text-white/70 hover:text-white'
@@ -284,7 +284,7 @@ const LandingPage = () => {
                   </button>
                   <button
                     onClick={() => setSelectedPlan('yearly')}
-                    className={`px-6 py-3 rounded-md text-base font-semibold transition-all ${
+                    className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${
                       selectedPlan === 'yearly'
                         ? 'bg-accent text-black shadow-lg'
                         : 'text-white/70 hover:text-white'
@@ -302,56 +302,56 @@ const LandingPage = () => {
                   border: '2px solid rgba(6, 182, 212, 0.3)',
                   boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-2 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
                     OFFRE UNIQUE
                   </div>
-                  <div className="p-8 md:p-10 pt-12">
-                    <h3 className="text-3xl md:text-4xl font-bold mb-4 text-center gradient-text">Performance</h3>
-                    <div className="mb-8 text-center py-4 px-6 rounded-xl" style={{
+                  <div className="p-6 md:p-8 pt-10">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Performance</h3>
+                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                       background: 'rgba(0, 0, 0, 0.3)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
                     }}>
                       <div className="flex items-baseline justify-center gap-2">
-                        <span className="text-6xl md:text-7xl font-bold gradient-text">
+                        <span className="text-5xl md:text-6xl font-bold gradient-text">
                           {pricingPlans[selectedPlan].price}€
                         </span>
-                        <span className="text-xl text-white/60">/mois</span>
+                        <span className="text-lg text-white/60">/mois</span>
                       </div>
                     </div>
-                    <ul className="space-y-3 mb-8">
-                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3.5 h-3.5 text-accent" />
+                    <ul className="space-y-2.5 mb-6">
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-base leading-relaxed">Nouvelles entreprises chaque semaine</span>
+                        <span className="text-white text-sm leading-relaxed">Nouvelles entreprises chaque semaine</span>
                       </li>
-                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3.5 h-3.5 text-accent" />
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-base leading-relaxed">Mapping automatique géolocalisé</span>
+                        <span className="text-white text-sm leading-relaxed">Mapping automatique géolocalisé</span>
                       </li>
-                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3.5 h-3.5 text-accent" />
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-base leading-relaxed">Création de tournées optimisées</span>
+                        <span className="text-white text-sm leading-relaxed">Création de tournées optimisées</span>
                       </li>
-                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3.5 h-3.5 text-accent" />
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-base leading-relaxed">CRM complet + pipeline intégré</span>
+                        <span className="text-white text-sm leading-relaxed">CRM complet + pipeline intégré</span>
                       </li>
-                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3.5 h-3.5 text-accent" />
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-base leading-relaxed">Support WhatsApp</span>
+                        <span className="text-white text-sm leading-relaxed">Support WhatsApp</span>
                       </li>
                     </ul>
                     <Button 
-                      className="w-full bg-accent text-black hover:bg-accent/90 text-lg py-6 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
+                      className="w-full bg-accent text-black hover:bg-accent/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
                       onClick={() => navigate('/auth')}
                     >
                       Démarrer maintenant
