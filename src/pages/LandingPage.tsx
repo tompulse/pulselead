@@ -251,7 +251,7 @@ const LandingPage = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Investissement rentable dès le premier mois</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Notre offre unique</h2>
               <p className="text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">
                 Un seul contrat signé et l'outil est amorti
               </p>
@@ -303,7 +303,7 @@ const LandingPage = () => {
                   boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
-                    OFFRE UNIQUE
+                    TOUT EN UN
                   </div>
                   <div className="p-6 md:p-8 pt-10">
                     <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Performance</h3>
