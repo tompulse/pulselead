@@ -17,22 +17,41 @@ const ContactSection = () => {
               Contactez-moi pour programmer une démo personnalisée et discuter de vos besoins spécifiques
             </p>
             
-            <Button 
-              asChild
-              size="lg"
-              className="bg-[#25D366] hover:bg-[#20BA5A] text-white shadow-2xl px-10 py-6 text-lg font-bold hover:scale-105 transition-transform"
-            >
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackEvent('whatsapp_click', { source: 'contact_section' })}
-                aria-label="Écrire sur WhatsApp"
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-2 border-accent text-accent hover:bg-accent/10 text-lg font-bold px-10 py-6 hover:scale-105 transition-transform"
               >
-                <MessageSquare className="w-5 h-5 mr-2" />
-                Écrire sur WhatsApp
-              </a>
-            </Button>
+                <a
+                  href="https://app.iclosed.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent('demo_click', { source: 'contact_section' })}
+                  aria-label="Réserver une démo"
+                >
+                  Réserver une démo
+                </a>
+              </Button>
+
+              <Button 
+                asChild
+                size="lg"
+                className="bg-[#25D366] hover:bg-[#20BA5A] text-white shadow-2xl px-10 py-6 text-lg font-bold hover:scale-105 transition-transform"
+              >
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent('whatsapp_click', { source: 'contact_section' })}
+                  aria-label="Écrire sur WhatsApp"
+                >
+                  <MessageSquare className="w-5 h-5 mr-2" />
+                  Écrire sur WhatsApp
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

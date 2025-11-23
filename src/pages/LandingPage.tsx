@@ -480,35 +480,6 @@ const LandingPage = () => {
 
         <ContactSection />
 
-        {/* Final CTA */}
-        <section className="py-16 px-6 bg-gradient-to-b from-black-deep/30 to-transparent relative z-10">
-          <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="text-6xl font-bold mb-6">
-              Prêt à <span className="gradient-text">transformer</span> votre prospection terrain ?
-            </h2>
-            <p className="text-2xl text-white/70 mb-8">
-              Soyez le premier à prospecter vos futurs clients
-            </p>
-            <div className="flex gap-6 justify-center">
-              <Button 
-                size="lg"
-                onClick={() => navigate('/auth')}
-                className="btn-hero text-xl px-12 py-6"
-              >
-                Démarrer gratuit 14j
-                <ArrowRight className="ml-2" />
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="border-2 border-accent text-accent hover:bg-accent/10 text-xl px-12 py-6"
-              >
-                Réserver une démo
-              </Button>
-            </div>
-          </div>
-        </section>
-
         {/* Footer */}
         <footer className="border-t border-white/10 py-8 px-6">
           <div className="container mx-auto max-w-6xl">
