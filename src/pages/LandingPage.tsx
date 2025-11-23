@@ -249,59 +249,59 @@ const LandingPage = () => {
                 Un seul contrat signé et l'outil est amorti
               </p>
               <div className="flex justify-center">
-                <Card className="relative max-w-xl w-full overflow-hidden" style={{
+                <Card className="relative max-w-lg w-full overflow-visible" style={{
                   background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%)',
                   border: '2px solid rgba(6, 182, 212, 0.3)',
                   boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-8 py-2.5 rounded-full text-sm font-bold tracking-wide shadow-lg">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-2 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
                     OFFRE UNIQUE
                   </div>
-                  <div className="p-10 md:p-12">
-                    <h3 className="text-4xl md:text-5xl font-bold mb-6 text-center gradient-text">Performance</h3>
-                    <div className="mb-10 text-center py-6 px-8 rounded-2xl" style={{
+                  <div className="p-8 md:p-10 pt-12">
+                    <h3 className="text-3xl md:text-4xl font-bold mb-4 text-center gradient-text">Performance</h3>
+                    <div className="mb-8 text-center py-4 px-6 rounded-xl" style={{
                       background: 'rgba(0, 0, 0, 0.3)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
                     }}>
                       <div className="flex items-baseline justify-center gap-2">
-                        <span className="text-7xl md:text-8xl font-bold gradient-text">149€</span>
-                        <span className="text-2xl text-white/60">/mois</span>
+                        <span className="text-6xl md:text-7xl font-bold gradient-text">149€</span>
+                        <span className="text-xl text-white/60">/mois</span>
                       </div>
                     </div>
-                    <ul className="space-y-5 mb-12">
-                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
-                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-4 h-4 text-accent" />
+                    <ul className="space-y-3 mb-8">
+                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3.5 h-3.5 text-accent" />
                         </div>
-                        <span className="text-white text-lg leading-relaxed">Détection hebdomadaire des nouvelles entreprises</span>
+                        <span className="text-white text-base leading-relaxed">Nouvelles entreprises chaque semaine</span>
                       </li>
-                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
-                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-4 h-4 text-accent" />
+                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3.5 h-3.5 text-accent" />
                         </div>
-                        <span className="text-white text-lg leading-relaxed">Mapping automatique géolocalisé</span>
+                        <span className="text-white text-base leading-relaxed">Mapping automatique géolocalisé</span>
                       </li>
-                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
-                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-4 h-4 text-accent" />
+                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3.5 h-3.5 text-accent" />
                         </div>
-                        <span className="text-white text-lg leading-relaxed">Création de tournées optimisées</span>
+                        <span className="text-white text-base leading-relaxed">Création de tournées optimisées</span>
                       </li>
-                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
-                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-4 h-4 text-accent" />
+                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3.5 h-3.5 text-accent" />
                         </div>
-                        <span className="text-white text-lg leading-relaxed">CRM complet + pipeline intégré</span>
+                        <span className="text-white text-base leading-relaxed">CRM complet + pipeline intégré</span>
                       </li>
-                      <li className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/5">
-                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-4 h-4 text-accent" />
+                      <li className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3.5 h-3.5 text-accent" />
                         </div>
-                        <span className="text-white text-lg leading-relaxed">Support WhatsApp</span>
+                        <span className="text-white text-base leading-relaxed">Support WhatsApp</span>
                       </li>
                     </ul>
                     <Button 
-                      className="w-full bg-accent text-black hover:bg-accent/90 text-xl py-7 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
+                      className="w-full bg-accent text-black hover:bg-accent/90 text-lg py-6 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
                       onClick={() => navigate('/auth')}
                     >
                       Démarrer maintenant
