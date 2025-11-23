@@ -75,7 +75,7 @@ const LandingPage = () => {
                 Prospectez les <span className="gradient-text">créations d'entreprise</span> avant vos concurrents
               </h1>
               <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
-                PULSE détecte automatiquement les nouvelles entreprises dans votre zone et génère vos tournées optimisées. Vous arrivez en premier.
+                PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, ventes de fonds, nouvelles implantations) dans votre zone et génère vos tournées optimisées.
               </p>
               <div className="flex gap-4 justify-center pt-8">
                 <Button 
@@ -147,7 +147,7 @@ const LandingPage = () => {
                 </div>
                 <h3 className="text-2xl font-bold">Détection Ultra-Rapide</h3>
                 <p className="text-white/70 text-lg leading-relaxed">
-                  Identifiez automatiquement chaque nouvelle entreprise de votre secteur avant vos concurrents
+                  Accédez en temps réel aux mouvements d'entreprises : créations, déménagements, ventes de fonds de commerce et nouvelles implantations partout en France
                 </p>
               </div>
               <div className="text-center space-y-4">
@@ -323,7 +323,7 @@ const LandingPage = () => {
                         <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-sm leading-relaxed">Nouvelles entreprises chaque semaine</span>
+                        <span className="text-white text-sm leading-relaxed">Mouvements d'entreprises chaque semaine</span>
                       </li>
                       <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
                         <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -341,7 +341,7 @@ const LandingPage = () => {
                         <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-sm leading-relaxed">CRM complet + pipeline intégré</span>
+                        <span className="text-white text-sm leading-relaxed">Suivi de vos prospects</span>
                       </li>
                       <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
                         <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -388,18 +388,18 @@ const LandingPage = () => {
                   Peut-on l'utiliser partout en France ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
-                  Oui, LUMA couvre l'intégralité du territoire français. Notre base de données contient plus de 
-                  10 millions d'entreprises actives.
+                  Oui, PULSE couvre l'intégralité du territoire français. Nos données sont basées sur les mouvements officiels d'entreprises : 
+                  créations, déménagements, ventes de fonds de commerce et nouvelles implantations.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  Peut-on intégrer LUMA avec notre CRM ?
+                  D'où proviennent les données ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
-                  Oui, nous proposons des intégrations natives avec les principaux CRM (Salesforce, HubSpot, Pipedrive) 
-                  et une API complète pour des intégrations sur mesure.
+                  Nos données proviennent de sources officielles et sont actualisées en temps réel. 
+                  Nous suivons tous les mouvements d'entreprises : créations, déménagements, cessions de fonds de commerce et nouvelles implantations partout en France.
                 </AccordionContent>
               </AccordionItem>
 
