@@ -69,7 +69,7 @@ const LandingPage = () => {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="py-20 px-6 relative z-10">
+        <section className="py-12 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-8 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <h1 className="text-6xl md:text-7xl font-bold leading-tight">
@@ -100,14 +100,14 @@ const LandingPage = () => {
         </section>
 
         {/* Problems Section */}
-        <section className="py-20 px-6 relative z-10" style={{ 
+        <section className="py-12 px-6 relative z-10" style={{
           background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
           borderTop: '1px solid rgba(6, 182, 212, 0.1)',
           borderBottom: '1px solid rgba(6, 182, 212, 0.1)'
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-16">Ce qui tue votre chiffre d'affaires</h2>
+              <h2 className="text-5xl font-bold text-center mb-8">Ce qui tue votre chiffre d'affaires</h2>
               <div className="grid md:grid-cols-3 gap-8">
               <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
                 <TrendingDown className="w-12 h-12 text-accent mb-4" />
@@ -130,7 +130,7 @@ const LandingPage = () => {
         </section>
 
         {/* Solution Section */}
-        <section id="solution" className="py-20 px-6 relative z-10" style={{
+        <section id="solution" className="py-12 px-6 relative z-10" style={{
           background: 'radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%)'
         }}>
           <div className="container mx-auto max-w-6xl">
@@ -138,7 +138,7 @@ const LandingPage = () => {
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
                 Votre arsenal pour <span className="gradient-text">dominer</span> votre territoire
               </h2>
-              <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
+              <p className="text-xl text-white/60 text-center mb-10 max-w-2xl mx-auto">
                 Détectez avant tout le monde, agissez plus vite, convertissez davantage
               </p>
               <div className="grid md:grid-cols-3 gap-12">
@@ -175,14 +175,14 @@ const LandingPage = () => {
         </section>
 
         {/* Before/After Section */}
-        <section id="avantages" className="py-20 px-6 relative z-10" style={{
+        <section id="avantages" className="py-12 px-6 relative z-10" style={{
           background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4)), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(6, 182, 212, 0.03) 50px, rgba(6, 182, 212, 0.03) 51px)',
           backgroundSize: '100% 100%, 100px 100%'
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">L'impact immédiat sur vos résultats</h2>
-              <p className="text-xl text-white/60 text-center mb-16 max-w-2xl mx-auto">
+              <p className="text-xl text-white/60 text-center mb-10 max-w-2xl mx-auto">
                 Moins de kilomètres, plus de rendez-vous, meilleure conversion
               </p>
               <div className="grid md:grid-cols-2 gap-12">
@@ -367,12 +367,12 @@ const LandingPage = () => {
 
 
         {/* FAQ */}
-        <section className="py-20 px-6 relative z-10" style={{
+        <section className="py-12 px-6 relative z-10" style={{
           background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.06) 0%, transparent 60%)'
         }}>
           <div className="container mx-auto max-w-4xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-16">Vos questions, nos réponses</h2>
+              <h2 className="text-5xl font-bold text-center mb-8">Vos questions, nos réponses</h2>
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
@@ -411,12 +411,12 @@ const LandingPage = () => {
         <ContactSection />
 
         {/* Final CTA */}
-        <section className="py-32 px-6 bg-gradient-to-b from-black-deep/30 to-transparent relative z-10">
+        <section className="py-16 px-6 bg-gradient-to-b from-black-deep/30 to-transparent relative z-10">
           <div className="container mx-auto max-w-4xl text-center">
             <h2 className="text-6xl font-bold mb-6">
               Prêt à <span className="gradient-text">transformer</span> votre prospection terrain ?
             </h2>
-            <p className="text-2xl text-white/70 mb-12">
+            <p className="text-2xl text-white/70 mb-8">
               Soyez le premier à prospecter vos futurs clients
             </p>
             <div className="flex gap-6 justify-center">
@@ -440,12 +440,12 @@ const LandingPage = () => {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-white/10 py-12 px-6">
+        <footer className="border-t border-white/10 py-8 px-6">
           <div className="container mx-auto max-w-6xl">
             <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div>
                 <div className="text-2xl font-bold mb-4">
-                  <span className="text-white">LUMA</span>
+                  <span className="text-white">PULSE</span>
                   <span className="text-accent">.</span>
                 </div>
                 <p className="text-white/60">La prospection terrain réinventée</p>
@@ -471,7 +471,7 @@ const LandingPage = () => {
                 <ul className="space-y-2 text-white/60">
                   <li className="flex items-center gap-2">
                     <Mail className="w-4 h-4" />
-                    <span>contact@luma.fr</span>
+                    <span>contact@pulse.fr</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Phone className="w-4 h-4" />
@@ -481,7 +481,7 @@ const LandingPage = () => {
               </div>
             </div>
             <div className="border-t border-white/10 pt-8 text-center text-white/40">
-              <p>&copy; 2024 LUMA. Tous droits réservés.</p>
+              <p>&copy; 2024 PULSE. Tous droits réservés.</p>
             </div>
           </div>
         </footer>
