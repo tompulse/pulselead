@@ -44,7 +44,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
-              <span className="text-white">LUMA</span>
+              <span className="text-white">PULSE</span>
               <span className="text-accent ml-1">.</span>
             </div>
 
@@ -75,7 +75,7 @@ const LandingPage = () => {
                 Prospectez les <span className="gradient-text">créations d'entreprise</span> avant vos concurrents
               </h1>
               <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
-                LUMA détecte automatiquement les nouvelles entreprises dans votre zone et génère vos tournées optimisées. Vous arrivez en premier.
+                PULSE détecte automatiquement les nouvelles entreprises dans votre zone et génère vos tournées optimisées. Vous arrivez en premier.
               </p>
               <div className="flex gap-4 justify-center pt-8">
                 <Button 
@@ -190,7 +190,7 @@ const LandingPage = () => {
                   <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
                     <TrendingDown className="w-6 h-6 text-red-500" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold">Sans LUMA</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold">Sans PULSE</h3>
                 </div>
                 <ul className="space-y-5 text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
@@ -216,7 +216,7 @@ const LandingPage = () => {
                   <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
                     <TrendingUp className="w-6 h-6 text-accent" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold">Avec LUMA</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold">Avec PULSE</h3>
                 </div>
                 <ul className="space-y-5 text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">

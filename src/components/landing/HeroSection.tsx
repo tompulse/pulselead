@@ -27,7 +27,7 @@ export const HeroSection = () => {
           {/* Stat sociale */}
           <div className="inline-flex items-center gap-2 text-xs sm:text-sm text-muted-foreground/80">
             <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
-            <span><strong className="text-accent font-bold">35 commerciaux</strong> utilisent LUMA quotidiennement</span>
+            <span><strong className="text-accent font-bold">35 commerciaux</strong> utilisent PULSE quotidiennement</span>
           </div>
         </div>
         

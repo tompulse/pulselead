@@ -13,7 +13,7 @@ export const DemoSection = () => {
           <span className="text-sm text-accent font-medium">Démo Interactive</span>
         </div>
         <h2 className="text-4xl md:text-5xl font-bold">
-          Découvrez LUMA en action
+          Découvrez PULSE en action
         </h2>
         <p className="text-xl text-muted-foreground">
           Une plateforme complète pour transformer votre prospection commerciale

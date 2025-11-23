@@ -20,7 +20,7 @@ All colors MUST be HSL.
   }
   
   :root {
-    /* LUMA Brand Colors - Bleu foncé + Cyan électrique */
+    /* PULSE Brand Colors - Bleu foncé + Cyan électrique */
     --blue-deep: 220 60% 8%;
     --blue-darker: 220 50% 5%;
     --black-pure: 0 0% 0%;

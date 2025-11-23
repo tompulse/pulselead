@@ -23,7 +23,7 @@ const CGU = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">1. Objet</h2>
             <p>
-              Les présentes Conditions Générales d'Utilisation (CGU) définissent les conditions d'accès et d'utilisation de la plateforme LUMA. 
+              Les présentes Conditions Générales d'Utilisation (CGU) définissent les conditions d'accès et d'utilisation de la plateforme PULSE. 
               En accédant à la plateforme, vous acceptez sans réserve les présentes CGU.
             </p>
           </section>
@@ -31,7 +31,7 @@ const CGU = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">2. Accès à la plateforme</h2>
             <p>
-              L'accès à LUMA nécessite la création d'un compte utilisateur. Vous devez fournir des informations exactes et complètes 
+              L'accès à PULSE nécessite la création d'un compte utilisateur. Vous devez fournir des informations exactes et complètes 
               lors de votre inscription. Vous êtes responsable de la confidentialité de vos identifiants de connexion.
             </p>
             <p className="mt-4">
@@ -42,7 +42,7 @@ const CGU = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">3. Description des services</h2>
-            <p>LUMA est une plateforme destinée aux commerciaux terrain proposant :</p>
+            <p>PULSE est une plateforme destinée aux commerciaux terrain proposant :</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               <li>L'optimisation automatique d'itinéraires de tournées commerciales</li>
               <li>Le suivi et la gestion des interactions avec les prospects et clients</li>
@@ -53,10 +53,10 @@ const CGU = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">4. Obligations de l'utilisateur</h2>
-            <p>En utilisant LUMA, vous vous engagez à :</p>
+            <p>En utilisant PULSE, vous vous engagez à :</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               <li>Utiliser la plateforme conformément à sa destination et de manière loyale</li>
-              <li>Ne pas porter atteinte aux droits de propriété intellectuelle de LUMA</li>
+              <li>Ne pas porter atteinte aux droits de propriété intellectuelle de PULSE</li>
               <li>Ne pas tenter d'accéder de manière non autorisée au système</li>
               <li>Respecter la réglementation en vigueur, notamment en matière de protection des données</li>
               <li>Ne pas utiliser la plateforme pour des activités illégales ou frauduleuses</li>
@@ -67,7 +67,7 @@ const CGU = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">5. Propriété intellectuelle</h2>
             <p>
-              Tous les éléments de la plateforme LUMA (codes, logiciels, structure, design, contenus, marques, logos) sont protégés 
+              Tous les éléments de la plateforme PULSE (codes, logiciels, structure, design, contenus, marques, logos) sont protégés 
               par le droit de la propriété intellectuelle. Toute reproduction, représentation, modification ou utilisation non autorisée 
               est strictement interdite.
             </p>
@@ -89,7 +89,7 @@ const CGU = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">7. Données des entreprises tierces</h2>
             <p>
-              Les données d'entreprises fournies par LUMA proviennent de sources publiques et de partenaires. Nous nous efforçons 
+              Les données d'entreprises fournies par PULSE proviennent de sources publiques et de partenaires. Nous nous efforçons 
               de maintenir ces données à jour mais ne pouvons garantir leur exactitude absolue. L'utilisateur est responsable de vérifier 
               les informations avant toute utilisation commerciale.
             </p>
@@ -106,7 +106,7 @@ const CGU = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">9. Limitation de responsabilité</h2>
             <p>
-              LUMA ne pourra être tenue responsable :
+              PULSE ne pourra être tenue responsable :
             </p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               <li>Des dommages indirects résultant de l'utilisation ou de l'impossibilité d'utiliser la plateforme</li>
@@ -125,7 +125,7 @@ const CGU = () => {
               <li>Violation des présentes CGU</li>
               <li>Utilisation frauduleuse de la plateforme</li>
               <li>Non-paiement des sommes dues</li>
-              <li>Comportement préjudiciable à LUMA ou aux autres utilisateurs</li>
+              <li>Comportement préjudiciable à PULSE ou aux autres utilisateurs</li>
             </ul>
           </section>
 

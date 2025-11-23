@@ -102,16 +102,16 @@ const DashboardContent = () => {
         .single();
 
       if (!progress || !progress.completed_at) {
-        const launch = localStorage.getItem('luma_launch_filter_onboarding');
+        const launch = localStorage.getItem('pulse_launch_filter_onboarding');
         if (launch) {
-          localStorage.removeItem('luma_launch_filter_onboarding');
+          localStorage.removeItem('pulse_launch_filter_onboarding');
           setShowWizard(false);
           setShowOnboarding(true);
         } else {
           setShowWizard(true);
         }
       } else {
-        const savedFilters = localStorage.getItem('luma_initial_filters');
+        const savedFilters = localStorage.getItem('pulse_initial_filters');
         if (savedFilters) {
           try {
             const parsed = JSON.parse(savedFilters);
@@ -145,7 +145,7 @@ const DashboardContent = () => {
     await supabase.auth.signOut();
     toast({
       title: "Déconnexion réussie",
-      description: "À bientôt sur LUMA !",
+      description: "À bientôt sur PULSE !",
     });
     navigate("/");
   };
@@ -168,7 +168,7 @@ const DashboardContent = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-accent">LUMA</h1>
+          <h1 className="text-4xl font-bold text-accent">PULSE</h1>
           <p className="text-muted-foreground text-base">Chargement...</p>
         </div>
       </div>

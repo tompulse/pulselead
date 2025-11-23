@@ -126,7 +126,7 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
           .from('user_onboarding_progress')
           .upsert({ user_id: user.id, current_step: 2 }, { onConflict: 'user_id' });
       }
-      localStorage.setItem('luma_launch_filter_onboarding', 'true');
+      localStorage.setItem('pulse_launch_filter_onboarding', 'true');
       onComplete();
     }
   };
@@ -186,7 +186,7 @@ export const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
       <Card className="w-full max-w-3xl max-h-[85vh] overflow-auto custom-scrollbar p-4 md:p-6">
         {/* Progress Header */}
         <div className="mb-6 md:mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-center">Bienvenue sur LUMA</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-center">Bienvenue sur PULSE</h2>
         </div>
 
         {/* Step 1: Welcome & Value Proposition */}
