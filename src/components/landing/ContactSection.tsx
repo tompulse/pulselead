@@ -14,7 +14,7 @@ const ContactSection = () => {
               Contact avec le fondateur
             </h2>
             <p className="text-lg md:text-xl text-white/70 font-medium max-w-2xl mx-auto">
-              Contactez directement le fondateur sur WhatsApp pour discuter de vos besoins
+              Contactez directement le fondateur pour programmer une démo personnalisée et discuter de vos besoins spécifiques
             </p>
             
             <Button 
