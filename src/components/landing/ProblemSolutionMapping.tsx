@@ -30,12 +30,12 @@ export const ProblemSolutionMapping = () => {
       problem: {
         icon: MapPin,
         title: "Prospection à l'aveugle",
-        description: "Vous ratez les nouvelles entreprises de votre zone"
+        description: "Vous découvrez trop tard les mouvements d'entreprises de votre zone"
       },
       solution: {
         icon: TrendingUp,
-        title: "Nouveaux sites en temps réel",
-        description: "Accès direct aux créations d'entreprises (J+1)"
+        title: "Détection des mouvements",
+        description: "Créations et nouveaux établissements de votre zone en données officielles"
       }
     },
     {

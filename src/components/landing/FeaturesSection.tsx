@@ -19,8 +19,8 @@ export const FeaturesSection = () => {
     },
     {
       icon: Zap,
-      title: "Nouvelles entreprises",
-      description: "Accédez aux créations d'entreprises de votre secteur. Données INPI & INSEE, filtres avancés par zone et activité."
+      title: "Mouvements d'entreprises",
+      description: "Créations et nouveaux sites de votre secteur. Données officielles INPI & INSEE. Notez que certains sites peuvent être en travaux ou en cours d'installation."
     },
     {
       icon: Clock,
