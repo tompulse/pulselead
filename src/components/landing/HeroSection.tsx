@@ -38,7 +38,7 @@ export const HeroSection = () => {
         
         {/* Subheadline - Focus sur les bénéfices avec chiffre clé */}
         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed px-4 font-medium">
-          Détectez les mouvements d'entreprises de votre zone en temps réel, optimisez vos tournées, gagnez du temps sur le terrain.
+          PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, nouvelles implantations) dans votre zone, génère vos tournées optimisées et enregistre chaque visite, appel et relance.
         </p>
         
         {/* Badge résultat */}
