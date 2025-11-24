@@ -26,9 +26,9 @@ const LandingPage = () => {
   const faqAnimation = useScrollAnimation({ threshold: 0.2 });
 
   const pricingPlans = {
-    monthly: { price: 149, label: 'Mensuel' },
-    quarterly: { price: 119, label: 'Trimestriel' },
-    yearly: { price: 99, label: 'Annuel' }
+    monthly: { price: 99, label: 'Mensuel' },
+    quarterly: { price: 79, label: 'Trimestriel' },
+    yearly: { price: 59, label: 'Annuel' }
   };
 
   return (
