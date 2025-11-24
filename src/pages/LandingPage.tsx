@@ -329,7 +329,7 @@ const LandingPage = () => {
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-sm leading-relaxed">Mouvements d'entreprises chaque semaine</span>
+                          <span className="text-white text-sm leading-relaxed">Chaque semaine toutes les nouvelles entreprises sur votre secteur (déménagements, nouvelles implantations, créations...)</span>
                         </li>
                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -347,7 +347,7 @@ const LandingPage = () => {
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-sm leading-relaxed">Suivi de vos prospects</span>
+                          <span className="text-white text-sm leading-relaxed">CRM dédié à la prospection et suivi pipeline</span>
                         </li>
                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
