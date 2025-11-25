@@ -131,7 +131,8 @@ const LandingPage = () => {
                 animationDelay: '0.2s'
               }}>
                   <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">13</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">commerciaux font confiance à PULSE</p>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">commerciaux ont fait
+confiance à PULSE</p>
                 </div>
                 
                 {/* Stat 3 */}
