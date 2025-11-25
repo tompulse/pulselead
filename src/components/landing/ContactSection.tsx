@@ -23,11 +23,11 @@ const ContactSection = () => {
                 </a>
               </Button>
 
-              <Button asChild size="lg" className="bg-[#25D366] hover:bg-[#20BA5A] text-white shadow-2xl px-10 py-6 text-lg font-bold hover:scale-105 transition-transform">
+              <Button asChild size="lg" className="bg-[#25D366] hover:bg-[#20BA5A] text-white shadow-2xl px-10 py-6 text-sm font-bold hover:scale-105 transition-transform">
                 <a href={waUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('whatsapp_click', {
                 source: 'contact_section'
               })} aria-label="Écrire sur WhatsApp">
-                  <MessageSquare className="w-5 h-5 mr-2" />
+                  <MessageSquare className="w-4 h-4 mr-2" />
                   Écrire sur WhatsApp
                 </a>
               </Button>
