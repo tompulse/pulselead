@@ -110,9 +110,9 @@ const LandingPage = () => {
                 PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, ventes de fonds, nouvelles implantations) dans votre zone et génère vos tournées optimisées.
               </p>
               <div className="flex justify-center pt-6">
-                <Button size="lg" onClick={() => navigate('/auth')} className="btn-hero text-xl px-12 py-6">
-                  Je me lance
-                  <ArrowRight className="ml-2" />
+                <Button size="lg" onClick={() => navigate('/auth')} className="btn-hero-pulse">
+                  Commencer maintenant
+                  <ArrowRight className="ml-3 w-7 h-7" />
                 </Button>
               </div>
 
