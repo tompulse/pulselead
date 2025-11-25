@@ -113,6 +113,43 @@ const LandingPage = () => {
                   <ArrowRight className="ml-2" />
                 </Button>
               </div>
+
+              {/* Stats Section */}
+              <div className="mt-20 grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                {/* Stat 1 */}
+                <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                  <div className="text-5xl font-bold gradient-text">+850</div>
+                  <p className="text-white/70 text-lg">entreprises détectées en moyenne chaque semaine</p>
+                </div>
+                
+                {/* Stat 2 */}
+                <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                  <div className="text-5xl font-bold gradient-text">13</div>
+                  <p className="text-white/70 text-lg">commerciaux font confiance à PULSE</p>
+                </div>
+                
+                {/* Stat 3 */}
+                <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                  <div className="text-5xl font-bold gradient-text">92%</div>
+                  <p className="text-white/70 text-lg">de satisfaction client</p>
+                </div>
+              </div>
+
+              {/* Trust badges */}
+              <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-white/50 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Conforme RGPD</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Database className="w-4 h-4 text-accent" />
+                  <span>Données publiques officielles</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-accent" />
+                  <span>Sources INSEE & Infogreffe</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
