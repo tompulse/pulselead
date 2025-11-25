@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Menu, MapIcon, Navigation, TrendingUp, LogOut } from "lucide-react";
+import { Menu, MapIcon, Navigation, TrendingUp, LogOut, CreditCard } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { SyncButton } from "./SyncButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { SubscriptionManagement } from "./SubscriptionManagement";
 import { useState } from "react";
 
 interface DashboardHeaderProps {
@@ -21,6 +23,7 @@ export const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
 
   const handleViewChange = (newView: typeof view) => {
     onViewChange(newView);
@@ -52,9 +55,22 @@ export const DashboardHeader = ({
                 </SheetHeader>
                 <div className="flex flex-col p-4 gap-2">
                   {isAdmin && (
-                    <div className="pb-4 border-b border-accent/20">
-                      <SyncButton />
-                    </div>
+                    <>
+                      <div className="pb-4 border-b border-accent/20 space-y-2">
+                        <SyncButton />
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start gap-2" 
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setSubscriptionDialogOpen(true);
+                          }}
+                        >
+                          <CreditCard className="w-4 h-4" />
+                          Abonnements
+                        </Button>
+                      </div>
+                    </>
                   )}
                 </div>
               </SheetContent>
@@ -99,7 +115,31 @@ export const DashboardHeader = ({
             </div>
 
             <div className="flex items-center gap-2">
-              {isAdmin && <SyncButton />}
+              {isAdmin && (
+                <>
+                  <SyncButton />
+                  <Dialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10 hover:border-accent transition-all duration-300"
+                      >
+                        <CreditCard className="w-3.5 h-3.5 sm:mr-1" />
+                        <span className="hidden lg:inline">Abonnements</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+                      <DialogHeader>
+                        <DialogTitle>Gestion des abonnements</DialogTitle>
+                      </DialogHeader>
+                      <div className="overflow-y-auto flex-1">
+                        <SubscriptionManagement />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </>
+              )}
               <Button
                 variant="outline"
                 size="sm"
@@ -134,6 +174,18 @@ export const DashboardHeader = ({
           ))}
         </div>
       )}
+      
+      {/* Dialog pour abonnements (mobile aussi) */}
+      <Dialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Gestion des abonnements</DialogTitle>
+          </DialogHeader>
+          <div className="overflow-y-auto flex-1">
+            <SubscriptionManagement />
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 };
