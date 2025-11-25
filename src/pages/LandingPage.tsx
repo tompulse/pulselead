@@ -102,6 +102,12 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-6 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <h1 className="text-6xl md:text-7xl font-bold leading-tight">Prospectez les nouvelles entreprises avant vos concurrents
+
+
+
+
+
+  
                 <br />
                 avant vos concurrents
               </h1>
@@ -130,7 +136,8 @@ const LandingPage = () => {
                 animationDelay: '0.2s'
               }}>
                   <div className="text-5xl font-bold gradient-text">13</div>
-                  <p className="text-white/70 text-lg">commerciaux font confiance à PULSE</p>
+                  <p className="text-white/70 text-lg">commerciaux font 
+confiance à PULSE</p>
                 </div>
                 
                 {/* Stat 3 */}
@@ -200,26 +207,29 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
-                Votre arsenal pour <span className="gradient-text">dominer</span> votre territoire
+                Votre arsenal pour dominer
+votre territoire <span className="gradient-text">dominer</span> votre territoire
               </h2>
               <p className="text-xl text-white/60 text-center mb-10 max-w-2xl mx-auto">
-                Détectez avant tout le monde, agissez plus vite, convertissez davantage
+                Détectez avant tout le monde, agissez plus vite, prenez des rendez-vous    
               </p>
               <div className="grid md:grid-cols-3 gap-12">
               <div className="text-center space-y-4">
                 <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
                   <Search className="w-12 h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Détection Ultra-Rapide</h3>
+                <h3 className="text-2xl font-bold">Détection Hebdomadaire</h3>
                 <p className="text-white/70 text-lg leading-relaxed">
-                  Accédez en temps réel aux mouvements d'entreprises : créations, déménagements, ventes de fonds de commerce et nouvelles implantations partout en France
+                  Accédez en temps réel aux mouvements d'entreprises : créations, déménagements et nouvelles implantations
+partout en France
                 </p>
               </div>
               <div className="text-center space-y-4">
                 <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
                   <Route className="w-12 h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Itinéraires Redoutables</h3>
+                <h3 className="text-2xl font-bold">Itinéraires
+Redoutables</h3>
                 <p className="text-white/70 text-lg leading-relaxed">
                   Visitez 2x plus de prospects par jour grâce à l'optimisation automatique de vos trajets
                 </p>
@@ -264,11 +274,11 @@ const LandingPage = () => {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Des heures de route pour 3 rendez-vous ratés</span>
+                    <span>Des heures de route pour quelques prospects au hasard                        </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Prospects chauds refroidis faute de suivi</span>
+                    <span>Oubli de relance suite à vos prospections                </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
@@ -286,11 +296,11 @@ const LandingPage = () => {
                 <ul className="space-y-5 text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Prospects qualifiés livrés chaque semaine dans votre boîte</span>
+                    <span>Nouvelles entreprises ajoutées chaque semaine                </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Itinéraires calculés en 30 sec : 2x plus de visites/jour</span>
+                    <span>Itinéraires optimisées en distance et durée calculés en 30 sec                                                                                                                                                       </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
@@ -333,10 +343,10 @@ const LandingPage = () => {
                 <div className="space-y-4">
                   {/* Plan Toggle for Commercial Seul */}
                   <div className="flex justify-center">
-                    <div className="inline-flex rounded-lg p-1" style={{
+                    <div style={{
                     background: 'rgba(0, 0, 0, 0.4)',
                     border: '1px solid rgba(6, 182, 212, 0.2)'
-                  }}>
+                  }} className="inline-flex rounded-lg p-1 my-0 mx-0">
                       <button onClick={() => setSelectedPlan('monthly')} className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Mensuel
                       </button>
@@ -384,19 +394,19 @@ const LandingPage = () => {
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-sm leading-relaxed">Chaque semaine toutes les nouvelles entreprises sur votre secteur (déménagements, nouvelles implantations, créations...)</span>
+                          <span className="text-white text-sm leading-relaxed">Chaque semaine toutes les mouvements d'entreprises sur votre secteur (créations, nouvelles implantations, déménagements...)</span>
                         </li>
                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-sm leading-relaxed">Mapping automatique géolocalisé</span>
+                          <span className="text-white text-sm leading-relaxed">Mapping automatique géolocalisé pour voir votre territoire       </span>
                         </li>
                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-sm leading-relaxed">Création de tournées optimisées</span>
+                          <span className="text-white text-sm leading-relaxed">Création de tournées optimisées en distance et durée        </span>
                         </li>
                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -408,7 +418,7 @@ const LandingPage = () => {
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-sm leading-relaxed">Support WhatsApp</span>
+                          <span className="text-white text-sm leading-relaxed">Support WhatsApp 24/7 </span>
                         </li>
                       </ul>
                       <Button className="w-full bg-accent text-black hover:bg-accent/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
@@ -439,7 +449,7 @@ const LandingPage = () => {
                       border: '1px solid rgba(14, 165, 233, 0.2)'
                     }}>
                         <div className="flex items-baseline justify-center gap-2">
-                          <span className="text-5xl md:text-6xl font-bold gradient-text">
+                          <span className="text-5xl font-bold gradient-text md:text-4xl">
                             Sur devis
                           </span>
                         </div>
@@ -473,7 +483,7 @@ const LandingPage = () => {
                           <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-cyan-glow" />
                           </div>
-                          <span className="text-white text-sm leading-relaxed">Formation sur mesure</span>
+                          <span className="text-white text-sm leading-relaxed">Formation de vos équipes à l'outil                </span>
                         </li>
                       </ul>
                       <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => window.location.href = '#contact'}>
