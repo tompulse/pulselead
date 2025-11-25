@@ -62,7 +62,7 @@ export const Navbar = () => {
               onClick={() => navigate("/auth")}
               className="text-sm font-semibold hover:text-accent transition-colors"
             >
-              Connexion
+              Mon compte
             </Button>
             <Button 
               asChild
@@ -135,7 +135,7 @@ export const Navbar = () => {
                 }}
                 className="w-full"
               >
-                Connexion
+                Mon compte
               </Button>
               <Button 
                 asChild
