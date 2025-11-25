@@ -26,9 +26,27 @@ const LandingPage = () => {
   const faqAnimation = useScrollAnimation({ threshold: 0.2 });
 
   const pricingPlans = {
-    monthly: { price: 99, label: 'Mensuel' },
-    quarterly: { price: 79, label: 'Trimestriel' },
-    yearly: { price: 59, label: 'Annuel' }
+    monthly: { 
+      originalPrice: 99, 
+      discountedPrice: 69, 
+      label: 'Mensuel',
+      period: '/mois',
+      monthlyEquivalent: undefined
+    },
+    quarterly: { 
+      originalPrice: 237, 
+      discountedPrice: 166, 
+      label: 'Trimestriel',
+      period: '/3 mois',
+      monthlyEquivalent: '55€/mois'
+    },
+    yearly: { 
+      originalPrice: 708, 
+      discountedPrice: 496, 
+      label: 'Annuel',
+      period: '/an',
+      monthlyEquivalent: '41€/mois'
+    }
   };
 
   return (
@@ -255,6 +273,10 @@ const LandingPage = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-full mb-6 font-bold shadow-lg mx-auto block w-fit">
+                <Sparkles className="w-5 h-5" />
+                Offre de lancement -30% • Jusqu'au 31 Décembre 2025
+              </div>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Notre offre unique</h2>
               <p className="text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">
                 Choisissez la formule qui correspond à vos ambitions
@@ -317,11 +339,22 @@ const LandingPage = () => {
                         background: 'rgba(0, 0, 0, 0.3)',
                         border: '1px solid rgba(6, 182, 212, 0.2)'
                       }}>
-                        <div className="flex items-baseline justify-center gap-2">
+                        <div className="flex items-baseline justify-center gap-2 mb-1">
                           <span className="text-5xl md:text-6xl font-bold gradient-text">
-                            {pricingPlans[selectedPlan].price}€
+                            {pricingPlans[selectedPlan].discountedPrice}€
                           </span>
-                          <span className="text-lg text-white/60">/mois</span>
+                          <span className="text-2xl text-white/40 line-through">
+                            {pricingPlans[selectedPlan].originalPrice}€
+                          </span>
+                        </div>
+                        <p className="text-sm text-white/60">{pricingPlans[selectedPlan].period}</p>
+                        {pricingPlans[selectedPlan].monthlyEquivalent && (
+                          <p className="text-sm font-semibold text-green-500 mt-1">
+                            Soit {pricingPlans[selectedPlan].monthlyEquivalent}
+                          </p>
+                        )}
+                        <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
+                          -30% de réduction
                         </div>
                       </div>
                       <ul className="space-y-2.5 mb-6">
