@@ -36,13 +36,13 @@ const LandingPage = () => {
       originalPrice: 79, 
       discountedPrice: 55, 
       label: 'Trimestriel',
-      billingDetails: 'Soit 166€ facturés tous les 3 mois'
+      billingDetails: ''
     },
     yearly: { 
       originalPrice: 59, 
       discountedPrice: 41, 
       label: 'Annuel',
-      billingDetails: 'Soit 496€ facturés annuellement'
+      billingDetails: ''
     }
   };
 
