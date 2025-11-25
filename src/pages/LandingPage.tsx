@@ -101,17 +101,12 @@ const LandingPage = () => {
         <section className="py-8 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-6 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
-              <h1 className="text-6xl md:text-7xl font-bold leading-tight">Prospectez les nouvelles entreprises avant vos concurrents
-
-
-
-
-
-  
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                Prospectez les <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">nouvelles entreprises</span>
                 <br />
                 avant vos concurrents
               </h1>
-              <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto">
                 PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, ventes de fonds, nouvelles implantations) dans votre zone et génère vos tournées optimisées.
               </p>
               <div className="flex justify-center pt-6">
@@ -122,30 +117,29 @@ const LandingPage = () => {
               </div>
 
               {/* Stats Section */}
-              <div className="mt-12 grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
                 {/* Stat 1 */}
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.1s'
               }}>
-                  <div className="text-5xl font-bold gradient-text">+850</div>
-                  <p className="text-white/70 text-lg">entreprises détectées en moyenne chaque semaine</p>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">+850</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">entreprises détectées en moyenne chaque semaine</p>
                 </div>
                 
                 {/* Stat 2 */}
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.2s'
               }}>
-                  <div className="text-5xl font-bold gradient-text">13</div>
-                  <p className="text-white/70 text-lg">commerciaux font 
-confiance à PULSE</p>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">13</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">commerciaux font confiance à PULSE</p>
                 </div>
                 
                 {/* Stat 3 */}
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.3s'
               }}>
-                  <div className="text-5xl font-bold gradient-text">92%</div>
-                  <p className="text-white/70 text-lg">de satisfaction client</p>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">92%</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">de satisfaction client</p>
                 </div>
               </div>
 
@@ -178,22 +172,22 @@ confiance à PULSE</p>
       }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-8">Ce qui tue votre chiffre d'affaires</h2>
-              <div className="grid md:grid-cols-3 gap-8">
-              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                <TrendingDown className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Temps gaspillé</h3>
-                <p className="text-white/70 text-lg">40% de votre journée perdue sur la route au lieu de vendre</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Ce qui tue votre chiffre d'affaires</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
+                <TrendingDown className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Temps gaspillé</h3>
+                <p className="text-white/70 text-base sm:text-lg">40% de votre journée perdue sur la route au lieu de vendre</p>
               </Card>
-              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                <FileText className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Chaos organisationnel</h3>
-                <p className="text-white/70 text-lg">Impossible de retrouver l'info au bon moment</p>
+              <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
+                <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Chaos organisationnel</h3>
+                <p className="text-white/70 text-base sm:text-lg">Impossible de retrouver l'info au bon moment</p>
               </Card>
-              <Card className="glass-card p-8 border-white/10 hover:border-accent/50 transition-all">
-                <AlertCircle className="w-12 h-12 text-accent mb-4" />
-                <h3 className="text-2xl font-bold mb-3">Concurrence imbattable</h3>
-                <p className="text-white/70 text-lg">Ils signent avant même que vous sachiez que le prospect existe</p>
+              <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
+                <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Concurrence imbattable</h3>
+                <p className="text-white/70 text-base sm:text-lg">Ils signent avant même que vous sachiez que le prospect existe</p>
               </Card>
             </div>
             </div>
@@ -206,40 +200,37 @@ confiance à PULSE</p>
       }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
-                Votre arsenal pour dominer
-votre territoire <span className="gradient-text">dominer</span> votre territoire
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">
+                Votre arsenal pour <span className="gradient-text">dominer</span> votre territoire
               </h2>
-              <p className="text-xl text-white/60 text-center mb-10 max-w-2xl mx-auto">
-                Détectez avant tout le monde, agissez plus vite, prenez des rendez-vous    
+              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
+                Détectez avant tout le monde, agissez plus vite, prenez des rendez-vous    
               </p>
-              <div className="grid md:grid-cols-3 gap-12">
-              <div className="text-center space-y-4">
-                <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
-                  <Search className="w-12 h-12 text-accent" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+              <div className="text-center space-y-3 sm:space-y-4">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
+                  <Search className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Détection Hebdomadaire</h3>
-                <p className="text-white/70 text-lg leading-relaxed">
-                  Accédez en temps réel aux mouvements d'entreprises : créations, déménagements et nouvelles implantations
-partout en France
+                <h3 className="text-xl sm:text-2xl font-bold">Détection Hebdomadaire</h3>
+                <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
+                  Accédez en temps réel aux mouvements d'entreprises : créations, déménagements et nouvelles implantations partout en France
                 </p>
               </div>
-              <div className="text-center space-y-4">
-                <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
-                  <Route className="w-12 h-12 text-accent" />
+              <div className="text-center space-y-3 sm:space-y-4">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
+                  <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Itinéraires
-Redoutables</h3>
-                <p className="text-white/70 text-lg leading-relaxed">
+                <h3 className="text-xl sm:text-2xl font-bold">Itinéraires Redoutables</h3>
+                <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
                   Visitez 2x plus de prospects par jour grâce à l'optimisation automatique de vos trajets
                 </p>
               </div>
-              <div className="text-center space-y-4">
-                <div className="w-24 h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
-                  <Smartphone className="w-12 h-12 text-accent" />
+              <div className="text-center space-y-3 sm:space-y-4">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
+                  <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold">Zéro Opportunité Perdue</h3>
-                <p className="text-white/70 text-lg leading-relaxed">
+                <h3 className="text-xl sm:text-2xl font-bold">Zéro Opportunité Perdue</h3>
+                <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
                   Suivez chaque prospect, relancez au bon moment, transformez plus de contacts en contrats signés
                 </p>
               </div>
@@ -255,11 +246,11 @@ Redoutables</h3>
       }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">L'impact immédiat sur vos résultats</h2>
-              <p className="text-xl text-white/60 text-center mb-10 max-w-2xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">L'impact immédiat sur vos résultats</h2>
+              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
                 Moins de kilomètres, plus de rendez-vous, meilleure conversion
               </p>
-              <div className="grid md:grid-cols-2 gap-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
               <Card className="glass-card p-10 border-red-500/30">
                 <div className="flex items-center gap-3 mb-8">
                   <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
@@ -332,11 +323,11 @@ Redoutables</h3>
                   Offre de lancement -30% • Jusqu'au 31 Décembre 2025
                 </div>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Notre offre unique</h2>
-              <p className="text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">Choisissez la durée qui correspond à vos ambitions</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">Notre offre unique</h2>
+              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-6 sm:mb-8 max-w-2xl mx-auto">Choisissez la durée qui correspond à vos ambitions</p>
               
               {/* Pricing Cards */}
-              <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
                 {/* Card 1: Commercial Seul */}
                 <div className="space-y-4">
                   {/* Plan Toggle for Commercial Seul */}
@@ -503,7 +494,7 @@ Redoutables</h3>
       }}>
           <div className="container mx-auto max-w-4xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-5xl font-bold text-center mb-8">Vos questions, nos réponses</h2>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Vos questions, nos réponses</h2>
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
