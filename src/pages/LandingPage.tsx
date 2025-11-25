@@ -251,25 +251,25 @@ const LandingPage = () => {
                 Moins de kilomètres, plus de rendez-vous, meilleure conversion
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
-              <Card className="glass-card p-10 border-red-500/30">
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                    <TrendingDown className="w-6 h-6 text-red-500" />
+              <Card className="glass-card p-6 sm:p-8 md:p-10 border-red-500/30">
+                <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                    <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold">Sans PULSE</h3>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Sans PULSE</h3>
                 </div>
-                <ul className="space-y-5 text-base md:text-lg text-white/70">
+                <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
                     <span>La concurrence signe pendant que vous cherchez des prospects</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Des heures de route pour quelques prospects au hasard                        </span>
+                    <span>Des heures de route pour quelques prospects au hasard</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Oubli de relance suite à vos prospections                </span>
+                    <span>Oubli de relance suite à vos prospections</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
@@ -277,21 +277,21 @@ const LandingPage = () => {
                   </li>
                 </ul>
               </Card>
-              <Card className="glass-card p-10 border-accent/50">
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-accent" />
+              <Card className="glass-card p-6 sm:p-8 md:p-10 border-accent/50">
+                <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-accent/20 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold">Avec PULSE</h3>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Avec PULSE</h3>
                 </div>
-                <ul className="space-y-5 text-base md:text-lg text-white/70">
+                <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Nouvelles entreprises ajoutées chaque semaine                </span>
+                    <span>Nouvelles entreprises ajoutées chaque semaine</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Itinéraires optimisées en distance et durée calculés en 30 sec                                                                                                                                                       </span>
+                    <span>Itinéraires optimisés en distance et durée calculés en 30 sec</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
@@ -378,38 +378,38 @@ const LandingPage = () => {
                           -30% de réduction
                         </div>
                       </div>
-                      <ul className="space-y-2.5 mb-6">
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Chaque semaine toutes les mouvements d'entreprises sur votre secteur (créations, nouvelles implantations, déménagements...)</span>
-                        </li>
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Mapping automatique géolocalisé pour voir votre territoire       </span>
-                        </li>
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Création de tournées optimisées en distance et durée        </span>
-                        </li>
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">CRM dédié à la prospection et suivi pipeline</span>
-                        </li>
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Support WhatsApp 24/7 </span>
-                        </li>
-                      </ul>
+                       <ul className="space-y-2.5 mb-6">
+                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                             <Check className="w-3 h-3 text-accent" />
+                           </div>
+                           <span className="text-white text-sm leading-relaxed">Chaque semaine tous les mouvements d'entreprises sur votre secteur (créations, nouvelles implantations, déménagements...)</span>
+                         </li>
+                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                             <Check className="w-3 h-3 text-accent" />
+                           </div>
+                           <span className="text-white text-sm leading-relaxed">Mapping automatique géolocalisé pour voir votre territoire</span>
+                         </li>
+                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                             <Check className="w-3 h-3 text-accent" />
+                           </div>
+                           <span className="text-white text-sm leading-relaxed">Création de tournées optimisées en distance et durée</span>
+                         </li>
+                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                             <Check className="w-3 h-3 text-accent" />
+                           </div>
+                           <span className="text-white text-sm leading-relaxed">CRM dédié à la prospection et suivi pipeline</span>
+                         </li>
+                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                             <Check className="w-3 h-3 text-accent" />
+                           </div>
+                           <span className="text-white text-sm leading-relaxed">Support WhatsApp 24/7</span>
+                         </li>
+                       </ul>
                       <Button className="w-full bg-accent text-black hover:bg-accent/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
                         Démarrer maintenant
                         <ArrowRight className="ml-2" />
