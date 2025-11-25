@@ -1,59 +1,70 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { 
-  ArrowRight, Star, AlertCircle, Clock, 
-  Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User,
-  MapPin, BarChart3, Users, ChevronDown, Phone, Mail,
-  TrendingDown, FileText, Database, Search, Route, Smartphone
-} from "lucide-react";
+import { ArrowRight, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User, MapPin, BarChart3, Users, ChevronDown, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import ContactSection from "@/components/landing/ContactSection";
-
 const LandingPage = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
-  
-  // Scroll animations
-  const heroAnimation = useScrollAnimation({ threshold: 0.2 });
-  const problemsAnimation = useScrollAnimation({ threshold: 0.2 });
-  const solutionAnimation = useScrollAnimation({ threshold: 0.2 });
-  const beforeAfterAnimation = useScrollAnimation({ threshold: 0.2 });
-  const featuresAnimation = useScrollAnimation({ threshold: 0.2 });
-  const pricingAnimation = useScrollAnimation({ threshold: 0.2 });
-  const faqAnimation = useScrollAnimation({ threshold: 0.2 });
 
+  // Scroll animations
+  const heroAnimation = useScrollAnimation({
+    threshold: 0.2
+  });
+  const problemsAnimation = useScrollAnimation({
+    threshold: 0.2
+  });
+  const solutionAnimation = useScrollAnimation({
+    threshold: 0.2
+  });
+  const beforeAfterAnimation = useScrollAnimation({
+    threshold: 0.2
+  });
+  const featuresAnimation = useScrollAnimation({
+    threshold: 0.2
+  });
+  const pricingAnimation = useScrollAnimation({
+    threshold: 0.2
+  });
+  const faqAnimation = useScrollAnimation({
+    threshold: 0.2
+  });
   const pricingPlans = {
-    monthly: { 
-      originalPrice: 99, 
-      discountedPrice: 69, 
+    monthly: {
+      originalPrice: 99,
+      discountedPrice: 69,
       label: 'Mensuel',
       billingDetails: 'Facturé mensuellement'
     },
-    quarterly: { 
-      originalPrice: 79, 
-      discountedPrice: 55, 
+    quarterly: {
+      originalPrice: 79,
+      discountedPrice: 55,
       label: 'Trimestriel',
       billingDetails: ''
     },
-    yearly: { 
-      originalPrice: 59, 
-      discountedPrice: 41, 
+    yearly: {
+      originalPrice: 59,
+      discountedPrice: 41,
       label: 'Annuel',
       billingDetails: ''
     }
   };
-
-  return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))' }}>
+  return <div className="min-h-screen relative overflow-hidden" style={{
+    background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))'
+  }}>
       {/* Decorative elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Large glowing orb top right */}
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }}></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{
+        animationDuration: '8s'
+      }}></div>
         {/* Medium glowing orb bottom left */}
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-glow/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s' }}></div>
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-glow/10 rounded-full blur-3xl animate-pulse" style={{
+        animationDuration: '10s'
+      }}></div>
       </div>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-lg border-b border-white/10">
@@ -72,19 +83,12 @@ const LandingPage = () => {
             </nav>
 
             <div className="flex items-center gap-4">
-              <Button 
-                asChild
-                className="bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-              >
+              <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
                 <a href="https://calendly.com/tomiolovpro/30min?month=2025-11" target="_blank" rel="noopener noreferrer">
                   Je réserve ma démo
                 </a>
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/auth')}
-                className="border-accent/50 text-accent hover:bg-accent hover:text-black"
-              >
+              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black">
                 Connexion
               </Button>
             </div>
@@ -97,8 +101,7 @@ const LandingPage = () => {
         <section className="py-8 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-6 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
-              <h1 className="text-6xl md:text-7xl font-bold leading-tight">
-                Prospectez les <span className="gradient-text">nouvelles entreprises</span>
+              <h1 className="text-6xl md:text-7xl font-bold leading-tight">Prospectez les nouvelles entreprises avant vos concurrents
                 <br />
                 avant vos concurrents
               </h1>
@@ -106,11 +109,7 @@ const LandingPage = () => {
                 PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, ventes de fonds, nouvelles implantations) dans votre zone et génère vos tournées optimisées.
               </p>
               <div className="flex justify-center pt-6">
-                <Button 
-                  size="lg"
-                  onClick={() => navigate('/auth')}
-                  className="btn-hero text-xl px-12 py-6"
-                >
+                <Button size="lg" onClick={() => navigate('/auth')} className="btn-hero text-xl px-12 py-6">
                   Je me lance
                   <ArrowRight className="ml-2" />
                 </Button>
@@ -119,26 +118,34 @@ const LandingPage = () => {
               {/* Stats Section */}
               <div className="mt-12 grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                 {/* Stat 1 */}
-                <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                <div className="text-center space-y-2 animate-fade-in" style={{
+                animationDelay: '0.1s'
+              }}>
                   <div className="text-5xl font-bold gradient-text">+850</div>
                   <p className="text-white/70 text-lg">entreprises détectées en moyenne chaque semaine</p>
                 </div>
                 
                 {/* Stat 2 */}
-                <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <div className="text-center space-y-2 animate-fade-in" style={{
+                animationDelay: '0.2s'
+              }}>
                   <div className="text-5xl font-bold gradient-text">13</div>
                   <p className="text-white/70 text-lg">commerciaux font confiance à PULSE</p>
                 </div>
                 
                 {/* Stat 3 */}
-                <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <div className="text-center space-y-2 animate-fade-in" style={{
+                animationDelay: '0.3s'
+              }}>
                   <div className="text-5xl font-bold gradient-text">92%</div>
                   <p className="text-white/70 text-lg">de satisfaction client</p>
                 </div>
               </div>
 
               {/* Trust badges */}
-              <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-white/50 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-white/50 animate-fade-in" style={{
+              animationDelay: '0.4s'
+            }}>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-green-500" />
                   <span>Conforme RGPD</span>
@@ -158,10 +165,10 @@ const LandingPage = () => {
 
         {/* Problems Section */}
         <section className="py-12 px-6 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
-          borderTop: '1px solid rgba(6, 182, 212, 0.1)',
-          borderBottom: '1px solid rgba(6, 182, 212, 0.1)'
-        }}>
+        background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
+        borderTop: '1px solid rgba(6, 182, 212, 0.1)',
+        borderBottom: '1px solid rgba(6, 182, 212, 0.1)'
+      }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-5xl font-bold text-center mb-8">Ce qui tue votre chiffre d'affaires</h2>
@@ -188,8 +195,8 @@ const LandingPage = () => {
 
         {/* Solution Section */}
         <section id="solution" className="py-12 px-6 relative z-10" style={{
-          background: 'radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%)'
-        }}>
+        background: 'radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%)'
+      }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
@@ -233,9 +240,9 @@ const LandingPage = () => {
 
         {/* Before/After Section */}
         <section id="avantages" className="py-12 px-6 relative z-10" style={{
-          background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4)), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(6, 182, 212, 0.03) 50px, rgba(6, 182, 212, 0.03) 51px)',
-          backgroundSize: '100% 100%, 100px 100%'
-        }}>
+        background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4)), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(6, 182, 212, 0.03) 50px, rgba(6, 182, 212, 0.03) 51px)',
+        backgroundSize: '100% 100%, 100px 100%'
+      }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">L'impact immédiat sur vos résultats</h2>
@@ -304,9 +311,9 @@ const LandingPage = () => {
 
         {/* Pricing */}
         <section id="pricing" className="py-16 px-6 relative z-10" style={{
-          background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
-          borderTop: '2px solid rgba(6, 182, 212, 0.2)'
-        }}>
+        background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
+        borderTop: '2px solid rgba(6, 182, 212, 0.2)'
+      }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
               <div className="flex justify-center mb-6">
@@ -327,56 +334,35 @@ const LandingPage = () => {
                   {/* Plan Toggle for Commercial Seul */}
                   <div className="flex justify-center">
                     <div className="inline-flex rounded-lg p-1" style={{
-                      background: 'rgba(0, 0, 0, 0.4)',
-                      border: '1px solid rgba(6, 182, 212, 0.2)'
-                    }}>
-                      <button
-                        onClick={() => setSelectedPlan('monthly')}
-                        className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${
-                          selectedPlan === 'monthly'
-                            ? 'bg-accent text-black shadow-lg'
-                            : 'text-white/70 hover:text-white'
-                        }`}
-                      >
+                    background: 'rgba(0, 0, 0, 0.4)',
+                    border: '1px solid rgba(6, 182, 212, 0.2)'
+                  }}>
+                      <button onClick={() => setSelectedPlan('monthly')} className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Mensuel
                       </button>
-                      <button
-                        onClick={() => setSelectedPlan('quarterly')}
-                        className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${
-                          selectedPlan === 'quarterly'
-                            ? 'bg-accent text-black shadow-lg'
-                            : 'text-white/70 hover:text-white'
-                        }`}
-                      >
+                      <button onClick={() => setSelectedPlan('quarterly')} className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${selectedPlan === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Trimestriel
                       </button>
-                      <button
-                        onClick={() => setSelectedPlan('yearly')}
-                        className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${
-                          selectedPlan === 'yearly'
-                            ? 'bg-accent text-black shadow-lg'
-                            : 'text-white/70 hover:text-white'
-                        }`}
-                      >
+                      <button onClick={() => setSelectedPlan('yearly')} className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${selectedPlan === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Annuel
                       </button>
                     </div>
                   </div>
 
                   <Card className="relative overflow-visible" style={{
-                    background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%)',
-                    border: '2px solid rgba(6, 182, 212, 0.3)',
-                    boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                  }}>
+                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%)',
+                  border: '2px solid rgba(6, 182, 212, 0.3)',
+                  boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                }}>
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
                       COMMERCIAL
                     </div>
                     <div className="p-6 md:p-8 pt-10">
                       <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Performance</h3>
                       <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                        background: 'rgba(0, 0, 0, 0.3)',
-                        border: '1px solid rgba(6, 182, 212, 0.2)'
-                      }}>
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(6, 182, 212, 0.2)'
+                    }}>
                         <div className="flex items-baseline justify-center gap-2 mb-1">
                           <span className="text-5xl md:text-6xl font-bold gradient-text">
                             {pricingPlans[selectedPlan].discountedPrice}€
@@ -425,10 +411,7 @@ const LandingPage = () => {
                           <span className="text-white text-sm leading-relaxed">Support WhatsApp</span>
                         </li>
                       </ul>
-                      <Button 
-                        className="w-full bg-accent text-black hover:bg-accent/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
-                        onClick={() => navigate('/auth')}
-                      >
+                      <Button className="w-full bg-accent text-black hover:bg-accent/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
                         Démarrer maintenant
                         <ArrowRight className="ml-2" />
                       </Button>
@@ -442,19 +425,19 @@ const LandingPage = () => {
                   <div className="h-[52px]"></div>
 
                   <Card className="relative overflow-visible" style={{
-                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                    border: '2px solid rgba(14, 165, 233, 0.3)',
-                    boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                  }}>
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                  border: '2px solid rgba(14, 165, 233, 0.3)',
+                  boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                }}>
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
                       ENTREPRISE
                     </div>
                     <div className="p-6 md:p-8 pt-10">
                       <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Équipes commerciales</h3>
                       <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                        background: 'rgba(0, 0, 0, 0.3)',
-                        border: '1px solid rgba(14, 165, 233, 0.2)'
-                      }}>
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(14, 165, 233, 0.2)'
+                    }}>
                         <div className="flex items-baseline justify-center gap-2">
                           <span className="text-5xl md:text-6xl font-bold gradient-text">
                             Sur devis
@@ -493,10 +476,7 @@ const LandingPage = () => {
                           <span className="text-white text-sm leading-relaxed">Formation sur mesure</span>
                         </li>
                       </ul>
-                      <Button 
-                        className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
-                        onClick={() => window.location.href = '#contact'}
-                      >
+                      <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => window.location.href = '#contact'}>
                         Nous contacter
                         <ArrowRight className="ml-2" />
                       </Button>
@@ -511,8 +491,8 @@ const LandingPage = () => {
 
         {/* FAQ */}
         <section className="py-12 px-6 relative z-10" style={{
-          background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.06) 0%, transparent 60%)'
-        }}>
+        background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.06) 0%, transparent 60%)'
+      }}>
           <div className="container mx-auto max-w-4xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-5xl font-bold text-center mb-8">Vos questions, nos réponses</h2>
@@ -607,16 +587,16 @@ const LandingPage = () => {
           </div>
         </footer>
       </main>
-    </div>
-  );
+    </div>;
 };
 
 // Import X icon
-const X = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const X = ({
+  className
+}: {
+  className?: string;
+}) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>
-);
-
+  </svg>;
 export default LandingPage;
