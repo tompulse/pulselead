@@ -463,12 +463,20 @@ const LandingPage = () => {
                   Peut-on l'utiliser partout en France ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
-                  Oui, PULSE couvre l'intégralité du territoire français. Nos données sont basées sur les mouvements officiels d'entreprises : 
-                  créations, déménagements, ventes de fonds de commerce et nouvelles implantations.
+                  Oui, PULSE couvre l'intégralité du territoire français, de la plus grande ville au plus petit bourg.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-6">
+                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
+                  Quelles données vais-je retrouver ?
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 text-lg">
+                  Chaque semaine nous vous localisons les nouvelles ouvertures d'entreprise, les déménagements en cours, les nouvelles implantations d'entreprises existantes, etc...
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-4" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
                   Puis-je personnaliser mes critères de recherche ?
                 </AccordionTrigger>
