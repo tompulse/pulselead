@@ -98,7 +98,7 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-6 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <h1 className="text-6xl md:text-7xl font-bold leading-tight">
-                Prospectez les <span className="gradient-text">nouvelles entreprises</span><br />
+                Prospectez les nouvelles <span className="gradient-text">entreprises</span><br />
                 avant vos concurrents
               </h1>
               <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
