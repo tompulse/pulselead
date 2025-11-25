@@ -65,6 +65,14 @@ export const Navbar = () => {
               Connexion
             </Button>
             <Button 
+              asChild
+              className="bg-green-600 hover:bg-green-700 text-white font-bold text-sm px-6 py-2.5 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+            >
+              <a href="https://calendly.com/tomiolovpro/30min?month=2025-11" target="_blank" rel="noopener noreferrer">
+                Je réserve ma démo
+              </a>
+            </Button>
+            <Button 
               onClick={() => navigate("/auth")}
               className="relative bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold text-sm px-6 py-2.5 rounded-full shadow-lg shadow-accent/40 hover:shadow-xl hover:shadow-accent/60 hover:scale-105 transition-all duration-300"
             >
@@ -128,6 +136,14 @@ export const Navbar = () => {
                 className="w-full"
               >
                 Connexion
+              </Button>
+              <Button 
+                asChild
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg"
+              >
+                <a href="https://calendly.com/tomiolovpro/30min?month=2025-11" target="_blank" rel="noopener noreferrer">
+                  Je réserve ma démo
+                </a>
               </Button>
               <Button 
                 onClick={() => {
