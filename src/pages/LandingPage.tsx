@@ -109,7 +109,7 @@ const LandingPage = () => {
                   onClick={() => navigate('/auth')}
                   className="btn-hero text-xl px-12 py-6"
                 >
-                  Démarrer gratuitement
+                  Je me lance
                   <ArrowRight className="ml-2" />
                 </Button>
               </div>
