@@ -73,19 +73,19 @@ const LandingPage = () => {
 
             <div className="flex items-center gap-4">
               <Button 
-                variant="outline" 
-                onClick={() => navigate('/auth')}
-                className="border-accent/50 text-accent hover:bg-accent hover:text-black"
-              >
-                Connexion
-              </Button>
-              <Button 
                 asChild
                 className="bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
                 <a href="https://calendly.com/tomiolovpro/30min?month=2025-11" target="_blank" rel="noopener noreferrer">
                   Je réserve ma démo
                 </a>
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/auth')}
+                className="border-accent/50 text-accent hover:bg-accent hover:text-black"
+              >
+                Connexion
               </Button>
             </div>
           </div>
