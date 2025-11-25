@@ -75,10 +75,10 @@ const LandingPage = () => {
               <span className="text-accent ml-1">.</span>
             </div>
 
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
               <a href="#solution" className="text-white/70 hover:text-accent transition-colors">Fonctionnalités</a>
               <a href="#avantages" className="text-white/70 hover:text-accent transition-colors">Avantages</a>
-              <a href="#pricing" className="text-white/70 hover:text-accent transition-colors">Tarif</a>
+              <a href="#pricing" className="text-white/70 hover:text-accent transition-colors">Tarifs</a>
               <a href="#contact" className="text-white/70 hover:text-accent transition-colors">Contact</a>
             </nav>
 
