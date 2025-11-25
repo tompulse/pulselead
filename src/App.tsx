@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Subscribe from "./pages/Subscribe";
 import Error404 from "./pages/Error404";
 import MentionsLegales from "./pages/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
@@ -27,6 +28,11 @@ const App = () => (
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/subscribe" element={
+            <ProtectedRoute>
+              <Subscribe />
+            </ProtectedRoute>
+          } />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />

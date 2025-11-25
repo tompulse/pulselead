@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSubscription } from "@/hooks/useSubscription";
 
 import { DashboardProvider, useDashboard } from "@/contexts/DashboardContext";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -48,6 +49,7 @@ const DashboardContent = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { hasAccess, isLoading: subscriptionLoading, daysRemaining } = useSubscription(userId || undefined);
 
   const handleAIFiltersApply = (params: ApplyAIFiltersParams) => {
     // Passer au mode prospects si pas déjà le cas
@@ -139,6 +141,15 @@ const DashboardContent = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Vérifier l'accès à l'abonnement après le chargement
+  useEffect(() => {
+    if (!loading && !subscriptionLoading && userId && !isAdmin) {
+      if (!hasAccess) {
+        navigate("/subscribe");
+      }
+    }
+  }, [loading, subscriptionLoading, hasAccess, userId, isAdmin, navigate]);
 
 
   const handleLogout = async () => {
