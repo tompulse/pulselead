@@ -14,7 +14,7 @@ const ContactSection = () => {
               Une question ? Parlons-en
             </h2>
             <p className="text-lg md:text-xl text-white/70 font-medium max-w-2xl mx-auto">
-              Contactez-moi pour programmer une démo personnalisée et discuter de vos besoins spécifiques
+              Contactez-moi pour programmer une démo et discuter de vos besoins
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
