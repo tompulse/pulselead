@@ -103,7 +103,7 @@ const LandingPage = () => {
               <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
                 PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, ventes de fonds, nouvelles implantations) dans votre zone et génère vos tournées optimisées.
               </p>
-              <div className="flex gap-4 justify-center pt-8">
+              <div className="flex justify-center pt-8">
                 <Button 
                   size="lg"
                   onClick={() => navigate('/auth')}
@@ -111,13 +111,6 @@ const LandingPage = () => {
                 >
                   Démarrer gratuitement
                   <ArrowRight className="ml-2" />
-                </Button>
-                <Button 
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-accent text-accent hover:bg-accent/10 text-xl px-12 py-6"
-                >
-                  Voir une démo
                 </Button>
               </div>
             </div>
@@ -280,9 +273,11 @@ const LandingPage = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-full mb-6 font-bold shadow-lg mx-auto block w-fit">
-                <Sparkles className="w-5 h-5" />
-                Offre de lancement -30% • Jusqu'au 31 Décembre 2025
+              <div className="flex justify-center mb-6">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-full font-bold shadow-lg">
+                  <Sparkles className="w-5 h-5" />
+                  Offre de lancement -30% • Jusqu'au 31 Décembre 2025
+                </div>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Notre offre unique</h2>
               <p className="text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">
