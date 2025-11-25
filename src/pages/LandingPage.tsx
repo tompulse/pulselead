@@ -94,16 +94,17 @@ const LandingPage = () => {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="py-12 px-6 relative z-10">
+        <section className="py-8 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
-            <div ref={heroAnimation.ref} className={`text-center space-y-8 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
+            <div ref={heroAnimation.ref} className={`text-center space-y-6 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <h1 className="text-6xl md:text-7xl font-bold leading-tight">
-                Prospectez les <span className="gradient-text">créations d'entreprise</span> avant vos concurrents
+                Prospectez les <span className="gradient-text">nouvelles entreprises</span><br />
+                avant vos concurrents
               </h1>
               <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto">
                 PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, ventes de fonds, nouvelles implantations) dans votre zone et génère vos tournées optimisées.
               </p>
-              <div className="flex justify-center pt-8">
+              <div className="flex justify-center pt-6">
                 <Button 
                   size="lg"
                   onClick={() => navigate('/auth')}
@@ -115,7 +116,7 @@ const LandingPage = () => {
               </div>
 
               {/* Stats Section */}
-              <div className="mt-20 grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="mt-12 grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                 {/* Stat 1 */}
                 <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
                   <div className="text-5xl font-bold gradient-text">+850</div>
@@ -136,7 +137,7 @@ const LandingPage = () => {
               </div>
 
               {/* Trust badges */}
-              <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-white/50 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-white/50 animate-fade-in" style={{ animationDelay: '0.4s' }}>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-green-500" />
                   <span>Conforme RGPD</span>
@@ -153,9 +154,6 @@ const LandingPage = () => {
             </div>
           </div>
         </section>
-
-        {/* Spacer to push problems section below fold */}
-        <div className="h-32 md:h-48"></div>
 
         {/* Problems Section */}
         <section className="py-12 px-6 relative z-10" style={{
