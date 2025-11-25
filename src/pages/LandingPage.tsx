@@ -112,7 +112,7 @@ const LandingPage = () => {
               <div className="flex justify-center pt-6">
                 <Button size="lg" onClick={() => navigate('/auth')} className="btn-hero-pulse">
                   Commencer maintenant
-                  <ArrowRight className="ml-3 w-7 h-7" />
+                  <ArrowRight className="ml-4 w-8 h-8" />
                 </Button>
               </div>
 
