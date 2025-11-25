@@ -83,7 +83,7 @@ const LandingPage = () => {
             </nav>
 
             <div className="flex items-center gap-4">
-              <Button asChild className="bg-green-600 hover:bg-green-700 text-white text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+              <Button asChild className="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 px-4 py-2">
                 <a href="https://calendly.com/tomiolovpro/30min?month=2025-11" target="_blank" rel="noopener noreferrer">
                   Je réserve ma démo
                 </a>
