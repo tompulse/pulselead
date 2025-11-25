@@ -100,16 +100,16 @@ const LandingPage = () => {
         {/* Hero Section */}
         <section className="py-8 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
-            <div ref={heroAnimation.ref} className={`text-center space-y-6 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
+            <div ref={heroAnimation.ref} className={`text-center space-y-3 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 Prospectez les <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">nouvelles entreprises</span>
                 <br />
                 avant vos concurrents
               </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto pt-2">
                 PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, ventes de fonds, nouvelles implantations) dans votre zone et génère vos tournées optimisées.
               </p>
-              <div className="flex justify-center py-10">
+              <div className="flex justify-center py-6">
                 <Button onClick={() => navigate('/auth')} className="btn-hero-pulse">
                   Commencer maintenant
                   <ArrowRight className="ml-4 w-8 h-8" />
@@ -117,7 +117,7 @@ const LandingPage = () => {
               </div>
 
               {/* Stats Section */}
-              <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
                 {/* Stat 1 */}
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.1s'
