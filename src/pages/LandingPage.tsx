@@ -122,7 +122,7 @@ const LandingPage = () => {
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.1s'
               }}>
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">+850</div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+850</div>
                   <p className="text-white/70 text-sm sm:text-base md:text-lg">entreprises détectées en moyenne chaque semaine</p>
                 </div>
                 
@@ -130,7 +130,7 @@ const LandingPage = () => {
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.2s'
               }}>
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">13</div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">13</div>
                   <p className="text-white/70 text-sm sm:text-base md:text-lg">commerciaux ont fait
 confiance à PULSE</p>
                 </div>
@@ -139,7 +139,7 @@ confiance à PULSE</p>
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.3s'
               }}>
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">92%</div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
                   <p className="text-white/70 text-sm sm:text-base md:text-lg">de satisfaction client</p>
                 </div>
               </div>
