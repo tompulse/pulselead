@@ -30,22 +30,19 @@ const LandingPage = () => {
       originalPrice: 99, 
       discountedPrice: 69, 
       label: 'Mensuel',
-      period: '/mois',
-      monthlyEquivalent: undefined
+      billingDetails: 'Facturé mensuellement'
     },
     quarterly: { 
-      originalPrice: 237, 
-      discountedPrice: 166, 
+      originalPrice: 79, 
+      discountedPrice: 55, 
       label: 'Trimestriel',
-      period: '/3 mois',
-      monthlyEquivalent: '55€/mois'
+      billingDetails: 'Soit 166€ facturés tous les 3 mois'
     },
     yearly: { 
-      originalPrice: 708, 
-      discountedPrice: 496, 
+      originalPrice: 59, 
+      discountedPrice: 41, 
       label: 'Annuel',
-      period: '/an',
-      monthlyEquivalent: '41€/mois'
+      billingDetails: 'Soit 496€ facturés annuellement'
     }
   };
 
@@ -347,12 +344,10 @@ const LandingPage = () => {
                             {pricingPlans[selectedPlan].originalPrice}€
                           </span>
                         </div>
-                        <p className="text-sm text-white/60">{pricingPlans[selectedPlan].period}</p>
-                        {pricingPlans[selectedPlan].monthlyEquivalent && (
-                          <p className="text-sm font-semibold text-green-500 mt-1">
-                            Soit {pricingPlans[selectedPlan].monthlyEquivalent}
-                          </p>
-                        )}
+                        <p className="text-lg text-white/60 font-semibold">/mois</p>
+                        <p className="text-sm text-white/50 mt-1">
+                          {pricingPlans[selectedPlan].billingDetails}
+                        </p>
                         <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
                           -30% de réduction
                         </div>
