@@ -333,7 +333,7 @@ Redoutables</h3>
                 </div>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Notre offre unique</h2>
-              <p className="text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">Choisissez la durée qui corresponds à vos ambitions</p>
+              <p className="text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">Choisissez la durée qui correspond à vos ambitions</p>
               
               {/* Pricing Cards */}
               <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
