@@ -1,44 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Check, Sparkles } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Check, Sparkles, Construction } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
 const Subscribe = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  const plans = [
-    {
-      name: 'Mensuel',
-      originalPrice: 149,
-      discountedPrice: 104,
-      period: '/mois',
-      plan: 'monthly',
-      popular: false,
-      savings: '-30%'
-    },
-    {
-      name: 'Trimestriel',
-      originalPrice: 356,
-      discountedPrice: 249,
-      period: '/3 mois',
-      plan: 'quarterly',
-      popular: true,
-      savings: '-30%',
-      monthlyEquivalent: '83€/mois'
-    },
-    {
-      name: 'Annuel',
-      originalPrice: 1062,
-      discountedPrice: 743,
-      period: '/an',
-      plan: 'yearly',
-      popular: false,
-      savings: '-30%',
-      monthlyEquivalent: '62€/mois'
-    }
-  ];
 
   const handleSubscribe = (plan: string) => {
     toast({
@@ -57,88 +26,129 @@ const Subscribe = () => {
             Offre de lancement -30% • Jusqu'au 31 Décembre 2025
           </div>
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-accent via-cyan-glow to-accent bg-clip-text text-transparent">
-            Choisissez votre abonnement PULSE Premium
+            Choisissez votre formule PULSE
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Cartographie territoriale, tournées optimisées, CRM mobile + détection automatique 
-            des mouvements d'entreprises
+            Gagnez 2h par jour sur le terrain
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {plans.map((plan) => (
-            <Card
-              key={plan.plan}
-              className={`relative p-8 ${
-                plan.popular
-                  ? 'border-2 border-accent shadow-2xl shadow-accent/20 scale-105'
-                  : 'border-border/50 hover:border-accent/50'
-              } transition-all duration-300 hover:scale-105`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-primary px-6 py-1 rounded-full text-sm font-bold shadow-lg">
-                  Le plus populaire
-                </div>
-              )}
-
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-4xl font-bold text-accent">{plan.discountedPrice}€</span>
-                  <span className="text-xl text-muted-foreground line-through">{plan.originalPrice}€</span>
-                </div>
-                <p className="text-sm text-muted-foreground mb-1">{plan.period}</p>
-                {plan.monthlyEquivalent && (
-                  <p className="text-sm font-semibold text-green-600">
-                    Soit {plan.monthlyEquivalent}
-                  </p>
-                )}
-                <div className="inline-flex items-center bg-green-600/20 text-green-600 px-3 py-1 rounded-full text-sm font-bold mt-2">
-                  {plan.savings} de réduction
-                </div>
+        <div className="grid md:grid-cols-2 gap-8 mb-12 max-w-5xl mx-auto">
+          {/* Commercial Offer */}
+          <Card className="relative p-8 border-border/50 hover:border-accent/50 transition-all duration-300">
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold mb-2">Commercial</h3>
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-4xl font-bold text-accent">69€</span>
+                <span className="text-xl text-muted-foreground line-through">99€</span>
+                <span className="text-sm text-muted-foreground">/mois</span>
               </div>
+              <div className="inline-flex items-center bg-green-600/20 text-green-600 px-3 py-1 rounded-full text-sm font-bold mt-2">
+                -30% de réduction
+              </div>
+            </div>
 
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm">Cartographie complète de votre territoire</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm">Tournées optimisées avec GPS intégré</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm">CRM mobile simple et efficace</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm font-semibold">🎯 Détection automatique des mouvements d'entreprises</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm">Assistant IA pour l'optimisation</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm">Accès mobile et hors-ligne</span>
-                </li>
-              </ul>
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm">Cartographie interactive de votre territoire</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm">Tournées optimisées automatiquement</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm">Navigation GPS intégrée (Google Maps / Waze)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm">CRM multi-supports : visites, RDV, emails, notes</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm">Programmer vos relances</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm">Pipeline de vente (Kanban)</span>
+              </li>
+              <li className="flex items-start gap-2 opacity-60">
+                <Construction className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">Assistant IA</span>
+                  <Badge variant="secondary" className="text-xs">Bientôt disponible</Badge>
+                </div>
+              </li>
+            </ul>
 
-              <Button
-                onClick={() => handleSubscribe(plan.plan)}
-                className={`w-full ${
-                  plan.popular
-                    ? 'bg-gradient-to-r from-accent to-cyan-glow hover:shadow-xl hover:shadow-accent/40'
-                    : ''
-                }`}
-                size="lg"
-              >
-                Commencer maintenant
-              </Button>
-            </Card>
-          ))}
+            <Button
+              onClick={() => handleSubscribe('commercial')}
+              className="w-full"
+              size="lg"
+            >
+              Commencer
+            </Button>
+          </Card>
+
+          {/* Premium Offer */}
+          <Card className="relative p-8 border-2 border-accent shadow-2xl shadow-accent/20 scale-105 transition-all duration-300">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-primary px-6 py-1 rounded-full text-sm font-bold shadow-lg">
+              Offre la plus populaire
+            </div>
+
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold mb-2">Premium</h3>
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-4xl font-bold text-accent">104€</span>
+                <span className="text-xl text-muted-foreground line-through">149€</span>
+                <span className="text-sm text-muted-foreground">/mois</span>
+              </div>
+              <div className="inline-flex items-center bg-green-600/20 text-green-600 px-3 py-1 rounded-full text-sm font-bold mt-2">
+                -30% de réduction
+              </div>
+            </div>
+
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm font-semibold">Tout Commercial inclus</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm font-semibold">🎯 Détection automatique des créations d'entreprises</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm font-semibold">Nouveaux sites détectés (ouvertures, déménagements)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm font-semibold">Filtres avancés (NAF, départements, catégories)</span>
+              </li>
+            </ul>
+
+            <Button
+              onClick={() => handleSubscribe('premium')}
+              className="w-full bg-gradient-to-r from-accent to-cyan-glow hover:shadow-xl hover:shadow-accent/40"
+              size="lg"
+            >
+              Commencer maintenant
+            </Button>
+          </Card>
+        </div>
+
+        {/* Trust indicators */}
+        <div className="flex flex-wrap justify-center gap-8 mb-12 text-center">
+          <div className="flex flex-col items-center">
+            <span className="text-2xl mb-1">💳</span>
+            <span className="text-sm text-muted-foreground">Satisfait ou remboursé 14 jours</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-2xl mb-1">🔒</span>
+            <span className="text-sm text-muted-foreground">Paiement 100% sécurisé</span>
+          </div>
         </div>
 
         {/* FAQ Section */}
