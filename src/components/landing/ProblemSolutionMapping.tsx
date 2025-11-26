@@ -5,49 +5,49 @@ export const ProblemSolutionMapping = () => {
     {
       problem: {
         icon: Clock,
-        title: "Trajets non optimisés",
-        description: "Vous perdez 2h/jour dans les transports"
+        title: "40% du temps perdu sur la route",
+        description: "Vous passez plus de temps à rouler qu'à vendre"
       },
       solution: {
         icon: Target,
-        title: "Tournées optimisées IA",
-        description: "Itinéraires calculés en 3s, +2-3 visites/jour"
+        title: "Tournées optimisées automatiquement",
+        description: "Itinéraires calculés en 3s, GPS intégré, +2-3 visites/jour"
       }
     },
     {
       problem: {
         icon: FileText,
-        title: "CRM dispersé et incomplet",
-        description: "Excel, papier, notes... impossible de suivre"
+        title: "Excel, carnets, post-its...",
+        description: "Votre suivi client est un cauchemar à gérer"
       },
       solution: {
         icon: Zap,
-        title: "CRM intégré temps réel",
-        description: "Pipeline clair, historique complet, mobile-first"
-      }
-    },
-    {
-      problem: {
-        icon: MapPin,
-        title: "Prospection à l'aveugle",
-        description: "Vous découvrez trop tard les mouvements d'entreprises de votre zone"
-      },
-      solution: {
-        icon: TrendingUp,
-        title: "Détection des mouvements",
-        description: "Créations et nouveaux établissements de votre zone en données officielles"
+        title: "CRM terrain simple et mobile",
+        description: "Visites, appels, relances : tout centralisé sur votre téléphone"
       }
     },
     {
       problem: {
         icon: AlertCircle,
-        title: "Relances oubliées",
-        description: "Prospects chauds qui refroidissent par manque de suivi"
+        title: "Opportunités manquées",
+        description: "Vous passez à côté de prospects sans le savoir"
+      },
+      solution: {
+        icon: TrendingUp,
+        title: "Cartographie territoriale complète",
+        description: "Tous vos prospects sur une carte + détection des nouvelles entreprises"
+      }
+    },
+    {
+      problem: {
+        icon: MapPin,
+        title: "Les CRM classiques sont trop lourds",
+        description: "Trop complexes pour un usage terrain quotidien"
       },
       solution: {
         icon: CheckCircle,
-        title: "Rappels automatiques",
-        description: "Notifications intelligentes pour ne rien manquer"
+        title: "Pensé pour les commerciaux TPE/PME",
+        description: "Simple, rapide, efficace : juste ce qu'il faut"
       }
     }
   ];
@@ -57,10 +57,10 @@ export const ProblemSolutionMapping = () => {
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-destructive">Vos défis</span> → <span className="text-accent">Nos solutions</span>
+            <span className="text-destructive">Vos problèmes</span> → <span className="text-accent">Nos solutions</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            PULSE transforme chaque obstacle terrain en opportunité de croissance
+            PULSE vous aide à gagner du temps et vendre plus efficacement
           </p>
         </div>
         

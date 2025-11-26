@@ -21,33 +21,32 @@ export const HeroSection = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
             </span>
-            <span className="text-xs sm:text-sm text-accent font-bold tracking-wide">L'outil tout-en-un des commerciaux terrain</span>
+            <span className="text-xs sm:text-sm text-accent font-bold tracking-wide">🎯 L'outil terrain des commerciaux qui veulent gagner du temps</span>
           </div>
           
           {/* Stat sociale */}
           <div className="inline-flex items-center gap-2 text-xs sm:text-sm text-muted-foreground/80">
             <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
-            <span><strong className="text-accent font-bold">35 commerciaux</strong> utilisent PULSE quotidiennement</span>
+            <span>Adapté aux <strong className="text-accent font-bold">TPE/PME</strong></span>
           </div>
         </div>
         
-        {/* Main Headline - Focus sur le développement commercial */}
+        {/* Main Headline */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-extrabold leading-[1.05] tracking-tight px-2">
-          <span className="text-foreground">Prospectez les </span>
-          <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">nouvelles entreprises</span>
-          <br />
-          <span className="text-foreground">avant vos concurrents</span>
+          <span className="text-foreground">Vendez plus. </span>
+          <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">Roulez moins.</span>
         </h1>
         
-        {/* Subheadline - Focus sur les bénéfices avec chiffre clé */}
+        {/* Subheadline */}
         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed px-4 font-medium">
-          PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, nouvelles implantations) dans votre zone, génère vos tournées optimisées et enregistre chaque visite, appel et relance.
+          PULSE cartographie votre territoire, optimise vos tournées et centralise votre suivi commercial. 
+          Conçu pour les commerciaux de TPE/PME qui veulent passer plus de temps à vendre qu'à s'organiser.
         </p>
         
         {/* Badge résultat */}
         <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-green-500/15 border border-green-500/40 shadow-lg shadow-green-500/20">
-          <TrendingUp className="w-4 h-4 text-green-500" />
-          <span className="text-xs sm:text-sm font-bold text-green-500">+30% de commissions en moyenne</span>
+          <Clock className="w-4 h-4 text-green-500" />
+          <span className="text-xs sm:text-sm font-bold text-green-500">2h gagnées par jour en moyenne</span>
         </div>
 
         {/* CTA Principal unique et fort */}

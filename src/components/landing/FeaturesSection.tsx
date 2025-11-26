@@ -4,38 +4,38 @@ export const FeaturesSection = () => {
   const features = [
     {
       icon: MapPin,
-      title: "Tournées optimisées",
-      description: "Planifiez vos visites terrain avec des itinéraires intelligents. GPS intégré et optimisation automatique pour gagner du temps."
+      title: "Cartographie de votre territoire",
+      description: "Visualisez tous vos prospects et clients sur une carte. Filtrez par secteur, statut, ou type d'activité."
     },
     {
       icon: Target,
-      title: "CRM intégré",
-      description: "Gérez vos prospects et clients. Historique complet, relances automatiques, pipeline commercial clair et actionable."
-    },
-    {
-      icon: TrendingUp,
-      title: "Suivi d'activité",
-      description: "Suivez vos performances : appels, visites, RDV, conversions. Tableaux de bord et statistiques en temps réel."
+      title: "Tournées optimisées automatiquement",
+      description: "L'IA calcule le meilleur itinéraire en 3 secondes. GPS intégré. Gagnez 2h par jour et visitez 2-3 entreprises de plus."
     },
     {
       icon: Zap,
-      title: "Mouvements d'entreprises",
-      description: "Créations et nouveaux sites de votre secteur. Données officielles INPI & INSEE. Notez que certains sites peuvent être en travaux ou en cours d'installation."
+      title: "CRM simple et mobile",
+      description: "Enregistrez visites, appels et relances depuis votre mobile. Pipeline visuel pour suivre vos opportunités."
+    },
+    {
+      icon: TrendingUp,
+      title: "Détection des nouvelles opportunités",
+      description: "Créations d'entreprises et nouveaux établissements dans votre zone (données officielles publiques)."
     },
     {
       icon: Clock,
-      title: "Gestion du temps",
-      description: "Organisez votre agenda, programmez vos relances et ne manquez plus aucune opportunité commerciale."
+      title: "Import de vos fichiers",
+      description: "Importez vos Excel, CSV ou bases existantes. PULSE enrichit automatiquement les données manquantes."
     },
     {
       icon: Shield,
-      title: "Données sécurisées",
-      description: "Vos données commerciales protégées avec un chiffrement de niveau bancaire. Hébergement en France."
+      title: "Conforme RGPD",
+      description: "Toutes les données publiques proviennent de sources officielles. Sécurité et conformité garanties."
     },
     {
       icon: BarChart,
-      title: "Reporting complet",
-      description: "Analysez votre activité avec des statistiques détaillées et des graphiques interactifs pour piloter vos résultats."
+      title: "Suivi de votre activité",
+      description: "Tableaux de bord clairs : nombre de visites, taux de conversion, évolution de votre pipeline."
     }
   ];
 
@@ -43,10 +43,10 @@ export const FeaturesSection = () => {
     <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16">
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-2xl lg:text-3xl font-bold">
-          Tout ce dont vous avez besoin pour <span className="gradient-text">performer</span>
+          Les 3 piliers de <span className="gradient-text">PULSE</span>
         </h2>
         <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
-          Une plateforme complète pensée pour les commerciaux terrain
+          Cartographie + Tournées optimisées + CRM terrain = Plus de temps pour vendre
         </p>
       </div>
 
