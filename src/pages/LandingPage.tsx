@@ -9,7 +9,8 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import ContactSection from "@/components/landing/ContactSection";
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
+  const [selectedPlanCommercial, setSelectedPlanCommercial] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
+  const [selectedPlanPremium, setSelectedPlanPremium] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
 
   // Scroll animations
   const heroAnimation = useScrollAnimation({
@@ -105,7 +106,7 @@ const LandingPage = () => {
             <div ref={heroAnimation.ref} className={`text-center space-y-3 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/20 mb-4">
                 <Target className="w-4 h-4 text-accent" />
-                <span className="text-sm text-white/90 font-medium">L'outil terrain des commerciaux qui veulent gagner du temps</span>
+                <span className="text-sm text-white/90 font-medium">Structurez votre prospection terrain avec intelligence</span>
               </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 Vendez plus.
@@ -128,8 +129,8 @@ const LandingPage = () => {
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.1s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">2h</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">gagnées par jour en moyenne</p>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">100%</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">de votre territoire structuré</p>
                 </div>
                 
                 {/* Stat 2 */}
@@ -178,22 +179,22 @@ const LandingPage = () => {
       }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Ce qui tue votre chiffre d'affaires</h2>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Ce qui désorganise votre prospection</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
-                <Clock className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">40% du temps perdu sur la route</h3>
-                <p className="text-white/70 text-base sm:text-lg">Des trajets mal optimisés qui vous empêchent de voir plus de clients</p>
+                <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Aucune visibilité sur votre secteur</h3>
+                <p className="text-white/70 text-base sm:text-lg">Impossible de savoir où sont vos prospects, qui cibler en priorité, quel territoire couvrir</p>
               </Card>
               <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
                 <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Excel, carnets, post-its...</h3>
-                <p className="text-white/70 text-base sm:text-lg">Informations éparpillées, relances oubliées, opportunités perdues</p>
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Informations éparpillées partout</h3>
+                <p className="text-white/70 text-base sm:text-lg">Excel, carnets, post-its... Relances oubliées, données perdues, aucun historique structuré</p>
               </Card>
               <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
-                <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Les CRM classiques sont trop lourds</h3>
-                <p className="text-white/70 text-base sm:text-lg">Compliqués, lents, pas adaptés au terrain et aux commerciaux mobiles</p>
+                <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Trajets improvisés inefficaces</h3>
+                <p className="text-white/70 text-base sm:text-lg">Des kilomètres inutiles, du temps perdu, moins de visites, moins de chiffre d'affaires</p>
               </Card>
             </div>
             </div>
@@ -210,7 +211,7 @@ const LandingPage = () => {
                 Les 3 piliers de <span className="gradient-text">PULSE</span>
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Maîtrisez votre territoire, optimisez vos déplacements, suivez vos actions
+                Contrôlez votre territoire, optimisez chaque action commerciale
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
               <div className="text-center space-y-3 sm:space-y-4">
@@ -254,7 +255,7 @@ const LandingPage = () => {
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">Avant / Après PULSE</h2>
               <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Passez du chaos à l'organisation, du temps perdu au temps investi
+                Passez du chaos à une prospection structurée et méthodique
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
               <Card className="glass-card p-6 sm:p-8 md:p-10 border-red-500/30">
@@ -267,6 +268,10 @@ const LandingPage = () => {
                 <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
+                    <span>Prospection désorganisée sans vision claire de votre territoire</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-red-500 mt-1 text-xl">✗</span>
                     <span>Trajets improvisés, temps perdu dans les bouchons et les détours</span>
                   </li>
                   <li className="flex items-start gap-3">
@@ -275,11 +280,7 @@ const LandingPage = () => {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Relances oubliées, prospects qui passent entre les mailles</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Aucune visibilité sur votre activité réelle et vos résultats</span>
+                    <span>Aucune visibilité sur vos prospects cibles et votre secteur</span>
                   </li>
                 </ul>
               </Card>
@@ -293,19 +294,19 @@ const LandingPage = () => {
                 <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>2h gagnées par jour grâce aux tournées optimisées et au GPS intégré</span>
+                    <span>Prospection structurée avec visibilité complète de tous vos prospects cibles</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Toutes les infos centralisées dans un CRM simple accessible partout</span>
+                    <span>Tournées méthodiques et optimisées qui vous font gagner 2h par jour</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Aucune relance manquée, suivi clair de chaque prospect</span>
+                    <span>CRM organisé : toutes vos actions centralisées et accessibles partout</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Visibilité totale sur votre activité et vos performances</span>
+                    <span>Maîtrise totale de votre activité avec suivi en temps réel</span>
                   </li>
                 </ul>
               </Card>
@@ -333,7 +334,7 @@ const LandingPage = () => {
                 Choisissez votre formule <span className="gradient-text">PULSE</span>
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Gagnez 2h par jour sur le terrain
+                Structurez votre prospection, maîtrisez votre territoire
               </p>
               
               {/* Pricing Cards */}
@@ -346,13 +347,13 @@ const LandingPage = () => {
                       background: 'rgba(0, 0, 0, 0.4)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
                     }} className="inline-flex rounded-lg p-1">
-                      <button onClick={() => setSelectedPlan('monthly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                      <button onClick={() => setSelectedPlanCommercial('monthly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanCommercial === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Mensuel
                       </button>
-                      <button onClick={() => setSelectedPlan('quarterly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                      <button onClick={() => setSelectedPlanCommercial('quarterly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanCommercial === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Trimestriel
                       </button>
-                      <button onClick={() => setSelectedPlan('yearly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                      <button onClick={() => setSelectedPlanCommercial('yearly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanCommercial === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Annuel
                       </button>
                     </div>
@@ -369,18 +370,18 @@ const LandingPage = () => {
                         background: 'rgba(0, 0, 0, 0.3)',
                         border: '1px solid rgba(6, 182, 212, 0.2)'
                       }}>
-                        <div className="flex items-baseline justify-center gap-2 mb-1">
+                      <div className="flex items-baseline justify-center gap-2 mb-1">
                           <span className="text-4xl md:text-5xl font-bold gradient-text">
-                            {pricingPlans[selectedPlan].discountedPrice}€
+                            {pricingPlans[selectedPlanCommercial].discountedPrice}€
                           </span>
                           <span className="text-xl text-white/40 line-through">
-                            {pricingPlans[selectedPlan].originalPrice}€
+                            {pricingPlans[selectedPlanCommercial].originalPrice}€
                           </span>
                         </div>
                         <p className="text-base text-white/60 font-semibold">/mois</p>
-                        {pricingPlans[selectedPlan].billingDetails && (
+                        {pricingPlans[selectedPlanCommercial].billingDetails && (
                           <p className="text-xs text-white/50 mt-1">
-                            {pricingPlans[selectedPlan].billingDetails}
+                            {pricingPlans[selectedPlanCommercial].billingDetails}
                           </p>
                         )}
                         <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
@@ -399,19 +400,13 @@ const LandingPage = () => {
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed">Tournées optimisées</span>
+                          <span className="text-white text-xs leading-relaxed">Tournées optimisées GPS</span>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed">GPS intégré</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-xs leading-relaxed">CRM mobile</span>
+                          <span className="text-white text-xs leading-relaxed">CRM mobile simplifié</span>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -419,14 +414,11 @@ const LandingPage = () => {
                           </div>
                           <span className="text-white text-xs leading-relaxed">Pipeline Kanban</span>
                         </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5 opacity-60">
-                          <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Construction className="w-3 h-3 text-white/50" />
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
                           </div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-white/70 text-xs">Assistant IA</span>
-                            <Badge variant="secondary" className="text-[10px] py-0 px-1.5">Bientôt</Badge>
-                          </div>
+                          <span className="text-white text-xs leading-relaxed">Filtres avancés (département, activité, taille)</span>
                         </li>
                       </ul>
 
@@ -439,64 +431,103 @@ const LandingPage = () => {
                 </div>
 
                 {/* Premium Offer */}
-                <Card className="relative overflow-visible lg:scale-105" style={{
-                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%)',
-                  border: '2px solid rgba(6, 182, 212, 0.5)',
-                  boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
-                }}>
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
-                    ⭐ OFFRE LA PLUS POPULAIRE
-                  </div>
-                  
-                  <div className="p-6 md:p-8 pt-10 lg:pt-12">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Premium</h3>
-                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                      background: 'rgba(0, 0, 0, 0.3)',
+                <div className="space-y-4">
+                  {/* Plan Toggle for Premium */}
+                  <div className="flex justify-center">
+                    <div style={{
+                      background: 'rgba(0, 0, 0, 0.4)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
-                    }}>
-                      <div className="flex items-baseline justify-center gap-2 mb-1">
-                        <span className="text-4xl md:text-5xl font-bold gradient-text">104€</span>
-                        <span className="text-xl text-white/40 line-through">149€</span>
-                      </div>
-                      <p className="text-base text-white/60 font-semibold">/mois</p>
-                      <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                        -30% de réduction
-                      </div>
+                    }} className="inline-flex rounded-lg p-1">
+                      <button onClick={() => setSelectedPlanPremium('monthly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanPremium === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                        Mensuel
+                      </button>
+                      <button onClick={() => setSelectedPlanPremium('quarterly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanPremium === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                        Trimestriel
+                      </button>
+                      <button onClick={() => setSelectedPlanPremium('yearly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanPremium === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                        Annuel
+                      </button>
                     </div>
-
-                    <ul className="space-y-2 mb-6">
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-xs leading-relaxed font-semibold">Tout Commercial inclus</span>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-xs leading-relaxed font-semibold">🎯 Détection créations entreprises</span>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-xs leading-relaxed font-semibold">Nouveaux sites détectés</span>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-xs leading-relaxed font-semibold">Filtres avancés (NAF, départements)</span>
-                      </li>
-                    </ul>
-
-                    <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-4 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
-                      Commencer maintenant
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
                   </div>
-                </Card>
+
+                  <Card className="relative overflow-visible lg:scale-105" style={{
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%)',
+                    border: '2px solid rgba(6, 182, 212, 0.5)',
+                    boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+                  }}>
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
+                      ⭐ OFFRE LA PLUS POPULAIRE
+                    </div>
+                    
+                    <div className="p-6 md:p-8 pt-10 lg:pt-12">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Premium</h3>
+                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(6, 182, 212, 0.2)'
+                      }}>
+                        <div className="flex items-baseline justify-center gap-2 mb-1">
+                          <span className="text-4xl md:text-5xl font-bold gradient-text">
+                            {selectedPlanPremium === 'monthly' ? '104' : selectedPlanPremium === 'quarterly' ? '83' : '62'}€
+                          </span>
+                          <span className="text-xl text-white/40 line-through">
+                            {selectedPlanPremium === 'monthly' ? '149' : selectedPlanPremium === 'quarterly' ? '119' : '89'}€
+                          </span>
+                        </div>
+                        <p className="text-base text-white/60 font-semibold">/mois</p>
+                        {selectedPlanPremium === 'quarterly' && (
+                          <p className="text-xs text-white/50 mt-1">Soit 249€ au lieu de 357€</p>
+                        )}
+                        {selectedPlanPremium === 'yearly' && (
+                          <p className="text-xs text-white/50 mt-1">Soit 744€ au lieu de 1068€</p>
+                        )}
+                        <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
+                          -30% de réduction
+                        </div>
+                      </div>
+
+                      <ul className="space-y-2 mb-6">
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed font-semibold">Tout Commercial inclus</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed font-semibold">🎯 Détection créations entreprises</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed font-semibold">Nouveaux sites détectés</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed font-semibold">Filtres avancés (NAF, départements)</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Sparkles className="w-3 h-3 text-accent" />
+                          </div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-white text-xs font-semibold">Assistant IA</span>
+                            <Badge variant="secondary" className="text-[10px] py-0 px-1.5">Bientôt</Badge>
+                          </div>
+                        </li>
+                      </ul>
+
+                      <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-4 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
+                        Commencer maintenant
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
 
                 {/* Enterprise Offer */}
                 <div className="space-y-4">
@@ -528,6 +559,12 @@ const LandingPage = () => {
                             <Check className="w-3 h-3 text-cyan-glow" />
                           </div>
                           <span className="text-white text-xs leading-relaxed font-semibold">Tout Premium inclus</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Sparkles className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed font-semibold">Assistant IA inclus</span>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                           <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -567,12 +604,16 @@ const LandingPage = () => {
               {/* Trust indicators */}
               <div className="flex flex-wrap justify-center gap-8 text-center text-white/70">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">💳</span>
-                  <span className="text-sm">Satisfait ou remboursé 14 jours</span>
+                  <Check className="w-5 h-5 text-green-500" />
+                  <span className="text-sm font-medium">Conforme RGPD</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🔒</span>
                   <span className="text-sm">Paiement 100% sécurisé</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Database className="w-5 h-5 text-accent" />
+                  <span className="text-sm">Données publiques officielles</span>
                 </div>
               </div>
             </div>
@@ -590,6 +631,17 @@ const LandingPage = () => {
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
+                  Comment PULSE structure ma prospection ?
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 text-lg">
+                  PULSE vous donne une vision complète de votre territoire avec tous vos prospects sur une carte interactive, 
+                  des tournées calculées automatiquement pour optimiser vos déplacements, et un CRM mobile pour suivre chaque action. 
+                  Tout est centralisé, organisé et accessible en temps réel.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-2" className="border border-white/10 rounded-lg px-6">
+                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
                   Les données sont-elles fiables ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
@@ -598,7 +650,7 @@ const LandingPage = () => {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-2" className="border border-white/10 rounded-lg px-6">
+              <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
                   Peut-on l'utiliser partout en France ?
                 </AccordionTrigger>
@@ -607,21 +659,23 @@ const LandingPage = () => {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-6">
+              <AccordionItem value="item-4" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
                   Quelles données vais-je retrouver ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
-                  Chaque semaine nous vous localisons les nouvelles ouvertures d'entreprise, les déménagements en cours, les nouvelles implantations d'entreprises existantes, etc...
+                  Avec l'offre Premium, chaque semaine nous vous localisons les nouvelles ouvertures d'entreprise, les déménagements en cours, 
+                  les nouvelles implantations d'entreprises existantes. L'offre Commercial vous donne accès à toute la cartographie et aux outils de tournées.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-4" className="border border-white/10 rounded-lg px-6">
+              <AccordionItem value="item-5" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
                   Puis-je personnaliser mes critères de recherche ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
-                  Absolument ! PULSE vous permet de filtrer par secteur d'activité, zone géographique, taille d'entreprise.
+                  Absolument ! Toutes les offres incluent des filtres avancés : département, secteur d'activité (code NAF), taille d'entreprise, 
+                  forme juridique. Vous ciblez précisément les prospects qui vous intéressent.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
