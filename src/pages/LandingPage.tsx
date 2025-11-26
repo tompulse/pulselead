@@ -9,6 +9,7 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import ContactSection from "@/components/landing/ContactSection";
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
 
   // Scroll animations
   const heroAnimation = useScrollAnimation({
@@ -32,6 +33,27 @@ const LandingPage = () => {
   const faqAnimation = useScrollAnimation({
     threshold: 0.2
   });
+
+  const pricingPlans = {
+    monthly: {
+      originalPrice: 99,
+      discountedPrice: 69,
+      label: 'Mensuel',
+      billingDetails: 'Facturé mensuellement'
+    },
+    quarterly: {
+      originalPrice: 79,
+      discountedPrice: 55,
+      label: 'Trimestriel',
+      billingDetails: 'Soit 165€ au lieu de 237€'
+    },
+    yearly: {
+      originalPrice: 59,
+      discountedPrice: 41,
+      label: 'Annuel',
+      billingDetails: 'Soit 492€ au lieu de 708€'
+    }
+  };
   return <div className="min-h-screen relative overflow-hidden" style={{
     background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))'
   }}>
@@ -299,7 +321,7 @@ const LandingPage = () => {
         background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
         borderTop: '2px solid rgba(6, 182, 212, 0.2)'
       }}>
-          <div className="container mx-auto max-w-6xl">
+          <div className="container mx-auto max-w-7xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
               <div className="flex justify-center mb-6">
                 <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-full font-bold shadow-lg">
@@ -315,143 +337,231 @@ const LandingPage = () => {
               </p>
               
               {/* Pricing Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto mb-8">
-                {/* Commercial Offer */}
-                <Card className="relative overflow-visible" style={{
-                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%)',
-                  border: '2px solid rgba(6, 182, 212, 0.3)',
-                  boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                }}>
-                  <div className="p-6 md:p-8">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial</h3>
-                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                      background: 'rgba(0, 0, 0, 0.3)',
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto mb-8">
+                {/* Commercial Offer with duration selector */}
+                <div className="space-y-4">
+                  {/* Plan Toggle */}
+                  <div className="flex justify-center">
+                    <div style={{
+                      background: 'rgba(0, 0, 0, 0.4)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
-                    }}>
-                      <div className="flex items-baseline justify-center gap-2 mb-1">
-                        <span className="text-5xl md:text-6xl font-bold gradient-text">69€</span>
-                        <span className="text-2xl text-white/40 line-through">99€</span>
-                      </div>
-                      <p className="text-lg text-white/60 font-semibold">/mois</p>
-                      <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                        -30% de réduction
-                      </div>
+                    }} className="inline-flex rounded-lg p-1">
+                      <button onClick={() => setSelectedPlan('monthly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                        Mensuel
+                      </button>
+                      <button onClick={() => setSelectedPlan('quarterly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                        Trimestriel
+                      </button>
+                      <button onClick={() => setSelectedPlan('yearly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                        Annuel
+                      </button>
                     </div>
-
-                    <ul className="space-y-2.5 mb-6">
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Cartographie interactive de votre territoire</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Tournées optimisées automatiquement</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Navigation GPS intégrée (Google Maps / Waze)</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">CRM multi-supports : visites, RDV, emails, notes</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Programmer vos relances</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-accent" />
-                        </div>
-                        <span className="text-white text-sm leading-relaxed">Pipeline de vente (Kanban)</span>
-                      </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5 opacity-60">
-                        <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Construction className="w-3 h-3 text-white/50" />
-                        </div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-white/70 text-sm">Assistant IA</span>
-                          <Badge variant="secondary" className="text-xs">Bientôt disponible</Badge>
-                        </div>
-                      </li>
-                    </ul>
-
-                    <Button className="w-full bg-accent text-black hover:bg-accent/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
-                      Commencer
-                      <ArrowRight className="ml-2" />
-                    </Button>
                   </div>
-                </Card>
+
+                  <Card className="relative overflow-visible" style={{
+                    background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%)',
+                    border: '2px solid rgba(6, 182, 212, 0.3)',
+                    boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div className="p-6 md:p-8">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial</h3>
+                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(6, 182, 212, 0.2)'
+                      }}>
+                        <div className="flex items-baseline justify-center gap-2 mb-1">
+                          <span className="text-4xl md:text-5xl font-bold gradient-text">
+                            {pricingPlans[selectedPlan].discountedPrice}€
+                          </span>
+                          <span className="text-xl text-white/40 line-through">
+                            {pricingPlans[selectedPlan].originalPrice}€
+                          </span>
+                        </div>
+                        <p className="text-base text-white/60 font-semibold">/mois</p>
+                        {pricingPlans[selectedPlan].billingDetails && (
+                          <p className="text-xs text-white/50 mt-1">
+                            {pricingPlans[selectedPlan].billingDetails}
+                          </p>
+                        )}
+                        <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
+                          -30% de réduction
+                        </div>
+                      </div>
+
+                      <ul className="space-y-2 mb-6">
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">Cartographie interactive</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">Tournées optimisées</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">GPS intégré</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">CRM mobile</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-accent" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">Pipeline Kanban</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5 opacity-60">
+                          <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Construction className="w-3 h-3 text-white/50" />
+                          </div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-white/70 text-xs">Assistant IA</span>
+                            <Badge variant="secondary" className="text-[10px] py-0 px-1.5">Bientôt</Badge>
+                          </div>
+                        </li>
+                      </ul>
+
+                      <Button className="w-full bg-accent text-black hover:bg-accent/90 text-sm py-4 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
+                        Commencer
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
 
                 {/* Premium Offer */}
-                <Card className="relative overflow-visible md:scale-105" style={{
+                <Card className="relative overflow-visible lg:scale-105" style={{
                   background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%)',
                   border: '2px solid rgba(6, 182, 212, 0.5)',
                   boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
                 }}>
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
-                    OFFRE LA PLUS POPULAIRE
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
+                    ⭐ OFFRE LA PLUS POPULAIRE
                   </div>
                   
-                  <div className="p-6 md:p-8 pt-10">
+                  <div className="p-6 md:p-8 pt-10 lg:pt-12">
                     <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Premium</h3>
                     <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                       background: 'rgba(0, 0, 0, 0.3)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
                     }}>
                       <div className="flex items-baseline justify-center gap-2 mb-1">
-                        <span className="text-5xl md:text-6xl font-bold gradient-text">104€</span>
-                        <span className="text-2xl text-white/40 line-through">149€</span>
+                        <span className="text-4xl md:text-5xl font-bold gradient-text">104€</span>
+                        <span className="text-xl text-white/40 line-through">149€</span>
                       </div>
-                      <p className="text-lg text-white/60 font-semibold">/mois</p>
+                      <p className="text-base text-white/60 font-semibold">/mois</p>
                       <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
                         -30% de réduction
                       </div>
                     </div>
 
-                    <ul className="space-y-2.5 mb-6">
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                    <ul className="space-y-2 mb-6">
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                         <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-sm leading-relaxed font-semibold">Tout Commercial inclus</span>
+                        <span className="text-white text-xs leading-relaxed font-semibold">Tout Commercial inclus</span>
                       </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                         <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-sm leading-relaxed font-semibold">🎯 Détection automatique des créations d'entreprises</span>
+                        <span className="text-white text-xs leading-relaxed font-semibold">🎯 Détection créations entreprises</span>
                       </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                         <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-sm leading-relaxed font-semibold">Nouveaux sites détectés (ouvertures, déménagements)</span>
+                        <span className="text-white text-xs leading-relaxed font-semibold">Nouveaux sites détectés</span>
                       </li>
-                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                         <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Check className="w-3 h-3 text-accent" />
                         </div>
-                        <span className="text-white text-sm leading-relaxed font-semibold">Filtres avancés (NAF, départements, catégories)</span>
+                        <span className="text-white text-xs leading-relaxed font-semibold">Filtres avancés (NAF, départements)</span>
                       </li>
                     </ul>
 
-                    <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
+                    <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-4 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
                       Commencer maintenant
-                      <ArrowRight className="ml-2" />
+                      <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </div>
                 </Card>
+
+                {/* Enterprise Offer */}
+                <div className="space-y-4">
+                  {/* Spacer to align with Commercial card */}
+                  <div className="h-[52px]"></div>
+
+                  <Card className="relative overflow-visible" style={{
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                    border: '2px solid rgba(14, 165, 233, 0.3)',
+                    boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div className="p-6 md:p-8">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Entreprise</h3>
+                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(14, 165, 233, 0.2)'
+                      }}>
+                        <div className="flex items-baseline justify-center gap-2">
+                          <span className="text-3xl md:text-4xl font-bold gradient-text">
+                            Sur devis
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/50 mt-2">Solution sur mesure</p>
+                      </div>
+
+                      <ul className="space-y-2 mb-6">
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed font-semibold">Tout Premium inclus</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">Dashboard managers</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">Point mensuel 1h offert pour analyser vos résultats</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">Gestion multi-utilisateurs</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-xs leading-relaxed">Support prioritaire</span>
+                        </li>
+                      </ul>
+
+                      <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-sm py-4 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => window.location.href = '#contact'}>
+                        Nous contacter
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
               </div>
 
               {/* Trust indicators */}
