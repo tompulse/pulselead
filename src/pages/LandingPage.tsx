@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { ArrowRight, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User, MapPin, BarChart3, Users, ChevronDown, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone } from "lucide-react";
+import { ArrowRight, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User, MapPin, BarChart3, Users, ChevronDown, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone, Construction } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import ContactSection from "@/components/landing/ContactSection";
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
 
   // Scroll animations
   const heroAnimation = useScrollAnimation({
@@ -32,26 +32,6 @@ const LandingPage = () => {
   const faqAnimation = useScrollAnimation({
     threshold: 0.2
   });
-  const pricingPlans = {
-    monthly: {
-      originalPrice: 99,
-      discountedPrice: 69,
-      label: 'Mensuel',
-      billingDetails: 'Facturé mensuellement'
-    },
-    quarterly: {
-      originalPrice: 79,
-      discountedPrice: 55,
-      label: 'Trimestriel',
-      billingDetails: ''
-    },
-    yearly: {
-      originalPrice: 59,
-      discountedPrice: 41,
-      label: 'Annuel',
-      billingDetails: ''
-    }
-  };
   return <div className="min-h-screen relative overflow-hidden" style={{
     background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))'
   }}>
@@ -327,164 +307,162 @@ const LandingPage = () => {
                   Offre de lancement -30% • Jusqu'au 31 Décembre 2025
                 </div>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">Notre offre unique</h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-6 sm:mb-8 max-w-2xl mx-auto">Choisissez la durée qui correspond à vos ambitions</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
+                Choisissez votre formule <span className="gradient-text">PULSE</span>
+              </h2>
+              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
+                Gagnez 2h par jour sur le terrain
+              </p>
               
               {/* Pricing Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
-                {/* Card 1: Commercial Seul */}
-                <div className="space-y-4">
-                  {/* Plan Toggle for Commercial Seul */}
-                  <div className="flex justify-center">
-                    <div style={{
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    border: '1px solid rgba(6, 182, 212, 0.2)'
-                  }} className="inline-flex rounded-lg p-1 my-0 mx-0">
-                      <button onClick={() => setSelectedPlan('monthly')} className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Mensuel
-                      </button>
-                      <button onClick={() => setSelectedPlan('quarterly')} className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${selectedPlan === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Trimestriel
-                      </button>
-                      <button onClick={() => setSelectedPlan('yearly')} className={`px-5 py-2.5 rounded-md text-sm font-semibold transition-all ${selectedPlan === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Annuel
-                      </button>
-                    </div>
-                  </div>
-
-                  <Card className="relative overflow-visible" style={{
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto mb-8">
+                {/* Commercial Offer */}
+                <Card className="relative overflow-visible" style={{
                   background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%)',
                   border: '2px solid rgba(6, 182, 212, 0.3)',
                   boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
-                      COMMERCIAL
-                    </div>
-                    <div className="p-6 md:p-8 pt-10">
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Performance</h3>
-                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
+                  <div className="p-6 md:p-8">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial</h3>
+                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                       background: 'rgba(0, 0, 0, 0.3)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
                     }}>
-                        <div className="flex items-baseline justify-center gap-2 mb-1">
-                          <span className="text-5xl md:text-6xl font-bold gradient-text">
-                            {pricingPlans[selectedPlan].discountedPrice}€
-                          </span>
-                          <span className="text-2xl text-white/40 line-through">
-                            {pricingPlans[selectedPlan].originalPrice}€
-                          </span>
-                        </div>
-                        <p className="text-lg text-white/60 font-semibold">/mois</p>
-                        <p className="text-sm text-white/50 mt-1">
-                          {pricingPlans[selectedPlan].billingDetails}
-                        </p>
-                        <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                          -30% de réduction
-                        </div>
+                      <div className="flex items-baseline justify-center gap-2 mb-1">
+                        <span className="text-5xl md:text-6xl font-bold gradient-text">69€</span>
+                        <span className="text-2xl text-white/40 line-through">99€</span>
                       </div>
-                       <ul className="space-y-2.5 mb-6">
-                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                             <Check className="w-3 h-3 text-accent" />
-                           </div>
-                           <span className="text-white text-sm leading-relaxed">Chaque semaine tous les mouvements d'entreprises sur votre secteur (créations, nouvelles implantations, déménagements...)</span>
-                         </li>
-                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                             <Check className="w-3 h-3 text-accent" />
-                           </div>
-                           <span className="text-white text-sm leading-relaxed">Mapping automatique géolocalisé pour voir votre territoire</span>
-                         </li>
-                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                             <Check className="w-3 h-3 text-accent" />
-                           </div>
-                           <span className="text-white text-sm leading-relaxed">Création de tournées optimisées en distance et durée</span>
-                         </li>
-                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                             <Check className="w-3 h-3 text-accent" />
-                           </div>
-                           <span className="text-white text-sm leading-relaxed">CRM dédié à la prospection et suivi pipeline</span>
-                         </li>
-                         <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                           <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                             <Check className="w-3 h-3 text-accent" />
-                           </div>
-                           <span className="text-white text-sm leading-relaxed">Support WhatsApp 24/7</span>
-                         </li>
-                       </ul>
-                      <Button className="w-full bg-accent text-black hover:bg-accent/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
-                        Démarrer maintenant
-                        <ArrowRight className="ml-2" />
-                      </Button>
+                      <p className="text-lg text-white/60 font-semibold">/mois</p>
+                      <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
+                        -30% de réduction
+                      </div>
                     </div>
-                  </Card>
-                </div>
 
-                {/* Card 2: Équipes Commerciales */}
-                <div className="space-y-4">
-                  {/* Spacer to align with the first card that has the plan toggle */}
-                  <div className="h-[52px]"></div>
+                    <ul className="space-y-2.5 mb-6">
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed">Cartographie interactive de votre territoire</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed">Tournées optimisées automatiquement</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed">Navigation GPS intégrée (Google Maps / Waze)</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed">CRM multi-supports : visites, RDV, emails, notes</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed">Programmer vos relances</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed">Pipeline de vente (Kanban)</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5 opacity-60">
+                        <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Construction className="w-3 h-3 text-white/50" />
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-white/70 text-sm">Assistant IA</span>
+                          <Badge variant="secondary" className="text-xs">Bientôt disponible</Badge>
+                        </div>
+                      </li>
+                    </ul>
 
-                  <Card className="relative overflow-visible" style={{
-                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                  border: '2px solid rgba(14, 165, 233, 0.3)',
-                  boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                    <Button className="w-full bg-accent text-black hover:bg-accent/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
+                      Commencer
+                      <ArrowRight className="ml-2" />
+                    </Button>
+                  </div>
+                </Card>
+
+                {/* Premium Offer */}
+                <Card className="relative overflow-visible md:scale-105" style={{
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%)',
+                  border: '2px solid rgba(6, 182, 212, 0.5)',
+                  boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
                 }}>
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
-                      ENTREPRISE
-                    </div>
-                    <div className="p-6 md:p-8 pt-10">
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Équipes commerciales</h3>
-                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10">
+                    OFFRE LA PLUS POPULAIRE
+                  </div>
+                  
+                  <div className="p-6 md:p-8 pt-10">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Premium</h3>
+                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                       background: 'rgba(0, 0, 0, 0.3)',
-                      border: '1px solid rgba(14, 165, 233, 0.2)'
+                      border: '1px solid rgba(6, 182, 212, 0.2)'
                     }}>
-                        <div className="flex items-baseline justify-center gap-2">
-                          <span className="text-5xl font-bold gradient-text md:text-4xl">
-                            Sur devis
-                          </span>
-                        </div>
+                      <div className="flex items-baseline justify-center gap-2 mb-1">
+                        <span className="text-5xl md:text-6xl font-bold gradient-text">104€</span>
+                        <span className="text-2xl text-white/40 line-through">149€</span>
                       </div>
-                      <ul className="space-y-2.5 mb-6">
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Toutes les fonctionnalités Performance</span>
-                        </li>
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Gestion multi-utilisateurs</span>
-                        </li>
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Tableau de bord manager</span>
-                        </li>
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Support prioritaire</span>
-                        </li>
-                        <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm leading-relaxed">Formation de vos équipes à l'outil                </span>
-                        </li>
-                      </ul>
-                      <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => window.location.href = '#contact'}>
-                        Nous contacter
-                        <ArrowRight className="ml-2" />
-                      </Button>
+                      <p className="text-lg text-white/60 font-semibold">/mois</p>
+                      <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
+                        -30% de réduction
+                      </div>
                     </div>
-                  </Card>
+
+                    <ul className="space-y-2.5 mb-6">
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed font-semibold">Tout Commercial inclus</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed font-semibold">🎯 Détection automatique des créations d'entreprises</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed font-semibold">Nouveaux sites détectés (ouvertures, déménagements)</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-accent" />
+                        </div>
+                        <span className="text-white text-sm leading-relaxed font-semibold">Filtres avancés (NAF, départements, catégories)</span>
+                      </li>
+                    </ul>
+
+                    <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
+                      Commencer maintenant
+                      <ArrowRight className="ml-2" />
+                    </Button>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="flex flex-wrap justify-center gap-8 text-center text-white/70">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">💳</span>
+                  <span className="text-sm">Satisfait ou remboursé 14 jours</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🔒</span>
+                  <span className="text-sm">Paiement 100% sécurisé</span>
                 </div>
               </div>
             </div>

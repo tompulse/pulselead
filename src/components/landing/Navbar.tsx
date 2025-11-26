@@ -41,7 +41,7 @@ export const Navbar = () => {
             </Button>
             <Button 
               variant="ghost" 
-              onClick={() => navigate('/subscribe')}
+              onClick={() => scrollToSection('pricing')}
               className="text-sm font-semibold hover:text-accent transition-colors"
             >
               Tarifs
@@ -114,10 +114,7 @@ export const Navbar = () => {
             </Button>
             <Button 
               variant="ghost" 
-              onClick={() => {
-                navigate('/subscribe');
-                setMobileMenuOpen(false);
-              }}
+              onClick={() => scrollToSection('pricing')}
               className="w-full justify-start"
             >
               Tarifs
