@@ -7,13 +7,13 @@ export const CaseStudies = () => {
         <div className="text-center mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/30 mb-4">
             <TrendingUp className="w-4 h-4 text-accent" />
-            <span className="text-sm font-bold text-accent">Résultats Clients</span>
+            <span className="text-sm font-bold text-accent">Témoignage client</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-            Cas clients : <span className="gradient-text">Résultats mesurables</span>
+            Avant / Après <span className="gradient-text">PULSE</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Découvrez comment nos utilisateurs ont transformé leur activité avec PULSE
+            L'impact concret sur l'organisation et les résultats
           </p>
         </div>
         
@@ -29,25 +29,25 @@ export const CaseStudies = () => {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">Tournées de 3h de prospection non optimisées</span>
+                  <span className="text-sm sm:text-base text-foreground">2-3h perdues par jour en trajets non optimisés</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">Taux de conversion RDV : <strong>7%</strong></span>
+                  <span className="text-sm sm:text-base text-foreground">Suivi client dispersé : Excel, carnets, mémoire...</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">CRM Excel difficile à maintenir</span>
+                  <span className="text-sm sm:text-base text-foreground">Relances oubliées, prospects perdus</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">Prospection réactive, pas de ciblage</span>
+                  <span className="text-sm sm:text-base text-foreground">Pas de visibilité sur le territoire et les opportunités</span>
                 </li>
               </ul>
               
               <div className="p-4 sm:p-6 bg-destructive/10 rounded-lg border border-destructive/30">
-                <div className="text-3xl sm:text-4xl font-bold text-destructive">3 200€/mois</div>
-                <div className="text-sm text-muted-foreground mt-1">Commission moyenne</div>
+                <div className="text-3xl sm:text-4xl font-bold text-destructive">Désorganisé</div>
+                <div className="text-sm text-muted-foreground mt-1">Pas de vue d'ensemble</div>
               </div>
             </div>
             
@@ -55,30 +55,30 @@ export const CaseStudies = () => {
             <div className="space-y-4">
               <h3 className="text-xl sm:text-2xl font-bold text-accent flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                Après PULSE (3 mois)
+                Après PULSE
               </h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">Tournées optimisées : <strong>45 min économisées</strong> sur 3h</span>
+                  <span className="text-sm sm:text-base text-foreground">Tournées calculées en 3s : <strong>2h gagnées</strong> chaque jour</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">Taux de conversion RDV : <strong>18%</strong> (+11 points)</span>
+                  <span className="text-sm sm:text-base text-foreground">Tout centralisé sur mobile : visites, appels, relances</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">Pipeline CRM clair et à jour en temps réel</span>
+                  <span className="text-sm sm:text-base text-foreground">Rappels automatiques : plus aucune relance manquée</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-foreground">Accès direct aux nouvelles entreprises</span>
+                  <span className="text-sm sm:text-base text-foreground">Vision claire du territoire + nouvelles opportunités</span>
                 </li>
               </ul>
               
               <div className="p-4 sm:p-6 bg-accent/10 rounded-lg border border-accent/30">
-                <div className="text-3xl sm:text-4xl font-bold text-accent">4 800€/mois</div>
-                <div className="text-sm text-green-500 mt-1 font-semibold">+50% de commissions</div>
+                <div className="text-3xl sm:text-4xl font-bold text-accent">Organisé</div>
+                <div className="text-sm text-green-500 mt-1 font-semibold">Suivi clair et centralisé</div>
               </div>
             </div>
           </div>
@@ -87,16 +87,16 @@ export const CaseStudies = () => {
           <div className="p-6 sm:p-8 border-l-4 border-accent bg-accent/5 rounded-r-lg">
             <Quote className="w-8 h-8 text-accent/30 mb-3" />
             <p className="text-base sm:text-lg text-foreground italic mb-4">
-              "PULSE m'a permis de doubler mes RDV et de gagner 2h par jour. Le ROI s'est fait sentir dès le 2ème mois. 
-              J'ai surtout apprécié l'accès aux nouveaux sites, ça m'a permis de cibler des prospects avant mes concurrents."
+              "Avant PULSE, je passais plus de temps sur la route et à gérer mes Excel qu'à vendre. Maintenant, mes tournées sont optimisées, 
+              mon suivi est clair, et je ne perds plus de temps. Je fais 3 visites de plus par jour et mon taux de conversion a explosé."
             </p>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center">
-                <span className="text-accent font-bold text-lg">TD</span>
+                <span className="text-accent font-bold text-lg">TC</span>
               </div>
               <div>
-                <div className="font-bold text-foreground">Thomas D.</div>
-                <div className="text-sm text-muted-foreground">Commercial BtoB, Lyon</div>
+                <div className="font-bold text-foreground">Thomas C.</div>
+                <div className="text-sm text-muted-foreground">Commercial terrain TPE, fournitures de bureau</div>
               </div>
             </div>
           </div>
@@ -107,18 +107,18 @@ export const CaseStudies = () => {
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="glass-card p-6 text-center">
             <Clock className="w-8 h-8 text-accent mx-auto mb-3" />
-            <div className="text-3xl font-bold text-accent mb-1">6h</div>
-            <div className="text-sm text-muted-foreground">économisées par semaine en moyenne</div>
+            <div className="text-3xl font-bold text-accent mb-1">2h/jour</div>
+            <div className="text-sm text-muted-foreground">gagnées en moyenne</div>
           </div>
           <div className="glass-card p-6 text-center">
             <Target className="w-8 h-8 text-accent mx-auto mb-3" />
-            <div className="text-3xl font-bold text-accent mb-1">+35%</div>
-            <div className="text-sm text-muted-foreground">de visites par jour en moyenne</div>
+            <div className="text-3xl font-bold text-accent mb-1">+3 visites</div>
+            <div className="text-sm text-muted-foreground">par jour en moyenne</div>
           </div>
           <div className="glass-card p-6 text-center">
             <TrendingUp className="w-8 h-8 text-accent mx-auto mb-3" />
-            <div className="text-3xl font-bold text-accent mb-1">+30%</div>
-            <div className="text-sm text-muted-foreground">de commissions en moyenne</div>
+            <div className="text-3xl font-bold text-accent mb-1">Organisé</div>
+            <div className="text-sm text-muted-foreground">suivi clair et centralisé</div>
           </div>
         </div>
       </div>
