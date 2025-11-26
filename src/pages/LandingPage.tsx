@@ -101,13 +101,17 @@ const LandingPage = () => {
         <section className="py-8 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-3 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
+              <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/20 mb-4">
+                <Target className="w-4 h-4 text-accent" />
+                <span className="text-sm text-white/90 font-medium">L'outil terrain des commerciaux qui veulent gagner du temps</span>
+              </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                Prospectez les <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">nouvelles entreprises</span>
+                Vendez plus.
                 <br />
-                avant vos concurrents
+                <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">Roulez moins.</span>
               </h1>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto pt-2">
-                PULSE détecte automatiquement les mouvements d'entreprises (créations, déménagements, ventes de fonds, nouvelles implantations) dans votre zone et génère vos tournées optimisées.
+                Cartographie de votre territoire • Tournées optimisées • CRM simple et mobile pour suivre vos visites sur le terrain
               </p>
               <div className="flex justify-center py-6">
                 <Button onClick={() => navigate('/auth')} className="btn-hero-pulse">
@@ -122,8 +126,8 @@ const LandingPage = () => {
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.1s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+850</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">entreprises détectées en moyenne chaque semaine</p>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">2h</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">gagnées par jour en moyenne</p>
                 </div>
                 
                 {/* Stat 2 */}
@@ -131,8 +135,7 @@ const LandingPage = () => {
                 animationDelay: '0.2s'
               }}>
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">13</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">commerciaux ont fait
-confiance à PULSE</p>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">commerciaux ont fait confiance à PULSE</p>
                 </div>
                 
                 {/* Stat 3 */}
@@ -153,12 +156,12 @@ confiance à PULSE</p>
                   <span>Conforme RGPD</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Database className="w-4 h-4 text-accent" />
-                  <span>Données publiques officielles</span>
+                  <Smartphone className="w-4 h-4 text-accent" />
+                  <span>Adapté aux TPE/PME</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-accent" />
-                  <span>Sources INSEE & Infogreffe</span>
+                  <Database className="w-4 h-4 text-accent" />
+                  <span>Données publiques officielles</span>
                 </div>
               </div>
             </div>
@@ -176,19 +179,19 @@ confiance à PULSE</p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Ce qui tue votre chiffre d'affaires</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
-                <TrendingDown className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Temps gaspillé</h3>
-                <p className="text-white/70 text-base sm:text-lg">40% de votre journée perdue sur la route au lieu de vendre</p>
+                <Clock className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">40% du temps perdu sur la route</h3>
+                <p className="text-white/70 text-base sm:text-lg">Des trajets mal optimisés qui vous empêchent de voir plus de clients</p>
               </Card>
               <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
                 <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Chaos organisationnel</h3>
-                <p className="text-white/70 text-base sm:text-lg">Impossible de retrouver l'info au bon moment</p>
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Excel, carnets, post-its...</h3>
+                <p className="text-white/70 text-base sm:text-lg">Informations éparpillées, relances oubliées, opportunités perdues</p>
               </Card>
               <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
                 <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Concurrence imbattable</h3>
-                <p className="text-white/70 text-base sm:text-lg">Ils signent avant même que vous sachiez que le prospect existe</p>
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Les CRM classiques sont trop lourds</h3>
+                <p className="text-white/70 text-base sm:text-lg">Compliqués, lents, pas adaptés au terrain et aux commerciaux mobiles</p>
               </Card>
             </div>
             </div>
@@ -202,37 +205,37 @@ confiance à PULSE</p>
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">
-                Votre arsenal pour <span className="gradient-text">dominer</span> votre territoire
+                Les 3 piliers de <span className="gradient-text">PULSE</span>
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Détectez avant tout le monde, agissez plus vite, prenez des rendez-vous    
+                Maîtrisez votre territoire, optimisez vos déplacements, suivez vos actions
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
               <div className="text-center space-y-3 sm:space-y-4">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
-                  <Search className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
+                  <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">Détection Hebdomadaire</h3>
+                <h3 className="text-xl sm:text-2xl font-bold">Cartographie de votre territoire</h3>
                 <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
-                  Accédez en temps réel aux mouvements d'entreprises : créations, déménagements et nouvelles implantations partout en France
+                  Tous vos prospects et clients sur une carte interactive. Visualisez votre zone et identifiez les opportunités à proximité
                 </p>
               </div>
               <div className="text-center space-y-3 sm:space-y-4">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
                   <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">Itinéraires Redoutables</h3>
+                <h3 className="text-xl sm:text-2xl font-bold">Tournées optimisées</h3>
                 <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
-                  Visitez 2x plus de prospects par jour grâce à l'optimisation automatique de vos trajets
+                  Itinéraires calculés automatiquement avec GPS intégré. Visitez 2x plus de prospects en divisant par 2 vos kilomètres
                 </p>
               </div>
               <div className="text-center space-y-3 sm:space-y-4">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
                   <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">Zéro Opportunité Perdue</h3>
+                <h3 className="text-xl sm:text-2xl font-bold">CRM terrain simple et mobile</h3>
                 <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
-                  Suivez chaque prospect, relancez au bon moment, transformez plus de contacts en contrats signés
+                  Suivez vos visites, appels et relances directement depuis votre mobile. Simple, rapide, efficace
                 </p>
               </div>
               </div>
@@ -247,9 +250,9 @@ confiance à PULSE</p>
       }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">L'impact immédiat sur vos résultats</h2>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">Avant / Après PULSE</h2>
               <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Moins de kilomètres, plus de rendez-vous, meilleure conversion
+                Passez du chaos à l'organisation, du temps perdu au temps investi
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
               <Card className="glass-card p-6 sm:p-8 md:p-10 border-red-500/30">
@@ -262,19 +265,19 @@ confiance à PULSE</p>
                 <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>La concurrence signe pendant que vous cherchez des prospects</span>
+                    <span>Trajets improvisés, temps perdu dans les bouchons et les détours</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Des heures de route pour quelques prospects au hasard</span>
+                    <span>Notes éparpillées sur des carnets, Excel, post-its perdus</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Oubli de relance suite à vos prospections</span>
+                    <span>Relances oubliées, prospects qui passent entre les mailles</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Organisation catastrophique = CA qui stagne</span>
+                    <span>Aucune visibilité sur votre activité réelle et vos résultats</span>
                   </li>
                 </ul>
               </Card>
@@ -288,19 +291,19 @@ confiance à PULSE</p>
                 <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Nouvelles entreprises ajoutées chaque semaine</span>
+                    <span>2h gagnées par jour grâce aux tournées optimisées et au GPS intégré</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Itinéraires optimisés en distance et durée calculés en 30 sec</span>
+                    <span>Toutes les infos centralisées dans un CRM simple accessible partout</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Aucune relance manquée, conversion maximale</span>
+                    <span>Aucune relance manquée, suivi clair de chaque prospect</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Tout centralisé : focus 100% sur la vente</span>
+                    <span>Visibilité totale sur votre activité et vos performances</span>
                   </li>
                 </ul>
               </Card>
