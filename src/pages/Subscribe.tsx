@@ -11,8 +11,8 @@ const Subscribe = () => {
   const plans = [
     {
       name: 'Mensuel',
-      originalPrice: 99,
-      discountedPrice: 69,
+      originalPrice: 149,
+      discountedPrice: 104,
       period: '/mois',
       plan: 'monthly',
       popular: false,
@@ -20,23 +20,23 @@ const Subscribe = () => {
     },
     {
       name: 'Trimestriel',
-      originalPrice: 237,
-      discountedPrice: 166,
+      originalPrice: 356,
+      discountedPrice: 249,
       period: '/3 mois',
       plan: 'quarterly',
       popular: true,
       savings: '-30%',
-      monthlyEquivalent: '55€/mois'
+      monthlyEquivalent: '83€/mois'
     },
     {
       name: 'Annuel',
-      originalPrice: 708,
-      discountedPrice: 496,
+      originalPrice: 1062,
+      discountedPrice: 743,
       period: '/an',
       plan: 'yearly',
       popular: false,
       savings: '-30%',
-      monthlyEquivalent: '41€/mois'
+      monthlyEquivalent: '62€/mois'
     }
   ];
 
@@ -57,11 +57,11 @@ const Subscribe = () => {
             Offre de lancement -30% • Jusqu'au 31 Décembre 2025
           </div>
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-accent via-cyan-glow to-accent bg-clip-text text-transparent">
-            Choisissez votre abonnement PULSE
+            Choisissez votre abonnement PULSE Premium
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Accédez à toutes les fonctionnalités de PULSE : détection de mouvements d'entreprises, 
-            tournées optimisées et CRM intégré
+            Cartographie territoriale, tournées optimisées, CRM mobile + détection automatique 
+            des mouvements d'entreprises
           </p>
         </div>
 
@@ -102,15 +102,19 @@ const Subscribe = () => {
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm">Détection automatique des mouvements d'entreprises</span>
+                  <span className="text-sm">Cartographie complète de votre territoire</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm">Tournées optimisées avec GPS</span>
+                  <span className="text-sm">Tournées optimisées avec GPS intégré</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <span className="text-sm">CRM intégré avec suivi des interactions</span>
+                  <span className="text-sm">CRM mobile simple et efficace</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                  <span className="text-sm font-semibold">🎯 Détection automatique des mouvements d'entreprises</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
