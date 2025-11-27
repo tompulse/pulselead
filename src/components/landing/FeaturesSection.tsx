@@ -25,7 +25,7 @@ export const FeaturesSection = () => {
     {
       icon: Clock,
       title: "Import de vos fichiers",
-      description: "Importez vos Excel, CSV ou bases existantes. PULSE enrichit automatiquement les données manquantes."
+      description: "Importez vos fichiers Excel ou bases existantes. PULSE enrichit automatiquement les données manquantes."
     },
     {
       icon: Shield,
