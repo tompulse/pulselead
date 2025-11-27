@@ -158,20 +158,44 @@ const Auth = () => {
             </div>
 
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="phone">Téléphone *</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="06 12 34 56 78"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="bg-background/50 border-border focus:border-accent"
-                  disabled={loading}
-                  required
-                />
-                <p className="text-xs text-muted-foreground">Format: 06 12 34 56 78 ou +33 6 12 34 56 78</p>
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Téléphone *</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="06 12 34 56 78"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="bg-background/50 border-border focus:border-accent"
+                    disabled={loading}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">Format: 06 12 34 56 78 ou +33 6 12 34 56 78</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      required
+                      disabled={loading}
+                      className="mt-1 w-4 h-4 rounded border-border bg-background/50 text-accent focus:ring-accent focus:ring-offset-0"
+                    />
+                    <Label htmlFor="terms" className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer">
+                      J'accepte les{" "}
+                      <a href="/cgu" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                        Conditions Générales d'Utilisation
+                      </a>
+                      {" "}et la{" "}
+                      <a href="/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                        Politique de Confidentialité
+                      </a>
+                    </Label>
+                  </div>
+                </div>
+              </>
             )}
 
             <Button

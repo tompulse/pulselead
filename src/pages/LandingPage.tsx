@@ -717,17 +717,24 @@ const LandingPage = () => {
                 <ul className="space-y-2 text-white/60">
                   <li className="flex items-center gap-2">
                     <Mail className="w-4 h-4" />
-                    <span>contact@pulse.fr</span>
+                    <a href="mailto:tomiolovpro@gmail.com" className="hover:text-accent transition-colors">
+                      tomiolovpro@gmail.com
+                    </a>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    <span>01 23 45 67 89</span>
-                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4">Légal</h4>
+                <ul className="space-y-2 text-white/60">
+                  <li><a href="/mentions-legales" className="hover:text-accent transition-colors">Mentions Légales</a></li>
+                  <li><a href="/cgu" className="hover:text-accent transition-colors">CGU</a></li>
+                  <li><a href="/cgv" className="hover:text-accent transition-colors">CGV</a></li>
+                  <li><a href="/confidentialite" className="hover:text-accent transition-colors">Politique de Confidentialité</a></li>
                 </ul>
               </div>
             </div>
             <div className="border-t border-white/10 pt-8 text-center text-white/40">
-              <p>&copy; 2024 PULSE. Tous droits réservés.</p>
+              <p>&copy; 2025 Individual Entrepreneur PULSE. Tous droits réservés.</p>
             </div>
           </div>
         </footer>
