@@ -23,7 +23,12 @@ const CGU = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">1. Objet</h2>
             <p>
-              Les présentes Conditions Générales d'Utilisation (CGU) définissent les conditions d'accès et d'utilisation de la plateforme PULSE. 
+              Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation de la plateforme PULSE, 
+              éditée par Individual Entrepreneur PULSE, Entrepreneur Individuel enregistré en Georgia, 
+              dont le siège social est situé à 75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia, 
+              immatriculée sous le numéro 300453630.
+            </p>
+            <p className="mt-4">
               En accédant à la plateforme, vous acceptez sans réserve les présentes CGU.
             </p>
           </section>
@@ -139,17 +144,19 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">12. Droit applicable et juridiction</h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">12. Droit applicable et juridiction compétente</h2>
             <p>
-              Les présentes CGU sont soumises au droit français. En cas de litige, et après tentative de recherche d'une solution amiable, 
-              les tribunaux français seront seuls compétents.
+              Les présentes CGU sont régies par le droit géorgien. Toutefois, conformément aux réglementations européennes, 
+              les consommateurs résidant dans l'Union Européenne bénéficient des dispositions impératives de protection du 
+              consommateur de leur pays de résidence. En cas de litige, les parties s'efforceront de trouver une solution amiable. 
+              À défaut, les tribunaux de Tbilisi, Georgia seront compétents, sans préjudice des droits procéduraux des consommateurs de l'UE.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">13. Contact</h2>
             <p>
-              Pour toute question concernant les présentes CGU, vous pouvez nous contacter à : [email à compléter]
+              Pour toute question concernant les présentes CGU, vous pouvez nous contacter à : tomiolovpro@gmail.com
             </p>
           </section>
         </div>
