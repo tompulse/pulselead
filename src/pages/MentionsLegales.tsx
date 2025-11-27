@@ -22,25 +22,23 @@ const MentionsLegales = () => {
         <div className="space-y-8 text-muted-foreground">
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Éditeur du site</h2>
-            <p className="mb-2"><strong>Raison sociale :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>Forme juridique :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>Capital social :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>Siège social :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>RCS :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>SIRET :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>TVA intracommunautaire :</strong> [À compléter]</p>
+            <p className="mb-2"><strong>Raison sociale :</strong> Individual Entrepreneur PULSE</p>
+            <p className="mb-2"><strong>Forme juridique :</strong> Entrepreneur Individuel (Georgia)</p>
+            <p className="mb-2"><strong>Siège social :</strong> 75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia</p>
+            <p className="mb-2"><strong>N° d'enregistrement :</strong> 300453630</p>
+            <p className="mb-2"><strong>Email :</strong> tomiolovpro@gmail.com</p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Directeur de la publication</h2>
-            <p><strong>Nom :</strong> [À compléter]</p>
-            <p><strong>Email :</strong> [À compléter]</p>
+            <p><strong>Nom :</strong> Individual Entrepreneur PULSE</p>
+            <p><strong>Email :</strong> tomiolovpro@gmail.com</p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Hébergement</h2>
             <p className="mb-2"><strong>Hébergeur :</strong> Lovable Cloud (propulsé par Supabase)</p>
-            <p className="mb-2"><strong>Adresse :</strong> [Informations d'hébergement à compléter]</p>
+            <p className="mb-2"><strong>Adresse :</strong> 970 Toa Payoh North, #07-04, Singapore 318992</p>
           </section>
 
           <section>
@@ -56,7 +54,7 @@ const MentionsLegales = () => {
             <p>
               Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, 
               de suppression et d'opposition aux données personnelles vous concernant. Pour exercer ces droits, veuillez nous contacter à : 
-              [email à compléter]
+              tomiolovpro@gmail.com
             </p>
           </section>
 

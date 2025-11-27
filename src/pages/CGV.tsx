@@ -30,11 +30,11 @@ const CGV = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">2. Identification du vendeur</h2>
-            <p className="mb-2"><strong>Raison sociale :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>Siège social :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>RCS :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>Email :</strong> [À compléter]</p>
-            <p className="mb-2"><strong>TVA intracommunautaire :</strong> [À compléter]</p>
+            <p className="mb-2"><strong>Raison sociale :</strong> Individual Entrepreneur PULSE</p>
+            <p className="mb-2"><strong>Forme juridique :</strong> Entrepreneur Individuel (Georgia)</p>
+            <p className="mb-2"><strong>Siège social :</strong> 75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia</p>
+            <p className="mb-2"><strong>Email :</strong> tomiolovpro@gmail.com</p>
+            <p className="mb-2"><strong>Numéro d'enregistrement :</strong> 300453630</p>
           </section>
 
           <section>
@@ -67,15 +67,14 @@ const CGV = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">6. Paiement</h2>
-            <p>Le paiement s'effectue :</p>
-            <ul className="list-disc ml-6 mt-4 space-y-2">
-              <li>Par carte bancaire</li>
-              <li>Par prélèvement automatique (pour les abonnements récurrents)</li>
-              <li>Par virement bancaire (sur demande pour les forfaits entreprise)</li>
-            </ul>
+            <p>
+              Le paiement s'effectue en ligne de manière sécurisée via Paddle.com (Merchant of Record). 
+              Paddle gère l'ensemble du processus de paiement, y compris la collecte de la TVA applicable. 
+              Les informations de paiement sont transmises de manière cryptée et ne sont pas stockées par PULSE.
+            </p>
             <p className="mt-4">
               Le paiement est exigible immédiatement à la commande. En cas d'abonnement, le paiement est prélevé automatiquement 
-              à chaque échéance (mensuelle ou annuelle selon la formule choisie).
+              à chaque échéance (mensuelle, trimestrielle ou annuelle selon la formule choisie).
             </p>
           </section>
 
@@ -126,18 +125,16 @@ const CGV = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">12. Droit applicable et juridiction</h2>
-            <p>
-              Les présentes CGV sont soumises au droit français. En cas de litige, et après tentative de recherche d'une solution amiable, 
-              les tribunaux français seront seuls compétents.
+            <h2 className="text-2xl font-semibold text-foreground mb-4">12. Droit applicable et médiation</h2>
+            <p className="mb-4">
+              Les présentes CGV sont soumises au droit géorgien. Toutefois, conformément aux réglementations européennes, 
+              les consommateurs résidant dans l'Union Européenne bénéficient des dispositions impératives de protection du 
+              consommateur de leur pays de résidence. En cas de litige, les parties s'efforceront de trouver une solution amiable. 
+              À défaut, les tribunaux de Tbilisi, Georgia seront compétents, sans préjudice des droits procéduraux des consommateurs de l'UE.
             </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">13. Médiation</h2>
             <p>
-              Conformément à l'article L. 612-1 du Code de la consommation, nous proposons un dispositif de médiation de la consommation. 
-              L'entité de médiation retenue est : [À compléter]
+              Les consommateurs résidant dans l'Union Européenne peuvent recourir à la plateforme européenne de règlement en ligne des litiges 
+              (RLL) disponible à l'adresse suivante : https://ec.europa.eu/consumers/odr
             </p>
           </section>
         </div>

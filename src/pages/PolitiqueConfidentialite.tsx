@@ -77,7 +77,7 @@ const PolitiqueConfidentialite = () => {
               <li>Droit d'opposition au traitement</li>
             </ul>
             <p className="mt-4">
-              Pour exercer ces droits, contactez-nous à : [email à compléter]
+              Pour exercer ces droits, contactez-nous à : tomiolovpro@gmail.com
             </p>
           </section>
 
@@ -90,9 +90,36 @@ const PolitiqueConfidentialite = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">7. Contact</h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">7. Responsable du traitement</h2>
+            <p className="mb-4">
+              <strong>Responsable du traitement :</strong> Individual Entrepreneur PULSE<br />
+              <strong>Adresse :</strong> 75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia<br />
+              <strong>N° d'enregistrement :</strong> 300453630<br />
+              <strong>Email :</strong> tomiolovpro@gmail.com
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">8. Sous-traitants et transferts de données</h2>
             <p>
-              Pour toute question relative à cette politique de confidentialité, vous pouvez nous contacter à : [email à compléter]
+              Dans le cadre de nos services, nous faisons appel aux sous-traitants suivants :
+            </p>
+            <ul className="list-disc ml-6 mt-4 space-y-2">
+              <li><strong>Lovable Cloud / Supabase :</strong> Hébergement des données (Singapore)</li>
+              <li><strong>Paddle.com :</strong> Traitement des paiements et facturation (Merchant of Record)</li>
+            </ul>
+            <p className="mt-4">
+              Vos données peuvent être transférées en dehors de l'Union Européenne. Nous nous assurons que des garanties appropriées 
+              sont en place conformément au RGPD, notamment par l'utilisation de clauses contractuelles types approuvées par la 
+              Commission Européenne.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">9. Contact</h2>
+            <p>
+              Pour toute question relative à cette politique de confidentialité ou pour exercer vos droits RGPD, 
+              vous pouvez nous contacter à : tomiolovpro@gmail.com
             </p>
           </section>
         </div>
