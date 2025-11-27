@@ -12,12 +12,17 @@ export const GoogleAnalytics = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (typeof window.gtag !== 'undefined') {
-      window.gtag('event', 'page_view', {
-        page_path: location.pathname,
-        page_title: document.title,
-        page_location: window.location.href,
-      });
+    // Only track if consent is given
+    const consent = localStorage.getItem('cookieConsent');
+    if (consent) {
+      const consentData = JSON.parse(consent);
+      if (consentData.analytics && typeof window.gtag !== 'undefined') {
+        window.gtag('event', 'page_view', {
+          page_path: location.pathname,
+          page_title: document.title,
+          page_location: window.location.href,
+        });
+      }
     }
   }, [location]);
 

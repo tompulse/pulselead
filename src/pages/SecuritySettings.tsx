@@ -3,10 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AuditLogViewer } from "@/components/dashboard/AuditLogViewer";
-import { ArrowLeft, Shield, AlertTriangle, RefreshCw, Sparkles } from "lucide-react";
+import { ArrowLeft, Shield, AlertTriangle, RefreshCw, Sparkles, Trash2, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 /**
  * Page des paramètres de sécurité
@@ -23,6 +36,9 @@ export default function SecuritySettings() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [resetting, setResetting] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     checkAdminStatus();
@@ -81,6 +97,124 @@ export default function SecuritySettings() {
       });
     } finally {
       setResetting(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Verify password
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email!,
+        password: deletePassword,
+      });
+
+      if (signInError) {
+        toast({
+          title: "Erreur",
+          description: "Mot de passe incorrect",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Delete user data from all tables
+      await supabase.from('lead_statuts').delete().eq('user_id', user.id);
+      await supabase.from('lead_interactions').delete().eq('user_id', user.id);
+      await supabase.from('tournee_visites').delete().eq('user_id', user.id);
+      await supabase.from('tournees').delete().eq('user_id', user.id);
+      await supabase.from('user_onboarding_progress').delete().eq('user_id', user.id);
+      await supabase.from('qualification_status').delete().eq('user_id', user.id);
+
+      // Delete auth account
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
+      
+      if (deleteError) {
+        // If admin delete fails, sign out user (they can't delete themselves with admin API)
+        await supabase.auth.signOut();
+      }
+
+      toast({
+        title: "Compte supprimé",
+        description: "Votre compte et toutes vos données ont été supprimés",
+      });
+
+      navigate('/');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le compte",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
+      setDeletePassword("");
+    }
+  };
+
+  const handleExportData = async () => {
+    setExporting(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch all user data
+      const [
+        { data: statuts },
+        { data: interactions },
+        { data: tournees },
+        { data: visites },
+        { data: onboarding }
+      ] = await Promise.all([
+        supabase.from('lead_statuts').select('*').eq('user_id', user.id),
+        supabase.from('lead_interactions').select('*').eq('user_id', user.id),
+        supabase.from('tournees').select('*').eq('user_id', user.id),
+        supabase.from('tournee_visites').select('*').eq('user_id', user.id),
+        supabase.from('user_onboarding_progress').select('*').eq('user_id', user.id),
+      ]);
+
+      const exportData = {
+        user_info: {
+          id: user.id,
+          email: user.email,
+          created_at: user.created_at,
+        },
+        lead_statuts: statuts || [],
+        lead_interactions: interactions || [],
+        tournees: tournees || [],
+        tournee_visites: visites || [],
+        onboarding_progress: onboarding || [],
+        export_date: new Date().toISOString(),
+      };
+
+      // Create and download JSON file
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pulse_data_export_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Export réussi",
+        description: "Vos données ont été téléchargées",
+      });
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'exporter les données",
+        variant: "destructive",
+      });
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -259,6 +393,114 @@ export default function SecuritySettings() {
 
         {/* Logs d'audit */}
         <AuditLogViewer />
+
+        {/* Gestion des données RGPD */}
+        <Card className="glass-card border-accent/20">
+          <CardHeader>
+            <CardTitle>Gestion de mes données (RGPD)</CardTitle>
+            <CardDescription>
+              Exportez ou supprimez vos données personnelles
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 rounded-lg border border-accent/20">
+              <div className="flex-1">
+                <p className="font-medium">Exporter mes données</p>
+                <p className="text-sm text-muted-foreground">
+                  Télécharger toutes vos données au format JSON (droit à la portabilité)
+                </p>
+              </div>
+              <Button
+                onClick={handleExportData}
+                disabled={exporting}
+                variant="outline"
+                className="gap-2"
+              >
+                {exporting ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Export...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    Exporter
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-between p-4 rounded-lg border border-red-500/20 bg-red-500/5">
+              <div className="flex-1">
+                <p className="font-medium text-red-500">Supprimer mon compte</p>
+                <p className="text-sm text-muted-foreground">
+                  Suppression définitive de votre compte et de toutes vos données (irréversible)
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-red-500/50 text-red-500 hover:bg-red-500/10"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Supprimer
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="glass-card border-red-500/30">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-red-500">
+                      Supprimer définitivement mon compte ?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="space-y-4">
+                      <p>
+                        Cette action est <strong>irréversible</strong>. Toutes vos données seront supprimées :
+                      </p>
+                      <ul className="list-disc list-inside space-y-1 text-sm">
+                        <li>Tous vos prospects et interactions</li>
+                        <li>Toutes vos tournées planifiées</li>
+                        <li>Votre historique CRM complet</li>
+                        <li>Vos paramètres et préférences</li>
+                      </ul>
+                      <div className="space-y-2 pt-4">
+                        <Label htmlFor="delete-password" className="text-foreground">
+                          Confirmez avec votre mot de passe
+                        </Label>
+                        <Input
+                          id="delete-password"
+                          type="password"
+                          placeholder="Votre mot de passe"
+                          value={deletePassword}
+                          onChange={(e) => setDeletePassword(e.target.value)}
+                          className="bg-background/50 border-border"
+                        />
+                      </div>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setDeletePassword("")}>
+                      Annuler
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteAccount}
+                      disabled={!deletePassword || deleting}
+                      className="bg-red-500 hover:bg-red-600 text-white"
+                    >
+                      {deleting ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                          Suppression...
+                        </>
+                      ) : (
+                        "Supprimer définitivement"
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

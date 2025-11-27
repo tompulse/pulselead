@@ -123,6 +123,10 @@ const PolitiqueConfidentialite = () => {
             </p>
           </section>
         </div>
+
+        <div className="mt-12 pt-8 border-t border-accent/20 text-center text-muted-foreground text-sm">
+          <p>Dernière mise à jour : 27 novembre 2025</p>
+        </div>
       </div>
     </div>
   );
