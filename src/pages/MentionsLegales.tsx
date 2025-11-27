@@ -44,8 +44,9 @@ const MentionsLegales = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Propriété intellectuelle</h2>
             <p>
-              L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle. 
-              Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les représentations iconographiques et photographiques.
+              L'ensemble de ce site relève des conventions internationales sur le droit d'auteur et la propriété intellectuelle, 
+              ainsi que du droit géorgien applicable à l'éditeur. Tous les droits de reproduction sont réservés, y compris pour 
+              les documents téléchargeables et les représentations iconographiques et photographiques.
             </p>
           </section>
 

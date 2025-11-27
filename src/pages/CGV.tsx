@@ -39,12 +39,14 @@ const CGV = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">3. Services proposés</h2>
-            <p>PULSE propose une plateforme SaaS (Software as a Service) comprenant :</p>
+            <p>PULSE propose une plateforme SaaS (Software as a Service) de prospection territoriale intelligente comprenant :</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
-              <li>Optimisation intelligente des tournées commerciales</li>
-              <li>Suivi et gestion des interactions clients</li>
-              <li>Accès aux données d'entreprises en temps réel</li>
-              <li>Analyse et statistiques de performance</li>
+              <li>Cartographie interactive de votre territoire commercial</li>
+              <li>Optimisation automatique des tournées avec GPS intégré</li>
+              <li>CRM terrain mobile avec pipeline visuel</li>
+              <li>Détection des nouvelles entreprises de votre zone (données publiques officielles)</li>
+              <li>Import et enrichissement de fichiers Excel</li>
+              <li>Tableaux de bord et statistiques de performance</li>
             </ul>
           </section>
 

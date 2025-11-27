@@ -28,7 +28,11 @@ const PolitiqueConfidentialite = () => {
             <ul className="list-disc ml-6 mt-4 space-y-2">
               <li>Informations d'identification (nom, prénom, email)</li>
               <li>Données de connexion et d'utilisation</li>
-              <li>Données liées à votre activité commerciale (entreprises visitées, interactions)</li>
+              <li>Données de géolocalisation lors de l'utilisation du GPS pour la navigation</li>
+              <li>Historique des entreprises visitées et interactions commerciales enregistrées</li>
+              <li>Entreprises ajoutées à vos tournées et zones géographiques de prospection</li>
+              <li>Préférences de filtres (secteurs d'activité, départements, taille d'entreprise)</li>
+              <li>Données importées depuis vos fichiers Excel (prospects, clients)</li>
             </ul>
           </section>
 
