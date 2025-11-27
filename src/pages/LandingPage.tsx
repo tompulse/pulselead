@@ -688,7 +688,7 @@ const LandingPage = () => {
         {/* Footer */}
         <footer className="border-t border-white/10 py-8 px-6">
           <div className="container mx-auto max-w-6xl">
-            <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
               <div>
                 <div className="text-2xl font-bold mb-4">
                   <span className="text-white">PULSE</span>
@@ -705,14 +705,6 @@ const LandingPage = () => {
                 </ul>
               </div>
               <div>
-                <h4 className="font-bold mb-4">Entreprise</h4>
-                <ul className="space-y-2 text-white/60">
-                  <li><a href="#" className="hover:text-accent transition-colors">À propos</a></li>
-                  <li><a href="#" className="hover:text-accent transition-colors">Blog</a></li>
-                  <li><a href="#" className="hover:text-accent transition-colors">Carrières</a></li>
-                </ul>
-              </div>
-              <div>
                 <h4 className="font-bold mb-4">Contact</h4>
                 <ul className="space-y-2 text-white/60">
                   <li className="flex items-center gap-2">
@@ -723,18 +715,18 @@ const LandingPage = () => {
                   </li>
                 </ul>
               </div>
-              <div>
-                <h4 className="font-bold mb-4">Légal</h4>
-                <ul className="space-y-2 text-white/60">
-                  <li><a href="/mentions-legales" className="hover:text-accent transition-colors">Mentions Légales</a></li>
-                  <li><a href="/cgu" className="hover:text-accent transition-colors">CGU</a></li>
-                  <li><a href="/cgv" className="hover:text-accent transition-colors">CGV</a></li>
-                  <li><a href="/confidentialite" className="hover:text-accent transition-colors">Politique de Confidentialité</a></li>
-                </ul>
-              </div>
             </div>
-            <div className="border-t border-white/10 pt-8 text-center text-white/40">
+            <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-white/40 text-sm">
               <p>&copy; 2025 Individual Entrepreneur PULSE. Tous droits réservés.</p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <a href="/mentions-legales" className="hover:text-accent transition-colors">Mentions Légales</a>
+                <span className="text-white/20">•</span>
+                <a href="/cgu" className="hover:text-accent transition-colors">CGU</a>
+                <span className="text-white/20">•</span>
+                <a href="/cgv" className="hover:text-accent transition-colors">CGV</a>
+                <span className="text-white/20">•</span>
+                <a href="/confidentialite" className="hover:text-accent transition-colors">Confidentialité</a>
+              </div>
             </div>
           </div>
         </footer>
