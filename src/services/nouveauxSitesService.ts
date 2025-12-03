@@ -2,10 +2,9 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface NouveauxSitesFilters {
   searchQuery?: string;
-  codesNaf?: string[];
+  nafSections?: string[];
+  nafDivisions?: string[];
   departments?: string[];
-  categories?: string[];
-  formesJuridiques?: string[];
   taillesEntreprise?: string[];
 }
 
@@ -27,9 +26,14 @@ export const nouveauxSitesService = {
         );
       }
 
-      // Filtre par catégorie détaillée
-      if (filters.categories && filters.categories.length > 0) {
-        query = query.in('categorie_detaillee', filters.categories);
+      // Filtre par section NAF
+      if (filters.nafSections && filters.nafSections.length > 0) {
+        query = query.in('naf_section', filters.nafSections);
+      }
+
+      // Filtre par division NAF
+      if (filters.nafDivisions && filters.nafDivisions.length > 0) {
+        query = query.in('naf_division', filters.nafDivisions);
       }
 
       // Filtre par département
@@ -38,19 +42,6 @@ export const nouveauxSitesService = {
           `code_postal.ilike.${dept}%`
         ).join(',');
         query = query.or(deptConditions);
-      }
-
-      // Filtre par code NAF
-      if (filters.codesNaf && filters.codesNaf.length > 0) {
-        const nafConditions = filters.codesNaf.map(code => 
-          `code_naf.ilike.${code}%`
-        ).join(',');
-        query = query.or(nafConditions);
-      }
-
-      // Filtre par forme juridique
-      if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
-        query = query.in('categorie_juridique', filters.formesJuridiques);
       }
 
       // Filtre par taille d'entreprise

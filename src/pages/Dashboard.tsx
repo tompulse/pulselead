@@ -28,11 +28,11 @@ const DashboardContent = () => {
   const [filters, setFilters] = useState({
     dateFrom: "",
     dateTo: "",
-    categories: [] as string[],
+    nafSections: [] as string[],
+    nafDivisions: [] as string[],
     departments: [] as string[],
-    formesJuridiques: [] as string[],
+    taillesEntreprise: [] as string[],
     searchQuery: "",
-    subcategories: [] as string[],
   });
 
   const applyAIFiltersRef = useRef<((params: any) => void) | null>(null);
@@ -55,10 +55,10 @@ const DashboardContent = () => {
   };
 
   const activeFiltersCount = 
-    (filters.categories?.length || 0) + 
+    (filters.nafSections?.length || 0) + 
+    (filters.nafDivisions?.length || 0) +
     (filters.departments?.length || 0) + 
-    (filters.dateFrom ? 1 : 0) + 
-    (filters.dateTo ? 1 : 0);
+    (filters.taillesEntreprise?.length || 0);
 
   const handleEntrepriseSelect = async (entreprise: any) => {
     setSelectedEntreprise(entreprise);
@@ -135,7 +135,8 @@ const DashboardContent = () => {
             const parsed = JSON.parse(savedFilters);
             setFilters(prev => ({
               ...prev,
-              categories: parsed.categories || [],
+              nafSections: parsed.nafSections || [],
+              nafDivisions: parsed.nafDivisions || [],
               departments: parsed.departments || []
             }));
           } catch (e) {
@@ -177,11 +178,11 @@ const DashboardContent = () => {
     navigate("/");
   };
 
-  const handleOnboardingComplete = (newFilters: { categories: string[]; departments: string[] }) => {
+  const handleOnboardingComplete = (newFilters: { nafSections?: string[]; departments?: string[] }) => {
     setFilters(prev => ({
       ...prev,
-      categories: newFilters.categories,
-      departments: newFilters.departments
+      nafSections: newFilters.nafSections || [],
+      departments: newFilters.departments || []
     }));
     setShowOnboarding(false);
     

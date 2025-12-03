@@ -3,80 +3,30 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Building2, ChevronDown, X, Route, Calendar as CalendarIcon, Users, Scale } from "lucide-react";
+import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as CalendarIcon } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NAF_SECTIONS, NAF_DIVISIONS, getSectionEmoji } from "@/utils/nafNomenclature";
 
-// Labels lisibles pour les catégories de la base de données
-const CATEGORY_LABELS: Record<string, { label: string; emoji: string }> = {
-  'agriculture': { label: 'Agriculture', emoji: '🌾' },
-  'industrie_alimentaire': { label: 'Industrie alimentaire', emoji: '🍞' },
-  'textile': { label: 'Textile & Habillement', emoji: '👕' },
-  'bois_papier': { label: 'Bois & Papier', emoji: '🪵' },
-  'chimie': { label: 'Chimie & Pharmacie', emoji: '🧪' },
-  'plastique': { label: 'Plastique & Caoutchouc', emoji: '♻️' },
-  'metallurgie': { label: 'Métallurgie & Mécanique', emoji: '⚙️' },
-  'informatique': { label: 'Électronique (fabrication)', emoji: '🔌' },
-  'automobile': { label: 'Automobile (fabrication)', emoji: '🚗' },
-  'meubles': { label: 'Meubles & Industries diverses', emoji: '🛋️' },
-  'energie': { label: 'Énergie & Eau', emoji: '⚡' },
-  'construction': { label: 'Construction & BTP', emoji: '🏗️' },
-  'commerce_auto': { label: 'Commerce automobile', emoji: '🚙' },
-  'commerce_gros': { label: 'Commerce de gros', emoji: '📦' },
-  'commerce_detail': { label: 'Commerce de détail', emoji: '🛒' },
-  'transport': { label: 'Transport & Logistique', emoji: '🚚' },
-  'hotellerie': { label: 'Hôtellerie & Restauration', emoji: '🏨' },
-  'communication': { label: 'Communication & Médias', emoji: '📡' },
-  'informatique_services': { label: 'Services informatiques', emoji: '💻' },
-  'finance': { label: 'Finance & Assurance', emoji: '💰' },
-  'immobilier': { label: 'Immobilier', emoji: '🏠' },
-  'juridique': { label: 'Juridique & Comptable', emoji: '⚖️' },
-  'architecture': { label: 'Architecture & Ingénierie', emoji: '📐' },
-  'services_admin': { label: 'Services administratifs', emoji: '📋' },
-  'administration': { label: 'Administration publique', emoji: '🏛️' },
-  'enseignement': { label: 'Enseignement & Formation', emoji: '🎓' },
-  'sante': { label: 'Santé & Action sociale', emoji: '🏥' },
-  'culture': { label: 'Culture & Loisirs', emoji: '🎭' },
-  'autres_services': { label: 'Autres services', emoji: '🔧' },
-  'menages': { label: 'Services aux ménages', emoji: '🏡' },
-  'international': { label: 'Organisations internationales', emoji: '🌍' },
-  // Nouvelles catégories NAF sections
-  'A - Agriculture, sylviculture et pêche': { label: 'Agriculture, sylviculture et pêche', emoji: '🌾' },
-  'B - Industries extractives': { label: 'Industries extractives', emoji: '⛏️' },
-  'C - Industrie manufacturière': { label: 'Industrie manufacturière', emoji: '🏭' },
-  'D - Production et distribution d\'électricité': { label: 'Électricité, gaz', emoji: '⚡' },
-  'E - Eau, assainissement, déchets': { label: 'Eau, assainissement, déchets', emoji: '💧' },
-  'F - Construction': { label: 'Construction', emoji: '🏗️' },
-  'G - Commerce, réparation auto/moto': { label: 'Commerce, réparation auto/moto', emoji: '🛒' },
-  'H - Transports et entreposage': { label: 'Transports et entreposage', emoji: '🚚' },
-  'I - Hébergement et restauration': { label: 'Hébergement et restauration', emoji: '🏨' },
-  'J - Information et communication': { label: 'Information et communication', emoji: '💻' },
-  'K - Activités financières et assurance': { label: 'Activités financières et assurance', emoji: '💰' },
-  'L - Activités immobilières': { label: 'Activités immobilières', emoji: '🏠' },
-  'M - Activités scientifiques et techniques': { label: 'Activités scientifiques et techniques', emoji: '🔬' },
-  'N - Services administratifs et soutien': { label: 'Services administratifs et soutien', emoji: '📋' },
-  'O - Administration publique': { label: 'Administration publique', emoji: '🏛️' },
-  'P - Enseignement': { label: 'Enseignement', emoji: '🎓' },
-  'Q - Santé humaine et action sociale': { label: 'Santé humaine et action sociale', emoji: '🏥' },
-  'R - Arts, spectacles, loisirs': { label: 'Arts, spectacles, loisirs', emoji: '🎭' },
-  'S - Autres activités de services': { label: 'Autres activités de services', emoji: '🔧' },
-  'T - Activités des ménages': { label: 'Activités des ménages', emoji: '🏡' },
-  'U - Activités extra-territoriales': { label: 'Activités extra-territoriales', emoji: '🌍' },
+// Labels pour les tailles d'entreprise
+const TAILLE_LABELS: Record<string, string> = {
+  'GE': 'Grande Entreprise (GE)',
+  'ETI': 'Entreprise Taille Intermédiaire (ETI)',
+  'PME': 'Petite/Moyenne Entreprise (PME)',
+  'Non spécifié': 'Non spécifié'
 };
 
 interface NafFiltersProps {
   filters: {
     searchQuery?: string;
-    codesNaf?: string[];
+    nafSections?: string[];
+    nafDivisions?: string[];
     departments?: string[];
-    categories?: string[];
-    formesJuridiques?: string[];
     taillesEntreprise?: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
@@ -108,32 +58,43 @@ export const NafFilters = ({
   onOptimize,
   isOptimizing = false
 }: NafFiltersProps) => {
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [sectionsOpen, setSectionsOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
-  const [formesJuridiquesOpen, setFormesJuridiquesOpen] = useState(false);
   const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
   
   const { isAdmin } = useAdminStatus();
   const { data: availableFilters, isLoading } = useAvailableNouveauxSitesFilters({
-    categories: filters.categories,
+    nafSections: filters.nafSections,
+    nafDivisions: filters.nafDivisions,
     departments: filters.departments,
-    codesNaf: filters.codesNaf,
+    taillesEntreprise: filters.taillesEntreprise,
     searchQuery: filters.searchQuery
   });
 
-  // Construire les catégories à partir des données réelles de la base
-  const availableCategories = Object.entries(availableFilters?.categories || {})
-    .map(([key, count]) => {
-      const catInfo = CATEGORY_LABELS[key] || { label: key, emoji: '📁' };
-      return {
-        key,
-        label: catInfo.label,
-        emoji: catInfo.emoji,
-        count: count as number
-      };
-    })
-    .filter(cat => cat.count > 0)
+  // Construire les sections NAF avec leurs compteurs
+  const availableSections = Object.entries(NAF_SECTIONS)
+    .map(([code, info]) => ({
+      code,
+      label: info.label,
+      emoji: info.emoji,
+      count: availableFilters?.nafSections?.[code] || 0
+    }))
+    .filter(section => section.count > 0)
     .sort((a, b) => b.count - a.count);
+
+  // Construire les divisions groupées par section
+  const divisionsBySection = Object.entries(NAF_DIVISIONS).reduce((acc, [code, info]) => {
+    if (!acc[info.section]) {
+      acc[info.section] = [];
+    }
+    acc[info.section].push({
+      code,
+      label: info.label,
+      count: availableFilters?.nafDivisions?.[code] || 0
+    });
+    return acc;
+  }, {} as Record<string, { code: string; label: string; count: number }[]>);
 
   const availableDepartments = Object.entries(availableFilters?.departments || {})
     .map(([dept, count]) => ({ dept, count: count as number }))
@@ -144,14 +105,6 @@ export const NafFilters = ({
       return numA - numB;
     });
 
-  // Labels pour les tailles d'entreprise
-  const TAILLE_LABELS: Record<string, string> = {
-    'GE': 'Grande Entreprise (GE)',
-    'ETI': 'Entreprise Taille Intermédiaire (ETI)',
-    'PME': 'Petite/Moyenne Entreprise (PME)',
-    'Non spécifié': 'Non spécifié'
-  };
-
   const availableTailles = Object.entries(availableFilters?.taillesEntreprise || {})
     .map(([taille, count]) => ({
       taille,
@@ -161,16 +114,38 @@ export const NafFilters = ({
     .filter(t => t.count > 0)
     .sort((a, b) => b.count - a.count);
 
-  const handleCategoryToggle = (categoryKey: string) => {
+  const handleSectionToggle = (sectionCode: string) => {
     setFilters((prev: any) => {
-      const current = prev.categories || [];
-      const isSelected = current.includes(categoryKey);
+      const currentSections = prev.nafSections || [];
+      const isSelected = currentSections.includes(sectionCode);
+      
+      // Si on désélectionne la section, retirer aussi les divisions de cette section
+      let newDivisions = prev.nafDivisions || [];
+      if (isSelected) {
+        const sectionDivisions = divisionsBySection[sectionCode]?.map(d => d.code) || [];
+        newDivisions = newDivisions.filter((d: string) => !sectionDivisions.includes(d));
+      }
       
       return {
         ...prev,
-        categories: isSelected
-          ? current.filter((c: string) => c !== categoryKey)
-          : [...current, categoryKey]
+        nafSections: isSelected
+          ? currentSections.filter((c: string) => c !== sectionCode)
+          : [...currentSections, sectionCode],
+        nafDivisions: newDivisions
+      };
+    });
+  };
+
+  const handleDivisionToggle = (divisionCode: string) => {
+    setFilters((prev: any) => {
+      const current = prev.nafDivisions || [];
+      const isSelected = current.includes(divisionCode);
+      
+      return {
+        ...prev,
+        nafDivisions: isSelected
+          ? current.filter((d: string) => d !== divisionCode)
+          : [...current, divisionCode]
       };
     });
   };
@@ -189,20 +164,6 @@ export const NafFilters = ({
     });
   };
 
-  const handleFormeJuridiqueToggle = (forme: string) => {
-    setFilters((prev: any) => {
-      const current = prev.formesJuridiques || [];
-      const isSelected = current.includes(forme);
-      
-      return {
-        ...prev,
-        formesJuridiques: isSelected
-          ? current.filter((f: string) => f !== forme)
-          : [...current, forme]
-      };
-    });
-  };
-
   const handleTailleEntrepriseToggle = (taille: string) => {
     setFilters((prev: any) => {
       const current = prev.taillesEntreprise || [];
@@ -217,21 +178,27 @@ export const NafFilters = ({
     });
   };
 
+  const toggleExpandedSection = (sectionCode: string) => {
+    setExpandedSections(prev => 
+      prev.includes(sectionCode) 
+        ? prev.filter(s => s !== sectionCode)
+        : [...prev, sectionCode]
+    );
+  };
+
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
-    categories: [], 
+    nafSections: [], 
+    nafDivisions: [],
     departments: [],
-    codesNaf: [],
-    formesJuridiques: [],
     taillesEntreprise: [],
     searchQuery: ""
   }));
 
   const activeFiltersCount = 
-    (filters.categories?.length || 0) + 
+    (filters.nafSections?.length || 0) + 
+    (filters.nafDivisions?.length || 0) +
     (filters.departments?.length || 0) +
-    (filters.codesNaf?.length || 0) +
-    (filters.formesJuridiques?.length || 0) +
     (filters.taillesEntreprise?.length || 0);
 
   return (
@@ -327,11 +294,11 @@ export const NafFilters = ({
         )}
       </div>
 
-      {/* Catégories d'activité */}
-      <Collapsible open={categoriesOpen} onOpenChange={setCategoriesOpen} className="border-b border-accent/20">
+      {/* Sections NAF avec Divisions */}
+      <Collapsible open={sectionsOpen} onOpenChange={setSectionsOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <span className="font-medium text-sm">Catégories d'activité</span>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesOpen ? 'rotate-180' : ''}`} />
+          <span className="font-medium text-sm">Secteurs d'activité (NAF)</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${sectionsOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
         <CollapsibleContent>
@@ -341,29 +308,83 @@ export const NafFilters = ({
                 Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton key={i} className="h-10 w-full" />
                 ))
-              ) : availableCategories.length === 0 ? (
+              ) : availableSections.length === 0 ? (
                 <div className="text-sm text-muted-foreground text-center py-4">
-                  Aucune catégorie disponible
+                  Aucun secteur disponible
                 </div>
               ) : (
-                availableCategories.map((cat) => {
-                  const selected = filters.categories?.includes(cat.key);
+                availableSections.map((section) => {
+                  const sectionSelected = filters.nafSections?.includes(section.code);
+                  const sectionExpanded = expandedSections.includes(section.code);
+                  const sectionDivisions = (divisionsBySection[section.code] || []).filter(d => d.count > 0);
+                  
                   return (
-                    <div
-                      key={cat.key}
-                      onClick={() => handleCategoryToggle(cat.key)}
-                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                    >
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                        selected ? 'bg-accent border-accent' : 'border-accent/30'
-                      }`}>
-                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                    <div key={section.code} className="space-y-1">
+                      <div className="flex items-center gap-1">
+                        {/* Bouton expand pour voir les divisions */}
+                        {sectionDivisions.length > 0 && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExpandedSection(section.code);
+                            }}
+                            className="p-1 hover:bg-accent/10 rounded"
+                          >
+                            {sectionExpanded ? (
+                              <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                            ) : (
+                              <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                            )}
+                          </button>
+                        )}
+                        
+                        {/* Section checkbox */}
+                        <div
+                          onClick={() => handleSectionToggle(section.code)}
+                          className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98] flex-1"
+                        >
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                            sectionSelected ? 'bg-accent border-accent' : 'border-accent/30'
+                          }`}>
+                            {sectionSelected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                          </div>
+                          <span className="text-lg mr-1">{section.emoji}</span>
+                          <span className="text-xs font-semibold text-accent mr-1">{section.code}</span>
+                          <span className="text-sm leading-tight flex-1 truncate">{section.label}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {section.count.toLocaleString('fr-FR')}
+                          </span>
+                        </div>
                       </div>
-                      <span className="text-lg mr-2">{cat.emoji}</span>
-                      <span className="text-sm leading-tight flex-1">{cat.label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {cat.count.toLocaleString('fr-FR')}
-                      </span>
+                      
+                      {/* Divisions (sous-catégories) */}
+                      {sectionExpanded && sectionDivisions.length > 0 && (
+                        <div className="ml-8 pl-2 border-l-2 border-accent/20 space-y-0.5">
+                          {sectionDivisions
+                            .sort((a, b) => b.count - a.count)
+                            .map((division) => {
+                              const divisionSelected = filters.nafDivisions?.includes(division.code);
+                              return (
+                                <div
+                                  key={division.code}
+                                  onClick={() => handleDivisionToggle(division.code)}
+                                  className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
+                                >
+                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                                    divisionSelected ? 'bg-accent/80 border-accent/80' : 'border-accent/20'
+                                  }`}>
+                                    {divisionSelected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                                  </div>
+                                  <span className="text-xs font-mono text-muted-foreground">{division.code}</span>
+                                  <span className="text-xs leading-tight flex-1 truncate">{division.label}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {division.count.toLocaleString('fr-FR')}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      )}
                     </div>
                   );
                 })
@@ -405,7 +426,7 @@ export const NafFilters = ({
                       }`}>
                         {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                       </div>
-                      <span className="text-sm leading-tight flex-1">{dept}</span>
+                      <span className="text-sm flex-1">Département {dept}</span>
                       <span className="text-xs text-muted-foreground">
                         {count.toLocaleString('fr-FR')}
                       </span>
@@ -413,39 +434,6 @@ export const NafFilters = ({
                   );
                 })
               )}
-            </div>
-          </ScrollArea>
-        </CollapsibleContent>
-      </Collapsible>
-
-      {/* Formes juridiques */}
-      <Collapsible open={formesJuridiquesOpen} onOpenChange={setFormesJuridiquesOpen} className="border-b border-accent/20">
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <span className="font-medium text-sm">Formes juridiques</span>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${formesJuridiquesOpen ? 'rotate-180' : ''}`} />
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent>
-          <ScrollArea className="h-[300px]">
-            <div className="px-4 pb-4 space-y-1">
-              {FORMES_JURIDIQUES.map((forme) => {
-                const selected = filters.formesJuridiques?.includes(forme.value);
-                return (
-                  <div
-                    key={forme.value}
-                    onClick={() => handleFormeJuridiqueToggle(forme.value)}
-                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                  >
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                      selected ? 'bg-accent border-accent' : 'border-accent/30'
-                    }`}>
-                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                    </div>
-                    <Scale className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm leading-tight flex-1">{forme.label}</span>
-                  </div>
-                );
-              })}
             </div>
           </ScrollArea>
         </CollapsibleContent>
@@ -459,54 +447,57 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <div className="px-4 pb-4 space-y-1">
-            {isLoading ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))
-            ) : availableTailles.length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Aucune taille disponible
-              </div>
-            ) : (
-              availableTailles.map(({ taille, count, label }) => {
-                const selected = filters.taillesEntreprise?.includes(taille);
-                return (
-                  <div
-                    key={taille}
-                    onClick={() => handleTailleEntrepriseToggle(taille)}
-                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                  >
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                      selected ? 'bg-accent border-accent' : 'border-accent/30'
-                    }`}>
-                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+          <ScrollArea className="h-[200px]">
+            <div className="px-4 pb-4 space-y-1">
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))
+              ) : availableTailles.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-4">
+                  Aucune taille disponible
+                </div>
+              ) : (
+                availableTailles.map(({ taille, label, count }) => {
+                  const selected = filters.taillesEntreprise?.includes(taille);
+                  return (
+                    <div
+                      key={taille}
+                      onClick={() => handleTailleEntrepriseToggle(taille)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                    >
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                        selected ? 'bg-accent border-accent' : 'border-accent/30'
+                      }`}>
+                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                      </div>
+                      <span className="text-sm flex-1">{label}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {count.toLocaleString('fr-FR')}
+                      </span>
                     </div>
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm leading-tight flex-1">{label}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {count.toLocaleString('fr-FR')}
-                    </span>
-                  </div>
-                );
-              })
-            )}
-          </div>
+                  );
+                })
+              )}
+            </div>
+          </ScrollArea>
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Footer with reset button */}
-      <div className="p-4 border-t border-accent/20">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={clearFilters}
-          disabled={activeFiltersCount === 0}
-          className="w-full border-accent/30 hover:bg-accent/10"
-        >
-          Réinitialiser les filtres
-        </Button>
-      </div>
+      {/* Bouton réinitialiser */}
+      {activeFiltersCount > 0 && (
+        <div className="p-4">
+          <Button
+            onClick={clearFilters}
+            variant="ghost"
+            size="sm"
+            className="w-full h-8 text-xs text-muted-foreground hover:text-destructive"
+          >
+            <X className="w-3 h-3 mr-1" />
+            Réinitialiser les filtres ({activeFiltersCount})
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
