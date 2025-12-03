@@ -351,7 +351,7 @@ export const NafFilters = ({
                           <ChevronRight className="w-4 h-4 text-accent" />
                         )}
                         <span className="text-lg">{section.emoji}</span>
-                        <span className="text-sm font-medium flex-1 truncate">{section.label}</span>
+                        <span className="text-sm font-medium flex-1 break-words leading-tight">{section.label}</span>
                         <span className="text-xs text-muted-foreground">
                           {section.totalCount.toLocaleString('fr-FR')}
                         </span>
@@ -381,7 +381,7 @@ export const NafFilters = ({
                                   {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
                                 </div>
                                 <span className="text-xs text-muted-foreground">{div.code}</span>
-                                <span className="text-xs flex-1 truncate">{div.label}</span>
+                                <span className="text-xs flex-1 break-words leading-tight">{div.label}</span>
                                 <span className="text-xs text-muted-foreground">
                                   {div.count.toLocaleString('fr-FR')}
                                 </span>
