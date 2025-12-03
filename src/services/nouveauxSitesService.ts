@@ -48,14 +48,9 @@ export const nouveauxSitesService = {
         query = query.or(nafConditions);
       }
 
-      // Filtre par forme juridique (code numérique)
+      // Filtre par forme juridique
       if (filters.formesJuridiques && filters.formesJuridiques.length > 0) {
         query = query.in('categorie_juridique', filters.formesJuridiques);
-      }
-
-      // Filtre par taille d'entreprise
-      if (filters.taillesEntreprise && filters.taillesEntreprise.length > 0) {
-        query = query.in('categorie_entreprise', filters.taillesEntreprise);
       }
 
       const { data, error, count } = await query;
