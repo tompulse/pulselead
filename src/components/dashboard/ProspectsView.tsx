@@ -69,7 +69,8 @@ const ProspectsView = ({
   onAIFiltersReady?: (applyFn: (params: ApplyAIFiltersParams) => void) => void;
 }) => {
   const { toast } = useToast();
-  const [activeView, setActiveView] = useState<'creations' | 'nouveaux-sites'>('creations');
+  // Vue fixée sur nouveaux-sites (créations supprimé)
+  const activeView = 'nouveaux-sites' as const;
   
   // États pour les tournées de créations
   const [tourneeActive, setTourneeActive] = useState(false);
@@ -248,41 +249,22 @@ const ProspectsView = ({
   const internalSelectedEntreprises = externalSelectionMode ? externalSelectedEntreprises : selectedEntreprises;
   const internalOnToggleSelection = externalSelectionMode ? externalOnToggleSelection : toggleEntreprise;
 
-  // Méthode pour appliquer les filtres de l'IA
+  // Méthode pour appliquer les filtres de l'IA (uniquement nouveaux sites)
   const applyAIFilters = (params: ApplyAIFiltersParams) => {
-    setActiveView(params.view);
+    // Appliquer les filtres de nouveaux sites
+    setNouveauxSitesFilters({
+      searchQuery: "",
+      codesNaf: params.filters.codesNaf || [],
+      departments: params.filters.departments || [],
+      categories: params.filters.categories || [],
+      formesJuridiques: params.filters.formesJuridiques || [],
+      taillesEntreprise: params.filters.taillesEntreprise || []
+    });
     
-    if (params.view === 'creations') {
-      // Appliquer les filtres de créations
-      setFilters((prev: any) => ({
-        ...prev,
-        categories: params.filters.categories || [],
-        departments: params.filters.departments || [],
-        formesJuridiques: params.filters.formesJuridiques || [],
-        dateFrom: params.filters.dateFrom || "",
-        dateTo: params.filters.dateTo || ""
-      }));
-      
-      // Activer le mode tournée et pré-remplir
-      setTourneeActive(true);
-      setTourneeName(params.tourneeName);
-      setTourneeDate(format(params.tourneeDate, "yyyy-MM-dd"));
-    } else {
-      // Appliquer les filtres de nouveaux sites
-      setNouveauxSitesFilters({
-        searchQuery: "",
-        codesNaf: params.filters.codesNaf || [],
-        departments: params.filters.departments || [],
-        categories: params.filters.categories || [],
-        formesJuridiques: params.filters.formesJuridiques || [],
-        taillesEntreprise: params.filters.taillesEntreprise || []
-      });
-      
-      // Activer le mode tournée et pré-remplir
-      setNouveauxSitesTourneeActive(true);
-      setNouveauxSitesTourneeName(params.tourneeName);
-      setNouveauxSitesTourneeDate(format(params.tourneeDate, "yyyy-MM-dd"));
-    }
+    // Activer le mode tournée et pré-remplir
+    setNouveauxSitesTourneeActive(true);
+    setNouveauxSitesTourneeName(params.tourneeName);
+    setNouveauxSitesTourneeDate(format(params.tourneeDate, "yyyy-MM-dd"));
     
     if (onAIFiltersApply) {
       onAIFiltersApply(params);
@@ -302,34 +284,18 @@ const ProspectsView = ({
       <div className="h-full flex flex-col overflow-hidden">
         {/* Header mobile avec tabs et bouton tournée */}
         <div className="shrink-0 space-y-2 px-3 pb-2">
-          <div className="flex gap-2">
-            <Button
-              variant={activeView === 'creations' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActiveView('creations')}
-              className="flex-1 h-9 text-xs"
-            >
-              Créations
-            </Button>
-            <Button
-              variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActiveView('nouveaux-sites')}
-              className="flex-1 h-9 text-xs"
-            >
-              Nouveaux Sites
-            </Button>
-          </div>
+          {/* Titre de la vue */}
+          <h2 className="text-sm font-semibold text-foreground">Nouveaux Sites</h2>
 
           <div className="flex gap-2">
             <Button
-              onClick={activeView === 'creations' ? handleCreateTournee : handleCreateNouveauxSitesTournee}
-              variant={(activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive) ? "default" : "outline"}
+              onClick={handleCreateNouveauxSitesTournee}
+              variant={nouveauxSitesTourneeActive ? "default" : "outline"}
               className="flex-1 h-9 text-xs"
               size="sm"
             >
               <Route className="w-3.5 h-3.5 mr-2" />
-              {(activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
+              {nouveauxSitesTourneeActive
                 ? "Mode tournée actif"
                 : "Créer une tournée"}
             </Button>
@@ -346,67 +312,19 @@ const ProspectsView = ({
                   <SheetTitle>Filtres</SheetTitle>
                 </SheetHeader>
                 <div className="overflow-y-auto h-full pb-6 mt-4">
-                  {activeView === 'creations' ? (
-                    <TourneeFilters 
-                      filters={filters} 
-                      setFilters={setFilters}
-                      resultsCount={resultsCount}
-                    />
-                  ) : (
-                    <NafFilters
-                      filters={nouveauxSitesFilters}
-                      setFilters={setNouveauxSitesFilters}
-                      resultsCount={nouveauxSitesFilteredCount}
-                      totalCount={nouveauxSitesTotalCount}
-                    />
-                  )}
+                  <NafFilters
+                    filters={nouveauxSitesFilters}
+                    setFilters={setNouveauxSitesFilters}
+                    resultsCount={nouveauxSitesFilteredCount}
+                    totalCount={nouveauxSitesTotalCount}
+                  />
                 </div>
               </SheetContent>
             </Sheet>
           </div>
 
           {/* Configuration tournée mobile */}
-          {activeView === 'creations' && tourneeActive && (
-            <div className="space-y-2 p-3 bg-accent/10 rounded-lg border border-accent/30">
-              <Input
-                placeholder="Nom de la tournée"
-                value={tourneeName}
-                onChange={(e) => setTourneeName(e.target.value)}
-                className="h-9 text-sm"
-              />
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full h-9 text-sm justify-start">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {tourneeDate ? format(new Date(tourneeDate), "dd/MM/yyyy") : "Date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={tourneeDate ? new Date(tourneeDate) : undefined}
-                    onSelect={(date) => setTourneeDate(date ? format(date, "yyyy-MM-dd") : "")}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              {selectedEntreprises.length > 0 && (
-                <div className="text-xs text-center py-2 bg-accent/20 rounded">
-                  {selectedEntreprises.length} sélectionné(s)
-                </div>
-              )}
-              <Button
-                onClick={handleOptimize}
-                disabled={selectedEntreprises.length < 2 || isOptimizing || !tourneeName.trim()}
-                className="w-full h-9 text-xs"
-                size="sm"
-              >
-                {isOptimizing ? "Optimisation..." : "Optimiser"}
-              </Button>
-            </div>
-          )}
-
-          {activeView === 'nouveaux-sites' && nouveauxSitesTourneeActive && (
+          {nouveauxSitesTourneeActive && (
             <div className="space-y-2 p-3 bg-accent/10 rounded-lg border border-accent/30">
               <Input
                 placeholder="Nom de la tournée"
@@ -450,23 +368,13 @@ const ProspectsView = ({
         {/* Liste mobile - cartes centrées */}
         <div className="flex-1 overflow-y-auto px-4 pb-3 hide-scrollbar">
           <div className="max-w-md mx-auto space-y-3">
-            {activeView === 'creations' ? (
-              <ListView
-                filters={filters}
-                onEntrepriseSelect={onEntrepriseSelect}
-                selectionMode={internalSelectionMode}
-                selectedEntreprises={internalSelectedEntreprises}
-                onToggleSelection={internalOnToggleSelection}
-              />
-            ) : (
-              <NouveauxSitesListView
-                filters={nouveauxSitesFilters}
-                onSiteSelect={onEntrepriseSelect}
-                selectionMode={nouveauxSitesTourneeActive}
-                selectedSites={selectedNouveauxSites}
-                onToggleSelection={toggleNouveauSite}
-              />
-            )}
+            <NouveauxSitesListView
+              filters={nouveauxSitesFilters}
+              onSiteSelect={onEntrepriseSelect}
+              selectionMode={nouveauxSitesTourneeActive}
+              selectedSites={selectedNouveauxSites}
+              onToggleSelection={toggleNouveauSite}
+            />
           </div>
         </div>
       </div>
@@ -481,104 +389,30 @@ const ProspectsView = ({
         <div className="w-64 shrink-0 glass-card overflow-y-auto">
           {/* Sélection de vue et création de tournée */}
           <div className="p-4 border-b border-border/50 space-y-3">
-            <div className="flex gap-2">
-              <Button
-                variant={activeView === 'creations' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setActiveView('creations')}
-                className="flex-1 justify-center text-xs"
-              >
-                Créations
-              </Button>
-              <Button
-                variant={activeView === 'nouveaux-sites' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setActiveView('nouveaux-sites')}
-                className="flex-1 justify-center text-xs"
-              >
-                Nouveaux Sites
-              </Button>
-            </div>
+            {/* Titre de la vue */}
+            <h2 className="text-sm font-semibold text-foreground">Nouveaux Sites</h2>
             
             {/* Bouton Créer une tournée */}
             <Button
-              onClick={activeView === 'creations' ? handleCreateTournee : handleCreateNouveauxSitesTournee}
-              variant={
-                (activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive) 
-                  ? "default" 
-                  : "outline"
-              }
+              onClick={handleCreateNouveauxSitesTournee}
+              variant={nouveauxSitesTourneeActive ? "default" : "outline"}
               className={`w-full ${
-                (activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
+                nouveauxSitesTourneeActive
                   ? "bg-gradient-to-r from-accent to-accent/80 hover:shadow-lg hover:shadow-accent/30 text-primary" 
                   : "border-accent/50 hover:bg-accent/10 hover:border-accent hover:shadow-md"
               } transition-all h-8 text-xs px-3`}
               size="sm"
             >
               <Route className="w-3.5 h-3.5 mr-2" />
-              {(activeView === 'creations' ? tourneeActive : nouveauxSitesTourneeActive)
+              {nouveauxSitesTourneeActive
                 ? "✓ Mode tournée actif" 
                 : "Créer une tournée"}
             </Button>
           </div>
 
-          {/* Panneaux de configuration de tournée */}
+          {/* Panneau de configuration de tournée */}
           <div className="border-b border-accent/20">
-            {/* Panneau de configuration pour Créations */}
-            {activeView === 'creations' && tourneeActive && (
-              <div className="space-y-3 p-3 mt-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30 shadow-sm">
-                <div className="space-y-2">
-                  <Label htmlFor="tournee-name-creations" className="text-xs font-semibold text-accent">Nom de la tournée</Label>
-                  <Input
-                    id="tournee-name-creations"
-                    placeholder="Ex: Tournée Sud"
-                    value={tourneeName}
-                    onChange={(e) => setTourneeName(e.target.value)}
-                    className="h-9 text-sm border-accent/30 focus:border-accent focus:ring-accent/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tournee-date-creations" className="text-xs font-semibold text-accent">Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {tourneeDate ? format(new Date(tourneeDate), "dd/MM/yyyy") : "Choisir une date"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={tourneeDate ? new Date(tourneeDate) : undefined}
-                        onSelect={(date) => setTourneeDate(date ? format(date, "yyyy-MM-dd") : "")}
-                        initialFocus
-                        className="pointer-events-auto"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                {selectedEntreprises.length > 0 && (
-                  <div className="text-xs bg-accent/10 text-accent font-semibold rounded-lg px-3 py-2 border border-accent/20">
-                    {selectedEntreprises.length} entreprise(s) sélectionnée(s)
-                  </div>
-                )}
-                <Button
-                  onClick={handleOptimize}
-                  disabled={selectedEntreprises.length < 2 || isOptimizing || !tourneeName.trim()}
-                  className="w-full h-9 text-xs bg-gradient-to-r from-accent via-accent to-accent/80 transition-colors disabled:opacity-50"
-                  size="sm"
-                >
-                  <Route className="w-3.5 h-3.5 mr-2" />
-                  {isOptimizing ? "Optimisation..." : "Optimiser la tournée"}
-                </Button>
-              </div>
-            )}
-
-            {/* Panneau de configuration pour Nouveaux Sites */}
-            {activeView === 'nouveaux-sites' && nouveauxSitesTourneeActive && (
+            {nouveauxSitesTourneeActive && (
               <div className="space-y-3 p-3 mt-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30 shadow-sm">
                 <div className="space-y-2">
                   <Label htmlFor="tournee-name-sites" className="text-xs font-semibold text-accent">Nom de la tournée</Label>
@@ -631,41 +465,23 @@ const ProspectsView = ({
             )}
           </div>
 
-          {activeView === 'creations' ? (
-            <TourneeFilters
-              filters={filters}
-              setFilters={setFilters}
-              resultsCount={resultsCount}
-            />
-          ) : (
-            <NafFilters
-              filters={nouveauxSitesFilters}
-              setFilters={setNouveauxSitesFilters}
-              resultsCount={nouveauxSitesFilteredCount}
-              totalCount={nouveauxSitesTotalCount}
-            />
-          )}
+          <NafFilters
+            filters={nouveauxSitesFilters}
+            setFilters={setNouveauxSitesFilters}
+            resultsCount={nouveauxSitesFilteredCount}
+            totalCount={nouveauxSitesTotalCount}
+          />
         </div>
 
         {/* Content - Liste */}
         <div className="flex-1 overflow-hidden min-h-0 glass-card">
-          {activeView === 'creations' ? (
-            <ListView
-              filters={filters}
-              onEntrepriseSelect={onEntrepriseSelect}
-              selectionMode={internalSelectionMode}
-              selectedEntreprises={internalSelectedEntreprises}
-              onToggleSelection={internalOnToggleSelection}
-            />
-          ) : (
-            <NouveauxSitesListView
-              filters={nouveauxSitesFilters}
-              onSiteSelect={onEntrepriseSelect}
-              selectionMode={nouveauxSitesTourneeActive}
-              selectedSites={selectedNouveauxSites}
-              onToggleSelection={toggleNouveauSite}
-            />
-          )}
+          <NouveauxSitesListView
+            filters={nouveauxSitesFilters}
+            onSiteSelect={onEntrepriseSelect}
+            selectionMode={nouveauxSitesTourneeActive}
+            selectedSites={selectedNouveauxSites}
+            onToggleSelection={toggleNouveauSite}
+          />
         </div>
       </div>
     </div>
