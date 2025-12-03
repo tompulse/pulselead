@@ -183,7 +183,6 @@ export default function SecuritySettings() {
         lead_statuts: statuts || [],
         lead_interactions: interactions || [],
         tournees: tournees || [],
-        tournee_visites: visites || [],
         onboarding_progress: onboarding || [],
         export_date: new Date().toISOString(),
       };
