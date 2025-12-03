@@ -1,13 +1,12 @@
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
-import { Upload, CheckCircle2, Loader2, Database, MapPin, Tags, AlertCircle } from 'lucide-react';
+import { Upload, CheckCircle2, Loader2, Database, Tags, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import * as XLSX from 'xlsx';
 
-type ImportStep = 'idle' | 'parsing' | 'importing' | 'geocoding' | 'harmonizing' | 'complete' | 'error';
+type ImportStep = 'idle' | 'parsing' | 'importing' | 'harmonizing' | 'complete' | 'error';
 
 interface ImportState {
   step: ImportStep;
@@ -16,6 +15,28 @@ interface ImportState {
   totalLines: number;
   inserted: number;
   message: string;
+}
+
+// Parse CSV with semicolon delimiter
+function parseCSVContent(content: string): any[] {
+  const lines = content.split('\n').filter(line => line.trim());
+  if (lines.length < 2) return [];
+
+  // Get headers from first line
+  const headers = lines[0].split(';').map(h => h.trim().replace(/^"|"$/g, ''));
+  
+  const data: any[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(';').map(v => v.trim().replace(/^"|"$/g, ''));
+    if (values.length >= headers.length - 2) { // Allow some missing columns
+      const row: any = {};
+      headers.forEach((header, index) => {
+        row[header] = values[index] || '';
+      });
+      data.push(row);
+    }
+  }
+  return data;
 }
 
 export function AdminNouveauxSitesImport() {
@@ -30,69 +51,66 @@ export function AdminNouveauxSitesImport() {
   });
   const { toast } = useToast();
 
-  const parseCSV = useCallback(async (file: File): Promise<any[]> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const data = e.target?.result;
-          const workbook = XLSX.read(data, { type: 'binary', codepage: 65001 });
-          const sheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[sheetName];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
-            raw: false,
-            defval: ''
-          });
-          resolve(jsonData);
-        } catch (error) {
-          reject(error);
-        }
-      };
-      reader.onerror = () => reject(new Error('Erreur de lecture du fichier'));
-      reader.readAsBinaryString(file);
-    });
-  }, []);
-
   const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     try {
       // Step 1: Parse CSV
-      setState({ step: 'parsing', progress: 5, currentLine: 0, totalLines: 0, inserted: 0, message: 'Lecture du fichier...' });
+      setState({ step: 'parsing', progress: 2, currentLine: 0, totalLines: 0, inserted: 0, message: 'Lecture du fichier...' });
       
-      const data = await parseCSV(file);
+      const content = await file.text();
+      const data = parseCSVContent(content);
       const totalLines = data.length;
       
-      setState(s => ({ ...s, totalLines, progress: 10, message: `${totalLines.toLocaleString()} lignes détectées` }));
+      console.log(`Parsed ${totalLines} rows from CSV`);
+      
+      if (totalLines === 0) {
+        throw new Error('Aucune donnée trouvée dans le fichier');
+      }
+      
+      setState(s => ({ ...s, totalLines, progress: 5, message: `${totalLines.toLocaleString()} lignes détectées` }));
 
       // Step 2: Import in batches
-      setState(s => ({ ...s, step: 'importing', message: 'Import en cours...' }));
+      setState(s => ({ ...s, step: 'importing', progress: 8, message: 'Import en cours...' }));
       
-      const batchSize = 500;
+      const batchSize = 300; // Smaller batches for reliability
       const batches = Math.ceil(totalLines / batchSize);
       let totalInserted = 0;
+      let errors: string[] = [];
 
       for (let i = 0; i < batches; i++) {
         const start = i * batchSize;
         const end = Math.min(start + batchSize, totalLines);
         const batch = data.slice(start, end);
 
-        const { data: result, error } = await supabase.functions.invoke('import-nouveaux-sites-csv', {
-          body: { 
-            entreprises: batch,
-            batchIndex: i,
-            totalBatches: batches
-          }
-        });
+        try {
+          console.log(`Sending batch ${i + 1}/${batches} (${batch.length} records)`);
+          
+          const { data: result, error } = await supabase.functions.invoke('import-nouveaux-sites-csv', {
+            body: { 
+              entreprises: batch,
+              batchIndex: i,
+              totalBatches: batches
+            }
+          });
 
-        if (error) {
-          console.error('Batch error:', error);
-        } else if (result?.inserted) {
-          totalInserted += result.inserted;
+          if (error) {
+            console.error('Batch error:', error);
+            errors.push(`Batch ${i + 1}: ${error.message}`);
+          } else if (result?.inserted) {
+            totalInserted += result.inserted;
+            console.log(`Batch ${i + 1} inserted ${result.inserted} records`);
+          } else if (result?.error) {
+            console.error('Function error:', result.error);
+            errors.push(`Batch ${i + 1}: ${result.error}`);
+          }
+        } catch (batchError) {
+          console.error('Batch exception:', batchError);
+          errors.push(`Batch ${i + 1}: Exception`);
         }
 
-        const progress = 10 + (80 * (i + 1) / batches);
+        const progress = 8 + (82 * (i + 1) / batches);
         setState(s => ({
           ...s,
           progress,
@@ -100,6 +118,11 @@ export function AdminNouveauxSitesImport() {
           inserted: totalInserted,
           message: `Import: ${end.toLocaleString()} / ${totalLines.toLocaleString()} lignes`
         }));
+
+        // Small delay between batches to avoid overwhelming the server
+        if (i < batches - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
       }
 
       // Step 3: Harmonize categories
@@ -123,7 +146,7 @@ export function AdminNouveauxSitesImport() {
 
       toast({
         title: "Import réussi",
-        description: `${totalInserted.toLocaleString()} entreprises ont été importées dans la base de données.`,
+        description: `${totalInserted.toLocaleString()} entreprises ont été importées.${errors.length > 0 ? ` (${errors.length} erreurs)` : ''}`,
       });
 
     } catch (error) {
@@ -139,7 +162,7 @@ export function AdminNouveauxSitesImport() {
         variant: "destructive"
       });
     }
-  }, [parseCSV, toast]);
+  }, [toast]);
 
   const resetState = useCallback(() => {
     setState({
@@ -163,7 +186,6 @@ export function AdminNouveauxSitesImport() {
     switch (state.step) {
       case 'parsing': return <Loader2 className="h-5 w-5 animate-spin text-primary" />;
       case 'importing': return <Database className="h-5 w-5 text-primary animate-pulse" />;
-      case 'geocoding': return <MapPin className="h-5 w-5 text-primary animate-pulse" />;
       case 'harmonizing': return <Tags className="h-5 w-5 text-primary animate-pulse" />;
       case 'complete': return <CheckCircle2 className="h-5 w-5 text-green-500" />;
       case 'error': return <AlertCircle className="h-5 w-5 text-destructive" />;
@@ -185,6 +207,9 @@ export function AdminNouveauxSitesImport() {
             <Database className="h-5 w-5 text-primary" />
             Import des nouveaux sites
           </DialogTitle>
+          <DialogDescription>
+            Importez un fichier CSV pour ajouter des entreprises à la base de données.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -192,20 +217,20 @@ export function AdminNouveauxSitesImport() {
             <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
               <Upload className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
               <p className="text-sm text-muted-foreground mb-4">
-                Sélectionnez un fichier CSV avec les colonnes:<br/>
-                <span className="text-xs">siret, dateCreationEtablissement, Entreprise, codePostal, etc.</span>
+                Format attendu: CSV avec séparateur point-virgule (;)<br/>
+                <span className="text-xs">siret, dateCreationEtablissement, Entreprise, codePostalEtablissement...</span>
               </p>
               <label className="cursor-pointer">
                 <input
                   type="file"
-                  accept=".csv,.xlsx,.xls"
+                  accept=".csv"
                   onChange={handleFileUpload}
                   className="hidden"
                 />
                 <Button variant="default" className="gap-2" asChild>
                   <span>
                     <Upload className="h-4 w-4" />
-                    Choisir un fichier
+                    Choisir un fichier CSV
                   </span>
                 </Button>
               </label>
