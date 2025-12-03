@@ -27,6 +27,7 @@ import type { ApplyAIFiltersParams } from "@/components/dashboard/ProspectsView"
 
 const DashboardContent = () => {
   const [loading, setLoading] = useState(true);
+  const [adminLoading, setAdminLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
@@ -81,6 +82,7 @@ const DashboardContent = () => {
 
   useEffect(() => {
     const checkAuthAndRole = async () => {
+      setAdminLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
@@ -96,6 +98,7 @@ const DashboardContent = () => {
       });
       
       setIsAdmin(adminCheck === true);
+      setAdminLoading(false);
       
       const { data: progress } = await supabase
         .from('user_onboarding_progress')
@@ -142,14 +145,14 @@ const DashboardContent = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // Vérifier l'accès à l'abonnement après le chargement
+  // Vérifier l'accès à l'abonnement après le chargement (attendre que le statut admin soit vérifié)
   useEffect(() => {
-    if (!loading && !subscriptionLoading && userId && !isAdmin) {
-      if (!hasAccess) {
+    if (!loading && !adminLoading && !subscriptionLoading && userId) {
+      if (!isAdmin && !hasAccess) {
         navigate("/subscribe");
       }
     }
-  }, [loading, subscriptionLoading, hasAccess, userId, isAdmin, navigate]);
+  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, navigate]);
 
 
   const handleLogout = async () => {
