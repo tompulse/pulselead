@@ -59,7 +59,7 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-4">
             <Button 
               variant="ghost"
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate("/auth?mode=login")}
               className="text-sm font-semibold hover:text-accent transition-colors"
             >
               Mon compte
@@ -130,7 +130,7 @@ export const Navbar = () => {
               <Button 
                 variant="outline"
                 onClick={() => {
-                  navigate("/auth");
+                  navigate("/auth?mode=login");
                   setMobileMenuOpen(false);
                 }}
                 className="w-full"
