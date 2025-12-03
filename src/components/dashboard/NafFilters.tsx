@@ -324,38 +324,48 @@ export const NafFilters = ({
                     .map(div => ({ code: div, ...NAF_DIVISIONS[div], count: divisionCounts[div] || 0 }))
                     .filter(d => d.count > 0);
                   
-                  return (
+                    return (
                     <div key={section.code} className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        {sectionDivisions.length > 0 && (
+                      <div
+                        onClick={() => handleSectionToggle(section.code)}
+                        className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
+                      >
+                        {/* Bouton expand */}
+                        {sectionDivisions.length > 0 ? (
                           <button
-                            onClick={() => toggleSectionExpand(section.code)}
-                            className="p-1 hover:bg-accent/10 rounded"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSectionExpand(section.code);
+                            }}
+                            className="p-0.5 hover:bg-accent/20 rounded mt-0.5 shrink-0"
                           >
                             {isExpanded ? (
-                              <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                              <ChevronDown className="w-3.5 h-3.5 text-accent" />
                             ) : (
-                              <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                             )}
                           </button>
+                        ) : (
+                          <div className="w-4 shrink-0" />
                         )}
-                        <div
-                          onClick={() => handleSectionToggle(section.code)}
-                          className={`flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98] flex-1 ${
-                            sectionDivisions.length === 0 ? 'ml-5' : ''
-                          }`}
-                        >
-                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                            selected ? 'bg-accent border-accent' : 'border-accent/30'
-                          }`}>
-                            {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                          </div>
-                          <span className="text-lg">{section.emoji}</span>
-                          <div className="flex-1 min-w-0">
-                            <span className="text-xs font-bold text-accent mr-1">{section.code}</span>
-                            <span className="text-sm">{section.label}</span>
-                          </div>
-                          <span className="text-xs text-muted-foreground font-medium">
+                        
+                        {/* Checkbox */}
+                        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                          selected ? 'bg-accent border-accent' : 'border-accent/30'
+                        }`}>
+                          {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                        </div>
+                        
+                        {/* Emoji */}
+                        <span className="text-base shrink-0">{section.emoji}</span>
+                        
+                        {/* Code + Label + Count - sur une ligne */}
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                          <span className="bg-accent/20 text-accent text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
+                            {section.code}
+                          </span>
+                          <span className="text-xs truncate flex-1">{section.label}</span>
+                          <span className="text-xs text-accent font-semibold shrink-0 tabular-nums">
                             {count.toLocaleString('fr-FR')}
                           </span>
                         </div>
@@ -363,23 +373,26 @@ export const NafFilters = ({
                       
                       {/* Sous-divisions */}
                       {isExpanded && sectionDivisions.length > 0 && (
-                        <div className="ml-8 space-y-1 border-l-2 border-accent/20 pl-3">
+                        <div className="ml-6 space-y-0.5 border-l-2 border-accent/20 pl-2">
                           {sectionDivisions.map(div => {
                             const divSelected = filters.codesNaf?.includes(div.code);
                             return (
                               <div
                                 key={div.code}
-                                onClick={() => handleDivisionToggle(div.code)}
-                                className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDivisionToggle(div.code);
+                                }}
+                                className="flex items-center gap-2 cursor-pointer hover:bg-accent/10 p-1.5 rounded transition-colors"
                               >
-                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                                <div className={`w-3.5 h-3.5 rounded border-2 flex items-center justify-center shrink-0 ${
                                   divSelected ? 'bg-accent border-accent' : 'border-accent/30'
                                 }`}>
-                                  {divSelected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                                  {divSelected && <div className="w-1.5 h-1.5 bg-white rounded-sm" />}
                                 </div>
-                                <span className="text-xs font-mono text-accent">{div.code}</span>
-                                <span className="text-xs flex-1 truncate">{div.label}</span>
-                                <span className="text-xs text-muted-foreground">
+                                <span className="text-[10px] font-mono text-accent/70 shrink-0">{div.code}</span>
+                                <span className="text-[11px] flex-1 truncate text-muted-foreground">{div.label}</span>
+                                <span className="text-[10px] text-accent/70 shrink-0 tabular-nums">
                                   {div.count.toLocaleString('fr-FR')}
                                 </span>
                               </div>
