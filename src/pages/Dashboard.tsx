@@ -82,23 +82,34 @@ const DashboardContent = () => {
 
   useEffect(() => {
     const checkAuthAndRole = async () => {
-      setAdminLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
+        setAdminLoading(false);
         navigate("/auth");
         return;
       }
 
       setUserId(session.user.id);
 
-      const { data: adminCheck } = await supabase.rpc('has_role', {
-        _user_id: session.user.id,
-        _role: 'admin'
-      });
-      
-      setIsAdmin(adminCheck === true);
-      setAdminLoading(false);
+      try {
+        const { data: adminCheck, error } = await supabase.rpc('has_role', {
+          _user_id: session.user.id,
+          _role: 'admin'
+        });
+        
+        if (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(adminCheck === true);
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      } finally {
+        setAdminLoading(false);
+      }
       
       const { data: progress } = await supabase
         .from('user_onboarding_progress')
