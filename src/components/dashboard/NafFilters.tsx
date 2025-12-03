@@ -10,9 +10,65 @@ import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSi
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { getAllCategories } from "@/utils/detailedCategories";
 import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { Skeleton } from "@/components/ui/skeleton";
+
+// Labels lisibles pour les catégories de la base de données
+const CATEGORY_LABELS: Record<string, { label: string; emoji: string }> = {
+  'agriculture': { label: 'Agriculture', emoji: '🌾' },
+  'industrie_alimentaire': { label: 'Industrie alimentaire', emoji: '🍞' },
+  'textile': { label: 'Textile & Habillement', emoji: '👕' },
+  'bois_papier': { label: 'Bois & Papier', emoji: '🪵' },
+  'chimie': { label: 'Chimie & Pharmacie', emoji: '🧪' },
+  'plastique': { label: 'Plastique & Caoutchouc', emoji: '♻️' },
+  'metallurgie': { label: 'Métallurgie & Mécanique', emoji: '⚙️' },
+  'informatique': { label: 'Électronique (fabrication)', emoji: '🔌' },
+  'automobile': { label: 'Automobile (fabrication)', emoji: '🚗' },
+  'meubles': { label: 'Meubles & Industries diverses', emoji: '🛋️' },
+  'energie': { label: 'Énergie & Eau', emoji: '⚡' },
+  'construction': { label: 'Construction & BTP', emoji: '🏗️' },
+  'commerce_auto': { label: 'Commerce automobile', emoji: '🚙' },
+  'commerce_gros': { label: 'Commerce de gros', emoji: '📦' },
+  'commerce_detail': { label: 'Commerce de détail', emoji: '🛒' },
+  'transport': { label: 'Transport & Logistique', emoji: '🚚' },
+  'hotellerie': { label: 'Hôtellerie & Restauration', emoji: '🏨' },
+  'communication': { label: 'Communication & Médias', emoji: '📡' },
+  'informatique_services': { label: 'Services informatiques', emoji: '💻' },
+  'finance': { label: 'Finance & Assurance', emoji: '💰' },
+  'immobilier': { label: 'Immobilier', emoji: '🏠' },
+  'juridique': { label: 'Juridique & Comptable', emoji: '⚖️' },
+  'architecture': { label: 'Architecture & Ingénierie', emoji: '📐' },
+  'services_admin': { label: 'Services administratifs', emoji: '📋' },
+  'administration': { label: 'Administration publique', emoji: '🏛️' },
+  'enseignement': { label: 'Enseignement & Formation', emoji: '🎓' },
+  'sante': { label: 'Santé & Action sociale', emoji: '🏥' },
+  'culture': { label: 'Culture & Loisirs', emoji: '🎭' },
+  'autres_services': { label: 'Autres services', emoji: '🔧' },
+  'menages': { label: 'Services aux ménages', emoji: '🏡' },
+  'international': { label: 'Organisations internationales', emoji: '🌍' },
+  // Nouvelles catégories NAF sections
+  'A - Agriculture, sylviculture et pêche': { label: 'Agriculture, sylviculture et pêche', emoji: '🌾' },
+  'B - Industries extractives': { label: 'Industries extractives', emoji: '⛏️' },
+  'C - Industrie manufacturière': { label: 'Industrie manufacturière', emoji: '🏭' },
+  'D - Production et distribution d\'électricité': { label: 'Électricité, gaz', emoji: '⚡' },
+  'E - Eau, assainissement, déchets': { label: 'Eau, assainissement, déchets', emoji: '💧' },
+  'F - Construction': { label: 'Construction', emoji: '🏗️' },
+  'G - Commerce, réparation auto/moto': { label: 'Commerce, réparation auto/moto', emoji: '🛒' },
+  'H - Transports et entreposage': { label: 'Transports et entreposage', emoji: '🚚' },
+  'I - Hébergement et restauration': { label: 'Hébergement et restauration', emoji: '🏨' },
+  'J - Information et communication': { label: 'Information et communication', emoji: '💻' },
+  'K - Activités financières et assurance': { label: 'Activités financières et assurance', emoji: '💰' },
+  'L - Activités immobilières': { label: 'Activités immobilières', emoji: '🏠' },
+  'M - Activités scientifiques et techniques': { label: 'Activités scientifiques et techniques', emoji: '🔬' },
+  'N - Services administratifs et soutien': { label: 'Services administratifs et soutien', emoji: '📋' },
+  'O - Administration publique': { label: 'Administration publique', emoji: '🏛️' },
+  'P - Enseignement': { label: 'Enseignement', emoji: '🎓' },
+  'Q - Santé humaine et action sociale': { label: 'Santé humaine et action sociale', emoji: '🏥' },
+  'R - Arts, spectacles, loisirs': { label: 'Arts, spectacles, loisirs', emoji: '🎭' },
+  'S - Autres activités de services': { label: 'Autres activités de services', emoji: '🔧' },
+  'T - Activités des ménages': { label: 'Activités des ménages', emoji: '🏡' },
+  'U - Activités extra-territoriales': { label: 'Activités extra-territoriales', emoji: '🌍' },
+};
 
 interface NafFiltersProps {
   filters: {
@@ -65,14 +121,17 @@ export const NafFilters = ({
     searchQuery: filters.searchQuery
   });
 
-  const allCategories = getAllCategories();
-  const availableCategories = Object.entries(allCategories)
-    .map(([key, cat]) => ({
-      key,
-      label: cat.label,
-      emoji: cat.emoji,
-      count: availableFilters?.categories[key] || 0
-    }))
+  // Construire les catégories à partir des données réelles de la base
+  const availableCategories = Object.entries(availableFilters?.categories || {})
+    .map(([key, count]) => {
+      const catInfo = CATEGORY_LABELS[key] || { label: key, emoji: '📁' };
+      return {
+        key,
+        label: catInfo.label,
+        emoji: catInfo.emoji,
+        count: count as number
+      };
+    })
     .filter(cat => cat.count > 0)
     .sort((a, b) => b.count - a.count);
 
@@ -84,6 +143,23 @@ export const NafFilters = ({
       const numB = parseInt(b.dept);
       return numA - numB;
     });
+
+  // Labels pour les tailles d'entreprise
+  const TAILLE_LABELS: Record<string, string> = {
+    'GE': 'Grande Entreprise (GE)',
+    'ETI': 'Entreprise Taille Intermédiaire (ETI)',
+    'PME': 'Petite/Moyenne Entreprise (PME)',
+    'Non spécifié': 'Non spécifié'
+  };
+
+  const availableTailles = Object.entries(availableFilters?.taillesEntreprise || {})
+    .map(([taille, count]) => ({
+      taille,
+      label: TAILLE_LABELS[taille] || taille,
+      count: count as number
+    }))
+    .filter(t => t.count > 0)
+    .sort((a, b) => b.count - a.count);
 
   const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
@@ -383,10 +459,38 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <div className="px-4 pb-4">
-            <div className="text-xs text-muted-foreground text-center py-4 bg-accent/5 rounded-lg border border-accent/10">
-              Les données de taille d'entreprise ne sont pas disponibles pour les nouveaux sites.
-            </div>
+          <div className="px-4 pb-4 space-y-1">
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))
+            ) : availableTailles.length === 0 ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Aucune taille disponible
+              </div>
+            ) : (
+              availableTailles.map(({ taille, count, label }) => {
+                const selected = filters.taillesEntreprise?.includes(taille);
+                return (
+                  <div
+                    key={taille}
+                    onClick={() => handleTailleEntrepriseToggle(taille)}
+                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                  >
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                      selected ? 'bg-accent border-accent' : 'border-accent/30'
+                    }`}>
+                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                    </div>
+                    <Users className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm leading-tight flex-1">{label}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {count.toLocaleString('fr-FR')}
+                    </span>
+                  </div>
+                );
+              })
+            )}
           </div>
         </CollapsibleContent>
       </Collapsible>
