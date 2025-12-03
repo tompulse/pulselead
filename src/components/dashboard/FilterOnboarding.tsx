@@ -5,11 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapPin, Building2, ArrowRight, ArrowLeft, Sparkles, ChevronDown, TrendingUp } from "lucide-react";
 import { DETAILED_CATEGORIES, getCategoryLabel } from "@/utils/detailedCategories";
-import { categorizeActivity, getCategoryFromNaf } from "@/utils/detailedCategories";
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { useSmartSuggestions } from "@/hooks/useSmartSuggestions";
 
 interface FilterOnboardingProps {
   onComplete: (filters: {
@@ -26,7 +23,6 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
   const [expandedRegions, setExpandedRegions] = useState<string[]>([]);
   const [entrepriseCount, setEntrepriseCount] = useState<number>(0);
   const [loadingCount, setLoadingCount] = useState(false);
-  const { suggestions, loading: suggestionsLoading } = useSmartSuggestions();
 
   const handleCategoryToggle = (categoryKey: string) => {
     setSelectedCategories(prev =>
@@ -40,11 +36,9 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
     const regionDepts = REGIONS_DATA[regionKey].departments;
     
     if (selectedRegions.includes(regionKey)) {
-      // Déselectionner la région
       setSelectedRegions(prev => prev.filter(r => r !== regionKey));
       setSelectedDepartments(prev => prev.filter(d => !regionDepts.includes(d)));
     } else {
-      // Sélectionner la région
       setSelectedRegions(prev => [...prev, regionKey]);
       setSelectedDepartments(prev => {
         const newDepts = regionDepts.filter(d => !prev.includes(d));
@@ -57,17 +51,13 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
     const regionDepts = REGIONS_DATA[regionKey].departments;
     
     if (selectedDepartments.includes(deptCode)) {
-      // Déselectionner le département
       setSelectedDepartments(prev => prev.filter(d => d !== deptCode));
-      // Déselectionner la région si c'était le dernier département
       const remainingDepts = selectedDepartments.filter(d => d !== deptCode && regionDepts.includes(d));
       if (remainingDepts.length === 0) {
         setSelectedRegions(prev => prev.filter(r => r !== regionKey));
       }
     } else {
-      // Sélectionner le département
       setSelectedDepartments(prev => [...prev, deptCode]);
-      // Vérifier si tous les départements de la région sont sélectionnés
       const allSelected = regionDepts.every(d => 
         d === deptCode || selectedDepartments.includes(d)
       );
@@ -96,12 +86,10 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
       setLoadingCount(true);
       try {
         let query = supabase
-          .from('entreprises')
+          .from('nouveaux_sites')
           .select('*', { count: 'exact', head: false })
           .not('latitude', 'is', null)
           .not('longitude', 'is', null);
-
-        // Pas de filtre de date - on affiche toutes les entreprises
 
         const { data, error } = await query;
 
@@ -113,14 +101,13 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
 
         let filteredData = data || [];
 
-        // Filtre par départements (client-side, gère la Corse)
+        // Filtre par départements
         if (selectedDepartments.length > 0) {
           filteredData = filteredData.filter((entreprise: any) => {
             const cp = entreprise.code_postal as string | null;
             if (!cp) return false;
             const normalized = cp.length === 4 ? '0' + cp : cp;
             if (normalized.startsWith('20')) {
-              // Corse: impossible de distinguer 2A vs 2B via le code postal => on inclut si l'un des deux est sélectionné
               return selectedDepartments.includes('2A') || selectedDepartments.includes('2B');
             }
             const dept = normalized.substring(0, 2);
@@ -131,8 +118,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
         // Filtre par catégories si sélectionnées
         if (selectedCategories.length > 0) {
           filteredData = filteredData.filter((entreprise: any) => {
-            const category = categorizeActivity(entreprise.activite, entreprise.categorie_qualifiee);
-            return selectedCategories.includes(category);
+            return selectedCategories.includes(entreprise.categorie_detaillee);
           });
         }
 
@@ -154,7 +140,6 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
       departments: selectedDepartments,
     };
     
-    // Sauvegarder dans localStorage
     localStorage.setItem('pulse_onboarding_complete', 'true');
     localStorage.setItem('pulse_initial_filters', JSON.stringify(filters));
     
@@ -162,8 +147,8 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
   };
 
   const canProceed = step === 1 
-    ? selectedDepartments.length > 0  // Géographie obligatoire
-    : true; // Activité optionnelle
+    ? selectedDepartments.length > 0
+    : true;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 flex items-center justify-center p-4">
@@ -368,13 +353,12 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
               <Button
                 variant="outline"
                 onClick={() => setStep(1)}
-                className="border-accent/50 hover:bg-accent/10 hover:border-accent text-sm h-10 font-bold rounded-full"
+                className="border-accent/30 hover:bg-accent/10 h-10 md:h-12"
               >
-                <ArrowLeft className="w-4 h-4 mr-1.5" />
+                <ArrowLeft className="w-4 h-4 mr-2" />
                 Retour
               </Button>
             )}
-            
             <Button
               onClick={() => {
                 if (step === 1) {
@@ -384,19 +368,16 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
                 }
               }}
               disabled={!canProceed}
-              className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-primary flex-1 text-sm h-10 font-bold rounded-full shadow-lg shadow-accent/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 h-10 md:h-12 text-sm md:text-base font-semibold"
             >
               {step === 1 ? (
                 <>
-                  Suivant
-                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                  Continuer
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </>
-              ) : selectedCategories.length > 0 ? (
-                <>
-                  <Sparkles className="w-4 h-4 mr-1.5" />
-                  Découvrir les entreprises
-                </>
-              ) : null}
+              ) : (
+                'Terminer la configuration'
+              )}
             </Button>
           </div>
         </div>

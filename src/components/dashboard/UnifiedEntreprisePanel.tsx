@@ -1,19 +1,12 @@
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useCRMActions } from "@/hooks/useCRMActions";
-import { UnifiedCRMActions } from "./UnifiedCRMActions";
-import { InteractionTimeline } from "./InteractionTimeline";
-import { LeadStatusBadge } from "./LeadStatusBadge";
-import { Building2, MapPin, Calendar, DollarSign, X, Navigation } from "lucide-react";
+import { Building2, MapPin, Calendar, X, Navigation } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface UnifiedEntreprisePanelProps {
   entreprise: any | null;
@@ -29,38 +22,16 @@ export const UnifiedEntreprisePanel = ({
   userId 
 }: UnifiedEntreprisePanelProps) => {
   const isMobile = useIsMobile();
-  const [activeTab, setActiveTab] = useState<'info' | 'crm'>('info');
-
-  const {
-    interactions,
-    leadStatus,
-    isLoading,
-    addInteraction,
-    removeInteraction,
-    updateLeadStatus,
-    isUpdating
-  } = useCRMActions(entreprise?.id || '', userId);
-
-  // Reset to info tab when opening
-  useEffect(() => {
-    if (open) {
-      setActiveTab('info');
-    }
-  }, [open]);
 
   if (!entreprise) return null;
 
   const formattedAddress = [
     entreprise.numero_voie,
     entreprise.type_voie,
-    entreprise.nom_voie,
+    entreprise.libelle_voie,
     entreprise.code_postal,
     entreprise.ville
-  ].filter(Boolean).join(' ');
-
-  const formattedCapital = entreprise.capital 
-    ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(entreprise.capital)
-    : 'Non disponible';
+  ].filter(Boolean).join(' ') || entreprise.adresse || 'Adresse non disponible';
 
   const content = (
     <div className="flex flex-col h-full">
@@ -68,12 +39,7 @@ export const UnifiedEntreprisePanel = ({
       <div className="flex items-start justify-between p-6 border-b border-accent/20">
         <div className="flex-1 pr-4">
           <h2 className="text-2xl font-bold mb-2">{entreprise.nom}</h2>
-          {leadStatus && (
-            <LeadStatusBadge 
-              statut={leadStatus.statut_actuel}
-            />
-          )}
-          <p className="text-sm text-muted-foreground">{entreprise.activite}</p>
+          <p className="text-sm text-muted-foreground">{entreprise.categorie_detaillee || entreprise.categorie_entreprise || 'Non catégorisé'}</p>
         </div>
         <Button
           variant="ghost"
@@ -85,23 +51,17 @@ export const UnifiedEntreprisePanel = ({
         </Button>
       </div>
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'info' | 'crm')} className="flex-1 flex flex-col">
-        <TabsList className="grid w-full grid-cols-2 mx-6 mt-4">
-          <TabsTrigger value="info">Informations</TabsTrigger>
-          <TabsTrigger value="crm">CRM</TabsTrigger>
-        </TabsList>
-
-        <ScrollArea className="flex-1 px-6">
-          {/* Informations Tab */}
-          <TabsContent value="info" className="space-y-6 py-4">
-            {/* Address */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm font-semibold text-accent">
-                <MapPin className="w-4 h-4" />
-                <span>Adresse</span>
-              </div>
-              <p className="text-sm pl-6">{formattedAddress}</p>
+      {/* Content */}
+      <ScrollArea className="flex-1 px-6">
+        <div className="space-y-6 py-4">
+          {/* Address */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm font-semibold text-accent">
+              <MapPin className="w-4 h-4" />
+              <span>Adresse</span>
+            </div>
+            <p className="text-sm pl-6">{formattedAddress}</p>
+            {entreprise.latitude && entreprise.longitude && (
               <div className="flex gap-2 pl-6">
                 <Button
                   size="sm"
@@ -120,121 +80,73 @@ export const UnifiedEntreprisePanel = ({
                   Waze
                 </Button>
               </div>
+            )}
+          </div>
+
+          <Separator />
+
+          {/* Activity */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm font-semibold text-accent">
+              <Building2 className="w-4 h-4" />
+              <span>Activité</span>
             </div>
+            <p className="text-sm pl-6">{entreprise.categorie_detaillee || 'Non renseigné'}</p>
+            {entreprise.code_naf && (
+              <p className="text-xs text-muted-foreground pl-6">Code NAF: {entreprise.code_naf}</p>
+            )}
+          </div>
 
-            <Separator />
+          <Separator />
 
-            {/* Activity */}
-            <div className="space-y-2">
+          {/* SIRET */}
+          {entreprise.siret && (
+            <>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-accent">SIRET</p>
+                <p className="text-sm pl-6">{entreprise.siret}</p>
+              </div>
+              <Separator />
+            </>
+          )}
+
+          {/* Date création */}
+          {entreprise.date_creation && (
+            <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm font-semibold text-accent">
-                <Building2 className="w-4 h-4" />
-                <span>Activité</span>
+                <Calendar className="w-4 h-4" />
+                <span>Date de création</span>
               </div>
-              <p className="text-sm pl-6">{entreprise.activite || 'Non renseigné'}</p>
-              {entreprise.code_naf && (
-                <p className="text-xs text-muted-foreground pl-6">Code NAF: {entreprise.code_naf}</p>
-              )}
+              <p className="text-sm pl-6">
+                {new Date(entreprise.date_creation).toLocaleDateString('fr-FR')}
+              </p>
             </div>
-
-            <Separator />
-
-            {/* SIRET */}
-            {entreprise.siret && (
-              <>
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold text-accent">SIRET</p>
-                  <p className="text-sm pl-6">{entreprise.siret}</p>
-                </div>
-                <Separator />
-              </>
-            )}
-
-            {/* Contact */}
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-accent">Contact</p>
-              <div className="pl-6 space-y-2">
-                {entreprise.email && (
-                  <p className="text-sm">{entreprise.email}</p>
-                )}
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Financial Info */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm font-semibold text-accent">
-                  <DollarSign className="w-4 h-4" />
-                  <span>Capital</span>
-                </div>
-                <p className="text-sm pl-6">{formattedCapital}</p>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm font-semibold text-accent">
-                  <Calendar className="w-4 h-4" />
-                  <span>Date de création</span>
-                </div>
-                <p className="text-sm pl-6">
-                  {entreprise.date_demarrage 
-                    ? new Date(entreprise.date_demarrage).toLocaleDateString('fr-FR')
-                    : 'Non disponible'}
-                </p>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* CRM Tab */}
-          <TabsContent value="crm" className="space-y-6 py-4">
-            {isLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-24 w-full" />
-                <Skeleton className="h-64 w-full" />
-              </div>
-            ) : (
-              <>
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-accent">Actions rapides</h3>
-                  <UnifiedCRMActions
-                    entrepriseId={entreprise.id}
-                    onInteractionAdded={() => {}}
-                    mode="dialog"
-                    size="lg"
-                  />
-                </div>
-
-                <Separator />
-
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-accent">Historique des interactions</h3>
-                  <InteractionTimeline 
-                    interactions={interactions}
-                  />
-                </div>
-              </>
-            )}
-          </TabsContent>
-        </ScrollArea>
-      </Tabs>
-
-      {/* Actions rapides colorées en bas */}
-      <div className="shrink-0 px-6 py-4 border-t border-accent/20 bg-gradient-to-b from-transparent to-accent/5">
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
-            className="h-12 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
-          >
-            <Navigation className="w-4 h-4" />
-          </Button>
-
-          <Button
-            onClick={() => setActiveTab('crm')}
-            className="h-12 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 hover:border-purple-500/40 transition-all"
-          >
-            <Calendar className="w-4 h-4" />
-          </Button>
+          )}
         </div>
-      </div>
+      </ScrollArea>
+
+      {/* Actions rapides en bas */}
+      {entreprise.latitude && entreprise.longitude && (
+        <div className="shrink-0 px-6 py-4 border-t border-accent/20 bg-gradient-to-b from-transparent to-accent/5">
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
+              className="h-12 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
+            >
+              <MapPin className="w-4 h-4 mr-2" />
+              Maps
+            </Button>
+
+            <Button
+              onClick={() => openWaze(entreprise.latitude, entreprise.longitude)}
+              className="h-12 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 hover:border-purple-500/40 transition-all"
+            >
+              <Navigation className="w-4 h-4 mr-2" />
+              Waze
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 
