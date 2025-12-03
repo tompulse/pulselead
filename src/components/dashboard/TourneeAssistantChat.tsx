@@ -16,7 +16,6 @@ import { Separator } from "@/components/ui/separator";
 
 interface TourneeAssistantChatProps {
   onApplyFilters: (params: {
-    view: "creations" | "nouveaux-sites";
     filters: any;
     tourneeName: string;
     tourneeDate: Date;
@@ -35,13 +34,12 @@ interface Message {
 interface ParsedResult {
   tourneeName: string;
   tourneeDate: string;
-  view: "creations" | "nouveaux-sites";
   filters: {
     categories?: string[];
     departments?: string[];
     formesJuridiques?: string[];
-    dateFrom?: string;
-    dateTo?: string;
+    codesNaf?: string[];
+    taillesEntreprise?: string[];
   };
   optimization?: {
     entreprises: any[];
@@ -355,8 +353,8 @@ const TourneeResult = ({
         </div>
 
         <div>
-          <Badge variant={result.view === "creations" ? "default" : "secondary"} className="text-xs">
-            {result.view === "creations" ? "Créations" : "Nouveaux Sites"}
+          <Badge variant="secondary" className="text-xs">
+            Nouveaux Sites
           </Badge>
         </div>
 
