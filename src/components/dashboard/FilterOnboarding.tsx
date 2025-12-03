@@ -9,7 +9,6 @@ import { categorizeActivity, getCategoryFromNaf } from "@/utils/detailedCategori
 import { REGIONS_DATA, DEPARTMENT_NAMES } from "@/utils/regionsData";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { useSmartSuggestions } from "@/hooks/useSmartSuggestions";
 
 interface FilterOnboardingProps {
   onComplete: (filters: {
@@ -26,7 +25,6 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
   const [expandedRegions, setExpandedRegions] = useState<string[]>([]);
   const [entrepriseCount, setEntrepriseCount] = useState<number>(0);
   const [loadingCount, setLoadingCount] = useState(false);
-  const { suggestions, loading: suggestionsLoading } = useSmartSuggestions();
 
   const handleCategoryToggle = (categoryKey: string) => {
     setSelectedCategories(prev =>
@@ -96,7 +94,7 @@ export function FilterOnboarding({ onComplete }: FilterOnboardingProps) {
       setLoadingCount(true);
       try {
         let query = supabase
-          .from('entreprises')
+          .from('nouveaux_sites')
           .select('*', { count: 'exact', head: false })
           .not('latitude', 'is', null)
           .not('longitude', 'is', null);

@@ -1,28 +1,25 @@
-import { lazy, Suspense, Dispatch, SetStateAction } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-
-const ProspectsView = lazy(() => import('@/components/dashboard/ProspectsView'));
+import { NouveauxSitesListView } from '@/components/dashboard/NouveauxSitesListView';
 
 interface ProspectsViewContainerProps {
   filters: any;
-  setFilters: Dispatch<SetStateAction<any>>;
+  setFilters: any;
   userId: string;
-  onEntrepriseSelect: (entreprise: any) => void;
-  selectionMode?: boolean;
-  selectedEntreprises?: any[];
-  onToggleSelection?: (entreprise: any) => void;
-  onAIFiltersReady?: (applyFn: any) => void;
+  onEntrepriseSelect?: (entreprise: any) => void;
+  onAIFiltersReady?: (fn: any) => void;
 }
 
-export const ProspectsViewContainer = (props: ProspectsViewContainerProps) => {
+export const ProspectsViewContainer = ({ 
+  filters, 
+  userId, 
+  onEntrepriseSelect 
+}: ProspectsViewContainerProps) => {
   return (
-    <Suspense fallback={
-      <div className="h-full p-6 space-y-4">
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-[calc(100vh-180px)] w-full" />
-      </div>
-    }>
-      <ProspectsView {...props} />
-    </Suspense>
+    <div className="h-full overflow-hidden">
+      <NouveauxSitesListView
+        filters={filters}
+        userId={userId}
+        onEntrepriseSelect={onEntrepriseSelect}
+      />
+    </div>
   );
 };
