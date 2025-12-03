@@ -86,7 +86,7 @@ export const HeroSection = () => {
             </button>
             <span className="hidden sm:inline text-muted-foreground/40">•</span>
             <button 
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate("/auth?mode=login")}
               className="hover:text-accent transition-colors font-medium"
             >
               Connexion
