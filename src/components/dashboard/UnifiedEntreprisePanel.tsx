@@ -4,9 +4,15 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Building2, MapPin, Calendar, X, Navigation } from "lucide-react";
+import { Building2, MapPin, Calendar, X, Navigation, Phone, Mail, MessageSquare, Clock, Plus } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
+import { useCRMActions, LeadStatut, InteractionType } from "@/hooks/useCRMActions";
+import { LeadStatusBadge, allStatuts, getStatusLabel } from "./LeadStatusBadge";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface UnifiedEntreprisePanelProps {
   entreprise: any | null;
@@ -22,6 +28,46 @@ export const UnifiedEntreprisePanel = ({
   userId 
 }: UnifiedEntreprisePanelProps) => {
   const isMobile = useIsMobile();
+  const { getLeadStatus, updateLeadStatus, getInteractions, addInteraction, loading } = useCRMActions(userId);
+  
+  const [currentStatus, setCurrentStatus] = useState<LeadStatut>('nouveau');
+  const [interactions, setInteractions] = useState<any[]>([]);
+  const [showAddInteraction, setShowAddInteraction] = useState(false);
+  const [newInteraction, setNewInteraction] = useState({
+    type: 'appel' as InteractionType,
+    notes: ''
+  });
+
+  useEffect(() => {
+    if (entreprise?.id && open) {
+      loadData();
+    }
+  }, [entreprise?.id, open]);
+
+  const loadData = async () => {
+    if (!entreprise?.id) return;
+    
+    const status = await getLeadStatus(entreprise.id);
+    setCurrentStatus(status?.statut || 'nouveau');
+    
+    const ints = await getInteractions(entreprise.id);
+    setInteractions(ints);
+  };
+
+  const handleStatusChange = async (newStatus: LeadStatut) => {
+    if (!entreprise?.id) return;
+    setCurrentStatus(newStatus);
+    await updateLeadStatus(entreprise.id, newStatus);
+  };
+
+  const handleAddInteraction = async () => {
+    if (!entreprise?.id || !newInteraction.notes.trim()) return;
+    
+    await addInteraction(entreprise.id, newInteraction.type, newInteraction.notes);
+    setNewInteraction({ type: 'appel', notes: '' });
+    setShowAddInteraction(false);
+    await loadData();
+  };
 
   if (!entreprise) return null;
 
@@ -33,13 +79,40 @@ export const UnifiedEntreprisePanel = ({
     entreprise.ville
   ].filter(Boolean).join(' ') || entreprise.adresse || 'Adresse non disponible';
 
+  const interactionIcons: Record<InteractionType, React.ReactNode> = {
+    appel: <Phone className="w-3 h-3" />,
+    email: <Mail className="w-3 h-3" />,
+    visite: <MapPin className="w-3 h-3" />,
+    rdv: <Calendar className="w-3 h-3" />,
+    autre: <MessageSquare className="w-3 h-3" />
+  };
+
   const content = (
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-start justify-between p-6 border-b border-accent/20">
         <div className="flex-1 pr-4">
           <h2 className="text-2xl font-bold mb-2">{entreprise.nom}</h2>
-          <p className="text-sm text-muted-foreground">{entreprise.categorie_detaillee || entreprise.categorie_entreprise || 'Non catégorisé'}</p>
+          <p className="text-sm text-muted-foreground mb-3">{entreprise.categorie_detaillee || entreprise.categorie_entreprise || 'Non catégorisé'}</p>
+          
+          {/* Status selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Statut:</span>
+            <Select value={currentStatus} onValueChange={(v) => handleStatusChange(v as LeadStatut)}>
+              <SelectTrigger className="w-[140px] h-8">
+                <SelectValue>
+                  <LeadStatusBadge statut={currentStatus} size="sm" />
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {allStatuts.map(s => (
+                  <SelectItem key={s} value={s}>
+                    <LeadStatusBadge statut={s} size="sm" />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <Button
           variant="ghost"
@@ -112,16 +185,93 @@ export const UnifiedEntreprisePanel = ({
 
           {/* Date création */}
           {entreprise.date_creation && (
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-sm font-semibold text-accent">
-                <Calendar className="w-4 h-4" />
-                <span>Date de création</span>
+            <>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-sm font-semibold text-accent">
+                  <Calendar className="w-4 h-4" />
+                  <span>Date de création</span>
+                </div>
+                <p className="text-sm pl-6">
+                  {new Date(entreprise.date_creation).toLocaleDateString('fr-FR')}
+                </p>
               </div>
-              <p className="text-sm pl-6">
-                {new Date(entreprise.date_creation).toLocaleDateString('fr-FR')}
-              </p>
-            </div>
+              <Separator />
+            </>
           )}
+
+          {/* Interactions */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm font-semibold text-accent">
+                <MessageSquare className="w-4 h-4" />
+                <span>Historique ({interactions.length})</span>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowAddInteraction(!showAddInteraction)}
+                className="h-7 text-xs"
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                Ajouter
+              </Button>
+            </div>
+
+            {showAddInteraction && (
+              <div className="space-y-2 p-3 rounded-lg bg-accent/5 border border-accent/20">
+                <Select 
+                  value={newInteraction.type} 
+                  onValueChange={(v) => setNewInteraction(prev => ({ ...prev, type: v as InteractionType }))}
+                >
+                  <SelectTrigger className="w-full h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="appel">📞 Appel</SelectItem>
+                    <SelectItem value="email">📧 Email</SelectItem>
+                    <SelectItem value="visite">🚗 Visite</SelectItem>
+                    <SelectItem value="rdv">📅 RDV</SelectItem>
+                    <SelectItem value="autre">📝 Autre</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Textarea
+                  placeholder="Notes..."
+                  value={newInteraction.notes}
+                  onChange={(e) => setNewInteraction(prev => ({ ...prev, notes: e.target.value }))}
+                  className="min-h-[60px]"
+                />
+                <div className="flex justify-end gap-2">
+                  <Button size="sm" variant="ghost" onClick={() => setShowAddInteraction(false)}>
+                    Annuler
+                  </Button>
+                  <Button size="sm" onClick={handleAddInteraction} disabled={loading || !newInteraction.notes.trim()}>
+                    Enregistrer
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {interactions.length > 0 ? (
+              <div className="space-y-2 pl-2">
+                {interactions.map((int) => (
+                  <div key={int.id} className="flex gap-3 p-2 rounded-lg bg-card/50 border border-border/50">
+                    <div className="shrink-0 mt-1 p-1.5 rounded bg-accent/10 text-accent">
+                      {interactionIcons[int.type as InteractionType] || <MessageSquare className="w-3 h-3" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                        <Clock className="w-3 h-3" />
+                        {format(new Date(int.date_interaction), 'dd MMM yyyy HH:mm', { locale: fr })}
+                      </div>
+                      <p className="text-sm">{int.notes}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground pl-6">Aucune interaction enregistrée</p>
+            )}
+          </div>
         </div>
       </ScrollArea>
 
