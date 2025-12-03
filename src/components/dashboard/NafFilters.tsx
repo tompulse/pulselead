@@ -3,16 +3,18 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Building2, ChevronDown, X, Route, Calendar as CalendarIcon, Users, Scale } from "lucide-react";
+import { Search, Building2, ChevronDown, ChevronRight, Route, Calendar as CalendarIcon, Users, Scale, MapPin } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { getAllCategories } from "@/utils/detailedCategories";
-import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NAF_SECTIONS } from "@/utils/nafNomenclature";
+import { REGIONS, getDepartmentInfo } from "@/utils/departmentsRegions";
+import { LEGAL_FORM_CATEGORIES, getLegalFormLabel } from "@/utils/legalFormCategories";
+import { COMPANY_SIZES } from "@/utils/companySizes";
 
 interface NafFiltersProps {
   filters: {
@@ -52,10 +54,15 @@ export const NafFilters = ({
   onOptimize,
   isOptimizing = false
 }: NafFiltersProps) => {
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [nafSectionsOpen, setNafSectionsOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [formesJuridiquesOpen, setFormesJuridiquesOpen] = useState(false);
   const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
+  
+  // Track expanded sections/regions
+  const [expandedNafSections, setExpandedNafSections] = useState<string[]>([]);
+  const [expandedRegions, setExpandedRegions] = useState<string[]>([]);
+  const [expandedLegalCategories, setExpandedLegalCategories] = useState<string[]>([]);
   
   const { isAdmin } = useAdminStatus();
   const { data: availableFilters, isLoading } = useAvailableNouveauxSitesFilters({
@@ -65,36 +72,68 @@ export const NafFilters = ({
     searchQuery: filters.searchQuery
   });
 
-  const allCategories = getAllCategories();
-  const availableCategories = Object.entries(allCategories)
-    .map(([key, cat]) => ({
-      key,
-      label: cat.label,
-      emoji: cat.emoji,
-      count: availableFilters?.categories[key] || 0
-    }))
-    .filter(cat => cat.count > 0)
-    .sort((a, b) => b.count - a.count);
+  // Compute NAF counts by section
+  const nafCountsBySection = NAF_SECTIONS.map(section => {
+    const divisionCounts = section.divisions.map(div => ({
+      code: div.code,
+      label: div.label,
+      count: availableFilters?.nafCodes[div.code] || 0
+    })).filter(d => d.count > 0);
+    
+    const totalCount = divisionCounts.reduce((sum, d) => sum + d.count, 0);
+    
+    return {
+      ...section,
+      totalCount,
+      divisions: divisionCounts
+    };
+  }).filter(s => s.totalCount > 0);
 
-  const availableDepartments = Object.entries(availableFilters?.departments || {})
-    .map(([dept, count]) => ({ dept, count: count as number }))
-    .filter(d => d.count > 0)
-    .sort((a, b) => {
-      const numA = parseInt(a.dept);
-      const numB = parseInt(b.dept);
-      return numA - numB;
-    });
+  // Compute department counts by region
+  const departmentsByRegion = REGIONS.map(region => {
+    const deptCounts = region.departments.map(dept => ({
+      code: dept.code,
+      label: dept.label,
+      count: availableFilters?.departments[dept.code] || 0
+    })).filter(d => d.count > 0);
+    
+    const totalCount = deptCounts.reduce((sum, d) => sum + d.count, 0);
+    
+    return {
+      ...region,
+      totalCount,
+      departments: deptCounts
+    };
+  }).filter(r => r.totalCount > 0);
 
-  const handleCategoryToggle = (categoryKey: string) => {
+  // Compute legal form counts by category
+  const legalFormsByCategory = LEGAL_FORM_CATEGORIES.map(category => {
+    const formCounts = category.forms.map(form => ({
+      code: form.code,
+      label: form.shortLabel || form.label,
+      fullLabel: form.label,
+      count: availableFilters?.formesJuridiques?.[form.code] || 0
+    })).filter(f => f.count > 0);
+    
+    const totalCount = formCounts.reduce((sum, f) => sum + f.count, 0);
+    
+    return {
+      ...category,
+      totalCount,
+      forms: formCounts
+    };
+  }).filter(c => c.totalCount > 0);
+
+  const handleNafDivisionToggle = (divisionCode: string) => {
     setFilters((prev: any) => {
-      const current = prev.categories || [];
-      const isSelected = current.includes(categoryKey);
+      const current = prev.codesNaf || [];
+      const isSelected = current.includes(divisionCode);
       
       return {
         ...prev,
-        categories: isSelected
-          ? current.filter((c: string) => c !== categoryKey)
-          : [...current, categoryKey]
+        codesNaf: isSelected
+          ? current.filter((c: string) => c !== divisionCode)
+          : [...current, divisionCode]
       };
     });
   };
@@ -113,16 +152,16 @@ export const NafFilters = ({
     });
   };
 
-  const handleFormeJuridiqueToggle = (forme: string) => {
+  const handleFormeJuridiqueToggle = (code: string) => {
     setFilters((prev: any) => {
       const current = prev.formesJuridiques || [];
-      const isSelected = current.includes(forme);
+      const isSelected = current.includes(code);
       
       return {
         ...prev,
         formesJuridiques: isSelected
-          ? current.filter((f: string) => f !== forme)
-          : [...current, forme]
+          ? current.filter((f: string) => f !== code)
+          : [...current, code]
       };
     });
   };
@@ -139,6 +178,30 @@ export const NafFilters = ({
           : [...current, taille]
       };
     });
+  };
+
+  const toggleNafSection = (sectionCode: string) => {
+    setExpandedNafSections(prev => 
+      prev.includes(sectionCode) 
+        ? prev.filter(c => c !== sectionCode)
+        : [...prev, sectionCode]
+    );
+  };
+
+  const toggleRegion = (regionCode: string) => {
+    setExpandedRegions(prev => 
+      prev.includes(regionCode) 
+        ? prev.filter(c => c !== regionCode)
+        : [...prev, regionCode]
+    );
+  };
+
+  const toggleLegalCategory = (categoryCode: string) => {
+    setExpandedLegalCategories(prev => 
+      prev.includes(categoryCode) 
+        ? prev.filter(c => c !== categoryCode)
+        : [...prev, categoryCode]
+    );
   };
 
   const clearFilters = () => setFilters((prev: any) => ({ 
@@ -251,11 +314,11 @@ export const NafFilters = ({
         )}
       </div>
 
-      {/* Catégories d'activité */}
-      <Collapsible open={categoriesOpen} onOpenChange={setCategoriesOpen} className="border-b border-accent/20">
+      {/* Secteurs d'activité NAF */}
+      <Collapsible open={nafSectionsOpen} onOpenChange={setNafSectionsOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <span className="font-medium text-sm">Catégories d'activité</span>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesOpen ? 'rotate-180' : ''}`} />
+          <span className="font-medium text-sm">Secteurs d'activité (NAF)</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${nafSectionsOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
         <CollapsibleContent>
@@ -265,29 +328,68 @@ export const NafFilters = ({
                 Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton key={i} className="h-10 w-full" />
                 ))
-              ) : availableCategories.length === 0 ? (
+              ) : nafCountsBySection.length === 0 ? (
                 <div className="text-sm text-muted-foreground text-center py-4">
-                  Aucune catégorie disponible
+                  Aucun secteur disponible
                 </div>
               ) : (
-                availableCategories.map((cat) => {
-                  const selected = filters.categories?.includes(cat.key);
+                nafCountsBySection.map((section) => {
+                  const isExpanded = expandedNafSections.includes(section.code);
+                  const selectedDivisions = section.divisions.filter(d => 
+                    filters.codesNaf?.includes(d.code)
+                  );
+                  
                   return (
-                    <div
-                      key={cat.key}
-                      onClick={() => handleCategoryToggle(cat.key)}
-                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                    >
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                        selected ? 'bg-accent border-accent' : 'border-accent/30'
-                      }`}>
-                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                    <div key={section.code} className="border border-accent/10 rounded-lg overflow-hidden">
+                      <div
+                        onClick={() => toggleNafSection(section.code)}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2.5 transition-colors"
+                      >
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4 text-accent" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-accent" />
+                        )}
+                        <span className="text-lg">{section.emoji}</span>
+                        <span className="text-sm font-medium flex-1 truncate">{section.label}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {section.totalCount.toLocaleString('fr-FR')}
+                        </span>
+                        {selectedDivisions.length > 0 && (
+                          <span className="text-xs bg-accent text-white px-1.5 py-0.5 rounded">
+                            {selectedDivisions.length}
+                          </span>
+                        )}
                       </div>
-                      <span className="text-lg mr-2">{cat.emoji}</span>
-                      <span className="text-sm leading-tight flex-1">{cat.label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {cat.count.toLocaleString('fr-FR')}
-                      </span>
+                      
+                      {isExpanded && (
+                        <div className="bg-accent/5 px-2 pb-2 space-y-0.5">
+                          {section.divisions.map((div) => {
+                            const selected = filters.codesNaf?.includes(div.code);
+                            return (
+                              <div
+                                key={div.code}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleNafDivisionToggle(div.code);
+                                }}
+                                className="flex items-center gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors ml-4"
+                              >
+                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                                  selected ? 'bg-accent border-accent' : 'border-accent/30'
+                                }`}>
+                                  {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                                </div>
+                                <span className="text-xs text-muted-foreground">{div.code}</span>
+                                <span className="text-xs flex-1 truncate">{div.label}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {div.count.toLocaleString('fr-FR')}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
                 })
@@ -297,7 +399,7 @@ export const NafFilters = ({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Départements */}
+      {/* Départements par région */}
       <Collapsible open={departmentsOpen} onOpenChange={setDepartmentsOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
           <span className="font-medium text-sm">Départements</span>
@@ -305,34 +407,74 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className="h-[300px]">
+          <ScrollArea className="h-[400px]">
             <div className="px-4 pb-4 space-y-1">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton key={i} className="h-10 w-full" />
                 ))
-              ) : availableDepartments.length === 0 ? (
+              ) : departmentsByRegion.length === 0 ? (
                 <div className="text-sm text-muted-foreground text-center py-4">
                   Aucun département disponible
                 </div>
               ) : (
-                availableDepartments.map(({ dept, count }) => {
-                  const selected = filters.departments?.includes(dept);
+                departmentsByRegion.map((region) => {
+                  const isExpanded = expandedRegions.includes(region.code);
+                  const selectedDepts = region.departments.filter(d => 
+                    filters.departments?.includes(d.code)
+                  );
+                  
                   return (
-                    <div
-                      key={dept}
-                      onClick={() => handleDepartmentToggle(dept)}
-                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                    >
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                        selected ? 'bg-accent border-accent' : 'border-accent/30'
-                      }`}>
-                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                    <div key={region.code} className="border border-accent/10 rounded-lg overflow-hidden">
+                      <div
+                        onClick={() => toggleRegion(region.code)}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2.5 transition-colors"
+                      >
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4 text-accent" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-accent" />
+                        )}
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm font-medium flex-1">{region.label}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {region.totalCount.toLocaleString('fr-FR')}
+                        </span>
+                        {selectedDepts.length > 0 && (
+                          <span className="text-xs bg-accent text-white px-1.5 py-0.5 rounded">
+                            {selectedDepts.length}
+                          </span>
+                        )}
                       </div>
-                      <span className="text-sm leading-tight flex-1">{dept}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {count.toLocaleString('fr-FR')}
-                      </span>
+                      
+                      {isExpanded && (
+                        <div className="bg-accent/5 px-2 pb-2 space-y-0.5">
+                          {region.departments.map((dept) => {
+                            const selected = filters.departments?.includes(dept.code);
+                            return (
+                              <div
+                                key={dept.code}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDepartmentToggle(dept.code);
+                                }}
+                                className="flex items-center gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors ml-4"
+                              >
+                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                                  selected ? 'bg-accent border-accent' : 'border-accent/30'
+                                }`}>
+                                  {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                                </div>
+                                <span className="text-xs font-mono text-muted-foreground">{dept.code}</span>
+                                <span className="text-xs flex-1">{dept.label}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {dept.count.toLocaleString('fr-FR')}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
                 })
@@ -342,7 +484,7 @@ export const NafFilters = ({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Formes juridiques */}
+      {/* Formes juridiques par catégorie */}
       <Collapsible open={formesJuridiquesOpen} onOpenChange={setFormesJuridiquesOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
           <span className="font-medium text-sm">Formes juridiques</span>
@@ -350,26 +492,80 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className="h-[300px]">
+          <ScrollArea className="h-[400px]">
             <div className="px-4 pb-4 space-y-1">
-              {FORMES_JURIDIQUES.map((forme) => {
-                const selected = filters.formesJuridiques?.includes(forme.value);
-                return (
-                  <div
-                    key={forme.value}
-                    onClick={() => handleFormeJuridiqueToggle(forme.value)}
-                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                  >
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                      selected ? 'bg-accent border-accent' : 'border-accent/30'
-                    }`}>
-                      {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))
+              ) : legalFormsByCategory.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-4">
+                  Aucune forme juridique disponible
+                </div>
+              ) : (
+                legalFormsByCategory.map((category) => {
+                  const isExpanded = expandedLegalCategories.includes(category.code);
+                  const selectedForms = category.forms.filter(f => 
+                    filters.formesJuridiques?.includes(f.code)
+                  );
+                  
+                  return (
+                    <div key={category.code} className="border border-accent/10 rounded-lg overflow-hidden">
+                      <div
+                        onClick={() => toggleLegalCategory(category.code)}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-accent/5 p-2.5 transition-colors"
+                      >
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4 text-accent" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-accent" />
+                        )}
+                        <span className="text-lg">{category.emoji}</span>
+                        <span className="text-sm font-medium flex-1 truncate">{category.label}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {category.totalCount.toLocaleString('fr-FR')}
+                        </span>
+                        {selectedForms.length > 0 && (
+                          <span className="text-xs bg-accent text-white px-1.5 py-0.5 rounded">
+                            {selectedForms.length}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {isExpanded && (
+                        <div className="bg-accent/5 px-2 pb-2 space-y-0.5">
+                          {category.forms.map((form) => {
+                            const selected = filters.formesJuridiques?.includes(form.code);
+                            return (
+                              <div
+                                key={form.code}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleFormeJuridiqueToggle(form.code);
+                                }}
+                                className="flex items-center gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors ml-4"
+                              >
+                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                                  selected ? 'bg-accent border-accent' : 'border-accent/30'
+                                }`}>
+                                  {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                                </div>
+                                <span className="text-xs font-semibold text-accent">{form.label}</span>
+                                <span className="text-xs flex-1 truncate text-muted-foreground" title={form.fullLabel}>
+                                  {form.fullLabel !== form.label ? form.fullLabel : ''}
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  {form.count.toLocaleString('fr-FR')}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
-                    <Scale className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm leading-tight flex-1">{forme.label}</span>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </ScrollArea>
         </CollapsibleContent>
@@ -383,10 +579,28 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <div className="px-4 pb-4">
-            <div className="text-xs text-muted-foreground text-center py-4 bg-accent/5 rounded-lg border border-accent/10">
-              Les données de taille d'entreprise ne sont pas disponibles pour les nouveaux sites.
-            </div>
+          <div className="px-4 pb-4 space-y-1">
+            {COMPANY_SIZES.map((size) => {
+              const selected = filters.taillesEntreprise?.includes(size.code);
+              return (
+                <div
+                  key={size.code}
+                  onClick={() => handleTailleEntrepriseToggle(size.code)}
+                  className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                >
+                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                    selected ? 'bg-accent border-accent' : 'border-accent/30'
+                  }`}>
+                    {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                  </div>
+                  <span className="text-lg">{size.emoji}</span>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium">{size.label}</div>
+                    <div className="text-xs text-muted-foreground">{size.description}</div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </CollapsibleContent>
       </Collapsible>
