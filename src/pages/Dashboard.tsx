@@ -94,8 +94,9 @@ const DashboardContent = () => {
       const userEmail = session.user.email;
       console.log('Checking admin for:', userEmail, session.user.id);
 
-      // Fallback direct pour l'admin principal
-      if (userEmail === 'tomiolovpro@gmail.com') {
+      // Fallback direct pour les admins principaux
+      const adminEmails = ['tomiolovpro@gmail.com', 'tom.iolov@hotmail.fr'];
+      if (userEmail && adminEmails.includes(userEmail)) {
         console.log('Admin email detected, granting access');
         setIsAdmin(true);
         setAdminLoading(false);
