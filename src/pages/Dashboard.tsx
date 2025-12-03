@@ -15,6 +15,8 @@ import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
+import { DataEnrichmentPanel } from "@/components/dashboard/DataEnrichmentPanel";
+import { AdminNouveauxSitesImport } from "@/components/dashboard/AdminNouveauxSitesImport";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -232,6 +234,13 @@ const DashboardContent = () => {
         isAdmin={isAdmin}
         onLogout={handleLogout}
       />
+
+      {/* Bouton admin import */}
+      {isAdmin && (
+        <div className="px-2 sm:px-4 pt-2">
+          <AdminNouveauxSitesImport />
+        </div>
+      )}
       
       <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
         <main className="flex-1 overflow-hidden min-h-0">
