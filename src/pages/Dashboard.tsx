@@ -16,6 +16,7 @@ import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
 import { DataEnrichmentPanel } from "@/components/dashboard/DataEnrichmentPanel";
+import { AdminNouveauxSitesImport } from "@/components/dashboard/AdminNouveauxSitesImport";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -234,9 +235,10 @@ const DashboardContent = () => {
         onLogout={handleLogout}
       />
 
-      {/* Bouton d'enrichissement des données */}
+      {/* Boutons admin */}
       {isAdmin && (
-        <div className="px-2 sm:px-4 pt-2">
+        <div className="px-2 sm:px-4 pt-2 flex gap-2">
+          <AdminNouveauxSitesImport />
           <Dialog open={enrichmentOpen} onOpenChange={setEnrichmentOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
