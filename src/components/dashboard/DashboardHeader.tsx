@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Menu, MapIcon, Navigation, TrendingUp, LogOut, CreditCard, RefreshCw, Loader2 } from "lucide-react";
+import { Menu, MapIcon, Navigation, TrendingUp, LogOut, CreditCard, RefreshCw } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { SubscriptionManagement } from "./SubscriptionManagement";
+import { QualificationProgressDialog } from "./QualificationProgressDialog";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 interface DashboardHeaderProps {
   view: 'prospects' | 'tournees' | 'crm';
@@ -23,30 +22,9 @@ export const DashboardHeader = ({
   onLogout
 }: DashboardHeaderProps) => {
   const isMobile = useIsMobile();
-  const { toast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
-  const [qualifying, setQualifying] = useState(false);
-
-  const handleQualifyData = async () => {
-    setQualifying(true);
-    try {
-      const { error } = await supabase.functions.invoke('harmonize-categories');
-      if (error) throw error;
-      toast({
-        title: "✅ Qualification lancée",
-        description: "La qualification des données est en cours en arrière-plan",
-      });
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Échec de la qualification",
-        variant: "destructive",
-      });
-    } finally {
-      setQualifying(false);
-    }
-  };
+  const [qualificationDialogOpen, setQualificationDialogOpen] = useState(false);
 
   const handleViewChange = (newView: typeof view) => {
     onViewChange(newView);
@@ -142,17 +120,16 @@ export const DashboardHeader = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={handleQualifyData}
-                    disabled={qualifying}
+                    onClick={() => setQualificationDialogOpen(true)}
                     className="h-7 px-2 text-xs border-purple-500/50 hover:bg-purple-500/10 hover:border-purple-500 transition-all duration-300"
                   >
-                    {qualifying ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin sm:mr-1" />
-                    ) : (
-                      <RefreshCw className="w-3.5 h-3.5 sm:mr-1" />
-                    )}
-                    <span className="hidden lg:inline">{qualifying ? "Qualification..." : "Qualifier données"}</span>
+                    <RefreshCw className="w-3.5 h-3.5 sm:mr-1" />
+                    <span className="hidden lg:inline">Qualifier données</span>
                   </Button>
+                  <QualificationProgressDialog 
+                    open={qualificationDialogOpen} 
+                    onOpenChange={setQualificationDialogOpen} 
+                  />
                   <Dialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen}>
                     <DialogTrigger asChild>
                       <Button
