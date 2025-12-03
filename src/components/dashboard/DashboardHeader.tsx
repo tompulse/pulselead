@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu, MapIcon, Navigation, TrendingUp, LogOut, CreditCard } from "lucide-react";
+import { Menu, MapIcon, Navigation, LogOut, CreditCard } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -9,8 +9,8 @@ import { AdminNouveauxSitesImport } from "./AdminNouveauxSitesImport";
 import { useState } from "react";
 
 interface DashboardHeaderProps {
-  view: 'prospects' | 'tournees' | 'crm';
-  onViewChange: (view: 'prospects' | 'tournees' | 'crm') => void;
+  view: 'prospects' | 'tournees';
+  onViewChange: (view: 'prospects' | 'tournees') => void;
   isAdmin: boolean;
   onLogout: () => void;
 }
@@ -34,7 +34,6 @@ export const DashboardHeader = ({
   const viewConfig = [
     { key: 'prospects' as const, label: 'Prospects', icon: MapIcon },
     { key: 'tournees' as const, label: 'Tournées', icon: Navigation },
-    { key: 'crm' as const, label: 'CRM', icon: TrendingUp },
   ];
 
   return (
@@ -154,7 +153,7 @@ export const DashboardHeader = ({
       
       {/* Mobile Navigation Buttons */}
       {isMobile && (
-        <div className="grid grid-cols-3 gap-2 mt-3">
+        <div className="grid grid-cols-2 gap-2 mt-3">
           {viewConfig.map((v) => (
             <Button
               key={v.key}

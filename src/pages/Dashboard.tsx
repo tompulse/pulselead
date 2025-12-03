@@ -6,12 +6,8 @@ import { useSubscription } from "@/hooks/useSubscription";
 
 import { DashboardProvider, useDashboard } from "@/contexts/DashboardContext";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprisePanel";
-import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
-import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
 import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
-import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
 import { trackEntrepriseView } from "@/utils/analytics";
 import type { ApplyAIFiltersParams } from "@/components/dashboard/ProspectsView";
@@ -21,8 +17,6 @@ const DashboardContent = () => {
   const [adminLoading, setAdminLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showWizard, setShowWizard] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -33,31 +27,25 @@ const DashboardContent = () => {
   });
 
   const applyAIFiltersRef = useRef<((params: ApplyAIFiltersParams) => void) | null>(null);
-  const { view, setView, selectedEntreprise, setSelectedEntreprise, crmPanelOpen, setCrmPanelOpen } = useDashboard();
+  const { view, setView } = useDashboard();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { hasAccess, isLoading: subscriptionLoading } = useSubscription(userId || undefined);
 
   const handleAIFiltersApply = (params: ApplyAIFiltersParams) => {
-    // Passer au mode prospects si pas déjà le cas
     if (view !== 'prospects') {
       setView('prospects');
     }
     
-    // Délai pour laisser la vue se charger
     setTimeout(() => {
       applyAIFiltersRef.current?.(params);
     }, 100);
   };
 
   const handleEntrepriseSelect = async (entreprise: any) => {
-    setSelectedEntreprise(entreprise);
-    
     if (entreprise.id && entreprise.nom) {
       trackEntrepriseView(entreprise.id, entreprise.nom, view);
     }
-    
-    setCrmPanelOpen(true);
   };
 
   useEffect(() => {
@@ -74,7 +62,6 @@ const DashboardContent = () => {
       const userEmail = session.user.email;
       console.log('Checking admin for:', userEmail, session.user.id);
 
-      // Fallback direct pour les admins principaux
       const adminEmails = ['tomiolovpro@gmail.com', 'tom.iolov@hotmail.fr'];
       if (userEmail && adminEmails.includes(userEmail)) {
         console.log('Admin email detected, granting access');
@@ -102,35 +89,18 @@ const DashboardContent = () => {
           setAdminLoading(false);
         }
       }
-      
-      const { data: progress } = await supabase
-        .from('user_onboarding_progress')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .single();
 
-      if (!progress || !progress.completed_at) {
-        const launch = localStorage.getItem('pulse_launch_filter_onboarding');
-        if (launch) {
-          localStorage.removeItem('pulse_launch_filter_onboarding');
-          setShowWizard(false);
-          setShowOnboarding(true);
-        } else {
-          setShowWizard(true);
-        }
-      } else {
-        const savedFilters = localStorage.getItem('pulse_initial_filters');
-        if (savedFilters) {
-          try {
-            const parsed = JSON.parse(savedFilters);
-            setFilters(prev => ({
-              ...prev,
-              categories: parsed.categories || [],
-              departments: parsed.departments || []
-            }));
-          } catch (e) {
-            console.error('Error parsing saved filters:', e);
-          }
+      const savedFilters = localStorage.getItem('pulse_initial_filters');
+      if (savedFilters) {
+        try {
+          const parsed = JSON.parse(savedFilters);
+          setFilters(prev => ({
+            ...prev,
+            categories: parsed.categories || [],
+            departments: parsed.departments || []
+          }));
+        } catch (e) {
+          console.error('Error parsing saved filters:', e);
         }
       }
       
@@ -148,7 +118,6 @@ const DashboardContent = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // Vérifier l'accès à l'abonnement après le chargement (attendre que le statut admin soit vérifié)
   useEffect(() => {
     if (!loading && !adminLoading && !subscriptionLoading && userId) {
       if (!isAdmin && !hasAccess) {
@@ -167,20 +136,6 @@ const DashboardContent = () => {
     navigate("/");
   };
 
-  const handleOnboardingComplete = (newFilters: { categories: string[]; departments: string[] }) => {
-    setFilters(prev => ({
-      ...prev,
-      categories: newFilters.categories,
-      departments: newFilters.departments
-    }));
-    setShowOnboarding(false);
-    
-    toast({
-      title: "Configuration terminée !",
-      description: "Vous allez maintenant voir les entreprises qui correspondent à vos critères.",
-    });
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -191,19 +146,6 @@ const DashboardContent = () => {
       </div>
     );
   }
-
-  if (showWizard) {
-    return <OnboardingWizard onComplete={() => {
-      setShowWizard(false);
-      setLoading(false);
-    }} />;
-  }
-
-  if (showOnboarding) {
-    return <FilterOnboarding onComplete={handleOnboardingComplete} />;
-  }
-
-  const showSidebar = view === 'prospects';
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
@@ -230,27 +172,8 @@ const DashboardContent = () => {
           {view === 'tournees' && userId && (
             <TourneesViewContainer userId={userId} />
           )}
-          {view === 'crm' && userId && (
-            <CRMViewContainer 
-              userId={userId}
-              onEntrepriseSelect={(id) => {
-                const entreprise = { id };
-                handleEntrepriseSelect(entreprise);
-              }}
-            />
-          )}
         </main>
       </div>
-
-      {/* CRM Panel */}
-      {userId && (
-        <UnifiedEntreprisePanel
-          entreprise={selectedEntreprise}
-          open={crmPanelOpen}
-          onOpenChange={setCrmPanelOpen}
-          userId={userId}
-        />
-      )}
 
       {/* Assistant IA Tournée */}
       {userId && view === 'prospects' && (

@@ -10,7 +10,6 @@ import {
   Route, 
   MapPin, 
   Clock, 
-  Calendar, 
   Navigation, 
   Trash2, 
   Play, 
@@ -25,7 +24,6 @@ import {
 import { DatePicker } from "@/components/ui/date-picker";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { TourneeRouteDisplay } from "./TourneeRouteDisplay";
 
 interface Tournee {
   id: string;
@@ -92,7 +90,6 @@ export const TourneesView = () => {
     setLoadingEntreprises(true);
     
     try {
-      // Récupérer les entreprises de la tournée depuis nouveaux_sites
       const { data, error } = await supabase
         .from('nouveaux_sites')
         .select('id, nom, adresse, ville, code_postal, latitude, longitude')
@@ -100,7 +97,6 @@ export const TourneesView = () => {
       
       if (error) throw error;
       
-      // Ordonner selon l'ordre optimisé
       const orderedData = tournee.ordre_optimise.length > 0
         ? tournee.ordre_optimise.map(id => data?.find(e => e.id === id)).filter(Boolean) as Entreprise[]
         : (data || []) as Entreprise[];
@@ -198,7 +194,6 @@ export const TourneesView = () => {
   const handleStartTournee = (tournee: Tournee) => {
     if (tourneeEntreprises.length === 0) return;
     
-    // Construire l'URL Google Maps avec les étapes
     const waypoints = tourneeEntreprises
       .filter(e => e.latitude && e.longitude)
       .map(e => `${e.latitude},${e.longitude}`)
