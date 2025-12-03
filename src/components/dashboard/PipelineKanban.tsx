@@ -1,213 +1,343 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Building2, MapPin, Phone, Mail, ChevronRight } from 'lucide-react';
-import { LeadStatusBadge, LeadStatut, allStatuts, getStatusLabel } from './LeadStatusBadge';
-import { useCRMActions } from '@/hooks/useCRMActions';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCorners } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Building2, TrendingUp, TrendingDown, Mail, Calendar, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-interface Entreprise {
-  id: string;
-  nom: string;
-  ville: string | null;
-  code_postal: string | null;
-  code_naf: string | null;
-}
-
-interface LeadWithEntreprise {
-  id: string;
+interface Lead {
   entreprise_id: string;
-  statut: LeadStatut;
-  score: number;
-  notes: string | null;
-  entreprise?: Entreprise;
+  statut_actuel: string;
+  etape_pipeline: number;
+  probabilite: number;
+  technologie: string;
+  entreprise: {
+    nom: string;
+    ville: string;
+    activite: string;
+  };
+  derniere_interaction?: {
+    type: string;
+    created_at: string;
+  };
 }
 
-interface PipelineKanbanProps {
-  userId: string;
-  onEntrepriseSelect: (entrepriseId: string) => void;
-}
+const PIPELINE_STAGES = [
+  { id: "proposition", label: "Proposition", color: "bg-purple-500", etape: 3 },
+  { id: "negociation", label: "Négociation", color: "bg-orange-500", etape: 4 },
+  { id: "gagne", label: "Signé", color: "bg-green-500", etape: 5 },
+];
 
-const columnColors: Record<LeadStatut, string> = {
-  nouveau: 'border-slate-500/30',
-  contacte: 'border-blue-500/30',
-  qualifie: 'border-purple-500/30',
-  proposition: 'border-orange-500/30',
-  negociation: 'border-yellow-500/30',
-  gagne: 'border-green-500/30',
-  perdu: 'border-red-500/30'
+// Données fictives pour le tutoriel
+const FAKE_LEADS: Lead[] = [
+  {
+    entreprise_id: "fake-1",
+    statut_actuel: "proposition",
+    etape_pipeline: 3,
+    probabilite: 60,
+    technologie: "Intrusion",
+    entreprise: {
+      nom: "Boulangerie Martin",
+      ville: "Paris",
+      activite: "Boulangerie-pâtisserie"
+    }
+  },
+  {
+    entreprise_id: "fake-2",
+    statut_actuel: "negociation",
+    etape_pipeline: 4,
+    probabilite: 80,
+    technologie: "Vidéo",
+    entreprise: {
+      nom: "Restaurant Le Gourmet",
+      ville: "Lyon",
+      activite: "Restauration"
+    }
+  },
+  {
+    entreprise_id: "fake-3",
+    statut_actuel: "gagne",
+    etape_pipeline: 5,
+    probabilite: 100,
+    technologie: "PTI",
+    entreprise: {
+      nom: "Hôtel des Alpes",
+      ville: "Grenoble",
+      activite: "Hôtellerie"
+    }
+  }
+];
+
+const LeadCard = ({ lead, onSelect }: { lead: Lead; onSelect: (lead: Lead) => void }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: lead.entreprise_id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const scoreColor = (score: number | null) => {
+    if (!score) return "bg-gray-500";
+    if (score >= 80) return "bg-green-500";
+    if (score >= 50) return "bg-orange-500";
+    return "bg-red-500";
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => onSelect(lead)}
+      className="mb-2 md:mb-2 cursor-move"
+    >
+      <Card className="transition-colors border-accent/20 hover:border-accent/50">
+        <CardContent className="p-3 md:p-3 space-y-1 md:space-y-2">
+          <div className="flex items-start justify-between gap-2 md:gap-2">
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-sm md:text-sm truncate">{lead.entreprise.nom}</h4>
+              <p className="text-xs md:text-xs text-muted-foreground truncate">{lead.entreprise.ville}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-1 text-xs text-accent">
+            <Badge variant="secondary" className="text-xs md:text-xs px-2 py-0">
+              {lead.technologie}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 };
 
-export const PipelineKanban = ({ userId, onEntrepriseSelect }: PipelineKanbanProps) => {
-  const [leads, setLeads] = useState<LeadWithEntreprise[]>([]);
+const PipelineColumn = ({ 
+  stage, 
+  leads, 
+  onSelect 
+}: { 
+  stage: typeof PIPELINE_STAGES[0]; 
+  leads: Lead[];
+  onSelect: (lead: Lead) => void;
+}) => {
+  return (
+    <Card className="flex flex-col h-full glass-card border-accent/30">
+      <CardHeader className="pb-2 md:pb-3 px-2 md:px-4 pt-2 md:pt-4">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm md:text-sm font-bold flex items-center gap-1 md:gap-2">
+            <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${stage.color}`} />
+            <span className="truncate">{stage.label}</span>
+          </CardTitle>
+          <Badge variant="secondary" className="text-xs md:text-xs px-1 md:px-2">
+            {leads.length}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="flex-1 overflow-hidden p-2 md:p-3 pt-0">
+        <ScrollArea className="h-full pr-1 md:pr-2 hide-scrollbar">
+          <SortableContext items={leads.map(l => l.entreprise_id)} strategy={verticalListSortingStrategy}>
+            {leads.length === 0 ? (
+              <div className="flex items-center justify-center h-16 md:h-32 opacity-40">
+                <Plus className="w-4 h-4 md:w-6 md:h-6 text-muted-foreground" />
+              </div>
+            ) : (
+              leads.map((lead) => (
+                <LeadCard key={lead.entreprise_id} lead={lead} onSelect={onSelect} />
+              ))
+            )}
+          </SortableContext>
+        </ScrollArea>
+      </CardContent>
+    </Card>
+  );
+};
+
+export const PipelineKanban = ({ onLeadSelect }: { onLeadSelect?: (entrepriseId: string) => void }) => {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const { updateLeadStatus } = useCRMActions(userId);
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchLeads();
-  }, [userId]);
+    // DEMO MODE: Données fictives pour le tutoriel
+    setLeads(FAKE_LEADS);
+    setLoading(false);
+    
+    // Pour utiliser les vraies données, décommenter ci-dessous:
+    // fetchLeads();
+  }, []);
 
   const fetchLeads = async () => {
     try {
-      // Fetch all lead statuts for this user
-      const { data: leadData, error: leadError } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
         .from('lead_statuts')
-        .select('*')
-        .eq('user_id', userId);
+        .select(`
+          entreprise_id,
+          statut_actuel,
+          etape_pipeline,
+          probabilite,
+          valeur_estimee,
+          entreprises:entreprise_id (
+            nom,
+            ville,
+            activite,
+            score_lead
+          )
+        `)
+        .eq('user_id', user.id);
 
-      if (leadError) throw leadError;
+      if (error) throw error;
 
-      if (!leadData || leadData.length === 0) {
-        setLeads([]);
-        setLoading(false);
-        return;
-      }
+      // Fetch dernière interaction pour chaque lead
+      const leadsWithInteractions = await Promise.all(
+        (data || []).map(async (lead) => {
+          const { data: interaction } = await supabase
+            .from('lead_interactions')
+            .select('type, created_at')
+            .eq('entreprise_id', lead.entreprise_id)
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
 
-      // Fetch entreprise details for each lead
-      const entrepriseIds = leadData.map(l => l.entreprise_id);
-      const { data: entreprisesData, error: entError } = await supabase
-        .from('nouveaux_sites')
-        .select('id, nom, ville, code_postal, code_naf')
-        .in('id', entrepriseIds);
+          return {
+            ...lead,
+            entreprise: Array.isArray(lead.entreprises) ? lead.entreprises[0] : lead.entreprises,
+            derniere_interaction: interaction,
+            technologie: "Intrusion", // Valeur par défaut
+          };
+        })
+      );
 
-      if (entError) throw entError;
-
-      // Merge data
-      const merged = leadData.map(lead => ({
-        ...lead,
-        statut: lead.statut as LeadStatut,
-        entreprise: entreprisesData?.find(e => e.id === lead.entreprise_id)
-      }));
-
-      setLeads(merged);
+      setLeads(leadsWithInteractions);
     } catch (error) {
       console.error('Error fetching leads:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger le pipeline",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDragStart = (e: React.DragEvent, leadId: string) => {
-    e.dataTransfer.setData('leadId', leadId);
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = async (e: React.DragEvent, newStatut: LeadStatut) => {
-    e.preventDefault();
-    const leadId = e.dataTransfer.getData('leadId');
-    const lead = leads.find(l => l.id === leadId);
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
     
-    if (!lead || lead.statut === newStatut) return;
+    if (!over) return;
 
-    // Optimistic update
-    setLeads(prev => prev.map(l => 
-      l.id === leadId ? { ...l, statut: newStatut } : l
-    ));
+    const overId = over.id as string;
+    const activeId = active.id as string;
 
-    // Update in database
-    await updateLeadStatus(lead.entreprise_id, newStatut);
+    // Déterminer le nouveau statut basé sur la colonne de destination
+    const targetStage = PIPELINE_STAGES.find(stage => overId.startsWith(stage.id));
+    
+    if (!targetStage) return;
+
+    const lead = leads.find(l => l.entreprise_id === activeId);
+    if (!lead || lead.statut_actuel === targetStage.id) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Calculer la nouvelle probabilité en fonction de l'étape
+      const newProbability = targetStage.etape === 0 ? 0 : targetStage.etape * 20;
+
+      const { error } = await supabase
+        .from('lead_statuts')
+        .update({
+          statut_actuel: targetStage.id as any,
+          etape_pipeline: targetStage.etape,
+          probabilite: newProbability,
+        })
+        .eq('entreprise_id', activeId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      // Ajouter une interaction automatique
+      await supabase.from('lead_interactions').insert([{
+        entreprise_id: activeId,
+        user_id: user.id,
+        type: 'autre',
+        statut: 'a_rappeler',
+        notes: `Lead déplacé vers: ${targetStage.label}`,
+      }]);
+
+      toast({
+        title: "Pipeline mis à jour",
+        description: `Lead déplacé vers "${targetStage.label}"`,
+      });
+
+      fetchLeads();
+    } catch (error) {
+      console.error('Error updating lead:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le lead",
+        variant: "destructive",
+      });
+    }
+
+    setActiveId(null);
   };
 
-  const getLeadsByStatus = (statut: LeadStatut) => {
-    return leads.filter(l => l.statut === statut);
+  const handleLeadSelect = (lead: Lead) => {
+    if (onLeadSelect) {
+      onLeadSelect(lead.entreprise_id);
+    }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-accent" />
-      </div>
-    );
-  }
-
-  if (leads.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-8">
-        <Building2 className="w-16 h-16 text-muted-foreground/30 mb-4" />
-        <h3 className="text-lg font-semibold mb-2">Aucun prospect dans le pipeline</h3>
-        <p className="text-sm text-muted-foreground max-w-md">
-          Commencez par ajouter des entreprises depuis l'onglet Prospects. 
-          Cliquez sur une entreprise et modifiez son statut pour l'ajouter au pipeline.
-        </p>
+        <p className="text-muted-foreground">Chargement du pipeline...</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4 px-2">
-        <h2 className="text-lg font-semibold">Pipeline Commercial</h2>
-        <Badge variant="outline" className="border-accent/30">
-          {leads.length} prospect{leads.length > 1 ? 's' : ''}
-        </Badge>
-      </div>
-
-      <div className="flex-1 overflow-x-auto">
-        <div className="flex gap-3 h-full min-w-max pb-4">
-          {allStatuts.map(statut => {
-            const columnLeads = getLeadsByStatus(statut);
-            return (
-              <div
-                key={statut}
-                className={cn(
-                  'w-64 flex-shrink-0 rounded-lg border-2 bg-card/50',
-                  columnColors[statut]
-                )}
-                onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, statut)}
-              >
-                <div className="p-3 border-b border-border/50">
-                  <div className="flex items-center justify-between">
-                    <LeadStatusBadge statut={statut} />
-                    <span className="text-xs text-muted-foreground">
-                      {columnLeads.length}
-                    </span>
-                  </div>
-                </div>
-                
-                <ScrollArea className="h-[calc(100%-48px)]">
-                  <div className="p-2 space-y-2">
-                    {columnLeads.map(lead => (
-                      <Card
-                        key={lead.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, lead.id)}
-                        onClick={() => onEntrepriseSelect(lead.entreprise_id)}
-                        className="cursor-grab active:cursor-grabbing hover:border-accent/50 transition-colors glass-card"
-                      >
-                        <CardContent className="p-3">
-                          <h4 className="font-medium text-sm truncate mb-1">
-                            {lead.entreprise?.nom || 'Entreprise inconnue'}
-                          </h4>
-                          {lead.entreprise?.ville && (
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <MapPin className="w-3 h-3" />
-                              <span className="truncate">
-                                {lead.entreprise.code_postal} {lead.entreprise.ville}
-                              </span>
-                            </div>
-                          )}
-                          {lead.notes && (
-                            <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
-                              {lead.notes}
-                            </p>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
-            );
-          })}
+    <div className="h-full">
+      <DndContext
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-2 h-full overflow-hidden">
+          {PIPELINE_STAGES.map((stage) => (
+            <PipelineColumn
+              key={stage.id}
+              stage={stage}
+              leads={leads.filter(l => l.statut_actuel === stage.id)}
+              onSelect={handleLeadSelect}
+            />
+          ))}
         </div>
-      </div>
+      </DndContext>
     </div>
   );
 };

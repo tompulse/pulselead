@@ -1,62 +1,83 @@
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-
-export type LeadStatut = 'nouveau' | 'contacte' | 'qualifie' | 'proposition' | 'negociation' | 'gagne' | 'perdu';
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface LeadStatusBadgeProps {
-  statut: LeadStatut;
-  size?: 'sm' | 'md';
+  statut: 'nouveau' | 'contacte' | 'qualifie' | 'proposition' | 'negociation' | 'gagne' | 'perdu';
+  probabilite?: number;
+  showTooltip?: boolean;
 }
 
-const statusConfig: Record<LeadStatut, { label: string; className: string }> = {
-  nouveau: {
-    label: 'Nouveau',
-    className: 'bg-slate-500/20 text-slate-300 border-slate-500/30'
-  },
-  contacte: {
-    label: 'Contacté',
-    className: 'bg-blue-500/20 text-blue-300 border-blue-500/30'
-  },
-  qualifie: {
-    label: 'Qualifié',
-    className: 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-  },
-  proposition: {
-    label: 'Proposition',
-    className: 'bg-orange-500/20 text-orange-300 border-orange-500/30'
-  },
-  negociation: {
-    label: 'Négociation',
-    className: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
-  },
-  gagne: {
-    label: 'Gagné',
-    className: 'bg-green-500/20 text-green-300 border-green-500/30'
-  },
-  perdu: {
-    label: 'Perdu',
-    className: 'bg-red-500/20 text-red-300 border-red-500/30'
+const getStatusColor = (statut: string): "default" | "secondary" | "destructive" | "outline" => {
+  switch (statut) {
+    case 'nouveau':
+      return 'outline';
+    case 'contacte':
+      return 'secondary';
+    case 'qualifie':
+    case 'proposition':
+    case 'negociation':
+      return 'default';
+    case 'gagne':
+      return 'default';
+    case 'perdu':
+      return 'destructive';
+    default:
+      return 'outline';
   }
 };
 
-export const LeadStatusBadge = ({ statut, size = 'md' }: LeadStatusBadgeProps) => {
-  const config = statusConfig[statut] || statusConfig.nouveau;
+const getStatusLabel = (statut: string) => {
+  const labels = {
+    nouveau: '🆕 Nouveau',
+    contacte: '📞 Contacté',
+    qualifie: '✅ Qualifié',
+    proposition: '📄 Proposition',
+    negociation: '🤝 Négociation',
+    gagne: '🎉 Gagné',
+    perdu: '❌ Perdu',
+  };
+  return labels[statut as keyof typeof labels] || statut;
+};
+
+const getStatusDescription = (statut: string, probabilite?: number) => {
+  const descriptions = {
+    nouveau: 'Lead non contacté',
+    contacte: 'Premier contact établi',
+    qualifie: 'Besoin identifié et validé',
+    proposition: 'Proposition commerciale envoyée',
+    negociation: 'Discussion en cours sur les conditions',
+    gagne: 'Contrat signé',
+    perdu: 'Opportunité perdue',
+  };
   
-  return (
-    <Badge 
-      variant="outline" 
-      className={cn(
-        config.className,
-        size === 'sm' ? 'text-xs px-1.5 py-0' : 'text-xs px-2 py-0.5'
-      )}
-    >
-      {config.label}
+  const baseDesc = descriptions[statut as keyof typeof descriptions] || '';
+  if (probabilite !== undefined && statut !== 'gagne' && statut !== 'perdu') {
+    return `${baseDesc} • ${probabilite}% de chances de conversion`;
+  }
+  return baseDesc;
+};
+
+export const LeadStatusBadge = ({ statut, probabilite, showTooltip = true }: LeadStatusBadgeProps) => {
+  const badge = (
+    <Badge variant={getStatusColor(statut)} className="whitespace-nowrap">
+      {getStatusLabel(statut)}
     </Badge>
   );
-};
 
-export const getStatusLabel = (statut: LeadStatut): string => {
-  return statusConfig[statut]?.label || statut;
-};
+  if (!showTooltip) {
+    return badge;
+  }
 
-export const allStatuts: LeadStatut[] = ['nouveau', 'contacte', 'qualifie', 'proposition', 'negociation', 'gagne', 'perdu'];
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {badge}
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{getStatusDescription(statut, probabilite)}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};

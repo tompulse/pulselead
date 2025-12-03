@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Menu, MapIcon, Navigation, TrendingUp, LogOut, CreditCard } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
+import { SyncButton } from "./SyncButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { SubscriptionManagement } from "./SubscriptionManagement";
-import { AdminNouveauxSitesImport } from "./AdminNouveauxSitesImport";
 import { useState } from "react";
 
 interface DashboardHeaderProps {
@@ -55,20 +55,22 @@ export const DashboardHeader = ({
                 </SheetHeader>
                 <div className="flex flex-col p-4 gap-2">
                   {isAdmin && (
-                    <div className="pb-4 border-b border-accent/20 space-y-2">
-                      <AdminNouveauxSitesImport />
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-start gap-2" 
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          setSubscriptionDialogOpen(true);
-                        }}
-                      >
-                        <CreditCard className="w-4 h-4" />
-                        Abonnements
-                      </Button>
-                    </div>
+                    <>
+                      <div className="pb-4 border-b border-accent/20 space-y-2">
+                        <SyncButton />
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start gap-2" 
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setSubscriptionDialogOpen(true);
+                          }}
+                        >
+                          <CreditCard className="w-4 h-4" />
+                          Abonnements
+                        </Button>
+                      </div>
+                    </>
                   )}
                 </div>
               </SheetContent>
@@ -115,7 +117,7 @@ export const DashboardHeader = ({
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <>
-                  <AdminNouveauxSitesImport />
+                  <SyncButton />
                   <Dialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen}>
                     <DialogTrigger asChild>
                       <Button

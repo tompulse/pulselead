@@ -53,77 +53,210 @@ export type Database = {
         }
         Relationships: []
       }
-      lead_interactions: {
+      entreprises: {
         Row: {
-          created_at: string
-          date_interaction: string
-          date_relance: string | null
-          entreprise_id: string
+          activite: string | null
+          administration: string | null
+          adresse: string | null
+          capital: number | null
+          categorie_confidence: number | null
+          categorie_detaillee: string | null
+          categorie_qualifiee: string | null
+          chiffre_affaires: number | null
+          code_naf: string | null
+          code_postal: string | null
+          created_at: string | null
+          date_demarrage: string | null
+          date_enrichissement: string | null
+          date_qualification: string | null
+          dirigeant: string | null
+          effectifs: number | null
+          email: string | null
+          enrichi: boolean | null
+          forme_juridique: string | null
           id: string
-          notes: string | null
-          statut: string
-          type: string
-          updated_at: string
-          user_id: string
+          interlocuteur: string | null
+          latitude: number | null
+          longitude: number | null
+          nom: string
+          nom_voie: string | null
+          numero_voie: string | null
+          score_lead: number | null
+          siret: string
+          site_web: string | null
+          statut: string | null
+          telephone: string | null
+          type_batiment: string | null
+          type_voie: string | null
+          updated_at: string | null
+          ville: string | null
+          zone_type: string | null
         }
         Insert: {
-          created_at?: string
-          date_interaction?: string
-          date_relance?: string | null
-          entreprise_id: string
+          activite?: string | null
+          administration?: string | null
+          adresse?: string | null
+          capital?: number | null
+          categorie_confidence?: number | null
+          categorie_detaillee?: string | null
+          categorie_qualifiee?: string | null
+          chiffre_affaires?: number | null
+          code_naf?: string | null
+          code_postal?: string | null
+          created_at?: string | null
+          date_demarrage?: string | null
+          date_enrichissement?: string | null
+          date_qualification?: string | null
+          dirigeant?: string | null
+          effectifs?: number | null
+          email?: string | null
+          enrichi?: boolean | null
+          forme_juridique?: string | null
           id?: string
-          notes?: string | null
-          statut?: string
-          type?: string
-          updated_at?: string
-          user_id: string
+          interlocuteur?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          nom: string
+          nom_voie?: string | null
+          numero_voie?: string | null
+          score_lead?: number | null
+          siret: string
+          site_web?: string | null
+          statut?: string | null
+          telephone?: string | null
+          type_batiment?: string | null
+          type_voie?: string | null
+          updated_at?: string | null
+          ville?: string | null
+          zone_type?: string | null
         }
         Update: {
-          created_at?: string
-          date_interaction?: string
-          date_relance?: string | null
-          entreprise_id?: string
+          activite?: string | null
+          administration?: string | null
+          adresse?: string | null
+          capital?: number | null
+          categorie_confidence?: number | null
+          categorie_detaillee?: string | null
+          categorie_qualifiee?: string | null
+          chiffre_affaires?: number | null
+          code_naf?: string | null
+          code_postal?: string | null
+          created_at?: string | null
+          date_demarrage?: string | null
+          date_enrichissement?: string | null
+          date_qualification?: string | null
+          dirigeant?: string | null
+          effectifs?: number | null
+          email?: string | null
+          enrichi?: boolean | null
+          forme_juridique?: string | null
           id?: string
-          notes?: string | null
-          statut?: string
-          type?: string
-          updated_at?: string
-          user_id?: string
+          interlocuteur?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          nom?: string
+          nom_voie?: string | null
+          numero_voie?: string | null
+          score_lead?: number | null
+          siret?: string
+          site_web?: string | null
+          statut?: string | null
+          telephone?: string | null
+          type_batiment?: string | null
+          type_voie?: string | null
+          updated_at?: string | null
+          ville?: string | null
+          zone_type?: string | null
         }
         Relationships: []
       }
-      lead_statuts: {
+      lead_interactions: {
         Row: {
           created_at: string
+          date_prochaine_action: string | null
           entreprise_id: string
           id: string
           notes: string | null
-          score: number | null
-          statut: string
+          prochaine_action: string | null
+          statut: Database["public"]["Enums"]["interaction_statut"]
+          type: Database["public"]["Enums"]["interaction_type"]
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          date_prochaine_action?: string | null
           entreprise_id: string
           id?: string
           notes?: string | null
-          score?: number | null
-          statut?: string
+          prochaine_action?: string | null
+          statut: Database["public"]["Enums"]["interaction_statut"]
+          type: Database["public"]["Enums"]["interaction_type"]
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          date_prochaine_action?: string | null
           entreprise_id?: string
           id?: string
           notes?: string | null
-          score?: number | null
-          statut?: string
+          prochaine_action?: string | null
+          statut?: Database["public"]["Enums"]["interaction_statut"]
+          type?: Database["public"]["Enums"]["interaction_type"]
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "lead_interactions_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_statuts: {
+        Row: {
+          entreprise_id: string
+          etape_pipeline: number
+          id: string
+          probabilite: number | null
+          statut_actuel: Database["public"]["Enums"]["lead_statut_enum"]
+          updated_at: string
+          user_id: string
+          valeur_estimee: number | null
+        }
+        Insert: {
+          entreprise_id: string
+          etape_pipeline?: number
+          id?: string
+          probabilite?: number | null
+          statut_actuel?: Database["public"]["Enums"]["lead_statut_enum"]
+          updated_at?: string
+          user_id: string
+          valeur_estimee?: number | null
+        }
+        Update: {
+          entreprise_id?: string
+          etape_pipeline?: number
+          id?: string
+          probabilite?: number | null
+          statut_actuel?: Database["public"]["Enums"]["lead_statut_enum"]
+          updated_at?: string
+          user_id?: string
+          valeur_estimee?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_statuts_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       nouveaux_sites: {
         Row: {
@@ -265,6 +398,63 @@ export type Database = {
           window_start?: string | null
         }
         Relationships: []
+      }
+      tournee_visites: {
+        Row: {
+          a_revoir: boolean | null
+          created_at: string | null
+          entreprise_id: string
+          id: string
+          notes: string | null
+          ordre_visite: number | null
+          rdv_pris: boolean | null
+          statut: string | null
+          tournee_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          a_revoir?: boolean | null
+          created_at?: string | null
+          entreprise_id: string
+          id?: string
+          notes?: string | null
+          ordre_visite?: number | null
+          rdv_pris?: boolean | null
+          statut?: string | null
+          tournee_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          a_revoir?: boolean | null
+          created_at?: string | null
+          entreprise_id?: string
+          id?: string
+          notes?: string | null
+          ordre_visite?: number | null
+          rdv_pris?: boolean | null
+          statut?: string | null
+          tournee_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournee_visites_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournee_visites_tournee_id_fkey"
+            columns: ["tournee_id"]
+            isOneToOne: false
+            referencedRelation: "tournees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tournees: {
         Row: {

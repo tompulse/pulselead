@@ -2,10 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscription } from "@/hooks/useSubscription";
 
 import { DashboardProvider, useDashboard } from "@/contexts/DashboardContext";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { Sidebar } from "@/components/dashboard/Sidebar";
 import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprisePanel";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
@@ -13,6 +15,14 @@ import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
+import { DataEnrichmentPanel } from "@/components/dashboard/DataEnrichmentPanel";
+import { AdminNouveauxSitesImport } from "@/components/dashboard/AdminNouveauxSitesImport";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Filter, Loader2, CheckCircle, Database } from "lucide-react";
+import { format } from "date-fns";
 import { trackEntrepriseView } from "@/utils/analytics";
 import type { ApplyAIFiltersParams } from "@/components/dashboard/ProspectsView";
 
@@ -21,8 +31,11 @@ const DashboardContent = () => {
   const [adminLoading, setAdminLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [enrichmentOpen, setEnrichmentOpen] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -30,13 +43,15 @@ const DashboardContent = () => {
     departments: [] as string[],
     formesJuridiques: [] as string[],
     searchQuery: "",
+    subcategories: [] as string[],
   });
 
   const applyAIFiltersRef = useRef<((params: ApplyAIFiltersParams) => void) | null>(null);
   const { view, setView, selectedEntreprise, setSelectedEntreprise, crmPanelOpen, setCrmPanelOpen } = useDashboard();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { hasAccess, isLoading: subscriptionLoading } = useSubscription(userId || undefined);
+  const isMobile = useIsMobile();
+  const { hasAccess, isLoading: subscriptionLoading, daysRemaining } = useSubscription(userId || undefined);
 
   const handleAIFiltersApply = (params: ApplyAIFiltersParams) => {
     // Passer au mode prospects si pas déjà le cas
@@ -49,6 +64,12 @@ const DashboardContent = () => {
       applyAIFiltersRef.current?.(params);
     }, 100);
   };
+
+  const activeFiltersCount = 
+    (filters.categories?.length || 0) + 
+    (filters.departments?.length || 0) + 
+    (filters.dateFrom ? 1 : 0) + 
+    (filters.dateTo ? 1 : 0);
 
   const handleEntrepriseSelect = async (entreprise: any) => {
     setSelectedEntreprise(entreprise);
@@ -213,6 +234,13 @@ const DashboardContent = () => {
         isAdmin={isAdmin}
         onLogout={handleLogout}
       />
+
+      {/* Bouton admin import */}
+      {isAdmin && (
+        <div className="px-2 sm:px-4 pt-2">
+          <AdminNouveauxSitesImport />
+        </div>
+      )}
       
       <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
         <main className="flex-1 overflow-hidden min-h-0">
