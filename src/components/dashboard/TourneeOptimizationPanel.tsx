@@ -2,8 +2,6 @@ import { useState } from "react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -12,14 +10,19 @@ import {
   Navigation, 
   Save, 
   Loader2,
-  TrendingUp,
   X,
   MapPin
 } from "lucide-react";
-import { format } from "date-fns";
-import type { Database } from "@/integrations/supabase/types";
 
-type Entreprise = Database['public']['Tables']['entreprises']['Row'];
+type Entreprise = {
+  id: string;
+  nom: string;
+  adresse?: string | null;
+  code_postal?: string | null;
+  ville?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+};
 
 interface TourneeOptimizationPanelProps {
   selectedEntreprises: Entreprise[];
@@ -163,7 +166,6 @@ export const TourneeOptimizationPanel = ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
 
-      // Check for duplicate tournee name AND date
       const { data: existingTournee } = await supabase
         .from('tournees')
         .select('id')
@@ -182,7 +184,6 @@ export const TourneeOptimizationPanel = ({
         return;
       }
 
-      // Check if any selected entreprise is already in another tournee
       const { data: existingTournees } = await supabase
         .from('tournees')
         .select('entreprises_ids')
@@ -264,7 +265,6 @@ export const TourneeOptimizationPanel = ({
           </div>
         ) : optimizedResult ? (
           <>
-            {/* Stats compactes */}
             <div className="space-y-3">
               <div className="flex items-center justify-around py-3 px-2 bg-accent/5 rounded-lg border border-accent/20">
                 <div className="text-center">
@@ -284,28 +284,8 @@ export const TourneeOptimizationPanel = ({
                   <div className="text-[10px] text-muted-foreground">Arrêts</div>
                 </div>
               </div>
-              
-              {/* Détail du temps */}
-              <div className="text-xs text-muted-foreground bg-card/60 rounded-lg px-3 py-2 space-y-1">
-                <div className="flex justify-between">
-                  <span>Temps trajet :</span>
-                  <span className="font-medium">
-                    {Math.floor((optimizedResult.temps_trajet_minutes || 0) / 60)}h
-                    {Math.round((optimizedResult.temps_trajet_minutes || 0) % 60).toString().padStart(2, '0')}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Temps visites :</span>
-                  <span className="font-medium">
-                    {Math.floor((optimizedResult.entreprises_ordonnees.length * 15) / 60)}h
-                    {Math.round((optimizedResult.entreprises_ordonnees.length * 15) % 60).toString().padStart(2, '0')}
-                    <span className="text-[10px] ml-1 opacity-70">(15 min/arrêt)</span>
-                  </span>
-                </div>
-              </div>
             </div>
 
-            {/* Liste des entreprises épurée */}
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 mb-2">
                 <Route className="w-4 h-4 text-accent" />
@@ -336,7 +316,6 @@ export const TourneeOptimizationPanel = ({
               </div>
             </div>
 
-            {/* Boutons d'action */}
             <div className="space-y-2">
               <Button 
                 variant="outline"
@@ -363,7 +342,6 @@ export const TourneeOptimizationPanel = ({
           </>
         ) : null}
 
-        {/* Dialog de navigation GPS */}
         {optimizedResult && (
           <div className={`fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity ${showNavigationDialog ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <div className="glass-card max-w-sm w-full p-6 space-y-4 animate-scale-in">
@@ -395,9 +373,6 @@ export const TourneeOptimizationPanel = ({
                   </div>
                 </button>
               </div>
-              <p className="text-xs text-muted-foreground text-center">
-                📍 Google Maps affichera tous les arrêts. Waze vous guidera vers le premier point.
-              </p>
               <Button 
                 variant="outline" 
                 onClick={() => setShowNavigationDialog(false)}

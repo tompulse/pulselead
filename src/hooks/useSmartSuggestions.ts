@@ -22,10 +22,10 @@ export const useSmartSuggestions = () => {
     setLoading(true);
     
     try {
-      // Fetch all entreprises to analyze
-      const { data: entreprises, error } = await supabase
-        .from('entreprises')
-        .select('ville, code_postal, activite, effectifs, chiffre_affaires');
+      // Fetch all nouveaux_sites to analyze
+      const { data: sites, error } = await supabase
+        .from('nouveaux_sites')
+        .select('ville, code_postal, categorie_detaillee');
 
       if (error) throw error;
 
@@ -33,16 +33,11 @@ export const useSmartSuggestions = () => {
 
       // Analyze by department (from postal code)
       const departmentCounts = new Map<string, number>();
-      const departmentHighValue = new Map<string, number>();
 
-      entreprises?.forEach(e => {
+      sites?.forEach(e => {
         if (e.code_postal) {
           const dept = e.code_postal.substring(0, 2);
           departmentCounts.set(dept, (departmentCounts.get(dept) || 0) + 1);
-          
-          if (e.chiffre_affaires && e.chiffre_affaires > 500000) {
-            departmentHighValue.set(dept, (departmentHighValue.get(dept) || 0) + 1);
-          }
         }
       });
 
@@ -52,47 +47,36 @@ export const useSmartSuggestions = () => {
         .slice(0, 3);
 
       sortedDepts.forEach(([dept, count], index) => {
-        const highValueCount = departmentHighValue.get(dept) || 0;
         newSuggestions.push({
           type: 'department',
           value: dept,
           label: `Département ${dept}`,
-          reason: highValueCount > 0 
-            ? `${count} entreprises dont ${highValueCount} à fort potentiel`
-            : `${count} entreprises dans ce département`,
+          reason: `${count} entreprises dans ce département`,
           count,
           priority: 10 - index,
         });
       });
 
-      // Analyze by activity
-      const activityCounts = new Map<string, number>();
-      const activityHighValue = new Map<string, number>();
+      // Analyze by category
+      const categoryCounts = new Map<string, number>();
 
-      entreprises?.forEach(e => {
-        if (e.activite) {
-          activityCounts.set(e.activite, (activityCounts.get(e.activite) || 0) + 1);
-          
-          if (e.chiffre_affaires && e.chiffre_affaires > 500000) {
-            activityHighValue.set(e.activite, (activityHighValue.get(e.activite) || 0) + 1);
-          }
+      sites?.forEach(e => {
+        if (e.categorie_detaillee) {
+          categoryCounts.set(e.categorie_detaillee, (categoryCounts.get(e.categorie_detaillee) || 0) + 1);
         }
       });
 
-      // Top activities by volume
-      const sortedActivities = Array.from(activityCounts.entries())
+      // Top categories by volume
+      const sortedCategories = Array.from(categoryCounts.entries())
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
 
-      sortedActivities.forEach(([activity, count], index) => {
-        const highValueCount = activityHighValue.get(activity) || 0;
+      sortedCategories.forEach(([category, count], index) => {
         newSuggestions.push({
           type: 'category',
-          value: activity,
-          label: activity,
-          reason: highValueCount > 0
-            ? `${count} entreprises, ${highValueCount} à fort CA`
-            : `${count} entreprises dans ce secteur`,
+          value: category,
+          label: category,
+          reason: `${count} entreprises dans ce secteur`,
           count,
           priority: 7 - index,
         });

@@ -21,15 +21,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-/**
- * Page des paramètres de sécurité
- * 
- * UTILITÉ:
- * - Visualiser les logs d'audit
- * - Informations sur la sécurité du compte
- * - Recommandations de sécurité
- */
-
 export default function SecuritySettings() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -68,22 +59,19 @@ export default function SecuritySettings() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Delete onboarding progress from database
       await supabase
         .from('user_onboarding_progress')
         .delete()
         .eq('user_id', user.id);
 
-      // Clear localStorage
-      localStorage.removeItem('luma_onboarding_complete');
-      localStorage.removeItem('luma_initial_filters');
+      localStorage.removeItem('pulse_onboarding_complete');
+      localStorage.removeItem('pulse_initial_filters');
 
       toast({
         title: "Onboarding réinitialisé",
         description: "Redirection vers l'onboarding...",
       });
 
-      // Redirect to dashboard which will show onboarding
       setTimeout(() => {
         navigate('/dashboard');
         window.location.reload();
@@ -106,7 +94,6 @@ export default function SecuritySettings() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Verify password
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: user.email!,
         password: deletePassword,
@@ -121,19 +108,14 @@ export default function SecuritySettings() {
         return;
       }
 
-      // Delete user data from all tables
-      await supabase.from('lead_statuts').delete().eq('user_id', user.id);
-      await supabase.from('lead_interactions').delete().eq('user_id', user.id);
-      await supabase.from('tournee_visites').delete().eq('user_id', user.id);
+      // Delete user data from existing tables only
       await supabase.from('tournees').delete().eq('user_id', user.id);
       await supabase.from('user_onboarding_progress').delete().eq('user_id', user.id);
       await supabase.from('qualification_status').delete().eq('user_id', user.id);
 
-      // Delete auth account
       const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
       
       if (deleteError) {
-        // If admin delete fails, sign out user (they can't delete themselves with admin API)
         await supabase.auth.signOut();
       }
 
@@ -162,18 +144,11 @@ export default function SecuritySettings() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Fetch all user data
       const [
-        { data: statuts },
-        { data: interactions },
         { data: tournees },
-        { data: visites },
         { data: onboarding }
       ] = await Promise.all([
-        supabase.from('lead_statuts').select('*').eq('user_id', user.id),
-        supabase.from('lead_interactions').select('*').eq('user_id', user.id),
         supabase.from('tournees').select('*').eq('user_id', user.id),
-        supabase.from('tournee_visites').select('*').eq('user_id', user.id),
         supabase.from('user_onboarding_progress').select('*').eq('user_id', user.id),
       ]);
 
@@ -183,15 +158,11 @@ export default function SecuritySettings() {
           email: user.email,
           created_at: user.created_at,
         },
-        lead_statuts: statuts || [],
-        lead_interactions: interactions || [],
         tournees: tournees || [],
-        tournee_visites: visites || [],
         onboarding_progress: onboarding || [],
         export_date: new Date().toISOString(),
       };
 
-      // Create and download JSON file
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -283,67 +254,6 @@ export default function SecuritySettings() {
               <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
                 Actif
               </Badge>
-            </div>
-
-            <div className="flex items-center justify-between p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-500/10 rounded-lg">
-                  <AlertTriangle className="w-5 h-5 text-orange-500" />
-                </div>
-                <div>
-                  <p className="font-medium">Protection mots de passe compromis</p>
-                  <p className="text-sm text-muted-foreground">
-                    Recommandé: Activer la protection contre les mots de passe connus
-                  </p>
-                </div>
-              </div>
-              <Badge variant="outline" className="bg-orange-500/10 text-orange-500 border-orange-500/20">
-                À configurer
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Recommandations */}
-        <Card className="glass-card border-accent/20">
-          <CardHeader>
-            <CardTitle>Recommandations de sécurité</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-accent/20">
-              <div className="p-1 bg-accent/10 rounded">
-                <Shield className="w-4 h-4 text-accent" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-sm">Utilisez un mot de passe fort</p>
-                <p className="text-xs text-muted-foreground">
-                  Minimum 12 caractères avec majuscules, minuscules, chiffres et symboles
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-accent/20">
-              <div className="p-1 bg-accent/10 rounded">
-                <Shield className="w-4 h-4 text-accent" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-sm">Vérifiez régulièrement vos logs</p>
-                <p className="text-xs text-muted-foreground">
-                  Consultez votre journal d'audit pour détecter toute activité suspecte
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-accent/20">
-              <div className="p-1 bg-accent/10 rounded">
-                <Shield className="w-4 h-4 text-accent" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-sm">Ne partagez jamais vos identifiants</p>
-                <p className="text-xs text-muted-foreground">
-                  LUMA ne vous demandera jamais votre mot de passe par email ou téléphone
-                </p>
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -457,9 +367,7 @@ export default function SecuritySettings() {
                         Cette action est <strong>irréversible</strong>. Toutes vos données seront supprimées :
                       </p>
                       <ul className="list-disc list-inside space-y-1 text-sm">
-                        <li>Tous vos prospects et interactions</li>
                         <li>Toutes vos tournées planifiées</li>
-                        <li>Votre historique CRM complet</li>
                         <li>Vos paramètres et préférences</li>
                       </ul>
                       <div className="space-y-2 pt-4">
@@ -469,22 +377,20 @@ export default function SecuritySettings() {
                         <Input
                           id="delete-password"
                           type="password"
-                          placeholder="Votre mot de passe"
                           value={deletePassword}
                           onChange={(e) => setDeletePassword(e.target.value)}
-                          className="bg-background/50 border-border"
+                          placeholder="Votre mot de passe"
+                          className="border-red-500/30"
                         />
                       </div>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setDeletePassword("")}>
-                      Annuler
-                    </AlertDialogCancel>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleDeleteAccount}
-                      disabled={!deletePassword || deleting}
-                      className="bg-red-500 hover:bg-red-600 text-white"
+                      disabled={deleting || !deletePassword}
+                      className="bg-red-500 hover:bg-red-600"
                     >
                       {deleting ? (
                         <>
@@ -492,7 +398,7 @@ export default function SecuritySettings() {
                           Suppression...
                         </>
                       ) : (
-                        "Supprimer définitivement"
+                        'Supprimer mon compte'
                       )}
                     </AlertDialogAction>
                   </AlertDialogFooter>
