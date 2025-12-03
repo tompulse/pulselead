@@ -143,7 +143,9 @@ export type Database = {
           latitude: number | null
           libelle_voie: string | null
           longitude: number | null
+          naf_classe: string | null
           naf_division: string | null
+          naf_groupe: string | null
           naf_section: string | null
           nom: string
           numero_voie: string | null
@@ -169,7 +171,9 @@ export type Database = {
           latitude?: number | null
           libelle_voie?: string | null
           longitude?: number | null
+          naf_classe?: string | null
           naf_division?: string | null
+          naf_groupe?: string | null
           naf_section?: string | null
           nom: string
           numero_voie?: string | null
@@ -195,7 +199,9 @@ export type Database = {
           latitude?: number | null
           libelle_voie?: string | null
           longitude?: number | null
+          naf_classe?: string | null
           naf_division?: string | null
+          naf_groupe?: string | null
           naf_section?: string | null
           nom?: string
           numero_voie?: string | null
