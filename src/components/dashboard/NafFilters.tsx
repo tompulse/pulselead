@@ -64,13 +64,7 @@ export const NafFilters = ({
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   
   const { isAdmin } = useAdminStatus();
-  const { data: availableFilters, isLoading } = useAvailableNouveauxSitesFilters({
-    nafSections: filters.nafSections,
-    nafDivisions: filters.nafDivisions,
-    departments: filters.departments,
-    taillesEntreprise: filters.taillesEntreprise,
-    searchQuery: filters.searchQuery
-  });
+  const { data: availableFilters, isLoading } = useAvailableNouveauxSitesFilters();
 
   // Construire les sections NAF avec leurs compteurs
   const availableSections = Object.entries(NAF_SECTIONS)
