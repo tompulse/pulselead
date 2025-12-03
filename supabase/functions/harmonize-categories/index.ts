@@ -6,251 +6,131 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Catégories détaillées avec NAF codes et mots-clés
-const DETAILED_CATEGORIES = [
-  { key: 'agriculture-cultures', nafCodes: ['01.1', '01.2'], keywords: ['culture', 'maraîchage', 'céréales', 'légumes'] },
-  { key: 'agriculture-elevage', nafCodes: ['01.4', '01.5'], keywords: ['élevage', 'bovins', 'porcins', 'volailles'] },
-  { key: 'agriculture-viticole', nafCodes: ['01.21'], keywords: ['vigne', 'viticole', 'vin', 'viticulture'] },
-  { key: 'agriculture-forestier', nafCodes: ['02'], keywords: ['forêt', 'bois', 'sylviculture'] },
-  { key: 'agriculture-peche', nafCodes: ['03'], keywords: ['pêche', 'aquaculture', 'poisson'] },
-  { key: 'alimentaire-boulangerie', nafCodes: ['10.71'], keywords: ['boulangerie', 'pâtisserie', 'pain', 'viennoiserie'] },
-  { key: 'alimentaire-boucherie', nafCodes: ['10.11', '10.13'], keywords: ['boucherie', 'charcuterie', 'viande'] },
-  { key: 'alimentaire-laiterie', nafCodes: ['10.51'], keywords: ['laiterie', 'fromage', 'yaourt', 'crème'] },
-  { key: 'alimentaire-boissons', nafCodes: ['11'], keywords: ['boisson', 'jus', 'eau', 'soda'] },
-  { key: 'alimentaire-conserves', nafCodes: ['10.39', '10.85'], keywords: ['conserve', 'plat', 'préparé'] },
-  { key: 'alimentaire-confiserie', nafCodes: ['10.82'], keywords: ['chocolat', 'confiserie', 'bonbon'] },
-  { key: 'textile-confection', nafCodes: ['13', '14'], keywords: ['textile', 'vêtement', 'confection', 'habit'] },
-  { key: 'textile-cuir', nafCodes: ['15'], keywords: ['cuir', 'maroquinerie', 'sac', 'chaussure'] },
-  { key: 'btp-gros-oeuvre', nafCodes: ['41', '43.99'], keywords: ['maçonnerie', 'gros oeuvre', 'fondation', 'béton'] },
-  { key: 'btp-charpente', nafCodes: ['43.91'], keywords: ['charpente', 'couverture', 'toiture', 'zinguerie'] },
-  { key: 'btp-menuiserie', nafCodes: ['16', '43.32'], keywords: ['menuiserie', 'menuisier', 'fenêtre', 'porte'] },
-  { key: 'btp-plomberie', nafCodes: ['43.22'], keywords: ['plomberie', 'plombier', 'chauffage', 'sanitaire'] },
-  { key: 'btp-electricite', nafCodes: ['43.21'], keywords: ['électricité', 'électricien', 'électrique'] },
-  { key: 'btp-peinture', nafCodes: ['43.34'], keywords: ['peinture', 'peintre', 'finition'] },
-  { key: 'btp-terrassement', nafCodes: ['42', '43.12'], keywords: ['terrassement', 'vrd', 'voirie'] },
-  { key: 'auto-concessionnaire', nafCodes: ['45.11'], keywords: ['concessionnaire', 'vente', 'voiture', 'automobile'] },
-  { key: 'auto-garage', nafCodes: ['45.20'], keywords: ['garage', 'réparation', 'mécanique', 'entretien'] },
-  { key: 'auto-carrosserie', nafCodes: ['45.20B'], keywords: ['carrosserie', 'peinture', 'carrossier'] },
-  { key: 'auto-pieces', nafCodes: ['45.31', '45.32'], keywords: ['pièce', 'détachée', 'accessoire'] },
-  { key: 'commerce-supermarche', nafCodes: ['47.11'], keywords: ['supermarché', 'hypermarché', 'grande surface'] },
-  { key: 'commerce-alimentation', nafCodes: ['47.2'], keywords: ['épicerie', 'alimentation', 'primeur'] },
-  { key: 'commerce-pharmacie', nafCodes: ['47.73'], keywords: ['pharmacie', 'pharmacien', 'médicament'] },
-  { key: 'commerce-optique', nafCodes: ['47.78A'], keywords: ['optique', 'opticien', 'lunette'] },
-  { key: 'commerce-bricolage', nafCodes: ['47.52'], keywords: ['bricolage', 'jardinerie', 'outillage'] },
-  { key: 'commerce-electromenager', nafCodes: ['47.4', '47.5'], keywords: ['électroménager', 'informatique', 'téléphone'] },
-  { key: 'commerce-meuble', nafCodes: ['47.59'], keywords: ['meuble', 'décoration', 'ameublement'] },
-  { key: 'commerce-vetement', nafCodes: ['47.71'], keywords: ['vêtement', 'mode', 'prêt-à-porter'] },
-  { key: 'commerce-chaussure', nafCodes: ['47.72'], keywords: ['chaussure', 'basket', 'bottier'] },
-  { key: 'commerce-bijouterie', nafCodes: ['47.77'], keywords: ['bijouterie', 'horlogerie', 'bijou'] },
-  { key: 'commerce-librairie', nafCodes: ['47.61', '47.62'], keywords: ['librairie', 'presse', 'livre'] },
-  { key: 'commerce-fleuriste', nafCodes: ['47.76'], keywords: ['fleuriste', 'fleur', 'bouquet'] },
-  { key: 'commerce-tabac', nafCodes: ['47.26'], keywords: ['tabac', 'presse', 'cigarette'] },
-  { key: 'gros-alimentaire', nafCodes: ['46.3'], keywords: ['grossiste', 'alimentaire', 'cash'] },
-  { key: 'gros-materiel', nafCodes: ['46.7'], keywords: ['matériaux', 'négoce', 'fourniture'] },
-  { key: 'gros-produits', nafCodes: ['46.4', '46.5'], keywords: ['produit', 'distribution'] },
-  { key: 'resto-restaurant', nafCodes: ['56.10A'], keywords: ['restaurant', 'gastronomie', 'table'] },
-  { key: 'resto-fastfood', nafCodes: ['56.10C'], keywords: ['fast food', 'snack', 'burger', 'sandwich'] },
-  { key: 'resto-cafeteria', nafCodes: ['56.10B'], keywords: ['cafétéria', 'self', 'cantine'] },
-  { key: 'resto-traiteur', nafCodes: ['56.21'], keywords: ['traiteur', 'événement', 'buffet'] },
-  { key: 'resto-bar', nafCodes: ['56.30'], keywords: ['bar', 'café', 'brasserie', 'pub'] },
-  { key: 'hotellerie-hotel', nafCodes: ['55.10'], keywords: ['hôtel', 'hébergement', 'chambre'] },
-  { key: 'transport-routier', nafCodes: ['49.41'], keywords: ['transport', 'routier', 'marchandise', 'messagerie'] },
-  { key: 'transport-demenagement', nafCodes: ['49.42'], keywords: ['déménagement', 'déménageur'] },
-  { key: 'transport-taxi', nafCodes: ['49.32'], keywords: ['taxi', 'vtc', 'transport', 'personne'] },
-  { key: 'transport-logistique', nafCodes: ['52'], keywords: ['entrepôt', 'logistique', 'stockage'] },
-  { key: 'info-developpement', nafCodes: ['62.01'], keywords: ['développement', 'logiciel', 'programmation', 'dev'] },
-  { key: 'info-conseil', nafCodes: ['62.02'], keywords: ['conseil', 'consulting', 'it', 'informatique'] },
-  { key: 'info-webagency', nafCodes: ['62.01', '73.11'], keywords: ['web', 'digital', 'site', 'agence'] },
-  { key: 'info-hebergement', nafCodes: ['63.11'], keywords: ['hébergement', 'cloud', 'serveur'] },
-  { key: 'finance-banque', nafCodes: ['64.1'], keywords: ['banque', 'crédit', 'bancaire'] },
-  { key: 'finance-assurance', nafCodes: ['65'], keywords: ['assurance', 'mutuelle', 'assureur'] },
-  { key: 'finance-holding', nafCodes: ['64.2', '70.10'], keywords: ['holding', 'gestion', 'portefeuille'] },
-  { key: 'finance-comptable', nafCodes: ['69.20'], keywords: ['comptable', 'expertise', 'compta'] },
-  { key: 'immo-agence', nafCodes: ['68.31'], keywords: ['agence', 'immobilier', 'transaction'] },
-  { key: 'immo-syndic', nafCodes: ['68.32'], keywords: ['syndic', 'gestion', 'copropriété'] },
-  { key: 'immo-promotion', nafCodes: ['41.10'], keywords: ['promotion', 'promoteur', 'construction'] },
-  { key: 'immo-location', nafCodes: ['68.20'], keywords: ['location', 'bailleur'] },
-  { key: 'juridique-avocat', nafCodes: ['69.10'], keywords: ['avocat', 'juridique', 'droit'] },
-  { key: 'juridique-notaire', nafCodes: ['69.10'], keywords: ['notaire', 'notariat'] },
-  { key: 'conseil-management', nafCodes: ['70.22'], keywords: ['conseil', 'consulting', 'stratégie'] },
-  { key: 'archi-architecture', nafCodes: ['71.11'], keywords: ['architecte', 'architecture', 'plan'] },
-  { key: 'archi-bureau-etudes', nafCodes: ['71.12'], keywords: ['bureau', 'étude', 'ingénierie'] },
-  { key: 'archi-geometre', nafCodes: ['71.12A'], keywords: ['géomètre', 'topographie'] },
-  { key: 'formation-ecole', nafCodes: ['85'], keywords: ['école', 'formation', 'enseignement'] },
-  { key: 'formation-conduite', nafCodes: ['85.53'], keywords: ['auto-école', 'conduite', 'permis'] },
-  { key: 'formation-professionnelle', nafCodes: ['85.59'], keywords: ['formation', 'professionnel', 'continue'] },
-  { key: 'sante-medecin', nafCodes: ['86.21'], keywords: ['médecin', 'généraliste', 'docteur'] },
-  { key: 'sante-dentiste', nafCodes: ['86.23'], keywords: ['dentiste', 'dentaire', 'orthodontie'] },
-  { key: 'sante-kine', nafCodes: ['86.90'], keywords: ['kinésithérapeute', 'kiné', 'ostéopathe'] },
-  { key: 'sante-infirmier', nafCodes: ['86.90'], keywords: ['infirmier', 'infirmière', 'soin'] },
-  { key: 'sante-labo', nafCodes: ['86.90'], keywords: ['laboratoire', 'analyse', 'médical'] },
-  { key: 'sante-clinique', nafCodes: ['86.10'], keywords: ['clinique', 'hôpital', 'centre'] },
-  { key: 'sante-ehpad', nafCodes: ['87'], keywords: ['ehpad', 'résidence', 'maison', 'retraite'] },
-  { key: 'service-coiffeur', nafCodes: ['96.02'], keywords: ['coiffeur', 'coiffure', 'salon'] },
-  { key: 'service-esthetique', nafCodes: ['96.02'], keywords: ['esthétique', 'beauté', 'spa', 'onglerie'] },
-  { key: 'service-pressing', nafCodes: ['96.01'], keywords: ['pressing', 'blanchisserie', 'nettoyage'] },
-  { key: 'service-reparation', nafCodes: ['95'], keywords: ['réparation', 'dépannage'] },
-  { key: 'sport-salle', nafCodes: ['93.13'], keywords: ['sport', 'fitness', 'musculation', 'salle'] },
-  { key: 'sport-piscine', nafCodes: ['93.11'], keywords: ['piscine', 'aquatique', 'natation'] },
-  { key: 'loisirs-cinema', nafCodes: ['59.14'], keywords: ['cinéma', 'film', 'multiplex'] },
-  { key: 'culture-spectacle', nafCodes: ['90'], keywords: ['spectacle', 'événement', 'concert'] },
-  { key: 'culture-musee', nafCodes: ['91'], keywords: ['musée', 'patrimoine', 'exposition'] },
-  { key: 'energie-electricite', nafCodes: ['35.11'], keywords: ['électricité', 'production', 'énergie'] },
-  { key: 'energie-renouvelable', nafCodes: ['35.11', '35.14'], keywords: ['solaire', 'éolien', 'renouvelable', 'photovoltaïque'] },
-  { key: 'energie-gaz', nafCodes: ['35.2'], keywords: ['gaz', 'réseau', 'distribution'] },
-  { key: 'service-interim', nafCodes: ['78'], keywords: ['intérim', 'recrutement', 'travail', 'temporaire'] },
-  { key: 'service-nettoyage', nafCodes: ['81.2'], keywords: ['nettoyage', 'entretien', 'propreté'] },
-  { key: 'service-securite', nafCodes: ['80.1'], keywords: ['sécurité', 'gardiennage', 'surveillance'] },
-  { key: 'service-publicite', nafCodes: ['73'], keywords: ['publicité', 'marketing', 'communication'] },
-  { key: 'industrie-metallurgie', nafCodes: ['24', '25'], keywords: ['métallurgie', 'chaudronnerie', 'mécanique'] },
-  { key: 'industrie-plastique', nafCodes: ['22'], keywords: ['plastique', 'plasturgie', 'injection'] },
-  { key: 'industrie-chimie', nafCodes: ['20'], keywords: ['chimie', 'chimique', 'produit'] },
-  { key: 'industrie-electronique', nafCodes: ['26', '27'], keywords: ['électronique', 'composant', 'circuit'] },
-];
-
-// Mapping catégories qualifiées (Créations) → catégories détaillées
-const QUALIF_TO_DETAILED: Record<string, string> = {
-  // Immobilier & Finance
-  'immobilier': 'immo-agence',
-  'holding': 'finance-holding',
-  'finance-assurance': 'finance-assurance',
-  
-  // Commerce
-  'commerce-detail': 'commerce-alimentation',
-  'commerce-gros': 'gros-produits',
-  'e-commerce': 'commerce-alimentation', // e-commerce générique
-  
-  // Conseil & Services pro
-  'conseil-consulting': 'conseil-management',
-  'juridique': 'juridique-avocat',
-  
-  // Tech & Digital
-  'informatique-dev': 'info-developpement',
-  'digital-web': 'info-webagency',
-  
-  // Restauration & Alimentation
-  'restauration': 'resto-restaurant',
-  'snack-fastfood': 'resto-fastfood',
-  'traiteur': 'resto-traiteur',
-  'cafes-bars': 'resto-bar',
-  
-  // BTP
-  'maconnerie': 'btp-gros-oeuvre',
-  'plomberie-chauffage': 'btp-plomberie',
-  'electricite': 'btp-electricite',
-  'menuiserie': 'btp-menuiserie',
-  'peinture-revetements': 'btp-peinture',
-  
-  // Agriculture
-  'agriculture': 'agriculture-cultures',
-  
-  // Services
-  'artisanat-reparation': 'service-reparation',
-  'services-personne': 'service-nettoyage',
-  'beaute-coiffure': 'service-coiffeur',
-  
-  // Energie
-  'energie-renouvelable': 'energie-renouvelable',
-  'environnement-recyclage': 'energie-renouvelable',
-  
-  // Formation & Education
-  'education-formation': 'formation-professionnelle',
-  
-  // Industrie
-  'industrie-fabrication': 'industrie-metallurgie',
-  
-  // Santé
-  'sante-medical': 'sante-medecin',
-  
-  // Transport
-  'transport-marchandises': 'transport-routier',
-  'transport-logistique': 'transport-logistique',
-  'vtc-taxi': 'transport-taxi',
-  'livraison-coursier': 'transport-routier',
-  
-  // Hôtellerie & Tourisme
-  'hotellerie': 'hotellerie-hotel',
-  
-  // Culture & Sport
-  'culture-spectacles': 'culture-spectacle',
-  'sport-loisirs': 'sport-salle',
-  
-  // Marketing
-  'marketing-pub': 'service-publicite',
-  
-  // Autres
-  'autre': 'service-reparation',
-  'activite-non-precisee': 'service-reparation'
+// Nomenclature NAF officielle - mapping code NAF 2 chiffres vers catégorie
+// Aligné avec src/utils/nafCategories.ts
+const NAF_TO_CATEGORY: Record<string, string> = {
+  // Agriculture & Forêt
+  '01': 'agriculture',
+  '02': 'agriculture',
+  '03': 'agriculture',
+  // Industrie alimentaire
+  '10': 'industrie_alimentaire',
+  '11': 'industrie_alimentaire',
+  '12': 'industrie_alimentaire',
+  // Textile & Habillement
+  '13': 'textile',
+  '14': 'textile',
+  '15': 'textile',
+  // Bois & Papier
+  '16': 'bois_papier',
+  '17': 'bois_papier',
+  '18': 'bois_papier',
+  // Chimie & Pharmacie
+  '19': 'chimie',
+  '20': 'chimie',
+  '21': 'chimie',
+  // Plastique & Caoutchouc
+  '22': 'plastique',
+  '23': 'plastique',
+  // Métallurgie & Mécanique
+  '24': 'metallurgie',
+  '25': 'metallurgie',
+  '28': 'metallurgie',
+  // Informatique & Électronique (fabrication)
+  '26': 'informatique',
+  '27': 'informatique',
+  // Automobile & Transport (fabrication)
+  '29': 'automobile',
+  '30': 'automobile',
+  // Meubles & Autres industries
+  '31': 'meubles',
+  '32': 'meubles',
+  '33': 'meubles',
+  // Énergie & Eau
+  '35': 'energie',
+  '36': 'energie',
+  '37': 'energie',
+  '38': 'energie',
+  '39': 'energie',
+  // Construction & BTP
+  '41': 'construction',
+  '42': 'construction',
+  '43': 'construction',
+  // Commerce Automobile
+  '45': 'commerce_auto',
+  // Commerce de Gros
+  '46': 'commerce_gros',
+  // Commerce de Détail
+  '47': 'commerce_detail',
+  // Transport & Logistique
+  '49': 'transport',
+  '50': 'transport',
+  '51': 'transport',
+  '52': 'transport',
+  '53': 'transport',
+  // Hôtellerie & Restauration
+  '55': 'hotellerie',
+  '56': 'hotellerie',
+  // Communication & Médias
+  '58': 'communication',
+  '59': 'communication',
+  '60': 'communication',
+  '61': 'communication',
+  // Services Informatiques
+  '62': 'informatique_services',
+  '63': 'informatique_services',
+  // Finance & Assurance
+  '64': 'finance',
+  '65': 'finance',
+  '66': 'finance',
+  // Immobilier
+  '68': 'immobilier',
+  // Services Juridiques & Comptables
+  '69': 'juridique',
+  '70': 'juridique',
+  // Architecture & Ingénierie
+  '71': 'architecture',
+  '72': 'architecture',
+  '73': 'architecture',
+  '74': 'architecture',
+  '75': 'architecture',
+  // Services Administratifs
+  '77': 'services_admin',
+  '78': 'services_admin',
+  '79': 'services_admin',
+  '80': 'services_admin',
+  '81': 'services_admin',
+  '82': 'services_admin',
+  // Administration Publique
+  '84': 'administration',
+  // Enseignement & Formation
+  '85': 'enseignement',
+  // Santé & Action Sociale
+  '86': 'sante',
+  '87': 'sante',
+  '88': 'sante',
+  // Culture & Loisirs
+  '90': 'culture',
+  '91': 'culture',
+  '92': 'culture',
+  '93': 'culture',
+  // Autres Services
+  '94': 'autres_services',
+  '95': 'autres_services',
+  '96': 'autres_services',
+  // Services aux Ménages
+  '97': 'menages',
+  '98': 'menages',
+  // Organisations Internationales
+  '99': 'international',
 };
 
-function getCategoryFromNaf(codeNaf: string): string | null {
+function getCategoryFromNaf(codeNaf: string | null): string | null {
   if (!codeNaf) return null;
-  
-  // Chercher la catégorie détaillée correspondante
-  for (const cat of DETAILED_CATEGORIES) {
-    for (const nafCode of cat.nafCodes) {
-      if (codeNaf.startsWith(nafCode)) {
-        return cat.key;
-      }
-    }
-  }
-  
-  return null;
+  // Extraire les 2 premiers caractères du code NAF
+  const prefix = codeNaf.replace(/[^0-9]/g, '').substring(0, 2);
+  return NAF_TO_CATEGORY[prefix] || null;
 }
-
-// Helpers: normalize, priority keyword mapping and keyword-based categorization
-function normalize(input: string | null | undefined): string {
-  return (input ?? '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
-}
-
-const PRIORITY_MAPPINGS: Array<{ regex: RegExp; key: string }> = [
-  { regex: /\bagence(s)?\s+immobili(e|er|ere|ers|eres|eres)?\b/, key: 'immo-agence' },
-  { regex: /\bimmobili(e|er|ere|ers|eres)?\b/, key: 'immo-agence' },
-  { regex: /\bcoiff(eur|ure|eurs|ures)\b/, key: 'service-coiffeur' },
-  { regex: /\bboulanger(ie|ies)?\b|\bpatisser(ie|ies)?\b/, key: 'alimentaire-boulangerie' },
-  { regex: /\b(bar|cafe|cafes|brasserie|brasseries|pub)\b/, key: 'resto-bar' },
-  { regex: /\brestaurant(s)?\b/, key: 'resto-restaurant' },
-  { regex: /\bpharmaci(e|en|enne|ens|ennes)?\b/, key: 'commerce-pharmacie' },
-  { regex: /\bopticien(s)?\b|\boptique\b/, key: 'commerce-optique' },
-];
-
-function getCategoryFromKeywords(nom?: string | null, activite?: string | null): string | null {
-  const text = normalize(`${nom ?? ''} ${activite ?? ''}`);
-  if (!text.trim()) return null;
-
-  // 1) Priority phrases first
-  for (const { regex, key } of PRIORITY_MAPPINGS) {
-    if (regex.test(text)) return key;
-  }
-
-  // 2) Score-based by keywords across all detailed categories
-  let bestKey: string | null = null;
-  let bestScore = 0;
-
-  for (const cat of DETAILED_CATEGORIES) {
-    let score = 0;
-    for (const raw of cat.keywords) {
-      const kw = normalize(raw);
-      if (!kw) continue;
-      // word boundary for short keywords, plain contains for long
-      if (kw.length <= 4) {
-        const boundaryRegex = new RegExp(`(^|\\b)${kw}(\\b|$)`, 'g');
-        if (boundaryRegex.test(text)) score += 1;
-      } else {
-        if (text.includes(kw)) score += 1;
-      }
-    }
-    if (score > bestScore) {
-      bestScore = score;
-      bestKey = cat.key;
-    }
-  }
-
-  // Require a minimal confidence (>=2 hits) to avoid false positives
-  if (bestScore >= 2) return bestKey;
-  return null;
-}
-
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -264,72 +144,79 @@ serve(async (req) => {
 
     let successCount = 0;
     let errorCount = 0;
+    let skippedCount = 0;
+    const batchSize = 1000;
+    let offset = 0;
+    let hasMore = true;
 
-    // 1. Harmoniser les nouveaux_sites basé sur NAF puis mots-clés (nom)
-    console.log('Harmonizing nouveaux_sites...');
-    const { data: nouveauxSites, error: nsError } = await supabase
-      .from('nouveaux_sites')
-      .select('id, code_naf, nom, categorie_detaillee');
+    console.log('Starting NAF harmonization for nouveaux_sites...');
 
-    if (nsError) throw nsError;
+    while (hasMore) {
+      // Récupérer un lot
+      const { data: sites, error: fetchError } = await supabase
+        .from('nouveaux_sites')
+        .select('id, code_naf, categorie_detaillee')
+        .range(offset, offset + batchSize - 1);
 
-    for (const site of nouveauxSites || []) {
-      const nafCategory = site.code_naf ? getCategoryFromNaf(site.code_naf) : null;
-      const keywordCategory = getCategoryFromKeywords(site.nom, null);
-      const newCategory = nafCategory || keywordCategory;
+      if (fetchError) {
+        console.error('Fetch error:', fetchError);
+        break;
+      }
 
-      if (newCategory && newCategory !== site.categorie_detaillee) {
-        const { error } = await supabase
-          .from('nouveaux_sites')
-          .update({ categorie_detaillee: newCategory })
-          .eq('id', site.id);
+      if (!sites || sites.length === 0) {
+        hasMore = false;
+        break;
+      }
 
-        if (error) {
-          console.error(`Error updating nouveaux_sites ${site.id}:`, error);
-          errorCount++;
-        } else {
-          successCount++;
+      console.log(`Processing batch at offset ${offset}, ${sites.length} records...`);
+
+      // Préparer les updates
+      const updates: { id: string; categorie_detaillee: string }[] = [];
+
+      for (const site of sites) {
+        const newCategory = getCategoryFromNaf(site.code_naf);
+        
+        if (newCategory && newCategory !== site.categorie_detaillee) {
+          updates.push({ id: site.id, categorie_detaillee: newCategory });
+        } else if (!newCategory && site.code_naf) {
+          skippedCount++;
         }
       }
-    }
 
-    // 2. Harmoniser les entreprises basé sur NAF, mots-clés (nom/activité), puis categorie_qualifiee
-    console.log('Harmonizing entreprises...');
-    const { data: entreprises, error: entError } = await supabase
-      .from('entreprises')
-      .select('id, categorie_qualifiee, code_naf, nom, activite, categorie_detaillee');
+      // Appliquer les updates par petits lots pour éviter timeout
+      for (let i = 0; i < updates.length; i += 50) {
+        const batch = updates.slice(i, i + 50);
+        
+        await Promise.all(batch.map(async (update) => {
+          const { error } = await supabase
+            .from('nouveaux_sites')
+            .update({ categorie_detaillee: update.categorie_detaillee })
+            .eq('id', update.id);
 
-    if (entError) throw entError;
+          if (error) {
+            errorCount++;
+          } else {
+            successCount++;
+          }
+        }));
+      }
 
-    for (const entreprise of entreprises || []) {
-      const nafCategory = entreprise.code_naf ? getCategoryFromNaf(entreprise.code_naf) : null;
-      const keywordCategory = getCategoryFromKeywords(entreprise.nom, entreprise.activite);
-      const qualifCategory = entreprise.categorie_qualifiee ? QUALIF_TO_DETAILED[entreprise.categorie_qualifiee] : null;
-      const newCategory = nafCategory || keywordCategory || qualifCategory;
+      offset += batchSize;
       
-      if (newCategory && newCategory !== entreprise.categorie_detaillee) {
-        const { error } = await supabase
-          .from('entreprises')
-          .update({ categorie_detaillee: newCategory })
-          .eq('id', entreprise.id);
-
-        if (error) {
-          console.error(`Error updating entreprises ${entreprise.id}:`, error);
-          errorCount++;
-        } else {
-          successCount++;
-        }
+      if (sites.length < batchSize) {
+        hasMore = false;
       }
     }
 
-    console.log(`Updated ${successCount} records, ${errorCount} errors`);
+    console.log(`Harmonization complete: ${successCount} updated, ${errorCount} errors, ${skippedCount} skipped (unknown NAF)`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Harmonisation terminée: ${successCount} succès, ${errorCount} erreurs`,
+        message: `Harmonisation NAF terminée: ${successCount} mises à jour, ${errorCount} erreurs, ${skippedCount} ignorés`,
         successCount,
-        errorCount
+        errorCount,
+        skippedCount
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
