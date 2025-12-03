@@ -28,6 +28,7 @@ export const useTourneeManager = (userId: string) => {
   // Create tournee mutation
   const createTourneeMutation = useMutation({
     mutationFn: async ({ nom, date, entreprises }: { nom: string; date: string; entreprises: any[] }) => {
+      // Étape 1: Géocoder les entreprises sans coordonnées
       toast({
         title: "Préparation de la tournée...",
         description: "Géocodage des adresses en cours...",
@@ -51,15 +52,16 @@ export const useTourneeManager = (userId: string) => {
               continue;
             }
 
-            // Mettre à jour les coordonnées dans nouveaux_sites
+            // Mettre à jour les coordonnées dans la DB
             await supabase
-              .from('nouveaux_sites')
+              .from('entreprises')
               .update({
                 latitude: geoData.latitude,
                 longitude: geoData.longitude
               })
               .eq('id', entreprise.id);
 
+            // Mettre à jour l'objet local
             entreprise.latitude = geoData.latitude;
             entreprise.longitude = geoData.longitude;
           } catch (error) {
@@ -68,6 +70,7 @@ export const useTourneeManager = (userId: string) => {
         }
       }
 
+      // Étape 2: Calculer les itinéraires
       const entreprisesWithCoords = entreprises.filter(e => e.latitude && e.longitude);
       
       if (entreprisesWithCoords.length === 0) {
@@ -93,6 +96,7 @@ export const useTourneeManager = (userId: string) => {
 
       if (routeError) throw routeError;
 
+      // Étape 3: Créer la tournée avec les données calculées
       const { data, error } = await supabase
         .from('tournees')
         .insert({
@@ -133,6 +137,7 @@ export const useTourneeManager = (userId: string) => {
   const optimizeTournee = async (entreprises: any[], userLat: number, userLng: number) => {
     setIsOptimizing(true);
     try {
+      // Étape 1: Détecter et géocoder les entreprises sans coordonnées
       const entreprisesToGeocode = entreprises.filter(e => !e.latitude || !e.longitude);
       
       if (entreprisesToGeocode.length > 0) {
@@ -141,6 +146,7 @@ export const useTourneeManager = (userId: string) => {
           description: `Recherche des coordonnées GPS pour ${entreprisesToGeocode.length} entreprise(s)...`
         });
 
+        // Géocoder chaque entreprise
         for (const entreprise of entreprisesToGeocode) {
           try {
             const { data: geoData, error: geoError } = await supabase.functions.invoke('geocode-entreprise', {
@@ -156,8 +162,9 @@ export const useTourneeManager = (userId: string) => {
               continue;
             }
 
+            // Mettre à jour les coordonnées dans la DB
             const { error: updateError } = await supabase
-              .from('nouveaux_sites')
+              .from('entreprises')
               .update({
                 latitude: geoData.latitude,
                 longitude: geoData.longitude
@@ -167,6 +174,7 @@ export const useTourneeManager = (userId: string) => {
             if (updateError) {
               console.error(`Erreur mise à jour coordonnées pour ${entreprise.nom}:`, updateError);
             } else {
+              // CRITICAL: Mettre à jour l'objet local avec les nouvelles coordonnées
               entreprise.latitude = geoData.latitude;
               entreprise.longitude = geoData.longitude;
               console.log(`✅ Coordonnées sauvegardées pour ${entreprise.nom}`);
@@ -177,6 +185,7 @@ export const useTourneeManager = (userId: string) => {
         }
       }
 
+      // Étape 2: Vérifier que toutes les entreprises ont maintenant des coordonnées
       const entreprisesWithCoords = entreprises.filter(e => e.latitude && e.longitude);
       
       if (entreprisesWithCoords.length === 0) {
@@ -196,6 +205,7 @@ export const useTourneeManager = (userId: string) => {
         });
       }
 
+      // Étape 3: Optimiser la tournée avec les entreprises géocodées
       const { data, error } = await supabase.functions.invoke('optimize-tournee', {
         body: {
           entreprises: entreprisesWithCoords.map(e => ({

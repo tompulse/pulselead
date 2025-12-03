@@ -1,20 +1,30 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 interface DashboardContextType {
-  view: 'prospects' | 'tournees';
-  setView: (view: 'prospects' | 'tournees') => void;
+  view: 'prospects' | 'tournees' | 'crm';
+  setView: (view: 'prospects' | 'tournees' | 'crm') => void;
+  selectedEntreprise: any | null;
+  setSelectedEntreprise: (entreprise: any | null) => void;
+  crmPanelOpen: boolean;
+  setCrmPanelOpen: (open: boolean) => void;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export const DashboardProvider = ({ children }: { children: ReactNode }) => {
-  const [view, setView] = useState<'prospects' | 'tournees'>('prospects');
+  const [view, setView] = useState<'prospects' | 'tournees' | 'crm'>('prospects');
+  const [selectedEntreprise, setSelectedEntreprise] = useState<any | null>(null);
+  const [crmPanelOpen, setCrmPanelOpen] = useState(false);
 
   return (
     <DashboardContext.Provider
       value={{
         view,
-        setView
+        setView,
+        selectedEntreprise,
+        setSelectedEntreprise,
+        crmPanelOpen,
+        setCrmPanelOpen
       }}
     >
       {children}

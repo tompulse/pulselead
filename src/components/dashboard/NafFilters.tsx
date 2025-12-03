@@ -3,14 +3,14 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Building2, ChevronDown, ChevronRight, Route, Calendar as CalendarIcon, Scale } from "lucide-react";
+import { Search, Building2, ChevronDown, X, Route, Calendar as CalendarIcon, Users, Scale } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafOfficiel";
+import { getAllCategories } from "@/utils/detailedCategories";
 import { FORMES_JURIDIQUES } from "@/utils/formesJuridiques";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -37,31 +37,6 @@ interface NafFiltersProps {
   isOptimizing?: boolean;
 }
 
-// Mapping des sections vers les catégories en base
-const SECTION_TO_CATEGORY: Record<string, string> = {
-  "A": "A - Agriculture, sylviculture et pêche",
-  "B": "B - Industries extractives",
-  "C": "C - Industrie manufacturière",
-  "D": "D - Production électricité, gaz, vapeur",
-  "E": "E - Eau, déchets, dépollution",
-  "F": "F - Construction",
-  "G": "G - Commerce, réparation auto/moto",
-  "H": "H - Transports et entreposage",
-  "I": "I - Hébergement et restauration",
-  "J": "J - Information et communication",
-  "K": "K - Activités financières et assurance",
-  "L": "L - Activités immobilières",
-  "M": "M - Activités scientifiques et techniques",
-  "N": "N - Services administratifs et soutien",
-  "O": "O - Administration publique",
-  "P": "P - Enseignement",
-  "Q": "Q - Santé humaine et action sociale",
-  "R": "R - Arts, spectacles, loisirs",
-  "S": "S - Autres activités de services",
-  "T": "T - Activités des ménages employeurs",
-  "U": "U - Activités extra-territoriales"
-};
-
 export const NafFilters = ({ 
   filters, 
   setFilters,
@@ -77,11 +52,10 @@ export const NafFilters = ({
   onOptimize,
   isOptimizing = false
 }: NafFiltersProps) => {
-  const [sectionsOpen, setSectionsOpen] = useState(false);
-  const [divisionsOpen, setDivisionsOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [formesJuridiquesOpen, setFormesJuridiquesOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
   
   const { isAdmin } = useAdminStatus();
   const { data: availableFilters, isLoading } = useAvailableNouveauxSitesFilters({
@@ -91,15 +65,16 @@ export const NafFilters = ({
     searchQuery: filters.searchQuery
   });
 
-  // Calculer les compteurs par section NAF
-  const sectionCounts: Record<string, number> = {};
-  NAF_SECTIONS.forEach(section => {
-    const categoryKey = SECTION_TO_CATEGORY[section.code];
-    sectionCounts[section.code] = availableFilters?.categories[categoryKey] || 0;
-  });
-
-  // Calculer les compteurs par division NAF
-  const divisionCounts = availableFilters?.nafCodes || {};
+  const allCategories = getAllCategories();
+  const availableCategories = Object.entries(allCategories)
+    .map(([key, cat]) => ({
+      key,
+      label: cat.label,
+      emoji: cat.emoji,
+      count: availableFilters?.categories[key] || 0
+    }))
+    .filter(cat => cat.count > 0)
+    .sort((a, b) => b.count - a.count);
 
   const availableDepartments = Object.entries(availableFilters?.departments || {})
     .map(([dept, count]) => ({ dept, count: count as number }))
@@ -110,8 +85,7 @@ export const NafFilters = ({
       return numA - numB;
     });
 
-  const handleSectionToggle = (sectionCode: string) => {
-    const categoryKey = SECTION_TO_CATEGORY[sectionCode];
+  const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
       const current = prev.categories || [];
       const isSelected = current.includes(categoryKey);
@@ -121,20 +95,6 @@ export const NafFilters = ({
         categories: isSelected
           ? current.filter((c: string) => c !== categoryKey)
           : [...current, categoryKey]
-      };
-    });
-  };
-
-  const handleDivisionToggle = (divisionCode: string) => {
-    setFilters((prev: any) => {
-      const current = prev.codesNaf || [];
-      const isSelected = current.includes(divisionCode);
-      
-      return {
-        ...prev,
-        codesNaf: isSelected
-          ? current.filter((c: string) => c !== divisionCode)
-          : [...current, divisionCode]
       };
     });
   };
@@ -167,12 +127,18 @@ export const NafFilters = ({
     });
   };
 
-  const toggleSectionExpand = (sectionCode: string) => {
-    setExpandedSections(prev => 
-      prev.includes(sectionCode) 
-        ? prev.filter(s => s !== sectionCode)
-        : [...prev, sectionCode]
-    );
+  const handleTailleEntrepriseToggle = (taille: string) => {
+    setFilters((prev: any) => {
+      const current = prev.taillesEntreprise || [];
+      const isSelected = current.includes(taille);
+      
+      return {
+        ...prev,
+        taillesEntreprise: isSelected
+          ? current.filter((t: string) => t !== taille)
+          : [...current, taille]
+      };
+    });
   };
 
   const clearFilters = () => setFilters((prev: any) => ({ 
@@ -189,12 +155,8 @@ export const NafFilters = ({
     (filters.categories?.length || 0) + 
     (filters.departments?.length || 0) +
     (filters.codesNaf?.length || 0) +
-    (filters.formesJuridiques?.length || 0);
-
-  // Sections avec des données disponibles, triées par count
-  const availableSections = NAF_SECTIONS
-    .filter(section => sectionCounts[section.code] > 0)
-    .sort((a, b) => sectionCounts[b.code] - sectionCounts[a.code]);
+    (filters.formesJuridiques?.length || 0) +
+    (filters.taillesEntreprise?.length || 0);
 
   return (
     <div className="space-y-0">
@@ -289,18 +251,11 @@ export const NafFilters = ({
         )}
       </div>
 
-      {/* Sections NAF (niveau 1) */}
-      <Collapsible open={sectionsOpen} onOpenChange={setSectionsOpen} className="border-b border-accent/20">
+      {/* Catégories d'activité */}
+      <Collapsible open={categoriesOpen} onOpenChange={setCategoriesOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-sm">Secteurs d'activité (NAF)</span>
-            {(filters.categories?.length || 0) > 0 && (
-              <span className="bg-accent/20 text-accent text-xs px-1.5 py-0.5 rounded-full">
-                {filters.categories?.length}
-              </span>
-            )}
-          </div>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${sectionsOpen ? 'rotate-180' : ''}`} />
+          <span className="font-medium text-sm">Catégories d'activité</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
         <CollapsibleContent>
@@ -310,96 +265,29 @@ export const NafFilters = ({
                 Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton key={i} className="h-10 w-full" />
                 ))
-              ) : availableSections.length === 0 ? (
+              ) : availableCategories.length === 0 ? (
                 <div className="text-sm text-muted-foreground text-center py-4">
-                  Aucun secteur disponible
+                  Aucune catégorie disponible
                 </div>
               ) : (
-                availableSections.map((section) => {
-                  const categoryKey = SECTION_TO_CATEGORY[section.code];
-                  const selected = filters.categories?.includes(categoryKey);
-                  const count = sectionCounts[section.code];
-                  const isExpanded = expandedSections.includes(section.code);
-                  const sectionDivisions = section.divisions
-                    .map(div => ({ code: div, ...NAF_DIVISIONS[div], count: divisionCounts[div] || 0 }))
-                    .filter(d => d.count > 0);
-                  
-                    return (
-                    <div key={section.code} className="space-y-1">
-                      <div
-                        onClick={() => handleSectionToggle(section.code)}
-                        className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
-                      >
-                        {/* Bouton expand */}
-                        {sectionDivisions.length > 0 ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleSectionExpand(section.code);
-                            }}
-                            className="p-0.5 hover:bg-accent/20 rounded mt-0.5 shrink-0"
-                          >
-                            {isExpanded ? (
-                              <ChevronDown className="w-3.5 h-3.5 text-accent" />
-                            ) : (
-                              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-                            )}
-                          </button>
-                        ) : (
-                          <div className="w-4 shrink-0" />
-                        )}
-                        
-                        {/* Checkbox */}
-                        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 ${
-                          selected ? 'bg-accent border-accent' : 'border-accent/30'
-                        }`}>
-                          {selected && <div className="w-2 h-2 bg-white rounded-sm" />}
-                        </div>
-                        
-                        {/* Emoji */}
-                        <span className="text-base shrink-0">{section.emoji}</span>
-                        
-                        {/* Code + Label + Count - sur une ligne */}
-                        <div className="flex-1 min-w-0 flex items-center gap-2">
-                          <span className="bg-accent/20 text-accent text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
-                            {section.code}
-                          </span>
-                          <span className="text-xs truncate flex-1">{section.label}</span>
-                          <span className="text-xs text-accent font-semibold shrink-0 tabular-nums">
-                            {count.toLocaleString('fr-FR')}
-                          </span>
-                        </div>
+                availableCategories.map((cat) => {
+                  const selected = filters.categories?.includes(cat.key);
+                  return (
+                    <div
+                      key={cat.key}
+                      onClick={() => handleCategoryToggle(cat.key)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                    >
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                        selected ? 'bg-accent border-accent' : 'border-accent/30'
+                      }`}>
+                        {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                       </div>
-                      
-                      {/* Sous-divisions */}
-                      {isExpanded && sectionDivisions.length > 0 && (
-                        <div className="ml-6 space-y-0.5 border-l-2 border-accent/20 pl-2">
-                          {sectionDivisions.map(div => {
-                            const divSelected = filters.codesNaf?.includes(div.code);
-                            return (
-                              <div
-                                key={div.code}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDivisionToggle(div.code);
-                                }}
-                                className="flex items-center gap-2 cursor-pointer hover:bg-accent/10 p-1.5 rounded transition-colors"
-                              >
-                                <div className={`w-3.5 h-3.5 rounded border-2 flex items-center justify-center shrink-0 ${
-                                  divSelected ? 'bg-accent border-accent' : 'border-accent/30'
-                                }`}>
-                                  {divSelected && <div className="w-1.5 h-1.5 bg-white rounded-sm" />}
-                                </div>
-                                <span className="text-[10px] font-mono text-accent/70 shrink-0">{div.code}</span>
-                                <span className="text-[11px] flex-1 truncate text-muted-foreground">{div.label}</span>
-                                <span className="text-[10px] text-accent/70 shrink-0 tabular-nums">
-                                  {div.count.toLocaleString('fr-FR')}
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                      <span className="text-lg mr-2">{cat.emoji}</span>
+                      <span className="text-sm leading-tight flex-1">{cat.label}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {cat.count.toLocaleString('fr-FR')}
+                      </span>
                     </div>
                   );
                 })
@@ -412,14 +300,7 @@ export const NafFilters = ({
       {/* Départements */}
       <Collapsible open={departmentsOpen} onOpenChange={setDepartmentsOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-sm">Départements</span>
-            {(filters.departments?.length || 0) > 0 && (
-              <span className="bg-accent/20 text-accent text-xs px-1.5 py-0.5 rounded-full">
-                {filters.departments?.length}
-              </span>
-            )}
-          </div>
+          <span className="font-medium text-sm">Départements</span>
           <ChevronDown className={`h-4 w-4 text-accent transition-transform ${departmentsOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
@@ -464,14 +345,7 @@ export const NafFilters = ({
       {/* Formes juridiques */}
       <Collapsible open={formesJuridiquesOpen} onOpenChange={setFormesJuridiquesOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-sm">Formes juridiques</span>
-            {(filters.formesJuridiques?.length || 0) > 0 && (
-              <span className="bg-accent/20 text-accent text-xs px-1.5 py-0.5 rounded-full">
-                {filters.formesJuridiques?.length}
-              </span>
-            )}
-          </div>
+          <span className="font-medium text-sm">Formes juridiques</span>
           <ChevronDown className={`h-4 w-4 text-accent transition-transform ${formesJuridiquesOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
@@ -498,6 +372,22 @@ export const NafFilters = ({
               })}
             </div>
           </ScrollArea>
+        </CollapsibleContent>
+      </Collapsible>
+
+      {/* Taille d'entreprise */}
+      <Collapsible open={taillesEntrepriseOpen} onOpenChange={setTaillesEntrepriseOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <span className="font-medium text-sm">Taille d'entreprise</span>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${taillesEntrepriseOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <div className="px-4 pb-4">
+            <div className="text-xs text-muted-foreground text-center py-4 bg-accent/5 rounded-lg border border-accent/10">
+              Les données de taille d'entreprise ne sont pas disponibles pour les nouveaux sites.
+            </div>
+          </div>
         </CollapsibleContent>
       </Collapsible>
 
