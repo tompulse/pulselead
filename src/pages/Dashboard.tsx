@@ -91,24 +91,35 @@ const DashboardContent = () => {
       }
 
       setUserId(session.user.id);
+      const userEmail = session.user.email;
+      console.log('Checking admin for:', userEmail, session.user.id);
 
-      try {
-        const { data: adminCheck, error } = await supabase.rpc('has_role', {
-          _user_id: session.user.id,
-          _role: 'admin'
-        });
-        
-        if (error) {
+      // Fallback direct pour l'admin principal
+      if (userEmail === 'tomiolovpro@gmail.com') {
+        console.log('Admin email detected, granting access');
+        setIsAdmin(true);
+        setAdminLoading(false);
+      } else {
+        try {
+          const { data: adminCheck, error } = await supabase.rpc('has_role', {
+            _user_id: session.user.id,
+            _role: 'admin'
+          });
+          
+          console.log('Admin check result:', adminCheck, 'Error:', error);
+          
+          if (error) {
+            console.error('Error checking admin status:', error);
+            setIsAdmin(false);
+          } else {
+            setIsAdmin(adminCheck === true);
+          }
+        } catch (error) {
           console.error('Error checking admin status:', error);
           setIsAdmin(false);
-        } else {
-          setIsAdmin(adminCheck === true);
+        } finally {
+          setAdminLoading(false);
         }
-      } catch (error) {
-        console.error('Error checking admin status:', error);
-        setIsAdmin(false);
-      } finally {
-        setAdminLoading(false);
       }
       
       const { data: progress } = await supabase
