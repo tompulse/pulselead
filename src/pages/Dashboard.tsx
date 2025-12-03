@@ -14,8 +14,6 @@ import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
-import { Button } from "@/components/ui/button";
-import { RefreshCw, Loader2 } from "lucide-react";
 import { trackEntrepriseView } from "@/utils/analytics";
 
 const DashboardContent = () => {
@@ -27,7 +25,6 @@ const DashboardContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [harmonizing, setHarmonizing] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -194,26 +191,6 @@ const DashboardContent = () => {
     });
   };
 
-  const handleHarmonizeNaf = async () => {
-    setHarmonizing(true);
-    try {
-      const { error } = await supabase.functions.invoke('harmonize-categories');
-      if (error) throw error;
-      toast({
-        title: "✅ Qualification lancée",
-        description: "La catégorisation NAF est en cours en arrière-plan",
-      });
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Échec de la qualification",
-        variant: "destructive",
-      });
-    } finally {
-      setHarmonizing(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -244,31 +221,6 @@ const DashboardContent = () => {
         isAdmin={isAdmin}
         onLogout={handleLogout}
       />
-
-      {/* Bouton admin - Qualifier la base NAF */}
-      {isAdmin && (
-        <div className="px-2 sm:px-4 pt-2">
-          <Button 
-            onClick={handleHarmonizeNaf}
-            disabled={harmonizing}
-            variant="outline" 
-            size="sm" 
-            className="gap-2"
-          >
-            {harmonizing ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Qualification en cours...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="h-4 w-4" />
-                Qualifier NAF
-              </>
-            )}
-          </Button>
-        </div>
-      )}
       
       <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
         <main className="flex-1 overflow-hidden min-h-0">
