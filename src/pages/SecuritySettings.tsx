@@ -21,15 +21,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-/**
- * Page des paramètres de sécurité
- * 
- * UTILITÉ:
- * - Visualiser les logs d'audit
- * - Informations sur la sécurité du compte
- * - Recommandations de sécurité
- */
-
 export default function SecuritySettings() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -68,13 +59,11 @@ export default function SecuritySettings() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Delete onboarding progress from database
       await supabase
         .from('user_onboarding_progress')
         .delete()
         .eq('user_id', user.id);
 
-      // Clear localStorage
       localStorage.removeItem('luma_onboarding_complete');
       localStorage.removeItem('luma_initial_filters');
 
@@ -83,7 +72,6 @@ export default function SecuritySettings() {
         description: "Redirection vers l'onboarding...",
       });
 
-      // Redirect to dashboard which will show onboarding
       setTimeout(() => {
         navigate('/dashboard');
         window.location.reload();
@@ -106,7 +94,6 @@ export default function SecuritySettings() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Verify password
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: user.email!,
         password: deletePassword,
@@ -121,19 +108,14 @@ export default function SecuritySettings() {
         return;
       }
 
-      // Delete user data from all tables
-      await supabase.from('lead_statuts').delete().eq('user_id', user.id);
-      await supabase.from('lead_interactions').delete().eq('user_id', user.id);
-      await supabase.from('tournee_visites').delete().eq('user_id', user.id);
+      // Delete user data from remaining tables
       await supabase.from('tournees').delete().eq('user_id', user.id);
       await supabase.from('user_onboarding_progress').delete().eq('user_id', user.id);
       await supabase.from('qualification_status').delete().eq('user_id', user.id);
 
-      // Delete auth account
       const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
       
       if (deleteError) {
-        // If admin delete fails, sign out user (they can't delete themselves with admin API)
         await supabase.auth.signOut();
       }
 
@@ -162,18 +144,11 @@ export default function SecuritySettings() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Fetch all user data
       const [
-        { data: statuts },
-        { data: interactions },
         { data: tournees },
-        { data: visites },
         { data: onboarding }
       ] = await Promise.all([
-        supabase.from('lead_statuts').select('*').eq('user_id', user.id),
-        supabase.from('lead_interactions').select('*').eq('user_id', user.id),
         supabase.from('tournees').select('*').eq('user_id', user.id),
-        supabase.from('tournee_visites').select('*').eq('user_id', user.id),
         supabase.from('user_onboarding_progress').select('*').eq('user_id', user.id),
       ]);
 
@@ -183,15 +158,11 @@ export default function SecuritySettings() {
           email: user.email,
           created_at: user.created_at,
         },
-        lead_statuts: statuts || [],
-        lead_interactions: interactions || [],
         tournees: tournees || [],
-        tournee_visites: visites || [],
         onboarding_progress: onboarding || [],
         export_date: new Date().toISOString(),
       };
 
-      // Create and download JSON file
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -341,7 +312,7 @@ export default function SecuritySettings() {
               <div className="flex-1">
                 <p className="font-medium text-sm">Ne partagez jamais vos identifiants</p>
                 <p className="text-xs text-muted-foreground">
-                  LUMA ne vous demandera jamais votre mot de passe par email ou téléphone
+                  PULSE ne vous demandera jamais votre mot de passe par email ou téléphone
                 </p>
               </div>
             </div>
@@ -457,9 +428,7 @@ export default function SecuritySettings() {
                         Cette action est <strong>irréversible</strong>. Toutes vos données seront supprimées :
                       </p>
                       <ul className="list-disc list-inside space-y-1 text-sm">
-                        <li>Tous vos prospects et interactions</li>
                         <li>Toutes vos tournées planifiées</li>
-                        <li>Votre historique CRM complet</li>
                         <li>Vos paramètres et préférences</li>
                       </ul>
                       <div className="space-y-2 pt-4">
@@ -472,28 +441,19 @@ export default function SecuritySettings() {
                           placeholder="Votre mot de passe"
                           value={deletePassword}
                           onChange={(e) => setDeletePassword(e.target.value)}
-                          className="bg-background/50 border-border"
+                          className="border-red-500/30"
                         />
                       </div>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setDeletePassword("")}>
-                      Annuler
-                    </AlertDialogCancel>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleDeleteAccount}
                       disabled={!deletePassword || deleting}
-                      className="bg-red-500 hover:bg-red-600 text-white"
+                      className="bg-red-500 hover:bg-red-600"
                     >
-                      {deleting ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin mr-2" />
-                          Suppression...
-                        </>
-                      ) : (
-                        "Supprimer définitivement"
-                      )}
+                      {deleting ? "Suppression..." : "Supprimer définitivement"}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
