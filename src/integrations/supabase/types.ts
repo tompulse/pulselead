@@ -453,6 +453,7 @@ export type Database = {
         }
         Returns: Json
       }
+      get_nouveaux_sites_filter_counts_v2: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
