@@ -38,14 +38,14 @@ const DashboardContent = () => {
     subcategories: [] as string[],
   });
 
-  const applyAIFiltersRef = useRef<((params: ApplyAIFiltersParams) => void) | null>(null);
+  const applyAIFiltersRef = useRef<((params: any) => void) | null>(null);
   const { view, setView, selectedEntreprise, setSelectedEntreprise, crmPanelOpen, setCrmPanelOpen } = useDashboard();
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const { hasAccess, isLoading: subscriptionLoading, daysRemaining } = useSubscription(userId || undefined);
 
-  const handleAIFiltersApply = (params: ApplyAIFiltersParams) => {
+  const handleAIFiltersApply = (params: any) => {
     // Passer au mode prospects si pas déjà le cas
     if (view !== 'prospects') {
       setView('prospects');
