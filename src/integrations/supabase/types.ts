@@ -53,6 +53,78 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_interactions: {
+        Row: {
+          created_at: string
+          date_interaction: string
+          date_relance: string | null
+          entreprise_id: string
+          id: string
+          notes: string | null
+          statut: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_interaction?: string
+          date_relance?: string | null
+          entreprise_id: string
+          id?: string
+          notes?: string | null
+          statut?: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_interaction?: string
+          date_relance?: string | null
+          entreprise_id?: string
+          id?: string
+          notes?: string | null
+          statut?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lead_statuts: {
+        Row: {
+          created_at: string
+          entreprise_id: string
+          id: string
+          notes: string | null
+          score: number | null
+          statut: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entreprise_id: string
+          id?: string
+          notes?: string | null
+          score?: number | null
+          statut?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entreprise_id?: string
+          id?: string
+          notes?: string | null
+          score?: number | null
+          statut?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       nouveaux_sites: {
         Row: {
           adresse: string | null

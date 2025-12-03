@@ -258,12 +258,24 @@ export const TourneeRouteDisplay = ({
             >
               <SortableContext items={entreprises.map(e => e.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-2">
-                  {entreprises.map((entreprise, index) => (
+                {entreprises.map((entreprise, index) => (
                     <SortableEntrepriseItem
                       key={entreprise.id}
-                      entreprise={entreprise}
+                      entreprise={{ ...entreprise, latitude: entreprise.latitude || 0, longitude: entreprise.longitude || 0 }}
                       index={index}
-                      isCompleted={false}
+                      onNavigate={(e) => {
+                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${e.latitude},${e.longitude}`, '_blank');
+                      }}
+                      onVisiteClick={() => {}}
+                      onDelete={async (e) => {
+                        const newOrder = entreprises.filter(ent => ent.id !== e.id);
+                        setEntreprises(newOrder);
+                        await supabase
+                          .from('tournees')
+                          .update({ ordre_optimise: newOrder.map(ent => ent.id) })
+                          .eq('id', tourneeId);
+                        toast({ title: "Arrêt supprimé", duration: 2000 });
+                      }}
                     />
                   ))}
                 </div>
@@ -276,11 +288,16 @@ export const TourneeRouteDisplay = ({
         <Card className="glass-card border-accent/20 overflow-hidden">
           <CardContent className="p-0 h-full">
             <TourneeMap
-              entreprises={entreprises.filter(e => e.latitude && e.longitude)}
-              pointDepart={initialPointDepartLat && initialPointDepartLng ? {
-                lat: initialPointDepartLat,
-                lng: initialPointDepartLng
-              } : undefined}
+              entreprises={entreprises.filter(e => e.latitude && e.longitude).map(e => ({
+                id: e.id,
+                nom: e.nom,
+                adresse: e.adresse || '',
+                ville: e.ville || undefined,
+                latitude: e.latitude!,
+                longitude: e.longitude!
+              }))}
+              pointDepartLat={initialPointDepartLat}
+              pointDepartLng={initialPointDepartLng}
             />
           </CardContent>
         </Card>
