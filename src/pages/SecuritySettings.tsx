@@ -124,7 +124,6 @@ export default function SecuritySettings() {
       // Delete user data from all tables
       await supabase.from('lead_statuts').delete().eq('user_id', user.id);
       await supabase.from('lead_interactions').delete().eq('user_id', user.id);
-      await supabase.from('tournee_visites').delete().eq('user_id', user.id);
       await supabase.from('tournees').delete().eq('user_id', user.id);
       await supabase.from('user_onboarding_progress').delete().eq('user_id', user.id);
       await supabase.from('qualification_status').delete().eq('user_id', user.id);
@@ -167,13 +166,11 @@ export default function SecuritySettings() {
         { data: statuts },
         { data: interactions },
         { data: tournees },
-        { data: visites },
         { data: onboarding }
       ] = await Promise.all([
         supabase.from('lead_statuts').select('*').eq('user_id', user.id),
         supabase.from('lead_interactions').select('*').eq('user_id', user.id),
         supabase.from('tournees').select('*').eq('user_id', user.id),
-        supabase.from('tournee_visites').select('*').eq('user_id', user.id),
         supabase.from('user_onboarding_progress').select('*').eq('user_id', user.id),
       ]);
 

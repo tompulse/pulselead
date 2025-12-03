@@ -7,7 +7,6 @@ import { useSubscription } from "@/hooks/useSubscription";
 
 import { DashboardProvider, useDashboard } from "@/contexts/DashboardContext";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprisePanel";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
@@ -15,16 +14,9 @@ import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
-import { DataEnrichmentPanel } from "@/components/dashboard/DataEnrichmentPanel";
-import { AdminNouveauxSitesImport } from "@/components/dashboard/AdminNouveauxSitesImport";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Filter, Loader2, CheckCircle, Database } from "lucide-react";
-import { format } from "date-fns";
+import { RefreshCw, Loader2 } from "lucide-react";
 import { trackEntrepriseView } from "@/utils/analytics";
-import type { ApplyAIFiltersParams } from "@/components/dashboard/ProspectsView";
 
 const DashboardContent = () => {
   const [loading, setLoading] = useState(true);
@@ -35,7 +27,7 @@ const DashboardContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [enrichmentOpen, setEnrichmentOpen] = useState(false);
+  const [harmonizing, setHarmonizing] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -202,6 +194,26 @@ const DashboardContent = () => {
     });
   };
 
+  const handleHarmonizeNaf = async () => {
+    setHarmonizing(true);
+    try {
+      const { error } = await supabase.functions.invoke('harmonize-categories');
+      if (error) throw error;
+      toast({
+        title: "✅ Qualification lancée",
+        description: "La catégorisation NAF est en cours en arrière-plan",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Échec de la qualification",
+        variant: "destructive",
+      });
+    } finally {
+      setHarmonizing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -224,8 +236,6 @@ const DashboardContent = () => {
     return <FilterOnboarding onComplete={handleOnboardingComplete} />;
   }
 
-  const showSidebar = view === 'prospects';
-
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
       <DashboardHeader 
@@ -235,25 +245,28 @@ const DashboardContent = () => {
         onLogout={handleLogout}
       />
 
-      {/* Boutons admin */}
+      {/* Bouton admin - Qualifier la base NAF */}
       {isAdmin && (
-        <div className="px-2 sm:px-4 pt-2 flex gap-2">
-          <AdminNouveauxSitesImport />
-          <Dialog open={enrichmentOpen} onOpenChange={setEnrichmentOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
-                <Database className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline">Enrichir</span>
-                <span className="xs:hidden">Données</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl mx-2 sm:mx-auto">
-              <DialogHeader>
-                <DialogTitle className="text-base sm:text-lg">Enrichissement automatique des données</DialogTitle>
-              </DialogHeader>
-              <DataEnrichmentPanel />
-            </DialogContent>
-          </Dialog>
+        <div className="px-2 sm:px-4 pt-2">
+          <Button 
+            onClick={handleHarmonizeNaf}
+            disabled={harmonizing}
+            variant="outline" 
+            size="sm" 
+            className="gap-2"
+          >
+            {harmonizing ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Qualification en cours...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4" />
+                Qualifier NAF
+              </>
+            )}
+          </Button>
         </div>
       )}
       

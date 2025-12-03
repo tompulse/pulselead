@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Menu, MapIcon, Navigation, TrendingUp, LogOut, CreditCard } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
-import { SyncButton } from "./SyncButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -57,7 +56,6 @@ export const DashboardHeader = ({
                   {isAdmin && (
                     <>
                       <div className="pb-4 border-b border-accent/20 space-y-2">
-                        <SyncButton />
                         <Button 
                           variant="outline" 
                           className="w-full justify-start gap-2" 
@@ -117,7 +115,6 @@ export const DashboardHeader = ({
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <>
-                  <SyncButton />
                   <Dialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen}>
                     <DialogTrigger asChild>
                       <Button
