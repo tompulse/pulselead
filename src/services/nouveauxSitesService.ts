@@ -53,6 +53,11 @@ export const nouveauxSitesService = {
         query = query.in('categorie_juridique', filters.formesJuridiques);
       }
 
+      // Filtre par taille d'entreprise
+      if (filters.taillesEntreprise && filters.taillesEntreprise.length > 0) {
+        query = query.in('categorie_entreprise', filters.taillesEntreprise);
+      }
+
       const { data, error, count } = await query;
 
       if (error) throw error;
