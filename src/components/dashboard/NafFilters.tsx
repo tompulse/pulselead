@@ -335,17 +335,17 @@ export const NafFilters = ({
                         {/* Section checkbox */}
                         <div
                           onClick={() => handleSectionToggle(section.code)}
-                          className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98] flex-1"
+                          className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98] flex-1"
                         >
-                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 ${
                             sectionSelected ? 'bg-accent border-accent' : 'border-accent/30'
                           }`}>
                             {sectionSelected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                           </div>
-                          <span className="text-lg mr-1">{section.emoji}</span>
-                          <span className="text-xs font-semibold text-accent mr-1">{section.code}</span>
-                          <span className="text-sm leading-tight flex-1 truncate">{section.label}</span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-lg shrink-0">{section.emoji}</span>
+                          <span className="text-xs font-semibold text-accent shrink-0">{section.code}</span>
+                          <span className="text-sm leading-snug flex-1 break-words">{section.label}</span>
+                          <span className="text-xs text-muted-foreground shrink-0">
                             {section.count.toLocaleString('fr-FR')}
                           </span>
                         </div>
@@ -362,16 +362,16 @@ export const NafFilters = ({
                                 <div
                                   key={division.code}
                                   onClick={() => handleDivisionToggle(division.code)}
-                                  className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
+                                  className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98]"
                                 >
-                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 ${
                                     divisionSelected ? 'bg-accent/80 border-accent/80' : 'border-accent/20'
                                   }`}>
                                     {divisionSelected && <div className="w-2 h-2 bg-white rounded-sm" />}
                                   </div>
-                                  <span className="text-xs font-mono text-muted-foreground">{division.code}</span>
-                                  <span className="text-xs leading-tight flex-1 truncate">{division.label}</span>
-                                  <span className="text-xs text-muted-foreground">
+                                  <span className="text-xs font-mono text-muted-foreground shrink-0">{division.code}</span>
+                                  <span className="text-xs leading-snug flex-1 break-words">{division.label}</span>
+                                  <span className="text-xs text-muted-foreground shrink-0">
                                     {division.count.toLocaleString('fr-FR')}
                                   </span>
                                 </div>
