@@ -20,6 +20,7 @@ const DashboardContent = () => {
   const [loading, setLoading] = useState(true);
   const [adminLoading, setAdminLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isDemoUser, setIsDemoUser] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -84,9 +85,15 @@ const DashboardContent = () => {
       const userEmail = session.user.email;
       console.log('Checking admin for:', userEmail, session.user.id);
 
-      // Fallback direct pour les admins principaux
+      // Fallback direct pour les admins principaux et compte démo
       const adminEmails = ['tomiolovpro@gmail.com', 'tom.iolov@hotmail.fr'];
-      if (userEmail && adminEmails.includes(userEmail)) {
+      const demoEmail = 'demo@pulse.com';
+      
+      if (userEmail === demoEmail) {
+        console.log('Demo user detected, granting visitor access');
+        setIsDemoUser(true);
+        setAdminLoading(false);
+      } else if (userEmail && adminEmails.includes(userEmail)) {
         console.log('Admin email detected, granting access');
         setIsAdmin(true);
         setAdminLoading(false);
@@ -162,11 +169,12 @@ const DashboardContent = () => {
   // Vérifier l'accès à l'abonnement après le chargement (attendre que le statut admin soit vérifié)
   useEffect(() => {
     if (!loading && !adminLoading && !subscriptionLoading && userId) {
-      if (!isAdmin && !hasAccess) {
+      // Bypass pour admins et utilisateur démo
+      if (!isAdmin && !isDemoUser && !hasAccess) {
         navigate("/subscribe");
       }
     }
-  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, navigate]);
+  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate]);
 
 
   const handleLogout = async () => {
