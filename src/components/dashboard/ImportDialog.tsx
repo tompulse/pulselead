@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useQueryClient } from "@tanstack/react-query";
 import JSZip from "jszip";
 import * as XLSX from "xlsx";
 
@@ -17,6 +18,7 @@ export const ImportDialog = () => {
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
   const [importType, setImportType] = useState<'entreprises' | 'nouveaux-sites'>('entreprises');
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -120,7 +122,12 @@ export const ImportDialog = () => {
 
         setProgress(100);
 
-        const successMessage = `${totalInserted} sites importés avec succès${totalErrors > 0 ? ` (${totalErrors} échecs)` : ''}`;
+        // Fetch total count from database
+        const { count: totalCount } = await supabase
+          .from('nouveaux_sites')
+          .select('*', { count: 'exact', head: true });
+
+        const successMessage = `${totalInserted} sites importés avec succès${totalErrors > 0 ? ` (${totalErrors} échecs)` : ''} — Total en base : ${totalCount?.toLocaleString('fr-FR') || '?'}`;
         
         setResult({
           success: true,
@@ -132,9 +139,9 @@ export const ImportDialog = () => {
           description: successMessage,
         });
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
+        // Invalidate queries to refresh data without page reload
+        await queryClient.invalidateQueries({ queryKey: ['nouveaux-sites'] });
+        await queryClient.invalidateQueries({ queryKey: ['nouveaux-sites-available-filters-v2'] });
 
         return;
       }
@@ -225,6 +232,10 @@ export const ImportDialog = () => {
         description: successMessage,
       });
 
+      // Invalidate queries to refresh data without page reload
+      await queryClient.invalidateQueries({ queryKey: ['nouveaux-sites'] });
+      await queryClient.invalidateQueries({ queryKey: ['nouveaux-sites-available-filters-v2'] });
+
       // Show qualification notification
       if (totalInserted > 0) {
         setTimeout(() => {
@@ -235,11 +246,6 @@ export const ImportDialog = () => {
           });
         }, 1500);
       }
-
-      // Reload page after 3 seconds
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
 
     } catch (error) {
       console.error('Import error:', error);
