@@ -7,31 +7,26 @@ const corsHeaders = {
 };
 
 // Conversion Lambert 93 (EPSG:2154) vers WGS84 (EPSG:4326)
-// Formules simplifiées pour la France métropolitaine
 function lambert93ToWGS84(x: number, y: number): { lat: number; lng: number } | null {
   if (!x || !y || x === 0 || y === 0) return null;
+  if (x < 100000 || x > 1300000 || y < 6000000 || y > 7200000) return null;
 
-  // Constantes Lambert 93
   const n = 0.7256077650532670;
   const c = 11754255.426096;
   const xs = 700000;
   const ys = 12655612.049876;
   const e = 0.08248325676;
-  const lambda0 = 0.04079234433198; // 3° en radians
+  const lambda0 = 0.04079234433198;
 
   try {
     const dx = x - xs;
     const dy = y - ys;
-
     const R = Math.sqrt(dx * dx + dy * dy);
     const gamma = Math.atan2(dx, -dy);
-
     const lambda = lambda0 + gamma / n;
-
     const L = -Math.log(R / c) / n;
     let phi = 2 * Math.atan(Math.exp(L)) - Math.PI / 2;
 
-    // Iterations pour la latitude
     for (let i = 0; i < 10; i++) {
       const eSinPhi = e * Math.sin(phi);
       phi = 2 * Math.atan(
@@ -42,16 +37,88 @@ function lambert93ToWGS84(x: number, y: number): { lat: number; lng: number } | 
     const lat = phi * 180 / Math.PI;
     const lng = lambda * 180 / Math.PI;
 
-    // Validation des coordonnées (France métropolitaine approximativement)
-    if (lat < 41 || lat > 51 || lng < -5 || lng > 10) {
-      return null;
-    }
-
+    if (lat < 41 || lat > 51 || lng < -5 || lng > 10) return null;
     return { lat, lng };
   } catch (error) {
     console.error("Error converting Lambert to WGS84:", error);
     return null;
   }
+}
+
+// NAF hierarchy extraction from code
+function getNafHierarchy(codeNaf: string | null): { 
+  section: string | null; 
+  division: string | null; 
+  groupe: string | null; 
+  classe: string | null; 
+} {
+  if (!codeNaf) return { section: null, division: null, groupe: null, classe: null };
+  
+  const code = codeNaf.replace(/\./g, '').toUpperCase();
+  
+  // Division = 2 premiers chiffres
+  const division = code.substring(0, 2);
+  
+  // Groupe = 2 premiers chiffres + 1 chiffre (ex: "412")
+  const groupe = code.length >= 3 ? code.substring(0, 3) : null;
+  
+  // Classe = 4 premiers caractères (ex: "41.20" devient "4120")
+  const classe = code.length >= 4 ? code.substring(0, 4) : null;
+  
+  // Section mapping based on division
+  const divisionNum = parseInt(division, 10);
+  let section: string | null = null;
+  
+  if (divisionNum >= 1 && divisionNum <= 3) section = 'A';
+  else if (divisionNum >= 5 && divisionNum <= 9) section = 'B';
+  else if (divisionNum >= 10 && divisionNum <= 33) section = 'C';
+  else if (divisionNum >= 35 && divisionNum <= 35) section = 'D';
+  else if (divisionNum >= 36 && divisionNum <= 39) section = 'E';
+  else if (divisionNum >= 41 && divisionNum <= 43) section = 'F';
+  else if (divisionNum >= 45 && divisionNum <= 47) section = 'G';
+  else if (divisionNum >= 49 && divisionNum <= 53) section = 'H';
+  else if (divisionNum >= 55 && divisionNum <= 56) section = 'I';
+  else if (divisionNum >= 58 && divisionNum <= 63) section = 'J';
+  else if (divisionNum >= 64 && divisionNum <= 66) section = 'K';
+  else if (divisionNum === 68) section = 'L';
+  else if (divisionNum >= 69 && divisionNum <= 75) section = 'M';
+  else if (divisionNum >= 77 && divisionNum <= 82) section = 'N';
+  else if (divisionNum === 84) section = 'O';
+  else if (divisionNum === 85) section = 'P';
+  else if (divisionNum >= 86 && divisionNum <= 88) section = 'Q';
+  else if (divisionNum >= 90 && divisionNum <= 93) section = 'R';
+  else if (divisionNum >= 94 && divisionNum <= 96) section = 'S';
+  else if (divisionNum >= 97 && divisionNum <= 98) section = 'T';
+  else if (divisionNum === 99) section = 'U';
+  
+  return { section, division, groupe, classe };
+}
+
+// Parse date from various formats
+function parseDate(dateStr: string | null | undefined): string | null {
+  if (!dateStr) return null;
+  const str = String(dateStr).trim();
+  
+  // Format DD/MM/YYYY
+  if (str.includes('/')) {
+    const parts = str.split('/');
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+  }
+  
+  // Format YYYYMMDD
+  if (str.length === 8 && !isNaN(Number(str))) {
+    return `${str.substring(0, 4)}-${str.substring(4, 6)}-${str.substring(6, 8)}`;
+  }
+  
+  // Format YYYY-MM-DD (already correct)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    return str;
+  }
+  
+  return null;
 }
 
 serve(async (req) => {
@@ -65,7 +132,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    // Parse JSON uniquement (l'utilisateur devra convertir Excel -> JSON)
     const body = await req.json();
     const entreprises = body.entreprises || [];
     console.log(`📊 Received ${entreprises.length} entreprises`);
@@ -74,22 +140,34 @@ serve(async (req) => {
       throw new Error('No entreprises data provided');
     }
 
-    // Mapping des colonnes Excel vers la structure de base de données
     const mappedData = entreprises.map((row: any) => {
-      // Reconstruire l'adresse complète
+      // Support multiple column name formats
+      const siret = String(row.siret || '').trim();
+      
+      // Name: try multiple possible columns
+      const nom = String(
+        row.enseigne1Etablissement || 
+        row.Entreprise || 
+        row.denominationUsuelleEtablissement ||
+        row.nom ||
+        ''
+      ).trim();
+      
+      if (!siret || !nom) return null;
+
+      // Build full address
       const adresseComplete = [
-        row.numeroVoieEtablissement,
-        row.typeVoieEtablissement,
-        row.libelleVoieEtablissement
+        row.numeroVoieEtablissement || row.numeroVoie,
+        row.typeVoieEtablissement || row.typeVoie,
+        row.libelleVoieEtablissement || row.libelleVoie
       ].filter(Boolean).join(' ');
 
-      // Convertir les coordonnées Lambert en WGS84
+      // Convert Lambert coordinates to WGS84
+      const lambertX = parseFloat(row.coordonneeLambertAbscisseEtablissement || row.coordonnee_lambert_x || 0);
+      const lambertY = parseFloat(row.coordonneeLambertOrdonneeEtablissement || row.coordonnee_lambert_y || 0);
+      
       let latitude = null;
       let longitude = null;
-      
-      const lambertX = parseFloat(row.coordonneeLambertAbscisseEtablissement);
-      const lambertY = parseFloat(row.coordonneeLambertOrdonneeEtablissement);
-      
       if (!isNaN(lambertX) && !isNaN(lambertY) && lambertX !== 0 && lambertY !== 0) {
         const coords = lambert93ToWGS84(lambertX, lambertY);
         if (coords) {
@@ -98,72 +176,92 @@ serve(async (req) => {
         }
       }
 
-      // Parser la date de création
-      let dateCreation = null;
-      if (row['date création']) {
-        try {
-          const dateStr = String(row['date création']);
-          // Format: YYYYMMDD ou DD/MM/YYYY
-          if (dateStr.length === 8 && !dateStr.includes('/')) {
-            const year = dateStr.substring(0, 4);
-            const month = dateStr.substring(4, 6);
-            const day = dateStr.substring(6, 8);
-            dateCreation = `${year}-${month}-${day}`;
-          } else if (dateStr.includes('/')) {
-            const parts = dateStr.split('/');
-            if (parts.length === 3) {
-              dateCreation = `${parts[2]}-${parts[1]}-${parts[0]}`;
-            }
-          }
-        } catch (e) {
-          console.warn('Error parsing date:', row['date création']);
-        }
-      }
+      // Parse creation date (multiple formats)
+      const dateCreation = parseDate(
+        row.dateCreationEtablissement || 
+        row['date création'] || 
+        row.date_creation
+      );
+
+      // Get NAF code
+      const codeNaf = String(
+        row.activitePrincipaleEtablissement || 
+        row.activitePrincipaleUniteLegale ||
+        row.code_naf ||
+        ''
+      ).trim() || null;
+
+      // Get NAF hierarchy
+      const nafHierarchy = getNafHierarchy(codeNaf);
+
+      // Company size
+      const categorieEntreprise = row.categorieEntreprise 
+        ? String(row.categorieEntreprise).toUpperCase().trim() 
+        : 'Non spécifié';
+
+      // Legal form
+      const categorieJuridique = row.categorieJuridiqueUniteLegale 
+        ? String(row.categorieJuridiqueUniteLegale).trim()
+        : null;
+
+      // Is headquarters (handle VRAI/FAUX format)
+      const estSiege = 
+        row.etablissementSiege === 'VRAI' || 
+        row.etablissementSiege === true || 
+        row.siège === 'true' || 
+        row.siège === true ||
+        row.est_siege === true;
 
       return {
-        siret: String(row.siret || '').trim(),
-        nom: String(row.Entreprise || '').trim(),
+        siret,
+        nom,
         date_creation: dateCreation,
-        est_siege: row.siège === 'true' || row.siège === true || row.siège === 'Oui',
-        categorie_juridique: row.categorieJuridiqueUniteLegale ? String(row.categorieJuridiqueUniteLegale) : null,
-        categorie_entreprise: row.categorieEntreprise ? String(row.categorieEntreprise).toUpperCase() : null,
-        complement_adresse: row.complementAdresseEtablissement || null,
-        numero_voie: row.numeroVoieEtablissement || null,
-        type_voie: row.typeVoieEtablissement || null,
-        libelle_voie: row.libelleVoieEtablissement || null,
-        code_postal: row.codePostalEtablissement ? String(row.codePostalEtablissement) : null,
-        ville: row.libelleCommuneEtablissement || null,
+        est_siege: estSiege,
+        categorie_juridique: categorieJuridique,
+        categorie_entreprise: categorieEntreprise,
+        complement_adresse: row.complementAdresseEtablissement || row.complement_adresse || null,
+        numero_voie: row.numeroVoieEtablissement || row.numero_voie || null,
+        type_voie: row.typeVoieEtablissement || row.type_voie || null,
+        libelle_voie: row.libelleVoieEtablissement || row.libelle_voie || null,
+        code_postal: row.codePostalEtablissement || row.code_postal ? String(row.codePostalEtablissement || row.code_postal) : null,
+        ville: row.libelleCommuneEtablissement || row.ville || null,
         coordonnee_lambert_x: lambertX || null,
         coordonnee_lambert_y: lambertY || null,
         latitude,
         longitude,
-        code_naf: row.activitePrincipaleEtablissement ? String(row.activitePrincipaleEtablissement) : null,
+        code_naf: codeNaf,
+        naf_section: nafHierarchy.section,
+        naf_division: nafHierarchy.division,
+        naf_groupe: nafHierarchy.groupe,
+        naf_classe: nafHierarchy.classe,
         adresse: adresseComplete || null
       };
-    }).filter(item => item.siret && item.nom); // Filtrer les lignes sans SIRET ou nom
+    }).filter(Boolean);
 
     console.log(`✅ Mapped ${mappedData.length} valid entreprises`);
 
-    // Dédupliquer par SIRET (garder la première occurrence)
+    // Deduplicate by SIRET
     const uniqueData = mappedData.reduce((acc: any[], current: any) => {
       const exists = acc.find(item => item.siret === current.siret);
-      if (!exists) {
-        acc.push(current);
-      }
+      if (!exists) acc.push(current);
       return acc;
     }, []);
 
     console.log(`🔄 After deduplication: ${uniqueData.length} entreprises`);
 
-    // Insertion par batch de 500
-    const BATCH_SIZE = 500;
+    // Insert in batches of 300 to avoid timeouts
+    const BATCH_SIZE = 300;
     let totalInserted = 0;
     let totalErrors = 0;
 
     for (let i = 0; i < uniqueData.length; i += BATCH_SIZE) {
       const batch = uniqueData.slice(i, i + BATCH_SIZE);
+      const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+      const totalBatches = Math.ceil(uniqueData.length / BATCH_SIZE);
       
-      const { data, error } = await supabaseClient
+      console.log(`Processing batch ${batchNum}/${totalBatches} (${batch.length} records)`);
+      
+      const { error } = await supabaseClient
         .from('nouveaux_sites')
         .upsert(batch, { 
           onConflict: 'siret',
@@ -171,11 +269,11 @@ serve(async (req) => {
         });
 
       if (error) {
-        console.error(`❌ Batch ${Math.floor(i / BATCH_SIZE) + 1} error:`, error);
+        console.error(`❌ Batch ${batchNum} error:`, error.message);
         totalErrors += batch.length;
       } else {
         totalInserted += batch.length;
-        console.log(`✅ Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${batch.length} entreprises inserted`);
+        console.log(`✅ Batch ${batchNum}: ${batch.length} records inserted`);
       }
     }
 
