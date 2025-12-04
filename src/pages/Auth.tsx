@@ -19,7 +19,16 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Compte démo sans validation stricte
+  const DEMO_EMAIL = 'demo@pulse.com';
+  const isDemoAccount = email.toLowerCase() === DEMO_EMAIL;
+
   const loginSchema = z.object({
+    email: z.string().trim().email('Email invalide').max(255, 'Email trop long'),
+    password: z.string().min(6, 'Minimum 6 caractères requis')
+  });
+
+  const loginSchemaStrict = z.object({
     email: z.string().trim().email('Email invalide').max(255, 'Email trop long'),
     password: z.string()
       .min(8, 'Minimum 8 caractères requis')
@@ -27,11 +36,17 @@ const Auth = () => {
       .regex(/[0-9]/, 'Doit contenir au moins un chiffre')
   });
 
-  const signupSchema = loginSchema.extend({
+  const signupSchema = loginSchemaStrict.extend({
     phone: z.string()
       .trim()
       .regex(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/, 'Numéro de téléphone français invalide')
       .transform(val => val.replace(/[\s.-]/g, ''))
+  });
+
+  // Schema simplifié pour le compte démo (pas de téléphone requis)
+  const demoSignupSchema = z.object({
+    email: z.string().trim().email('Email invalide'),
+    password: z.string().min(6, 'Minimum 6 caractères requis')
   });
 
   useEffect(() => {
@@ -55,9 +70,18 @@ const Auth = () => {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate input
-    const schema = isLogin ? loginSchema : signupSchema;
-    const data = isLogin ? { email, password } : { email, password, phone };
+    // Choisir le schema selon le type de compte
+    let schema;
+    let data;
+    
+    if (isLogin) {
+      schema = isDemoAccount ? loginSchema : loginSchemaStrict;
+      data = { email, password };
+    } else {
+      schema = isDemoAccount ? demoSignupSchema : signupSchema;
+      data = isDemoAccount ? { email, password } : { email, password, phone };
+    }
+    
     const validation = schema.safeParse(data);
     
     if (!validation.success) {
@@ -86,23 +110,29 @@ const Auth = () => {
           description: "Bienvenue sur PULSE !",
         });
       } else {
-        const validatedData = validation.data as { email: string; password: string; phone: string };
+        // Pour le compte démo, pas de téléphone
+        const signupOptions: any = {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+        };
+        
+        if (!isDemoAccount && phone) {
+          const validatedData = validation.data as { email: string; password: string; phone?: string };
+          signupOptions.data = { phone: validatedData.phone };
+        }
+        
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
-            data: {
-              phone: validatedData.phone,
-            }
-          },
+          options: signupOptions,
         });
 
         if (error) throw error;
 
         toast({
-          title: "✉️ Vérifiez votre email",
-          description: "Un lien de confirmation a été envoyé à votre adresse email",
+          title: isDemoAccount ? "Compte démo créé !" : "✉️ Vérifiez votre email",
+          description: isDemoAccount 
+            ? "Vous pouvez maintenant vous connecter" 
+            : "Un lien de confirmation a été envoyé à votre adresse email",
         });
         setEmail('');
         setPassword('');
@@ -159,7 +189,7 @@ const Auth = () => {
               />
             </div>
 
-            {!isLogin && (
+            {!isLogin && !isDemoAccount && (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Téléphone *</Label>
