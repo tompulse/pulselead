@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { SubscriptionManagement } from "./SubscriptionManagement";
 import { QualificationProgressDialog } from "./QualificationProgressDialog";
+import { ImportDialog } from "./ImportDialog";
 import { useState } from "react";
 
 interface DashboardHeaderProps {
@@ -117,6 +118,7 @@ export const DashboardHeader = ({
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <>
+                  <ImportDialog />
                   <Button
                     variant="outline"
                     size="sm"
