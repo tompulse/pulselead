@@ -52,12 +52,44 @@ export const ImportDialog = () => {
       if (importType === 'nouveaux-sites') {
         setProgress(20);
 
-        // Lire et parser le fichier Excel côté client
-        const buffer = await file.arrayBuffer();
-        const workbook = XLSX.read(buffer, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        let jsonData: any[];
+
+        // Handle CSV files with semicolon delimiter
+        if (file.name.endsWith('.csv')) {
+          const text = await file.text();
+          const lines = text.split('\n').filter(line => line.trim());
+          
+          if (lines.length === 0) {
+            throw new Error('Le fichier CSV est vide');
+          }
+
+          // Detect delimiter (semicolon or comma)
+          const firstLine = lines[0];
+          const delimiter = firstLine.includes(';') ? ';' : ',';
+          
+          // Parse headers
+          const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
+          
+          // Parse data rows
+          jsonData = lines.slice(1).map(line => {
+            const values = line.split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ''));
+            const row: any = {};
+            headers.forEach((header, index) => {
+              row[header] = values[index] || '';
+            });
+            return row;
+          }).filter(row => row.siret); // Filter rows with valid siret
+          
+          console.log(`📊 Parsed ${jsonData.length} rows from CSV (delimiter: "${delimiter}")`);
+        } else {
+          // Read Excel file
+          const buffer = await file.arrayBuffer();
+          const workbook = XLSX.read(buffer, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          jsonData = XLSX.utils.sheet_to_json(worksheet);
+          console.log(`📊 Parsed ${jsonData.length} rows from Excel`);
+        }
 
         setProgress(40);
         console.log(`📊 Parsed ${jsonData.length} rows from Excel`);
