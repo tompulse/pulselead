@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,8 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { TourneeDetailView } from '@/components/dashboard/TourneeDetailView';
+import { TourneeCreationStandalone } from '@/components/dashboard/TourneeCreationStandalone';
 
 interface Tournee {
   id: string;
@@ -27,10 +30,17 @@ interface Tournee {
   distance_totale_km: number | null;
   temps_estime_minutes: number | null;
   statut: string;
+  point_depart_lat: number | null;
+  point_depart_lng: number | null;
+  visites_effectuees?: any;
 }
+
+type ViewMode = 'list' | 'create' | 'detail';
 
 export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   const queryClient = useQueryClient();
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [selectedTournee, setSelectedTournee] = useState<Tournee | null>(null);
 
   // Fetch user's tournees
   const { data: tournees = [], isLoading } = useQuery({
@@ -86,25 +96,56 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   };
 
   const handleCreateTournee = () => {
-    toast.info('Fonctionnalité à venir - Backend à implémenter');
+    setViewMode('create');
   };
 
   const handleViewDetails = (tournee: Tournee) => {
-    toast.info(`Détails de ${tournee.nom} - Backend à implémenter`);
+    setSelectedTournee(tournee);
+    setViewMode('detail');
   };
 
-  const handleEdit = (tournee: Tournee) => {
-    toast.info(`Modifier ${tournee.nom} - Backend à implémenter`);
+  const handleBackToList = () => {
+    setSelectedTournee(null);
+    setViewMode('list');
+    queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
+  };
+
+  const handleCreationSuccess = () => {
+    setViewMode('list');
+    queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
   };
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
   };
 
+  // View: Detail
+  if (viewMode === 'detail' && selectedTournee) {
+    return (
+      <TourneeDetailView 
+        tournee={selectedTournee} 
+        onBack={handleBackToList}
+      />
+    );
+  }
+
+  // View: Create
+  if (viewMode === 'create') {
+    return (
+      <TourneeCreationStandalone
+        userId={userId}
+        onClose={handleBackToList}
+        onSuccess={handleCreationSuccess}
+      />
+    );
+  }
+
+  // View: List (default)
   return (
     <div className="h-full flex flex-col overflow-hidden p-4 space-y-4">
       {/* Create Button */}
       <Button 
+        type="button"
         onClick={handleCreateTournee}
         className="w-full h-14 bg-accent hover:bg-accent/90 text-primary font-semibold text-base rounded-xl"
       >
@@ -178,6 +219,7 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                 {/* Actions row */}
                 <div className="flex items-center gap-2">
                   <Button 
+                    type="button"
                     variant="outline"
                     className="flex-1 h-12 border-accent/30 hover:bg-accent/10 rounded-xl"
                     onClick={() => handleViewDetails(tournee)}
@@ -186,14 +228,16 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                     Voir détails
                   </Button>
                   <Button 
+                    type="button"
                     variant="outline" 
                     size="icon"
-                    onClick={() => handleEdit(tournee)}
+                    onClick={() => toast.info('Modification à venir')}
                     className="h-12 w-12 border-accent/30 hover:bg-accent/10 rounded-xl"
                   >
                     <Pencil className="w-4 h-4" />
                   </Button>
                   <Button 
+                    type="button"
                     variant="outline" 
                     size="icon"
                     onClick={() => handleDelete(tournee.id)}
