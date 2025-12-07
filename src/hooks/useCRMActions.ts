@@ -1,10 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { crmService, InteractionType, LeadStatus } from '@/services/crmService';
 import { useToast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
 
 export const useCRMActions = (entrepriseId: string, userId: string) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // Ensure lead exists when loading CRM data
+  useEffect(() => {
+    if (entrepriseId && userId) {
+      crmService.ensureLeadExists(entrepriseId, userId);
+    }
+  }, [entrepriseId, userId]);
 
   // Fetch CRM data
   const { data, isLoading } = useQuery({

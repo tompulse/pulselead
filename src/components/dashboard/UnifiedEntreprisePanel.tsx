@@ -4,16 +4,17 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useCRMActions } from "@/hooks/useCRMActions";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { Building2, MapPin, Calendar, DollarSign, X, Navigation } from "lucide-react";
+import { Building2, MapPin, Calendar, X, Navigation, Factory } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface UnifiedEntreprisePanelProps {
   entreprise: any | null;
@@ -50,17 +51,16 @@ export const UnifiedEntreprisePanel = ({
 
   if (!entreprise) return null;
 
-  const formattedAddress = [
+  // Build address from nouveaux_sites fields
+  const addressParts = [
     entreprise.numero_voie,
     entreprise.type_voie,
-    entreprise.nom_voie,
-    entreprise.code_postal,
-    entreprise.ville
+    entreprise.libelle_voie
   ].filter(Boolean).join(' ');
-
-  const formattedCapital = entreprise.capital 
-    ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(entreprise.capital)
-    : 'Non disponible';
+  
+  const formattedAddress = addressParts 
+    ? `${addressParts}, ${entreprise.code_postal || ''} ${entreprise.ville || ''}`.trim()
+    : `${entreprise.code_postal || ''} ${entreprise.ville || ''}`.trim() || 'Non disponible';
 
   const content = (
     <div className="flex flex-col h-full">
@@ -70,10 +70,12 @@ export const UnifiedEntreprisePanel = ({
           <h2 className="text-2xl font-bold mb-2">{entreprise.nom}</h2>
           {leadStatus && (
             <LeadStatusBadge 
-              statut={leadStatus.statut_actuel}
+              statut={leadStatus.statut}
             />
           )}
-          <p className="text-sm text-muted-foreground">{entreprise.activite}</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {entreprise.categorie_detaillee || entreprise.code_naf || 'Activité non renseignée'}
+          </p>
         </div>
         <Button
           variant="ghost"
@@ -102,24 +104,26 @@ export const UnifiedEntreprisePanel = ({
                 <span>Adresse</span>
               </div>
               <p className="text-sm pl-6">{formattedAddress}</p>
-              <div className="flex gap-2 pl-6">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
-                  className="border-accent/30 hover:bg-accent/10"
-                >
-                  Google Maps
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => openWaze(entreprise.latitude, entreprise.longitude)}
-                  className="border-accent/30 hover:bg-accent/10"
-                >
-                  Waze
-                </Button>
-              </div>
+              {entreprise.latitude && entreprise.longitude && (
+                <div className="flex gap-2 pl-6">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
+                    className="border-accent/30 hover:bg-accent/10"
+                  >
+                    Google Maps
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openWaze(entreprise.latitude, entreprise.longitude)}
+                    className="border-accent/30 hover:bg-accent/10"
+                  >
+                    Waze
+                  </Button>
+                </div>
+              )}
             </div>
 
             <Separator />
@@ -130,7 +134,7 @@ export const UnifiedEntreprisePanel = ({
                 <Building2 className="w-4 h-4" />
                 <span>Activité</span>
               </div>
-              <p className="text-sm pl-6">{entreprise.activite || 'Non renseigné'}</p>
+              <p className="text-sm pl-6">{entreprise.categorie_detaillee || 'Non renseigné'}</p>
               {entreprise.code_naf && (
                 <p className="text-xs text-muted-foreground pl-6">Code NAF: {entreprise.code_naf}</p>
               )}
@@ -142,33 +146,24 @@ export const UnifiedEntreprisePanel = ({
             {entreprise.siret && (
               <>
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-accent">SIRET</p>
-                  <p className="text-sm pl-6">{entreprise.siret}</p>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-accent">
+                    <Factory className="w-4 h-4" />
+                    <span>SIRET</span>
+                  </div>
+                  <p className="text-sm pl-6 font-mono">{entreprise.siret}</p>
                 </div>
                 <Separator />
               </>
             )}
 
-            {/* Contact */}
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-accent">Contact</p>
-              <div className="pl-6 space-y-2">
-                {entreprise.email && (
-                  <p className="text-sm">{entreprise.email}</p>
-                )}
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Financial Info */}
+            {/* Company info */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-sm font-semibold text-accent">
-                  <DollarSign className="w-4 h-4" />
-                  <span>Capital</span>
+                  <Building2 className="w-4 h-4" />
+                  <span>Taille</span>
                 </div>
-                <p className="text-sm pl-6">{formattedCapital}</p>
+                <p className="text-sm pl-6">{entreprise.categorie_entreprise || 'Non spécifié'}</p>
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-sm font-semibold text-accent">
@@ -176,12 +171,23 @@ export const UnifiedEntreprisePanel = ({
                   <span>Date de création</span>
                 </div>
                 <p className="text-sm pl-6">
-                  {entreprise.date_demarrage 
-                    ? new Date(entreprise.date_demarrage).toLocaleDateString('fr-FR')
+                  {entreprise.date_creation 
+                    ? format(new Date(entreprise.date_creation), 'dd MMM yyyy', { locale: fr })
                     : 'Non disponible'}
                 </p>
               </div>
             </div>
+
+            {/* Additional info */}
+            {entreprise.categorie_juridique && (
+              <>
+                <Separator />
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-accent">Forme juridique</p>
+                  <p className="text-sm pl-6">{entreprise.categorie_juridique}</p>
+                </div>
+              </>
+            )}
           </TabsContent>
 
           {/* CRM Tab */}
@@ -220,18 +226,22 @@ export const UnifiedEntreprisePanel = ({
       {/* Actions rapides colorées en bas */}
       <div className="shrink-0 px-6 py-4 border-t border-accent/20 bg-gradient-to-b from-transparent to-accent/5">
         <div className="grid grid-cols-2 gap-3">
-          <Button
-            onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
-            className="h-12 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
-          >
-            <Navigation className="w-4 h-4" />
-          </Button>
+          {entreprise.latitude && entreprise.longitude && (
+            <Button
+              onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
+              className="h-12 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 hover:border-green-500/40 transition-all"
+            >
+              <Navigation className="w-4 h-4 mr-2" />
+              GPS
+            </Button>
+          )}
 
           <Button
             onClick={() => setActiveTab('crm')}
-            className="h-12 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 hover:border-purple-500/40 transition-all"
+            className={`h-12 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 hover:border-purple-500/40 transition-all ${!entreprise.latitude ? 'col-span-2' : ''}`}
           >
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-4 h-4 mr-2" />
+            CRM
           </Button>
         </div>
       </div>
