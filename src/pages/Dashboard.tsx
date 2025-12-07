@@ -11,7 +11,6 @@ import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprise
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
 import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
-import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { TourneeAssistantChat } from "@/components/dashboard/TourneeAssistantChat";
@@ -240,9 +239,6 @@ const DashboardContent = () => {
                 applyAIFiltersRef.current = applyFn;
               }}
             />
-          )}
-          {view === 'tournees' && userId && (
-            <TourneesViewContainer userId={userId} />
           )}
           {view === 'crm' && userId && (
             <CRMViewContainer 

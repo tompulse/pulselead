@@ -10,8 +10,8 @@ import { ImportDialog } from "./ImportDialog";
 import { useState } from "react";
 
 interface DashboardHeaderProps {
-  view: 'prospects' | 'tournees' | 'crm';
-  onViewChange: (view: 'prospects' | 'tournees' | 'crm') => void;
+  view: 'prospects' | 'crm';
+  onViewChange: (view: 'prospects' | 'crm') => void;
   isAdmin: boolean;
   onLogout: () => void;
 }
@@ -35,7 +35,6 @@ export const DashboardHeader = ({
 
   const viewConfig = [
     { key: 'prospects' as const, label: 'Prospects', icon: MapIcon },
-    { key: 'tournees' as const, label: 'Tournées', icon: Navigation },
     { key: 'crm' as const, label: 'CRM', icon: TrendingUp },
   ];
 
