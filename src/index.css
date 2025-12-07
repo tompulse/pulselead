@@ -6,66 +6,6 @@
 All colors MUST be HSL.
 */
 
-/* CSS Variables - must be outside @layer for proper cascade */
-:root,
-.dark {
-  /* PULSE Brand Colors - Bleu foncé + Cyan électrique */
-  --blue-deep: 220 60% 8%;
-  --blue-darker: 220 50% 5%;
-  --black-pure: 0 0% 0%;
-  --black-deep: 0 0% 3%;
-  --cyan-electric: 190 100% 50%;
-  --cyan-glow: 190 100% 60%;
-  --cyan-subtle: 190 80% 45%;
-  
-  /* Core semantic tokens */
-  --background: 220 60% 8%;
-  --foreground: 0 0% 100%;
-
-  --card: 220 50% 10%;
-  --card-foreground: 0 0% 100%;
-
-  --popover: 220 50% 8%;
-  --popover-foreground: 0 0% 100%;
-
-  --primary: 220 60% 8%;
-  --primary-foreground: 0 0% 100%;
-
-  --secondary: 220 50% 15%;
-  --secondary-foreground: 0 0% 100%;
-
-  --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 60%;
-
-  --accent: 190 100% 50%;
-  --accent-foreground: 0 0% 0%;
-
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
-
-  --border: 0 0% 20%;
-  --input: 0 0% 20%;
-  --ring: 190 100% 50%;
-
-  /* Shadows & Depth */
-  --shadow-sm: 0 2px 8px -2px hsl(var(--accent) / 0.15);
-  --shadow-md: 0 4px 16px -4px hsl(var(--accent) / 0.25);
-  --shadow-lg: 0 8px 32px -8px hsl(var(--accent) / 0.35);
-  --shadow-glow: 0 0 32px hsl(var(--accent) / 0.5);
-  
-  --radius: 0.75rem;
-  
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, hsl(220 60% 8%), hsl(220 50% 5%));
-  --gradient-accent: linear-gradient(135deg, hsl(190 100% 50%), hsl(190 100% 60%));
-  --gradient-card: linear-gradient(180deg, hsl(220 50% 10% / 0.9), hsl(220 50% 10% / 0.6));
-  --gradient-bg: radial-gradient(ellipse at top, hsl(220 60% 12%), hsl(220 60% 8%), hsl(0 0% 0%));
-  
-  /* Glows & Shadows */
-  --glow-cyan: 0 0 48px hsl(190 100% 50% / 0.5);
-  --shadow-elevated: 0 20px 60px -15px hsl(0 0% 0% / 0.95);
-}
-
 @layer base {
   * {
     @apply border-border;
@@ -75,6 +15,74 @@ All colors MUST be HSL.
     scroll-behavior: smooth;
   }
   
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  :root {
+    /* PULSE Brand Colors - Bleu foncé + Cyan électrique */
+    --blue-deep: 220 60% 8%;
+    --blue-darker: 220 50% 5%;
+    --black-pure: 0 0% 0%;
+    --black-deep: 0 0% 3%;
+    --cyan-electric: 190 100% 50%;
+    --cyan-glow: 190 100% 60%;
+    --cyan-subtle: 190 80% 45%;
+    
+    /* Core semantic tokens */
+    --background: 220 60% 8%;
+    --foreground: 0 0% 100%;
+
+    --card: 220 50% 10%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 220 50% 8%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 220 60% 8%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 50% 15%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 190 100% 50%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 10%;
+    --input: 0 0% 10%;
+    --ring: 190 100% 50%;
+
+    /* Shadows & Depth */
+    --shadow-sm: 0 2px 8px -2px hsl(var(--accent) / 0.15);
+    --shadow-md: 0 4px 16px -4px hsl(var(--accent) / 0.25);
+    --shadow-lg: 0 8px 32px -8px hsl(var(--accent) / 0.35);
+    --shadow-glow: 0 0 32px hsl(var(--accent) / 0.5);
+    
+    --radius: 0.75rem;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 60% 8%), hsl(220 50% 5%));
+    --gradient-accent: linear-gradient(135deg, hsl(190 100% 50%), hsl(190 100% 60%));
+    --gradient-card: linear-gradient(180deg, hsl(220 50% 10% / 0.9), hsl(220 50% 10% / 0.6));
+    --gradient-bg: radial-gradient(ellipse at top, hsl(220 60% 12%), hsl(220 60% 8%), hsl(0 0% 0%));
+    
+    /* Glows & Shadows */
+    --glow-cyan: 0 0 48px hsl(190 100% 50% / 0.5);
+    --shadow-elevated: 0 20px 60px -15px hsl(0 0% 0% / 0.95);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
