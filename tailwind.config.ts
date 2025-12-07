@@ -52,8 +52,8 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         navy: {
-          deep: "hsl(var(--navy-deep))",
-          darker: "hsl(var(--navy-darker))",
+          deep: "hsl(var(--blue-deep))",
+          darker: "hsl(var(--blue-darker))",
         },
         black: {
           deep: "hsl(var(--black-deep))",
