@@ -19,7 +19,8 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
   
-  :root {
+  :root,
+  .dark {
     /* PULSE Brand Colors - Bleu foncé + Cyan électrique */
     --blue-deep: 220 60% 8%;
     --blue-darker: 220 50% 5%;
@@ -54,8 +55,8 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 10%;
-    --input: 0 0% 10%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
     --ring: 190 100% 50%;
 
     /* Shadows & Depth */
