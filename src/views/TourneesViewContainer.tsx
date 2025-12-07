@@ -1,45 +1,223 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Map, Route, Calendar } from 'lucide-react';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { 
+  Plus, 
+  Calendar, 
+  MapPin, 
+  Navigation, 
+  Clock, 
+  Map, 
+  Compass,
+  Trash2,
+  Route as RouteIcon
+} from 'lucide-react';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { toast } from 'sonner';
+import { TourneeCreationStandalone } from '@/components/dashboard/TourneeCreationStandalone';
+
+interface Tournee {
+  id: string;
+  nom: string;
+  date_planifiee: string;
+  entreprises_ids: string[];
+  ordre_optimise: string[];
+  distance_totale_km: number | null;
+  temps_estime_minutes: number | null;
+  statut: string;
+  heure_debut: string | null;
+}
 
 export const TourneesViewContainer = ({ userId }: { userId: string }) => {
+  const [showCreation, setShowCreation] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Fetch user's tournees
+  const { data: tournees = [], isLoading } = useQuery({
+    queryKey: ['tournees', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tournees')
+        .select('*')
+        .eq('user_id', userId)
+        .order('date_planifiee', { ascending: true });
+      
+      if (error) throw error;
+      return data as Tournee[];
+    },
+  });
+
+  // Delete tournee mutation
+  const deleteTournee = useMutation({
+    mutationFn: async (tourneeId: string) => {
+      const { error } = await supabase
+        .from('tournees')
+        .delete()
+        .eq('id', tourneeId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
+      toast.success('Tournée supprimée');
+    },
+    onError: () => {
+      toast.error('Erreur lors de la suppression');
+    },
+  });
+
+  const formatDuration = (minutes: number | null) => {
+    if (!minutes) return '0h00';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h${mins.toString().padStart(2, '0')}`;
+  };
+
+  const getStatusBadge = (statut: string) => {
+    switch (statut) {
+      case 'planifiee':
+        return <Badge variant="outline" className="border-accent/50 text-accent">Planifiée</Badge>;
+      case 'en_cours':
+        return <Badge className="bg-orange-500/20 text-orange-500 border-orange-500/30">En cours</Badge>;
+      case 'terminee':
+        return <Badge className="bg-green-500/20 text-green-500 border-green-500/30">Terminée</Badge>;
+      default:
+        return <Badge variant="outline">{statut}</Badge>;
+    }
+  };
+
+  const openGPS = (tournee: Tournee) => {
+    // Open in Google Maps or native maps app
+    toast.info('Ouverture GPS...');
+    // TODO: Generate Google Maps URL with waypoints
+  };
+
+  if (showCreation) {
+    return (
+      <TourneeCreationStandalone 
+        userId={userId}
+        onClose={() => setShowCreation(false)}
+        onSuccess={() => {
+          setShowCreation(false);
+          queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
+        }}
+      />
+    );
+  }
+
   return (
-    <div className="h-full flex flex-col overflow-hidden p-4">
-      <h2 className="text-xl font-bold mb-4">Tournées commerciales</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tournées planifiées</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">Cette semaine</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Distance totale</CardTitle>
-            <Route className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">-- km</div>
-            <p className="text-xs text-muted-foreground">Aujourd'hui</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Points de visite</CardTitle>
-            <Map className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">Prévus</p>
-          </CardContent>
-        </Card>
-      </div>
-      <p className="mt-8 text-muted-foreground text-center">
-        Module Tournées en cours de mise à jour
-      </p>
+    <div className="h-full flex flex-col overflow-hidden p-4 space-y-4">
+      {/* Create new tournee button */}
+      <Button
+        onClick={() => setShowCreation(true)}
+        className="w-full h-14 text-lg font-semibold bg-accent hover:bg-accent/90 text-primary"
+      >
+        <Plus className="w-5 h-5 mr-2" />
+        Créer une nouvelle tournée
+      </Button>
+
+      {/* Tournees list */}
+      <Card className="flex-1 overflow-hidden glass-card border-accent/20">
+        <CardContent className="p-4 h-full">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 rounded-lg bg-accent/10">
+              <Calendar className="w-5 h-5 text-accent" />
+            </div>
+            <div>
+              <h3 className="font-bold text-accent">Mes tournées planifiées</h3>
+              <p className="text-sm text-muted-foreground">
+                {tournees.length} tournée(s) enregistrée(s)
+              </p>
+            </div>
+          </div>
+
+          <ScrollArea className="h-[calc(100%-60px)]">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
+              </div>
+            ) : tournees.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <RouteIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Aucune tournée planifiée</p>
+                <p className="text-sm">Créez votre première tournée optimisée</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {tournees.map((tournee) => (
+                  <div 
+                    key={tournee.id}
+                    className="p-4 rounded-xl border border-accent/20 bg-card/50 space-y-3"
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <RouteIcon className="w-4 h-4 text-accent" />
+                        <span className="font-semibold">{tournee.nom}</span>
+                      </div>
+                      {getStatusBadge(tournee.statut)}
+                    </div>
+
+                    {/* Date */}
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-4 h-4" />
+                      {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy', { locale: fr })}
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="flex items-center gap-2 p-3 rounded-lg bg-accent/10 border border-accent/20">
+                        <MapPin className="w-4 h-4 text-accent" />
+                        <span className="font-medium">{tournee.entreprises_ids?.length || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30">
+                        <Navigation className="w-4 h-4 text-accent" />
+                        <span className="font-medium">{tournee.distance_totale_km?.toFixed(0) || 0}km</span>
+                      </div>
+                      <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <Clock className="w-4 h-4 text-purple-400" />
+                        <span className="font-medium">{formatDuration(tournee.temps_estime_minutes)}</span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="outline" 
+                        className="flex-1 border-accent/30 hover:bg-accent/10 bg-accent/5"
+                      >
+                        <Map className="w-4 h-4 mr-2" />
+                        Voir détails
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => openGPS(tournee)}
+                        className="border-accent/30 hover:bg-accent/10"
+                      >
+                        <Compass className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => deleteTournee.mutate(tournee.id)}
+                        className="border-destructive/30 hover:bg-destructive/10 text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </CardContent>
+      </Card>
     </div>
   );
 };
