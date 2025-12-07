@@ -6,12 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarIcon, Route, Loader2, MapPin, Clock, Navigation } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 
 interface Site {
   id: string;
@@ -168,30 +166,35 @@ export const TourneeCreationModal = ({
           {/* Date */}
           <div className="space-y-2">
             <Label>Date de la tournée *</Label>
-            <Popover modal={true}>
-              <PopoverTrigger asChild>
+            {date ? (
+              <div className="flex items-center gap-2">
+                <div className="flex-1 p-3 rounded-lg border border-accent/30 bg-accent/5">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <CalendarIcon className="w-4 h-4 text-accent" />
+                    {format(date, 'EEEE d MMMM yyyy', { locale: fr })}
+                  </div>
+                </div>
                 <Button
                   variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal border-accent/30",
-                    !date && "text-muted-foreground"
-                  )}
+                  size="sm"
+                  onClick={() => setDate(undefined)}
+                  className="border-accent/30"
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, 'PPP', { locale: fr }) : "Sélectionner une date"}
+                  Modifier
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 z-[100]" align="start">
+              </div>
+            ) : (
+              <div className="border border-accent/30 rounded-lg overflow-hidden">
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={setDate}
                   locale={fr}
-                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                  className="p-3 pointer-events-auto"
+                  disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
+                  className="p-3 pointer-events-auto w-full"
                 />
-              </PopoverContent>
-            </Popover>
+              </div>
+            )}
           </div>
 
           {/* Preview d'optimisation */}
