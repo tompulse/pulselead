@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Calendar, MapPin, Route, Loader2, Clock, X } from 'lucide-react';
+import { Calendar, MapPin, Route, Loader2, Clock, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 interface NouveauSite {
@@ -49,46 +49,66 @@ export const TourneeCreationModal = ({
     mutationFn: async () => {
       setIsOptimizing(true);
 
-      // Prepare entreprises for optimization
+      // Prepare entreprises for optimization - only those with valid coordinates
       const entreprises = selectedSites
         .filter(site => site.latitude && site.longitude)
         .map(site => ({
           id: site.id,
           nom: site.nom,
-          ville: site.ville,
-          latitude: site.latitude,
-          longitude: site.longitude,
-          adresse: site.adresse,
+          ville: site.ville || '',
+          latitude: Number(site.latitude),
+          longitude: Number(site.longitude),
+          adresse: site.adresse || '',
+          code_postal: site.code_postal || '',
         }));
+
+      console.log('📦 Sites préparés pour optimisation:', entreprises.length, entreprises);
 
       if (entreprises.length < 2) {
         throw new Error('Il faut au moins 2 sites avec coordonnées GPS pour optimiser');
       }
 
       // Get user's current position for starting point
-      let startPoint: { lat: number; lng: number } | null = null;
+      let point_depart: { lat: number; lng: number } | null = null;
       try {
         const position = await new Promise<GeolocationPosition>((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
         });
-        startPoint = { lat: position.coords.latitude, lng: position.coords.longitude };
-      } catch {
+        point_depart = { lat: position.coords.latitude, lng: position.coords.longitude };
+        console.log('📍 Position utilisateur détectée:', point_depart);
+      } catch (err) {
         // Use first site as starting point
-        startPoint = { lat: entreprises[0].latitude!, lng: entreprises[0].longitude! };
+        point_depart = { lat: entreprises[0].latitude, lng: entreprises[0].longitude };
+        console.log('📍 Position par défaut (1er site):', point_depart);
       }
 
       // Call optimize-tournee edge function
+      console.log('🚀 Appel optimize-tournee avec', { entreprises, point_depart });
       const { data: optimizeResult, error: optimizeError } = await supabase.functions.invoke('optimize-tournee', {
         body: {
           entreprises,
-          startPoint,
+          point_depart, // Correct field name for the edge function
         },
       });
 
+      console.log('📊 Résultat optimisation:', optimizeResult, 'Erreur:', optimizeError);
+
       if (optimizeError) {
         console.error('Optimization error:', optimizeError);
-        throw new Error('Erreur lors de l\'optimisation');
+        throw new Error('Erreur lors de l\'optimisation: ' + optimizeError.message);
       }
+
+      if (optimizeResult?.error) {
+        console.error('Optimization result error:', optimizeResult.error);
+        // Continue with fallback order
+      }
+
+      // Extract values from response (edge function uses snake_case)
+      const ordreOptimise = optimizeResult?.ordre_optimise || selectedSites.map(s => s.id);
+      const distanceTotale = optimizeResult?.distance_totale_km || null;
+      const tempsEstime = optimizeResult?.temps_estime_minutes || null;
+
+      console.log('📝 Données pour insertion:', { ordreOptimise, distanceTotale, tempsEstime });
 
       // Create tournee with optimized data
       const { data: tournee, error: insertError } = await supabase
@@ -98,37 +118,39 @@ export const TourneeCreationModal = ({
           nom,
           date_planifiee: format(datePlanifiee, 'yyyy-MM-dd'),
           entreprises_ids: selectedSites.map(s => s.id),
-          ordre_optimise: optimizeResult?.ordreOptimise || selectedSites.map(s => s.id),
-          distance_totale_km: optimizeResult?.distanceTotale || 0,
-          temps_estime_minutes: optimizeResult?.tempsEstime || selectedSites.length * 15,
-          point_depart_lat: startPoint?.lat,
-          point_depart_lng: startPoint?.lng,
+          ordre_optimise: ordreOptimise,
+          distance_totale_km: distanceTotale,
+          temps_estime_minutes: tempsEstime,
+          point_depart_lat: point_depart?.lat,
+          point_depart_lng: point_depart?.lng,
           statut: 'planifiee',
           visites_effectuees: [],
         })
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('Insert error:', insertError);
+        throw insertError;
+      }
 
-      return { tournee, optimizeResult };
+      return { tournee, optimizeResult, distanceTotale, tempsEstime };
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['tournees'] });
-      toast({
-        title: '🚗 Tournée créée !',
-        description: `${selectedSites.length} arrêts optimisés • ${Math.round(result.optimizeResult?.distanceTotale || 0)} km • ${Math.round((result.optimizeResult?.tempsEstime || 0) / 60)}h${(result.optimizeResult?.tempsEstime || 0) % 60}min`,
-      });
+      
+      const distance = Math.round(result.distanceTotale || 0);
+      const minutes = result.tempsEstime || 0;
+      const hours = Math.floor(minutes / 60);
+      const mins = Math.round(minutes % 60);
+      
+      toast.success(`🚗 Tournée créée ! ${selectedSites.length} arrêts • ${distance} km • ${hours}h${mins.toString().padStart(2, '0')}`);
       onSuccess();
       onClose();
     },
     onError: (error: any) => {
       console.error('Error creating tournee:', error);
-      toast({
-        title: 'Erreur',
-        description: error.message || 'Impossible de créer la tournée',
-        variant: 'destructive',
-      });
+      toast.error(error.message || 'Impossible de créer la tournée');
     },
     onSettled: () => {
       setIsOptimizing(false);
@@ -261,7 +283,7 @@ export const TourneeCreationModal = ({
               </>
             ) : (
               <>
-                <Route className="w-4 h-4 mr-2" />
+                <Navigation className="w-4 h-4 mr-2" />
                 Créer et optimiser
               </>
             )}
