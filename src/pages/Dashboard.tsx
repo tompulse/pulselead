@@ -85,19 +85,15 @@ const DashboardContent = () => {
       const userEmail = session.user.email;
       console.log('Checking admin for:', userEmail, session.user.id);
 
-      // Fallback direct pour les admins principaux et compte démo
-      const adminEmails = ['tomiolovpro@gmail.com', 'tom.iolov@hotmail.fr'];
+      // Check for demo user
       const demoEmail = 'demo@pulse.com';
       
       if (userEmail === demoEmail) {
         console.log('Demo user detected, granting visitor access');
         setIsDemoUser(true);
         setAdminLoading(false);
-      } else if (userEmail && adminEmails.includes(userEmail)) {
-        console.log('Admin email detected, granting access');
-        setIsAdmin(true);
-        setAdminLoading(false);
       } else {
+        // Always use server-side role verification for admin status
         try {
           const { data: adminCheck, error } = await supabase.rpc('has_role', {
             _user_id: session.user.id,

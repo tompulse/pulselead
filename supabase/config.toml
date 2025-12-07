@@ -1,25 +1,25 @@
 project_id = "pcrxbfbktmekkkqhppjn"
 
 [functions.chat-tournee-assistant]
-verify_jwt = false
+verify_jwt = true
 
 [functions.test-insee-auth]
 verify_jwt = false
 
 [functions.harmonize-categories]
-verify_jwt = false
+verify_jwt = true
 
 [functions.qualify-all-entreprises]
-verify_jwt = false
+verify_jwt = true
 
 [functions.qualify-entreprises-background]
 verify_jwt = true
 
 [functions.qualify-subcategories]
-verify_jwt = false
+verify_jwt = true
 
 [functions.requalify-miscategorized]
-verify_jwt = false
+verify_jwt = true
 
 [functions.format-lead-details]
 verify_jwt = true
@@ -31,10 +31,10 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.batch-geocode]
-verify_jwt = false
+verify_jwt = true
 
 [functions.enrich-naf-codes]
-verify_jwt = false
+verify_jwt = true
 
 [functions.import-nouveaux-sites-csv]
-verify_jwt = false
+verify_jwt = true
