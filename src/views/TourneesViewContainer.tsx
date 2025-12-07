@@ -174,11 +174,7 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                       <Button 
                         variant="outline" 
                         className="flex-1 border-accent/30 hover:bg-accent/10 bg-accent/5"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          console.log('[Tournees] Opening detail for:', tournee.nom);
-                          setSelectedTournee(tournee);
-                        }}
+                        onClick={() => setSelectedTournee(tournee)}
                       >
                         <Map className="w-4 h-4 mr-2" />
                         Voir détails
