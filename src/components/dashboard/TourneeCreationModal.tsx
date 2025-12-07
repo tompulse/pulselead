@@ -50,18 +50,24 @@ export const TourneeCreationModal = ({
 
       setIsOptimizing(true);
 
-      // Préparer les entreprises pour l'optimisation
-      const entreprises = selectedSites.map(site => ({
-        id: site.id,
-        nom: site.nom,
-        latitude: site.latitude || 0,
-        longitude: site.longitude || 0,
-        adresse: site.adresse,
-        ville: site.ville,
-        code_postal: site.code_postal
-      }));
+      // Préparer les entreprises pour l'optimisation - ne garder que celles avec coordonnées
+      const entreprises = selectedSites
+        .filter(site => site.latitude && site.longitude)
+        .map(site => ({
+          id: site.id,
+          nom: site.nom,
+          latitude: Number(site.latitude),
+          longitude: Number(site.longitude),
+          adresse: site.adresse || '',
+          ville: site.ville || '',
+          code_postal: site.code_postal || ''
+        }));
 
-      console.log('[TourneeCreation] Calling optimize-tournee with', entreprises.length, 'sites');
+      console.log('[TourneeCreation] Calling optimize-tournee with', entreprises.length, 'valid sites');
+
+      if (entreprises.length < 2) {
+        throw new Error('Au moins 2 sites avec coordonnées GPS sont nécessaires');
+      }
 
       // Appeler l'edge function d'optimisation
       const { data: optimData, error: optimError } = await supabase.functions.invoke('optimize-tournee', {
@@ -74,7 +80,21 @@ export const TourneeCreationModal = ({
       }
 
       console.log('[TourneeCreation] Optimization result:', optimData);
+      
+      // Vérifier si l'optimisation a réussi
+      if (optimData.error) {
+        console.error('[TourneeCreation] API returned error:', optimData.error);
+        throw new Error(optimData.error);
+      }
+
       setOptimizationResult(optimData);
+
+      // Utiliser les données optimisées ou fallback sur l'ordre original
+      const ordreOptimise = optimData.ordre_optimise || entreprises.map(e => e.id);
+      const distanceKm = optimData.distance_totale_km ?? null;
+      const tempsMin = optimData.temps_estime_minutes ?? null;
+
+      console.log('[TourneeCreation] Saving tournee with:', { ordreOptimise, distanceKm, tempsMin });
 
       // Créer la tournée avec les KPIs
       const { data: tournee, error: insertError } = await supabase
@@ -83,10 +103,10 @@ export const TourneeCreationModal = ({
           user_id: userId,
           nom: nom.trim(),
           date_planifiee: format(date, 'yyyy-MM-dd'),
-          entreprises_ids: optimData.ordre_optimise || selectedSites.map(s => s.id),
-          ordre_optimise: optimData.ordre_optimise || selectedSites.map(s => s.id),
-          distance_totale_km: optimData.distance_totale_km || null,
-          temps_estime_minutes: optimData.temps_estime_minutes || null,
+          entreprises_ids: ordreOptimise,
+          ordre_optimise: ordreOptimise,
+          distance_totale_km: distanceKm,
+          temps_estime_minutes: tempsMin,
           statut: 'planifiee'
         })
         .select()
