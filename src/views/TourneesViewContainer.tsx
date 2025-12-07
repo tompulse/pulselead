@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -31,6 +32,7 @@ interface Tournee {
 
 export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Fetch user's tournees
   const { data: tournees = [], isLoading } = useQuery({
@@ -90,7 +92,7 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   };
 
   const handleViewDetails = (tournee: Tournee) => {
-    toast.info(`Détails de ${tournee.nom} - Backend à implémenter`);
+    navigate(`/dashboard/tournee/${tournee.id}`);
   };
 
   const handleEdit = (tournee: Tournee) => {
