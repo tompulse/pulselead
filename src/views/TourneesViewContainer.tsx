@@ -32,6 +32,7 @@ interface Tournee {
   heure_debut: string | null;
   point_depart_lat: number | null;
   point_depart_lng: number | null;
+  visites_effectuees?: any;
 }
 
 export const TourneesViewContainer = ({ userId }: { userId: string }) => {
@@ -174,7 +175,12 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                       <Button 
                         variant="outline" 
                         className="flex-1 border-accent/30 hover:bg-accent/10 bg-accent/5"
-                        onClick={() => setSelectedTournee(tournee)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('[TourneesView] Selecting tournee:', tournee.id, tournee.nom);
+                          setSelectedTournee(tournee);
+                        }}
                       >
                         <Map className="w-4 h-4 mr-2" />
                         Voir détails
