@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useReducer, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -54,10 +54,32 @@ interface Site {
   libelle_voie: string | null;
 }
 
+// ==================== REDUCER ====================
+type ViewState = 
+  | { mode: 'list' }
+  | { mode: 'detail'; tournee: Tournee };
+
+type ViewAction = 
+  | { type: 'SHOW_LIST' }
+  | { type: 'SHOW_DETAIL'; tournee: Tournee };
+
+function viewReducer(state: ViewState, action: ViewAction): ViewState {
+  console.log('[REDUCER] Current state:', state.mode, 'Action:', action.type);
+  switch (action.type) {
+    case 'SHOW_LIST':
+      console.log('[REDUCER] -> Switching to LIST');
+      return { mode: 'list' };
+    case 'SHOW_DETAIL':
+      console.log('[REDUCER] -> Switching to DETAIL for:', action.tournee.id);
+      return { mode: 'detail', tournee: action.tournee };
+    default:
+      return state;
+  }
+}
+
 // ==================== COMPOSANT PRINCIPAL ====================
 export const TourneesViewContainer = ({ userId }: { userId: string }) => {
-  // ÉTAT SIMPLE: null = liste, sinon = détail de la tournée
-  const [activeTournee, setActiveTournee] = useState<Tournee | null>(null);
+  const [viewState, dispatch] = useReducer(viewReducer, { mode: 'list' });
   const queryClient = useQueryClient();
 
   // Fetch user's tournees
@@ -93,40 +115,50 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
     },
   });
 
-  // FONCTIONS DE NAVIGATION SIMPLIFIÉES
-  const openTourneeDetail = useCallback((tournee: Tournee) => {
-    console.log('Opening tournee:', tournee.id);
-    setActiveTournee(tournee);
+  // NAVIGATION HANDLERS
+  const handleOpenDetail = useCallback((tournee: Tournee) => {
+    console.log('[HANDLER] Opening detail for:', tournee.id, tournee.nom);
+    dispatch({ type: 'SHOW_DETAIL', tournee });
   }, []);
 
-  const closeTourneeDetail = useCallback(() => {
-    console.log('Closing tournee detail');
-    setActiveTournee(null);
+  const handleCloseDetail = useCallback(() => {
+    console.log('[HANDLER] Closing detail, returning to list');
+    dispatch({ type: 'SHOW_LIST' });
   }, []);
 
   const handleDelete = useCallback((id: string) => {
+    console.log('[HANDLER] Deleting tournee:', id);
     deleteMutation.mutate(id);
   }, [deleteMutation]);
 
-  // ==================== RENDU DÉTAIL ====================
-  if (activeTournee !== null) {
-    return (
-      <TourneeDetailPanel 
-        tournee={activeTournee} 
-        onClose={closeTourneeDetail}
-        queryClient={queryClient}
-      />
-    );
-  }
+  // Dynamic key for forcing re-render
+  const containerKey = useMemo(() => {
+    if (viewState.mode === 'list') return 'container-list';
+    return `container-detail-${viewState.tournee.id}`;
+  }, [viewState]);
 
-  // ==================== RENDU LISTE ====================
+  console.log('[RENDER] Current mode:', viewState.mode, 'Key:', containerKey);
+
+  // ==================== RENDU CONDITIONNEL ====================
   return (
-    <TourneeListPanel
-      tournees={tournees}
-      isLoading={isLoading}
-      onOpenDetail={openTourneeDetail}
-      onDelete={handleDelete}
-    />
+    <div key={containerKey} className="h-full flex flex-col overflow-hidden">
+      {viewState.mode === 'detail' ? (
+        <TourneeDetailPanel 
+          key={`detail-${viewState.tournee.id}`}
+          tournee={viewState.tournee} 
+          onClose={handleCloseDetail}
+          queryClient={queryClient}
+        />
+      ) : (
+        <TourneeListPanel
+          key="list-panel"
+          tournees={tournees}
+          isLoading={isLoading}
+          onOpenDetail={handleOpenDetail}
+          onDelete={handleDelete}
+        />
+      )}
+    </div>
   );
 };
 
@@ -162,6 +194,21 @@ const TourneeListPanel = ({
     }
   };
 
+  // Click handler with maximum protection
+  const handleViewClick = useCallback((e: React.MouseEvent, tournee: Tournee) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('[BUTTON CLICK] Voir détails clicked for:', tournee.id);
+    onOpenDetail(tournee);
+  }, [onOpenDetail]);
+
+  const handleDeleteClick = useCallback((e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('[BUTTON CLICK] Delete clicked for:', id);
+    onDelete(id);
+  }, [onDelete]);
+
   return (
     <div className="h-full flex flex-col overflow-hidden p-4 space-y-4">
       {/* Header */}
@@ -177,94 +224,99 @@ const TourneeListPanel = ({
         </div>
       </div>
 
-      {/* Tournees list */}
-      <Card className="flex-1 overflow-hidden glass-card border-accent/20">
-        <CardContent className="p-4 h-full">
-          <ScrollArea className="h-full">
-            {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
-              </div>
-            ) : tournees.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <RouteIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p className="font-medium">Aucune tournée planifiée</p>
-                <p className="text-sm mt-1">Sélectionnez des prospects pour créer une tournée</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {tournees.map((tournee) => (
-                  <div 
-                    key={tournee.id}
-                    className="p-4 rounded-xl border border-accent/20 bg-card/50 space-y-3 hover:border-accent/40 transition-colors"
-                  >
-                    {/* Header */}
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2">
-                        <RouteIcon className="w-4 h-4 text-accent" />
-                        <span className="font-semibold">{tournee.nom}</span>
-                      </div>
-                      {getStatusBadge(tournee.statut)}
-                    </div>
+      {/* Loading state */}
+      {isLoading && (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
+        </div>
+      )}
 
-                    {/* Date */}
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      {format(new Date(tournee.date_planifiee), 'EEEE d MMMM yyyy', { locale: fr })}
-                    </div>
+      {/* Empty state */}
+      {!isLoading && tournees.length === 0 && (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center text-muted-foreground">
+            <RouteIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p className="font-medium">Aucune tournée planifiée</p>
+            <p className="text-sm mt-1">Sélectionnez des prospects pour créer une tournée</p>
+          </div>
+        </div>
+      )}
 
-                    {/* KPIs */}
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="flex items-center gap-2 p-3 rounded-lg bg-accent/10 border border-accent/20">
-                        <MapPin className="w-4 h-4 text-accent" />
-                        <span className="font-medium">{tournee.entreprises_ids?.length || 0} arrêts</span>
-                      </div>
-                      <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30">
-                        <Navigation className="w-4 h-4 text-accent" />
-                        <span className="font-medium">{tournee.distance_totale_km?.toFixed(0) || '—'} km</span>
-                      </div>
-                      <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <Clock className="w-4 h-4 text-purple-400" />
-                        <span className="font-medium">{formatDuration(tournee.temps_estime_minutes)}</span>
-                      </div>
-                    </div>
-
-                    {/* Actions - BOUTON RADICALEMENT SIMPLIFIÉ */}
+      {/* Tournees list - BOUTONS HORS DU SCROLLAREA */}
+      {!isLoading && tournees.length > 0 && (
+        <div className="flex-1 overflow-auto">
+          <div className="space-y-4">
+            {tournees.map((tournee) => (
+              <Card 
+                key={tournee.id}
+                className="glass-card border-accent/20 hover:border-accent/40 transition-colors"
+              >
+                <CardContent className="p-4 space-y-3">
+                  {/* Header */}
+                  <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
-                      <Button 
-                        variant="default"
-                        className="flex-1 bg-accent hover:bg-accent/90 text-primary"
-                        type="button"
-                        onClick={() => {
-                          console.log('Button clicked for tournee:', tournee.id);
-                          onOpenDetail(tournee);
-                        }}
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Voir détails
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon"
-                        type="button"
-                        onClick={() => onDelete(tournee.id)}
-                        className="border-destructive/30 hover:bg-destructive/10 text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <RouteIcon className="w-4 h-4 text-accent" />
+                      <span className="font-semibold">{tournee.nom}</span>
+                    </div>
+                    {getStatusBadge(tournee.statut)}
+                  </div>
+
+                  {/* Date */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    {format(new Date(tournee.date_planifiee), 'EEEE d MMMM yyyy', { locale: fr })}
+                  </div>
+
+                  {/* KPIs */}
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-accent/10 border border-accent/20">
+                      <MapPin className="w-4 h-4 text-accent" />
+                      <span className="font-medium">{tournee.entreprises_ids?.length || 0} arrêts</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30">
+                      <Navigation className="w-4 h-4 text-accent" />
+                      <span className="font-medium">{tournee.distance_totale_km?.toFixed(0) || '—'} km</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                      <Clock className="w-4 h-4 text-purple-400" />
+                      <span className="font-medium">{formatDuration(tournee.temps_estime_minutes)}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
-        </CardContent>
-      </Card>
+
+                  {/* Actions - BOUTONS AVEC PROTECTION MAXIMALE */}
+                  <div className="flex items-center gap-2 relative z-50 pointer-events-auto">
+                    <Button 
+                      variant="default"
+                      className="flex-1 bg-accent hover:bg-accent/90 text-primary relative z-50 pointer-events-auto"
+                      type="button"
+                      onClick={(e) => handleViewClick(e, tournee)}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Voir détails
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      type="button"
+                      onClick={(e) => handleDeleteClick(e, tournee.id)}
+                      className="border-destructive/30 hover:bg-destructive/10 text-destructive relative z-50 pointer-events-auto"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // ==================== PANNEAU DÉTAIL ====================
+type VisiteStatus = { visite: boolean; rdv: boolean; aRevoir: boolean };
+
 const TourneeDetailPanel = ({ 
   tournee, 
   onClose,
@@ -274,8 +326,11 @@ const TourneeDetailPanel = ({
   onClose: () => void;
   queryClient: ReturnType<typeof useQueryClient>;
 }) => {
-  const [visitesStatus, setVisitesStatus] = useState<Record<string, { visite: boolean; rdv: boolean; aRevoir: boolean }>>(
-    tournee.visites_effectuees || {}
+  const [visitesStatus, setVisitesStatus] = useReducer(
+    (state: Record<string, VisiteStatus>, action: Record<string, VisiteStatus>) => {
+      return { ...state, ...action };
+    },
+    (tournee.visites_effectuees || {}) as Record<string, VisiteStatus>
   );
 
   // Fetch sites data
@@ -354,15 +409,12 @@ const TourneeDetailPanel = ({
   };
 
   const handleVisiteChange = async (siteId: string, field: 'visite' | 'rdv' | 'aRevoir', value: boolean) => {
-    const newStatus = {
-      ...visitesStatus,
-      [siteId]: {
-        ...(visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false }),
-        [field]: value,
-      },
-    };
-    setVisitesStatus(newStatus);
-    await updateMutation.mutateAsync({ visites_effectuees: newStatus });
+    const currentStatus = visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false };
+    const newSiteStatus = { ...currentStatus, [field]: value };
+    const newFullStatus = { ...visitesStatus, [siteId]: newSiteStatus };
+    
+    setVisitesStatus({ [siteId]: newSiteStatus });
+    await updateMutation.mutateAsync({ visites_effectuees: newFullStatus });
     
     // Sync to CRM
     if (value) {
@@ -393,6 +445,13 @@ const TourneeDetailPanel = ({
     toast.success('Tournée terminée');
   };
 
+  const handleBack = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('[DETAIL] Back button clicked');
+    onClose();
+  }, [onClose]);
+
   const entreprisesForMap = sites.map(site => ({
     id: site.id,
     nom: site.nom,
@@ -408,7 +467,13 @@ const TourneeDetailPanel = ({
     <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-accent/20 flex items-center gap-4">
-        <Button variant="ghost" size="icon" type="button" onClick={onClose}>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          type="button" 
+          onClick={handleBack}
+          className="relative z-50 pointer-events-auto"
+        >
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="flex-1">
