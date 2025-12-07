@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,6 @@ import {
   Play,
   CheckCircle,
   Loader2,
-  GripVertical,
   RotateCcw
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -42,17 +41,106 @@ interface Tournee {
   visites_effectuees?: any;
 }
 
-// ==================== LISTE DES TOURNÉES ====================
-const TourneesList = ({ 
-  tournees, 
-  isLoading, 
-  onSelectTournee, 
-  onDeleteTournee 
-}: { 
-  tournees: Tournee[]; 
+interface Site {
+  id: string;
+  nom: string;
+  adresse: string | null;
+  ville: string | null;
+  code_postal: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  numero_voie: string | null;
+  type_voie: string | null;
+  libelle_voie: string | null;
+}
+
+// ==================== COMPOSANT PRINCIPAL ====================
+export const TourneesViewContainer = ({ userId }: { userId: string }) => {
+  // ÉTAT SIMPLE: null = liste, sinon = détail de la tournée
+  const [activeTournee, setActiveTournee] = useState<Tournee | null>(null);
+  const queryClient = useQueryClient();
+
+  // Fetch user's tournees
+  const { data: tournees = [], isLoading } = useQuery({
+    queryKey: ['tournees', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tournees')
+        .select('*')
+        .eq('user_id', userId)
+        .order('date_planifiee', { ascending: true });
+      
+      if (error) throw error;
+      return data as Tournee[];
+    },
+  });
+
+  // Delete tournee mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (tourneeId: string) => {
+      const { error } = await supabase
+        .from('tournees')
+        .delete()
+        .eq('id', tourneeId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
+      toast.success('Tournée supprimée');
+    },
+    onError: () => {
+      toast.error('Erreur lors de la suppression');
+    },
+  });
+
+  // FONCTIONS DE NAVIGATION SIMPLIFIÉES
+  const openTourneeDetail = useCallback((tournee: Tournee) => {
+    console.log('Opening tournee:', tournee.id);
+    setActiveTournee(tournee);
+  }, []);
+
+  const closeTourneeDetail = useCallback(() => {
+    console.log('Closing tournee detail');
+    setActiveTournee(null);
+  }, []);
+
+  const handleDelete = useCallback((id: string) => {
+    deleteMutation.mutate(id);
+  }, [deleteMutation]);
+
+  // ==================== RENDU DÉTAIL ====================
+  if (activeTournee !== null) {
+    return (
+      <TourneeDetailPanel 
+        tournee={activeTournee} 
+        onClose={closeTourneeDetail}
+        queryClient={queryClient}
+      />
+    );
+  }
+
+  // ==================== RENDU LISTE ====================
+  return (
+    <TourneeListPanel
+      tournees={tournees}
+      isLoading={isLoading}
+      onOpenDetail={openTourneeDetail}
+      onDelete={handleDelete}
+    />
+  );
+};
+
+// ==================== PANNEAU LISTE ====================
+const TourneeListPanel = ({
+  tournees,
+  isLoading,
+  onOpenDetail,
+  onDelete,
+}: {
+  tournees: Tournee[];
   isLoading: boolean;
-  onSelectTournee: (t: Tournee) => void;
-  onDeleteTournee: (id: string) => void;
+  onOpenDetail: (t: Tournee) => void;
+  onDelete: (id: string) => void;
 }) => {
   const formatDuration = (minutes: number | null) => {
     if (!minutes) return '—';
@@ -141,12 +229,16 @@ const TourneesList = ({
                       </div>
                     </div>
 
-                    {/* Actions */}
+                    {/* Actions - BOUTON RADICALEMENT SIMPLIFIÉ */}
                     <div className="flex items-center gap-2">
                       <Button 
                         variant="default"
                         className="flex-1 bg-accent hover:bg-accent/90 text-primary"
-                        onClick={() => onSelectTournee(tournee)}
+                        type="button"
+                        onClick={() => {
+                          console.log('Button clicked for tournee:', tournee.id);
+                          onOpenDetail(tournee);
+                        }}
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         Voir détails
@@ -154,7 +246,8 @@ const TourneesList = ({
                       <Button 
                         variant="outline" 
                         size="icon"
-                        onClick={() => onDeleteTournee(tournee.id)}
+                        type="button"
+                        onClick={() => onDelete(tournee.id)}
                         className="border-destructive/30 hover:bg-destructive/10 text-destructive"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -171,22 +264,23 @@ const TourneesList = ({
   );
 };
 
-// ==================== DÉTAIL D'UNE TOURNÉE ====================
-const TourneeDetail = ({ 
+// ==================== PANNEAU DÉTAIL ====================
+const TourneeDetailPanel = ({ 
   tournee, 
-  onBack 
+  onClose,
+  queryClient
 }: { 
   tournee: Tournee; 
-  onBack: () => void;
+  onClose: () => void;
+  queryClient: ReturnType<typeof useQueryClient>;
 }) => {
-  const queryClient = useQueryClient();
   const [visitesStatus, setVisitesStatus] = useState<Record<string, { visite: boolean; rdv: boolean; aRevoir: boolean }>>(
     tournee.visites_effectuees || {}
   );
 
   // Fetch sites data
   const { data: sites = [], isLoading: sitesLoading } = useQuery({
-    queryKey: ['tournee-detail-sites', tournee.id],
+    queryKey: ['tournee-sites', tournee.id],
     queryFn: async () => {
       const ids = tournee.ordre_optimise || tournee.entreprises_ids || [];
       if (ids.length === 0) return [];
@@ -201,7 +295,7 @@ const TourneeDetail = ({
       // Réordonner selon ordre_optimise
       return ids
         .map(id => data?.find(s => s.id === id))
-        .filter(Boolean) as any[];
+        .filter(Boolean) as Site[];
     },
   });
 
@@ -226,13 +320,13 @@ const TourneeDetail = ({
     return `${hours}h${mins.toString().padStart(2, '0')}`;
   };
 
-  const getFullAddress = (site: any) => {
+  const getFullAddress = (site: Site) => {
     const parts = [site.numero_voie, site.type_voie, site.libelle_voie].filter(Boolean).join(' ');
     if (parts) return `${parts}, ${site.code_postal || ''} ${site.ville || ''}`.trim();
     return site.adresse || `${site.code_postal || ''} ${site.ville || ''}`.trim();
   };
 
-  const handleNavigateTo = (site: any) => {
+  const handleNavigateTo = (site: Site) => {
     if (site.latitude && site.longitude) {
       window.open(`https://www.google.com/maps/dir/?api=1&destination=${site.latitude},${site.longitude}&travelmode=driving`, '_blank');
     } else {
@@ -314,7 +408,7 @@ const TourneeDetail = ({
     <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-accent/20 flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
+        <Button variant="ghost" size="icon" type="button" onClick={onClose}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="flex-1">
@@ -361,6 +455,7 @@ const TourneeDetail = ({
       <div className="px-4 flex gap-2">
         {tournee.statut === 'planifiee' && (
           <Button 
+            type="button"
             onClick={handleStartTournee}
             className="flex-1 bg-accent hover:bg-accent/90 text-primary"
             disabled={updateMutation.isPending}
@@ -371,6 +466,7 @@ const TourneeDetail = ({
         )}
         {tournee.statut === 'en_cours' && (
           <Button 
+            type="button"
             onClick={handleEndTournee}
             className="flex-1 bg-green-500 hover:bg-green-600 text-white"
             disabled={updateMutation.isPending}
@@ -380,6 +476,7 @@ const TourneeDetail = ({
           </Button>
         )}
         <Button 
+          type="button"
           variant="outline" 
           onClick={openFullRoute}
           className="border-accent/30 hover:bg-accent/10"
@@ -487,6 +584,7 @@ const TourneeDetail = ({
 
                         {/* Navigation button */}
                         <Button
+                          type="button"
                           variant="ghost"
                           size="icon"
                           className="shrink-0 h-8 w-8"
@@ -503,82 +601,6 @@ const TourneeDetail = ({
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-};
-
-// ==================== COMPOSANT PRINCIPAL ====================
-export const TourneesViewContainer = ({ userId }: { userId: string }) => {
-  const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
-  const [selectedTournee, setSelectedTournee] = useState<Tournee | null>(null);
-  const queryClient = useQueryClient();
-
-  console.log('[TourneesViewContainer] Render - viewMode:', viewMode, 'selectedTournee:', selectedTournee?.id);
-
-  // Fetch user's tournees
-  const { data: tournees = [], isLoading } = useQuery({
-    queryKey: ['tournees', userId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('tournees')
-        .select('*')
-        .eq('user_id', userId)
-        .order('date_planifiee', { ascending: true });
-      
-      if (error) throw error;
-      return data as Tournee[];
-    },
-  });
-
-  // Delete tournee mutation
-  const deleteMutation = useMutation({
-    mutationFn: async (tourneeId: string) => {
-      const { error } = await supabase
-        .from('tournees')
-        .delete()
-        .eq('id', tourneeId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
-      toast.success('Tournée supprimée');
-    },
-    onError: () => {
-      toast.error('Erreur lors de la suppression');
-    },
-  });
-
-  const handleSelectTournee = (tournee: Tournee) => {
-    console.log('[TourneesViewContainer] handleSelectTournee called with:', tournee.id, tournee.nom);
-    setSelectedTournee(tournee);
-    setViewMode('detail');
-    console.log('[TourneesViewContainer] State updated - should now show detail');
-  };
-
-  const handleBack = () => {
-    console.log('[TourneesViewContainer] handleBack called');
-    setSelectedTournee(null);
-    setViewMode('list');
-  };
-
-  // Rendu explicite avec keys pour forcer le re-render
-  return (
-    <div className="h-full w-full" key={`view-${viewMode}-${selectedTournee?.id || 'none'}`}>
-      {viewMode === 'detail' && selectedTournee ? (
-        <TourneeDetail 
-          key={`detail-${selectedTournee.id}`}
-          tournee={selectedTournee} 
-          onBack={handleBack} 
-        />
-      ) : (
-        <TourneesList 
-          key="list"
-          tournees={tournees}
-          isLoading={isLoading}
-          onSelectTournee={handleSelectTournee}
-          onDeleteTournee={(id) => deleteMutation.mutate(id)}
-        />
-      )}
     </div>
   );
 };
