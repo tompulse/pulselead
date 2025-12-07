@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
-  Plus, 
   Calendar, 
   MapPin, 
   Navigation, 
@@ -19,7 +18,7 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
-import { TourneeCreationStandalone } from '@/components/dashboard/TourneeCreationStandalone';
+import { TourneeDetailView } from '@/components/dashboard/TourneeDetailView';
 
 interface Tournee {
   id: string;
@@ -31,10 +30,12 @@ interface Tournee {
   temps_estime_minutes: number | null;
   statut: string;
   heure_debut: string | null;
+  point_depart_lat: number | null;
+  point_depart_lng: number | null;
 }
 
 export const TourneesViewContainer = ({ userId }: { userId: string }) => {
-  const [showCreation, setShowCreation] = useState(false);
+  const [selectedTournee, setSelectedTournee] = useState<Tournee | null>(null);
   const queryClient = useQueryClient();
 
   // Fetch user's tournees
@@ -72,7 +73,7 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   });
 
   const formatDuration = (minutes: number | null) => {
-    if (!minutes) return '0h00';
+    if (!minutes) return '—';
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h${mins.toString().padStart(2, '0')}`;
@@ -91,52 +92,35 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
     }
   };
 
-  const openGPS = (tournee: Tournee) => {
-    // Open in Google Maps or native maps app
-    toast.info('Ouverture GPS...');
-    // TODO: Generate Google Maps URL with waypoints
-  };
-
-  if (showCreation) {
+  // Si une tournée est sélectionnée, afficher le détail
+  if (selectedTournee) {
     return (
-      <TourneeCreationStandalone 
-        userId={userId}
-        onClose={() => setShowCreation(false)}
-        onSuccess={() => {
-          setShowCreation(false);
-          queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
-        }}
+      <TourneeDetailView 
+        tournee={selectedTournee} 
+        onBack={() => setSelectedTournee(null)} 
       />
     );
   }
 
   return (
     <div className="h-full flex flex-col overflow-hidden p-4 space-y-4">
-      {/* Create new tournee button */}
-      <Button
-        onClick={() => setShowCreation(true)}
-        className="w-full h-14 text-lg font-semibold bg-accent hover:bg-accent/90 text-primary"
-      >
-        <Plus className="w-5 h-5 mr-2" />
-        Créer une nouvelle tournée
-      </Button>
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-accent/10">
+          <Calendar className="w-5 h-5 text-accent" />
+        </div>
+        <div>
+          <h3 className="font-bold text-lg">Mes tournées</h3>
+          <p className="text-sm text-muted-foreground">
+            {tournees.length} tournée{tournees.length > 1 ? 's' : ''} planifiée{tournees.length > 1 ? 's' : ''}
+          </p>
+        </div>
+      </div>
 
       {/* Tournees list */}
       <Card className="flex-1 overflow-hidden glass-card border-accent/20">
         <CardContent className="p-4 h-full">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 rounded-lg bg-accent/10">
-              <Calendar className="w-5 h-5 text-accent" />
-            </div>
-            <div>
-              <h3 className="font-bold text-accent">Mes tournées planifiées</h3>
-              <p className="text-sm text-muted-foreground">
-                {tournees.length} tournée(s) enregistrée(s)
-              </p>
-            </div>
-          </div>
-
-          <ScrollArea className="h-[calc(100%-60px)]">
+          <ScrollArea className="h-full">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
@@ -144,15 +128,15 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
             ) : tournees.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <RouteIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Aucune tournée planifiée</p>
-                <p className="text-sm">Créez votre première tournée optimisée</p>
+                <p className="font-medium">Aucune tournée planifiée</p>
+                <p className="text-sm mt-1">Sélectionnez des prospects pour créer une tournée</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {tournees.map((tournee) => (
                   <div 
                     key={tournee.id}
-                    className="p-4 rounded-xl border border-accent/20 bg-card/50 space-y-3"
+                    className="p-4 rounded-xl border border-accent/20 bg-card/50 space-y-3 hover:border-accent/40 transition-colors"
                   >
                     {/* Header */}
                     <div className="flex items-start justify-between">
@@ -166,18 +150,18 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                     {/* Date */}
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
-                      {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy', { locale: fr })}
+                      {format(new Date(tournee.date_planifiee), 'EEEE d MMMM yyyy', { locale: fr })}
                     </div>
 
-                    {/* Stats */}
+                    {/* KPIs */}
                     <div className="grid grid-cols-3 gap-2">
                       <div className="flex items-center gap-2 p-3 rounded-lg bg-accent/10 border border-accent/20">
                         <MapPin className="w-4 h-4 text-accent" />
-                        <span className="font-medium">{tournee.entreprises_ids?.length || 0}</span>
+                        <span className="font-medium">{tournee.entreprises_ids?.length || 0} arrêts</span>
                       </div>
                       <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30">
                         <Navigation className="w-4 h-4 text-accent" />
-                        <span className="font-medium">{tournee.distance_totale_km?.toFixed(0) || 0}km</span>
+                        <span className="font-medium">{tournee.distance_totale_km?.toFixed(0) || '—'} km</span>
                       </div>
                       <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
                         <Clock className="w-4 h-4 text-purple-400" />
@@ -190,17 +174,10 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                       <Button 
                         variant="outline" 
                         className="flex-1 border-accent/30 hover:bg-accent/10 bg-accent/5"
+                        onClick={() => setSelectedTournee(tournee)}
                       >
                         <Map className="w-4 h-4 mr-2" />
                         Voir détails
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon"
-                        onClick={() => openGPS(tournee)}
-                        className="border-accent/30 hover:bg-accent/10"
-                      >
-                        <Compass className="w-4 h-4" />
                       </Button>
                       <Button 
                         variant="outline" 
