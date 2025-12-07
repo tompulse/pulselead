@@ -112,7 +112,7 @@ export const crmService = {
         const { data, error } = await supabase
           .from('lead_statuts')
           .update({ 
-            statut: status,
+            statut_actuel: status,
             updated_at: new Date().toISOString()
           })
           .eq('id', existing.id)
@@ -128,7 +128,7 @@ export const crmService = {
           .insert({
             entreprise_id: entrepriseId,
             user_id: userId,
-            statut: status
+            statut_actuel: status
           })
           .select()
           .single();
@@ -139,29 +139,6 @@ export const crmService = {
     } catch (error) {
       console.error('Error updating lead status:', error);
       return { data: null, error };
-    }
-  },
-
-  async ensureLeadExists(entrepriseId: string, userId: string) {
-    try {
-      const { data: existing } = await supabase
-        .from('lead_statuts')
-        .select('id')
-        .eq('entreprise_id', entrepriseId)
-        .eq('user_id', userId)
-        .single();
-
-      if (!existing) {
-        await supabase
-          .from('lead_statuts')
-          .insert({
-            entreprise_id: entrepriseId,
-            user_id: userId,
-            statut: 'nouveau'
-          });
-      }
-    } catch (error) {
-      // Ignore - lead might already exist
     }
   },
 

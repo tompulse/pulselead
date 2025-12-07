@@ -1,7 +1,7 @@
+import { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { MapPin, Building2, Calendar, Factory, Loader2, Eye } from "lucide-react";
+import { MapPin, Building2, Calendar, Factory, Loader2 } from "lucide-react";
 import { nouveauxSitesService, NouveauxSitesFilters } from "@/services/nouveauxSitesService";
 import { getNafCategory } from "@/utils/nafCategories";
 import { format } from "date-fns";
@@ -197,23 +197,6 @@ export const NouveauxSitesListView = ({
                     )}
                   </div>
 
-                  {/* CRM Button - only show when not in selection mode */}
-                  {!selectionMode && onSiteSelect && (
-                    <div className="relative mt-auto pt-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSiteSelect(site);
-                        }}
-                        className="w-full border-accent/30 hover:bg-accent/10 hover:border-accent"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Voir détails / CRM
-                      </Button>
-                    </div>
-                  )}
                 </div>
               );
             })}

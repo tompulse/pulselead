@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -14,10 +14,8 @@ import {
   Calendar as CalendarIcon,
   MapPin, 
   Search,
-  Check,
-  Route,
-  Clock,
-  Loader2
+  Route as RouteIcon,
+  Check
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -36,13 +34,6 @@ interface NouveauSite {
   code_postal: string | null;
   latitude: number | null;
   longitude: number | null;
-  adresse?: string | null;
-}
-
-interface OptimizationResult {
-  ordre_optimise: string[];
-  distance_totale_km: number;
-  temps_estime_minutes: number;
 }
 
 export const TourneeCreationStandalone = ({ 
@@ -54,7 +45,6 @@ export const TourneeCreationStandalone = ({
   const [tourneeDate, setTourneeDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSites, setSelectedSites] = useState<NouveauSite[]>([]);
-  const [isOptimizing, setIsOptimizing] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch sites with coordinates
@@ -63,7 +53,7 @@ export const TourneeCreationStandalone = ({
     queryFn: async () => {
       let query = supabase
         .from('nouveaux_sites')
-        .select('id, nom, ville, code_postal, latitude, longitude, adresse, numero_voie, type_voie, libelle_voie')
+        .select('id, nom, ville, code_postal, latitude, longitude')
         .not('latitude', 'is', null)
         .not('longitude', 'is', null)
         .limit(100);
@@ -88,52 +78,13 @@ export const TourneeCreationStandalone = ({
     });
   };
 
-  // Create tournee mutation with optimization
+  // Create tournee mutation
   const createTournee = useMutation({
     mutationFn: async () => {
       if (!tourneeName || !tourneeDate || selectedSites.length < 2) {
         throw new Error('Données incomplètes');
       }
 
-      setIsOptimizing(true);
-
-      // Prepare data for optimization
-      const entreprises = selectedSites.map(site => ({
-        id: site.id,
-        nom: site.nom,
-        latitude: site.latitude,
-        longitude: site.longitude,
-        adresse: site.adresse || `${site.code_postal} ${site.ville}`,
-        ville: site.ville,
-        code_postal: site.code_postal,
-      }));
-
-      let optimizationResult: OptimizationResult = {
-        ordre_optimise: selectedSites.map(s => s.id),
-        distance_totale_km: 0,
-        temps_estime_minutes: 0,
-      };
-
-      // Try to optimize the route
-      try {
-        const { data: optData, error: optError } = await supabase.functions.invoke('optimize-tournee', {
-          body: { entreprises }
-        });
-
-        if (!optError && optData) {
-          optimizationResult = {
-            ordre_optimise: optData.ordre_optimise || selectedSites.map(s => s.id),
-            distance_totale_km: optData.distance_totale_km || 0,
-            temps_estime_minutes: optData.temps_estime_minutes || 0,
-          };
-        }
-      } catch (e) {
-        console.warn('Optimization failed, using default order:', e);
-      }
-
-      setIsOptimizing(false);
-
-      // Create the tournee with optimized data
       const { error } = await supabase
         .from('tournees')
         .insert({
@@ -141,28 +92,17 @@ export const TourneeCreationStandalone = ({
           nom: tourneeName,
           date_planifiee: tourneeDate,
           entreprises_ids: selectedSites.map(s => s.id),
-          ordre_optimise: optimizationResult.ordre_optimise,
-          distance_totale_km: optimizationResult.distance_totale_km,
-          temps_estime_minutes: optimizationResult.temps_estime_minutes,
+          ordre_optimise: selectedSites.map(s => s.id),
           statut: 'planifiee',
         });
       
       if (error) throw error;
-      return optimizationResult;
     },
-    onSuccess: (result) => {
-      const distanceText = result.distance_totale_km > 0 
-        ? ` - ${result.distance_totale_km.toFixed(1)} km` 
-        : '';
-      const timeText = result.temps_estime_minutes > 0 
-        ? ` - ${Math.round(result.temps_estime_minutes)} min` 
-        : '';
-      toast.success(`Tournée créée avec succès${distanceText}${timeText}`);
-      queryClient.invalidateQueries({ queryKey: ['tournees'] });
+    onSuccess: () => {
+      toast.success('Tournée créée avec succès');
       onSuccess();
     },
     onError: (error) => {
-      setIsOptimizing(false);
       toast.error('Erreur: ' + error.message);
     },
   });
@@ -272,24 +212,6 @@ export const TourneeCreationStandalone = ({
         </CardContent>
       </Card>
 
-      {/* Preview KPIs */}
-      {selectedSites.length >= 2 && (
-        <Card className="glass-card border-accent/20">
-          <CardContent className="p-3">
-            <div className="flex items-center justify-around text-sm">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-accent" />
-                <span>{selectedSites.length} arrêts</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Route className="w-4 h-4" />
-                <span>Optimisation auto</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Create button */}
       <Button
         onClick={() => createTournee.mutate()}
@@ -297,10 +219,7 @@ export const TourneeCreationStandalone = ({
         className="w-full h-12 text-lg font-semibold bg-accent hover:bg-accent/90 text-primary"
       >
         {createTournee.isPending ? (
-          <div className="flex items-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            {isOptimizing ? 'Optimisation...' : 'Création...'}
-          </div>
+          <div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
         ) : (
           <>
             <Check className="w-5 h-5 mr-2" />
