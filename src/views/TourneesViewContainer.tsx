@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
-  Plus, 
   Calendar, 
   MapPin, 
   Navigation, 
@@ -19,7 +18,7 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
-import { TourneeCreationStandalone } from '@/components/dashboard/TourneeCreationStandalone';
+import { TourneeDetailView } from '@/components/dashboard/TourneeDetailView';
 
 interface Tournee {
   id: string;
@@ -34,7 +33,7 @@ interface Tournee {
 }
 
 export const TourneesViewContainer = ({ userId }: { userId: string }) => {
-  const [showCreation, setShowCreation] = useState(false);
+  const [selectedTourneeId, setSelectedTourneeId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   // Fetch user's tournees
@@ -92,34 +91,40 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   };
 
   const openGPS = (tournee: Tournee) => {
-    // Open in Google Maps or native maps app
-    toast.info('Ouverture GPS...');
-    // TODO: Generate Google Maps URL with waypoints
+    // Build Google Maps URL with waypoints from ordre_optimise
+    if (!tournee.ordre_optimise || tournee.ordre_optimise.length === 0) {
+      toast.error('Aucun itinéraire disponible');
+      return;
+    }
+    
+    // We need to fetch the sites to get their coordinates
+    // For now, just show a toast
+    toast.info('Ouverture GPS via la vue détail...');
+    setSelectedTourneeId(tournee.id);
   };
 
-  if (showCreation) {
+  // Show detail view if a tournee is selected
+  if (selectedTourneeId) {
     return (
-      <TourneeCreationStandalone 
+      <TourneeDetailView 
+        tourneeId={selectedTourneeId}
         userId={userId}
-        onClose={() => setShowCreation(false)}
-        onSuccess={() => {
-          setShowCreation(false);
-          queryClient.invalidateQueries({ queryKey: ['tournees', userId] });
-        }}
+        onBack={() => setSelectedTourneeId(null)}
       />
     );
   }
 
   return (
     <div className="h-full flex flex-col overflow-hidden p-4 space-y-4">
-      {/* Create new tournee button */}
-      <Button
-        onClick={() => setShowCreation(true)}
-        className="w-full h-14 text-lg font-semibold bg-accent hover:bg-accent/90 text-primary"
-      >
-        <Plus className="w-5 h-5 mr-2" />
-        Créer une nouvelle tournée
-      </Button>
+      {/* Info message for creating tournees */}
+      <Card className="border-accent/30 bg-accent/5">
+        <CardContent className="p-4 flex items-center gap-3">
+          <RouteIcon className="w-5 h-5 text-accent" />
+          <p className="text-sm text-muted-foreground">
+            Pour créer une tournée, allez dans l'onglet <span className="text-accent font-medium">Prospects</span>, sélectionnez vos prospects et cliquez sur "Créer une tournée".
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Tournees list */}
       <Card className="flex-1 overflow-hidden glass-card border-accent/20">
@@ -145,7 +150,7 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
               <div className="text-center py-12 text-muted-foreground">
                 <RouteIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>Aucune tournée planifiée</p>
-                <p className="text-sm">Créez votre première tournée optimisée</p>
+                <p className="text-sm mt-2">Créez votre première tournée depuis l'onglet Prospects</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -166,7 +171,7 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                     {/* Date */}
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
-                      {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy', { locale: fr })}
+                      {format(new Date(tournee.date_planifiee), 'EEEE dd MMMM yyyy', { locale: fr })}
                     </div>
 
                     {/* Stats */}
@@ -190,6 +195,7 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                       <Button 
                         variant="outline" 
                         className="flex-1 border-accent/30 hover:bg-accent/10 bg-accent/5"
+                        onClick={() => setSelectedTourneeId(tournee.id)}
                       >
                         <Map className="w-4 h-4 mr-2" />
                         Voir détails
