@@ -513,6 +513,8 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   const [selectedTournee, setSelectedTournee] = useState<Tournee | null>(null);
   const queryClient = useQueryClient();
 
+  console.log('[TourneesViewContainer] Render - viewMode:', viewMode, 'selectedTournee:', selectedTournee?.id);
+
   // Fetch user's tournees
   const { data: tournees = [], isLoading } = useQuery({
     queryKey: ['tournees', userId],
@@ -546,27 +548,37 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
     },
   });
 
-  const handleSelectTournee = (t: Tournee) => {
-    setSelectedTournee(t);
+  const handleSelectTournee = (tournee: Tournee) => {
+    console.log('[TourneesViewContainer] handleSelectTournee called with:', tournee.id, tournee.nom);
+    setSelectedTournee(tournee);
     setViewMode('detail');
+    console.log('[TourneesViewContainer] State updated - should now show detail');
   };
 
   const handleBack = () => {
-    setViewMode('list');
+    console.log('[TourneesViewContainer] handleBack called');
     setSelectedTournee(null);
+    setViewMode('list');
   };
 
-  // Render based on view mode
-  if (viewMode === 'detail' && selectedTournee) {
-    return <TourneeDetail tournee={selectedTournee} onBack={handleBack} />;
-  }
-
+  // Rendu explicite avec keys pour forcer le re-render
   return (
-    <TourneesList 
-      tournees={tournees}
-      isLoading={isLoading}
-      onSelectTournee={handleSelectTournee}
-      onDeleteTournee={(id) => deleteMutation.mutate(id)}
-    />
+    <div className="h-full w-full" key={`view-${viewMode}-${selectedTournee?.id || 'none'}`}>
+      {viewMode === 'detail' && selectedTournee ? (
+        <TourneeDetail 
+          key={`detail-${selectedTournee.id}`}
+          tournee={selectedTournee} 
+          onBack={handleBack} 
+        />
+      ) : (
+        <TourneesList 
+          key="list"
+          tournees={tournees}
+          isLoading={isLoading}
+          onSelectTournee={handleSelectTournee}
+          onDeleteTournee={(id) => deleteMutation.mutate(id)}
+        />
+      )}
+    </div>
   );
 };
