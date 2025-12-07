@@ -16,6 +16,7 @@ import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import CGV from "./pages/CGV";
 import CGU from "./pages/CGU";
 import SecuritySettings from "./pages/SecuritySettings";
+import TourneeDetail from "./pages/TourneeDetail";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,11 @@ const App = () => (
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/tournee/:tourneeId" element={
+            <ProtectedRoute>
+              <TourneeDetail />
             </ProtectedRoute>
           } />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
