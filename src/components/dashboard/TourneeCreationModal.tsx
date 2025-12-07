@@ -168,7 +168,7 @@ export const TourneeCreationModal = ({
           {/* Date */}
           <div className="space-y-2">
             <Label>Date de la tournée *</Label>
-            <Popover>
+            <Popover modal={true}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -181,13 +181,14 @@ export const TourneeCreationModal = ({
                   {date ? format(date, 'PPP', { locale: fr }) : "Sélectionner une date"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 z-[100]" align="start">
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={setDate}
                   locale={fr}
                   disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                  className="p-3 pointer-events-auto"
                 />
               </PopoverContent>
             </Popover>
