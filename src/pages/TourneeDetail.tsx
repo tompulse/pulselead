@@ -145,8 +145,8 @@ const TourneeDetail = () => {
 
           if (error) throw error;
 
-          const newDistance = data.distance_km;
-          const newTemps = data.duration_minutes;
+          const newDistance = parseFloat(data.withTolls?.distance_km) || parseFloat(data.withoutTolls?.distance_km) || null;
+          const newTemps = data.withTolls?.duration_minutes || data.withoutTolls?.duration_minutes || null;
 
           if (newDistance || newTemps) {
             setLocalKpis({
