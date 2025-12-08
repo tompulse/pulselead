@@ -104,7 +104,7 @@ export const NouveauxSitesListView = ({
                       onToggleSelection(site);
                     }
                   }}
-                  className={`group relative rounded-xl p-4 md:p-5 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[280px] overflow-hidden ${
+                  className={`group relative rounded-xl p-3 md:p-4 lg:p-5 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[200px] md:min-h-[240px] lg:min-h-[280px] overflow-hidden ${
                     selectionMode 
                       ? isSelected
                         ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15'

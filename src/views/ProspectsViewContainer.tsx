@@ -135,8 +135,8 @@ export const ProspectsViewContainer = ({
       />
       
       <div className="flex-1 flex gap-4 overflow-hidden p-4">
-        {/* Sidebar Filtres NAF - Desktop only */}
-        <div className="w-80 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden lg:block">
+        {/* Sidebar Filtres NAF - Desktop & Tablet */}
+        <div className="w-64 lg:w-80 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden md:block">
           <ScrollArea className="h-full">
             <NafFilters
               filters={filters}

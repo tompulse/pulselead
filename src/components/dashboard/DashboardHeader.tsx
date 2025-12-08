@@ -47,7 +47,7 @@ export const DashboardHeader = ({
           <>
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="border-accent/30 hover:bg-accent/10 h-9 w-9">
+                <Button variant="outline" size="icon" className="border-accent/30 hover:bg-accent/10 h-9 w-9" aria-label="Ouvrir le menu">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -67,7 +67,7 @@ export const DashboardHeader = ({
                             setSubscriptionDialogOpen(true);
                           }}
                         >
-                          <CreditCard className="w-4 h-4" />
+                          <CreditCard className="w-4 h-4" aria-hidden="true" />
                           Abonnements
                         </Button>
                       </div>
@@ -86,8 +86,9 @@ export const DashboardHeader = ({
               size="icon"
               onClick={onLogout}
               className="h-9 w-9 border-accent/30 hover:bg-accent/10"
+              aria-label="Déconnexion"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-4 h-4" aria-hidden="true" />
             </Button>
           </>
         ) : (
@@ -159,8 +160,9 @@ export const DashboardHeader = ({
                 size="sm"
                 onClick={onLogout}
                 className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10 hover:border-accent transition-all duration-300 hover:shadow-md"
+                aria-label="Déconnexion"
               >
-                <LogOut className="w-3.5 h-3.5 sm:mr-1" />
+                <LogOut className="w-3.5 h-3.5 sm:mr-1" aria-hidden="true" />
                 <span className="hidden sm:inline">Déconnexion</span>
               </Button>
             </div>
