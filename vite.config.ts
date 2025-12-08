@@ -50,9 +50,9 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifest: {
-        name: 'LUMA — éclaire les leviers de ta croissance',
-        short_name: 'LUMA',
-        description: 'Visualise ton marché, comprends tes prospects et passe à l\'action',
+        name: 'PULSE — Vendez plus. Roulez moins.',
+        short_name: 'PULSE',
+        description: 'Structurez votre prospection terrain avec intelligence. Cartographie, tournées optimisées et CRM mobile.',
         theme_color: '#00FFF0',
         background_color: '#0A0F1E',
         display: 'standalone',
