@@ -12,8 +12,7 @@ import {
   Map,
   Trash2,
   Route as RouteIcon,
-  Plus,
-  Pencil
+  Plus
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -95,9 +94,6 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
     navigate(`/dashboard/tournee/${tournee.id}`);
   };
 
-  const handleEdit = (tournee: Tournee) => {
-    toast.info(`Modifier ${tournee.nom} - Backend à implémenter`);
-  };
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
@@ -195,15 +191,6 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                   >
                     <Map className="w-4 h-4 mr-2" aria-hidden="true" />
                     Voir détails
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => handleEdit(tournee)}
-                    className="h-11 w-11 sm:h-12 sm:w-12 border-accent/30 hover:bg-accent/10 hover:border-accent rounded-xl transition-all duration-200"
-                    aria-label={`Modifier ${tournee.nom}`}
-                  >
-                    <Pencil className="w-4 h-4" aria-hidden="true" />
                   </Button>
                   <Button 
                     variant="outline" 
