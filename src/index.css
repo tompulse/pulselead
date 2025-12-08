@@ -143,7 +143,7 @@ All colors MUST be HSL.
 @layer components {
   /* Hero button - Static avec surbrillance */
   .btn-hero-pulse {
-    @apply relative px-12 py-10 rounded-full font-extrabold !text-xl;
+    @apply relative px-8 py-6 sm:px-10 sm:py-8 md:px-12 md:py-10 rounded-full font-extrabold text-lg sm:text-xl;
     @apply bg-gradient-to-r from-accent via-cyan-glow to-accent;
     @apply text-accent-foreground transition-all duration-300;
     box-shadow: 0 0 40px hsl(190 100% 50% / 0.5), 0 10px 28px hsl(190 100% 50% / 0.35);
@@ -156,6 +156,14 @@ All colors MUST be HSL.
   
   .btn-hero-pulse:active {
     transform: translateY(-2px) scale(1.01);
+  }
+  
+  /* Mobile hero button adjustment */
+  @media (max-width: 640px) {
+    .btn-hero-pulse svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
   }
 
   /* Hero button - Style 2: Shimmer Effect */
