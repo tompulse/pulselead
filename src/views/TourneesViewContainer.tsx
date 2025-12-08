@@ -104,20 +104,21 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden p-4 space-y-4">
+    <div className="h-full flex flex-col overflow-hidden p-4 space-y-5">
       {/* Create Button */}
       <Button 
         onClick={handleCreateTournee}
-        className="w-full h-14 bg-accent hover:bg-accent/90 text-primary font-semibold text-base rounded-xl"
+        className="w-full h-14 bg-gradient-to-r from-accent to-cyan-glow hover:from-accent/90 hover:to-cyan-glow/90 text-primary font-bold text-base rounded-2xl shadow-lg shadow-accent/30 transition-all duration-300 hover:shadow-xl hover:shadow-accent/40 hover:scale-[1.02]"
+        aria-label="Créer une nouvelle tournée"
       >
-        <Plus className="w-5 h-5 mr-2" />
+        <Plus className="w-5 h-5 mr-2" aria-hidden="true" />
         Créer une nouvelle tournée
       </Button>
 
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 rounded-xl bg-card/50 border border-accent/20">
-        <div className="p-2.5 rounded-lg bg-accent/10 border border-accent/30">
-          <Calendar className="w-5 h-5 text-accent" />
+      <div className="flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-r from-card/80 to-card/40 border border-accent/20 backdrop-blur">
+        <div className="p-3 rounded-xl bg-accent/15 border border-accent/30">
+          <Calendar className="w-6 h-6 text-accent" aria-hidden="true" />
         </div>
         <div>
           <h3 className="font-bold text-lg text-accent">Mes tournées planifiées</h3>
@@ -128,80 +129,90 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
       </div>
 
       {/* Tournees list */}
-      <div className="flex-1 overflow-auto space-y-4">
+      <div className="flex-1 overflow-auto space-y-4 hide-scrollbar">
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
           </div>
         ) : tournees.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <RouteIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p className="font-medium">Aucune tournée planifiée</p>
-            <p className="text-sm mt-1">Cliquez sur le bouton ci-dessus pour créer votre première tournée</p>
+          <div className="text-center py-16 text-muted-foreground">
+            <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-accent/10 flex items-center justify-center">
+              <RouteIcon className="w-10 h-10 text-accent/50" aria-hidden="true" />
+            </div>
+            <p className="font-semibold text-lg">Aucune tournée planifiée</p>
+            <p className="text-sm mt-2 max-w-xs mx-auto">Sélectionnez des prospects et créez votre première tournée optimisée</p>
           </div>
         ) : (
           tournees.map((tournee) => (
             <Card 
               key={tournee.id}
-              className="glass-card border-accent/20 hover:border-accent/40 transition-colors rounded-2xl overflow-hidden"
+              className="glass-card border-accent/20 hover:border-accent/40 transition-all duration-300 rounded-2xl overflow-hidden hover:shadow-lg hover:shadow-accent/10"
             >
-              <CardContent className="p-5 space-y-4">
+              <CardContent className="p-5 space-y-5">
                 {/* Header row */}
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2">
-                    <RouteIcon className="w-5 h-5 text-accent" />
-                    <span className="font-semibold text-lg">{tournee.nom}</span>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="p-2 rounded-lg bg-accent/10 shrink-0">
+                      <RouteIcon className="w-5 h-5 text-accent" aria-hidden="true" />
+                    </div>
+                    <span className="font-bold text-lg truncate">{tournee.nom}</span>
                   </div>
                   {getStatusBadge(tournee.statut)}
                 </div>
 
                 {/* Date */}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
-                  {format(new Date(tournee.date_planifiee), 'dd/MM/yyyy', { locale: fr })}
+                  <Calendar className="w-4 h-4 text-accent/60" aria-hidden="true" />
+                  <span>{format(new Date(tournee.date_planifiee), 'dd/MM/yyyy', { locale: fr })}</span>
                 </div>
 
                 {/* KPIs row */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-accent/10 border border-accent/20">
-                    <MapPin className="w-5 h-5 text-accent" />
-                    <span className="font-bold text-lg">{tournee.entreprises_ids?.length || 0}</span>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                  <div className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl bg-accent/10 border border-accent/20">
+                    <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-accent mb-1" aria-hidden="true" />
+                    <span className="font-bold text-lg sm:text-xl">{tournee.entreprises_ids?.length || 0}</span>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground">arrêts</span>
                   </div>
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30">
-                    <Navigation className="w-5 h-5 text-accent" />
-                    <span className="font-bold text-lg">{tournee.distance_totale_km?.toFixed(0) || 0}km</span>
+                  <div className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl bg-gradient-to-br from-accent/15 to-cyan-glow/10 border border-accent/30">
+                    <Navigation className="w-4 h-4 sm:w-5 sm:h-5 text-accent mb-1" aria-hidden="true" />
+                    <span className="font-bold text-lg sm:text-xl">{tournee.distance_totale_km?.toFixed(0) || 0}<span className="text-sm font-normal">km</span></span>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground">distance</span>
                   </div>
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                    <Clock className="w-5 h-5 text-purple-400" />
-                    <span className="font-bold text-lg">{formatDuration(tournee.temps_estime_minutes)}</span>
+                  <div className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 mb-1" aria-hidden="true" />
+                    <span className="font-bold text-lg sm:text-xl">{formatDuration(tournee.temps_estime_minutes)}</span>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground">durée</span>
                   </div>
                 </div>
 
                 {/* Actions row */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pt-1">
                   <Button 
                     variant="outline"
-                    className="flex-1 h-12 border-accent/30 hover:bg-accent/10 rounded-xl"
+                    className="flex-1 h-11 sm:h-12 border-accent/30 hover:bg-accent hover:text-primary hover:border-accent rounded-xl font-semibold transition-all duration-200"
                     onClick={() => handleViewDetails(tournee)}
+                    aria-label={`Voir les détails de ${tournee.nom}`}
                   >
-                    <Map className="w-4 h-4 mr-2" />
+                    <Map className="w-4 h-4 mr-2" aria-hidden="true" />
                     Voir détails
                   </Button>
                   <Button 
                     variant="outline" 
                     size="icon"
                     onClick={() => handleEdit(tournee)}
-                    className="h-12 w-12 border-accent/30 hover:bg-accent/10 rounded-xl"
+                    className="h-11 w-11 sm:h-12 sm:w-12 border-accent/30 hover:bg-accent/10 hover:border-accent rounded-xl transition-all duration-200"
+                    aria-label={`Modifier ${tournee.nom}`}
                   >
-                    <Pencil className="w-4 h-4" />
+                    <Pencil className="w-4 h-4" aria-hidden="true" />
                   </Button>
                   <Button 
                     variant="outline" 
                     size="icon"
                     onClick={() => handleDelete(tournee.id)}
-                    className="h-12 w-12 border-destructive/30 hover:bg-destructive/10 text-destructive rounded-xl"
+                    className="h-11 w-11 sm:h-12 sm:w-12 border-destructive/30 hover:bg-destructive hover:text-white hover:border-destructive rounded-xl transition-all duration-200"
+                    aria-label={`Supprimer ${tournee.nom}`}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
                   </Button>
                 </div>
               </CardContent>
