@@ -10,7 +10,6 @@ interface ProspectsViewContainerProps {
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   userId: string;
   onEntrepriseSelect?: (entreprise: any) => void;
-  onAIFiltersReady?: (fn: any) => void;
 }
 
 export const ProspectsViewContainer = ({ 
