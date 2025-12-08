@@ -84,11 +84,13 @@ export const Navbar = () => {
           <button
             className="md:hidden p-2 rounded-lg hover:bg-accent/10 transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? (
-              <X className="w-6 h-6 text-foreground" />
+              <X className="w-6 h-6 text-foreground" aria-hidden="true" />
             ) : (
-              <Menu className="w-6 h-6 text-foreground" />
+              <Menu className="w-6 h-6 text-foreground" aria-hidden="true" />
             )}
           </button>
         </div>

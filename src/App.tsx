@@ -6,19 +6,35 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { CookieConsent } from "@/components/CookieConsent";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import LandingPage from "./pages/LandingPage";
+import { lazy, Suspense } from "react";
+import { Loader2 } from "lucide-react";
+
+// Lazy load heavy pages for better performance
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const TourneeDetail = lazy(() => import("./pages/TourneeDetail"));
+const SecuritySettings = lazy(() => import("./pages/SecuritySettings"));
+
+// Eagerly load light pages
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
 import Subscribe from "./pages/Subscribe";
 import Error404 from "./pages/Error404";
 import MentionsLegales from "./pages/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import CGV from "./pages/CGV";
 import CGU from "./pages/CGU";
-import SecuritySettings from "./pages/SecuritySettings";
-import TourneeDetail from "./pages/TourneeDetail";
 
 const queryClient = new QueryClient();
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="text-center space-y-4">
+      <Loader2 className="w-10 h-10 animate-spin text-accent mx-auto" />
+      <p className="text-muted-foreground text-sm">Chargement...</p>
+    </div>
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -28,32 +44,34 @@ const App = () => (
       <BrowserRouter>
         <GoogleAnalytics />
         <CookieConsent />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/subscribe" element={<Subscribe />} />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/dashboard/tournee/:tourneeId" element={
-            <ProtectedRoute>
-              <TourneeDetail />
-            </ProtectedRoute>
-          } />
-          <Route path="/mentions-legales" element={<MentionsLegales />} />
-          <Route path="/confidentialite" element={<PolitiqueConfidentialite />} />
-          <Route path="/cgv" element={<CGV />} />
-          <Route path="/cgu" element={<CGU />} />
-          <Route path="/security" element={
-            <ProtectedRoute>
-              <SecuritySettings />
-            </ProtectedRoute>
-          } />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<Error404 />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/subscribe" element={<Subscribe />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/tournee/:tourneeId" element={
+              <ProtectedRoute>
+                <TourneeDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/confidentialite" element={<PolitiqueConfidentialite />} />
+            <Route path="/cgv" element={<CGV />} />
+            <Route path="/cgu" element={<CGU />} />
+            <Route path="/security" element={
+              <ProtectedRoute>
+                <SecuritySettings />
+              </ProtectedRoute>
+            } />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<Error404 />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

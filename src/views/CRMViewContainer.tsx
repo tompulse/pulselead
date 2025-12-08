@@ -112,18 +112,22 @@ export const CRMViewContainer = ({
       {/* Activities Section */}
       <div>
         <h3 className="text-accent font-semibold mb-4">Activités</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
           {/* Visites */}
           <Card 
             className="glass-card border-accent/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-accent/10"
             onClick={() => setSelectedActivity('visite')}
+            role="button"
+            tabIndex={0}
+            aria-label={`Voir les ${visiteCount} visites`}
+            onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('visite')}
           >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
-                <MapPin className="w-6 h-6 text-accent" />
+            <CardContent className="p-4 md:p-6 text-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <MapPin className="w-5 h-5 md:w-6 md:h-6 text-accent" aria-hidden="true" />
               </div>
-              <p className="text-sm text-muted-foreground mb-1">Visites</p>
-              <p className="text-4xl font-bold text-accent">{visiteCount}</p>
+              <p className="text-xs md:text-sm text-muted-foreground mb-1">Visites</p>
+              <p className="text-2xl md:text-4xl font-bold text-accent">{visiteCount}</p>
             </CardContent>
           </Card>
 
@@ -131,13 +135,17 @@ export const CRMViewContainer = ({
           <Card 
             className="glass-card border-purple-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
             onClick={() => setSelectedActivity('rdv')}
+            role="button"
+            tabIndex={0}
+            aria-label={`Voir les ${rdvCount} rendez-vous`}
+            onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('rdv')}
           >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-3">
-                <Calendar className="w-6 h-6 text-purple-400" />
+            <CardContent className="p-4 md:p-6 text-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Calendar className="w-5 h-5 md:w-6 md:h-6 text-purple-400" aria-hidden="true" />
               </div>
-              <p className="text-sm text-muted-foreground mb-1">RDV</p>
-              <p className="text-4xl font-bold text-purple-400">{rdvCount}</p>
+              <p className="text-xs md:text-sm text-muted-foreground mb-1">RDV</p>
+              <p className="text-2xl md:text-4xl font-bold text-purple-400">{rdvCount}</p>
             </CardContent>
           </Card>
 
@@ -145,13 +153,17 @@ export const CRMViewContainer = ({
           <Card 
             className="glass-card border-orange-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/10"
             onClick={() => setSelectedActivity('a_revoir')}
+            role="button"
+            tabIndex={0}
+            aria-label={`Voir les ${aRevoirCount} entreprises à revoir`}
+            onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('a_revoir')}
           >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center mx-auto mb-3">
-                <RotateCcw className="w-6 h-6 text-orange-400" />
+            <CardContent className="p-4 md:p-6 text-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-orange-500/20 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <RotateCcw className="w-5 h-5 md:w-6 md:h-6 text-orange-400" aria-hidden="true" />
               </div>
-              <p className="text-sm text-muted-foreground mb-1">À revoir</p>
-              <p className="text-4xl font-bold text-orange-400">{aRevoirCount}</p>
+              <p className="text-xs md:text-sm text-muted-foreground mb-1">À revoir</p>
+              <p className="text-2xl md:text-4xl font-bold text-orange-400">{aRevoirCount}</p>
             </CardContent>
           </Card>
         </div>
@@ -181,7 +193,7 @@ export const CRMViewContainer = ({
             <p className="text-sm mt-1">Ajoutez des interactions depuis les fiches entreprises</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100%-32px)]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 h-[calc(100%-32px)]">
             {activeStages.map((stage) => {
               const stageLeads = getLeadsByStage(stage.key);
               return (

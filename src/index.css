@@ -76,6 +76,11 @@ All colors MUST be HSL.
     --glow-cyan: 0 0 48px hsl(190 100% 50% / 0.5);
     --shadow-elevated: 0 20px 60px -15px hsl(0 0% 0% / 0.95);
   }
+  
+  /* Safe area for mobile devices */
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
 }
 
 @layer base {
@@ -119,6 +124,36 @@ All colors MUST be HSL.
   .gradient-text {
     font-weight: 800;
     letter-spacing: -0.03em;
+  }
+  
+  /* Focus states for accessibility */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
+  }
+  
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  
+  /* Skip to content for keyboard navigation */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    padding: 8px 16px;
+    z-index: 100;
+    transition: top 0.3s;
+  }
+  
+  .skip-link:focus {
+    top: 0;
   }
   
   /* Scrollbar styling */
