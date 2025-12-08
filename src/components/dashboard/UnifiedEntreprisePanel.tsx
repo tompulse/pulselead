@@ -9,7 +9,7 @@ import { useCRMActions } from "@/hooks/useCRMActions";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { Building2, MapPin, Calendar, X, Navigation, Hash, Factory } from "lucide-react";
+import { Building2, MapPin, Calendar, Navigation, Hash, Factory } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafNomenclatureComplete";
@@ -127,28 +127,16 @@ export const UnifiedEntreprisePanel = ({
         className={`${isMobile ? 'h-[90vh]' : 'w-[420px]'} p-0 flex flex-col`}
       >
         {/* Header */}
-        <div className="shrink-0 p-4 border-b border-accent/20 bg-gradient-to-r from-accent/5 to-transparent">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-bold leading-tight">{displayEntreprise.nom || 'Entreprise'}</h2>
-              {cityLine && (
-                <p className="text-sm text-muted-foreground mt-0.5">{cityLine}</p>
-              )}
-              {leadStatus && (
-                <div className="mt-2">
-                  <LeadStatusBadge statut={leadStatus.statut_actuel} />
-                </div>
-              )}
+        <div className="shrink-0 p-4 pr-12 border-b border-accent/20 bg-gradient-to-r from-accent/5 to-transparent">
+          <h2 className="text-lg font-bold leading-tight">{displayEntreprise.nom || 'Entreprise'}</h2>
+          {cityLine && (
+            <p className="text-sm text-muted-foreground mt-0.5">{cityLine}</p>
+          )}
+          {leadStatus && (
+            <div className="mt-2">
+              <LeadStatusBadge statut={leadStatus.statut_actuel} />
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onOpenChange(false)}
-              className="shrink-0 -mr-2 -mt-1 h-8 w-8"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          )}
         </div>
 
         {/* Tabs */}
