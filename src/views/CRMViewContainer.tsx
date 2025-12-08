@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MapPin, Calendar, RotateCcw, Building2 } from 'lucide-react';
+import { ActivityDetailSheet } from '@/components/dashboard/ActivityDetailSheet';
 
 interface LeadWithSite {
   id: string;
@@ -37,6 +39,7 @@ export const CRMViewContainer = ({
   userId: string; 
   onEntrepriseSelect?: (entrepriseId: string) => void 
 }) => {
+  const [selectedActivity, setSelectedActivity] = useState<'visite' | 'rdv' | 'a_revoir' | null>(null);
   // Fetch interactions for activity stats
   const { data: interactions = [] } = useQuery({
     queryKey: ['crm-interactions', userId],
@@ -111,7 +114,10 @@ export const CRMViewContainer = ({
         <h3 className="text-accent font-semibold mb-4">Activités</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Visites */}
-          <Card className="glass-card border-accent/20">
+          <Card 
+            className="glass-card border-accent/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-accent/10"
+            onClick={() => setSelectedActivity('visite')}
+          >
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
                 <MapPin className="w-6 h-6 text-accent" />
@@ -122,7 +128,10 @@ export const CRMViewContainer = ({
           </Card>
 
           {/* RDV */}
-          <Card className="glass-card border-purple-500/20">
+          <Card 
+            className="glass-card border-purple-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
+            onClick={() => setSelectedActivity('rdv')}
+          >
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-3">
                 <Calendar className="w-6 h-6 text-purple-400" />
@@ -133,7 +142,10 @@ export const CRMViewContainer = ({
           </Card>
 
           {/* À revoir */}
-          <Card className="glass-card border-orange-500/20">
+          <Card 
+            className="glass-card border-orange-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/10"
+            onClick={() => setSelectedActivity('a_revoir')}
+          >
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center mx-auto mb-3">
                 <RotateCcw className="w-6 h-6 text-orange-400" />
@@ -144,6 +156,15 @@ export const CRMViewContainer = ({
           </Card>
         </div>
       </div>
+
+      {/* Activity Detail Sheet */}
+      <ActivityDetailSheet
+        isOpen={selectedActivity !== null}
+        onClose={() => setSelectedActivity(null)}
+        activityType={selectedActivity}
+        userId={userId}
+        onEntrepriseSelect={onEntrepriseSelect}
+      />
 
       {/* Pipeline Section */}
       <div className="flex-1 overflow-hidden">
