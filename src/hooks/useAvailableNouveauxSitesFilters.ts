@@ -11,15 +11,36 @@ interface FilterCounts {
   taillesEntreprise: Record<string, number>;
 }
 
-export function useAvailableNouveauxSitesFilters() {
+interface FiltersInput {
+  nafSections?: string[];
+  nafDivisions?: string[];
+  departments?: string[];
+  taillesEntreprise?: string[];
+  searchQuery?: string;
+}
+
+export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
   return useQuery({
-    queryKey: ['nouveaux-sites-available-filters-v2'],
+    queryKey: [
+      'nouveaux-sites-available-filters-dynamic',
+      filters.nafSections || [],
+      filters.nafDivisions || [],
+      filters.departments || [],
+      filters.taillesEntreprise || [],
+      filters.searchQuery || ''
+    ],
     queryFn: async (): Promise<FilterCounts> => {
-      // Use the PostgreSQL function for server-side aggregation
-      const { data, error } = await supabase.rpc('get_nouveaux_sites_filter_counts_v2');
+      // Use the dynamic PostgreSQL function for contextual counts
+      const { data, error } = await supabase.rpc('get_nouveaux_sites_filter_counts_dynamic', {
+        p_naf_sections: filters.nafSections?.length ? filters.nafSections : null,
+        p_naf_divisions: filters.nafDivisions?.length ? filters.nafDivisions : null,
+        p_departments: filters.departments?.length ? filters.departments : null,
+        p_tailles: filters.taillesEntreprise?.length ? filters.taillesEntreprise : null,
+        p_search_query: filters.searchQuery?.trim() || null
+      });
       
       if (error) {
-        console.error('Error fetching filter counts:', error);
+        console.error('Error fetching dynamic filter counts:', error);
         throw error;
       }
 
@@ -33,7 +54,7 @@ export function useAvailableNouveauxSitesFilters() {
         taillesEntreprise: (data as any)?.taillesEntreprise || {},
       };
     },
-    staleTime: 60000,
-    gcTime: 120000,
+    staleTime: 30000, // 30 secondes
+    gcTime: 60000,
   });
 }

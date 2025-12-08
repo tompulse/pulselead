@@ -89,7 +89,14 @@ export const NafFilters = ({
   const [nafSearchQuery, setNafSearchQuery] = useState("");
   
   const { isAdmin } = useAdminStatus();
-  const { data: availableFilters, isLoading } = useAvailableNouveauxSitesFilters();
+  // Pass current filters to get contextual/dynamic counts
+  const { data: availableFilters, isLoading, isFetching } = useAvailableNouveauxSitesFilters({
+    nafSections: filters.nafSections,
+    nafDivisions: filters.nafDivisions,
+    departments: filters.departments,
+    taillesEntreprise: filters.taillesEntreprise,
+    searchQuery: filters.searchQuery
+  });
 
   // Construire la hiérarchie NAF complète avec compteurs
   const nafHierarchy = useMemo(() => {
@@ -509,22 +516,99 @@ export const NafFilters = ({
       )}
 
       {/* Barre de recherche */}
-      <div className="p-4 border-b border-accent/20 space-y-2">
+      <div className="p-4 border-b border-accent/20 space-y-3">
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Rechercher..."
+            placeholder="Rechercher (ex: boulangerie paris)..."
             value={filters.searchQuery || ""}
             onChange={(e) => setFilters((prev: any) => ({ ...prev, searchQuery: e.target.value }))}
             className="pl-8 h-8 text-xs bg-background/50 border-accent/20 focus:border-accent/40"
           />
+          {isFetching && (
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+              <div className="w-3 h-3 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+            </div>
+          )}
         </div>
-        {isAdmin && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Building2 className="w-4 h-4 text-accent" />
-            <span className="font-medium text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
-            <span>/ {totalCount.toLocaleString('fr-FR')} site{totalCount > 1 ? 's' : ''}</span>
+        
+        {/* Compteur de résultats */}
+        <div className="flex items-center gap-2 text-sm">
+          <Building2 className="w-4 h-4 text-accent" />
+          <span className="font-semibold text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
+          <span className="text-muted-foreground">entreprise{resultsCount > 1 ? 's' : ''} trouvée{resultsCount > 1 ? 's' : ''}</span>
+          {isFetching && <span className="text-xs text-muted-foreground">(mise à jour...)</span>}
+        </div>
+
+        {/* Chips des filtres actifs */}
+        {activeFiltersCount > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {filters.nafSections?.map((code: string) => (
+              <span
+                key={`section-${code}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-accent/15 text-accent rounded-full border border-accent/30"
+              >
+                <span className="font-medium">{NAF_SECTIONS[code]?.emoji} {code}</span>
+                <button
+                  onClick={() => handleSectionToggle(code)}
+                  className="hover:bg-accent/20 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            {filters.nafDivisions?.map((code: string) => (
+              <span
+                key={`division-${code}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-accent/10 text-foreground rounded-full border border-accent/20"
+              >
+                <span>{code}</span>
+                <button
+                  onClick={() => handleDivisionToggle(code)}
+                  className="hover:bg-accent/20 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            {filters.departments?.map((dept: string) => (
+              <span
+                key={`dept-${dept}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-blue-500/15 text-blue-600 dark:text-blue-400 rounded-full border border-blue-500/30"
+              >
+                <span>Dép. {dept}</span>
+                <button
+                  onClick={() => handleDepartmentToggle(dept)}
+                  className="hover:bg-blue-500/20 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            {filters.taillesEntreprise?.map((taille: string) => (
+              <span
+                key={`taille-${taille}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-purple-500/15 text-purple-600 dark:text-purple-400 rounded-full border border-purple-500/30"
+              >
+                <span>{taille}</span>
+                <button
+                  onClick={() => handleTailleEntrepriseToggle(taille)}
+                  className="hover:bg-purple-500/20 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            {activeFiltersCount > 2 && (
+              <button
+                onClick={clearFilters}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-destructive/10 text-destructive rounded-full border border-destructive/30 hover:bg-destructive/20 transition-colors"
+              >
+                <X className="w-3 h-3" />
+                Tout effacer
+              </button>
+            )}
           </div>
         )}
       </div>

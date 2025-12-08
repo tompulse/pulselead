@@ -59,8 +59,26 @@ export const ProspectsViewContainer = ({
     clearSelection();
   };
 
+  const activeFiltersCount = 
+    (filters.nafSections?.length || 0) + 
+    (filters.nafDivisions?.length || 0) +
+    (filters.departments?.length || 0) +
+    (filters.taillesEntreprise?.length || 0);
+
   return (
     <div className="h-full flex flex-col overflow-hidden">
+      {/* Compteur de résultats visible en haut */}
+      <div className="px-4 py-2 bg-accent/5 border-b border-accent/20 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-foreground">{totalCount.toLocaleString('fr-FR')}</span>
+          <span className="text-sm text-muted-foreground">entreprise{totalCount > 1 ? 's' : ''}</span>
+          {activeFiltersCount > 0 && (
+            <span className="text-xs text-accent bg-accent/10 px-2 py-0.5 rounded-full">
+              {activeFiltersCount} filtre{activeFiltersCount > 1 ? 's' : ''} actif{activeFiltersCount > 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+      </div>
       {/* Selection mode bar */}
       <div className="px-4 py-3 flex items-center justify-between gap-4 border-b border-accent/20">
         <div className="flex items-center gap-3">
