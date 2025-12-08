@@ -66,7 +66,7 @@ export const ProspectsViewContainer = ({
     (filters.taillesEntreprise?.length || 0);
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-y-auto lg:overflow-hidden">
       {/* Compteur de résultats visible en haut */}
       <div className="px-4 py-2 bg-accent/5 border-b border-accent/20 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export const ProspectsViewContainer = ({
         totalCount={totalCount}
       />
       
-      <div className="flex-1 flex gap-4 overflow-hidden p-4">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 lg:overflow-hidden p-4">
         {/* Sidebar Filtres NAF - Desktop & Tablet */}
         <div className="w-64 lg:w-80 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden md:block">
           <ScrollArea className="h-full">
@@ -148,7 +148,7 @@ export const ProspectsViewContainer = ({
         </div>
 
         {/* Liste des sites */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 lg:overflow-hidden">
           <NouveauxSitesListView
             filters={filters}
             onSiteSelect={onEntrepriseSelect}
