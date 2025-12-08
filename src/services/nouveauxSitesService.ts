@@ -4,6 +4,9 @@ export interface NouveauxSitesFilters {
   searchQuery?: string;
   nafSections?: string[];
   nafDivisions?: string[];
+  nafGroupes?: string[];
+  nafClasses?: string[];
+  nafSousClasses?: string[];
   departments?: string[];
   taillesEntreprise?: string[];
 }
@@ -17,13 +20,25 @@ export const nouveauxSitesService = {
         .order('date_creation', { ascending: false })
         .range(page * pageSize, (page + 1) * pageSize - 1);
 
-      // Server-side search across common fields
+      // Multi-term search: split by space and search all terms (AND logic)
       if (filters.searchQuery && filters.searchQuery.trim()) {
-        const q = filters.searchQuery.trim();
-        const like = `%${q}%`;
-        query = query.or(
-          `nom.ilike.${like},ville.ilike.${like},adresse.ilike.${like},siret.eq.${q},code_naf.ilike.${like}`
-        );
+        const terms = filters.searchQuery.trim().split(/\s+/).filter(t => t.length > 0);
+        
+        if (terms.length === 1) {
+          const q = terms[0];
+          const like = `%${q}%`;
+          query = query.or(
+            `nom.ilike.${like},ville.ilike.${like},adresse.ilike.${like},siret.eq.${q},code_naf.ilike.${like}`
+          );
+        } else {
+          // Multiple terms: all must match (using filter for each term)
+          for (const term of terms) {
+            const like = `%${term}%`;
+            query = query.or(
+              `nom.ilike.${like},ville.ilike.${like},adresse.ilike.${like},siret.eq.${term},code_naf.ilike.${like}`
+            );
+          }
+        }
       }
 
       // Filtre par section NAF
@@ -34,6 +49,21 @@ export const nouveauxSitesService = {
       // Filtre par division NAF
       if (filters.nafDivisions && filters.nafDivisions.length > 0) {
         query = query.in('naf_division', filters.nafDivisions);
+      }
+
+      // Filtre par groupe NAF
+      if (filters.nafGroupes && filters.nafGroupes.length > 0) {
+        query = query.in('naf_groupe', filters.nafGroupes);
+      }
+
+      // Filtre par classe NAF
+      if (filters.nafClasses && filters.nafClasses.length > 0) {
+        query = query.in('naf_classe', filters.nafClasses);
+      }
+
+      // Filtre par sous-classe NAF
+      if (filters.nafSousClasses && filters.nafSousClasses.length > 0) {
+        query = query.in('code_naf', filters.nafSousClasses);
       }
 
       // Filtre par département
