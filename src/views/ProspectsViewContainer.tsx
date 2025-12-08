@@ -1,13 +1,9 @@
-import { useState } from 'react';
 import { NouveauxSitesListView } from '@/components/dashboard/NouveauxSitesListView';
 import { NafFilters } from '@/components/dashboard/NafFilters';
 import { MobileFiltersBar } from '@/components/dashboard/MobileFiltersBar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { nouveauxSitesService } from '@/services/nouveauxSitesService';
-import { TourneeCreationModal } from '@/components/dashboard/TourneeCreationModal';
-import { Route, X, CheckSquare } from 'lucide-react';
 
 interface ProspectsViewContainerProps {
   filters: any;
@@ -23,10 +19,6 @@ export const ProspectsViewContainer = ({
   userId,
   onEntrepriseSelect 
 }: ProspectsViewContainerProps) => {
-  const [selectionMode, setSelectionMode] = useState(false);
-  const [selectedSites, setSelectedSites] = useState<any[]>([]);
-  const [showTourneeModal, setShowTourneeModal] = useState(false);
-
   // Fetch count for filters display
   const { data } = useInfiniteQuery({
     queryKey: ['nouveaux-sites', filters],
@@ -38,26 +30,6 @@ export const ProspectsViewContainer = ({
 
   const totalCount = data?.pages[0]?.total || 0;
   const resultsCount = data?.pages[0]?.total || 0;
-
-  const toggleSiteSelection = (site: any) => {
-    setSelectedSites(prev => {
-      const exists = prev.find(s => s.id === site.id);
-      if (exists) {
-        return prev.filter(s => s.id !== site.id);
-      }
-      return [...prev, site];
-    });
-  };
-
-  const clearSelection = () => {
-    setSelectedSites([]);
-    setSelectionMode(false);
-  };
-
-  const handleTourneeSuccess = () => {
-    setShowTourneeModal(false);
-    clearSelection();
-  };
 
   const activeFiltersCount = 
     (filters.nafSections?.length || 0) + 
@@ -78,52 +50,6 @@ export const ProspectsViewContainer = ({
             </span>
           )}
         </div>
-      </div>
-      {/* Selection mode bar */}
-      <div className="px-4 py-3 flex items-center justify-between gap-4 border-b border-accent/20">
-        <div className="flex items-center gap-3">
-          <Button
-            variant={selectionMode ? "default" : "outline"}
-            size="sm"
-            onClick={() => {
-              if (selectionMode) {
-                clearSelection();
-              } else {
-                setSelectionMode(true);
-              }
-            }}
-            className={selectionMode ? "bg-accent text-primary" : "border-accent/30"}
-          >
-            <CheckSquare className="w-4 h-4 mr-2" />
-            {selectionMode ? 'Annuler' : 'Sélectionner'}
-          </Button>
-          
-          {selectionMode && selectedSites.length > 0 && (
-            <>
-              <span className="text-sm text-muted-foreground">
-                {selectedSites.length} site{selectedSites.length > 1 ? 's' : ''} sélectionné{selectedSites.length > 1 ? 's' : ''}
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedSites([])}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </>
-          )}
-        </div>
-
-        {selectionMode && selectedSites.length >= 2 && (
-          <Button
-            onClick={() => setShowTourneeModal(true)}
-            className="bg-accent hover:bg-accent/90 text-primary font-semibold"
-          >
-            <Route className="w-4 h-4 mr-2" />
-            Créer une tournée ({selectedSites.length})
-          </Button>
-        )}
       </div>
 
       {/* Mobile filters bar */}
@@ -152,21 +78,9 @@ export const ProspectsViewContainer = ({
           <NouveauxSitesListView
             filters={filters}
             onSiteSelect={onEntrepriseSelect}
-            selectionMode={selectionMode}
-            selectedSites={selectedSites}
-            onToggleSelection={toggleSiteSelection}
           />
         </div>
       </div>
-
-      {/* Modal création tournée */}
-      <TourneeCreationModal
-        open={showTourneeModal}
-        onOpenChange={setShowTourneeModal}
-        selectedSites={selectedSites}
-        userId={userId}
-        onSuccess={handleTourneeSuccess}
-      />
     </div>
   );
 };
