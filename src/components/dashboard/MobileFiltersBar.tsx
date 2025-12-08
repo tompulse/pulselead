@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-import { Filter, X, ChevronDown } from "lucide-react";
+import { Filter, ChevronDown } from "lucide-react";
 import { NafFilters } from "./NafFilters";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -31,22 +31,8 @@ export const MobileFiltersBar = ({
     (filters.departments?.length || 0) +
     (filters.taillesEntreprise?.length || 0);
 
-  const clearFilters = () => {
-    setFilters((prev: any) => ({ 
-      ...prev, 
-      nafSections: [], 
-      nafDivisions: [],
-      nafGroupes: [],
-      nafClasses: [],
-      nafSousClasses: [],
-      departments: [],
-      taillesEntreprise: [],
-      searchQuery: ""
-    }));
-  };
-
   return (
-    <div className="lg:hidden flex items-center gap-2 p-3 bg-card/80 backdrop-blur-sm border-b border-accent/20">
+    <div className="md:hidden flex items-center gap-2 p-3 bg-card/80 backdrop-blur-sm border-b border-accent/20">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button 
@@ -71,22 +57,9 @@ export const MobileFiltersBar = ({
         </SheetTrigger>
         <SheetContent side="bottom" className="h-[85vh] p-0 rounded-t-2xl">
           <SheetHeader className="p-4 pb-2 border-b border-accent/20">
-            <div className="flex items-center justify-between">
-              <SheetTitle className="text-lg font-bold gradient-text">
-                Filtres
-              </SheetTitle>
-              {activeFiltersCount > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={clearFilters}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <X className="w-4 h-4 mr-1" />
-                  Effacer tout
-                </Button>
-              )}
-            </div>
+            <SheetTitle className="text-lg font-bold gradient-text">
+              Filtres
+            </SheetTitle>
             <p className="text-sm text-muted-foreground">
               {resultsCount.toLocaleString()} résultats sur {totalCount.toLocaleString()}
             </p>
