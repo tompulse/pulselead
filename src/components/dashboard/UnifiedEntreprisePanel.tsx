@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,6 +13,7 @@ import { Building2, MapPin, Calendar, X, Navigation, Hash, Factory } from "lucid
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafNomenclatureComplete";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UnifiedEntreprisePanelProps {
   entreprise: any | null;
@@ -29,11 +31,38 @@ export const UnifiedEntreprisePanel = ({
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<'info' | 'crm'>('info');
 
+  // If we only have an ID, fetch full data from nouveaux_sites
+  const entrepriseId = entreprise?.id;
+  const needsFetch = entreprise && entrepriseId && !entreprise.siret && !entreprise.nom;
+
+  const { data: fetchedEntreprise, isLoading: isFetchingEntreprise } = useQuery({
+    queryKey: ['entreprise-detail', entrepriseId],
+    queryFn: async () => {
+      if (!entrepriseId) return null;
+      const { data, error } = await supabase
+        .from('nouveaux_sites')
+        .select('*')
+        .eq('id', entrepriseId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching entreprise:', error);
+        return null;
+      }
+      return data;
+    },
+    enabled: open && !!entrepriseId,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Use fetched data if available, otherwise use passed data
+  const displayEntreprise = fetchedEntreprise || entreprise;
+
   const {
     interactions,
     leadStatus,
     isLoading,
-  } = useCRMActions(entreprise?.id || '', userId);
+  } = useCRMActions(entrepriseId || '', userId);
 
   useEffect(() => {
     if (open) {
@@ -41,33 +70,55 @@ export const UnifiedEntreprisePanel = ({
     }
   }, [open]);
 
-  if (!entreprise) return null;
+  if (!open) return null;
+
+  // Show loading state while fetching
+  if (isFetchingEntreprise || !displayEntreprise) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent 
+          side={isMobile ? "bottom" : "right"} 
+          className={`${isMobile ? 'h-[90vh]' : 'w-[420px]'} p-0 flex flex-col`}
+        >
+          <div className="p-6 space-y-4">
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <div className="space-y-3 pt-4">
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   // Format address from real data
   const addressParts = [
-    entreprise.numero_voie,
-    entreprise.type_voie,
-    entreprise.libelle_voie,
-    entreprise.complement_adresse
+    displayEntreprise.numero_voie,
+    displayEntreprise.type_voie,
+    displayEntreprise.libelle_voie,
+    displayEntreprise.complement_adresse
   ].filter(Boolean).join(' ');
   
-  const formattedAddress = addressParts || entreprise.adresse || '';
-  const cityLine = [entreprise.code_postal, entreprise.ville].filter(Boolean).join(' ');
+  const formattedAddress = addressParts || displayEntreprise.adresse || '';
+  const cityLine = [displayEntreprise.code_postal, displayEntreprise.ville].filter(Boolean).join(' ');
 
   // Get NAF info
-  const nafSectionInfo = entreprise.naf_section ? NAF_SECTIONS[entreprise.naf_section] : null;
-  const nafDivisionInfo = entreprise.naf_division ? NAF_DIVISIONS[entreprise.naf_division] : null;
+  const nafSectionInfo = displayEntreprise.naf_section ? NAF_SECTIONS[displayEntreprise.naf_section] : null;
+  const nafDivisionInfo = displayEntreprise.naf_division ? NAF_DIVISIONS[displayEntreprise.naf_division] : null;
 
   // Format date
-  const formattedDate = entreprise.date_creation 
-    ? new Date(entreprise.date_creation).toLocaleDateString('fr-FR', { 
+  const formattedDate = displayEntreprise.date_creation 
+    ? new Date(displayEntreprise.date_creation).toLocaleDateString('fr-FR', { 
         day: 'numeric', 
         month: 'long', 
         year: 'numeric' 
       })
     : null;
 
-  const hasCoordinates = entreprise.latitude && entreprise.longitude;
+  const hasCoordinates = displayEntreprise.latitude && displayEntreprise.longitude;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -79,7 +130,7 @@ export const UnifiedEntreprisePanel = ({
         <div className="shrink-0 p-4 border-b border-accent/20 bg-gradient-to-r from-accent/5 to-transparent">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-bold leading-tight">{entreprise.nom || 'Entreprise'}</h2>
+              <h2 className="text-lg font-bold leading-tight">{displayEntreprise.nom || 'Entreprise'}</h2>
               {cityLine && (
                 <p className="text-sm text-muted-foreground mt-0.5">{cityLine}</p>
               )}
@@ -121,9 +172,7 @@ export const UnifiedEntreprisePanel = ({
                       Adresse
                     </div>
                     <div className="text-sm">
-                      {formattedAddress ? (
-                        <p>{formattedAddress}</p>
-                      ) : null}
+                      {formattedAddress && <p>{formattedAddress}</p>}
                       {cityLine && <p className="font-medium">{cityLine}</p>}
                       {!formattedAddress && !cityLine && (
                         <p className="text-muted-foreground italic">Non renseignée</p>
@@ -133,7 +182,7 @@ export const UnifiedEntreprisePanel = ({
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
+                        onClick={() => openGoogleMaps(displayEntreprise.latitude, displayEntreprise.longitude)}
                         className="h-8 text-xs border-accent/30 hover:bg-accent/10"
                         disabled={!hasCoordinates}
                       >
@@ -142,7 +191,7 @@ export const UnifiedEntreprisePanel = ({
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => openWaze(entreprise.latitude, entreprise.longitude)}
+                        onClick={() => openWaze(displayEntreprise.latitude, displayEntreprise.longitude)}
                         className="h-8 text-xs border-accent/30 hover:bg-accent/10"
                         disabled={!hasCoordinates}
                       >
@@ -165,8 +214,8 @@ export const UnifiedEntreprisePanel = ({
                     {nafDivisionInfo ? (
                       <p className="text-xs text-muted-foreground">{nafDivisionInfo.label}</p>
                     ) : null}
-                    {entreprise.code_naf ? (
-                      <p className="text-xs text-muted-foreground font-mono">Code NAF: {entreprise.code_naf}</p>
+                    {displayEntreprise.code_naf ? (
+                      <p className="text-xs text-muted-foreground font-mono">Code NAF: {displayEntreprise.code_naf}</p>
                     ) : !nafSectionInfo && !nafDivisionInfo ? (
                       <p className="text-sm text-muted-foreground italic">Non renseignée</p>
                     ) : null}
@@ -179,7 +228,7 @@ export const UnifiedEntreprisePanel = ({
                       SIRET
                     </div>
                     <p className="text-sm font-mono">
-                      {entreprise.siret || <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
+                      {displayEntreprise.siret || <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
                     </p>
                   </div>
 
@@ -201,22 +250,24 @@ export const UnifiedEntreprisePanel = ({
                       Taille
                     </div>
                     <p className="text-sm">
-                      {entreprise.categorie_entreprise && entreprise.categorie_entreprise !== 'Non spécifié' 
-                        ? entreprise.categorie_entreprise 
+                      {displayEntreprise.categorie_entreprise && displayEntreprise.categorie_entreprise !== 'Non spécifié' 
+                        ? displayEntreprise.categorie_entreprise 
                         : <span className="text-muted-foreground italic">Non renseignée</span>}
                     </p>
                   </div>
 
                   {/* Type d'établissement */}
-                  <div className="pt-3 border-t border-accent/10">
-                    <span className={`text-xs px-2.5 py-1 rounded-full ${
-                      entreprise.est_siege 
-                        ? 'bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/30' 
-                        : 'bg-muted text-muted-foreground border border-muted-foreground/20'
-                    }`}>
-                      {entreprise.est_siege ? 'Siège social' : 'Établissement secondaire'}
-                    </span>
-                  </div>
+                  {displayEntreprise.est_siege !== null && displayEntreprise.est_siege !== undefined && (
+                    <div className="pt-3 border-t border-accent/10">
+                      <span className={`text-xs px-2.5 py-1 rounded-full ${
+                        displayEntreprise.est_siege 
+                          ? 'bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/30' 
+                          : 'bg-muted text-muted-foreground border border-muted-foreground/20'
+                      }`}>
+                        {displayEntreprise.est_siege ? 'Siège social' : 'Établissement secondaire'}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </ScrollArea>
             </TabsContent>
@@ -235,7 +286,7 @@ export const UnifiedEntreprisePanel = ({
                       <div className="space-y-3">
                         <h3 className="text-xs font-semibold text-accent uppercase tracking-wide">Actions</h3>
                         <UnifiedCRMActions
-                          entrepriseId={entreprise.id}
+                          entrepriseId={displayEntreprise.id}
                           onInteractionAdded={() => {}}
                           mode="dialog"
                           size="lg"
@@ -264,7 +315,7 @@ export const UnifiedEntreprisePanel = ({
         <div className="shrink-0 p-3 border-t border-accent/20 bg-background">
           <div className="grid grid-cols-2 gap-2">
             <Button
-              onClick={() => openGoogleMaps(entreprise.latitude, entreprise.longitude)}
+              onClick={() => openGoogleMaps(displayEntreprise.latitude, displayEntreprise.longitude)}
               disabled={!hasCoordinates}
               size="sm"
               className="h-10 bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/20"
