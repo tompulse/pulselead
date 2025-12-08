@@ -15,8 +15,12 @@ import {
   Compass,
   Play,
   CheckCircle,
-  Loader2
+  Loader2,
+  Pencil,
+  Check,
+  X
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -57,6 +61,8 @@ const TourneeDetail = () => {
     distance: null as number | null,
     temps: null as number | null,
   });
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -374,6 +380,27 @@ const TourneeDetail = () => {
     navigate('/dashboard');
   };
 
+  const handleStartEditName = () => {
+    setEditedName(tournee?.nom || '');
+    setIsEditingName(true);
+  };
+
+  const handleSaveName = async () => {
+    if (!editedName.trim()) {
+      toast.error('Le nom ne peut pas être vide');
+      return;
+    }
+    await updateTourneeMutation.mutateAsync({ nom: editedName.trim() });
+    setIsEditingName(false);
+    toast.success('Nom modifié');
+    queryClient.invalidateQueries({ queryKey: ['tournee', tourneeId] });
+  };
+
+  const handleCancelEditName = () => {
+    setIsEditingName(false);
+    setEditedName('');
+  };
+
   // Loading state
   if (tourneeLoading) {
     return (
@@ -417,11 +444,43 @@ const TourneeDetail = () => {
     <div className="h-screen flex flex-col overflow-hidden bg-background">
       {/* Header */}
       <div className="p-4 border-b border-accent/20 flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={handleBack}>
+        <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour">
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <div className="flex-1">
-          <h2 className="font-bold text-lg">{tournee.nom}</h2>
+        <div className="flex-1 min-w-0">
+          {isEditingName ? (
+            <div className="flex items-center gap-2">
+              <Input
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                className="h-9 text-lg font-bold bg-card border-accent/30"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSaveName();
+                  if (e.key === 'Escape') handleCancelEditName();
+                }}
+              />
+              <Button size="icon" variant="ghost" onClick={handleSaveName} className="h-8 w-8 text-green-500 hover:text-green-400 hover:bg-green-500/10">
+                <Check className="w-4 h-4" />
+              </Button>
+              <Button size="icon" variant="ghost" onClick={handleCancelEditName} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <h2 className="font-bold text-lg truncate">{tournee.nom}</h2>
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                onClick={handleStartEditName}
+                className="h-8 w-8 text-muted-foreground hover:text-accent shrink-0"
+                aria-label="Modifier le nom"
+              >
+                <Pencil className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="w-4 h-4" />
             {format(new Date(tournee.date_planifiee), 'EEEE d MMMM yyyy', { locale: fr })}
