@@ -121,6 +121,60 @@ const TourneeDetail = () => {
     enabled: orderedSiteIds.length > 0
   });
 
+  // Auto-calculate route if KPIs are missing
+  useEffect(() => {
+    const calculateMissingKpis = async () => {
+      if (
+        sites.length >= 2 &&
+        (localKpis.distance === null || localKpis.temps === null) &&
+        !isRecalculating
+      ) {
+        const validSites = sites.filter((s: any) => s.latitude && s.longitude);
+        if (validSites.length < 2) return;
+
+        setIsRecalculating(true);
+        try {
+          const waypoints = validSites.map((s: any) => ({
+            lat: Number(s.latitude),
+            lng: Number(s.longitude),
+          }));
+
+          const { data, error } = await supabase.functions.invoke('calculate-routes', {
+            body: { waypoints },
+          });
+
+          if (error) throw error;
+
+          const newDistance = data.distance_km;
+          const newTemps = data.duration_minutes;
+
+          if (newDistance || newTemps) {
+            setLocalKpis({
+              distance: newDistance || null,
+              temps: newTemps || null,
+            });
+
+            // Save to database
+            await supabase
+              .from('tournees')
+              .update({
+                distance_totale_km: newDistance,
+                temps_estime_minutes: newTemps,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', tourneeId);
+          }
+        } catch (error) {
+          console.error('Error calculating route:', error);
+        } finally {
+          setIsRecalculating(false);
+        }
+      }
+    };
+
+    calculateMissingKpis();
+  }, [sites, localKpis.distance, localKpis.temps, tourneeId]);
+
   // Update tournee mutation
   const updateTourneeMutation = useMutation({
     mutationFn: async (updates: Record<string, any>) => {
