@@ -759,6 +759,18 @@ const LandingPage = () => {
             </div>
           </div>
         </footer>
+
+        {/* Sticky CTA Mobile */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
+          <Button 
+            onClick={() => navigate('/auth')} 
+            className="w-full bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold py-4 rounded-full shadow-lg shadow-accent/40"
+            aria-label="Commencer gratuitement"
+          >
+            Commencer maintenant
+            <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
+          </Button>
+        </div>
       </main>
     </div>;
 };
@@ -768,7 +780,7 @@ const X = ({
   className
 }: {
   className?: string;
-}) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+}) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>;
