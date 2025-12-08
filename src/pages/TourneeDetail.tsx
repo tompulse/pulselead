@@ -441,7 +441,7 @@ const TourneeDetail = () => {
   const currentStatut = tournee.statut;
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-y-auto lg:overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-accent/20 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour">
@@ -555,9 +555,9 @@ const TourneeDetail = () => {
       </div>
 
       {/* Content: Map + List */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 lg:overflow-hidden">
         {/* Map */}
-        <div className="flex-1 min-h-[300px] lg:min-h-0 rounded-xl overflow-hidden border border-accent/20">
+        <div className="h-[300px] lg:h-auto lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0">
           {sitesLoading ? (
             <div className="h-full flex items-center justify-center bg-card">
               <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
@@ -576,14 +576,14 @@ const TourneeDetail = () => {
         </div>
 
         {/* Sites list with drag & drop */}
-        <Card className="lg:w-96 glass-card border-accent/20">
-          <CardContent className="p-4 h-full flex flex-col">
+        <Card className="lg:w-96 glass-card border-accent/20 shrink-0 lg:h-full lg:overflow-hidden">
+          <CardContent className="p-4 lg:h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">Itinéraire</h3>
               <span className="text-xs text-muted-foreground">Glissez pour réorganiser</span>
             </div>
 
-            <ScrollArea className="flex-1">
+            <ScrollArea className="flex-1 lg:max-h-[calc(100vh-450px)]">
               {sitesLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...
