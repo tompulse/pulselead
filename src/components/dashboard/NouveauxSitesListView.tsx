@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Building2, Calendar, Factory, Loader2 } from "lucide-react";
@@ -7,6 +7,8 @@ import { getNafCategory } from "@/utils/nafCategories";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { ProspectStatusBadge, ProspectStatus } from "./ProspectStatusBadge";
+import { useProspectStatuses } from "@/hooks/useProspectStatuses";
 
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
@@ -14,6 +16,7 @@ interface NouveauxSitesListViewProps {
   selectionMode?: boolean;
   selectedSites?: any[];
   onToggleSelection?: (site: any) => void;
+  userId?: string;
 }
 
 export const NouveauxSitesListView = ({ 
@@ -21,7 +24,8 @@ export const NouveauxSitesListView = ({
   onSiteSelect,
   selectionMode = false,
   selectedSites = [],
-  onToggleSelection
+  onToggleSelection,
+  userId
 }: NouveauxSitesListViewProps) => {
   const { 
     data, 
@@ -41,6 +45,12 @@ export const NouveauxSitesListView = ({
 
   const allSites = data?.pages.flatMap(page => page.data) || [];
   const totalCount = data?.pages[0]?.total || 0;
+
+  // Get all entreprise IDs for status lookup
+  const entrepriseIds = useMemo(() => allSites.map(site => site.id), [allSites]);
+  
+  // Fetch statuses for displayed prospects
+  const { data: statusMap = {} } = useProspectStatuses(userId || null, entrepriseIds);
 
   const sentinelRef = useInfiniteScroll({
     onLoadMore: fetchNextPage,
@@ -84,6 +94,7 @@ export const NouveauxSitesListView = ({
               const nafInfo = getNafCategory(site.code_naf);
               const hasCoordinates = site.latitude && site.longitude;
               const isSelected = selectedSites.some(s => s.id === site.id);
+              const prospectStatus = statusMap[site.id] as ProspectStatus | undefined;
               
               // Format address
               const addressParts = [
@@ -139,6 +150,10 @@ export const NouveauxSitesListView = ({
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
+                      {/* Status badge - prominent position */}
+                      {prospectStatus && (
+                        <ProspectStatusBadge status={prospectStatus} />
+                      )}
                       {site.est_siege && (
                         <Badge variant="secondary" className="text-xs bg-accent/20 text-accent border-accent/30">
                           Siège
