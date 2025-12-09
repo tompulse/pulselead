@@ -167,8 +167,8 @@ export const NouveauxSitesListView = ({
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="relative space-y-2 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                  {/* Content - Groupe haut (NAF, Code, SIRET) */}
+                  <div className="relative space-y-2">
                     {/* Secteur NAF */}
                     {nafInfo && (
                       <div className="flex items-center gap-2 text-sm">
@@ -192,7 +192,13 @@ export const NouveauxSitesListView = ({
                         <span className="text-xs text-foreground/60 font-mono">{site.siret}</span>
                       </div>
                     )}
-                    
+                  </div>
+
+                  {/* Spacer flexible */}
+                  <div className="flex-1 min-h-2" />
+
+                  {/* Content - Groupe bas (Adresse, Date) */}
+                  <div className="relative space-y-2">
                     {/* Adresse */}
                     {fullAddress && (
                       <div className="flex items-start gap-2 text-sm">
