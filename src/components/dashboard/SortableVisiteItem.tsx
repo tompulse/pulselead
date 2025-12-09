@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { GripVertical, MapPin, Navigation, Phone, Calendar, RotateCcw } from 'lucide-react';
+import { GripVertical, MapPin, Navigation, Calendar, RotateCcw, Trash2 } from 'lucide-react';
 
 interface VisiteStatus {
   visite: boolean;
@@ -25,6 +25,7 @@ interface SortableVisiteItemProps {
   visiteStatus: VisiteStatus;
   onVisiteChange: (siteId: string, field: keyof VisiteStatus, value: boolean) => void;
   onNavigate: (site: { latitude?: number; longitude?: number; adresse: string }) => void;
+  onRemove?: (siteId: string) => void;
 }
 
 export const SortableVisiteItem = ({
@@ -35,6 +36,7 @@ export const SortableVisiteItem = ({
   visiteStatus,
   onVisiteChange,
   onNavigate,
+  onRemove,
 }: SortableVisiteItemProps) => {
   const {
     attributes,
@@ -121,15 +123,29 @@ export const SortableVisiteItem = ({
         </div>
       </div>
 
-      {/* Navigation button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="shrink-0 h-8 w-8"
-        onClick={() => onNavigate(site)}
-      >
-        <Navigation className="w-4 h-4 text-accent" />
-      </Button>
+      {/* Action buttons */}
+      <div className="flex flex-col gap-1 shrink-0">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => onNavigate(site)}
+          aria-label="Naviguer vers ce site"
+        >
+          <Navigation className="w-4 h-4 text-accent" />
+        </Button>
+        {onRemove && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => onRemove(site.id)}
+            aria-label="Supprimer de la tournée"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

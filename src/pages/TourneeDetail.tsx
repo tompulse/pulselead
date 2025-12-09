@@ -376,6 +376,35 @@ const TourneeDetail = () => {
     toast.success('Tournée terminée');
   };
 
+  const handleRemoveSite = async (siteId: string) => {
+    const newOrder = orderedSiteIds.filter(id => id !== siteId);
+    const newEntreprisesIds = tournee.entreprises_ids.filter(id => id !== siteId);
+    
+    // Remove from visitesStatus
+    const newVisitesStatus = { ...visitesStatus };
+    delete newVisitesStatus[siteId];
+    
+    setOrderedSiteIds(newOrder);
+    setVisitesStatus(newVisitesStatus);
+    
+    // Update database
+    await updateTourneeMutation.mutateAsync({
+      ordre_optimise: newOrder,
+      entreprises_ids: newEntreprisesIds,
+      visites_effectuees: newVisitesStatus,
+    });
+    
+    // Recalculate route if needed
+    if (newOrder.length >= 2) {
+      await recalculateRoute(newOrder);
+    } else {
+      setLocalKpis({ distance: null, temps: null });
+    }
+    
+    toast.success('Site supprimé de la tournée');
+    queryClient.invalidateQueries({ queryKey: ['tournee-sites', tourneeId, newOrder] });
+  };
+
   const handleBack = () => {
     navigate('/dashboard');
   };
@@ -624,6 +653,7 @@ const TourneeDetail = () => {
                             visiteStatus={visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false }}
                             onVisiteChange={handleVisiteChange}
                             onNavigate={handleNavigate}
+                            onRemove={handleRemoveSite}
                           />
                         );
                       })}
