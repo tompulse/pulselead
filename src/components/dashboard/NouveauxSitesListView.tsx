@@ -71,7 +71,7 @@ export const NouveauxSitesListView = ({
 
   return (
     <div className="h-full flex flex-col lg:overflow-hidden">
-      <div className="flex-1 overflow-y-auto lg:overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <div className="flex-1 overflow-y-auto lg:overflow-y-auto pr-3" style={{ WebkitOverflowScrolling: 'touch' }}>
         {isLoading && allSites.length === 0 ? (
           <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
             <Loader2 className="w-12 h-12 animate-spin mx-auto text-accent mb-4" />
