@@ -12,11 +12,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
-  NAF_SECTIONS, 
   NAF_DIVISIONS, 
   NAF_GROUPES, 
   NAF_CLASSES,
-  getSectionEmoji,
+  getDivisionEmoji,
   getGroupeLabel,
   getClasseLabel
 } from "@/utils/nafNomenclatureComplete";
@@ -56,7 +55,6 @@ interface NafFiltersProps {
 
 // Type pour les niveaux d'expansion
 type ExpandedLevel = {
-  sections: string[];
   divisions: string[];
   groupes: string[];
   classes: string[];
@@ -81,7 +79,6 @@ export const NafFilters = ({
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
   const [expanded, setExpanded] = useState<ExpandedLevel>({
-    sections: [],
     divisions: [],
     groupes: [],
     classes: []
@@ -98,85 +95,69 @@ export const NafFilters = ({
     searchQuery: filters.searchQuery
   });
 
-  // Construire la hiérarchie NAF complète avec compteurs
+  // Construire la hiérarchie NAF par DIVISIONS (point d'entrée numérique)
   const nafHierarchy = useMemo(() => {
     if (!availableFilters) return [];
 
-    const sections = Object.entries(NAF_SECTIONS)
-      .map(([code, info]) => {
-        const sectionCount = availableFilters.nafSections?.[code] || 0;
+    const divisions = Object.entries(NAF_DIVISIONS)
+      .map(([divCode, divInfo]) => {
+        const divisionCount = availableFilters.nafDivisions?.[divCode] || 0;
         
-        // Divisions de cette section
-        const divisions = Object.entries(NAF_DIVISIONS)
-          .filter(([_, divInfo]) => divInfo.section === code)
-          .map(([divCode, divInfo]) => {
-            const divisionCount = availableFilters.nafDivisions?.[divCode] || 0;
+        // Groupes de cette division
+        const groupes = Object.entries(NAF_GROUPES)
+          .filter(([_, grpInfo]) => grpInfo.division === divCode)
+          .map(([grpCode, grpInfo]) => {
+            const groupeCount = availableFilters.nafGroupes?.[grpCode] || 0;
             
-            // Groupes de cette division
-            const groupes = Object.entries(NAF_GROUPES)
-              .filter(([_, grpInfo]) => grpInfo.division === divCode)
-              .map(([grpCode, grpInfo]) => {
-                const groupeCount = availableFilters.nafGroupes?.[grpCode] || 0;
+            // Classes de ce groupe
+            const classes = Object.entries(NAF_CLASSES)
+              .filter(([_, clsInfo]) => clsInfo.groupe === grpCode)
+              .map(([clsCode, clsInfo]) => {
+                const classeCount = availableFilters.nafClasses?.[clsCode] || 0;
                 
-                // Classes de ce groupe
-                const classes = Object.entries(NAF_CLASSES)
-                  .filter(([_, clsInfo]) => clsInfo.groupe === grpCode)
-                  .map(([clsCode, clsInfo]) => {
-                    const classeCount = availableFilters.nafClasses?.[clsCode] || 0;
-                    
-                    // Sous-classes de cette classe
-                    const sousClasses = Object.entries(availableFilters.nafSousClasses || {})
-                      .filter(([scCode]) => scCode.startsWith(clsCode))
-                      .map(([scCode, count]) => ({
-                        code: scCode,
-                        label: scCode, // Le code complet est le label pour les sous-classes
-                        count: count as number
-                      }))
-                      .filter(sc => sc.count > 0)
-                      .sort((a, b) => b.count - a.count);
-                    
-                    return {
-                      code: clsCode,
-                      label: clsInfo.label,
-                      count: classeCount,
-                      sousClasses
-                    };
-                  })
-                  .filter(cls => cls.count > 0)
-                  .sort((a, b) => b.count - a.count);
+                // Sous-classes de cette classe
+                const sousClasses = Object.entries(availableFilters.nafSousClasses || {})
+                  .filter(([scCode]) => scCode.startsWith(clsCode))
+                  .map(([scCode, count]) => ({
+                    code: scCode,
+                    label: scCode,
+                    count: count as number
+                  }))
+                  .filter(sc => sc.count > 0)
+                  .sort((a, b) => a.code.localeCompare(b.code));
                 
                 return {
-                  code: grpCode,
-                  label: grpInfo.label,
-                  count: groupeCount,
-                  classes
+                  code: clsCode,
+                  label: clsInfo.label,
+                  count: classeCount,
+                  sousClasses
                 };
               })
-              .filter(grp => grp.count > 0)
-              .sort((a, b) => b.count - a.count);
+              .filter(cls => cls.count > 0)
+              .sort((a, b) => a.code.localeCompare(b.code));
             
             return {
-              code: divCode,
-              label: divInfo.label,
-              count: divisionCount,
-              groupes
+              code: grpCode,
+              label: grpInfo.label,
+              count: groupeCount,
+              classes
             };
           })
-          .filter(div => div.count > 0)
-          .sort((a, b) => b.count - a.count);
+          .filter(grp => grp.count > 0)
+          .sort((a, b) => a.code.localeCompare(b.code));
         
         return {
-          code,
-          label: info.label,
-          emoji: info.emoji,
-          count: sectionCount,
-          divisions
+          code: divCode,
+          label: divInfo.label,
+          emoji: getDivisionEmoji(divCode),
+          count: divisionCount,
+          groupes
         };
       })
-      .filter(section => section.count > 0)
-      .sort((a, b) => b.count - a.count);
+      .filter(div => div.count > 0)
+      .sort((a, b) => a.code.localeCompare(b.code)); // Tri numérique croissant
 
-    return sections;
+    return divisions;
   }, [availableFilters]);
 
   // Filtrer par recherche
@@ -185,25 +166,21 @@ export const NafFilters = ({
     
     const query = nafSearchQuery.toLowerCase();
     
-    return nafHierarchy.filter(section => {
-      const sectionMatch = section.code.toLowerCase().includes(query) || 
-                          section.label.toLowerCase().includes(query);
+    return nafHierarchy.filter(division => {
+      const divisionMatch = division.code.toLowerCase().includes(query) || 
+                          division.label.toLowerCase().includes(query);
       
-      const hasMatchingDivision = section.divisions.some(div => 
-        div.code.toLowerCase().includes(query) || 
-        div.label.toLowerCase().includes(query) ||
-        div.groupes.some(grp => 
-          grp.code.toLowerCase().includes(query) || 
-          grp.label.toLowerCase().includes(query) ||
-          grp.classes.some(cls =>
-            cls.code.toLowerCase().includes(query) ||
-            cls.label.toLowerCase().includes(query) ||
-            cls.sousClasses.some(sc => sc.code.toLowerCase().includes(query))
-          )
+      const hasMatchingGroupe = division.groupes.some(grp => 
+        grp.code.toLowerCase().includes(query) || 
+        grp.label.toLowerCase().includes(query) ||
+        grp.classes.some(cls =>
+          cls.code.toLowerCase().includes(query) ||
+          cls.label.toLowerCase().includes(query) ||
+          cls.sousClasses.some(sc => sc.code.toLowerCase().includes(query))
         )
       );
       
-      return sectionMatch || hasMatchingDivision;
+      return divisionMatch || hasMatchingGroupe;
     });
   }, [nafHierarchy, nafSearchQuery]);
 
@@ -236,51 +213,6 @@ export const NafFilters = ({
   };
 
   // Handlers pour la sélection des filtres
-  const handleSectionToggle = (sectionCode: string) => {
-    setFilters((prev: any) => {
-      const currentSections = prev.nafSections || [];
-      const isSelected = currentSections.includes(sectionCode);
-      
-      // Si on désélectionne, retirer aussi les niveaux inférieurs
-      let newDivisions = prev.nafDivisions || [];
-      let newGroupes = prev.nafGroupes || [];
-      let newClasses = prev.nafClasses || [];
-      let newSousClasses = prev.nafSousClasses || [];
-      
-      if (isSelected) {
-        const sectionDivisions = Object.entries(NAF_DIVISIONS)
-          .filter(([_, info]) => info.section === sectionCode)
-          .map(([code]) => code);
-        newDivisions = newDivisions.filter((d: string) => !sectionDivisions.includes(d));
-        
-        const sectionGroupes = Object.entries(NAF_GROUPES)
-          .filter(([_, info]) => sectionDivisions.includes(info.division))
-          .map(([code]) => code);
-        newGroupes = newGroupes.filter((g: string) => !sectionGroupes.includes(g));
-        
-        const sectionClasses = Object.entries(NAF_CLASSES)
-          .filter(([_, info]) => sectionGroupes.includes(info.groupe))
-          .map(([code]) => code);
-        newClasses = newClasses.filter((c: string) => !sectionClasses.includes(c));
-        
-        newSousClasses = newSousClasses.filter((sc: string) => 
-          !sectionClasses.some(cls => sc.startsWith(cls))
-        );
-      }
-      
-      return {
-        ...prev,
-        nafSections: isSelected
-          ? currentSections.filter((c: string) => c !== sectionCode)
-          : [...currentSections, sectionCode],
-        nafDivisions: newDivisions,
-        nafGroupes: newGroupes,
-        nafClasses: newClasses,
-        nafSousClasses: newSousClasses
-      };
-    });
-  };
-
   const handleDivisionToggle = (divisionCode: string) => {
     setFilters((prev: any) => {
       const current = prev.nafDivisions || [];
@@ -422,7 +354,6 @@ export const NafFilters = ({
   }));
 
   const activeFiltersCount = 
-    (filters.nafSections?.length || 0) + 
     (filters.nafDivisions?.length || 0) +
     (filters.nafGroupes?.length || 0) +
     (filters.nafClasses?.length || 0) +
@@ -544,28 +475,28 @@ export const NafFilters = ({
         {/* Chips des filtres actifs */}
         {activeFiltersCount > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            {filters.nafSections?.map((code: string) => (
+            {filters.nafDivisions?.map((code: string) => (
               <span
-                key={`section-${code}`}
+                key={`division-${code}`}
                 className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-accent/15 text-accent rounded-full border border-accent/30"
               >
-                <span className="font-medium">{NAF_SECTIONS[code]?.emoji} {code}</span>
+                <span className="font-medium">{getDivisionEmoji(code)} {code}</span>
                 <button
-                  onClick={() => handleSectionToggle(code)}
+                  onClick={() => handleDivisionToggle(code)}
                   className="hover:bg-accent/20 rounded-full p-0.5 transition-colors"
                 >
                   <X className="w-3 h-3" />
                 </button>
               </span>
             ))}
-            {filters.nafDivisions?.map((code: string) => (
+            {filters.nafGroupes?.map((code: string) => (
               <span
-                key={`division-${code}`}
+                key={`groupe-${code}`}
                 className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-accent/10 text-foreground rounded-full border border-accent/20"
               >
                 <span>{code}</span>
                 <button
-                  onClick={() => handleDivisionToggle(code)}
+                  onClick={() => handleGroupeToggle(code)}
                   className="hover:bg-accent/20 rounded-full p-0.5 transition-colors"
                 >
                   <X className="w-3 h-3" />
@@ -613,13 +544,12 @@ export const NafFilters = ({
         )}
       </div>
 
-      {/* Nomenclature NAF hiérarchique - 5 niveaux */}
+      {/* Nomenclature NAF hiérarchique - Point d'entrée: DIVISIONS */}
       <Collapsible open={sectionsOpen} onOpenChange={setSectionsOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-accent" />
-            <span className="font-medium text-sm">Nomenclature NAF</span>
-            <span className="text-xs text-muted-foreground">(5 niveaux)</span>
+            <span className="font-medium text-sm">Secteur d'activité (NAF)</span>
           </div>
           <ChevronDown className={`h-4 w-4 text-accent transition-transform ${sectionsOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
@@ -631,7 +561,7 @@ export const NafFilters = ({
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Filtrer les codes NAF..."
+                placeholder="Rechercher (ex: 43, construction)..."
                 value={nafSearchQuery}
                 onChange={(e) => setNafSearchQuery(e.target.value)}
                 className="pl-7 h-7 text-xs bg-background/50 border-accent/20"
@@ -650,20 +580,20 @@ export const NafFilters = ({
                   Aucun secteur trouvé
                 </div>
               ) : (
-                filteredHierarchy.map((section) => {
-                  const sectionSelected = filters.nafSections?.includes(section.code);
-                  const sectionExpanded = expanded.sections.includes(section.code);
+                filteredHierarchy.map((division) => {
+                  const divisionSelected = filters.nafDivisions?.includes(division.code);
+                  const divisionExpanded = expanded.divisions.includes(division.code);
                   
                   return (
-                    <div key={section.code} className="space-y-0.5">
-                      {/* Niveau 1: Section */}
+                    <div key={division.code} className="space-y-0.5">
+                      {/* Niveau 1: Division (point d'entrée) */}
                       <div className="flex items-start gap-1">
-                        {section.divisions.length > 0 && (
+                        {division.groupes.length > 0 && (
                           <button
-                            onClick={() => toggleExpand('sections', section.code)}
+                            onClick={() => toggleExpand('divisions', division.code)}
                             className="p-1 hover:bg-accent/10 rounded mt-1"
                           >
-                            {sectionExpanded ? (
+                            {divisionExpanded ? (
                               <ChevronDown className="w-3 h-3 text-muted-foreground" />
                             ) : (
                               <ChevronRight className="w-3 h-3 text-muted-foreground" />
@@ -671,33 +601,33 @@ export const NafFilters = ({
                           </button>
                         )}
                         <div
-                          onClick={() => handleSectionToggle(section.code)}
+                          onClick={() => handleDivisionToggle(division.code)}
                           className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98] flex-1"
                         >
-                          <Checkbox selected={sectionSelected} />
-                          <span className="text-base shrink-0">{section.emoji}</span>
-                          <span className="text-xs font-bold text-accent shrink-0">{section.code}</span>
-                          <span className="text-sm leading-snug flex-1 break-words font-medium">{section.label}</span>
+                          <Checkbox selected={divisionSelected} />
+                          <span className="text-base shrink-0">{division.emoji}</span>
+                          <span className="text-xs font-bold text-accent shrink-0 font-mono">{division.code}</span>
+                          <span className="text-sm leading-snug flex-1 break-words font-medium">{division.label}</span>
                           <span className="text-xs text-muted-foreground shrink-0 font-semibold">
-                            {section.count.toLocaleString('fr-FR')}
+                            {division.count.toLocaleString('fr-FR')}
                           </span>
                         </div>
                       </div>
                       
-                      {/* Niveau 2: Divisions */}
-                      {sectionExpanded && section.divisions.map((division) => {
-                        const divisionSelected = filters.nafDivisions?.includes(division.code);
-                        const divisionExpanded = expanded.divisions.includes(division.code);
+                      {/* Niveau 2: Groupes */}
+                      {divisionExpanded && division.groupes.map((groupe) => {
+                        const groupeSelected = filters.nafGroupes?.includes(groupe.code);
+                        const groupeExpanded = expanded.groupes.includes(groupe.code);
                         
                         return (
-                          <div key={division.code} className="ml-6 space-y-0.5">
+                          <div key={groupe.code} className="ml-6 space-y-0.5">
                             <div className="flex items-start gap-1 border-l-2 border-accent/20 pl-2">
-                              {division.groupes.length > 0 && (
+                              {groupe.classes.length > 0 && (
                                 <button
-                                  onClick={() => toggleExpand('divisions', division.code)}
+                                  onClick={() => toggleExpand('groupes', groupe.code)}
                                   className="p-0.5 hover:bg-accent/10 rounded mt-1"
                                 >
-                                  {divisionExpanded ? (
+                                  {groupeExpanded ? (
                                     <ChevronDown className="w-2.5 h-2.5 text-muted-foreground" />
                                   ) : (
                                     <ChevronRight className="w-2.5 h-2.5 text-muted-foreground" />
@@ -705,32 +635,32 @@ export const NafFilters = ({
                                 </button>
                               )}
                               <div
-                                onClick={() => handleDivisionToggle(division.code)}
+                                onClick={() => handleGroupeToggle(groupe.code)}
                                 className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-1.5 rounded transition-colors active:scale-[0.98] flex-1"
                               >
-                                <Checkbox selected={divisionSelected} size="sm" />
-                                <span className="text-xs font-mono text-accent/80 shrink-0">{division.code}</span>
-                                <span className="text-xs leading-snug flex-1 break-words">{division.label}</span>
+                                <Checkbox selected={groupeSelected} size="sm" />
+                                <span className="text-xs font-mono text-accent/80 shrink-0">{groupe.code}</span>
+                                <span className="text-xs leading-snug flex-1 break-words">{groupe.label}</span>
                                 <span className="text-xs text-muted-foreground shrink-0">
-                                  {division.count.toLocaleString('fr-FR')}
+                                  {groupe.count.toLocaleString('fr-FR')}
                                 </span>
                               </div>
                             </div>
                             
-                            {/* Niveau 3: Groupes */}
-                            {divisionExpanded && division.groupes.map((groupe) => {
-                              const groupeSelected = filters.nafGroupes?.includes(groupe.code);
-                              const groupeExpanded = expanded.groupes.includes(groupe.code);
+                            {/* Niveau 3: Classes */}
+                            {groupeExpanded && groupe.classes.map((classe) => {
+                              const classeSelected = filters.nafClasses?.includes(classe.code);
+                              const classeExpanded = expanded.classes.includes(classe.code);
                               
                               return (
-                                <div key={groupe.code} className="ml-5 space-y-0.5">
+                                <div key={classe.code} className="ml-5 space-y-0.5">
                                   <div className="flex items-start gap-1 border-l-2 border-accent/15 pl-2">
-                                    {groupe.classes.length > 0 && (
+                                    {classe.sousClasses.length > 0 && (
                                       <button
-                                        onClick={() => toggleExpand('groupes', groupe.code)}
-                                        className="p-0.5 hover:bg-accent/10 rounded mt-0.5"
+                                        onClick={() => toggleExpand('classes', classe.code)}
+                                        className="p-0.5 hover:bg-accent/10 rounded"
                                       >
-                                        {groupeExpanded ? (
+                                        {classeExpanded ? (
                                           <ChevronDown className="w-2 h-2 text-muted-foreground" />
                                         ) : (
                                           <ChevronRight className="w-2 h-2 text-muted-foreground" />
@@ -738,70 +668,34 @@ export const NafFilters = ({
                                       </button>
                                     )}
                                     <div
-                                      onClick={() => handleGroupeToggle(groupe.code)}
+                                      onClick={() => handleClasseToggle(classe.code)}
                                       className="flex items-start gap-1.5 cursor-pointer hover:bg-accent/10 p-1 rounded transition-colors active:scale-[0.98] flex-1"
                                     >
-                                      <Checkbox selected={groupeSelected} size="sm" />
-                                      <span className="text-[10px] font-mono text-muted-foreground shrink-0">{groupe.code}</span>
-                                      <span className="text-[11px] leading-snug flex-1 break-words">{groupe.label}</span>
+                                      <Checkbox selected={classeSelected} size="sm" />
+                                      <span className="text-[10px] font-mono text-muted-foreground shrink-0">{classe.code}</span>
+                                      <span className="text-[11px] leading-snug flex-1 break-words">{classe.label}</span>
                                       <span className="text-[10px] text-muted-foreground shrink-0">
-                                        {groupe.count.toLocaleString('fr-FR')}
+                                        {classe.count.toLocaleString('fr-FR')}
                                       </span>
                                     </div>
                                   </div>
                                   
-                                  {/* Niveau 4: Classes */}
-                                  {groupeExpanded && groupe.classes.map((classe) => {
-                                    const classeSelected = filters.nafClasses?.includes(classe.code);
-                                    const classeExpanded = expanded.classes.includes(classe.code);
+                                  {/* Niveau 4: Sous-classes */}
+                                  {classeExpanded && classe.sousClasses.map((sousClasse) => {
+                                    const sousClasseSelected = filters.nafSousClasses?.includes(sousClasse.code);
                                     
                                     return (
-                                      <div key={classe.code} className="ml-4 space-y-0.5">
-                                        <div className="flex items-start gap-1 border-l border-accent/10 pl-2">
-                                          {classe.sousClasses.length > 0 && (
-                                            <button
-                                              onClick={() => toggleExpand('classes', classe.code)}
-                                              className="p-0.5 hover:bg-accent/10 rounded"
-                                            >
-                                              {classeExpanded ? (
-                                                <ChevronDown className="w-2 h-2 text-muted-foreground" />
-                                              ) : (
-                                                <ChevronRight className="w-2 h-2 text-muted-foreground" />
-                                              )}
-                                            </button>
-                                          )}
-                                          <div
-                                            onClick={() => handleClasseToggle(classe.code)}
-                                            className="flex items-start gap-1.5 cursor-pointer hover:bg-accent/10 p-1 rounded transition-colors active:scale-[0.98] flex-1"
-                                          >
-                                            <Checkbox selected={classeSelected} size="sm" />
-                                            <span className="text-[10px] font-mono text-muted-foreground/70 shrink-0">{classe.code}</span>
-                                            <span className="text-[10px] leading-snug flex-1 break-words text-muted-foreground">{classe.label}</span>
-                                            <span className="text-[10px] text-muted-foreground/70 shrink-0">
-                                              {classe.count.toLocaleString('fr-FR')}
-                                            </span>
-                                          </div>
+                                      <div key={sousClasse.code} className="ml-4">
+                                        <div
+                                          onClick={() => handleSousClasseToggle(sousClasse.code)}
+                                          className="flex items-center gap-1.5 cursor-pointer hover:bg-accent/10 p-1 rounded transition-colors active:scale-[0.98] border-l border-accent/10 pl-2"
+                                        >
+                                          <Checkbox selected={sousClasseSelected} size="sm" />
+                                          <span className="text-[10px] font-mono text-accent/60 shrink-0">{sousClasse.code}</span>
+                                          <span className="text-[10px] text-muted-foreground/70 shrink-0 ml-auto">
+                                            {sousClasse.count.toLocaleString('fr-FR')}
+                                          </span>
                                         </div>
-                                        
-                                        {/* Niveau 5: Sous-classes */}
-                                        {classeExpanded && classe.sousClasses.map((sousClasse) => {
-                                          const sousClasseSelected = filters.nafSousClasses?.includes(sousClasse.code);
-                                          
-                                          return (
-                                            <div key={sousClasse.code} className="ml-4">
-                                              <div
-                                                onClick={() => handleSousClasseToggle(sousClasse.code)}
-                                                className="flex items-center gap-1.5 cursor-pointer hover:bg-accent/10 p-1 rounded transition-colors active:scale-[0.98] border-l border-accent/5 pl-2"
-                                              >
-                                                <Checkbox selected={sousClasseSelected} size="sm" />
-                                                <span className="text-[10px] font-mono text-accent/60 shrink-0">{sousClasse.code}</span>
-                                                <span className="text-[10px] text-muted-foreground/70 shrink-0 ml-auto">
-                                                  {sousClasse.count.toLocaleString('fr-FR')}
-                                                </span>
-                                              </div>
-                                            </div>
-                                          );
-                                        })}
                                       </div>
                                     );
                                   })}
