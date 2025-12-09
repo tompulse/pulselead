@@ -58,93 +58,95 @@ export const SortableVisiteItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${
+      className={`p-3 rounded-lg border transition-colors ${
         isDragging 
           ? 'bg-accent/20 border-accent shadow-lg' 
           : 'bg-card/50 border-accent/10 hover:border-accent/30'
       }`}
     >
-      {/* Drag handle */}
-      <button
-        {...attributes}
-        {...listeners}
-        className="mt-1 cursor-grab active:cursor-grabbing touch-none p-1 rounded hover:bg-accent/10"
-      >
-        <GripVertical className="w-4 h-4 text-muted-foreground" />
-      </button>
-
-      {/* Index badge */}
-      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
-        isLast 
-          ? 'bg-green-500 text-white' 
-          : visiteStatus.visite
-            ? 'bg-accent/50 text-primary'
-            : 'bg-accent text-primary'
-      }`}>
-        {isLast ? '🏁' : index + 1}
-      </div>
-
-      {/* Site info */}
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm truncate">{site.nom}</div>
-        <div className="text-xs text-muted-foreground truncate">{site.adresse}</div>
-        
-        {/* Action checkboxes */}
-        <div className="flex flex-wrap items-center gap-3 mt-2">
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-            <Checkbox 
-              checked={visiteStatus.visite}
-              onCheckedChange={(checked) => onVisiteChange(site.id, 'visite', !!checked)}
-              className="h-4 w-4"
-            />
-            <MapPin className="w-3 h-3 text-accent" />
-            <span>Visité</span>
-          </label>
-          
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-            <Checkbox 
-              checked={visiteStatus.rdv}
-              onCheckedChange={(checked) => onVisiteChange(site.id, 'rdv', !!checked)}
-              className="h-4 w-4"
-            />
-            <Calendar className="w-3 h-3 text-purple-400" />
-            <span>RDV</span>
-          </label>
-          
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-            <Checkbox 
-              checked={visiteStatus.aRevoir}
-              onCheckedChange={(checked) => onVisiteChange(site.id, 'aRevoir', !!checked)}
-              className="h-4 w-4"
-            />
-            <RotateCcw className="w-3 h-3 text-orange-400" />
-            <span>À revoir</span>
-          </label>
-        </div>
-      </div>
-
-      {/* Action buttons */}
-      <div className="flex flex-col gap-1 shrink-0">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => onNavigate(site)}
-          aria-label="Naviguer vers ce site"
+      <div className="flex items-start gap-2">
+        {/* Drag handle */}
+        <button
+          {...attributes}
+          {...listeners}
+          className="mt-1 cursor-grab active:cursor-grabbing touch-none p-1 rounded hover:bg-accent/10 shrink-0"
         >
-          <Navigation className="w-4 h-4 text-accent" />
-        </Button>
-        {onRemove && (
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        </button>
+
+        {/* Index badge */}
+        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
+          isLast 
+            ? 'bg-green-500 text-white' 
+            : visiteStatus.visite
+              ? 'bg-accent/50 text-primary'
+              : 'bg-accent text-primary'
+        }`}>
+          {isLast ? '🏁' : index + 1}
+        </div>
+
+        {/* Site info */}
+        <div className="flex-1 min-w-0">
+          <div className="font-medium text-sm leading-tight">{site.nom}</div>
+          <div className="text-xs text-muted-foreground leading-tight mt-0.5">{site.adresse}</div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-1 shrink-0">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
-            onClick={() => onRemove(site.id)}
-            aria-label="Supprimer de la tournée"
+            className="h-7 w-7"
+            onClick={() => onNavigate(site)}
+            aria-label="Naviguer vers ce site"
           >
-            <Trash2 className="w-4 h-4" />
+            <Navigation className="w-3.5 h-3.5 text-accent" />
           </Button>
-        )}
+          {onRemove && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => onRemove(site.id)}
+              aria-label="Supprimer de la tournée"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </Button>
+          )}
+        </div>
+      </div>
+      
+      {/* Action checkboxes - on separate row */}
+      <div className="flex items-center gap-4 mt-2 pl-10">
+        <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+          <Checkbox 
+            checked={visiteStatus.visite}
+            onCheckedChange={(checked) => onVisiteChange(site.id, 'visite', !!checked)}
+            className="h-4 w-4"
+          />
+          <MapPin className="w-3 h-3 text-accent" />
+          <span>Visité</span>
+        </label>
+        
+        <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+          <Checkbox 
+            checked={visiteStatus.rdv}
+            onCheckedChange={(checked) => onVisiteChange(site.id, 'rdv', !!checked)}
+            className="h-4 w-4"
+          />
+          <Calendar className="w-3 h-3 text-purple-400" />
+          <span>RDV</span>
+        </label>
+        
+        <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+          <Checkbox 
+            checked={visiteStatus.aRevoir}
+            onCheckedChange={(checked) => onVisiteChange(site.id, 'aRevoir', !!checked)}
+            className="h-4 w-4"
+          />
+          <RotateCcw className="w-3 h-3 text-orange-400" />
+          <span>À revoir</span>
+        </label>
       </div>
     </div>
   );
