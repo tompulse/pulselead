@@ -37,7 +37,7 @@ export const ProspectsViewContainer = ({
     (filters.taillesEntreprise?.length || 0);
 
   return (
-    <div className="h-full flex flex-col md:overflow-hidden">
+    <div className="h-full flex flex-col overflow-y-auto lg:overflow-hidden">
       {/* Mobile filters bar */}
       <MobileFiltersBar
         filters={filters}
@@ -46,9 +46,9 @@ export const ProspectsViewContainer = ({
         totalCount={totalCount}
       />
       
-      <div className="flex-1 flex flex-col md:flex-row gap-4 md:overflow-hidden p-4 pt-2">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 lg:overflow-hidden p-4 pt-2">
         {/* Sidebar Filtres NAF - Desktop & Tablet */}
-        <div className="w-56 lg:w-72 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden md:block">
+        <div className="w-64 lg:w-80 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden md:block">
           <ScrollArea className="h-full">
             <NafFilters
               filters={filters}
