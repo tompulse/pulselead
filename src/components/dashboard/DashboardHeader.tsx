@@ -45,38 +45,6 @@ export const DashboardHeader = ({
         {/* Mobile View */}
         {isMobile ? (
           <>
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="border-accent/30 hover:bg-accent/10 h-9 w-9" aria-label="Ouvrir le menu">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-0">
-                <SheetHeader className="p-6 pb-4 border-b border-accent/20">
-                  <SheetTitle className="text-left gradient-text">Menu</SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col p-4 gap-2">
-                  {isAdmin && (
-                    <>
-                      <div className="pb-4 border-b border-accent/20 space-y-2">
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-start gap-2" 
-                          onClick={() => {
-                            setMobileMenuOpen(false);
-                            setSubscriptionDialogOpen(true);
-                          }}
-                        >
-                          <CreditCard className="w-4 h-4" aria-hidden="true" />
-                          Abonnements
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
-            
             <div className="text-base font-bold gradient-text">
               {viewConfig.find(v => v.key === view)?.label}
             </div>
