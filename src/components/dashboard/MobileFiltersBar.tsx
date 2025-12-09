@@ -32,7 +32,7 @@ export const MobileFiltersBar = ({
     (filters.taillesEntreprise?.length || 0);
 
   return (
-    <div className="md:hidden flex items-center gap-2 p-3 bg-card/80 backdrop-blur-sm border-b border-accent/20">
+    <div className="lg:hidden flex items-center gap-2 p-3 bg-card/80 backdrop-blur-sm border-b border-accent/20">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button 
