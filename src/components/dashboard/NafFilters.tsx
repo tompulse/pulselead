@@ -16,9 +16,8 @@ import {
   NAF_GROUPES, 
   NAF_CLASSES,
   getDivisionEmoji,
-  getGroupeLabel,
-  getClasseLabel
 } from "@/utils/nafNomenclatureComplete";
+import { NAF_SOUS_CLASSES, getSousClasseLabel } from "@/utils/nafSousClasses";
 
 // Labels pour les tailles d'entreprise
 const TAILLE_LABELS: Record<string, string> = {
@@ -120,7 +119,7 @@ export const NafFilters = ({
                   .filter(([scCode]) => scCode.startsWith(clsCode))
                   .map(([scCode, count]) => ({
                     code: scCode,
-                    label: scCode,
+                    label: getSousClasseLabel(scCode),
                     count: count as number
                   }))
                   .filter(sc => sc.count > 0)
@@ -680,8 +679,8 @@ export const NafFilters = ({
                                     </div>
                                   </div>
                                   
-                                  {/* Niveau 4: Sous-classes */}
-                                  {classeExpanded && classe.sousClasses.map((sousClasse) => {
+                                  {/* Niveau 4: Sous-classes - Masquer si unique et même count que parent */}
+                                  {classeExpanded && !(classe.sousClasses.length === 1 && classe.sousClasses[0].count === classe.count) && classe.sousClasses.map((sousClasse) => {
                                     const sousClasseSelected = filters.nafSousClasses?.includes(sousClasse.code);
                                     
                                     return (
@@ -692,6 +691,7 @@ export const NafFilters = ({
                                         >
                                           <Checkbox selected={sousClasseSelected} size="sm" />
                                           <span className="text-[10px] font-mono text-accent/60 shrink-0">{sousClasse.code}</span>
+                                          <span className="text-[10px] leading-snug flex-1 break-words ml-1">{sousClasse.label}</span>
                                           <span className="text-[10px] text-muted-foreground/70 shrink-0 ml-auto">
                                             {sousClasse.count.toLocaleString('fr-FR')}
                                           </span>
