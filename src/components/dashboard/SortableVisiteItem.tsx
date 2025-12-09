@@ -117,8 +117,8 @@ export const SortableVisiteItem = ({
       </div>
       
       {/* Action checkboxes - on separate row */}
-      <div className="flex items-center gap-4 mt-2 pl-10">
-        <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+      <div className="flex items-center justify-between mt-2 pl-10">
+        <label className="flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap">
           <Checkbox 
             checked={visiteStatus.visite}
             onCheckedChange={(checked) => onVisiteChange(site.id, 'visite', !!checked)}
@@ -128,7 +128,7 @@ export const SortableVisiteItem = ({
           <span>Visité</span>
         </label>
         
-        <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+        <label className="flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap">
           <Checkbox 
             checked={visiteStatus.rdv}
             onCheckedChange={(checked) => onVisiteChange(site.id, 'rdv', !!checked)}
@@ -138,7 +138,7 @@ export const SortableVisiteItem = ({
           <span>RDV</span>
         </label>
         
-        <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+        <label className="flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap">
           <Checkbox 
             checked={visiteStatus.aRevoir}
             onCheckedChange={(checked) => onVisiteChange(site.id, 'aRevoir', !!checked)}
