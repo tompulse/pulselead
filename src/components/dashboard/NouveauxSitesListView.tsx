@@ -188,7 +188,7 @@ export const NouveauxSitesListView = ({
                     {/* SIRET */}
                     {site.siret && (
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs flex-shrink-0">🆔</span>
+                        <span className="text-xs flex-shrink-0">🏛️</span>
                         <span className="text-xs text-foreground/60 font-mono">{site.siret}</span>
                       </div>
                     )}
