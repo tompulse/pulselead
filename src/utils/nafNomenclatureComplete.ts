@@ -623,6 +623,60 @@ export const NAF_CLASSES: Record<string, { label: string; groupe: string }> = {
   '96.09': { label: 'Autres services personnels n.c.a.', groupe: '96.0' },
 };
 
+// Émojis par division (basés sur la thématique)
+export const DIVISION_EMOJIS: Record<string, string> = {
+  // Agriculture, sylviculture et pêche (01-03)
+  '01': '🌾', '02': '🌲', '03': '🐟',
+  // Industries extractives (05-09)
+  '05': '⛏️', '06': '🛢️', '07': '⚒️', '08': '🪨', '09': '⛏️',
+  // Industrie manufacturière (10-33)
+  '10': '🍖', '11': '🍷', '12': '🚬', '13': '🧵', '14': '👔',
+  '15': '👞', '16': '🪵', '17': '📄', '18': '🖨️', '19': '⛽',
+  '20': '🧪', '21': '💊', '22': '🔧', '23': '🧱', '24': '⚙️',
+  '25': '🔩', '26': '💻', '27': '🔌', '28': '⚙️', '29': '🚗',
+  '30': '✈️', '31': '🪑', '32': '💎', '33': '🔧',
+  // Électricité, gaz (35)
+  '35': '⚡',
+  // Eau, déchets (36-39)
+  '36': '💧', '37': '🚿', '38': '♻️', '39': '🧹',
+  // Construction (41-43)
+  '41': '🏗️', '42': '🛤️', '43': '🔨',
+  // Commerce (45-47)
+  '45': '🚙', '46': '📦', '47': '🛒',
+  // Transports (49-53)
+  '49': '🚚', '50': '🚢', '51': '✈️', '52': '🏭', '53': '📮',
+  // Hébergement, restauration (55-56)
+  '55': '🏨', '56': '🍽️',
+  // Information, communication (58-63)
+  '58': '📚', '59': '🎬', '60': '📺', '61': '📡', '62': '💻', '63': '🌐',
+  // Finance, assurance (64-66)
+  '64': '🏦', '65': '🛡️', '66': '💹',
+  // Immobilier (68)
+  '68': '🏠',
+  // Activités spécialisées (69-75)
+  '69': '⚖️', '70': '📊', '71': '📐', '72': '🔬', '73': '📢', '74': '🎨', '75': '🐕',
+  // Services administratifs (77-82)
+  '77': '🚐', '78': '👥', '79': '✈️', '80': '🔒', '81': '🧹', '82': '📋',
+  // Administration publique (84)
+  '84': '🏛️',
+  // Enseignement (85)
+  '85': '🎓',
+  // Santé, social (86-88)
+  '86': '🏥', '87': '🏠', '88': '🤝',
+  // Arts, loisirs (90-93)
+  '90': '🎭', '91': '🏛️', '92': '🎰', '93': '⚽',
+  // Autres services (94-96)
+  '94': '🤝', '95': '🔧', '96': '💇',
+  // Ménages employeurs (97-98)
+  '97': '🏡', '98': '🏡',
+  // Extra-territorial (99)
+  '99': '🌍',
+};
+
+export function getDivisionEmoji(division: string): string {
+  return DIVISION_EMOJIS[division] || '📁';
+}
+
 // Fonctions utilitaires
 export function getSectionFromDivision(division: string): string | null {
   return NAF_DIVISIONS[division]?.section || null;
