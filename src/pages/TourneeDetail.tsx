@@ -605,14 +605,14 @@ const TourneeDetail = () => {
         </div>
 
         {/* Sites list with drag & drop */}
-        <Card className="lg:w-96 glass-card border-accent/20 shrink-0 lg:h-full lg:overflow-hidden">
-          <CardContent className="p-4 lg:h-full flex flex-col">
-            <div className="flex items-center justify-between mb-4">
+        <Card className="lg:w-96 glass-card border-accent/20 shrink-0 lg:flex-1 lg:min-h-0">
+          <CardContent className="p-4 h-full flex flex-col">
+            <div className="flex items-center justify-between mb-4 shrink-0">
               <h3 className="font-semibold">Itinéraire</h3>
               <span className="text-xs text-muted-foreground">Glissez pour réorganiser</span>
             </div>
 
-            <ScrollArea className="flex-1 lg:max-h-[calc(100vh-450px)]">
+            <ScrollArea className="flex-1 min-h-0">
               {sitesLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...
