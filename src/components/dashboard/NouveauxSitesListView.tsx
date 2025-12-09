@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Building2, Calendar, Hash, Loader2, Factory } from "lucide-react";
+import { Loader2, Factory } from "lucide-react";
 import { nouveauxSitesService, NouveauxSitesFilters } from "@/services/nouveauxSitesService";
 import { getNafCategory } from "@/utils/nafCategories";
 import { format } from "date-fns";
@@ -180,7 +180,7 @@ export const NouveauxSitesListView = ({
                     {/* Code NAF */}
                     {site.code_naf && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Building2 className="w-3.5 h-3.5 text-purple-500 flex-shrink-0" />
+                        <span className="text-xs flex-shrink-0">🏷️</span>
                         <span className="text-xs text-foreground/60">NAF: {site.code_naf}</span>
                       </div>
                     )}
@@ -188,7 +188,7 @@ export const NouveauxSitesListView = ({
                     {/* SIRET */}
                     {site.siret && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Hash className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+                        <span className="text-xs flex-shrink-0">🆔</span>
                         <span className="text-xs text-foreground/60 font-mono">{site.siret}</span>
                       </div>
                     )}
@@ -196,7 +196,7 @@ export const NouveauxSitesListView = ({
                     {/* Adresse */}
                     {fullAddress && (
                       <div className="flex items-start gap-2 text-sm">
-                        <MapPin className="w-3.5 h-3.5 text-rose-500 flex-shrink-0 mt-0.5" />
+                        <span className="text-xs flex-shrink-0">📍</span>
                         <span className="text-xs text-foreground/60">{fullAddress}</span>
                       </div>
                     )}
@@ -204,7 +204,7 @@ export const NouveauxSitesListView = ({
                     {/* Date de création */}
                     {site.date_creation && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                        <span className="text-xs flex-shrink-0">📅</span>
                         <span className="text-xs text-foreground/60">
                           Créé le {format(new Date(site.date_creation), 'dd MMM yyyy', { locale: fr })}
                         </span>
