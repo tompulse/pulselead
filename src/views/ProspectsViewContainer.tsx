@@ -1,11 +1,9 @@
 import { NouveauxSitesListView } from '@/components/dashboard/NouveauxSitesListView';
 import { NafFilters } from '@/components/dashboard/NafFilters';
 import { MobileFiltersBar } from '@/components/dashboard/MobileFiltersBar';
-import { ProspectSearchBar } from '@/components/dashboard/ProspectSearchBar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { nouveauxSitesService } from '@/services/nouveauxSitesService';
-import { useCallback } from 'react';
 
 interface ProspectsViewContainerProps {
   filters: any;
@@ -38,21 +36,8 @@ export const ProspectsViewContainer = ({
     (filters.departments?.length || 0) +
     (filters.taillesEntreprise?.length || 0);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setFilters((prev: any) => ({ ...prev, searchQuery: value }));
-  }, [setFilters]);
-
   return (
     <div className="h-full flex flex-col overflow-y-auto lg:overflow-hidden">
-      {/* Barre de recherche proéminente */}
-      <div className="px-4 pt-4 pb-2">
-        <ProspectSearchBar
-          value={filters.searchQuery || ''}
-          onChange={handleSearchChange}
-          placeholder="🔍 Rechercher une entreprise par nom, ville, SIRET..."
-        />
-      </div>
-
       {/* Mobile filters bar */}
       <MobileFiltersBar
         filters={filters}
