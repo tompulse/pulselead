@@ -149,28 +149,30 @@ export const ProspectsViewContainer = ({
     (filters.taillesEntreprise?.length || 0);
 
   return (
-    <div className="h-full flex flex-col overflow-y-auto lg:overflow-hidden">
-      {/* Mobile & Tablet filters bar */}
-      <MobileFiltersBar
-        filters={filters}
-        setFilters={setFilters}
-        resultsCount={resultsCount}
-        totalCount={totalCount}
-        tourneeActive={tourneeActive}
-        onToggleTournee={handleToggleTournee}
-        tourneeName={tourneeName}
-        setTourneeName={setTourneeName}
-        tourneeDate={tourneeDate}
-        setTourneeDate={setTourneeDate}
-        selectedCount={selectedSites.length}
-        onOptimize={handleOptimize}
-        isOptimizing={isOptimizing}
-      />
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* Mobile & Tablet filters bar - Fixed */}
+      <div className="shrink-0 lg:hidden">
+        <MobileFiltersBar
+          filters={filters}
+          setFilters={setFilters}
+          resultsCount={resultsCount}
+          totalCount={totalCount}
+          tourneeActive={tourneeActive}
+          onToggleTournee={handleToggleTournee}
+          tourneeName={tourneeName}
+          setTourneeName={setTourneeName}
+          tourneeDate={tourneeDate}
+          setTourneeDate={setTourneeDate}
+          selectedCount={selectedSites.length}
+          onOptimize={handleOptimize}
+          isOptimizing={isOptimizing}
+        />
+      </div>
       
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 lg:overflow-hidden p-4 pt-2">
-        {/* Sidebar Filtres NAF - Desktop only */}
-        <div className="w-64 lg:w-80 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden lg:block">
-          <ScrollArea className="h-full">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden p-4 pt-2">
+        {/* Sidebar Filtres NAF - Desktop only - Fixed */}
+        <div className="w-64 lg:w-80 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden lg:flex lg:flex-col">
+          <ScrollArea className="flex-1">
             <NafFilters
               filters={filters}
               setFilters={setFilters}
@@ -189,8 +191,8 @@ export const ProspectsViewContainer = ({
           </ScrollArea>
         </div>
 
-        {/* Liste des sites */}
-        <div className="flex-1 lg:overflow-hidden">
+        {/* Liste des sites - Scrollable */}
+        <div className="flex-1 overflow-y-auto">
           <NouveauxSitesListView
             filters={filters}
             onSiteSelect={onEntrepriseSelect}

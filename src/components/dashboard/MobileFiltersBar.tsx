@@ -55,10 +55,10 @@ export const MobileFiltersBar = ({
     (filters.taillesEntreprise?.length || 0);
 
   return (
-    <div className="lg:hidden space-y-2 p-3 bg-card/80 backdrop-blur-sm border-b border-accent/20">
-      {/* Bouton création tournée - Mobile */}
+    <div className="lg:hidden space-y-1.5 p-2 bg-card/80 backdrop-blur-sm border-b border-accent/20">
+      {/* Bouton création tournée - Mobile - Plus compact */}
       {onToggleTournee && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Button
             onClick={onToggleTournee}
             variant={tourneeActive ? "default" : "outline"}
@@ -66,60 +66,53 @@ export const MobileFiltersBar = ({
               tourneeActive 
                 ? "bg-gradient-to-r from-accent to-accent/80 hover:shadow-md hover:shadow-accent/30 text-primary" 
                 : "border-accent/30 hover:bg-accent/10 hover:border-accent/50"
-            } transition-all h-9`}
+            } transition-all h-8 text-xs`}
             size="sm"
           >
-            <Route className="w-4 h-4 mr-2" />
+            <Route className="w-3.5 h-3.5 mr-1.5" />
             {tourneeActive ? "Mode tournée actif" : "Créer une tournée"}
           </Button>
           
-          {/* Formulaire tournée - Mobile */}
+          {/* Formulaire tournée - Mobile - Plus compact */}
           {tourneeActive && setTourneeName && setTourneeDate && onOptimize && (
-            <div className="space-y-2 p-3 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30">
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <Label htmlFor="mobile-tournee-name" className="text-xs font-semibold text-accent">Nom</Label>
-                  <Input
-                    id="mobile-tournee-name"
-                    placeholder="Ex: Tournée Sud"
-                    value={tourneeName}
-                    onChange={(e) => setTourneeName(e.target.value)}
-                    className="h-8 text-xs border-accent/30"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="mobile-tournee-date" className="text-xs font-semibold text-accent">Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full h-8 text-xs justify-start font-normal border-accent/30"
-                      >
-                        <CalendarIcon className="mr-1 h-3 w-3" />
-                        {tourneeDate ? format(new Date(tourneeDate), "dd/MM") : "Date"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={tourneeDate ? new Date(tourneeDate) : undefined}
-                        onSelect={(date) => setTourneeDate(date ? format(date, "yyyy-MM-dd") : "")}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
+            <div className="space-y-1.5 p-2 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30">
               <div className="flex items-center gap-2">
+                <Input
+                  placeholder="Nom tournée"
+                  value={tourneeName}
+                  onChange={(e) => setTourneeName(e.target.value)}
+                  className="flex-1 h-7 text-xs border-accent/30"
+                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="h-7 text-xs px-2 font-normal border-accent/30"
+                    >
+                      <CalendarIcon className="h-3 w-3 mr-1" />
+                      {tourneeDate ? format(new Date(tourneeDate), "dd/MM") : "Date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={tourneeDate ? new Date(tourneeDate) : undefined}
+                      onSelect={(date) => setTourneeDate(date ? format(date, "yyyy-MM-dd") : "")}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="flex items-center gap-1.5">
                 {selectedCount > 0 && (
-                  <div className="text-xs bg-accent/10 text-accent font-semibold rounded px-2 py-1 border border-accent/20">
-                    {selectedCount} sélectionné(s)
+                  <div className="text-xs bg-accent/10 text-accent font-semibold rounded px-1.5 py-0.5 border border-accent/20">
+                    {selectedCount} site(s)
                   </div>
                 )}
                 <Button
                   onClick={onOptimize}
                   disabled={selectedCount < 2 || isOptimizing}
-                  className="flex-1 h-8 text-xs bg-gradient-to-r from-accent to-accent/80 disabled:opacity-50"
+                  className="flex-1 h-7 text-xs bg-gradient-to-r from-accent to-accent/80 disabled:opacity-50"
                   size="sm"
                 >
                   <Route className="w-3 h-3 mr-1" />
