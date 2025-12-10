@@ -218,9 +218,11 @@ export const NouveauxSitesListView = ({
           </div>
 
           {/* Sentinel for infinite scroll */}
-          <div ref={sentinelRef} className="h-20 flex items-center justify-center">
+          <div ref={sentinelRef} className="h-4">
             {isFetchingNextPage && (
-              <Loader2 className="w-8 h-8 animate-spin text-accent" />
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="w-6 h-6 animate-spin text-accent" />
+              </div>
             )}
           </div>
 
