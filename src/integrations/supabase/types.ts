@@ -477,6 +477,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      lambert93_to_wgs84: {
+        Args: { x_lambert: number; y_lambert: number }
+        Returns: {
+          lat: number
+          lng: number
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "user"

@@ -6,25 +6,28 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Conversion Lambert 93 (EPSG:2154) vers WGS84 (EPSG:4326)
+// Conversion Lambert 93 (EPSG:2154) vers WGS84 (EPSG:4326) - Formule corrigée
 function lambert93ToWGS84(x: number, y: number): { lat: number; lng: number } | null {
   if (!x || !y || x === 0 || y === 0) return null;
   if (x < 100000 || x > 1300000 || y < 6000000 || y > 7200000) return null;
 
+  // Paramètres officiels Lambert 93 (EPSG:2154)
   const n = 0.7256077650532670;
   const c = 11754255.426096;
   const xs = 700000;
   const ys = 12655612.049876;
-  const e = 0.08248325676;
-  const lambda0 = 0.04079234433198;
+  const e = 0.08181919106;  // Excentricité GRS80
+  const lambda0 = 3 * Math.PI / 180;  // Méridien central = 3°E
 
   try {
     const dx = x - xs;
-    const dy = y - ys;
+    const dy = ys - y;  // CORRECTION: ys - y, pas y - ys
     const R = Math.sqrt(dx * dx + dy * dy);
-    const gamma = Math.atan2(dx, -dy);
+    const gamma = Math.atan2(dx, dy);  // CORRECTION: atan2(dx, dy) sans négation
     const lambda = lambda0 + gamma / n;
     const L = -Math.log(R / c) / n;
+    
+    // Latitude isométrique inverse avec itérations
     let phi = 2 * Math.atan(Math.exp(L)) - Math.PI / 2;
 
     for (let i = 0; i < 10; i++) {
@@ -37,7 +40,12 @@ function lambert93ToWGS84(x: number, y: number): { lat: number; lng: number } | 
     const lat = phi * 180 / Math.PI;
     const lng = lambda * 180 / Math.PI;
 
-    if (lat < 41 || lat > 51 || lng < -5 || lng > 10) return null;
+    // Validation France métropolitaine
+    if (lat < 41 || lat > 51.5 || lng < -5.5 || lng > 10) {
+      console.log(`Coords hors France: lat=${lat}, lng=${lng}`);
+      return null;
+    }
+    
     return { lat, lng };
   } catch (error) {
     console.error("Error converting Lambert to WGS84:", error);
