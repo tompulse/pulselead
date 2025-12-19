@@ -108,24 +108,25 @@ export const ProspectsViewContainer = ({
             id: site.id,
             nom: site.nom,
             adresse: `${site.numero_voie || ''} ${site.type_voie || ''} ${site.libelle_voie || ''}, ${site.code_postal || ''} ${site.ville || ''}`.trim(),
-            latitude: site.latitude,
-            longitude: site.longitude
+            ville: site.ville,
+            code_postal: site.code_postal,
+            latitude: Number(site.latitude) || null,
+            longitude: Number(site.longitude) || null
           })),
-          // Inclure le point de départ si défini
-          startPoint: startLat && startLng ? {
-            address: startAddress,
-            latitude: startLat,
-            longitude: startLng
+          // Inclure le point de départ si défini (utiliser point_depart comme attendu par l'edge function)
+          point_depart: startLat && startLng ? {
+            lat: startLat,
+            lng: startLng
           } : undefined
         }
       });
 
       if (optimizeError) throw optimizeError;
 
-      // Extraire les données de l'optimisation
-      const ordreOptimise = optimizeData?.optimizedOrder?.map((e: any) => e.id) || selectedSites.map(s => s.id);
-      const distanceKm = optimizeData?.withTolls?.distance_km || optimizeData?.distance_km || null;
-      const tempsMinutes = optimizeData?.withTolls?.duration_minutes || optimizeData?.duration_minutes || null;
+      // Extraire les données de l'optimisation (noms corrects des champs retournés)
+      const ordreOptimise = optimizeData?.ordre_optimise || selectedSites.map(s => s.id);
+      const distanceKm = optimizeData?.distance_totale_km || null;
+      const tempsMinutes = optimizeData?.temps_estime_minutes || null;
 
       // Sauvegarder la tournée avec le point de départ
       const { data: tournee, error: saveError } = await supabase
