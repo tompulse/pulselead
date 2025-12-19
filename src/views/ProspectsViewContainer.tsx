@@ -32,6 +32,11 @@ export const ProspectsViewContainer = ({
   const [tourneeDate, setTourneeDate] = useState('');
   const [selectedSites, setSelectedSites] = useState<any[]>([]);
   const [isOptimizing, setIsOptimizing] = useState(false);
+  
+  // État pour le point de départ
+  const [startAddress, setStartAddress] = useState('');
+  const [startLat, setStartLat] = useState<number>(0);
+  const [startLng, setStartLng] = useState<number>(0);
 
   // Fetch count for filters display
   const { data } = useInfiniteQuery({
@@ -54,6 +59,13 @@ export const ProspectsViewContainer = ({
     );
   };
 
+  // Gestion du point de départ
+  const handleStartPointChange = (address: string, lat: number, lng: number) => {
+    setStartAddress(address);
+    setStartLat(lat);
+    setStartLng(lng);
+  };
+
   // Toggle mode tournée
   const handleToggleTournee = () => {
     if (tourneeActive) {
@@ -62,6 +74,9 @@ export const ProspectsViewContainer = ({
       setTourneeName('');
       setTourneeDate('');
       setSelectedSites([]);
+      setStartAddress('');
+      setStartLat(0);
+      setStartLng(0);
     } else {
       setTourneeActive(true);
       setTourneeDate(format(new Date(), 'yyyy-MM-dd'));
@@ -95,7 +110,13 @@ export const ProspectsViewContainer = ({
             adresse: `${site.numero_voie || ''} ${site.type_voie || ''} ${site.libelle_voie || ''}, ${site.code_postal || ''} ${site.ville || ''}`.trim(),
             latitude: site.latitude,
             longitude: site.longitude
-          }))
+          })),
+          // Inclure le point de départ si défini
+          startPoint: startLat && startLng ? {
+            address: startAddress,
+            latitude: startLat,
+            longitude: startLng
+          } : undefined
         }
       });
 
@@ -106,7 +127,7 @@ export const ProspectsViewContainer = ({
       const distanceKm = optimizeData?.withTolls?.distance_km || optimizeData?.distance_km || null;
       const tempsMinutes = optimizeData?.withTolls?.duration_minutes || optimizeData?.duration_minutes || null;
 
-      // Sauvegarder la tournée
+      // Sauvegarder la tournée avec le point de départ
       const { data: tournee, error: saveError } = await supabase
         .from('tournees')
         .insert({
@@ -117,7 +138,9 @@ export const ProspectsViewContainer = ({
           ordre_optimise: ordreOptimise,
           distance_totale_km: distanceKm,
           temps_estime_minutes: tempsMinutes,
-          statut: 'planifiee'
+          statut: 'planifiee',
+          point_depart_lat: startLat || null,
+          point_depart_lng: startLng || null
         })
         .select()
         .single();
@@ -166,6 +189,10 @@ export const ProspectsViewContainer = ({
           selectedCount={selectedSites.length}
           onOptimize={handleOptimize}
           isOptimizing={isOptimizing}
+          startAddress={startAddress}
+          startLat={startLat}
+          startLng={startLng}
+          onStartPointChange={handleStartPointChange}
         />
       </div>
       
@@ -187,6 +214,10 @@ export const ProspectsViewContainer = ({
               selectedCount={selectedSites.length}
               onOptimize={handleOptimize}
               isOptimizing={isOptimizing}
+              startAddress={startAddress}
+              startLat={startLat}
+              startLng={startLng}
+              onStartPointChange={handleStartPointChange}
             />
           </ScrollArea>
         </div>

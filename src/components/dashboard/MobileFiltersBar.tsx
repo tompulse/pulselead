@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { AddressSearchInput } from "./AddressSearchInput";
 
 interface MobileFiltersBarProps {
   filters: any;
@@ -25,6 +26,10 @@ interface MobileFiltersBarProps {
   selectedCount?: number;
   onOptimize?: () => void;
   isOptimizing?: boolean;
+  startAddress?: string;
+  startLat?: number;
+  startLng?: number;
+  onStartPointChange?: (address: string, lat: number, lng: number) => void;
 }
 
 export const MobileFiltersBar = ({
@@ -40,7 +45,11 @@ export const MobileFiltersBar = ({
   setTourneeDate,
   selectedCount = 0,
   onOptimize,
-  isOptimizing = false
+  isOptimizing = false,
+  startAddress,
+  startLat,
+  startLng,
+  onStartPointChange
 }: MobileFiltersBarProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -75,7 +84,7 @@ export const MobileFiltersBar = ({
           
           {/* Formulaire tournée - Mobile - Plus compact */}
           {tourneeActive && setTourneeName && setTourneeDate && onOptimize && (
-            <div className="space-y-1.5 p-2 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30">
+            <div className="space-y-2 p-2 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent rounded-lg border border-accent/30">
               <div className="flex items-center gap-2">
                 <Input
                   placeholder="Nom tournée"
@@ -103,6 +112,17 @@ export const MobileFiltersBar = ({
                   </PopoverContent>
                 </Popover>
               </div>
+              
+              {/* Point de départ - Mobile */}
+              {onStartPointChange && (
+                <AddressSearchInput
+                  onAddressSelect={onStartPointChange}
+                  selectedAddress={startAddress}
+                  selectedLat={startLat}
+                  selectedLng={startLng}
+                />
+              )}
+              
               <div className="flex items-center gap-1.5">
                 {selectedCount > 0 && (
                   <div className="text-xs bg-accent/10 text-accent font-semibold rounded px-1.5 py-0.5 border border-accent/20">
