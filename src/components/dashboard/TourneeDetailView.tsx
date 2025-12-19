@@ -310,14 +310,15 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     toast.success('Tournée terminée');
   };
 
+  // Convertir les coordonnées en nombres pour la carte
   const entreprisesForMap = sites.map((site: any) => ({
     id: site.id,
     nom: site.nom,
     adresse: getFullAddress(site),
     ville: site.ville,
-    latitude: site.latitude,
-    longitude: site.longitude
-  }));
+    latitude: Number(site.latitude),
+    longitude: Number(site.longitude)
+  })).filter(e => Number.isFinite(e.latitude) && Number.isFinite(e.longitude));
 
   const completedCount = Object.values(visitesStatus).filter(v => v.visite).length;
   const currentStatut = updateTourneeMutation.isPending ? tournee.statut : tournee.statut;
@@ -349,7 +350,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
       <div className="p-4 grid grid-cols-4 gap-3">
         <div className="p-3 rounded-xl bg-accent/10 border border-accent/20 text-center">
           <MapPin className="w-5 h-5 text-accent mx-auto mb-1" />
-          <div className="font-bold text-xl">{sites.length}</div>
+          <div className="font-bold text-xl">{orderedSiteIds.length}</div>
           <div className="text-xs text-muted-foreground">Arrêts</div>
         </div>
         <div className="p-3 rounded-xl bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30 text-center">
