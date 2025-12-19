@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
+import { AddressSearchInput } from "./AddressSearchInput";
 
 interface TourneeCreationPanelProps {
   onCreateTournee: () => void;
@@ -16,6 +17,10 @@ interface TourneeCreationPanelProps {
   setTourneeDate: (date: string) => void;
   selectedCount: number;
   onOptimize: () => void;
+  startAddress?: string;
+  startLat?: number;
+  startLng?: number;
+  onStartPointChange?: (address: string, lat: number, lng: number) => void;
 }
 
 export const TourneeCreationPanel = ({
@@ -26,7 +31,11 @@ export const TourneeCreationPanel = ({
   tourneeDate,
   setTourneeDate,
   selectedCount,
-  onOptimize
+  onOptimize,
+  startAddress,
+  startLat,
+  startLng,
+  onStartPointChange
 }: TourneeCreationPanelProps) => {
   return (
     <div className="glass-card border border-accent/30 p-4 space-y-4 rounded-xl shadow-lg">
@@ -78,6 +87,17 @@ export const TourneeCreationPanel = ({
               </PopoverContent>
             </Popover>
           </div>
+          
+          {/* Point de départ */}
+          {onStartPointChange && (
+            <AddressSearchInput
+              onAddressSelect={onStartPointChange}
+              selectedAddress={startAddress}
+              selectedLat={startLat}
+              selectedLng={startLng}
+            />
+          )}
+          
           {selectedCount > 0 && (
             <div className="text-xs bg-accent/10 text-accent font-semibold rounded-lg px-3 py-2 border border-accent/20">
               {selectedCount} entreprise(s) sélectionnée(s)
@@ -97,3 +117,4 @@ export const TourneeCreationPanel = ({
     </div>
   );
 };
+

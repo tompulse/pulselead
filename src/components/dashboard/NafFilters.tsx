@@ -11,6 +11,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AddressSearchInput } from "./AddressSearchInput";
 import { 
   NAF_DIVISIONS, 
   NAF_GROUPES, 
@@ -50,6 +51,10 @@ interface NafFiltersProps {
   selectedCount?: number;
   onOptimize?: () => void;
   isOptimizing?: boolean;
+  startAddress?: string;
+  startLat?: number;
+  startLng?: number;
+  onStartPointChange?: (address: string, lat: number, lng: number) => void;
 }
 
 // Type pour les niveaux d'expansion
@@ -72,7 +77,11 @@ export const NafFilters = ({
   setTourneeDate,
   selectedCount = 0,
   onOptimize,
-  isOptimizing = false
+  isOptimizing = false,
+  startAddress,
+  startLat,
+  startLng,
+  onStartPointChange
 }: NafFiltersProps) => {
   const [sectionsOpen, setSectionsOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
@@ -426,6 +435,17 @@ export const NafFilters = ({
                   </PopoverContent>
                 </Popover>
               </div>
+              
+              {/* Point de départ */}
+              {onStartPointChange && (
+                <AddressSearchInput
+                  onAddressSelect={onStartPointChange}
+                  selectedAddress={startAddress}
+                  selectedLat={startLat}
+                  selectedLng={startLng}
+                />
+              )}
+              
               {selectedCount > 0 && (
                 <div className="text-xs bg-accent/10 text-accent font-semibold rounded-lg px-3 py-2 border border-accent/20">
                   {selectedCount} site(s) sélectionné(s)
