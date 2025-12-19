@@ -14,13 +14,16 @@ import {
   Compass,
   Play,
   CheckCircle,
-  Loader2
+  Loader2,
+  Home,
+  Flag
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { TourneeMap } from './TourneeMap';
 import { SortableVisiteItem } from './SortableVisiteItem';
+import { TourneeRouteConfig } from './TourneeRouteConfig';
 import {
   DndContext,
   closestCenter,
@@ -48,6 +51,11 @@ interface Tournee {
   statut: string;
   point_depart_lat: number | null;
   point_depart_lng: number | null;
+  point_depart_adresse?: string | null;
+  point_arrivee_type?: string | null;
+  point_arrivee_lat?: number | null;
+  point_arrivee_lng?: number | null;
+  point_arrivee_adresse?: string | null;
   visites_effectuees?: any;
 }
 
@@ -62,6 +70,20 @@ interface VisiteStatus {
   aRevoir: boolean;
 }
 
+interface RouteEndpoint {
+  type: 'address' | 'current_location';
+  address: string;
+  lat: number;
+  lng: number;
+}
+
+interface ArrivalOption {
+  type: 'last_prospect' | 'return_start' | 'custom_address';
+  address?: string;
+  lat?: number;
+  lng?: number;
+}
+
 export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) => {
   const queryClient = useQueryClient();
   const [orderedSiteIds, setOrderedSiteIds] = useState<string[]>(tournee.ordre_optimise || []);
@@ -70,6 +92,32 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
   const [localKpis, setLocalKpis] = useState({
     distance: tournee.distance_totale_km,
     temps: tournee.temps_estime_minutes,
+  });
+
+  // Route config state
+  const [startPoint, setStartPoint] = useState<RouteEndpoint | null>(
+    tournee.point_depart_lat && tournee.point_depart_lng
+      ? {
+          type: 'address',
+          address: (tournee as any).point_depart_adresse || 'Point de départ',
+          lat: tournee.point_depart_lat,
+          lng: tournee.point_depart_lng,
+        }
+      : null
+  );
+  
+  const [arrivalOption, setArrivalOption] = useState<ArrivalOption>(() => {
+    const type = (tournee as any).point_arrivee_type as string;
+    if (type === 'return_start') return { type: 'return_start' };
+    if (type === 'custom_address') {
+      return {
+        type: 'custom_address',
+        address: (tournee as any).point_arrivee_adresse,
+        lat: (tournee as any).point_arrivee_lat,
+        lng: (tournee as any).point_arrivee_lng,
+      };
+    }
+    return { type: 'last_prospect' };
   });
 
   // Initialize visites status from tournee data
@@ -282,13 +330,28 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     const validSites = sites.filter((s: any) => s.latitude && s.longitude);
     if (validSites.length === 0) return;
 
-    const origin = `${validSites[0].latitude},${validSites[0].longitude}`;
-    const destination = validSites.length > 1 
-      ? `${validSites[validSites.length - 1].latitude},${validSites[validSites.length - 1].longitude}`
-      : origin;
+    // Use start point if defined, otherwise first site
+    const origin = startPoint && startPoint.lat !== 0 
+      ? `${startPoint.lat},${startPoint.lng}`
+      : `${validSites[0].latitude},${validSites[0].longitude}`;
     
-    const waypoints = validSites.length > 2
-      ? validSites.slice(1, -1).map((s: any) => `${s.latitude},${s.longitude}`).join('|')
+    // Determine destination based on arrival option
+    let destination = origin;
+    if (arrivalOption.type === 'last_prospect' && validSites.length > 0) {
+      const lastSite = validSites[validSites.length - 1];
+      destination = `${lastSite.latitude},${lastSite.longitude}`;
+    } else if (arrivalOption.type === 'return_start' && startPoint) {
+      destination = `${startPoint.lat},${startPoint.lng}`;
+    } else if (arrivalOption.type === 'custom_address' && arrivalOption.lat && arrivalOption.lng) {
+      destination = `${arrivalOption.lat},${arrivalOption.lng}`;
+    } else if (validSites.length > 0) {
+      const lastSite = validSites[validSites.length - 1];
+      destination = `${lastSite.latitude},${lastSite.longitude}`;
+    }
+    
+    const waypointSites = startPoint ? validSites : validSites.slice(1);
+    const waypoints = waypointSites.length > 0
+      ? waypointSites.slice(0, -1).map((s: any) => `${s.latitude},${s.longitude}`).join('|')
       : '';
 
     let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
@@ -308,6 +371,99 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
   const handleEndTournee = async () => {
     await updateTourneeMutation.mutateAsync({ statut: 'terminee' });
     toast.success('Tournée terminée');
+  };
+
+  const handleStartPointChange = async (point: RouteEndpoint | null) => {
+    setStartPoint(point);
+    await updateTourneeMutation.mutateAsync({
+      point_depart_lat: point?.lat || null,
+      point_depart_lng: point?.lng || null,
+    } as any);
+    
+    // Recalculate route with new start point
+    if (orderedSiteIds.length > 0) {
+      await recalculateRouteWithEndpoints(orderedSiteIds, point, arrivalOption);
+    }
+  };
+
+  const handleArrivalOptionChange = async (option: ArrivalOption) => {
+    setArrivalOption(option);
+    // Note: We can't save to DB as columns don't exist yet, but we update local state
+    
+    // Recalculate route with new arrival option
+    if (orderedSiteIds.length > 0) {
+      await recalculateRouteWithEndpoints(orderedSiteIds, startPoint, option);
+    }
+  };
+
+  const recalculateRouteWithEndpoints = async (
+    newOrder: string[], 
+    start: RouteEndpoint | null, 
+    arrival: ArrivalOption
+  ) => {
+    setIsRecalculating(true);
+    
+    try {
+      const orderedSites = newOrder
+        .map(id => sites.find(s => s.id === id))
+        .filter(s => s?.latitude && s?.longitude);
+
+      if (orderedSites.length === 0) {
+        setIsRecalculating(false);
+        return;
+      }
+
+      const waypoints: { lat: number; lng: number }[] = [];
+      
+      // Add start point
+      if (start && start.lat !== 0) {
+        waypoints.push({ lat: start.lat, lng: start.lng });
+      }
+      
+      // Add all sites
+      orderedSites.forEach(s => {
+        waypoints.push({ lat: Number(s.latitude), lng: Number(s.longitude) });
+      });
+      
+      // Add arrival point based on option
+      if (arrival.type === 'return_start' && start && start.lat !== 0) {
+        waypoints.push({ lat: start.lat, lng: start.lng });
+      } else if (arrival.type === 'custom_address' && arrival.lat && arrival.lng) {
+        waypoints.push({ lat: arrival.lat, lng: arrival.lng });
+      }
+      // For 'last_prospect', no need to add anything as it's already the last site
+
+      if (waypoints.length < 2) {
+        setIsRecalculating(false);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('calculate-routes', {
+        body: { waypoints },
+      });
+
+      if (error) throw error;
+
+      const newDistance = data.distance_km || localKpis.distance;
+      const newTemps = data.duration_minutes || localKpis.temps;
+
+      setLocalKpis({
+        distance: newDistance,
+        temps: newTemps,
+      });
+
+      await updateTourneeMutation.mutateAsync({
+        ordre_optimise: newOrder,
+        distance_totale_km: newDistance,
+        temps_estime_minutes: newTemps,
+      });
+
+      toast.success('Itinéraire recalculé');
+    } catch (error) {
+      console.error('Error recalculating route:', error);
+    } finally {
+      setIsRecalculating(false);
+    }
   };
 
   // Convertir les coordonnées en nombres pour la carte
@@ -416,8 +572,8 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
           ) : entreprisesForMap.length > 0 ? (
             <TourneeMap 
               entreprises={entreprisesForMap}
-              pointDepartLat={tournee.point_depart_lat || undefined}
-              pointDepartLng={tournee.point_depart_lng || undefined}
+              pointDepartLat={startPoint?.lat || undefined}
+              pointDepartLng={startPoint?.lng || undefined}
             />
           ) : (
             <div className="h-full flex items-center justify-center bg-card text-muted-foreground">
@@ -427,7 +583,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         </div>
 
         {/* Sites list with drag & drop */}
-        <Card className="lg:w-96 glass-card border-accent/20">
+        <Card className="lg:w-[420px] glass-card border-accent/20">
           <CardContent className="p-4 h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">Itinéraire</h3>
@@ -435,6 +591,23 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
             </div>
 
             <ScrollArea className="flex-1">
+              {/* Route Configuration */}
+              <TourneeRouteConfig
+                startPoint={startPoint}
+                arrivalOption={arrivalOption}
+                onStartPointChange={handleStartPointChange}
+                onArrivalOptionChange={handleArrivalOptionChange}
+                disabled={currentStatut === 'terminee'}
+              />
+
+              <div className="my-4 border-t border-accent/20" />
+
+              {/* Prospects List Header */}
+              <div className="flex items-center gap-2 mb-3 text-sm font-medium text-muted-foreground">
+                <MapPin className="w-4 h-4 text-cyan-400" />
+                Prospects à visiter ({orderedSiteIds.length})
+              </div>
+
               {isLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...
@@ -481,6 +654,23 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
                     </div>
                   </SortableContext>
                 </DndContext>
+              )}
+
+              {/* Arrival indicator */}
+              {arrivalOption.type !== 'last_prospect' && sites.length > 0 && (
+                <div className="mt-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-lg">
+                    🏁
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-green-400">Arrivée</div>
+                    <div className="text-xs text-muted-foreground">
+                      {arrivalOption.type === 'return_start' 
+                        ? 'Retour au point de départ'
+                        : arrivalOption.address || 'Adresse personnalisée'}
+                    </div>
+                  </div>
+                </div>
               )}
             </ScrollArea>
           </CardContent>
