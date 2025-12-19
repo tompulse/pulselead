@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { findNafCodesForKeyword, normalizeSearchTerm, generateNafFilterConditions } from '@/utils/searchKeywordMapping';
 
 export interface NouveauxSitesFilters {
   searchQuery?: string;
@@ -20,24 +21,38 @@ export const nouveauxSitesService = {
         .order('date_creation', { ascending: false })
         .range(page * pageSize, (page + 1) * pageSize - 1);
 
-      // Multi-term search: split by space and search all terms (AND logic)
+      // Recherche intelligente multi-termes avec synonymes métier
       if (filters.searchQuery && filters.searchQuery.trim()) {
-        const terms = filters.searchQuery.trim().split(/\s+/).filter(t => t.length > 0);
+        const rawQuery = filters.searchQuery.trim();
+        const terms = rawQuery.split(/\s+/).filter(t => t.length > 0);
         
-        if (terms.length === 1) {
-          const q = terms[0];
-          const like = `%${q}%`;
-          query = query.or(
-            `nom.ilike.${like},ville.ilike.${like},adresse.ilike.${like},siret.eq.${q},code_naf.ilike.${like}`
-          );
-        } else {
-          // Multiple terms: all must match (using filter for each term)
-          for (const term of terms) {
-            const like = `%${term}%`;
-            query = query.or(
-              `nom.ilike.${like},ville.ilike.${like},adresse.ilike.${like},siret.eq.${term},code_naf.ilike.${like}`
-            );
+        // Pour chaque terme, on construit une recherche étendue
+        for (const term of terms) {
+          const like = `%${term}%`;
+          
+          // Trouver les codes NAF associés à ce terme (synonymes métier)
+          const relatedNafCodes = findNafCodesForKeyword(term);
+          
+          // Construire les conditions de recherche
+          // Champs étendus : nom, ville, adresse, siret, code_naf, categorie_detaillee
+          let searchConditions = [
+            `nom.ilike.${like}`,
+            `ville.ilike.${like}`,
+            `adresse.ilike.${like}`,
+            `siret.eq.${term}`,
+            `code_naf.ilike.${like}`,
+            `categorie_detaillee.ilike.${like}`
+          ];
+          
+          // Ajouter les conditions NAF issues des synonymes métier
+          if (relatedNafCodes.length > 0) {
+            const nafConditions = generateNafFilterConditions(relatedNafCodes);
+            if (nafConditions) {
+              searchConditions.push(nafConditions);
+            }
           }
+          
+          query = query.or(searchConditions.join(','));
         }
       }
 
