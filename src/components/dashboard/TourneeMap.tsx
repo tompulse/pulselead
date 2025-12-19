@@ -256,7 +256,7 @@ export const TourneeMap = ({
             startEl.style.transform = 'scale(1)';
           };
           
-          const startMarker = new mapboxgl.Marker({ element: startEl })
+          const startMarker = new mapboxgl.Marker({ element: startEl, anchor: 'center' })
             .setLngLat([pointDepartLng, pointDepartLat])
             .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML('<strong>🏁 Départ</strong><br/>Votre position actuelle'))
             .addTo(map.current);
@@ -303,7 +303,7 @@ export const TourneeMap = ({
             ? `<strong>🏁 Arrivée - Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.adresse || e.ville || ''}</small>`
             : `<strong>Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.adresse || e.ville || ''}</small>`;
           
-          const marker = new mapboxgl.Marker({ element: el })
+          const marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
             .setLngLat([e.longitude, e.latitude])
             .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent))
             .addTo(map.current);
