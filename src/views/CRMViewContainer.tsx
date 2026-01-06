@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar, RotateCcw, FileText, CheckCircle2, XCircle } from 'lucide-react';
+import { Calendar, RotateCcw, FileText, CheckCircle2, XCircle, Phone } from 'lucide-react';
 import { ActivityDetailSheet } from '@/components/dashboard/ActivityDetailSheet';
 import { toast } from 'sonner';
 
@@ -35,7 +35,7 @@ export const CRMViewContainer = ({
   userId: string; 
   onEntrepriseSelect?: (entrepriseId: string) => void 
 }) => {
-  const [selectedActivity, setSelectedActivity] = useState<'rdv' | 'a_revoir' | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<'rdv' | 'a_revoir' | 'a_rappeler' | null>(null);
   const queryClient = useQueryClient();
 
   // Fetch interactions for activity stats
@@ -106,8 +106,9 @@ export const CRMViewContainer = ({
   });
 
   // Calculate activity stats from real data
+  const aRappelerCount = interactions.filter(i => i.statut === 'a_rappeler').length;
   const rdvCount = interactions.filter(i => i.type === 'rdv').length;
-  const aRevoirCount = interactions.filter(i => i.type === 'a_revoir' || i.statut === 'a_rappeler').length;
+  const aRevoirCount = interactions.filter(i => i.type === 'a_revoir').length;
 
   // Count offers by stage
   const getOfferCountByStage = (stageKey: string): number => {
@@ -130,8 +131,26 @@ export const CRMViewContainer = ({
       {/* Activities Section */}
       <div>
         <h3 className="text-accent font-semibold mb-4">Activités</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-          {/* À revoir - Left */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+          {/* A rappeler - Left */}
+          <Card 
+            className="glass-card border-blue-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10"
+            onClick={() => setSelectedActivity('a_rappeler')}
+            role="button"
+            tabIndex={0}
+            aria-label={`Voir les ${aRappelerCount} entreprises à rappeler`}
+            onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('a_rappeler')}
+          >
+            <CardContent className="p-4 md:p-6 text-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Phone className="w-5 h-5 md:w-6 md:h-6 text-blue-400" aria-hidden="true" />
+              </div>
+              <p className="text-xs md:text-sm text-muted-foreground mb-1">A rappeler</p>
+              <p className="text-2xl md:text-4xl font-bold text-blue-400">{aRappelerCount}</p>
+            </CardContent>
+          </Card>
+
+          {/* À revoir - Center */}
           <Card 
             className="glass-card border-orange-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/10"
             onClick={() => setSelectedActivity('a_revoir')}

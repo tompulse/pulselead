@@ -5,14 +5,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
-import { MapPin, Calendar, RotateCcw, Eye, Trash2, Building2 } from 'lucide-react';
+import { MapPin, Calendar, RotateCcw, Eye, Trash2, Building2, Phone } from 'lucide-react';
 import { format, isToday, isYesterday } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 interface ActivityDetailSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  activityType: 'visite' | 'rdv' | 'a_revoir' | null;
+  activityType: 'visite' | 'rdv' | 'a_revoir' | 'a_rappeler' | null;
   userId: string;
   onEntrepriseSelect?: (id: string) => void;
 }
@@ -27,14 +27,20 @@ const ACTIVITY_CONFIG = {
   rdv: {
     title: 'Rendez-vous',
     icon: Calendar,
-    color: 'text-purple-400',
-    bgColor: 'bg-purple-500/20',
+    color: 'text-green-400',
+    bgColor: 'bg-green-500/20',
   },
   a_revoir: {
     title: 'À revoir',
     icon: RotateCcw,
     color: 'text-orange-400',
     bgColor: 'bg-orange-500/20',
+  },
+  a_rappeler: {
+    title: 'A rappeler',
+    icon: Phone,
+    color: 'text-blue-400',
+    bgColor: 'bg-blue-500/20',
   },
 };
 
@@ -73,7 +79,9 @@ export const ActivityDetailSheet = ({
         .order('date_interaction', { ascending: false });
 
       if (activityType === 'a_revoir') {
-        query = query.or('type.eq.a_revoir,statut.eq.a_rappeler');
+        query = query.eq('type', 'a_revoir');
+      } else if (activityType === 'a_rappeler') {
+        query = query.eq('statut', 'a_rappeler');
       } else {
         query = query.eq('type', activityType);
       }
