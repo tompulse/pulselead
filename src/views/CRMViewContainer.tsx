@@ -2,10 +2,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
-import { MapPin, Calendar, RotateCcw, Building2, FileText, Send, CheckCircle2, XCircle } from 'lucide-react';
+import { Calendar, RotateCcw, FileText, Send, CheckCircle2, XCircle } from 'lucide-react';
 import { ActivityDetailSheet } from '@/components/dashboard/ActivityDetailSheet';
 import { toast } from 'sonner';
 
@@ -24,16 +22,6 @@ interface LeadWithSite {
   };
 }
 
-const PIPELINE_STAGES = [
-  { key: 'nouveau', label: 'Nouveau', color: 'bg-blue-500' },
-  { key: 'contacte', label: 'Contacté', color: 'bg-yellow-500' },
-  { key: 'qualifie', label: 'Qualifié', color: 'bg-cyan-500' },
-  { key: 'offre_a_faire', label: 'Offre à faire', color: 'bg-indigo-500' },
-  { key: 'offre_delivree', label: 'Offre délivrée', color: 'bg-purple-500' },
-  { key: 'offre_acceptee', label: 'Offre acceptée', color: 'bg-green-500' },
-  { key: 'offre_refusee', label: 'Offre refusée', color: 'bg-red-500' },
-];
-
 const OFFER_STAGES = [
   { key: 'offre_a_faire', label: 'Offre à faire', icon: FileText, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20', borderColor: 'border-indigo-500/20' },
   { key: 'offre_delivree', label: 'Offre délivrée', icon: Send, color: 'text-purple-400', bgColor: 'bg-purple-500/20', borderColor: 'border-purple-500/20' },
@@ -48,7 +36,7 @@ export const CRMViewContainer = ({
   userId: string; 
   onEntrepriseSelect?: (entrepriseId: string) => void 
 }) => {
-  const [selectedActivity, setSelectedActivity] = useState<'visite' | 'rdv' | 'a_revoir' | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<'rdv' | 'a_revoir' | null>(null);
   const queryClient = useQueryClient();
 
   // Fetch interactions for activity stats
@@ -67,10 +55,9 @@ export const CRMViewContainer = ({
   });
 
   // Fetch lead statuts with company names from nouveaux_sites
-  const { data: leadsWithSites = [], isLoading } = useQuery({
+  const { data: leadsWithSites = [] } = useQuery({
     queryKey: ['crm-leads-with-sites', userId],
     queryFn: async () => {
-      // First get lead statuts
       const { data: leads, error: leadsError } = await supabase
         .from('lead_statuts')
         .select('*')
@@ -79,10 +66,8 @@ export const CRMViewContainer = ({
       if (leadsError) throw leadsError;
       if (!leads || leads.length === 0) return [];
 
-      // Get unique entreprise_ids
       const entrepriseIds = [...new Set(leads.map(l => l.entreprise_id))];
       
-      // Fetch site info for these entreprises
       const { data: sites, error: sitesError } = await supabase
         .from('nouveaux_sites')
         .select('id, nom, ville, code_naf')
@@ -92,7 +77,6 @@ export const CRMViewContainer = ({
         console.error('Error fetching sites:', sitesError);
       }
 
-      // Merge leads with site info
       const leadsWithSiteInfo: LeadWithSite[] = leads.map(lead => ({
         ...lead,
         site: sites?.find(s => s.id === lead.entreprise_id)
@@ -123,7 +107,6 @@ export const CRMViewContainer = ({
   });
 
   // Calculate activity stats from real data
-  const visiteCount = interactions.filter(i => i.type === 'visite').length;
   const rdvCount = interactions.filter(i => i.type === 'rdv').length;
   const aRevoirCount = interactions.filter(i => i.type === 'a_revoir' || i.statut === 'a_rappeler').length;
 
@@ -134,46 +117,21 @@ export const CRMViewContainer = ({
 
   // Handle offer stage toggle
   const handleOfferStageToggle = (lead: LeadWithSite, stageKey: string) => {
-    // If already in this stage, move back to 'qualifie', otherwise set to new stage
     const newStatus = lead.statut === stageKey ? 'qualifie' : stageKey;
     updateLeadStatus.mutate({ leadId: lead.id, newStatus });
   };
 
-  // Group leads by pipeline stage
+  // Group leads by stage
   const getLeadsByStage = (stageKey: string): LeadWithSite[] => {
     return leadsWithSites.filter(l => l.statut === stageKey);
   };
 
-  // Only show stages that have leads OR are core offer stages
-  const coreStages = ['offre_a_faire', 'offre_delivree', 'offre_acceptee', 'offre_refusee'];
-  const activeStages = PIPELINE_STAGES.filter(stage => 
-    coreStages.includes(stage.key) || getLeadsByStage(stage.key).length > 0
-  );
-
   return (
-    <div className="h-full flex flex-col overflow-hidden p-4 space-y-6">
+    <div className="h-full flex flex-col overflow-auto p-4 space-y-6">
       {/* Activities Section */}
       <div>
         <h3 className="text-accent font-semibold mb-4">Activités</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
-          {/* Visites */}
-          <Card 
-            className="glass-card border-accent/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-accent/10"
-            onClick={() => setSelectedActivity('visite')}
-            role="button"
-            tabIndex={0}
-            aria-label={`Voir les ${visiteCount} visites`}
-            onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('visite')}
-          >
-            <CardContent className="p-4 md:p-6 text-center">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-2 md:mb-3">
-                <MapPin className="w-5 h-5 md:w-6 md:h-6 text-accent" aria-hidden="true" />
-              </div>
-              <p className="text-xs md:text-sm text-muted-foreground mb-1">Visites</p>
-              <p className="text-2xl md:text-4xl font-bold text-accent">{visiteCount}</p>
-            </CardContent>
-          </Card>
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           {/* RDV */}
           <Card 
             className="glass-card border-purple-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
@@ -272,76 +230,6 @@ export const CRMViewContainer = ({
             );
           })}
         </div>
-      </div>
-
-      {/* Pipeline Section */}
-      <div className="flex-1 overflow-hidden">
-        <h3 className="text-accent font-semibold mb-4">Pipeline</h3>
-        
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
-          </div>
-        ) : leadsWithSites.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <Building2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p className="font-medium">Aucun lead dans le pipeline</p>
-            <p className="text-sm mt-1">Ajoutez des interactions depuis les fiches entreprises</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 h-[calc(100%-32px)]">
-            {activeStages.map((stage) => {
-              const stageLeads = getLeadsByStage(stage.key);
-              return (
-                <Card key={stage.key} className="glass-card border-accent/20 flex flex-col">
-                  <div className="p-4 border-b border-accent/10 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full ${stage.color}`} />
-                      <span className="font-semibold">{stage.label}</span>
-                    </div>
-                    <Badge variant="secondary" className="bg-accent/10">
-                      {stageLeads.length}
-                    </Badge>
-                  </div>
-                  <ScrollArea className="flex-1 p-3">
-                    <div className="space-y-3">
-                      {stageLeads.map((lead) => (
-                        <div 
-                          key={lead.id}
-                          onClick={() => onEntrepriseSelect?.(lead.entreprise_id)}
-                          className="p-3 rounded-lg bg-card/80 border border-accent/10 hover:border-accent/30 cursor-pointer transition-colors"
-                        >
-                          <p className="font-medium truncate">
-                            {lead.site?.nom || 'Entreprise inconnue'}
-                          </p>
-                          <p className="text-sm text-muted-foreground truncate">
-                            {lead.site?.ville || '—'}
-                          </p>
-                          {lead.score !== null && lead.score > 0 && (
-                            <div className="mt-2 flex items-center gap-2">
-                              <div className="flex-1 h-1.5 bg-accent/10 rounded-full overflow-hidden">
-                                <div 
-                                  className="h-full bg-accent rounded-full transition-all"
-                                  style={{ width: `${lead.score}%` }}
-                                />
-                              </div>
-                              <span className="text-xs text-muted-foreground">{lead.score}%</span>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      {stageLeads.length === 0 && (
-                        <p className="text-sm text-muted-foreground text-center py-4">
-                          Aucun lead
-                        </p>
-                      )}
-                    </div>
-                  </ScrollArea>
-                </Card>
-              );
-            })}
-          </div>
-        )}
       </div>
     </div>
   );
