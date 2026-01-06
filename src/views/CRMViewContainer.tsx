@@ -22,13 +22,11 @@ interface LeadWithSite {
   };
 }
 
-// Pipeline stages: left column (devis_a_faire, devis_refuse), right column (devis_accepte)
-const OFFER_STAGES_LEFT = [
+const OFFER_STAGES = [
   { key: 'devis_a_faire', label: 'Devis à faire', icon: FileText, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20', borderColor: 'border-indigo-500/20' },
   { key: 'devis_refuse', label: 'Devis refusé', icon: XCircle, color: 'text-red-400', bgColor: 'bg-red-500/20', borderColor: 'border-red-500/20' },
+  { key: 'devis_accepte', label: 'Devis accepté', icon: CheckCircle2, color: 'text-green-400', bgColor: 'bg-green-500/20', borderColor: 'border-green-500/20' },
 ];
-
-const OFFER_STAGE_RIGHT = { key: 'devis_accepte', label: 'Devis accepté', icon: CheckCircle2, color: 'text-green-400', bgColor: 'bg-green-500/20', borderColor: 'border-green-500/20' };
 
 export const CRMViewContainer = ({ 
   userId, 
@@ -183,97 +181,53 @@ export const CRMViewContainer = ({
       {/* Pipeline Section */}
       <div className="flex-1">
         <h3 className="text-accent font-semibold mb-4">Pipeline</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 h-full min-h-[400px]">
-          {/* Left Column: Devis à faire + Devis refusé */}
-          <div className="flex flex-col gap-3 md:gap-4">
-            {OFFER_STAGES_LEFT.map((stage) => {
-              const Icon = stage.icon;
-              const count = getOfferCountByStage(stage.key);
-              const leadsInStage = getLeadsByStage(stage.key);
-              
-              return (
-                <Card 
-                  key={stage.key}
-                  className={`glass-card ${stage.borderColor} transition-all duration-200 flex-1`}
-                >
-                  <CardContent className="p-4 md:p-6 h-full flex flex-col">
-                    <div className="text-center mb-4">
-                      <div className={`w-12 h-12 md:w-14 md:h-14 rounded-full ${stage.bgColor} flex items-center justify-center mx-auto mb-3`}>
-                        <Icon className={`w-6 h-6 md:w-7 md:h-7 ${stage.color}`} aria-hidden="true" />
-                      </div>
-                      <p className="text-sm md:text-base text-muted-foreground mb-1">{stage.label}</p>
-                      <p className={`text-3xl md:text-4xl font-bold ${stage.color}`}>{count}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+          {OFFER_STAGES.map((stage) => {
+            const Icon = stage.icon;
+            const count = getOfferCountByStage(stage.key);
+            const leadsInStage = getLeadsByStage(stage.key);
+            
+            return (
+              <Card 
+                key={stage.key}
+                className={`glass-card ${stage.borderColor} transition-all duration-200`}
+              >
+                <CardContent className="p-4 md:p-6 min-h-[280px] flex flex-col">
+                  <div className="text-center mb-4">
+                    <div className={`w-12 h-12 md:w-14 md:h-14 rounded-full ${stage.bgColor} flex items-center justify-center mx-auto mb-3`}>
+                      <Icon className={`w-6 h-6 md:w-7 md:h-7 ${stage.color}`} aria-hidden="true" />
                     </div>
-                    
-                    {/* Show leads in this stage with checkboxes */}
-                    <div className="flex-1 space-y-2">
-                      {leadsInStage.slice(0, 5).map((lead) => (
-                        <div 
-                          key={lead.id} 
-                          className="flex items-center gap-2 p-2.5 rounded-lg bg-card/50 border border-accent/10 hover:border-accent/30 transition-colors"
-                        >
-                          <Checkbox
-                            checked={true}
-                            onCheckedChange={() => handleOfferStageToggle(lead, stage.key)}
-                            className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
-                          />
-                          <span className="text-sm truncate flex-1">
-                            {lead.site?.nom || 'Entreprise'}
-                          </span>
-                        </div>
-                      ))}
-                      {leadsInStage.length > 5 && (
-                        <p className="text-xs text-muted-foreground text-center pt-2">
-                          +{leadsInStage.length - 5} autres
-                        </p>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* Right Column: Devis accepté (full height) */}
-          <Card 
-            className={`glass-card ${OFFER_STAGE_RIGHT.borderColor} transition-all duration-200 h-full`}
-          >
-            <CardContent className="p-4 md:p-6 h-full flex flex-col">
-              <div className="text-center mb-4">
-                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full ${OFFER_STAGE_RIGHT.bgColor} flex items-center justify-center mx-auto mb-3`}>
-                  <CheckCircle2 className={`w-7 h-7 md:w-8 md:h-8 ${OFFER_STAGE_RIGHT.color}`} aria-hidden="true" />
-                </div>
-                <p className="text-sm md:text-base text-muted-foreground mb-1">{OFFER_STAGE_RIGHT.label}</p>
-                <p className={`text-4xl md:text-5xl font-bold ${OFFER_STAGE_RIGHT.color}`}>
-                  {getOfferCountByStage(OFFER_STAGE_RIGHT.key)}
-                </p>
-              </div>
-              
-              {/* Show leads in this stage with checkboxes */}
-              <div className="flex-1 space-y-2 overflow-auto">
-                {getLeadsByStage(OFFER_STAGE_RIGHT.key).slice(0, 10).map((lead) => (
-                  <div 
-                    key={lead.id} 
-                    className="flex items-center gap-2 p-3 rounded-lg bg-card/50 border border-green-500/20 hover:border-green-500/40 transition-colors"
-                  >
-                    <Checkbox
-                      checked={true}
-                      onCheckedChange={() => handleOfferStageToggle(lead, OFFER_STAGE_RIGHT.key)}
-                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
-                    />
-                    <span className="text-sm truncate flex-1">
-                      {lead.site?.nom || 'Entreprise'}
-                    </span>
+                    <p className="text-sm md:text-base text-muted-foreground mb-1">{stage.label}</p>
+                    <p className={`text-3xl md:text-4xl font-bold ${stage.color}`}>{count}</p>
                   </div>
-                ))}
-                {getLeadsByStage(OFFER_STAGE_RIGHT.key).length > 10 && (
-                  <p className="text-xs text-muted-foreground text-center pt-2">
-                    +{getLeadsByStage(OFFER_STAGE_RIGHT.key).length - 10} autres
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                  
+                  {/* Show leads in this stage with checkboxes */}
+                  <div className="flex-1 space-y-2">
+                    {leadsInStage.slice(0, 5).map((lead) => (
+                      <div 
+                        key={lead.id} 
+                        className={`flex items-center gap-2 p-2.5 rounded-lg bg-card/50 border ${stage.borderColor} hover:border-accent/30 transition-colors`}
+                      >
+                        <Checkbox
+                          checked={true}
+                          onCheckedChange={() => handleOfferStageToggle(lead, stage.key)}
+                          className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                        />
+                        <span className="text-sm truncate flex-1">
+                          {lead.site?.nom || 'Entreprise'}
+                        </span>
+                      </div>
+                    ))}
+                    {leadsInStage.length > 5 && (
+                      <p className="text-xs text-muted-foreground text-center pt-2">
+                        +{leadsInStage.length - 5} autres
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
