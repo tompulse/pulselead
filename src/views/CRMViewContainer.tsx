@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar, RotateCcw, FileText, Send, CheckCircle2, XCircle } from 'lucide-react';
+import { Calendar, RotateCcw, FileText, CheckCircle2, XCircle } from 'lucide-react';
 import { ActivityDetailSheet } from '@/components/dashboard/ActivityDetailSheet';
 import { toast } from 'sonner';
 
@@ -23,10 +23,9 @@ interface LeadWithSite {
 }
 
 const OFFER_STAGES = [
-  { key: 'offre_a_faire', label: 'Offre à faire', icon: FileText, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20', borderColor: 'border-indigo-500/20' },
-  { key: 'offre_delivree', label: 'Offre délivrée', icon: Send, color: 'text-purple-400', bgColor: 'bg-purple-500/20', borderColor: 'border-purple-500/20' },
-  { key: 'offre_acceptee', label: 'Offre acceptée', icon: CheckCircle2, color: 'text-green-400', bgColor: 'bg-green-500/20', borderColor: 'border-green-500/20' },
-  { key: 'offre_refusee', label: 'Offre refusée', icon: XCircle, color: 'text-red-400', bgColor: 'bg-red-500/20', borderColor: 'border-red-500/20' },
+  { key: 'devis_a_faire', label: 'Devis à faire', icon: FileText, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20', borderColor: 'border-indigo-500/20' },
+  { key: 'devis_accepte', label: 'Devis accepté', icon: CheckCircle2, color: 'text-green-400', bgColor: 'bg-green-500/20', borderColor: 'border-green-500/20' },
+  { key: 'devis_refuse', label: 'Devis refusé', icon: XCircle, color: 'text-red-400', bgColor: 'bg-red-500/20', borderColor: 'border-red-500/20' },
 ];
 
 export const CRMViewContainer = ({ 
@@ -134,7 +133,7 @@ export const CRMViewContainer = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           {/* RDV */}
           <Card 
-            className="glass-card border-purple-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
+            className="glass-card border-green-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/10"
             onClick={() => setSelectedActivity('rdv')}
             role="button"
             tabIndex={0}
@@ -142,11 +141,11 @@ export const CRMViewContainer = ({
             onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('rdv')}
           >
             <CardContent className="p-4 md:p-6 text-center">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-2 md:mb-3">
-                <Calendar className="w-5 h-5 md:w-6 md:h-6 text-purple-400" aria-hidden="true" />
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Calendar className="w-5 h-5 md:w-6 md:h-6 text-green-400" aria-hidden="true" />
               </div>
               <p className="text-xs md:text-sm text-muted-foreground mb-1">RDV</p>
-              <p className="text-2xl md:text-4xl font-bold text-purple-400">{rdvCount}</p>
+              <p className="text-2xl md:text-4xl font-bold text-green-400">{rdvCount}</p>
             </CardContent>
           </Card>
 
@@ -179,10 +178,10 @@ export const CRMViewContainer = ({
         onEntrepriseSelect={onEntrepriseSelect}
       />
 
-      {/* Offers Progress Section */}
+      {/* Pipeline Section */}
       <div>
-        <h3 className="text-accent font-semibold mb-4">Avancement des offres</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+        <h3 className="text-accent font-semibold mb-4">Pipeline</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
           {OFFER_STAGES.map((stage) => {
             const Icon = stage.icon;
             const count = getOfferCountByStage(stage.key);
