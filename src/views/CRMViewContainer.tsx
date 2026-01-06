@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MapPin, Calendar, RotateCcw, Building2 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { MapPin, Calendar, RotateCcw, Building2, FileText, Send, CheckCircle2, XCircle } from 'lucide-react';
 import { ActivityDetailSheet } from '@/components/dashboard/ActivityDetailSheet';
+import { toast } from 'sonner';
 
 interface LeadWithSite {
   id: string;
@@ -26,10 +28,17 @@ const PIPELINE_STAGES = [
   { key: 'nouveau', label: 'Nouveau', color: 'bg-blue-500' },
   { key: 'contacte', label: 'Contacté', color: 'bg-yellow-500' },
   { key: 'qualifie', label: 'Qualifié', color: 'bg-cyan-500' },
-  { key: 'proposition', label: 'Proposition', color: 'bg-purple-500' },
-  { key: 'negociation', label: 'Négociation', color: 'bg-orange-500' },
-  { key: 'gagne', label: 'Signé', color: 'bg-green-500' },
-  { key: 'perdu', label: 'Perdu', color: 'bg-red-500' },
+  { key: 'offre_a_faire', label: 'Offre à faire', color: 'bg-indigo-500' },
+  { key: 'offre_delivree', label: 'Offre délivrée', color: 'bg-purple-500' },
+  { key: 'offre_acceptee', label: 'Offre acceptée', color: 'bg-green-500' },
+  { key: 'offre_refusee', label: 'Offre refusée', color: 'bg-red-500' },
+];
+
+const OFFER_STAGES = [
+  { key: 'offre_a_faire', label: 'Offre à faire', icon: FileText, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20', borderColor: 'border-indigo-500/20' },
+  { key: 'offre_delivree', label: 'Offre délivrée', icon: Send, color: 'text-purple-400', bgColor: 'bg-purple-500/20', borderColor: 'border-purple-500/20' },
+  { key: 'offre_acceptee', label: 'Offre acceptée', icon: CheckCircle2, color: 'text-green-400', bgColor: 'bg-green-500/20', borderColor: 'border-green-500/20' },
+  { key: 'offre_refusee', label: 'Offre refusée', icon: XCircle, color: 'text-red-400', bgColor: 'bg-red-500/20', borderColor: 'border-red-500/20' },
 ];
 
 export const CRMViewContainer = ({ 
@@ -40,6 +49,8 @@ export const CRMViewContainer = ({
   onEntrepriseSelect?: (entrepriseId: string) => void 
 }) => {
   const [selectedActivity, setSelectedActivity] = useState<'visite' | 'rdv' | 'a_revoir' | null>(null);
+  const queryClient = useQueryClient();
+
   // Fetch interactions for activity stats
   const { data: interactions = [] } = useQuery({
     queryKey: ['crm-interactions', userId],
@@ -91,18 +102,50 @@ export const CRMViewContainer = ({
     },
   });
 
+  // Mutation to update lead status
+  const updateLeadStatus = useMutation({
+    mutationFn: async ({ leadId, newStatus }: { leadId: string; newStatus: string }) => {
+      const { error } = await supabase
+        .from('lead_statuts')
+        .update({ statut: newStatus, updated_at: new Date().toISOString() })
+        .eq('id', leadId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['crm-leads-with-sites', userId] });
+      toast.success('Statut mis à jour');
+    },
+    onError: (error) => {
+      console.error('Error updating lead status:', error);
+      toast.error('Erreur lors de la mise à jour');
+    },
+  });
+
   // Calculate activity stats from real data
   const visiteCount = interactions.filter(i => i.type === 'visite').length;
   const rdvCount = interactions.filter(i => i.type === 'rdv').length;
   const aRevoirCount = interactions.filter(i => i.type === 'a_revoir' || i.statut === 'a_rappeler').length;
+
+  // Count offers by stage
+  const getOfferCountByStage = (stageKey: string): number => {
+    return leadsWithSites.filter(l => l.statut === stageKey).length;
+  };
+
+  // Handle offer stage toggle
+  const handleOfferStageToggle = (lead: LeadWithSite, stageKey: string) => {
+    // If already in this stage, move back to 'qualifie', otherwise set to new stage
+    const newStatus = lead.statut === stageKey ? 'qualifie' : stageKey;
+    updateLeadStatus.mutate({ leadId: lead.id, newStatus });
+  };
 
   // Group leads by pipeline stage
   const getLeadsByStage = (stageKey: string): LeadWithSite[] => {
     return leadsWithSites.filter(l => l.statut === stageKey);
   };
 
-  // Only show stages that have leads OR are core stages
-  const coreStages = ['proposition', 'negociation', 'gagne'];
+  // Only show stages that have leads OR are core offer stages
+  const coreStages = ['offre_a_faire', 'offre_delivree', 'offre_acceptee', 'offre_refusee'];
   const activeStages = PIPELINE_STAGES.filter(stage => 
     coreStages.includes(stage.key) || getLeadsByStage(stage.key).length > 0
   );
@@ -177,6 +220,59 @@ export const CRMViewContainer = ({
         userId={userId}
         onEntrepriseSelect={onEntrepriseSelect}
       />
+
+      {/* Offers Progress Section */}
+      <div>
+        <h3 className="text-accent font-semibold mb-4">Avancement des offres</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+          {OFFER_STAGES.map((stage) => {
+            const Icon = stage.icon;
+            const count = getOfferCountByStage(stage.key);
+            const leadsInStage = getLeadsByStage(stage.key);
+            
+            return (
+              <Card 
+                key={stage.key}
+                className={`glass-card ${stage.borderColor} transition-all duration-200`}
+              >
+                <CardContent className="p-4 text-center">
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full ${stage.bgColor} flex items-center justify-center mx-auto mb-2 md:mb-3`}>
+                    <Icon className={`w-5 h-5 md:w-6 md:h-6 ${stage.color}`} aria-hidden="true" />
+                  </div>
+                  <p className="text-xs md:text-sm text-muted-foreground mb-1 line-clamp-1">{stage.label}</p>
+                  <p className={`text-2xl md:text-3xl font-bold ${stage.color}`}>{count}</p>
+                  
+                  {/* Show leads in this stage with checkboxes */}
+                  {leadsInStage.length > 0 && (
+                    <div className="mt-3 space-y-2 text-left">
+                      {leadsInStage.slice(0, 3).map((lead) => (
+                        <div 
+                          key={lead.id} 
+                          className="flex items-center gap-2 p-2 rounded bg-card/50 border border-accent/10"
+                        >
+                          <Checkbox
+                            checked={true}
+                            onCheckedChange={() => handleOfferStageToggle(lead, stage.key)}
+                            className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                          />
+                          <span className="text-xs truncate flex-1">
+                            {lead.site?.nom || 'Entreprise'}
+                          </span>
+                        </div>
+                      ))}
+                      {leadsInStage.length > 3 && (
+                        <p className="text-xs text-muted-foreground text-center">
+                          +{leadsInStage.length - 3} autres
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Pipeline Section */}
       <div className="flex-1 overflow-hidden">
