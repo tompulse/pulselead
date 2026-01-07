@@ -142,11 +142,11 @@ export const CRMViewContainer = ({
             onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('a_rappeler')}
           >
             <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
-                <Phone className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-blue-400" aria-hidden="true" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-blue-500/20 flex items-center justify-center mb-2 sm:mb-3">
+                <Phone className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-400" aria-hidden="true" />
               </div>
-              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-1 sm:mb-2">A rappeler</p>
-              <p className="text-2xl sm:text-3xl md:text-5xl font-bold text-blue-400">{aRappelerCount}</p>
+              <p className="text-xs sm:text-sm md:text-sm text-muted-foreground mb-1">A rappeler</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-400">{aRappelerCount}</p>
             </CardContent>
           </Card>
 
@@ -160,11 +160,11 @@ export const CRMViewContainer = ({
             onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('a_revoir')}
           >
             <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-orange-500/20 flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
-                <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-orange-400" aria-hidden="true" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-orange-500/20 flex items-center justify-center mb-2 sm:mb-3">
+                <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-orange-400" aria-hidden="true" />
               </div>
-              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-1 sm:mb-2">À revoir</p>
-              <p className="text-2xl sm:text-3xl md:text-5xl font-bold text-orange-400">{aRevoirCount}</p>
+              <p className="text-xs sm:text-sm md:text-sm text-muted-foreground mb-1">À revoir</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-400">{aRevoirCount}</p>
             </CardContent>
           </Card>
 
@@ -178,11 +178,11 @@ export const CRMViewContainer = ({
             onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('rdv')}
           >
             <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-green-500/20 flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
-                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-green-400" aria-hidden="true" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-2 sm:mb-3">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-400" aria-hidden="true" />
               </div>
-              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-1 sm:mb-2">RDV</p>
-              <p className="text-2xl sm:text-3xl md:text-5xl font-bold text-green-400">{rdvCount}</p>
+              <p className="text-xs sm:text-sm md:text-sm text-muted-foreground mb-1">RDV</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-green-400">{rdvCount}</p>
             </CardContent>
           </Card>
         </div>
@@ -211,11 +211,11 @@ export const CRMViewContainer = ({
                 className={`glass-card ${stage.borderColor} transition-all duration-200 flex`}
               >
                 <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full ${stage.bgColor} flex items-center justify-center mb-2 sm:mb-3 md:mb-4`}>
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 ${stage.color}`} aria-hidden="true" />
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full ${stage.bgColor} flex items-center justify-center mb-2 sm:mb-3`}>
+                    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${stage.color}`} aria-hidden="true" />
                   </div>
-                  <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-1 sm:mb-2 whitespace-nowrap">{stage.label}</p>
-                  <p className={`text-2xl sm:text-3xl md:text-5xl font-bold ${stage.color}`}>{count}</p>
+                  <p className="text-xs sm:text-sm md:text-sm text-muted-foreground mb-1 whitespace-nowrap">{stage.label}</p>
+                  <p className={`text-xl sm:text-2xl md:text-3xl font-bold ${stage.color}`}>{count}</p>
                 </CardContent>
               </Card>
             );
