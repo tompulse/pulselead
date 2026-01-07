@@ -127,62 +127,62 @@ export const CRMViewContainer = ({
   };
 
   return (
-    <div className="h-full flex flex-col overflow-auto p-3 sm:p-4 md:p-6 space-y-4 md:space-y-6">
+    <div className="h-full flex flex-col p-3 sm:p-4 md:p-6">
       {/* Activities Section */}
-      <div>
+      <div className="flex-1 flex flex-col mb-4 md:mb-6">
         <h3 className="text-accent font-semibold mb-3 md:mb-4 text-sm md:text-base">Activités</h3>
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 flex-1">
           {/* A rappeler - Left */}
           <Card 
-            className="glass-card border-blue-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10"
+            className="glass-card border-blue-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 flex"
             onClick={() => setSelectedActivity('a_rappeler')}
             role="button"
             tabIndex={0}
             aria-label={`Voir les ${aRappelerCount} entreprises à rappeler`}
             onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('a_rappeler')}
           >
-            <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-1.5 sm:mb-2 md:mb-3">
-                <Phone className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-400" aria-hidden="true" />
+            <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
+                <Phone className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-blue-400" aria-hidden="true" />
               </div>
-              <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mb-0.5 sm:mb-1">A rappeler</p>
-              <p className="text-xl sm:text-2xl md:text-4xl font-bold text-blue-400">{aRappelerCount}</p>
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-1 sm:mb-2">A rappeler</p>
+              <p className="text-2xl sm:text-3xl md:text-5xl font-bold text-blue-400">{aRappelerCount}</p>
             </CardContent>
           </Card>
 
           {/* À revoir - Center */}
           <Card 
-            className="glass-card border-orange-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/10"
+            className="glass-card border-orange-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/10 flex"
             onClick={() => setSelectedActivity('a_revoir')}
             role="button"
             tabIndex={0}
             aria-label={`Voir les ${aRevoirCount} entreprises à revoir`}
             onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('a_revoir')}
           >
-            <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-orange-500/20 flex items-center justify-center mx-auto mb-1.5 sm:mb-2 md:mb-3">
-                <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-orange-400" aria-hidden="true" />
+            <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-orange-500/20 flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
+                <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-orange-400" aria-hidden="true" />
               </div>
-              <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mb-0.5 sm:mb-1">À revoir</p>
-              <p className="text-xl sm:text-2xl md:text-4xl font-bold text-orange-400">{aRevoirCount}</p>
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-1 sm:mb-2">À revoir</p>
+              <p className="text-2xl sm:text-3xl md:text-5xl font-bold text-orange-400">{aRevoirCount}</p>
             </CardContent>
           </Card>
 
           {/* RDV - Right */}
           <Card 
-            className="glass-card border-green-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/10"
+            className="glass-card border-green-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/10 flex"
             onClick={() => setSelectedActivity('rdv')}
             role="button"
             tabIndex={0}
             aria-label={`Voir les ${rdvCount} rendez-vous`}
             onKeyDown={(e) => e.key === 'Enter' && setSelectedActivity('rdv')}
           >
-            <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-1.5 sm:mb-2 md:mb-3">
-                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-400" aria-hidden="true" />
+            <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-green-500/20 flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
+                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-green-400" aria-hidden="true" />
               </div>
-              <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mb-0.5 sm:mb-1">RDV</p>
-              <p className="text-xl sm:text-2xl md:text-4xl font-bold text-green-400">{rdvCount}</p>
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-1 sm:mb-2">RDV</p>
+              <p className="text-2xl sm:text-3xl md:text-5xl font-bold text-green-400">{rdvCount}</p>
             </CardContent>
           </Card>
         </div>
@@ -198,9 +198,9 @@ export const CRMViewContainer = ({
       />
 
       {/* Pipeline Section */}
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col">
         <h3 className="text-accent font-semibold mb-3 md:mb-4 text-sm md:text-base">Pipeline</h3>
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 flex-1">
           {OFFER_STAGES.map((stage) => {
             const Icon = stage.icon;
             const count = getOfferCountByStage(stage.key);
@@ -208,14 +208,14 @@ export const CRMViewContainer = ({
             return (
               <Card 
                 key={stage.key}
-                className={`glass-card ${stage.borderColor} transition-all duration-200`}
+                className={`glass-card ${stage.borderColor} transition-all duration-200 flex`}
               >
-                <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 rounded-full ${stage.bgColor} flex items-center justify-center mx-auto mb-1.5 sm:mb-2 md:mb-3`}>
-                    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 md:w-7 md:h-7 ${stage.color}`} aria-hidden="true" />
+                <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full ${stage.bgColor} flex items-center justify-center mb-2 sm:mb-3 md:mb-4`}>
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 ${stage.color}`} aria-hidden="true" />
                   </div>
-                  <p className="text-[10px] sm:text-xs md:text-base text-muted-foreground mb-0.5 sm:mb-1 whitespace-nowrap">{stage.label}</p>
-                  <p className={`text-xl sm:text-2xl md:text-4xl font-bold ${stage.color}`}>{count}</p>
+                  <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-1 sm:mb-2 whitespace-nowrap">{stage.label}</p>
+                  <p className={`text-2xl sm:text-3xl md:text-5xl font-bold ${stage.color}`}>{count}</p>
                 </CardContent>
               </Card>
             );
