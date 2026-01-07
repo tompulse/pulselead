@@ -211,38 +211,12 @@ export const CRMViewContainer = ({
                 key={stage.key}
                 className={`glass-card ${stage.borderColor} transition-all duration-200`}
               >
-                <CardContent className="p-4 md:p-6 min-h-[280px] flex flex-col">
-                  <div className="text-center mb-4">
-                    <div className={`w-12 h-12 md:w-14 md:h-14 rounded-full ${stage.bgColor} flex items-center justify-center mx-auto mb-3`}>
-                      <Icon className={`w-6 h-6 md:w-7 md:h-7 ${stage.color}`} aria-hidden="true" />
-                    </div>
-                    <p className="text-sm md:text-base text-muted-foreground mb-1">{stage.label}</p>
-                    <p className={`text-3xl md:text-4xl font-bold ${stage.color}`}>{count}</p>
+                <CardContent className="p-4 md:p-6 text-center">
+                  <div className={`w-12 h-12 md:w-14 md:h-14 rounded-full ${stage.bgColor} flex items-center justify-center mx-auto mb-3`}>
+                    <Icon className={`w-6 h-6 md:w-7 md:h-7 ${stage.color}`} aria-hidden="true" />
                   </div>
-                  
-                  {/* Show leads in this stage with checkboxes */}
-                  <div className="flex-1 space-y-2">
-                    {leadsInStage.slice(0, 5).map((lead) => (
-                      <div 
-                        key={lead.id} 
-                        className={`flex items-center gap-2 p-2.5 rounded-lg bg-card/50 border ${stage.borderColor} hover:border-accent/30 transition-colors`}
-                      >
-                        <Checkbox
-                          checked={true}
-                          onCheckedChange={() => handleOfferStageToggle(lead, stage.key)}
-                          className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
-                        />
-                        <span className="text-sm truncate flex-1">
-                          {lead.site?.nom || 'Entreprise'}
-                        </span>
-                      </div>
-                    ))}
-                    {leadsInStage.length > 5 && (
-                      <p className="text-xs text-muted-foreground text-center pt-2">
-                        +{leadsInStage.length - 5} autres
-                      </p>
-                    )}
-                  </div>
+                  <p className="text-sm md:text-base text-muted-foreground mb-1">{stage.label}</p>
+                  <p className={`text-3xl md:text-4xl font-bold ${stage.color}`}>{count}</p>
                 </CardContent>
               </Card>
             );
