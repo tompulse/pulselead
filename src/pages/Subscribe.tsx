@@ -371,10 +371,9 @@ const Subscribe = () => {
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Puis-je changer de formule plus tard ?</h3>
+                <h3 className="font-semibold mb-2">Puis-je résilier à tout moment ?</h3>
                 <p className="text-sm text-muted-foreground">
-                  Oui, vous pouvez passer d'un abonnement mensuel à trimestriel ou annuel à tout moment.
-                  La différence sera calculée au prorata.
+                  Oui, votre abonnement est sans engagement. Vous pouvez l'annuler à tout moment depuis votre espace client.
                 </p>
               </div>
               <div>

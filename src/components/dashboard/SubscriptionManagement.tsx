@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, Check, X, User, CreditCard } from 'lucide-react';
+import { Calendar, Check, X, User, CreditCard, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
@@ -27,8 +27,8 @@ import {
 interface Subscription {
   id: string;
   user_id: string;
-  subscription_status: 'pending' | 'active' | 'expired' | 'cancelled';
-  subscription_plan: 'monthly' | 'quarterly' | 'yearly' | null;
+  subscription_status: 'pending' | 'active' | 'expired' | 'cancelled' | 'trialing';
+  subscription_plan: 'monthly' | null;
   subscription_start_date: string | null;
   subscription_end_date: string | null;
   created_at: string;
@@ -44,8 +44,8 @@ export const SubscriptionManagement = () => {
   const [selectedUser, setSelectedUser] = useState<UserWithSubscription | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editForm, setEditForm] = useState({
-    status: 'pending' as 'pending' | 'active' | 'expired' | 'cancelled',
-    plan: 'monthly' as 'monthly' | 'quarterly' | 'yearly',
+    status: 'pending' as 'pending' | 'active' | 'expired' | 'cancelled' | 'trialing',
+    plan: 'monthly' as 'monthly',
     months: 1
   });
   const { toast } = useToast();
@@ -79,8 +79,8 @@ export const SubscriptionManagement = () => {
         return {
           id: sub.id,
           user_id: sub.user_id,
-          subscription_status: sub.subscription_status as 'pending' | 'active' | 'expired' | 'cancelled',
-          subscription_plan: sub.subscription_plan as 'monthly' | 'quarterly' | 'yearly' | null,
+          subscription_status: sub.subscription_status as 'pending' | 'active' | 'expired' | 'cancelled' | 'trialing',
+          subscription_plan: sub.subscription_plan as 'monthly' | null,
           subscription_start_date: sub.subscription_start_date,
           subscription_end_date: sub.subscription_end_date,
           created_at: sub.created_at,
@@ -160,6 +160,7 @@ export const SubscriptionManagement = () => {
     const variants: Record<string, { variant: any; label: string; icon: any }> = {
       pending: { variant: 'secondary', label: 'En attente', icon: null },
       active: { variant: 'default', label: 'Actif', icon: <Check className="w-3 h-3" /> },
+      trialing: { variant: 'default', label: 'Essai gratuit', icon: <Sparkles className="w-3 h-3" /> },
       expired: { variant: 'destructive', label: 'Expiré', icon: <X className="w-3 h-3" /> },
       cancelled: { variant: 'outline', label: 'Annulé', icon: <X className="w-3 h-3" /> }
     };
@@ -280,9 +281,7 @@ export const SubscriptionManagement = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="monthly">Mensuel (69€)</SelectItem>
-                  <SelectItem value="quarterly">Trimestriel (166€)</SelectItem>
-                  <SelectItem value="yearly">Annuel (496€)</SelectItem>
+                  <SelectItem value="monthly">Mensuel (49€/mois)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -297,9 +296,7 @@ export const SubscriptionManagement = () => {
                 onChange={(e) => setEditForm({ ...editForm, months: parseInt(e.target.value) || 1 })}
               />
               <p className="text-xs text-muted-foreground mt-1">
-                {editForm.plan === 'monthly' && `${editForm.months} mois`}
-                {editForm.plan === 'quarterly' && `${editForm.months * 3} mois (${editForm.months} trimestre${editForm.months > 1 ? 's' : ''})`}
-                {editForm.plan === 'yearly' && `${editForm.months} an${editForm.months > 1 ? 's' : ''}`}
+                {editForm.months} mois d'abonnement
               </p>
             </div>
 

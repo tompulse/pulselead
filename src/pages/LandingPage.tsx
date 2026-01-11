@@ -10,7 +10,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ContactSection from "@/components/landing/ContactSection";
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
 
   // Scroll animations
   const heroAnimation = useScrollAnimation({
@@ -34,26 +33,6 @@ const LandingPage = () => {
   const faqAnimation = useScrollAnimation({
     threshold: 0.2
   });
-
-  const pricingPlans: Record<'monthly' | 'quarterly' | 'yearly', { price: number; label: string; billingDetails: string; savings?: string }> = {
-    monthly: {
-      price: 49,
-      label: 'Mensuel',
-      billingDetails: 'Facturé tous les mois'
-    },
-    quarterly: {
-      price: 39,
-      label: 'Trimestriel',
-      savings: '-20%',
-      billingDetails: 'Soit 117€ au trimestre'
-    },
-    yearly: {
-      price: 29,
-      label: 'Annuel',
-      savings: '-40%',
-      billingDetails: 'Soit 348€ à l\'année'
-    }
-  };
   return <div className="min-h-screen relative overflow-hidden" style={{
     background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))'
   }}>
@@ -358,35 +337,6 @@ const LandingPage = () => {
                 Structurez votre prospection, maîtrisez votre territoire
               </p>
               
-              {/* Plan Toggle - above cards */}
-              <div className="flex justify-center mb-6">
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(6, 182, 212, 0.2)'
-                }} className="inline-flex rounded-lg p-1">
-                  <button 
-                    onClick={() => setSelectedPlan('monthly')} 
-                    className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all flex items-center gap-1 ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}
-                  >
-                    Mensuel
-                  </button>
-                  <button 
-                    onClick={() => setSelectedPlan('quarterly')} 
-                    className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all flex items-center gap-1 ${selectedPlan === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}
-                  >
-                    Trimestriel
-                    <span className={`text-[10px] sm:text-xs font-bold ${selectedPlan === 'quarterly' ? 'text-green-700' : 'text-green-400'}`}>-20%</span>
-                  </button>
-                  <button 
-                    onClick={() => setSelectedPlan('yearly')} 
-                    className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all flex items-center gap-1 ${selectedPlan === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}
-                  >
-                    Annuel
-                    <span className={`text-[10px] sm:text-xs font-bold ${selectedPlan === 'yearly' ? 'text-green-700' : 'text-green-400'}`}>-40%</span>
-                  </button>
-                </div>
-              </div>
-
               {/* Pricing Cards - 2 columns: PULSE + Sur Mesure */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto items-stretch mb-8">
                 
@@ -408,16 +358,10 @@ const LandingPage = () => {
                       border: '1px solid rgba(6, 182, 212, 0.2)'
                     }}>
                       <div className="flex items-baseline justify-center gap-2 mb-1">
-                        <span className="text-4xl md:text-5xl font-bold gradient-text">
-                          {pricingPlans[selectedPlan].price}€
-                        </span>
+                        <span className="text-4xl md:text-5xl font-bold gradient-text">49€</span>
                         <span className="text-base text-white/60">/mois</span>
                       </div>
-                      {pricingPlans[selectedPlan].savings && (
-                        <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                          {pricingPlans[selectedPlan].savings} de réduction
-                        </div>
-                      )}
+                      <p className="text-sm text-white/50 mt-2">Sans engagement • Résiliable à tout moment</p>
                     </div>
 
                     <ul className="space-y-2 mb-6 flex-1">
