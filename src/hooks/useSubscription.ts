@@ -4,7 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 
 interface SubscriptionAccess {
   has_access: boolean;
-  plan?: 'monthly' | 'quarterly' | 'yearly';
+  plan?: 'monthly';
   days_remaining?: number;
   end_date?: string;
   reason?: string;

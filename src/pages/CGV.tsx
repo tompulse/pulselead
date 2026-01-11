@@ -76,14 +76,14 @@ const CGV = () => {
             </p>
             <p className="mt-4">
               Le paiement est exigible immédiatement à la commande. En cas d'abonnement, le paiement est prélevé automatiquement 
-              à chaque échéance (mensuelle, trimestrielle ou annuelle selon la formule choisie).
+              à chaque échéance mensuelle.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">7. Durée et renouvellement</h2>
             <p>
-              Les abonnements sont souscrits pour une durée déterminée (mensuelle ou annuelle) et sont renouvelés automatiquement 
+              Les abonnements sont souscrits pour une durée mensuelle et sont renouvelés automatiquement 
               sauf résiliation dans les conditions prévues à l'article 8.
             </p>
           </section>

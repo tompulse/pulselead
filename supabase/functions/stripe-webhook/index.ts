@@ -66,16 +66,8 @@ serve(async (req) => {
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           const priceId = subscription.items.data[0]?.price.id;
           
-          // Determine plan type based on billing interval
-          let plan = 'monthly';
-          const interval = subscription.items.data[0]?.price.recurring?.interval;
-          const intervalCount = subscription.items.data[0]?.price.recurring?.interval_count || 1;
-          
-          if (interval === 'year') {
-            plan = 'yearly';
-          } else if (interval === 'month' && intervalCount === 3) {
-            plan = 'quarterly';
-          }
+          // Plan unique mensuel
+          const plan = 'monthly';
 
           const subscriptionData = {
             user_id: userId,
