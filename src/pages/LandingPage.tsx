@@ -123,7 +123,7 @@ const LandingPage = () => {
                 Cartographie de votre territoire • Tournées optimisées • CRM simple et mobile pour suivre vos visites sur le terrain
               </p>
               <div className="flex justify-center py-6">
-                <Button onClick={() => navigate('/auth')} className="btn-hero-pulse">
+                <Button onClick={() => navigate('/subscribe')} className="btn-hero-pulse">
                   Essayer gratuitement 7 jours
                   <ArrowRight className="ml-4 w-8 h-8" />
                 </Button>
@@ -656,11 +656,11 @@ const LandingPage = () => {
         {/* Sticky CTA Mobile */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
           <Button 
-            onClick={() => navigate('/auth')} 
+            onClick={() => navigate('/subscribe')} 
             className="w-full bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold py-4 rounded-full shadow-lg shadow-accent/40"
-            aria-label="Commencer gratuitement"
+            aria-label="Essayer gratuitement"
           >
-            Commencer maintenant
+            Essayer gratuitement 7 jours
             <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
           </Button>
         </div>
