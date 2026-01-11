@@ -9,43 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Prix IDs Stripe - À REMPLACER avec les vrais IDs après création dans Stripe
-const STRIPE_PRICES = {
-  monthly: 'price_pulse_monthly', // 49€/mois
-  quarterly: 'price_pulse_quarterly', // 117€/trimestre (39€/mois)
-  yearly: 'price_pulse_yearly', // 348€/an (29€/mois)
-};
-
-type PricingPlan = {
-  price: number;
-  label: string;
-  billingDetails: string;
-  priceId: string;
-  savings?: string;
-};
-
-const pricingPlans: Record<'monthly' | 'quarterly' | 'yearly', PricingPlan> = {
-  monthly: {
-    price: 49,
-    label: 'Mensuel',
-    billingDetails: 'Facturé tous les mois',
-    priceId: STRIPE_PRICES.monthly,
-  },
-  quarterly: {
-    price: 39,
-    label: 'Trimestriel',
-    billingDetails: 'Soit 117€ facturé tous les 3 mois',
-    savings: '-20%',
-    priceId: STRIPE_PRICES.quarterly,
-  },
-  yearly: {
-    price: 29,
-    label: 'Annuel',
-    billingDetails: 'Soit 348€ facturé à l\'année',
-    savings: '-40%',
-    priceId: STRIPE_PRICES.yearly,
-  },
-};
+// Prix ID Stripe - Plan unique mensuel à 49€/mois
+// ⚠️ REMPLACER avec le vrai Price ID depuis Stripe Dashboard
+const STRIPE_PRICE_ID = 'price_REMPLACER_PAR_VRAI_ID';
 
 const features = [
   {
@@ -92,7 +58,6 @@ const enterpriseFeatures = [
 const Subscribe = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [isLoading, setIsLoading] = useState(false);
   
   // Enterprise form state
@@ -121,7 +86,7 @@ const Subscribe = () => {
       }
 
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: pricingPlans[selectedPlan].priceId },
+        body: { priceId: STRIPE_PRICE_ID },
       });
 
       if (error) throw error;
@@ -178,7 +143,7 @@ const Subscribe = () => {
     }
   };
 
-  const currentPlan = pricingPlans[selectedPlan];
+  
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{
@@ -216,47 +181,16 @@ const Subscribe = () => {
               <div className="p-8">
                 <h2 className="text-3xl font-bold mb-6 text-center gradient-text">Commercial Solo</h2>
                 
-                {/* Plan Toggle */}
-                <div className="flex justify-center mb-6">
-                  <div className="inline-flex rounded-lg p-1" style={{
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    border: '1px solid rgba(6, 182, 212, 0.2)'
-                  }}>
-                    {Object.entries(pricingPlans).map(([key, plan]) => (
-                      <button
-                        key={key}
-                        onClick={() => setSelectedPlan(key as 'monthly' | 'quarterly' | 'yearly')}
-                        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all flex items-center gap-1 ${
-                          selectedPlan === key 
-                            ? 'bg-accent text-black shadow-lg' 
-                            : 'text-white/70 hover:text-white'
-                        }`}
-                      >
-                        {plan.label}
-                        {plan.savings && (
-                          <span className={`text-xs font-bold ${selectedPlan === key ? 'text-green-700' : 'text-green-400'}`}>
-                            {plan.savings}
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Price Display */}
-                <div className="text-center mb-8 py-4 px-4 rounded-xl" style={{
+                {/* Price Display - Plan unique mensuel */}
+                <div className="text-center mb-8 py-6 px-4 rounded-xl" style={{
                   background: 'rgba(0, 0, 0, 0.3)',
                   border: '1px solid rgba(6, 182, 212, 0.2)'
                 }}>
-                  <div className="flex items-baseline justify-center gap-2 mb-2">
-                    <span className="text-5xl font-bold gradient-text">{currentPlan.price}€</span>
+                  <div className="flex items-baseline justify-center gap-2">
+                    <span className="text-5xl font-bold gradient-text">49€</span>
                     <span className="text-xl text-muted-foreground">/mois</span>
                   </div>
-                  {currentPlan.savings && (
-                    <span className="inline-block bg-green-600/20 text-green-400 px-4 py-1 rounded-full text-sm font-semibold border border-green-500/30">
-                      {currentPlan.savings} de réduction
-                    </span>
-                  )}
+                  <p className="text-sm text-muted-foreground mt-2">Sans engagement • Résiliable à tout moment</p>
                 </div>
 
                 {/* Features */}
