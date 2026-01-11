@@ -351,12 +351,6 @@ const LandingPage = () => {
       }}>
           <div className="container mx-auto max-w-7xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <div className="flex justify-center mb-6">
-                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-full font-bold shadow-lg">
-                  <Sparkles className="w-5 h-5" />
-                  Offre de lancement -30% • Jusqu'au 31 Décembre 2025
-                </div>
-              </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
                 Choisissez votre formule <span className="gradient-text">PULSE</span>
               </h2>
@@ -402,9 +396,6 @@ const LandingPage = () => {
                   border: '2px solid rgba(6, 182, 212, 0.5)',
                   boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
                 }}>
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
-                    ⭐ OFFRE UNIQUE
-                  </div>
                   
                   <div className="p-6 md:p-8 pt-10 flex flex-col flex-1">
                     <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial Solo</h3>

@@ -14,13 +14,6 @@ export const CTASection = () => {
         <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
         <div className="relative z-10 max-w-4xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-accent/30 to-accent/20 border border-accent/50 backdrop-blur-sm shadow-lg shadow-accent/20">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent shadow-md shadow-accent/50"></span>
-            </span>
-            <span className="text-xs text-accent font-bold">Offre de lancement</span>
-          </div>
 
           <h2 className="text-2xl lg:text-3xl font-bold leading-tight">
             Transformez votre façon
