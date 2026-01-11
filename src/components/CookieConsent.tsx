@@ -52,8 +52,8 @@ export const CookieConsent = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-4">
-      <Card className="glass-card border-accent/20 p-6 max-w-2xl w-full animate-slide-up">
+    <div className="fixed bottom-0 left-0 right-0 z-[100] p-4 animate-slide-up">
+      <Card className="glass-card border-accent/20 p-6 max-w-2xl mx-auto shadow-2xl">
         <div className="flex items-start justify-between mb-4">
           <h3 className="text-xl font-bold text-white">Gestion des cookies</h3>
           <button 

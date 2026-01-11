@@ -194,11 +194,15 @@ const Subscribe = () => {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-400 px-6 py-2 rounded-full mb-6 font-bold shadow-lg">
+              <Sparkles className="w-5 h-5" />
+              7 jours d'essai gratuit • CB requise
+            </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Choisissez <span className="gradient-text">PULSE</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Une seule offre complète pour structurer votre prospection terrain
+              Testez toutes les fonctionnalités gratuitement pendant 7 jours
             </p>
           </div>
 
@@ -281,11 +285,14 @@ const Subscribe = () => {
                     </>
                   ) : (
                     <>
-                      Commencer maintenant
+                      Commencer mon essai gratuit
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </>
                   )}
                 </Button>
+                <p className="text-xs text-center text-muted-foreground mt-3">
+                  Vous ne serez débité qu'après 7 jours d'essai
+                </p>
               </div>
             </Card>
 
@@ -423,6 +430,12 @@ const Subscribe = () => {
           <div className="bg-card/50 border border-border/50 rounded-lg p-8 max-w-3xl mx-auto backdrop-blur-sm">
             <h2 className="text-2xl font-bold mb-6 text-center">Questions fréquentes</h2>
             <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold mb-2">Comment fonctionne l'essai gratuit ?</h3>
+                <p className="text-sm text-muted-foreground">
+                  Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Votre carte bancaire est enregistrée mais vous ne serez débité qu'à la fin de la période d'essai si vous ne résiliez pas.
+                </p>
+              </div>
               <div>
                 <h3 className="font-semibold mb-2">Puis-je changer de formule plus tard ?</h3>
                 <p className="text-sm text-muted-foreground">
