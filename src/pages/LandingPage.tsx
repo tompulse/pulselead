@@ -410,9 +410,6 @@ const LandingPage = () => {
                           </span>
                           <span className="text-base text-white/60">/mois</span>
                         </div>
-                        <p className="text-xs text-white/50 mt-1">
-                          {pricingPlans[selectedPlan].billingDetails}
-                        </p>
                         {pricingPlans[selectedPlan].savings && (
                           <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
                             {pricingPlans[selectedPlan].savings} de réduction
