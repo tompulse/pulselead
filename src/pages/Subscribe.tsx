@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 // Prix ID Stripe - Plan unique mensuel à 49€/mois
 // ⚠️ REMPLACER avec le vrai Price ID depuis Stripe Dashboard
-const STRIPE_PRICE_ID = 'price_REMPLACER_PAR_VRAI_ID';
+const STRIPE_PRICE_ID = 'price_1SoQqlHQWfOgC6lKqTCh1MwO';
 
 const features = [
   {
