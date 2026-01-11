@@ -1,0 +1,201 @@
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
+};
+
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+    
+    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    if (!webhookSecret) throw new Error("STRIPE_WEBHOOK_SECRET is not set");
+
+    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+    
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    const signature = req.headers.get("stripe-signature");
+    if (!signature) throw new Error("No Stripe signature found");
+
+    const body = await req.text();
+    let event: Stripe.Event;
+
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    } catch (err) {
+      logStep("Webhook signature verification failed", { error: err.message });
+      return new Response(JSON.stringify({ error: "Invalid signature" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    logStep("Webhook received", { type: event.type });
+
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        logStep("Checkout completed", { sessionId: session.id, customerId: session.customer });
+
+        const userId = session.metadata?.user_id;
+        if (!userId) {
+          logStep("No user_id in metadata, skipping");
+          break;
+        }
+
+        // Get subscription details
+        const subscriptionId = session.subscription as string;
+        if (subscriptionId) {
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          const priceId = subscription.items.data[0]?.price.id;
+          
+          // Determine plan type based on billing interval
+          let plan = 'monthly';
+          const interval = subscription.items.data[0]?.price.recurring?.interval;
+          const intervalCount = subscription.items.data[0]?.price.recurring?.interval_count || 1;
+          
+          if (interval === 'year') {
+            plan = 'yearly';
+          } else if (interval === 'month' && intervalCount === 3) {
+            plan = 'quarterly';
+          }
+
+          const subscriptionData = {
+            user_id: userId,
+            stripe_customer_id: session.customer as string,
+            stripe_subscription_id: subscriptionId,
+            subscription_status: subscription.status, // 'trialing' for 7-day trial
+            subscription_plan: plan,
+            subscription_start_date: new Date(subscription.current_period_start * 1000).toISOString(),
+            subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+
+          const { error: upsertError } = await supabaseAdmin
+            .from('user_subscriptions')
+            .upsert(subscriptionData, { onConflict: 'user_id' });
+
+          if (upsertError) {
+            logStep("Error upserting subscription", { error: upsertError.message });
+          } else {
+            logStep("Subscription saved", subscriptionData);
+          }
+
+          // Send welcome email for trial start
+          if (subscription.status === 'trialing') {
+            try {
+              await supabaseAdmin.functions.invoke('send-welcome', {
+                body: { 
+                  userId, 
+                  email: session.customer_email || session.customer_details?.email,
+                  trialEnd: new Date(subscription.trial_end! * 1000).toISOString()
+                }
+              });
+              logStep("Welcome email triggered");
+            } catch (emailError) {
+              logStep("Error sending welcome email", { error: emailError.message });
+            }
+          }
+        }
+        break;
+      }
+
+      case "customer.subscription.updated": {
+        const subscription = event.data.object as Stripe.Subscription;
+        logStep("Subscription updated", { subscriptionId: subscription.id, status: subscription.status });
+
+        const { data: existingSub } = await supabaseAdmin
+          .from('user_subscriptions')
+          .select('user_id')
+          .eq('stripe_subscription_id', subscription.id)
+          .single();
+
+        if (existingSub) {
+          const { error } = await supabaseAdmin
+            .from('user_subscriptions')
+            .update({
+              subscription_status: subscription.status,
+              subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('stripe_subscription_id', subscription.id);
+
+          if (error) {
+            logStep("Error updating subscription", { error: error.message });
+          } else {
+            logStep("Subscription status updated", { status: subscription.status });
+          }
+        }
+        break;
+      }
+
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+        logStep("Subscription cancelled", { subscriptionId: subscription.id });
+
+        const { error } = await supabaseAdmin
+          .from('user_subscriptions')
+          .update({
+            subscription_status: 'cancelled',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('stripe_subscription_id', subscription.id);
+
+        if (error) {
+          logStep("Error marking subscription cancelled", { error: error.message });
+        }
+        break;
+      }
+
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        logStep("Payment failed", { invoiceId: invoice.id, customerId: invoice.customer });
+
+        const { error } = await supabaseAdmin
+          .from('user_subscriptions')
+          .update({
+            subscription_status: 'past_due',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('stripe_customer_id', invoice.customer as string);
+
+        if (error) {
+          logStep("Error updating subscription to past_due", { error: error.message });
+        }
+        break;
+      }
+
+      default:
+        logStep("Unhandled event type", { type: event.type });
+    }
+
+    return new Response(JSON.stringify({ received: true }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logStep("ERROR in stripe-webhook", { message: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+    });
+  }
+});
