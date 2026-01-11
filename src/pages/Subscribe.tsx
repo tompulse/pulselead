@@ -194,10 +194,6 @@ const Subscribe = () => {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-400 px-6 py-2 rounded-full mb-6 font-bold shadow-lg">
-              <Sparkles className="w-5 h-5" />
-              Offre de lancement
-            </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Choisissez <span className="gradient-text">PULSE</span>
             </h1>
