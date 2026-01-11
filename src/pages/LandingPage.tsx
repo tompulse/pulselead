@@ -133,7 +133,7 @@ const LandingPage = () => {
             <div ref={heroAnimation.ref} className={`text-center space-y-3 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/20 mb-4">
                 <Target className="w-4 h-4 text-accent" />
-                <span className="text-sm text-white/90 font-medium">Structurez votre prospection terrain avec intelligence</span>
+                <span className="text-sm text-white/90 font-medium">Essai gratuit 7 jours • Carte bancaire requise</span>
               </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 Vendez plus.
@@ -145,7 +145,7 @@ const LandingPage = () => {
               </p>
               <div className="flex justify-center py-6">
                 <Button onClick={() => navigate('/auth')} className="btn-hero-pulse">
-                  Commencer maintenant
+                  Essayer gratuitement 7 jours
                   <ArrowRight className="ml-4 w-8 h-8" />
                 </Button>
               </div>
@@ -156,24 +156,24 @@ const LandingPage = () => {
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.1s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">100%</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">de votre territoire structuré</p>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+850</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">nouvelles entreprises détectées par semaine</p>
                 </div>
                 
                 {/* Stat 2 */}
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.2s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">13</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">commerciaux ont fait confiance à PULSE</p>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">2h</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">gagnées par jour en moyenne</p>
                 </div>
                 
                 {/* Stat 3 */}
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.3s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">de satisfaction client</p>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">7 jours</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">d'essai gratuit sans engagement</p>
                 </div>
               </div>
 
@@ -186,8 +186,8 @@ const LandingPage = () => {
                   <span>Conforme RGPD</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Smartphone className="w-4 h-4 text-accent" />
-                  <span>Adapté aux TPE/PME</span>
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Essai gratuit 7 jours</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Database className="w-4 h-4 text-accent" />
@@ -396,6 +396,10 @@ const LandingPage = () => {
                   border: '2px solid rgba(6, 182, 212, 0.5)',
                   boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
                 }}>
+                  {/* Badge essai gratuit */}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
+                    🎁 7 JOURS D'ESSAI GRATUIT
+                  </div>
                   
                   <div className="p-6 md:p-8 pt-10 flex flex-col flex-1">
                     <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial Solo</h3>
@@ -474,7 +478,7 @@ const LandingPage = () => {
                     </ul>
 
                     <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] mt-auto" onClick={() => navigate('/subscribe')}>
-                      Commencer maintenant
+                      Essayer gratuitement 7 jours
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </div>

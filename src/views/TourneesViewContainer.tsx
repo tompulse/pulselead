@@ -87,7 +87,13 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
   };
 
   const handleCreateTournee = () => {
-    toast.info('Fonctionnalité à venir - Backend à implémenter');
+    // Rediriger vers la vue Prospects pour sélectionner des entreprises
+    navigate('/dashboard');
+    // Le passage à la vue prospects sera géré par le composant parent
+    toast.info('Sélectionnez des prospects sur la carte pour créer une tournée', {
+      description: 'Cliquez sur les prospects à ajouter à votre tournée',
+      duration: 5000,
+    });
   };
 
   const handleViewDetails = (tournee: Tournee) => {

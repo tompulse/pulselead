@@ -68,7 +68,14 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      success_url: `${origin}/dashboard?checkout=success`,
+      // Essai gratuit 7 jours avec CB obligatoire
+      subscription_data: {
+        trial_period_days: 7,
+        metadata: {
+          user_id: user.id,
+        },
+      },
+      success_url: `${origin}/dashboard?checkout=success&trial=true`,
       cancel_url: `${origin}/subscribe?checkout=cancelled`,
       metadata: {
         user_id: user.id,

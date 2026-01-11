@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { SubscriptionManagement } from "./SubscriptionManagement";
 import { QualificationProgressDialog } from "./QualificationProgressDialog";
 import { ImportDialog } from "./ImportDialog";
+import { NotificationCenter } from "./NotificationCenter";
 import { useState } from "react";
 
 interface DashboardHeaderProps {
@@ -14,13 +15,17 @@ interface DashboardHeaderProps {
   onViewChange: (view: 'prospects' | 'tournees' | 'crm') => void;
   isAdmin: boolean;
   onLogout: () => void;
+  userId: string;
+  onSelectEntreprise?: (entrepriseId: string) => void;
 }
 
 export const DashboardHeader = ({ 
   view, 
   onViewChange, 
   isAdmin, 
-  onLogout
+  onLogout,
+  userId,
+  onSelectEntreprise
 }: DashboardHeaderProps) => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -49,15 +54,18 @@ export const DashboardHeader = ({
               {viewConfig.find(v => v.key === view)?.label}
             </div>
             
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onLogout}
-              className="h-9 w-9 border-accent/30 hover:bg-accent/10"
-              aria-label="Déconnexion"
-            >
-              <LogOut className="w-4 h-4" aria-hidden="true" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <NotificationCenter userId={userId} onSelectEntreprise={onSelectEntreprise} />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={onLogout}
+                className="h-9 w-9 border-accent/30 hover:bg-accent/10"
+                aria-label="Déconnexion"
+              >
+                <LogOut className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            </div>
           </>
         ) : (
           <>

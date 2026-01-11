@@ -1,0 +1,190 @@
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+interface NotificationPermission {
+  permission: 'granted' | 'denied' | 'default';
+  isSupported: boolean;
+}
+
+interface Reminder {
+  id: string;
+  entreprise_id: string;
+  entreprise_nom: string;
+  date_relance: string;
+  notes: string | null;
+  type: string;
+}
+
+export const useNotifications = (userId: string | undefined) => {
+  const [permission, setPermission] = useState<NotificationPermission>({
+    permission: 'default',
+    isSupported: false,
+  });
+  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  // Check if notifications are supported
+  useEffect(() => {
+    const isSupported = 'Notification' in window && 'serviceWorker' in navigator;
+    setPermission({
+      permission: isSupported ? Notification.permission : 'denied',
+      isSupported,
+    });
+  }, []);
+
+  // Request notification permission
+  const requestPermission = useCallback(async () => {
+    if (!permission.isSupported) {
+      toast({
+        title: 'Notifications non supportées',
+        description: 'Votre navigateur ne supporte pas les notifications push',
+        variant: 'destructive',
+      });
+      return false;
+    }
+
+    try {
+      const result = await Notification.requestPermission();
+      setPermission(prev => ({ ...prev, permission: result }));
+      
+      if (result === 'granted') {
+        toast({
+          title: 'Notifications activées ✅',
+          description: 'Vous recevrez des rappels pour vos relances',
+        });
+        return true;
+      } else {
+        toast({
+          title: 'Notifications refusées',
+          description: 'Vous ne recevrez pas de rappels push',
+          variant: 'destructive',
+        });
+        return false;
+      }
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
+      return false;
+    }
+  }, [permission.isSupported, toast]);
+
+  // Fetch upcoming reminders
+  const fetchReminders = useCallback(async () => {
+    if (!userId) return;
+    
+    setIsLoading(true);
+    try {
+      const today = new Date();
+      const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+      
+      const { data, error } = await supabase
+        .from('lead_interactions')
+        .select(`
+          id,
+          entreprise_id,
+          date_relance,
+          notes,
+          type
+        `)
+        .eq('user_id', userId)
+        .not('date_relance', 'is', null)
+        .gte('date_relance', today.toISOString().split('T')[0])
+        .lte('date_relance', nextWeek.toISOString().split('T')[0])
+        .order('date_relance', { ascending: true });
+
+      if (error) throw error;
+
+      // Fetch entreprise names
+      if (data && data.length > 0) {
+        const entrepriseIds = [...new Set(data.map(r => r.entreprise_id))];
+        const { data: entreprises } = await supabase
+          .from('nouveaux_sites')
+          .select('id, nom')
+          .in('id', entrepriseIds);
+
+        const entrepriseMap = new Map(entreprises?.map(e => [e.id, e.nom]) || []);
+        
+        const remindersWithNames = data.map(r => ({
+          ...r,
+          entreprise_nom: entrepriseMap.get(r.entreprise_id) || 'Entreprise inconnue',
+        }));
+        
+        setReminders(remindersWithNames);
+      } else {
+        setReminders([]);
+      }
+    } catch (error) {
+      console.error('Error fetching reminders:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId]);
+
+  // Send a local notification
+  const sendNotification = useCallback((title: string, body: string, data?: any) => {
+    if (permission.permission !== 'granted') return;
+
+    try {
+      const notification = new Notification(title, {
+        body,
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
+        tag: data?.id || 'pulse-reminder',
+      });
+
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  }, [permission.permission]);
+
+  // Check for due reminders and notify
+  const checkDueReminders = useCallback(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const dueToday = reminders.filter(r => r.date_relance === today);
+    
+    dueToday.forEach(reminder => {
+      sendNotification(
+        '📞 Relance à faire',
+        `${reminder.entreprise_nom}${reminder.notes ? `: ${reminder.notes.substring(0, 50)}...` : ''}`,
+        { id: reminder.id, entreprise_id: reminder.entreprise_id }
+      );
+    });
+
+    return dueToday.length;
+  }, [reminders, sendNotification]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchReminders();
+  }, [fetchReminders]);
+
+  // Check for due reminders every minute
+  useEffect(() => {
+    if (permission.permission !== 'granted' || reminders.length === 0) return;
+
+    const interval = setInterval(() => {
+      checkDueReminders();
+    }, 60000); // Check every minute
+
+    // Check immediately on mount
+    checkDueReminders();
+
+    return () => clearInterval(interval);
+  }, [permission.permission, reminders, checkDueReminders]);
+
+  return {
+    permission,
+    reminders,
+    isLoading,
+    requestPermission,
+    fetchReminders,
+    sendNotification,
+    checkDueReminders,
+    todayReminders: reminders.filter(r => r.date_relance === new Date().toISOString().split('T')[0]),
+  };
+};
