@@ -646,6 +646,17 @@ const LandingPage = () => {
                   forme juridique. Vous ciblez précisément les prospects qui vous intéressent.
                 </AccordionContent>
               </AccordionItem>
+
+              <AccordionItem value="item-6" className="border border-white/10 rounded-lg px-6">
+                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
+                  Comment fonctionne l'essai gratuit de 7 jours ?
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 text-lg">
+                  Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités de PULSE. 
+                  Votre carte bancaire est enregistrée lors de l'inscription mais vous ne serez débité qu'à la fin de la période d'essai. 
+                  Vous pouvez annuler à tout moment pendant les 7 jours sans aucun frais.
+                </AccordionContent>
+              </AccordionItem>
             </Accordion>
             </div>
           </div>
