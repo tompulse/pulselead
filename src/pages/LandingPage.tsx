@@ -35,7 +35,7 @@ const LandingPage = () => {
     threshold: 0.2
   });
 
-  const pricingPlans = {
+  const pricingPlans: Record<'monthly' | 'quarterly' | 'yearly', { price: number; label: string; billingDetails: string; savings?: string }> = {
     monthly: {
       price: 49,
       label: 'Mensuel',
@@ -364,9 +364,10 @@ const LandingPage = () => {
                 Structurez votre prospection, maîtrisez votre territoire
               </p>
               
-              {/* Pricing Cards */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto mb-8">
-                {/* Commercial Offer with duration selector */}
+              {/* Pricing Cards - 2 columns: PULSE + Sur Mesure */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto mb-8">
+                
+                {/* PULSE Offer with duration selector */}
                 <div className="space-y-4">
                   {/* Plan Toggle */}
                   <div className="flex justify-center">
@@ -374,181 +375,109 @@ const LandingPage = () => {
                       background: 'rgba(0, 0, 0, 0.4)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
                     }} className="inline-flex rounded-lg p-1">
-                      <button onClick={() => setSelectedPlanCommercial('monthly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanCommercial === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                      <button onClick={() => setSelectedPlan('monthly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Mensuel
                       </button>
-                      <button onClick={() => setSelectedPlanCommercial('quarterly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanCommercial === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                      <button onClick={() => setSelectedPlan('quarterly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Trimestriel
+                        <span className="ml-1 text-[10px] text-green-400">-20%</span>
                       </button>
-                      <button onClick={() => setSelectedPlanCommercial('yearly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanCommercial === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
+                      <button onClick={() => setSelectedPlan('yearly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
                         Annuel
+                        <span className="ml-1 text-[10px] text-green-400">-40%</span>
                       </button>
                     </div>
                   </div>
 
                   <Card className="relative overflow-visible" style={{
-                    background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%)',
-                    border: '2px solid rgba(6, 182, 212, 0.3)',
-                    boxShadow: '0 20px 60px -10px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <div className="p-6 md:p-8">
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial</h3>
-                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                        background: 'rgba(0, 0, 0, 0.3)',
-                        border: '1px solid rgba(6, 182, 212, 0.2)'
-                      }}>
-                      <div className="flex items-baseline justify-center gap-2 mb-1">
-                          <span className="text-4xl md:text-5xl font-bold gradient-text">
-                            {pricingPlans[selectedPlanCommercial].discountedPrice}€
-                          </span>
-                          <span className="text-xl text-white/40 line-through">
-                            {pricingPlans[selectedPlanCommercial].originalPrice}€
-                          </span>
-                        </div>
-                        <p className="text-base text-white/60 font-semibold">/mois</p>
-                        {pricingPlans[selectedPlanCommercial].billingDetails && (
-                          <p className="text-xs text-white/50 mt-1">
-                            {pricingPlans[selectedPlanCommercial].billingDetails}
-                          </p>
-                        )}
-                        <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                          -30% de réduction
-                        </div>
-                      </div>
-
-                      <ul className="space-y-2 mb-6">
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-xs leading-relaxed">Cartographie interactive</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-xs leading-relaxed">Tournées optimisées GPS</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-xs leading-relaxed">CRM mobile simplifié</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-xs leading-relaxed">Pipeline Kanban</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
-                          </div>
-                          <span className="text-white text-xs leading-relaxed">Filtres avancés (département, activité, taille)</span>
-                        </li>
-                      </ul>
-
-                      <Button className="w-full bg-accent text-black hover:bg-accent/90 text-sm py-4 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
-                        Commencer
-                        <ArrowRight className="ml-2 w-4 h-4" />
-                      </Button>
-                    </div>
-                  </Card>
-                </div>
-
-                {/* Premium Offer */}
-                <div className="space-y-4">
-                  {/* Plan Toggle for Premium */}
-                  <div className="flex justify-center">
-                    <div style={{
-                      background: 'rgba(0, 0, 0, 0.4)',
-                      border: '1px solid rgba(6, 182, 212, 0.2)'
-                    }} className="inline-flex rounded-lg p-1">
-                      <button onClick={() => setSelectedPlanPremium('monthly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanPremium === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Mensuel
-                      </button>
-                      <button onClick={() => setSelectedPlanPremium('quarterly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanPremium === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Trimestriel
-                      </button>
-                      <button onClick={() => setSelectedPlanPremium('yearly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlanPremium === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Annuel
-                      </button>
-                    </div>
-                  </div>
-
-                  <Card className="relative overflow-visible lg:scale-105" style={{
-                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%)',
+                    background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
                     border: '2px solid rgba(6, 182, 212, 0.5)',
                     boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
                   }}>
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
-                      ⭐ OFFRE LA PLUS POPULAIRE
+                      ⭐ OFFRE UNIQUE
                     </div>
                     
-                    <div className="p-6 md:p-8 pt-10 lg:pt-12">
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Premium</h3>
+                    <div className="p-6 md:p-8 pt-10">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">PULSE</h3>
                       <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                         background: 'rgba(0, 0, 0, 0.3)',
                         border: '1px solid rgba(6, 182, 212, 0.2)'
                       }}>
                         <div className="flex items-baseline justify-center gap-2 mb-1">
                           <span className="text-4xl md:text-5xl font-bold gradient-text">
-                            {selectedPlanPremium === 'monthly' ? '104' : selectedPlanPremium === 'quarterly' ? '83' : '62'}€
+                            {pricingPlans[selectedPlan].price}€
                           </span>
-                          <span className="text-xl text-white/40 line-through">
-                            {selectedPlanPremium === 'monthly' ? '149' : selectedPlanPremium === 'quarterly' ? '119' : '89'}€
-                          </span>
+                          <span className="text-base text-white/60">/mois</span>
                         </div>
-                        <p className="text-base text-white/60 font-semibold">/mois</p>
-                        {selectedPlanPremium === 'quarterly' && (
-                          <p className="text-xs text-white/50 mt-1">Soit 249€ au lieu de 357€</p>
+                        <p className="text-xs text-white/50 mt-1">
+                          {pricingPlans[selectedPlan].billingDetails}
+                        </p>
+                        {pricingPlans[selectedPlan].savings && (
+                          <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
+                            {pricingPlans[selectedPlan].savings} de réduction
+                          </div>
                         )}
-                        {selectedPlanPremium === 'yearly' && (
-                          <p className="text-xs text-white/50 mt-1">Soit 744€ au lieu de 1068€</p>
-                        )}
-                        <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                          -30% de réduction
-                        </div>
                       </div>
 
                       <ul className="space-y-2 mb-6">
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
+                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Map className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed font-semibold">Tout Commercial inclus</span>
+                          <div>
+                            <span className="text-white text-sm font-semibold">Cartographie territoire</span>
+                            <p className="text-white/50 text-xs">Visualisez TOUS vos prospects sur une carte</p>
+                          </div>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
+                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Route className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed font-semibold">🎯 Détection créations entreprises</span>
+                          <div>
+                            <span className="text-white text-sm font-semibold">Tournées optimisées IA</span>
+                            <p className="text-white/50 text-xs">Moins de route, plus de RDV</p>
+                          </div>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
+                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Smartphone className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed font-semibold">Nouveaux sites détectés</span>
+                          <div>
+                            <span className="text-white text-sm font-semibold">CRM mobile terrain</span>
+                            <p className="text-white/50 text-xs">Visites et relances depuis votre poche</p>
+                          </div>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-accent" />
+                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Target className="w-3 h-3 text-accent" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed font-semibold">Filtres avancés (NAF, départements)</span>
+                          <div>
+                            <span className="text-white text-sm font-semibold">Filtres intelligents</span>
+                            <p className="text-white/50 text-xs">Département, activité, taille d'entreprise</p>
+                          </div>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Sparkles className="w-3 h-3 text-accent" />
+                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <BarChart3 className="w-3 h-3 text-accent" />
                           </div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-white text-xs font-semibold">Assistant IA</span>
-                            <Badge variant="secondary" className="text-[10px] py-0 px-1.5">Bientôt</Badge>
+                          <div>
+                            <span className="text-white text-sm font-semibold">Pipeline Kanban</span>
+                            <p className="text-white/50 text-xs">Du premier contact à la signature</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Clock className="w-3 h-3 text-accent" />
+                          </div>
+                          <div>
+                            <span className="text-white text-sm font-semibold">Relances programmées</span>
+                            <p className="text-white/50 text-xs">Ne ratez plus jamais un rappel client</p>
                           </div>
                         </li>
                       </ul>
 
-                      <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-4 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/auth')}>
+                      <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/subscribe')}>
                         Commencer maintenant
                         <ArrowRight className="ml-2 w-4 h-4" />
                       </Button>
@@ -556,18 +485,18 @@ const LandingPage = () => {
                   </Card>
                 </div>
 
-                {/* Enterprise Offer */}
+                {/* Sur Mesure / Enterprise */}
                 <div className="space-y-4">
-                  {/* Spacer to align with Commercial card */}
-                  <div className="h-[52px]"></div>
+                  {/* Spacer to align */}
+                  <div className="h-[44px]"></div>
 
-                  <Card className="relative overflow-visible" style={{
+                  <Card className="relative overflow-visible h-full" style={{
                     background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
                     border: '2px solid rgba(14, 165, 233, 0.3)',
                     boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                   }}>
                     <div className="p-6 md:p-8">
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Entreprise</h3>
+                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Sur Mesure</h3>
                       <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                         background: 'rgba(0, 0, 0, 0.3)',
                         border: '1px solid rgba(14, 165, 233, 0.2)'
@@ -577,50 +506,44 @@ const LandingPage = () => {
                             Sur devis
                           </span>
                         </div>
-                        <p className="text-xs text-white/50 mt-2">Solution sur mesure</p>
+                        <p className="text-xs text-white/50 mt-2">Pour les équipes ambitieuses</p>
                       </div>
 
                       <ul className="space-y-2 mb-6">
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-cyan-glow" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed font-semibold">Tout Premium inclus</span>
+                          <span className="text-white text-sm font-semibold">Tout PULSE inclus</span>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Users className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <span className="text-white text-sm">Équipes illimitées</span>
+                        </li>
+                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Sparkles className="w-3 h-3 text-cyan-glow" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed font-semibold">Assistant IA inclus</span>
+                          <span className="text-white text-sm">Onboarding personnalisé</span>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
+                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Phone className="w-3 h-3 text-cyan-glow" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed">Dashboard managers</span>
+                          <span className="text-white text-sm">Support prioritaire</span>
                         </li>
                         <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
+                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <TrendingUp className="w-3 h-3 text-cyan-glow" />
                           </div>
-                          <span className="text-white text-xs leading-relaxed">Point mensuel 1h offert pour analyser vos résultats</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-xs leading-relaxed">Gestion multi-utilisateurs</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-4 h-4 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-xs leading-relaxed">Support prioritaire</span>
+                          <span className="text-white text-sm">Session d'analyse mensuelle</span>
                         </li>
                       </ul>
 
-                      <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-sm py-4 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => window.location.href = '#contact'}>
-                        Nous contacter
+                      <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/subscribe')}>
+                        Demander un devis
                         <ArrowRight className="ml-2 w-4 h-4" />
                       </Button>
                     </div>
@@ -691,8 +614,8 @@ const LandingPage = () => {
                   Quelles données vais-je retrouver ?
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
-                  Avec l'offre Premium, chaque semaine nous vous localisons les nouvelles ouvertures d'entreprise, les déménagements en cours, 
-                  les nouvelles implantations d'entreprises existantes. L'offre Commercial vous donne accès à toute la cartographie et aux outils de tournées.
+                  PULSE vous donne accès à toutes les entreprises de votre territoire : nouvelles créations, établissements existants. 
+                  Vous pouvez filtrer par département, secteur d'activité (NAF), taille d'entreprise et forme juridique.
                 </AccordionContent>
               </AccordionItem>
 
