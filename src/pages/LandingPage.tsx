@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { ArrowRight, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User, MapPin, BarChart3, Users, ChevronDown, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone, Construction, Menu } from "lucide-react";
+import { ArrowRight, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User, MapPin, BarChart3, Users, ChevronDown, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone, Construction, Menu, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -364,188 +364,214 @@ const LandingPage = () => {
                 Structurez votre prospection, maîtrisez votre territoire
               </p>
               
-              {/* Pricing Cards - 2 columns: PULSE + Sur Mesure */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto mb-8">
-                
-                {/* PULSE Offer with duration selector */}
-                <div className="space-y-4">
-                  {/* Plan Toggle */}
-                  <div className="flex justify-center">
-                    <div style={{
-                      background: 'rgba(0, 0, 0, 0.4)',
-                      border: '1px solid rgba(6, 182, 212, 0.2)'
-                    }} className="inline-flex rounded-lg p-1">
-                      <button onClick={() => setSelectedPlan('monthly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Mensuel
-                      </button>
-                      <button onClick={() => setSelectedPlan('quarterly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Trimestriel
-                        <span className="ml-1 text-[10px] text-green-400">-20%</span>
-                      </button>
-                      <button onClick={() => setSelectedPlan('yearly')} className={`px-4 py-2 rounded-md text-xs font-semibold transition-all ${selectedPlan === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}>
-                        Annuel
-                        <span className="ml-1 text-[10px] text-green-400">-40%</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <Card className="relative overflow-visible" style={{
-                    background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
-                    border: '2px solid rgba(6, 182, 212, 0.5)',
-                    boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
-                  }}>
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
-                      ⭐ OFFRE UNIQUE
-                    </div>
-                    
-                    <div className="p-6 md:p-8 pt-10">
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">PULSE</h3>
-                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                        background: 'rgba(0, 0, 0, 0.3)',
-                        border: '1px solid rgba(6, 182, 212, 0.2)'
-                      }}>
-                        <div className="flex items-baseline justify-center gap-2 mb-1">
-                          <span className="text-4xl md:text-5xl font-bold gradient-text">
-                            {pricingPlans[selectedPlan].price}€
-                          </span>
-                          <span className="text-base text-white/60">/mois</span>
-                        </div>
-                        {pricingPlans[selectedPlan].savings && (
-                          <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                            {pricingPlans[selectedPlan].savings} de réduction
-                          </div>
-                        )}
-                      </div>
-
-                      <ul className="space-y-2 mb-6">
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Map className="w-3 h-3 text-accent" />
-                          </div>
-                          <div>
-                            <span className="text-white text-sm font-semibold">Cartographie territoire</span>
-                            <p className="text-white/50 text-xs">Visualisez TOUS vos prospects sur une carte</p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Route className="w-3 h-3 text-accent" />
-                          </div>
-                          <div>
-                            <span className="text-white text-sm font-semibold">Tournées optimisées IA</span>
-                            <p className="text-white/50 text-xs">Moins de route, plus de RDV</p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Smartphone className="w-3 h-3 text-accent" />
-                          </div>
-                          <div>
-                            <span className="text-white text-sm font-semibold">CRM mobile terrain</span>
-                            <p className="text-white/50 text-xs">Visites et relances depuis votre poche</p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Target className="w-3 h-3 text-accent" />
-                          </div>
-                          <div>
-                            <span className="text-white text-sm font-semibold">Filtres intelligents</span>
-                            <p className="text-white/50 text-xs">Département, activité, taille d'entreprise</p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <BarChart3 className="w-3 h-3 text-accent" />
-                          </div>
-                          <div>
-                            <span className="text-white text-sm font-semibold">Pipeline Kanban</span>
-                            <p className="text-white/50 text-xs">Du premier contact à la signature</p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Clock className="w-3 h-3 text-accent" />
-                          </div>
-                          <div>
-                            <span className="text-white text-sm font-semibold">Relances programmées</span>
-                            <p className="text-white/50 text-xs">Ne ratez plus jamais un rappel client</p>
-                          </div>
-                        </li>
-                      </ul>
-
-                      <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/subscribe')}>
-                        Commencer maintenant
-                        <ArrowRight className="ml-2 w-4 h-4" />
-                      </Button>
-                    </div>
-                  </Card>
+              {/* Plan Toggle - above cards */}
+              <div className="flex justify-center mb-6">
+                <div style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(6, 182, 212, 0.2)'
+                }} className="inline-flex rounded-lg p-1">
+                  <button 
+                    onClick={() => setSelectedPlan('monthly')} 
+                    className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all flex items-center gap-1 ${selectedPlan === 'monthly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}
+                  >
+                    Mensuel
+                  </button>
+                  <button 
+                    onClick={() => setSelectedPlan('quarterly')} 
+                    className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all flex items-center gap-1 ${selectedPlan === 'quarterly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}
+                  >
+                    Trimestriel
+                    <span className={`text-[10px] sm:text-xs font-bold ${selectedPlan === 'quarterly' ? 'text-green-700' : 'text-green-400'}`}>-20%</span>
+                  </button>
+                  <button 
+                    onClick={() => setSelectedPlan('yearly')} 
+                    className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all flex items-center gap-1 ${selectedPlan === 'yearly' ? 'bg-accent text-black shadow-lg' : 'text-white/70 hover:text-white'}`}
+                  >
+                    Annuel
+                    <span className={`text-[10px] sm:text-xs font-bold ${selectedPlan === 'yearly' ? 'text-green-700' : 'text-green-400'}`}>-40%</span>
+                  </button>
                 </div>
+              </div>
+
+              {/* Pricing Cards - 2 columns: PULSE + Sur Mesure */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto items-stretch mb-8">
+                
+                {/* PULSE Offer */}
+                <Card className="relative overflow-visible flex flex-col" style={{
+                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
+                  border: '2px solid rgba(6, 182, 212, 0.5)',
+                  boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+                }}>
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-cyan-glow text-black px-6 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
+                    ⭐ OFFRE UNIQUE
+                  </div>
+                  
+                  <div className="p-6 md:p-8 pt-10 flex flex-col flex-1">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">PULSE</h3>
+                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(6, 182, 212, 0.2)'
+                    }}>
+                      <div className="flex items-baseline justify-center gap-2 mb-1">
+                        <span className="text-4xl md:text-5xl font-bold gradient-text">
+                          {pricingPlans[selectedPlan].price}€
+                        </span>
+                        <span className="text-base text-white/60">/mois</span>
+                      </div>
+                      {pricingPlans[selectedPlan].savings && (
+                        <div className="inline-flex items-center bg-green-600/20 text-green-500 px-3 py-1 rounded-full text-xs font-bold mt-2">
+                          {pricingPlans[selectedPlan].savings} de réduction
+                        </div>
+                      )}
+                    </div>
+
+                    <ul className="space-y-2 mb-6 flex-1">
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Map className="w-3 h-3 text-accent" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Cartographie territoire</span>
+                          <p className="text-white/50 text-xs">Visualisez TOUS vos prospects sur une carte</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Route className="w-3 h-3 text-accent" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Tournées optimisées IA</span>
+                          <p className="text-white/50 text-xs">Moins de route, plus de RDV</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Smartphone className="w-3 h-3 text-accent" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">CRM mobile terrain</span>
+                          <p className="text-white/50 text-xs">Visites et relances depuis votre poche</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Target className="w-3 h-3 text-accent" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Filtres intelligents</span>
+                          <p className="text-white/50 text-xs">Département, activité, taille d'entreprise</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <BarChart3 className="w-3 h-3 text-accent" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Pipeline Kanban</span>
+                          <p className="text-white/50 text-xs">Du premier contact à la signature</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Clock className="w-3 h-3 text-accent" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Relances programmées</span>
+                          <p className="text-white/50 text-xs">Ne ratez plus jamais un rappel client</p>
+                        </div>
+                      </li>
+                    </ul>
+
+                    <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] mt-auto" onClick={() => navigate('/subscribe')}>
+                      Commencer maintenant
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </div>
+                </Card>
 
                 {/* Sur Mesure / Enterprise */}
-                <div className="space-y-4">
-                  {/* Spacer to align */}
-                  <div className="h-[44px]"></div>
-
-                  <Card className="relative overflow-visible h-full" style={{
-                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                    border: '2px solid rgba(14, 165, 233, 0.3)',
-                    boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <div className="p-6 md:p-8">
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Sur Mesure</h3>
-                      <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                        background: 'rgba(0, 0, 0, 0.3)',
-                        border: '1px solid rgba(14, 165, 233, 0.2)'
-                      }}>
-                        <div className="flex items-baseline justify-center gap-2">
-                          <span className="text-3xl md:text-4xl font-bold gradient-text">
-                            Sur devis
-                          </span>
-                        </div>
-                        <p className="text-xs text-white/50 mt-2">Pour les équipes ambitieuses</p>
+                <Card className="relative overflow-visible flex flex-col" style={{
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                  border: '2px solid rgba(14, 165, 233, 0.3)',
+                  boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                }}>
+                  <div className="p-6 md:p-8 flex flex-col flex-1">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Sur Mesure</h3>
+                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(14, 165, 233, 0.2)'
+                    }}>
+                      <div className="flex items-baseline justify-center gap-2">
+                        <span className="text-3xl md:text-4xl font-bold gradient-text">
+                          Sur devis
+                        </span>
                       </div>
-
-                      <ul className="space-y-2 mb-6">
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm font-semibold">Tout PULSE inclus</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Users className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm">Équipes illimitées</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Sparkles className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm">Onboarding personnalisé</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Phone className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm">Support prioritaire</span>
-                        </li>
-                        <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <TrendingUp className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <span className="text-white text-sm">Session d'analyse mensuelle</span>
-                        </li>
-                      </ul>
-
-                      <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]" onClick={() => navigate('/subscribe')}>
-                        Demander un devis
-                        <ArrowRight className="ml-2 w-4 h-4" />
-                      </Button>
+                      <p className="text-xs text-white/50 mt-2">Pour les équipes ambitieuses</p>
                     </div>
-                  </Card>
-                </div>
+
+                    <ul className="space-y-2 mb-6 flex-1">
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-cyan-glow" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Tout PULSE inclus</span>
+                          <p className="text-white/50 text-xs">Toutes les fonctionnalités de l'offre standard</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Users className="w-3 h-3 text-cyan-glow" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Équipes illimitées</span>
+                          <p className="text-white/50 text-xs">Invitez tous vos commerciaux</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Sparkles className="w-3 h-3 text-cyan-glow" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Onboarding personnalisé</span>
+                          <p className="text-white/50 text-xs">Formation dédiée à votre équipe</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Phone className="w-3 h-3 text-cyan-glow" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Support prioritaire</span>
+                          <p className="text-white/50 text-xs">Réponse sous 24h garantie</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <TrendingUp className="w-3 h-3 text-cyan-glow" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Session d'analyse mensuelle</span>
+                          <p className="text-white/50 text-xs">Optimisez vos performances</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
+                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Building2 className="w-3 h-3 text-cyan-glow" />
+                        </div>
+                        <div>
+                          <span className="text-white text-sm font-semibold">Intégrations sur mesure</span>
+                          <p className="text-white/50 text-xs">Connectez vos outils existants</p>
+                        </div>
+                      </li>
+                    </ul>
+
+                    <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] mt-auto" onClick={() => navigate('/subscribe')}>
+                      Demander un devis
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </div>
+                </Card>
               </div>
 
               {/* Trust indicators */}
