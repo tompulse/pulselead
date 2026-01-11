@@ -407,7 +407,7 @@ const LandingPage = () => {
                   </div>
                   
                   <div className="p-6 md:p-8 pt-10 flex flex-col flex-1">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">PULSE</h3>
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial Solo</h3>
                     <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                       background: 'rgba(0, 0, 0, 0.3)',
                       border: '1px solid rgba(6, 182, 212, 0.2)'
@@ -496,7 +496,7 @@ const LandingPage = () => {
                   boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
                   <div className="p-6 md:p-8 flex flex-col flex-1">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Sur Mesure</h3>
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Équipes Commerciales</h3>
                     <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
                       background: 'rgba(0, 0, 0, 0.3)',
                       border: '1px solid rgba(14, 165, 233, 0.2)'

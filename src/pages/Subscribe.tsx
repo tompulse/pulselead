@@ -214,7 +214,7 @@ const Subscribe = () => {
               boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
             }}>
               <div className="p-8">
-                <h2 className="text-3xl font-bold mb-6 text-center gradient-text">PULSE</h2>
+                <h2 className="text-3xl font-bold mb-6 text-center gradient-text">Commercial Solo</h2>
                 
                 {/* Plan Toggle */}
                 <div className="flex justify-center mb-6">
@@ -302,7 +302,7 @@ const Subscribe = () => {
               <div className="p-8">
                 <div className="flex items-center justify-center gap-2 mb-6">
                   <Building2 className="w-8 h-8 text-cyan-glow" />
-                  <h2 className="text-3xl font-bold gradient-text">Sur Mesure</h2>
+                  <h2 className="text-3xl font-bold gradient-text">Équipes Commerciales</h2>
                 </div>
 
                 <p className="text-center text-muted-foreground mb-6">
