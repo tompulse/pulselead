@@ -9,8 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Prix ID Stripe - Plan mensuel à 49€/mois (créé en mode test)
-const STRIPE_PRICE_ID = 'price_1SoR9bHQWfOgC6lKODL6XL1a';
+// Prix ID Stripe - Plan mensuel à 49€/mois
+const STRIPE_PRICE_ID = 'price_1SoTNkHjyidZ5i9LuxvK8Tzq';
 
 const features = [
   {
