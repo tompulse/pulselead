@@ -75,7 +75,7 @@ serve(async (req) => {
           user_id: user.id,
         },
       },
-      success_url: `${origin}/dashboard?checkout=success&trial=true`,
+      success_url: `${origin}/checkout-success?trial=true`,
       cancel_url: `${origin}/subscribe?checkout=cancelled`,
       metadata: {
         user_id: user.id,
