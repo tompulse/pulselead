@@ -8,16 +8,22 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
 
+type AuthMode = 'login' | 'signup' | 'forgot';
+
 const Auth = () => {
   const [searchParams] = useSearchParams();
-  const defaultMode = searchParams.get('mode') === 'login';
-  const [isLogin, setIsLogin] = useState(defaultMode);
+  const defaultMode = searchParams.get('mode') === 'login' ? 'login' : 'signup';
+  const [mode, setMode] = useState<AuthMode>(defaultMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const isLogin = mode === 'login';
+  const isForgot = mode === 'forgot';
 
   // Compte démo sans validation stricte
   const DEMO_EMAIL = 'demo@pulse.com';
@@ -67,8 +73,50 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const emailValidation = z.string().email('Email invalide').safeParse(email);
+    if (!emailValidation.success) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Veuillez entrer une adresse email valide",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?mode=login`,
+      });
+
+      if (error) throw error;
+
+      setResetSent(true);
+      toast({
+        title: "📧 Email envoyé !",
+        description: "Vérifiez votre boîte mail pour réinitialiser votre mot de passe",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Une erreur est survenue",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isForgot) {
+      return handleForgotPassword(e);
+    }
     
     // Choisir le schema selon le type de compte
     let schema;
@@ -149,6 +197,18 @@ const Auth = () => {
     }
   };
 
+  const getTitle = () => {
+    if (isForgot) return "Réinitialisez votre mot de passe";
+    if (isLogin) return "Connectez-vous à votre compte";
+    return "Créez votre compte";
+  };
+
+  const getButtonText = () => {
+    if (isForgot) return "Envoyer le lien";
+    if (isLogin) return "Se connecter";
+    return "S'inscrire";
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-navy-deep to-black-deep flex items-center justify-center p-6">
       <div className="w-full max-w-md">
@@ -156,107 +216,150 @@ const Auth = () => {
         <div className="text-center mb-8 animate-fade-in">
           <h1 className="text-3xl font-bold gradient-text mb-4">PULSE</h1>
           <p className="text-muted-foreground text-base">
-            {isLogin ? "Connectez-vous à votre compte" : "Créez votre compte"}
+            {getTitle()}
           </p>
         </div>
 
         {/* Auth Form */}
         <div className="glass-card p-8 space-y-6 animate-slide-up">
-          <form onSubmit={handleAuth} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="contact@exemple.fr"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-background/50 border-border focus:border-accent"
-                disabled={loading}
-              />
+          {isForgot && resetSent ? (
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto">
+                <span className="text-3xl">📧</span>
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">Email envoyé !</h3>
+              <p className="text-muted-foreground text-sm">
+                Vérifiez votre boîte mail et cliquez sur le lien pour réinitialiser votre mot de passe.
+              </p>
+              <Button
+                onClick={() => { setMode('login'); setResetSent(false); }}
+                className="w-full bg-accent hover:bg-accent/90 text-primary font-semibold"
+              >
+                Retour à la connexion
+              </Button>
             </div>
+          ) : (
+            <form onSubmit={handleAuth} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="contact@exemple.fr"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-background/50 border-border focus:border-accent"
+                  disabled={loading}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-background/50 border-border focus:border-accent"
-                disabled={loading}
-              />
-            </div>
-
-            {!isLogin && !isDemoAccount && (
-              <>
+              {!isForgot && (
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Téléphone *</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Mot de passe</Label>
+                    {isLogin && (
+                      <button
+                        type="button"
+                        onClick={() => setMode('forgot')}
+                        className="text-xs text-accent hover:underline"
+                      >
+                        Mot de passe oublié ?
+                      </button>
+                    )}
+                  </div>
                   <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="06 12 34 56 78"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="bg-background/50 border-border focus:border-accent"
                     disabled={loading}
-                    required
                   />
-                  <p className="text-xs text-muted-foreground">Format: 06 12 34 56 78 ou +33 6 12 34 56 78</p>
                 </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2">
-                    <input
-                      type="checkbox"
-                      id="terms"
-                      required
-                      disabled={loading}
-                      className="mt-1 w-4 h-4 rounded border-border bg-background/50 text-accent focus:ring-accent focus:ring-offset-0"
-                    />
-                    <Label htmlFor="terms" className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer">
-                      J'accepte les{" "}
-                      <a href="/cgu" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-                        Conditions Générales d'Utilisation
-                      </a>
-                      {" "}et la{" "}
-                      <a href="/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-                        Politique de Confidentialité
-                      </a>
-                    </Label>
-                  </div>
-                </div>
-              </>
-            )}
-
-            <Button
-              type="submit"
-              className="w-full bg-accent hover:bg-accent/90 text-primary font-semibold"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Chargement...
-                </>
-              ) : (
-                isLogin ? "Se connecter" : "S'inscrire"
               )}
-            </Button>
-          </form>
 
-          <div className="text-center space-y-2">
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-muted-foreground hover:text-accent transition-colors"
-              disabled={loading}
-            >
-              {isLogin
-                ? "Pas encore de compte ? S'inscrire"
-                : "Déjà un compte ? Se connecter"}
-            </button>
-          </div>
+              {!isLogin && !isForgot && !isDemoAccount && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Téléphone *</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="06 12 34 56 78"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="bg-background/50 border-border focus:border-accent"
+                      disabled={loading}
+                      required
+                    />
+                    <p className="text-xs text-muted-foreground">Format: 06 12 34 56 78 ou +33 6 12 34 56 78</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <input
+                        type="checkbox"
+                        id="terms"
+                        required
+                        disabled={loading}
+                        className="mt-1 w-4 h-4 rounded border-border bg-background/50 text-accent focus:ring-accent focus:ring-offset-0"
+                      />
+                      <Label htmlFor="terms" className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer">
+                        J'accepte les{" "}
+                        <a href="/cgu" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                          Conditions Générales d'Utilisation
+                        </a>
+                        {" "}et la{" "}
+                        <a href="/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                          Politique de Confidentialité
+                        </a>
+                      </Label>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full bg-accent hover:bg-accent/90 text-primary font-semibold"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Chargement...
+                  </>
+                ) : (
+                  getButtonText()
+                )}
+              </Button>
+            </form>
+          )}
+
+          {!resetSent && (
+            <div className="text-center space-y-2">
+              {isForgot ? (
+                <button
+                  onClick={() => setMode('login')}
+                  className="text-sm text-muted-foreground hover:text-accent transition-colors"
+                  disabled={loading}
+                >
+                  ← Retour à la connexion
+                </button>
+              ) : (
+                <button
+                  onClick={() => setMode(isLogin ? 'signup' : 'login')}
+                  className="text-sm text-muted-foreground hover:text-accent transition-colors"
+                  disabled={loading}
+                >
+                  {isLogin
+                    ? "Pas encore de compte ? S'inscrire"
+                    : "Déjà un compte ? Se connecter"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="text-center mt-6">
