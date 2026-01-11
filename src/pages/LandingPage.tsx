@@ -112,7 +112,7 @@ const LandingPage = () => {
             <div ref={heroAnimation.ref} className={`text-center space-y-3 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/20 mb-4">
                 <Target className="w-4 h-4 text-accent" />
-                <span className="text-sm text-white/90 font-medium">Essai gratuit 7 jours • Carte bancaire requise</span>
+                <span className="text-sm text-white/90 font-medium">Essai gratuit 7 jours</span>
               </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 Vendez plus.
@@ -597,7 +597,6 @@ const LandingPage = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-white/70 text-lg">
                   Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités de PULSE. 
-                  Votre carte bancaire est enregistrée lors de l'inscription mais vous ne serez débité qu'à la fin de la période d'essai. 
                   Vous pouvez annuler à tout moment pendant les 7 jours sans aucun frais.
                 </AccordionContent>
               </AccordionItem>
