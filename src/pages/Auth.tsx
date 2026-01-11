@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
 
-type AuthMode = 'login' | 'signup' | 'forgot';
+type AuthMode = 'login' | 'signup' | 'forgot' | 'reset';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -16,6 +16,7 @@ const Auth = () => {
   const [mode, setMode] = useState<AuthMode>(defaultMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
@@ -24,6 +25,7 @@ const Auth = () => {
 
   const isLogin = mode === 'login';
   const isForgot = mode === 'forgot';
+  const isReset = mode === 'reset';
 
   // Compte démo sans validation stricte
   const DEMO_EMAIL = 'demo@pulse.com';
@@ -56,22 +58,86 @@ const Auth = () => {
   });
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
+    // Listen for auth changes - set up FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Handle password recovery event - show reset form
+      if (event === 'PASSWORD_RECOVERY') {
+        setMode('reset');
+        return; // Don't redirect, let user set new password
+      }
+      
+      // For other events, redirect if logged in (but not during reset)
+      if (session && mode !== 'reset') {
         navigate("/dashboard");
       }
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      // Don't redirect if we're in reset mode
+      if (session && mode !== 'reset') {
         navigate("/dashboard");
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, mode]);
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate password
+    const passwordSchema = z.string()
+      .min(8, 'Minimum 8 caractères requis')
+      .regex(/[A-Z]/, 'Doit contenir au moins une majuscule')
+      .regex(/[0-9]/, 'Doit contenir au moins un chiffre');
+
+    const validation = passwordSchema.safeParse(password);
+    if (!validation.success) {
+      toast({
+        variant: "destructive",
+        title: "Mot de passe invalide",
+        description: validation.error.errors[0].message,
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Les mots de passe ne correspondent pas",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+
+      if (error) throw error;
+
+      toast({
+        title: "✅ Mot de passe modifié !",
+        description: "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe",
+      });
+      
+      // Sign out and redirect to login
+      await supabase.auth.signOut();
+      setMode('login');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Une erreur est survenue",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +156,7 @@ const Auth = () => {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?mode=login`,
+        redirectTo: `${window.location.origin}/auth?mode=reset`,
       });
 
       if (error) throw error;
@@ -113,6 +179,10 @@ const Auth = () => {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isReset) {
+      return handleResetPassword(e);
+    }
 
     if (isForgot) {
       return handleForgotPassword(e);
@@ -198,12 +268,14 @@ const Auth = () => {
   };
 
   const getTitle = () => {
+    if (isReset) return "Créez votre nouveau mot de passe";
     if (isForgot) return "Réinitialisez votre mot de passe";
     if (isLogin) return "Connectez-vous à votre compte";
     return "Créez votre compte";
   };
 
   const getButtonText = () => {
+    if (isReset) return "Enregistrer le mot de passe";
     if (isForgot) return "Envoyer le lien";
     if (isLogin) return "Se connecter";
     return "S'inscrire";
@@ -238,6 +310,61 @@ const Auth = () => {
                 Retour à la connexion
               </Button>
             </div>
+          ) : isReset ? (
+            <form onSubmit={handleAuth} className="space-y-4">
+              <div className="text-center mb-4">
+                <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🔐</span>
+                </div>
+                <p className="text-muted-foreground text-sm">
+                  Choisissez un nouveau mot de passe sécurisé
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Nouveau mot de passe</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-background/50 border-border focus:border-accent"
+                  disabled={loading}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Min. 8 caractères, 1 majuscule, 1 chiffre
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="bg-background/50 border-border focus:border-accent"
+                  disabled={loading}
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-accent hover:bg-accent/90 text-primary font-semibold"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Chargement...
+                  </>
+                ) : (
+                  getButtonText()
+                )}
+              </Button>
+            </form>
           ) : (
             <form onSubmit={handleAuth} className="space-y-4">
               <div className="space-y-2">
