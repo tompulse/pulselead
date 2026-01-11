@@ -226,7 +226,7 @@ const Subscribe = () => {
                       <button
                         key={key}
                         onClick={() => setSelectedPlan(key as 'monthly' | 'quarterly' | 'yearly')}
-                        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all flex items-center gap-1 ${
                           selectedPlan === key 
                             ? 'bg-accent text-black shadow-lg' 
                             : 'text-white/70 hover:text-white'
@@ -234,7 +234,9 @@ const Subscribe = () => {
                       >
                         {plan.label}
                         {plan.savings && (
-                          <span className="ml-1 text-xs text-green-400">{plan.savings}</span>
+                          <span className={`text-xs font-bold ${selectedPlan === key ? 'text-green-700' : 'text-green-400'}`}>
+                            {plan.savings}
+                          </span>
                         )}
                       </button>
                     ))}
@@ -246,11 +248,15 @@ const Subscribe = () => {
                   background: 'rgba(0, 0, 0, 0.3)',
                   border: '1px solid rgba(6, 182, 212, 0.2)'
                 }}>
-                  <div className="flex items-baseline justify-center gap-2 mb-1">
+                  <div className="flex items-baseline justify-center gap-2 mb-2">
                     <span className="text-5xl font-bold gradient-text">{currentPlan.price}€</span>
                     <span className="text-xl text-muted-foreground">/mois</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{currentPlan.billingDetails}</p>
+                  {currentPlan.savings && (
+                    <span className="inline-block bg-green-600/20 text-green-400 px-4 py-1 rounded-full text-sm font-semibold border border-green-500/30">
+                      {currentPlan.savings} de réduction
+                    </span>
+                  )}
                 </div>
 
                 {/* Features */}
