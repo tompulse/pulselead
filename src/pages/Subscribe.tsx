@@ -90,10 +90,31 @@ const Subscribe = () => {
 
       if (error) throw error;
 
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
+      if (!data?.url) {
         throw new Error('No checkout URL received');
+      }
+
+      const checkoutUrl: string = data.url;
+      const inIframe = window.self !== window.top;
+
+      // Stripe Checkout ne se charge pas dans une iframe (comme l'aperçu Lovable).
+      // On ouvre donc dans un nouvel onglet (ou on "break out" si popup bloquée).
+      if (inIframe) {
+        const opened = window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
+        if (!opened) {
+          try {
+            window.top!.location.href = checkoutUrl;
+          } catch {
+            window.location.href = checkoutUrl;
+          }
+        } else {
+          toast({
+            title: 'Ouverture du paiement',
+            description: 'Le paiement s’ouvre dans un nouvel onglet.',
+          });
+        }
+      } else {
+        window.location.href = checkoutUrl;
       }
     } catch (error: any) {
       console.error('Checkout error:', error);
