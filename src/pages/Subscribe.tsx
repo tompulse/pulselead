@@ -161,7 +161,7 @@ const Subscribe = () => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-400 px-6 py-2 rounded-full mb-6 font-bold shadow-lg">
               <Sparkles className="w-5 h-5" />
-              7 jours d'essai gratuit • CB requise
+              7 jours d'essai gratuit
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Choisissez <span className="gradient-text">PULSE</span>
@@ -367,7 +367,7 @@ const Subscribe = () => {
               <div>
                 <h3 className="font-semibold mb-2">Comment fonctionne l'essai gratuit ?</h3>
                 <p className="text-sm text-muted-foreground">
-                  Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Votre carte bancaire est enregistrée mais vous ne serez débité qu'à la fin de la période d'essai si vous ne résiliez pas.
+                  Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Vous pouvez annuler à tout moment pendant cette période.
                 </p>
               </div>
               <div>
