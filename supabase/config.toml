@@ -38,3 +38,15 @@ verify_jwt = true
 
 [functions.import-nouveaux-sites-csv]
 verify_jwt = true
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.check-subscription]
+verify_jwt = false
+
+[functions.customer-portal]
+verify_jwt = false
+
+[functions.send-enterprise-inquiry]
+verify_jwt = false

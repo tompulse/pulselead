@@ -12,7 +12,7 @@ export const ROICalculator = () => {
   const conversionRate = 0.15; // 15% de conversion moyenne
   const extraDealsPerMonth = extraVisitsPerWeek * 4 * conversionRate;
   const monthlyGain = extraDealsPerMonth * avgCommission;
-  const planCost = 99;
+  const planCost = 49;
   const netGain = monthlyGain - planCost;
   const roi = ((monthlyGain - planCost) / planCost * 100).toFixed(0);
   

@@ -10,8 +10,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ContactSection from "@/components/landing/ContactSection";
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [selectedPlanCommercial, setSelectedPlanCommercial] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
-  const [selectedPlanPremium, setSelectedPlanPremium] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
 
   // Scroll animations
   const heroAnimation = useScrollAnimation({
@@ -38,22 +37,21 @@ const LandingPage = () => {
 
   const pricingPlans = {
     monthly: {
-      originalPrice: 99,
-      discountedPrice: 69,
+      price: 49,
       label: 'Mensuel',
-      billingDetails: 'Facturé mensuellement'
+      billingDetails: 'Facturé tous les mois'
     },
     quarterly: {
-      originalPrice: 79,
-      discountedPrice: 55,
+      price: 39,
       label: 'Trimestriel',
-      billingDetails: 'Soit 165€ au lieu de 237€'
+      savings: '-20%',
+      billingDetails: 'Soit 117€ au trimestre'
     },
     yearly: {
-      originalPrice: 59,
-      discountedPrice: 41,
+      price: 29,
       label: 'Annuel',
-      billingDetails: 'Soit 492€ au lieu de 708€'
+      savings: '-40%',
+      billingDetails: 'Soit 348€ à l\'année'
     }
   };
   return <div className="min-h-screen relative overflow-hidden" style={{
