@@ -436,7 +436,45 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_subscriptions_safe: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          stripe_customer_masked: string | null
+          stripe_subscription_masked: string | null
+          subscription_end_date: string | null
+          subscription_plan: string | null
+          subscription_start_date: string | null
+          subscription_status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string | null
+          stripe_customer_masked?: never
+          stripe_subscription_masked?: never
+          subscription_end_date?: string | null
+          subscription_plan?: string | null
+          subscription_start_date?: string | null
+          subscription_status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string | null
+          stripe_customer_masked?: never
+          stripe_subscription_masked?: never
+          subscription_end_date?: string | null
+          subscription_plan?: string | null
+          subscription_start_date?: string | null
+          subscription_status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_subscription_access: { Args: { _user_id: string }; Returns: Json }
