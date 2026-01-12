@@ -444,34 +444,87 @@ const Subscribe = () => {
             </div>
           </div>
 
-          {/* FAQ Section */}
+          {/* FAQ Section - Enhanced Legal Compliance */}
           <div className="bg-card/50 border border-border/50 rounded-lg p-8 max-w-3xl mx-auto backdrop-blur-sm">
             <h2 className="text-2xl font-bold mb-6 text-center">Questions fréquentes</h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold mb-2">Comment fonctionne l'essai gratuit ?</h3>
+            <div className="space-y-5">
+              <div className="border-b border-border/30 pb-4">
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">💳</span>
+                  Quand serai-je débité exactement ?
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Votre carte bancaire est enregistrée mais vous ne serez débité qu'à la fin de la période d'essai si vous ne résiliez pas.
+                  Votre carte bancaire ne sera débitée qu'à la fin de votre période d'essai de 7 jours. 
+                  <strong className="text-foreground"> Nous vous enverrons un email de rappel 3 jours avant le prélèvement</strong> pour que vous puissiez annuler si vous le souhaitez. 
+                  Si vous n'annulez pas, vous serez débité de 49€/mois automatiquement.
                 </p>
               </div>
-              <div>
-                <h3 className="font-semibold mb-2">Puis-je résilier à tout moment ?</h3>
+              
+              <div className="border-b border-border/30 pb-4">
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">🔄</span>
+                  Comment annuler mon essai ou mon abonnement ?
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Oui, votre abonnement est sans engagement. Vous pouvez l'annuler à tout moment depuis votre espace client.
+                  C'est simple et rapide, en 2 clics : allez dans <strong className="text-foreground">Paramètres → Mon Abonnement → "Gérer mon abonnement"</strong>. 
+                  Vous accéderez à votre espace de gestion sécurisé où vous pourrez annuler sans justification et sans frais cachés. 
+                  Un lien de résiliation est également inclus dans chaque email que nous vous envoyons.
                 </p>
               </div>
-              <div>
-                <h3 className="font-semibold mb-2">Y a-t-il un engagement minimum ?</h3>
+              
+              <div className="border-b border-border/30 pb-4">
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">⏸️</span>
+                  Que se passe-t-il si j'annule pendant l'essai ?
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Non, vous pouvez annuler à tout moment. L'abonnement reste actif jusqu'à la fin de la période payée.
+                  <strong className="text-foreground">Vous ne serez pas débité.</strong> Votre accès reste actif jusqu'à la fin des 7 jours d'essai, 
+                  puis il sera automatiquement désactivé. Aucune action supplémentaire requise.
                 </p>
               </div>
-              <div>
-                <h3 className="font-semibold mb-2">Comment fonctionne le remboursement ?</h3>
+              
+              <div className="border-b border-border/30 pb-4">
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">💾</span>
+                  Mes données sont-elles conservées si j'annule ?
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Si vous n'êtes pas satisfait dans les 14 premiers jours, contactez-nous et nous vous remboursons intégralement.
+                  <strong className="text-foreground">Oui, absolument !</strong> Vos tournées, prospects CRM, interactions et paramètres sont conservés indéfiniment. 
+                  Si vous vous réabonnez plus tard (même 6 mois après), vous retrouverez tout exactement comme vous l'aviez laissé.
                 </p>
               </div>
+              
+              <div className="border-b border-border/30 pb-4">
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">💰</span>
+                  Comment obtenir un remboursement ?
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Conformément au <strong className="text-foreground">droit de rétractation européen</strong>, vous disposez de 14 jours après le premier paiement 
+                  pour demander un remboursement intégral sans justification. Contactez-nous simplement à{' '}
+                  <a href="mailto:tomiolovpro@gmail.com" className="text-cyan-400 hover:underline">tomiolovpro@gmail.com</a>.
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">📧</span>
+                  Quels emails vais-je recevoir ?
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Vous recevrez : (1) un email de bienvenue avec les détails de votre essai, (2) un rappel 3 jours avant la fin de l'essai, 
+                  (3) une confirmation après chaque paiement. Vous pouvez gérer vos préférences depuis votre espace client.
+                </p>
+              </div>
+            </div>
+            
+            {/* Legal mention */}
+            <div className="mt-6 pt-4 border-t border-border/30">
+              <p className="text-xs text-muted-foreground text-center">
+                En cliquant sur "Commencer mon essai gratuit", vous acceptez qu'après 7 jours d'essai gratuit, 
+                votre carte bancaire soit débitée de 49€/mois. Vous pouvez annuler à tout moment avant la fin de l'essai 
+                pour ne pas être facturé. Conformément à la réglementation européenne, vous bénéficiez d'un droit de rétractation de 14 jours.
+              </p>
             </div>
           </div>
 
