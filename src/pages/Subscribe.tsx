@@ -63,7 +63,7 @@ const Subscribe = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   
-  const { hasAccess, isLoading: subscriptionLoading } = useSubscription(userId || undefined);
+  const { hasAccess, subscriptionStatus, isReturningUser, isLoading: subscriptionLoading } = useSubscription(userId || undefined);
   
   // Check if checkout was cancelled
   const checkoutCancelled = searchParams.get('checkout') === 'cancelled';
@@ -230,8 +230,15 @@ const Subscribe = () => {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            {/* Message personnalisé si l'utilisateur est connecté mais n'a pas d'abonnement */}
-            {userId && !hasAccess && (
+            {/* Message personnalisé pour les utilisateurs de retour (cancelled/expired) */}
+            {userId && !hasAccess && isReturningUser && (
+              <div className="bg-amber-500/20 border border-amber-500/30 text-amber-400 px-6 py-4 rounded-xl mb-6 max-w-xl mx-auto">
+                <p className="font-bold text-lg">🎉 Bon retour parmi nous !</p>
+                <p className="text-sm mt-1">Vos tournées et données CRM sont toujours là et vous attendent. Réactivez votre accès pour les retrouver.</p>
+              </div>
+            )}
+            {/* Message pour nouveaux utilisateurs connectés */}
+            {userId && !hasAccess && !isReturningUser && (
               <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 px-6 py-2 rounded-full mb-4 font-medium">
                 👋 Bienvenue ! Activez votre essai pour accéder à PULSE
               </div>

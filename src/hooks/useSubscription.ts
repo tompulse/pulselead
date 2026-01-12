@@ -5,9 +5,11 @@ import { useToast } from '@/hooks/use-toast';
 interface SubscriptionAccess {
   has_access: boolean;
   plan?: 'monthly';
+  status?: string; // 'active', 'trialing', 'cancelled', 'past_due'
   days_remaining?: number;
   end_date?: string;
-  reason?: string;
+  reason?: string; // 'no_subscription', 'expired', 'cancelled', etc.
+  is_returning_user?: boolean; // True if user had a previous subscription
 }
 
 export const useSubscription = (userId: string | undefined) => {
@@ -50,9 +52,11 @@ export const useSubscription = (userId: string | undefined) => {
   return {
     hasAccess: access?.has_access || false,
     subscriptionPlan: access?.plan,
+    subscriptionStatus: access?.status,
     daysRemaining: access?.days_remaining,
     endDate: access?.end_date,
     reason: access?.reason,
+    isReturningUser: access?.is_returning_user || false,
     isLoading,
     refresh: checkAccess
   };

@@ -224,6 +224,34 @@ serve(async (req) => {
         break;
       }
 
+      // Gestion du paiement réussi après trial (conversion trialing -> active)
+      case "invoice.paid": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const subscriptionId = invoice.subscription as string;
+        logStep("Invoice paid", { invoiceId: invoice.id, subscriptionId });
+
+        if (subscriptionId) {
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          
+          // Mettre à jour le statut vers 'active' après paiement réussi
+          const { error } = await supabaseAdmin
+            .from('user_subscriptions')
+            .update({
+              subscription_status: subscription.status, // 'active'
+              subscription_end_date: unixToISOString(subscription.current_period_end),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('stripe_subscription_id', subscriptionId);
+
+          if (error) {
+            logStep("Error updating subscription after payment", { error: error.message });
+          } else {
+            logStep("Subscription activated after payment", { status: subscription.status });
+          }
+        }
+        break;
+      }
+
       default:
         logStep("Unhandled event type", { type: event.type });
     }
