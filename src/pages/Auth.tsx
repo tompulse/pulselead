@@ -75,6 +75,13 @@ const Auth = () => {
     password: z.string().min(6, 'Minimum 6 caractères requis')
   });
 
+  // Get redirect destination from URL params
+  const redirectTo = searchParams.get('redirect');
+  const getRedirectPath = () => {
+    if (redirectTo === 'subscribe') return '/subscribe';
+    return '/dashboard';
+  };
+
   useEffect(() => {
     // Listen for auth changes FIRST - this is critical for PASSWORD_RECOVERY
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -98,7 +105,7 @@ const Auth = () => {
       
       // For other events, redirect if logged in
       if (session && event === 'SIGNED_IN') {
-        navigate("/dashboard");
+        navigate(getRedirectPath());
       }
     });
 
@@ -110,13 +117,13 @@ const Auth = () => {
     if (shouldCheckSession) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session && !isRecoveryHandled && mode !== 'reset') {
-          navigate("/dashboard");
+          navigate(getRedirectPath());
         }
       });
     }
 
     return () => subscription.unsubscribe();
-  }, [navigate, mode, isRecoveryHandled, initialMode]);
+  }, [navigate, mode, isRecoveryHandled, initialMode, redirectTo]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();

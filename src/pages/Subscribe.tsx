@@ -117,12 +117,8 @@ const Subscribe = () => {
       const { data: sessionData } = await supabase.auth.getSession();
       
       if (!sessionData.session) {
-        toast({
-          title: 'Connexion requise',
-          description: 'Veuillez vous connecter pour souscrire à un abonnement',
-          variant: 'destructive',
-        });
-        navigate('/auth');
+        // Redirect to auth with return URL to come back here after login
+        navigate('/auth?redirect=subscribe');
         return;
       }
 
