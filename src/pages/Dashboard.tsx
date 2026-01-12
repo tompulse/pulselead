@@ -7,6 +7,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 
 import { DashboardProvider, useDashboard } from "@/contexts/DashboardContext";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { SubscriptionStatusBanner } from "@/components/dashboard/SubscriptionStatusBanner";
 import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprisePanel";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
@@ -40,7 +41,7 @@ const DashboardContent = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const { hasAccess, isLoading: subscriptionLoading, daysRemaining } = useSubscription(userId || undefined);
+  const { hasAccess, isLoading: subscriptionLoading, daysRemaining, subscriptionStatus, endDate } = useSubscription(userId || undefined);
 
   const activeFiltersCount = 
     (filters.nafSections?.length || 0) + 
@@ -223,7 +224,17 @@ const DashboardContent = () => {
         }}
       />
       
-      <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4">
+      {/* Subscription Status Banner - Legal compliance */}
+      <div className="px-4 pt-4">
+        <SubscriptionStatusBanner 
+          status={subscriptionStatus}
+          daysRemaining={daysRemaining}
+          endDate={endDate}
+          isLoading={subscriptionLoading}
+        />
+      </div>
+      
+      <div className="flex flex-1 overflow-hidden min-h-0 gap-4 p-4 pt-0">
         <main className="flex-1 overflow-hidden min-h-0">
           {view === 'prospects' && userId && (
             <ProspectsViewContainer 

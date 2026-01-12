@@ -50,3 +50,10 @@ verify_jwt = false
 
 [functions.send-enterprise-inquiry]
 verify_jwt = false
+
+[functions.send-trial-reminder]
+verify_jwt = false
+
+[functions.check-trial-reminders]
+verify_jwt = false
+schedule = "0 9 * * *"

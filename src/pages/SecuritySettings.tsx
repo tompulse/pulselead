@@ -3,10 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AuditLogViewer } from "@/components/dashboard/AuditLogViewer";
-import { ArrowLeft, Shield, AlertTriangle, RefreshCw, Sparkles, Trash2, Download } from "lucide-react";
+import { ArrowLeft, Shield, AlertTriangle, RefreshCw, Sparkles, Trash2, Download, CreditCard, Calendar, ExternalLink, Clock, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscription } from "@/hooks/useSubscription";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,6 +42,10 @@ export default function SecuritySettings() {
   const [deletePassword, setDeletePassword] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isOpeningPortal, setIsOpeningPortal] = useState(false);
+  
+  const { subscriptionStatus, subscriptionPlan, daysRemaining, endDate, isLoading: subscriptionLoading } = useSubscription(userId || undefined);
 
   useEffect(() => {
     checkAdminStatus();
@@ -48,6 +55,8 @@ export default function SecuritySettings() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      setUserId(user.id);
 
       const { data: adminCheck } = await supabase.rpc('has_role', {
         _user_id: user.id,
@@ -214,6 +223,72 @@ export default function SecuritySettings() {
     }
   };
 
+  const handleOpenPortal = async () => {
+    setIsOpeningPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        throw new Error('URL du portail non disponible');
+      }
+    } catch (error: any) {
+      console.error('Error opening customer portal:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Impossible d\'ouvrir le portail de gestion. Réessayez plus tard.'
+      });
+    } finally {
+      setIsOpeningPortal(false);
+    }
+  };
+
+  const getStatusBadge = () => {
+    switch (subscriptionStatus) {
+      case 'trialing':
+        return (
+          <Badge variant="outline" className="bg-cyan-500/10 text-cyan-400 border-cyan-500/30">
+            <Clock className="w-3 h-3 mr-1" />
+            Essai gratuit
+          </Badge>
+        );
+      case 'active':
+        return (
+          <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30">
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+            Actif
+          </Badge>
+        );
+      case 'past_due':
+        return (
+          <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/30">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Paiement en attente
+          </Badge>
+        );
+      case 'cancelled':
+        return (
+          <Badge variant="outline" className="bg-gray-500/10 text-gray-400 border-gray-500/30">
+            Annulé
+          </Badge>
+        );
+      default:
+        return (
+          <Badge variant="outline" className="bg-gray-500/10 text-gray-400 border-gray-500/30">
+            Aucun abonnement
+          </Badge>
+        );
+    }
+  };
+
+  const formattedEndDate = endDate 
+    ? format(new Date(endDate), "d MMMM yyyy", { locale: fr })
+    : null;
+
   return (
     <div className="min-h-screen bg-background">
       <header className="glass-card border-b border-accent/20 px-4 py-3">
@@ -229,12 +304,140 @@ export default function SecuritySettings() {
           </Button>
           <div className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-accent" />
-            <h1 className="text-xl font-bold gradient-text">Sécurité</h1>
+            <h1 className="text-xl font-bold gradient-text">Paramètres</h1>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8 space-y-6">
+        {/* Section Mon Abonnement - Premier élément */}
+        <Card className="glass-card border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-transparent">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-cyan-400" />
+              Mon Abonnement
+            </CardTitle>
+            <CardDescription>
+              Gérez votre abonnement et vos informations de paiement
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {subscriptionLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <RefreshCw className="w-6 h-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : (
+              <>
+                {/* Status Row */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-lg border border-accent/20 bg-background/50">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Statut</span>
+                      {getStatusBadge()}
+                    </div>
+                    {subscriptionPlan && (
+                      <p className="text-sm text-muted-foreground">
+                        Plan : <span className="text-foreground">Commercial Solo — 49€/mois</span>
+                      </p>
+                    )}
+                  </div>
+                  
+                  <Button
+                    onClick={handleOpenPortal}
+                    disabled={isOpeningPortal || !subscriptionStatus}
+                    variant="outline"
+                    className="gap-2 border-cyan-500/30 hover:bg-cyan-500/10"
+                  >
+                    {isOpeningPortal ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Chargement...
+                      </>
+                    ) : (
+                      <>
+                        Gérer mon abonnement
+                        <ExternalLink className="w-4 h-4" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {/* Info Row - Trial or Active */}
+                {subscriptionStatus === 'trialing' && (
+                  <div className="p-4 rounded-lg border border-amber-500/20 bg-amber-500/5">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-amber-500/10 rounded-lg shrink-0">
+                        <Calendar className="w-4 h-4 text-amber-400" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-medium text-amber-400">Période d'essai</p>
+                        <p className="text-sm text-muted-foreground">
+                          {daysRemaining !== undefined && daysRemaining > 0 ? (
+                            <>Il vous reste <strong className="text-foreground">{daysRemaining} jour{daysRemaining > 1 ? 's' : ''}</strong> d'essai gratuit.</>
+                          ) : (
+                            <>Votre essai se termine aujourd'hui.</>
+                          )}
+                        </p>
+                        {formattedEndDate && (
+                          <p className="text-sm text-muted-foreground">
+                            Premier prélèvement prévu le <strong className="text-foreground">{formattedEndDate}</strong> (49€)
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {subscriptionStatus === 'active' && formattedEndDate && (
+                  <div className="p-4 rounded-lg border border-green-500/20 bg-green-500/5">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
+                        <CheckCircle2 className="w-4 h-4 text-green-400" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-medium text-green-400">Abonnement actif</p>
+                        <p className="text-sm text-muted-foreground">
+                          Prochain renouvellement le <strong className="text-foreground">{formattedEndDate}</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {subscriptionStatus === 'past_due' && (
+                  <div className="p-4 rounded-lg border border-red-500/20 bg-red-500/5">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-red-500/10 rounded-lg shrink-0">
+                        <AlertTriangle className="w-4 h-4 text-red-400" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-medium text-red-400">Paiement échoué</p>
+                        <p className="text-sm text-muted-foreground">
+                          Votre dernier paiement a échoué. Veuillez mettre à jour votre moyen de paiement pour continuer à utiliser PULSE.
+                        </p>
+                        <Button 
+                          onClick={handleOpenPortal} 
+                          size="sm" 
+                          variant="destructive" 
+                          className="mt-2"
+                        >
+                          Mettre à jour ma carte
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Help text */}
+                <p className="text-xs text-muted-foreground">
+                  Depuis le portail de gestion, vous pouvez modifier votre carte bancaire, télécharger vos factures ou annuler votre abonnement. 
+                  La résiliation prend effet à la fin de la période payée.
+                </p>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Statut de sécurité */}
         <Card className="glass-card border-accent/20">
           <CardHeader>
