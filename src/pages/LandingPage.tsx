@@ -119,9 +119,8 @@ const LandingPage = () => {
                 <br />
                 <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">Roulez moins.</span>
               </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto pt-2">
-                Cartographie de votre territoire • Tournées optimisées • CRM simple et mobile pour suivre vos visites sur le terrain
-              </p>
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto pt-2">Cartographie de votre territoire • Tournées optimisées
+CRM simple pour suivre vos visites sur le terrain</p>
               <div className="flex justify-center py-6">
                 <Button onClick={() => navigate('/subscribe')} className="btn-hero-pulse">
                   Essayer gratuitement 7 jours
@@ -342,10 +341,10 @@ const LandingPage = () => {
                 
                 {/* PULSE Offer */}
                 <Card className="relative overflow-visible flex flex-col" style={{
-                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
-                  border: '2px solid rgba(6, 182, 212, 0.5)',
-                  boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
-                }}>
+                background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
+                border: '2px solid rgba(6, 182, 212, 0.5)',
+                boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+              }}>
                   {/* Badge essai gratuit */}
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
                     🎁 7 JOURS D'ESSAI GRATUIT
@@ -354,9 +353,9 @@ const LandingPage = () => {
                   <div className="p-6 md:p-8 pt-10 flex flex-col flex-1">
                     <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial Solo</h3>
                     <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      border: '1px solid rgba(6, 182, 212, 0.2)'
-                    }}>
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(6, 182, 212, 0.2)'
+                  }}>
                       <div className="flex items-baseline justify-center gap-2 mb-1">
                         <span className="text-4xl md:text-5xl font-bold gradient-text">49€</span>
                         <span className="text-base text-white/60">/mois</span>
@@ -430,16 +429,16 @@ const LandingPage = () => {
 
                 {/* Sur Mesure / Enterprise */}
                 <Card className="relative overflow-visible flex flex-col" style={{
-                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                  border: '2px solid rgba(14, 165, 233, 0.3)',
-                  boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                }}>
+                background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                border: '2px solid rgba(14, 165, 233, 0.3)',
+                boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              }}>
                   <div className="p-6 md:p-8 flex flex-col flex-1">
                     <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Équipes Commerciales</h3>
                     <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      border: '1px solid rgba(14, 165, 233, 0.2)'
-                    }}>
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(14, 165, 233, 0.2)'
+                  }}>
                       <div className="flex items-baseline justify-center gap-2">
                         <span className="text-3xl md:text-4xl font-bold gradient-text">
                           Sur devis
@@ -655,11 +654,7 @@ const LandingPage = () => {
 
         {/* Sticky CTA Mobile */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
-          <Button 
-            onClick={() => navigate('/subscribe')} 
-            className="w-full bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold py-4 rounded-full shadow-lg shadow-accent/40"
-            aria-label="Essayer gratuitement"
-          >
+          <Button onClick={() => navigate('/subscribe')} className="w-full bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold py-4 rounded-full shadow-lg shadow-accent/40" aria-label="Essayer gratuitement">
             Essayer gratuitement 7 jours
             <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
           </Button>
