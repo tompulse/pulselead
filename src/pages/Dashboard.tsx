@@ -154,14 +154,11 @@ const DashboardContent = () => {
     if (!loading && !adminLoading && !subscriptionLoading && userId) {
       // Bypass pour admins et utilisateur démo
       if (!isAdmin && !isDemoUser && !hasAccess) {
-        toast({
-          title: "Abonnement requis",
-          description: "Commencez votre essai gratuit de 7 jours pour accéder à PULSE",
-        });
+        // Redirection silencieuse - la page subscribe explique déjà tout
         navigate("/subscribe");
       }
     }
-  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate, toast]);
+  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate]);
 
 
   const handleLogout = async () => {
