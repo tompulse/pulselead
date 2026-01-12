@@ -18,14 +18,18 @@ serve(async (req) => {
   }
 
   try {
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
-    
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    if (!webhookSecret) throw new Error("STRIPE_WEBHOOK_SECRET is not set");
+    const stripeKeyLive = Deno.env.get("STRIPE_SECRET_KEY");
+    const stripeKeyTest = Deno.env.get("STRIPE_SECRET_TEST") ?? stripeKeyLive;
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    
+    const webhookSecretTest = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+    const webhookSecretLive = Deno.env.get("STRIPE_WEBHOOK_SECRET_LIVE"); // optionnel (prod)
+
+    if (!stripeKeyTest && !stripeKeyLive) throw new Error("No Stripe secret key is set");
+    if (!webhookSecretTest && !webhookSecretLive) throw new Error("No Stripe webhook secret is set");
+
+    // Utilisé uniquement pour vérifier la signature (la clé n'est pas utilisée pour ce calcul)
+    const stripeForWebhook = new Stripe(stripeKeyTest ?? stripeKeyLive!, { apiVersion: "2025-08-27.basil" });
+
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
@@ -38,14 +42,41 @@ serve(async (req) => {
     let event: Stripe.Event;
 
     try {
-      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
-    } catch (err) {
-      logStep("Webhook signature verification failed", { error: err.message });
-      return new Response(JSON.stringify({ error: "Invalid signature" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      });
+      if (webhookSecretTest) {
+        event = await stripeForWebhook.webhooks.constructEventAsync(body, signature, webhookSecretTest);
+        logStep("Webhook signature verified", { mode: "test" });
+      } else {
+        throw new Error("No STRIPE_WEBHOOK_SECRET (test) configured");
+      }
+    } catch (err: any) {
+      // Fallback: si on a un secret live, on tente aussi
+      if (webhookSecretLive) {
+        try {
+          event = await stripeForWebhook.webhooks.constructEventAsync(body, signature, webhookSecretLive);
+          logStep("Webhook signature verified", { mode: "live" });
+        } catch (err2: any) {
+          logStep("Webhook signature verification failed", { error: err2?.message ?? String(err2) });
+          return new Response(JSON.stringify({ error: "Invalid signature" }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 400,
+          });
+        }
+      } else {
+        logStep("Webhook signature verification failed", { error: err?.message ?? String(err) });
+        return new Response(JSON.stringify({ error: "Invalid signature" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        });
+      }
     }
+
+    // Important: utiliser la clé Stripe qui correspond au mode de l'événement
+    const stripeApiKey = event.livemode ? stripeKeyLive : stripeKeyTest;
+    if (!stripeApiKey) {
+      throw new Error(event.livemode ? "STRIPE_SECRET_KEY (live) is not set" : "STRIPE_SECRET_TEST is not set");
+    }
+
+    const stripe = new Stripe(stripeApiKey, { apiVersion: "2025-08-27.basil" });
 
     logStep("Webhook received", { type: event.type });
 
