@@ -52,10 +52,10 @@ export const HeroSection = () => {
         {/* CTA Principal unique et fort */}
         <div className="flex flex-col items-center gap-3 pt-3 px-4">
           <button 
-            onClick={() => navigate("/auth")}
+            onClick={() => navigate("/subscribe")}
             className="group relative btn-hero inline-flex items-center justify-center gap-2.5 w-full sm:w-auto min-w-[240px] px-6 sm:px-8 py-3 sm:py-4 shadow-2xl shadow-accent/50 hover:shadow-accent/60 text-sm sm:text-base md:text-lg font-bold hover:scale-105 transition-all duration-300"
           >
-            Démarrer gratuitement
+            Essayer gratuitement 7 jours
             <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
           </button>
           
@@ -63,12 +63,12 @@ export const HeroSection = () => {
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground/80">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-accent" />
-              <span className="text-foreground font-medium">Aucune carte bancaire</span>
+              <span className="text-foreground font-medium">7 jours gratuits</span>
             </div>
             <span className="hidden sm:inline text-muted-foreground/40">•</span>
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-accent" />
-              <span className="text-foreground font-medium">Configuration en 2 min</span>
+              <span className="text-foreground font-medium">Sans engagement</span>
             </div>
           </div>
           
