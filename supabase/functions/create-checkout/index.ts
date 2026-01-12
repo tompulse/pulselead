@@ -74,12 +74,27 @@ serve(async (req) => {
         metadata: {
           user_id: user.id,
         },
+        description: "Accès complet à PULSE pendant 7 jours gratuits, puis 49€/mois",
+      },
+      // Personnalisation du checkout
+      custom_text: {
+        submit: {
+          message: "🚀 Vous ne serez débité que dans 7 jours. Annulez à tout moment.",
+        },
+        terms_of_service_acceptance: {
+          message: "En continuant, vous acceptez nos [conditions générales](https://pulse.lovable.app/cgu)",
+        },
+      },
+      consent_collection: {
+        terms_of_service: "required",
       },
       success_url: `${origin}/checkout-success?trial=true`,
       cancel_url: `${origin}/subscribe?checkout=cancelled`,
       metadata: {
         user_id: user.id,
       },
+      // Locale français
+      locale: "fr",
     });
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
