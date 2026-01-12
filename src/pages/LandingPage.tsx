@@ -164,10 +164,6 @@ CRM simple pour suivre vos visites sur le terrain</p>
                   <span>Conforme RGPD</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Essai gratuit 7 jours</span>
-                </div>
-                <div className="flex items-center gap-2">
                   <Database className="w-4 h-4 text-accent" />
                   <span>Données publiques officielles</span>
                 </div>
