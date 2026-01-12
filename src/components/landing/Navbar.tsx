@@ -73,10 +73,10 @@ export const Navbar = () => {
               </a>
             </Button>
             <Button 
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate("/subscribe")}
               className="relative bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold text-sm px-6 py-2.5 rounded-full shadow-lg shadow-accent/40 hover:shadow-xl hover:shadow-accent/60 hover:scale-105 transition-all duration-300"
             >
-              Démarrer gratuitement
+              Essayer 7 jours gratuits
             </Button>
           </div>
 
@@ -149,12 +149,12 @@ export const Navbar = () => {
               </Button>
               <Button 
                 onClick={() => {
-                  navigate("/auth");
+                  navigate("/subscribe");
                   setMobileMenuOpen(false);
                 }}
                 className="w-full shadow-lg shadow-accent/30"
               >
-                Démarrer gratuitement
+                Essayer 7 jours gratuits
               </Button>
             </div>
           </div>

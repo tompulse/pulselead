@@ -40,10 +40,10 @@ export const CTASection = () => {
 
           <div className="pt-3">
             <button 
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate("/subscribe")}
               className="group btn-hero inline-flex items-center gap-2 text-base md:text-lg px-6 md:px-8 py-3 md:py-3.5 shadow-2xl shadow-accent/40 hover:shadow-accent/50"
             >
-              Démarrer gratuitement
+              Essayer gratuitement 7 jours
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
