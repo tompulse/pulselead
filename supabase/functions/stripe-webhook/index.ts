@@ -12,6 +12,14 @@ const logStep = (step: string, details?: any) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
 
+const unixToISOString = (unixSeconds?: number | null): string | null => {
+  if (typeof unixSeconds !== "number") return null;
+  const ms = unixSeconds * 1000;
+  if (!Number.isFinite(ms)) return null;
+  const d = new Date(ms);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -106,8 +114,8 @@ serve(async (req) => {
             stripe_subscription_id: subscriptionId,
             subscription_status: subscription.status, // 'trialing' for 7-day trial
             subscription_plan: plan,
-            subscription_start_date: new Date(subscription.current_period_start * 1000).toISOString(),
-            subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+            subscription_start_date: unixToISOString(subscription.current_period_start),
+            subscription_end_date: unixToISOString(subscription.current_period_end),
             updated_at: new Date().toISOString(),
           };
 
@@ -123,17 +131,19 @@ serve(async (req) => {
 
           // Send welcome email for trial start
           if (subscription.status === 'trialing') {
+            const trialEndIso = unixToISOString(subscription.trial_end ?? null);
+
             try {
               await supabaseAdmin.functions.invoke('send-welcome', {
-                body: { 
-                  userId, 
+                body: {
+                  userId,
                   email: session.customer_email || session.customer_details?.email,
-                  trialEnd: new Date(subscription.trial_end! * 1000).toISOString()
-                }
+                  trialEnd: trialEndIso,
+                },
               });
-              logStep("Welcome email triggered");
-            } catch (emailError) {
-              logStep("Error sending welcome email", { error: emailError.message });
+              logStep("Welcome email triggered", { trialEnd: trialEndIso });
+            } catch (emailError: any) {
+              logStep("Error sending welcome email", { error: emailError?.message ?? String(emailError) });
             }
           }
         }
@@ -155,7 +165,7 @@ serve(async (req) => {
             .from('user_subscriptions')
             .update({
               subscription_status: subscription.status,
-              subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+              subscription_end_date: unixToISOString(subscription.current_period_end),
               updated_at: new Date().toISOString(),
             })
             .eq('stripe_subscription_id', subscription.id);

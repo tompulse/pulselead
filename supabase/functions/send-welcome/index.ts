@@ -49,7 +49,9 @@ serve(async (req) => {
     const displayName = name || email.split('@')[0].replace(/[._]/g, ' ');
 
     const { data, error } = await resend.emails.send({
-      from: "PULSE <noreply@pulse.lovable.app>",
+      // Important: en mode dev/test, utiliser un expéditeur Resend vérifié.
+      // Pour envoyer depuis @pulse.lovable.app, il faut d'abord vérifier le domaine chez Resend.
+      from: "PULSE <onboarding@resend.dev>",
       to: [email],
       subject: "🚀 Bienvenue sur PULSE - Votre essai gratuit a commencé !",
       html: `
@@ -161,7 +163,13 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : JSON.stringify(error);
+
     logStep("ERROR in send-welcome", { message: errorMessage });
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
