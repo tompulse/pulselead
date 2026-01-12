@@ -76,30 +76,23 @@ const Auth = () => {
   });
 
   useEffect(() => {
-    // Check if we're coming from a recovery link (hash contains recovery token)
-    const hash = window.location.hash;
-    const isRecoveryLink = hash.includes('type=recovery');
-    
-    if (isRecoveryLink && !isRecoveryHandled) {
-      setMode('reset');
-      setIsRecoveryHandled(true);
-      // Clear the hash to prevent issues on refresh
-      window.history.replaceState(null, '', window.location.pathname + '?mode=reset');
-    }
-
-    // Listen for auth changes
+    // Listen for auth changes FIRST - this is critical for PASSWORD_RECOVERY
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth event:', event, 'Mode:', mode, 'isReset:', isReset);
+      console.log('Auth event:', event, 'Session:', !!session, 'isRecoveryHandled:', isRecoveryHandled);
       
       // Handle password recovery event - show reset form
       if (event === 'PASSWORD_RECOVERY') {
+        console.log('PASSWORD_RECOVERY event detected, showing reset form');
         setMode('reset');
         setIsRecoveryHandled(true);
+        // Clean URL without losing the session
+        window.history.replaceState(null, '', window.location.pathname + '?mode=reset');
         return; // Don't redirect, let user set new password
       }
       
       // CRITICAL: Never redirect if we're in reset mode or handling recovery
-      if (isRecoveryHandled) {
+      if (isRecoveryHandled || mode === 'reset') {
+        console.log('In reset mode, not redirecting');
         return;
       }
       
@@ -109,18 +102,21 @@ const Auth = () => {
       }
     });
 
-    // Check for existing session - but NOT if we're in reset mode
-    const shouldCheckSession = initialMode !== 'reset' && !window.location.hash.includes('type=recovery');
+    // Check for existing session - but NOT if we're in reset mode or have recovery token in URL
+    const hash = window.location.hash;
+    const hasRecoveryToken = hash.includes('type=recovery') || hash.includes('access_token');
+    const shouldCheckSession = initialMode !== 'reset' && !hasRecoveryToken;
+    
     if (shouldCheckSession) {
       supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session && !isRecoveryHandled) {
+        if (session && !isRecoveryHandled && mode !== 'reset') {
           navigate("/dashboard");
         }
       });
     }
 
     return () => subscription.unsubscribe();
-  }, [navigate, mode, isReset, isRecoveryHandled]);
+  }, [navigate, mode, isRecoveryHandled, initialMode]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
