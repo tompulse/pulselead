@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Check, ArrowRight, Sparkles, Building2, Send, Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Prix ID Stripe - Plan mensuel à 49€/mois
 const STRIPE_PRICE_ID = 'price_1SoTNkHjyidZ5i9LuxvK8Tzq';
@@ -56,8 +57,16 @@ const enterpriseFeatures = [
 
 const Subscribe = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  
+  const { hasAccess, isLoading: subscriptionLoading } = useSubscription(userId || undefined);
+  
+  // Check if checkout was cancelled
+  const checkoutCancelled = searchParams.get('checkout') === 'cancelled';
   
   // Enterprise form state
   const [enterpriseForm, setEnterpriseForm] = useState({
@@ -68,6 +77,39 @@ const Subscribe = () => {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check auth status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setUserId(session.user.id);
+      }
+      setIsCheckingAuth(false);
+    };
+    checkAuth();
+  }, []);
+
+  // Show toast if checkout was cancelled
+  useEffect(() => {
+    if (checkoutCancelled) {
+      toast({
+        title: "Paiement annulé",
+        description: "Vous pouvez réessayer quand vous le souhaitez",
+      });
+    }
+  }, [checkoutCancelled, toast]);
+
+  // Redirect to dashboard if user already has access
+  useEffect(() => {
+    if (!isCheckingAuth && !subscriptionLoading && userId && hasAccess) {
+      toast({
+        title: "Vous avez déjà un abonnement actif",
+        description: "Redirection vers votre tableau de bord...",
+      });
+      navigate('/dashboard');
+    }
+  }, [isCheckingAuth, subscriptionLoading, userId, hasAccess, navigate, toast]);
 
   const handleSubscribe = async () => {
     setIsLoading(true);
@@ -163,7 +205,20 @@ const Subscribe = () => {
     }
   };
 
-  
+  // Show loading while checking auth/subscription
+  if (isCheckingAuth || (userId && subscriptionLoading)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{
+        background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))'
+      }}>
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold text-accent">PULSE</h1>
+          <p className="text-muted-foreground">Vérification de votre compte...</p>
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{
@@ -179,12 +234,18 @@ const Subscribe = () => {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
+            {/* Message personnalisé si l'utilisateur est connecté mais n'a pas d'abonnement */}
+            {userId && !hasAccess && (
+              <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 px-6 py-2 rounded-full mb-4 font-medium">
+                👋 Bienvenue ! Activez votre essai pour accéder à PULSE
+              </div>
+            )}
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-400 px-6 py-2 rounded-full mb-6 font-bold shadow-lg">
               <Sparkles className="w-5 h-5" />
               7 jours d'essai gratuit • CB requise
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Choisissez <span className="gradient-text">PULSE</span>
+              {userId ? 'Activez votre accès à' : 'Choisissez'} <span className="gradient-text">PULSE</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Testez toutes les fonctionnalités gratuitement pendant 7 jours

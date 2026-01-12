@@ -154,10 +154,14 @@ const DashboardContent = () => {
     if (!loading && !adminLoading && !subscriptionLoading && userId) {
       // Bypass pour admins et utilisateur démo
       if (!isAdmin && !isDemoUser && !hasAccess) {
+        toast({
+          title: "Abonnement requis",
+          description: "Commencez votre essai gratuit de 7 jours pour accéder à PULSE",
+        });
         navigate("/subscribe");
       }
     }
-  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate]);
+  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate, toast]);
 
 
   const handleLogout = async () => {
@@ -183,12 +187,16 @@ const DashboardContent = () => {
     });
   };
 
-  if (loading) {
+  // Loading state amélioré
+  if (loading || adminLoading || subscriptionLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-accent">PULSE</h1>
-          <p className="text-muted-foreground text-base">Chargement...</p>
+          <p className="text-muted-foreground text-base">
+            {subscriptionLoading ? "Vérification de votre abonnement..." : "Chargement..."}
+          </p>
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
     );
