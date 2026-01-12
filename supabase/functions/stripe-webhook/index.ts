@@ -108,14 +108,23 @@ serve(async (req) => {
           // Plan unique mensuel
           const plan = 'monthly';
 
+          // En mode trial, utiliser trial_start/trial_end au lieu de current_period_start/end
+          const startDate = subscription.status === 'trialing' && subscription.trial_start
+            ? unixToISOString(subscription.trial_start)
+            : unixToISOString(subscription.current_period_start);
+          
+          const endDate = subscription.status === 'trialing' && subscription.trial_end
+            ? unixToISOString(subscription.trial_end)
+            : unixToISOString(subscription.current_period_end);
+
           const subscriptionData = {
             user_id: userId,
             stripe_customer_id: session.customer as string,
             stripe_subscription_id: subscriptionId,
             subscription_status: subscription.status, // 'trialing' for 7-day trial
             subscription_plan: plan,
-            subscription_start_date: unixToISOString(subscription.current_period_start),
-            subscription_end_date: unixToISOString(subscription.current_period_end),
+            subscription_start_date: startDate,
+            subscription_end_date: endDate,
             updated_at: new Date().toISOString(),
           };
 
