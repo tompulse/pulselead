@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar, RotateCcw, FileText, CheckCircle2, XCircle, Phone } from 'lucide-react';
 import { ActivityDetailSheet } from '@/components/dashboard/ActivityDetailSheet';
+import { PipelineDetailSheet } from '@/components/dashboard/PipelineDetailSheet';
 import { toast } from 'sonner';
 
 interface LeadWithSite {
@@ -26,7 +27,9 @@ const OFFER_STAGES = [
   { key: 'devis_a_faire', label: 'Devis à faire', icon: FileText, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20', borderColor: 'border-indigo-500/20' },
   { key: 'devis_refuse', label: 'Devis refusé', icon: XCircle, color: 'text-red-400', bgColor: 'bg-red-500/20', borderColor: 'border-red-500/20' },
   { key: 'devis_accepte', label: 'Devis accepté', icon: CheckCircle2, color: 'text-green-400', bgColor: 'bg-green-500/20', borderColor: 'border-green-500/20' },
-];
+] as const;
+
+type PipelineStageKey = typeof OFFER_STAGES[number]['key'];
 
 export const CRMViewContainer = ({ 
   userId, 
@@ -36,6 +39,7 @@ export const CRMViewContainer = ({
   onEntrepriseSelect?: (entrepriseId: string) => void 
 }) => {
   const [selectedActivity, setSelectedActivity] = useState<'rdv' | 'a_revoir' | 'a_rappeler' | null>(null);
+  const [selectedPipelineStage, setSelectedPipelineStage] = useState<PipelineStageKey | null>(null);
   const queryClient = useQueryClient();
 
   // Fetch interactions for activity stats
@@ -208,7 +212,12 @@ export const CRMViewContainer = ({
             return (
               <Card 
                 key={stage.key}
-                className={`glass-card ${stage.borderColor} transition-all duration-200 flex`}
+                className={`glass-card ${stage.borderColor} cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg flex`}
+                onClick={() => setSelectedPipelineStage(stage.key)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Voir les ${count} leads ${stage.label}`}
+                onKeyDown={(e) => e.key === 'Enter' && setSelectedPipelineStage(stage.key)}
               >
                 <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
                   <div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full ${stage.bgColor} flex items-center justify-center mb-2 sm:mb-3`}>
@@ -222,6 +231,15 @@ export const CRMViewContainer = ({
           })}
         </div>
       </div>
+
+      {/* Pipeline Detail Sheet */}
+      <PipelineDetailSheet
+        isOpen={selectedPipelineStage !== null}
+        onClose={() => setSelectedPipelineStage(null)}
+        stageKey={selectedPipelineStage}
+        userId={userId}
+        onEntrepriseSelect={onEntrepriseSelect}
+      />
     </div>
   );
 };

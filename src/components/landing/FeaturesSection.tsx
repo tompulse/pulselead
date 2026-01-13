@@ -43,10 +43,10 @@ export const FeaturesSection = () => {
     <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16">
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-2xl lg:text-3xl font-bold">
-          Les 3 piliers de <span className="gradient-text">PULSE</span>
+          Fonctionnalités <span className="gradient-text">PULSE</span>
         </h2>
         <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
-          Cartographie + Tournées optimisées + CRM terrain = Plus de temps pour vendre
+          Tout ce dont vous avez besoin pour prospecter efficacement
         </p>
       </div>
 

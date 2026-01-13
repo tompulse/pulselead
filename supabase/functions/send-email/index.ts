@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
             email: user.email,
           })
         )
-        subject = '🎉 Bienvenue sur LUMA !'
+        subject = '🎉 Bienvenue sur PULSE !'
         break
 
       case 'magiclink':
@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
             token,
           })
         )
-        subject = '🔐 Votre lien de connexion LUMA'
+        subject = '🔐 Votre lien de connexion PULSE'
         break
 
       case 'recovery':
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
 
     // Envoyer l'email via Resend
     const { error } = await resend.emails.send({
-      from: 'LUMA <onboarding@resend.dev>',
+      from: 'PULSE <onboarding@resend.dev>',
       to: [user.email],
       subject,
       html,

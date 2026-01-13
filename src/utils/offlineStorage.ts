@@ -3,7 +3,7 @@
  * Stocke les données entreprises dans IndexedDB pour accès hors-ligne
  */
 
-const DB_NAME = 'luma_cache';
+const DB_NAME = 'pulse_cache';
 const DB_VERSION = 1;
 const STORE_NAME = 'entreprises';
 const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 jours

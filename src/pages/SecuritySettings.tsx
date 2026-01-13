@@ -84,8 +84,8 @@ export default function SecuritySettings() {
         .eq('user_id', user.id);
 
       // Clear localStorage
-      localStorage.removeItem('luma_onboarding_complete');
-      localStorage.removeItem('luma_initial_filters');
+      localStorage.removeItem('pulse_onboarding_complete');
+      localStorage.removeItem('pulse_initial_filters');
 
       toast({
         title: "Onboarding réinitialisé",

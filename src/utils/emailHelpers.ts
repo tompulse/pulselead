@@ -115,7 +115,7 @@ export const generateICSFile = (
   const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//LUMA CRM//FR',
+    'PRODID:-//PULSE CRM//FR',
     'BEGIN:VEVENT',
     `DTSTART:${formatDate(startDate)}`,
     `DTEND:${formatDate(endDate)}`,
