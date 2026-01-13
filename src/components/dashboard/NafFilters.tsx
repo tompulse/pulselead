@@ -20,6 +20,7 @@ import {
 } from "@/utils/nafNomenclatureComplete";
 import { NAF_SOUS_CLASSES, getSousClasseLabel } from "@/utils/nafSousClasses";
 import { CATEGORIES_JURIDIQUES_NIVEAU_I, getCategorieJuridiqueLabel, getCategorieJuridiqueType } from "@/utils/categoriesJuridiques";
+import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 
 // Labels pour les tailles d'entreprise
 const TAILLE_LABELS: Record<string, string> = {
@@ -813,7 +814,7 @@ export const NafFilters = ({
                       className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                     >
                       <Checkbox selected={selected} />
-                      <span className="text-sm flex-1">Département {dept}</span>
+                      <span className="text-sm flex-1">Dépt. {dept} - {DEPARTMENT_NAMES[dept] || dept}</span>
                       <span className="text-xs text-muted-foreground">
                         {count.toLocaleString('fr-FR')}
                       </span>
