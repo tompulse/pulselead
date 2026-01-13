@@ -79,9 +79,10 @@ serve(async (req: Request) => {
         }
 
         const userEmail = userData.user.email;
-        const userName = userData.user.user_metadata?.full_name || userData.user.user_metadata?.name;
+        // Récupérer le prénom depuis les métadonnées utilisateur
+        const firstName = userData.user.user_metadata?.first_name;
 
-        logStep("Sending reminder to", { email: userEmail, trialEnd: trial.subscription_end_date });
+        logStep("Sending reminder to", { email: userEmail, firstName, trialEnd: trial.subscription_end_date });
 
         // Call send-trial-reminder function
         const reminderResponse = await fetch(`${supabaseUrl}/functions/v1/send-trial-reminder`, {
@@ -92,7 +93,7 @@ serve(async (req: Request) => {
           },
           body: JSON.stringify({
             email: userEmail,
-            userName: userName,
+            firstName: firstName,
             trialEndDate: trial.subscription_end_date,
             portalUrl: 'https://pulse.lovable.app/parametres'
           }),

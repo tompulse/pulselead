@@ -34,6 +34,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
@@ -63,6 +65,8 @@ const Auth = () => {
   });
 
   const signupSchema = loginSchemaStrict.extend({
+    firstName: z.string().trim().min(2, 'Prénom requis (min. 2 caractères)').max(50, 'Prénom trop long'),
+    lastName: z.string().trim().min(2, 'Nom requis (min. 2 caractères)').max(50, 'Nom trop long'),
     phone: z.string()
       .trim()
       .regex(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/, 'Numéro de téléphone français invalide')
@@ -239,7 +243,7 @@ const Auth = () => {
       data = { email, password };
     } else {
       schema = isDemoAccount ? demoSignupSchema : signupSchema;
-      data = isDemoAccount ? { email, password } : { email, password, phone };
+      data = isDemoAccount ? { email, password } : { email, password, firstName, lastName, phone };
     }
     
     const validation = schema.safeParse(data);
@@ -270,14 +274,24 @@ const Auth = () => {
           description: "Bienvenue sur PULSE !",
         });
       } else {
-        // Pour le compte démo, pas de téléphone
+        // Pour le compte démo, pas de téléphone ni nom
         const signupOptions: any = {
           emailRedirectTo: `${window.location.origin}/dashboard`,
         };
         
-        if (!isDemoAccount && phone) {
-          const validatedData = validation.data as { email: string; password: string; phone?: string };
-          signupOptions.data = { phone: validatedData.phone };
+        if (!isDemoAccount) {
+          const validatedData = validation.data as { 
+            email: string; 
+            password: string; 
+            firstName?: string;
+            lastName?: string;
+            phone?: string 
+          };
+          signupOptions.data = { 
+            first_name: validatedData.firstName,
+            last_name: validatedData.lastName,
+            phone: validatedData.phone 
+          };
         }
         
         const { error } = await supabase.auth.signUp({
@@ -296,6 +310,8 @@ const Auth = () => {
         });
         setEmail('');
         setPassword('');
+        setFirstName('');
+        setLastName('');
         setPhone('');
       }
     } catch (error: any) {
@@ -450,6 +466,35 @@ const Auth = () => {
 
               {!isLogin && !isForgot && !isDemoAccount && (
                 <>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">Prénom *</Label>
+                      <Input
+                        id="firstName"
+                        type="text"
+                        placeholder="Jean"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className="bg-background/50 border-border focus:border-accent"
+                        disabled={loading}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Nom *</Label>
+                      <Input
+                        id="lastName"
+                        type="text"
+                        placeholder="Dupont"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className="bg-background/50 border-border focus:border-accent"
+                        disabled={loading}
+                        required
+                      />
+                    </div>
+                  </div>
+                  
                   <div className="space-y-2">
                     <Label htmlFor="phone">Téléphone *</Label>
                     <Input
