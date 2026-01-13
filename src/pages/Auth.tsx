@@ -464,29 +464,29 @@ const Auth = () => {
 
               {!isLogin && !isForgot && !isDemoAccount && (
                 <>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">Prénom *</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="firstName" className="text-sm">Prénom *</Label>
                       <Input
                         id="firstName"
                         type="text"
                         placeholder="Jean"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="bg-background/50 border-border focus:border-accent"
+                        className="bg-background/50 border-border focus:border-accent h-10"
                         disabled={loading}
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Nom *</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="lastName" className="text-sm">Nom *</Label>
                       <Input
                         id="lastName"
                         type="text"
                         placeholder="Dupont"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="bg-background/50 border-border focus:border-accent"
+                        className="bg-background/50 border-border focus:border-accent h-10"
                         disabled={loading}
                         required
                       />
