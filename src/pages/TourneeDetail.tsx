@@ -708,13 +708,19 @@ const TourneeDetail = () => {
                       Optimiser
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-48">
-                    <DropdownMenuItem onClick={() => handleOptimizeRoute('duration')} className="cursor-pointer">
-                      <Clock className="w-4 h-4 mr-2" />
+                  <DropdownMenuContent align="start" className="w-48 bg-card border-accent/30">
+                    <DropdownMenuItem 
+                      onSelect={() => handleOptimizeRoute('duration')} 
+                      className="cursor-pointer hover:bg-accent/20"
+                    >
+                      <Clock className="w-4 h-4 mr-2 text-accent" />
                       Par durée
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleOptimizeRoute('distance')} className="cursor-pointer">
-                      <Gauge className="w-4 h-4 mr-2" />
+                    <DropdownMenuItem 
+                      onSelect={() => handleOptimizeRoute('distance')} 
+                      className="cursor-pointer hover:bg-accent/20"
+                    >
+                      <Gauge className="w-4 h-4 mr-2 text-accent" />
                       Par distance
                     </DropdownMenuItem>
                   </DropdownMenuContent>
