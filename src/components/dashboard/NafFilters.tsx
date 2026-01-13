@@ -814,7 +814,7 @@ export const NafFilters = ({
                       className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                     >
                       <Checkbox selected={selected} />
-                      <span className="text-sm flex-1">Dépt. {dept} - {DEPARTMENT_NAMES[dept] || dept}</span>
+                      <span className="text-sm flex-1">{dept} - {DEPARTMENT_NAMES[dept] || dept}</span>
                       <span className="text-xs text-muted-foreground">
                         {count.toLocaleString('fr-FR')}
                       </span>
