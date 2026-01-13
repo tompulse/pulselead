@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Menu, MapIcon, Navigation, TrendingUp, LogOut, CreditCard, RefreshCw } from "lucide-react";
+import { MapIcon, Navigation, TrendingUp, CreditCard, RefreshCw } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { SubscriptionManagement } from "./SubscriptionManagement";
 import { QualificationProgressDialog } from "./QualificationProgressDialog";
 import { ImportDialog } from "./ImportDialog";
 import { NotificationCenter } from "./NotificationCenter";
+import { AccountMenu } from "./AccountMenu";
 import { useState } from "react";
 
 interface DashboardHeaderProps {
@@ -16,6 +16,11 @@ interface DashboardHeaderProps {
   isAdmin: boolean;
   onLogout: () => void;
   userId: string;
+  userEmail?: string;
+  subscriptionStatus?: string;
+  subscriptionPlan?: string;
+  daysRemaining?: number;
+  endDate?: string;
   onSelectEntreprise?: (entrepriseId: string) => void;
 }
 
@@ -25,6 +30,11 @@ export const DashboardHeader = ({
   isAdmin, 
   onLogout,
   userId,
+  userEmail,
+  subscriptionStatus,
+  subscriptionPlan,
+  daysRemaining,
+  endDate,
   onSelectEntreprise
 }: DashboardHeaderProps) => {
   const isMobile = useIsMobile();
@@ -56,15 +66,14 @@ export const DashboardHeader = ({
             
             <div className="flex items-center gap-2">
               <NotificationCenter userId={userId} onSelectEntreprise={onSelectEntreprise} />
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={onLogout}
-                className="h-9 w-9 border-accent/30 hover:bg-accent/10"
-                aria-label="Déconnexion"
-              >
-                <LogOut className="w-4 h-4" aria-hidden="true" />
-              </Button>
+              <AccountMenu
+                userEmail={userEmail}
+                subscriptionStatus={subscriptionStatus}
+                subscriptionPlan={subscriptionPlan}
+                daysRemaining={daysRemaining}
+                endDate={endDate}
+                onLogout={onLogout}
+              />
             </div>
           </>
         ) : (
@@ -131,16 +140,15 @@ export const DashboardHeader = ({
                   </Dialog>
                 </>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onLogout}
-                className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10 hover:border-accent transition-all duration-300 hover:shadow-md"
-                aria-label="Déconnexion"
-              >
-                <LogOut className="w-3.5 h-3.5 sm:mr-1" aria-hidden="true" />
-                <span className="hidden sm:inline">Déconnexion</span>
-              </Button>
+              <NotificationCenter userId={userId} onSelectEntreprise={onSelectEntreprise} />
+              <AccountMenu
+                userEmail={userEmail}
+                subscriptionStatus={subscriptionStatus}
+                subscriptionPlan={subscriptionPlan}
+                daysRemaining={daysRemaining}
+                endDate={endDate}
+                onLogout={onLogout}
+              />
             </div>
           </>
         )}
