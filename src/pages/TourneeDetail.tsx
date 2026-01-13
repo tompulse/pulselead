@@ -719,7 +719,7 @@ const TourneeDetail = () => {
                   ) : (
                     <Sparkles className="w-3 h-3 mr-1" />
                   )}
-                  Retourner à la version optimisée
+                  Revenir à la version optimisée
                 </Button>
               </div>
               <span className="text-xs text-muted-foreground hidden sm:block">Glissez pour réorganiser</span>
