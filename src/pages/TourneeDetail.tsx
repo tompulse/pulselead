@@ -57,6 +57,7 @@ const TourneeDetail = () => {
   
   const [orderedSiteIds, setOrderedSiteIds] = useState<string[]>([]);
   const [visitesStatus, setVisitesStatus] = useState<Record<string, VisiteStatus>>({});
+  const [siteNotes, setSiteNotes] = useState<Record<string, string>>({});
   const [isRecalculating, setIsRecalculating] = useState(false);
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [localKpis, setLocalKpis] = useState({
@@ -340,6 +341,56 @@ const TourneeDetail = () => {
       } catch (error) {
         console.error('Error syncing to CRM:', error);
       }
+    }
+  };
+
+  const handleNoteChange = async (siteId: string, note: string) => {
+    // Update local state
+    setSiteNotes(prev => ({
+      ...prev,
+      [siteId]: note,
+    }));
+
+    // Get user session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user?.id) return;
+
+    try {
+      // Check if interaction exists for this site
+      const { data: existing } = await supabase
+        .from('lead_interactions')
+        .select('id')
+        .eq('entreprise_id', siteId)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (existing) {
+        // Update existing interaction with note
+        await supabase
+          .from('lead_interactions')
+          .update({ 
+            notes: note || null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existing.id);
+      } else {
+        // Create new interaction with note
+        await supabase
+          .from('lead_interactions')
+          .insert({
+            entreprise_id: siteId,
+            user_id: session.user.id,
+            type: 'visite',
+            statut: 'en_cours',
+            notes: note || null,
+          });
+      }
+
+      toast.success('Note enregistrée');
+      queryClient.invalidateQueries({ queryKey: ['crm-notes'] });
+    } catch (error) {
+      console.error('Error saving note:', error);
+      toast.error('Erreur lors de l\'enregistrement de la note');
     }
   };
 
@@ -713,9 +764,11 @@ const TourneeDetail = () => {
                               longitude: site.longitude,
                             }}
                             visiteStatus={visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false }}
+                            currentNote={siteNotes[siteId] || ''}
                             onVisiteChange={handleVisiteChange}
                             onNavigate={handleNavigate}
                             onRemove={handleRemoveSite}
+                            onNoteChange={handleNoteChange}
                           />
                         );
                       })}
