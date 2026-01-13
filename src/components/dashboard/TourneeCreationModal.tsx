@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Route, Loader2, MapPin, Clock, Navigation } from 'lucide-react';
+import { Calendar as CalendarIcon, Route, Loader2, MapPin, Clock, Navigation, Gauge } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
+
+type OptimizeMode = 'duration' | 'distance';
 
 interface Site {
   id: string;
@@ -40,6 +42,7 @@ export const TourneeCreationModal = ({
   const [date, setDate] = useState<Date>();
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [optimizationResult, setOptimizationResult] = useState<any>(null);
+  const [optimizeMode, setOptimizeMode] = useState<OptimizeMode>('duration');
   const queryClient = useQueryClient();
 
   const createTourneeMutation = useMutation({
@@ -69,9 +72,9 @@ export const TourneeCreationModal = ({
         throw new Error('Au moins 2 sites avec coordonnées GPS sont nécessaires');
       }
 
-      // Appeler l'edge function d'optimisation
+      // Appeler l'edge function d'optimisation avec le mode choisi
       const { data: optimData, error: optimError } = await supabase.functions.invoke('optimize-tournee', {
-        body: { entreprises }
+        body: { entreprises, optimize_by: optimizeMode }
       });
 
       if (optimError) {
@@ -141,6 +144,7 @@ export const TourneeCreationModal = ({
     setNom('');
     setDate(undefined);
     setOptimizationResult(null);
+    setOptimizeMode('duration');
   };
 
   const handleClose = () => {
@@ -215,6 +219,43 @@ export const TourneeCreationModal = ({
                 />
               </div>
             )}
+          </div>
+
+          {/* Mode d'optimisation */}
+          <div className="space-y-2">
+            <Label>Optimiser par</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                variant={optimizeMode === 'duration' ? 'default' : 'outline'}
+                onClick={() => setOptimizeMode('duration')}
+                className={optimizeMode === 'duration' 
+                  ? 'bg-accent hover:bg-accent/90 text-primary' 
+                  : 'border-accent/30 hover:bg-accent/10'
+                }
+              >
+                <Clock className="w-4 h-4 mr-2" />
+                Durée
+              </Button>
+              <Button
+                type="button"
+                variant={optimizeMode === 'distance' ? 'default' : 'outline'}
+                onClick={() => setOptimizeMode('distance')}
+                className={optimizeMode === 'distance' 
+                  ? 'bg-accent hover:bg-accent/90 text-primary' 
+                  : 'border-accent/30 hover:bg-accent/10'
+                }
+              >
+                <Gauge className="w-4 h-4 mr-2" />
+                Distance
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {optimizeMode === 'duration' 
+                ? 'Minimise le temps de trajet total' 
+                : 'Minimise les kilomètres parcourus'
+              }
+            </p>
           </div>
 
           {/* Preview d'optimisation */}

@@ -19,8 +19,10 @@ import {
   Pencil,
   Check,
   X,
-  Sparkles
+  Sparkles,
+  Gauge
 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -439,7 +441,7 @@ const TourneeDetail = () => {
     setEditedName('');
   };
 
-  const handleOptimizeRoute = async () => {
+  const handleOptimizeRoute = async (optimizeBy: 'duration' | 'distance' = 'duration') => {
     if (sites.length < 2) {
       toast.error('Au moins 2 sites sont nécessaires pour optimiser');
       return;
@@ -452,6 +454,7 @@ const TourneeDetail = () => {
       
       if (validSites.length < 2) {
         toast.error('Coordonnées GPS manquantes pour optimiser');
+        setIsOptimizing(false);
         return;
       }
 
@@ -472,6 +475,7 @@ const TourneeDetail = () => {
         body: { 
           entreprises,
           point_depart,
+          optimize_by: optimizeBy,
         },
       });
 
@@ -494,7 +498,8 @@ const TourneeDetail = () => {
           temps_estime_minutes: newTemps,
         });
 
-        toast.success('Itinéraire optimisé !');
+        const modeLabel = optimizeBy === 'distance' ? 'distance minimale' : 'durée minimale';
+        toast.success(`Optimisé par ${modeLabel} !`);
         queryClient.invalidateQueries({ queryKey: ['tournee', tourneeId] });
       } else {
         toast.error('Impossible d\'optimiser l\'itinéraire');
@@ -687,20 +692,33 @@ const TourneeDetail = () => {
             <div className="flex items-center justify-between mb-4 shrink-0">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold">Itinéraire</h3>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleOptimizeRoute}
-                  disabled={isOptimizing || sites.length < 2}
-                  className="h-7 text-xs border-accent/30 hover:bg-accent/10 hover:text-accent"
-                >
-                  {isOptimizing ? (
-                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                  ) : (
-                    <Sparkles className="w-3 h-3 mr-1" />
-                  )}
-                  Optimiser
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={isOptimizing || sites.length < 2}
+                      className="h-7 text-xs border-accent/30 hover:bg-accent/10 hover:text-accent"
+                    >
+                      {isOptimizing ? (
+                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3 h-3 mr-1" />
+                      )}
+                      Optimiser
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    <DropdownMenuItem onClick={() => handleOptimizeRoute('duration')} className="cursor-pointer">
+                      <Clock className="w-4 h-4 mr-2" />
+                      Par durée
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleOptimizeRoute('distance')} className="cursor-pointer">
+                      <Gauge className="w-4 h-4 mr-2" />
+                      Par distance
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               <span className="text-xs text-muted-foreground hidden sm:block">Glissez pour réorganiser</span>
             </div>
