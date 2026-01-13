@@ -22,16 +22,19 @@ const MentionsLegales = () => {
         <div className="space-y-8 text-muted-foreground">
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Éditeur du site</h2>
-            <p className="mb-2"><strong>Raison sociale :</strong> Individual Entrepreneur PULSE</p>
-            <p className="mb-2"><strong>Forme juridique :</strong> Entrepreneur Individuel (Georgia)</p>
-            <p className="mb-2"><strong>Siège social :</strong> 75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia</p>
-            <p className="mb-2"><strong>N° d'enregistrement :</strong> 300453630</p>
+            <p className="mb-2"><strong>Nom :</strong> Tom Iolov</p>
+            <p className="mb-2"><strong>Enseigne commerciale :</strong> PULSE</p>
+            <p className="mb-2"><strong>Statut :</strong> Entrepreneur individuel (auto-entrepreneur)</p>
+            <p className="mb-2"><strong>SIRET :</strong> 948 550 561 00010</p>
+            <p className="mb-2"><strong>RCS :</strong> Paris B 948 550 561</p>
+            <p className="mb-2"><strong>Siège social :</strong> 108 rue de Crimée, 75019 Paris, France</p>
             <p className="mb-2"><strong>Email :</strong> tomiolovpro@gmail.com</p>
+            <p className="mb-2"><strong>TVA :</strong> TVA non applicable, art. 293 B du CGI</p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Directeur de la publication</h2>
-            <p><strong>Nom :</strong> Individual Entrepreneur PULSE</p>
+            <p><strong>Nom :</strong> Tom Iolov</p>
             <p><strong>Email :</strong> tomiolovpro@gmail.com</p>
           </section>
 
@@ -44,9 +47,9 @@ const MentionsLegales = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Propriété intellectuelle</h2>
             <p>
-              L'ensemble de ce site relève des conventions internationales sur le droit d'auteur et la propriété intellectuelle, 
-              ainsi que du droit géorgien applicable à l'éditeur. Tous les droits de reproduction sont réservés, y compris pour 
-              les documents téléchargeables et les représentations iconographiques et photographiques.
+              L'ensemble de ce site relève de la législation française sur le droit d'auteur et la propriété intellectuelle. 
+              Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les représentations 
+              iconographiques et photographiques.
             </p>
           </section>
 
@@ -69,7 +72,7 @@ const MentionsLegales = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-accent/20 text-center text-muted-foreground text-sm">
-          <p>Dernière mise à jour : 27 novembre 2025</p>
+          <p>Dernière mise à jour : 13 janvier 2026</p>
         </div>
       </div>
     </div>

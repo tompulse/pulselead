@@ -30,11 +30,14 @@ const CGV = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">2. Identification du vendeur</h2>
-            <p className="mb-2"><strong>Raison sociale :</strong> Individual Entrepreneur PULSE</p>
-            <p className="mb-2"><strong>Forme juridique :</strong> Entrepreneur Individuel (Georgia)</p>
-            <p className="mb-2"><strong>Siège social :</strong> 75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia</p>
+            <p className="mb-2"><strong>Nom :</strong> Tom Iolov</p>
+            <p className="mb-2"><strong>Enseigne commerciale :</strong> PULSE</p>
+            <p className="mb-2"><strong>Statut :</strong> Entrepreneur individuel (auto-entrepreneur)</p>
+            <p className="mb-2"><strong>SIRET :</strong> 948 550 561 00010</p>
+            <p className="mb-2"><strong>RCS :</strong> Paris B 948 550 561</p>
+            <p className="mb-2"><strong>Siège social :</strong> 108 rue de Crimée, 75019 Paris, France</p>
             <p className="mb-2"><strong>Email :</strong> tomiolovpro@gmail.com</p>
-            <p className="mb-2"><strong>Numéro d'enregistrement :</strong> 300453630</p>
+            <p className="mb-2"><strong>TVA :</strong> TVA non applicable, art. 293 B du CGI</p>
           </section>
 
           <section>
@@ -53,7 +56,8 @@ const CGV = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">4. Prix</h2>
             <p>
-              Les prix des services sont indiqués en euros (€) hors taxes et toutes taxes comprises (TTC). 
+              Les prix des services sont indiqués en euros (€) toutes taxes comprises (TTC). 
+              TVA non applicable conformément à l'article 293 B du CGI (franchise en base de TVA).
               Les prix sont ceux en vigueur au moment de la commande. Nous nous réservons le droit de modifier nos tarifs à tout moment, 
               sous réserve d'en informer les clients avec un préavis raisonnable.
             </p>
@@ -70,8 +74,7 @@ const CGV = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">6. Paiement</h2>
             <p>
-              Le paiement s'effectue en ligne de manière sécurisée via Paddle.com (Merchant of Record). 
-              Paddle gère l'ensemble du processus de paiement, y compris la collecte de la TVA applicable. 
+              Le paiement s'effectue en ligne de manière sécurisée via Stripe, notre prestataire de paiement certifié PCI-DSS. 
               Les informations de paiement sont transmises de manière cryptée et ne sont pas stockées par PULSE.
             </p>
             <p className="mt-4">
@@ -91,11 +94,11 @@ const CGV = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">8. Droit de rétractation et résiliation</h2>
             <p className="mb-4">
-              <strong>Droit de rétractation :</strong> Conformément à la législation en vigueur, vous disposez d'un délai de 14 jours 
-              à compter de la souscription pour exercer votre droit de rétractation sans avoir à justifier de motifs.
+              <strong>Droit de rétractation :</strong> Conformément aux articles L.221-18 et suivants du Code de la consommation, 
+              vous disposez d'un délai de 14 jours à compter de la souscription pour exercer votre droit de rétractation sans avoir à justifier de motifs.
             </p>
             <p>
-              <strong>Résiliation :</strong> Vous pouvez résilier votre abonnement à tout moment depuis votre espace client. 
+              <strong>Résiliation :</strong> Vous pouvez résilier votre abonnement à tout moment depuis votre espace client ou via le portail Stripe. 
               La résiliation prend effet à la fin de la période d'abonnement en cours. Aucun remboursement au prorata ne sera effectué 
               pour la période en cours.
             </p>
@@ -122,27 +125,26 @@ const CGV = () => {
             <h2 className="text-2xl font-semibold text-foreground mb-4">11. Force majeure</h2>
             <p>
               Nous ne pourrons être tenus responsables de tout retard ou inexécution de nos obligations résultant d'un cas de force majeure 
-              tel que défini par la jurisprudence française.
+              tel que défini par l'article 1218 du Code civil.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">12. Droit applicable et médiation</h2>
             <p className="mb-4">
-              Les présentes CGV sont soumises au droit géorgien. Toutefois, conformément aux réglementations européennes, 
-              les consommateurs résidant dans l'Union Européenne bénéficient des dispositions impératives de protection du 
-              consommateur de leur pays de résidence. En cas de litige, les parties s'efforceront de trouver une solution amiable. 
-              À défaut, les tribunaux de Tbilisi, Georgia seront compétents, sans préjudice des droits procéduraux des consommateurs de l'UE.
+              Les présentes CGV sont soumises au droit français. En cas de litige, les parties s'efforceront de trouver une solution amiable. 
+              À défaut, les tribunaux de Paris seront seuls compétents.
             </p>
             <p>
-              Les consommateurs résidant dans l'Union Européenne peuvent recourir à la plateforme européenne de règlement en ligne des litiges 
-              (RLL) disponible à l'adresse suivante : https://ec.europa.eu/consumers/odr
+              Conformément aux articles L.612-1 et suivants du Code de la consommation, vous pouvez recourir gratuitement à un médiateur de la consommation. 
+              Vous pouvez également utiliser la plateforme européenne de règlement en ligne des litiges (RLL) disponible à l'adresse suivante : 
+              https://ec.europa.eu/consumers/odr
             </p>
           </section>
         </div>
 
         <div className="mt-12 pt-8 border-t border-accent/20 text-center text-muted-foreground text-sm">
-          <p>Dernière mise à jour : 27 novembre 2025</p>
+          <p>Dernière mise à jour : 13 janvier 2026</p>
         </div>
       </div>
     </div>

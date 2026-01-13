@@ -71,17 +71,20 @@ const PolitiqueConfidentialite = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">5. Vos droits</h2>
-            <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+            <p>Conformément au RGPD et à la loi Informatique et Libertés, vous disposez des droits suivants :</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               <li>Droit d'accès à vos données personnelles</li>
               <li>Droit de rectification de vos données</li>
-              <li>Droit à l'effacement de vos données</li>
+              <li>Droit à l'effacement de vos données (droit à l'oubli)</li>
               <li>Droit à la limitation du traitement</li>
               <li>Droit à la portabilité de vos données</li>
               <li>Droit d'opposition au traitement</li>
             </ul>
             <p className="mt-4">
               Pour exercer ces droits, contactez-nous à : tomiolovpro@gmail.com
+            </p>
+            <p className="mt-4">
+              Vous pouvez également introduire une réclamation auprès de la CNIL (Commission Nationale de l'Informatique et des Libertés) : www.cnil.fr
             </p>
           </section>
 
@@ -96,9 +99,9 @@ const PolitiqueConfidentialite = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">7. Responsable du traitement</h2>
             <p className="mb-4">
-              <strong>Responsable du traitement :</strong> Individual Entrepreneur PULSE<br />
-              <strong>Adresse :</strong> 75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia<br />
-              <strong>N° d'enregistrement :</strong> 300453630<br />
+              <strong>Responsable du traitement :</strong> Tom Iolov - PULSE<br />
+              <strong>Adresse :</strong> 108 rue de Crimée, 75019 Paris, France<br />
+              <strong>SIRET :</strong> 948 550 561 00010<br />
               <strong>Email :</strong> tomiolovpro@gmail.com
             </p>
           </section>
@@ -110,7 +113,7 @@ const PolitiqueConfidentialite = () => {
             </p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               <li><strong>Lovable Cloud / Supabase :</strong> Hébergement des données (Singapore)</li>
-              <li><strong>Paddle.com :</strong> Traitement des paiements et facturation (Merchant of Record)</li>
+              <li><strong>Stripe :</strong> Traitement des paiements (certifié PCI-DSS)</li>
             </ul>
             <p className="mt-4">
               Vos données peuvent être transférées en dehors de l'Union Européenne. Nous nous assurons que des garanties appropriées 
@@ -129,7 +132,7 @@ const PolitiqueConfidentialite = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-accent/20 text-center text-muted-foreground text-sm">
-          <p>Dernière mise à jour : 27 novembre 2025</p>
+          <p>Dernière mise à jour : 13 janvier 2026</p>
         </div>
       </div>
     </div>

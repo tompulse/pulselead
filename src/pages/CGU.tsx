@@ -24,9 +24,9 @@ const CGU = () => {
             <h2 className="text-2xl font-semibold text-foreground mb-4">1. Objet</h2>
             <p>
               Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation de la plateforme PULSE, 
-              éditée par Individual Entrepreneur PULSE, Entrepreneur Individuel enregistré en Georgia, 
-              dont le siège social est situé à 75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia, 
-              immatriculée sous le numéro 300453630.
+              éditée par Tom Iolov, exerçant sous l'enseigne PULSE en tant qu'entrepreneur individuel, 
+              immatriculé au RCS de Paris sous le numéro 948 550 561, 
+              dont le siège social est situé au 108 rue de Crimée, 75019 Paris, France.
             </p>
             <p className="mt-4">
               En accédant à la plateforme, vous acceptez sans réserve les présentes CGU.
@@ -148,10 +148,8 @@ const CGU = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">12. Droit applicable et juridiction compétente</h2>
             <p>
-              Les présentes CGU sont régies par le droit géorgien. Toutefois, conformément aux réglementations européennes, 
-              les consommateurs résidant dans l'Union Européenne bénéficient des dispositions impératives de protection du 
-              consommateur de leur pays de résidence. En cas de litige, les parties s'efforceront de trouver une solution amiable. 
-              À défaut, les tribunaux de Tbilisi, Georgia seront compétents, sans préjudice des droits procéduraux des consommateurs de l'UE.
+              Les présentes CGU sont régies par le droit français. En cas de litige, les parties s'efforceront de trouver une solution amiable. 
+              À défaut, les tribunaux de Paris seront seuls compétents.
             </p>
           </section>
 
@@ -164,7 +162,7 @@ const CGU = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-accent/20 text-center text-muted-foreground text-sm">
-          <p>Dernière mise à jour : 27 novembre 2025</p>
+          <p>Dernière mise à jour : 13 janvier 2026</p>
         </div>
       </div>
     </div>
