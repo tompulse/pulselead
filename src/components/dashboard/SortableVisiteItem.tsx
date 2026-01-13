@@ -128,17 +128,8 @@ export const SortableVisiteItem = ({
             )}
           </div>
 
-          {/* Action buttons */}
+          {/* Action buttons - Navigation & Delete only */}
           <div className="flex items-center gap-1 shrink-0">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-7 w-7 ${hasNote ? 'text-yellow-400' : ''}`}
-              onClick={handleOpenNote}
-              aria-label="Ajouter une note"
-            >
-              <MessageSquare className="w-3.5 h-3.5" />
-            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -163,7 +154,7 @@ export const SortableVisiteItem = ({
         </div>
         
         {/* Action checkboxes - on separate row */}
-        <div className="flex items-center justify-between mt-2 pl-10">
+        <div className="flex items-center flex-wrap gap-x-3 gap-y-2 mt-2 pl-10">
           <label className="flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap">
             <Checkbox 
               checked={visiteStatus.visite}
@@ -193,6 +184,19 @@ export const SortableVisiteItem = ({
             <RotateCcw className="w-3 h-3 text-orange-400" />
             <span>À revoir</span>
           </label>
+
+          <button
+            type="button"
+            onClick={handleOpenNote}
+            className={`flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap px-2 py-1 rounded-md border transition-colors ${
+              hasNote 
+                ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-400' 
+                : 'border-accent/20 hover:border-yellow-500/40 hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-400'
+            }`}
+          >
+            <MessageSquare className="w-3 h-3" />
+            <span>{hasNote ? 'Modifier note' : 'Note'}</span>
+          </button>
         </div>
       </div>
 
