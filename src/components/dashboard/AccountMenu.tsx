@@ -48,7 +48,10 @@ export const AccountMenu = ({
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleOpenPortal = async () => {
+  const handleOpenPortal = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     setIsOpeningPortal(true);
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal');
@@ -70,6 +73,12 @@ export const AccountMenu = ({
     } finally {
       setIsOpeningPortal(false);
     }
+  };
+
+  const handleNavigateToSecurity = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate('/security');
   };
 
   const getStatusConfig = () => {
@@ -137,7 +146,7 @@ export const AccountMenu = ({
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{userEmail || 'Mon compte'}</p>
-            <p className="text-xs text-muted-foreground">Commercial Solo · 49€/mois</p>
+            <p className="text-xs text-muted-foreground">Commercial Solo</p>
           </div>
         </DropdownMenuLabel>
         
@@ -171,17 +180,23 @@ export const AccountMenu = ({
         
         {/* Actions */}
         <DropdownMenuItem 
-          onClick={handleOpenPortal}
+          onSelect={(e) => {
+            e.preventDefault();
+            handleOpenPortal(e as any);
+          }}
           disabled={isOpeningPortal}
           className="cursor-pointer"
         >
           <CreditCard className="w-4 h-4 mr-2" />
-          <span className="flex-1">Gérer mon abonnement</span>
+          <span className="flex-1">{isOpeningPortal ? 'Chargement...' : 'Gérer mon abonnement'}</span>
           <ExternalLink className="w-3 h-3 opacity-50" />
         </DropdownMenuItem>
         
         <DropdownMenuItem 
-          onClick={() => navigate('/security-settings')}
+          onSelect={(e) => {
+            e.preventDefault();
+            handleNavigateToSecurity(e as any);
+          }}
           className="cursor-pointer"
         >
           <Shield className="w-4 h-4 mr-2" />
