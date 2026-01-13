@@ -25,7 +25,7 @@ const MentionsLegales = () => {
             <p className="mb-2"><strong>Nom :</strong> Tom Iolov</p>
             <p className="mb-2"><strong>Enseigne commerciale :</strong> PULSE</p>
             <p className="mb-2"><strong>Statut :</strong> Entrepreneur individuel (auto-entrepreneur)</p>
-            <p className="mb-2"><strong>SIRET :</strong> 948 550 561 00010</p>
+            <p className="mb-2"><strong>SIRET :</strong> 948 550 561 00039</p>
             <p className="mb-2"><strong>RCS :</strong> Paris B 948 550 561</p>
             <p className="mb-2"><strong>Siège social :</strong> 108 rue de Crimée, 75019 Paris, France</p>
             <p className="mb-2"><strong>Email :</strong> tomiolovpro@gmail.com</p>
