@@ -19,7 +19,7 @@ import {
   getDivisionEmoji,
 } from "@/utils/nafNomenclatureComplete";
 import { NAF_SOUS_CLASSES, getSousClasseLabel } from "@/utils/nafSousClasses";
-import { CATEGORIES_JURIDIQUES, getCategorieJuridiqueLabel, getCategorieJuridiqueEmoji } from "@/utils/categoriesJuridiques";
+import { CATEGORIES_JURIDIQUES_NIVEAU_I, getCategorieJuridiqueLabel, getCategorieJuridiqueType } from "@/utils/categoriesJuridiques";
 
 // Labels pour les tailles d'entreprise
 const TAILLE_LABELS: Record<string, string> = {
@@ -218,8 +218,7 @@ export const NafFilters = ({
     .map(([code, count]) => ({
       code,
       label: getCategorieJuridiqueLabel(code),
-      type: CATEGORIES_JURIDIQUES[code]?.type || '',
-      emoji: getCategorieJuridiqueEmoji(code),
+      type: getCategorieJuridiqueType(code),
       count: count as number
     }))
     .filter(c => c.count > 0)
@@ -586,7 +585,8 @@ export const NafFilters = ({
                 key={`catjur-${code}`}
                 className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-amber-500/15 text-amber-600 dark:text-amber-400 rounded-full border border-amber-500/30"
               >
-                <span>{getCategorieJuridiqueEmoji(code)} Cat. {code}</span>
+                <Scale className="w-3 h-3" />
+                <span>Cat. {code}</span>
                 <button
                   onClick={() => handleCategorieJuridiqueToggle(code)}
                   className="hover:bg-amber-500/20 rounded-full p-0.5 transition-colors"
@@ -889,7 +889,7 @@ export const NafFilters = ({
                   Aucune catégorie juridique disponible
                 </div>
               ) : (
-                availableCategoriesJuridiques.map(({ code, label, type, emoji, count }) => {
+                availableCategoriesJuridiques.map(({ code, label, type, count }) => {
                   const selected = filters.categoriesJuridiques?.includes(code);
                   return (
                     <div
@@ -898,7 +898,7 @@ export const NafFilters = ({
                       className="flex items-start gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                     >
                       <Checkbox selected={selected} />
-                      <span className="text-lg shrink-0">{emoji}</span>
+                      <span className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-xs font-bold text-accent shrink-0">{code}</span>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium leading-tight">{label}</div>
                         <div className="text-xs text-muted-foreground leading-tight mt-0.5">{type}</div>
