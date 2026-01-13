@@ -117,9 +117,17 @@ export const CRMViewContainer = ({
   const aRevoirCount = interactions.filter(i => i.type === 'a_revoir').length;
   const notesCount = interactions.filter(i => i.notes && i.notes.trim() !== '').length;
 
+  // Map stage keys to database statuts
+  const stageToStatutMap: Record<string, string> = {
+    'devis_a_faire': 'proposition',
+    'devis_accepte': 'gagne',
+    'devis_refuse': 'perdu',
+  };
+
   // Count offers by stage
   const getOfferCountByStage = (stageKey: string): number => {
-    return leadsWithSites.filter(l => l.statut === stageKey).length;
+    const dbStatut = stageToStatutMap[stageKey] || stageKey;
+    return leadsWithSites.filter(l => l.statut === dbStatut).length;
   };
 
   // Handle offer stage toggle
