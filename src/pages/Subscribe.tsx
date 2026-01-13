@@ -10,8 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useSubscription } from '@/hooks/useSubscription';
 
-// Prix ID Stripe - Mode Test - Plan mensuel à 49€/mois
-const STRIPE_PRICE_ID = 'price_1SoomEHQWfOgC6lKRt6x7nRd';
+// Prix ID Stripe - Mode Production - Plan mensuel à 49€/mois
+const STRIPE_PRICE_ID = 'price_1SoTNkHjyidZ5i9LuxvK8Tzq';
 
 const features = [
   {
