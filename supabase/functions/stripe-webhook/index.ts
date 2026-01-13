@@ -142,15 +142,25 @@ serve(async (req) => {
           if (subscription.status === 'trialing') {
             const trialEndIso = unixToISOString(subscription.trial_end ?? null);
 
+            // Récupérer le prénom depuis les métadonnées utilisateur
+            let firstName: string | undefined;
+            try {
+              const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
+              firstName = userData?.user?.user_metadata?.first_name;
+            } catch (e) {
+              logStep("Could not retrieve user metadata for welcome email");
+            }
+
             try {
               await supabaseAdmin.functions.invoke('send-welcome', {
                 body: {
                   userId,
                   email: session.customer_email || session.customer_details?.email,
                   trialEnd: trialEndIso,
+                  firstName,
                 },
               });
-              logStep("Welcome email triggered", { trialEnd: trialEndIso });
+              logStep("Welcome email triggered", { trialEnd: trialEndIso, firstName });
             } catch (emailError: any) {
               logStep("Error sending welcome email", { error: emailError?.message ?? String(emailError) });
             }

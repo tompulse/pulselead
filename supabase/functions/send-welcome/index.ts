@@ -26,8 +26,8 @@ serve(async (req) => {
       });
     }
 
-    const { userId, email, trialEnd, name } = await req.json();
-    logStep("Sending welcome email", { userId, email });
+    const { userId, email, trialEnd, firstName, lastName } = await req.json();
+    logStep("Sending welcome email", { userId, email, firstName });
 
     if (!email) {
       throw new Error("No email provided");
@@ -46,7 +46,8 @@ serve(async (req) => {
       });
     }
 
-    const displayName = name || email.split('@')[0].replace(/[._]/g, ' ');
+    // Utiliser le prénom si disponible, sinon fallback sur l'email
+    const displayName = firstName || email.split('@')[0].replace(/[._]/g, ' ');
 
     const { data, error } = await resend.emails.send({
       // Important: en mode dev/test, utiliser un expéditeur Resend vérifié.

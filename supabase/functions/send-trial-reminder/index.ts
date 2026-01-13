@@ -10,7 +10,7 @@ const corsHeaders = {
 
 interface TrialReminderRequest {
   email: string;
-  userName?: string;
+  firstName?: string;
   trialEndDate: string;
   portalUrl?: string;
 }
@@ -31,14 +31,14 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, userName, trialEndDate, portalUrl }: TrialReminderRequest = await req.json();
+    const { email, firstName, trialEndDate, portalUrl }: TrialReminderRequest = await req.json();
 
     if (!email || !trialEndDate) {
       throw new Error("Email and trialEndDate are required");
     }
 
     const formattedDate = formatDate(trialEndDate);
-    const displayName = userName || "cher utilisateur";
+    const displayName = firstName || "cher utilisateur";
     const manageUrl = portalUrl || "https://pulse.lovable.app/dashboard";
 
     const emailResponse = await resend.emails.send({
