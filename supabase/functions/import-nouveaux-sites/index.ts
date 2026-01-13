@@ -152,8 +152,8 @@ serve(async (req) => {
       // Support multiple column name formats
       const siret = String(row.siret || '').trim();
       
-      // Name: try multiple possible columns
-      const nom = String(
+      // Name: try multiple possible columns, for EI combine nom + prénom if no company name
+      const entrepriseNom = String(
         row.enseigne1Etablissement || 
         row.Entreprise || 
         row.denominationUsuelleEtablissement ||
@@ -161,7 +161,15 @@ serve(async (req) => {
         ''
       ).trim();
       
-      if (!siret || !nom) return null;
+      // For entrepreneurs individuels: combine nomUniteLegale + prenom1UniteLegale
+      const nomFamille = String(row.nomUniteLegale || '').trim();
+      const prenom = String(row.prenom1UniteLegale || '').trim();
+      const nomComplet = [nomFamille, prenom].filter(Boolean).join(' ');
+      
+      // Use company name if available, otherwise use nom + prénom for EI
+      const nom = entrepriseNom || nomComplet || 'Entreprise sans nom';
+      
+      if (!siret) return null;
 
       // Build full address
       const adresseComplete = [

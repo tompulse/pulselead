@@ -9,10 +9,11 @@ import { useCRMActions } from "@/hooks/useCRMActions";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { Building2, MapPin, Calendar, Navigation, Hash, Factory } from "lucide-react";
+import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafNomenclatureComplete";
+import { getCategorieJuridiqueFullLabel } from "@/utils/categoriesJuridiques";
 import { supabase } from "@/integrations/supabase/client";
 
 interface UnifiedEntreprisePanelProps {
@@ -216,9 +217,27 @@ export const UnifiedEntreprisePanel = ({
                       SIRET
                     </div>
                     <p className="text-sm font-mono">
-                      {displayEntreprise.siret || <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
+                      {displayEntreprise.siret 
+                        ? displayEntreprise.siret.replace(/(\d{3})(\d{3})(\d{3})(\d{5})/, '$1 $2 $3 $4')
+                        : <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
                     </p>
                   </div>
+
+                  {/* Catégorie juridique */}
+                  {displayEntreprise.categorie_juridique && (
+                    <div className="space-y-1 pt-3 border-t border-accent/10">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
+                        <Scale className="w-3.5 h-3.5" />
+                        Catégorie juridique
+                      </div>
+                      <p className="text-sm">
+                        {getCategorieJuridiqueFullLabel(displayEntreprise.categorie_juridique)}
+                      </p>
+                      <p className="text-xs text-muted-foreground font-mono">
+                        Code: {displayEntreprise.categorie_juridique}
+                      </p>
+                    </div>
+                  )}
 
                   {/* Date de création */}
                   <div className="space-y-1 pt-3 border-t border-accent/10">
