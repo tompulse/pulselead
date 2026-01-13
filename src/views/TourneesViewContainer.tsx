@@ -183,7 +183,7 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                 <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   <div className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl bg-accent/10 border border-accent/20">
                     <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-accent mb-1" aria-hidden="true" />
-                    <span className="font-bold text-lg sm:text-xl">{tournee.entreprises_ids?.length || 0}</span>
+                    <span className="font-bold text-lg sm:text-xl">{tournee.ordre_optimise?.length || 0}</span>
                     <span className="text-[10px] sm:text-xs text-muted-foreground">arrêts</span>
                   </div>
                   <div className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl bg-gradient-to-br from-accent/15 to-cyan-glow/10 border border-accent/30">
