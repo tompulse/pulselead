@@ -17,6 +17,17 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Tournee {
   id: string;
@@ -198,15 +209,35 @@ export const TourneesViewContainer = ({ userId }: { userId: string }) => {
                     <Map className="w-4 h-4 mr-2" aria-hidden="true" />
                     Voir détails
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => handleDelete(tournee.id)}
-                    className="h-11 w-11 sm:h-12 sm:w-12 border-destructive/30 hover:bg-destructive hover:text-white hover:border-destructive rounded-xl transition-all duration-200"
-                    aria-label={`Supprimer ${tournee.nom}`}
-                  >
-                    <Trash2 className="w-4 h-4" aria-hidden="true" />
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        className="h-11 w-11 sm:h-12 sm:w-12 border-destructive/30 hover:bg-destructive hover:text-white hover:border-destructive rounded-xl transition-all duration-200"
+                        aria-label={`Supprimer ${tournee.nom}`}
+                      >
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Supprimer cette tournée ?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Cette action est irréversible. La tournée "{tournee.nom}" sera définitivement supprimée.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDelete(tournee.id)}
+                          className="bg-destructive hover:bg-destructive/90"
+                        >
+                          Supprimer
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </CardContent>
             </Card>

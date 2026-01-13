@@ -139,7 +139,7 @@ serve(async (req) => {
                         Annulez à tout moment depuis votre espace client.
                       </p>
                       <p style="margin: 15px 0 0; font-size: 12px; color: #52525b;">
-                        © 2025 PULSE - Prospection Territoriale Intelligente
+                        © 2026 PULSE - Prospection Territoriale Intelligente
                       </p>
                     </td>
                   </tr>
