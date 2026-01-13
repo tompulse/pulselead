@@ -633,37 +633,8 @@ const TourneeDetail = () => {
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="px-4 flex gap-2">
-        {currentStatut === 'planifiee' && (
-          <Button 
-            onClick={handleStartTournee}
-            className="flex-1 bg-accent hover:bg-accent/90 text-primary"
-            disabled={updateTourneeMutation.isPending}
-          >
-            <Play className="w-4 h-4 mr-2" />
-            Démarrer la tournée
-          </Button>
-        )}
-        {currentStatut === 'en_cours' && (
-          <Button 
-            onClick={handleEndTournee}
-            className="flex-1 bg-green-500 hover:bg-green-600 text-white"
-            disabled={updateTourneeMutation.isPending}
-          >
-            <CheckCircle className="w-4 h-4 mr-2" />
-            Terminer la tournée
-          </Button>
-        )}
-        <Button 
-          variant="outline" 
-          onClick={openInGoogleMaps}
-          className="border-accent/30 hover:bg-accent/10"
-        >
-          <Compass className="w-4 h-4 mr-2" />
-          Ouvrir GPS
-        </Button>
-      </div>
+      {/* Actions supprimées (Démarrer la tournée / Ouvrir GPS) */}
+      <div className="px-4" />
 
       {/* Content: Map + List */}
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 lg:overflow-hidden">
