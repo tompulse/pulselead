@@ -172,83 +172,209 @@ serve(async (req) => {
     let legs: any[] | null = null;
     let responseWaypoints: any = null;
 
+
     if (optimize_by === 'distance') {
-      console.log('🎯 Optimisation demandée: DISTANCE (Matrix API + heuristique)');
+      console.log('🎯 Optimisation demandée: DISTANCE (Matrix API + optimisation exacte si possible)');
 
-      // Pour rester cohérent avec le comportement existant:
-      // - si point_depart n'est pas fourni, on garde le 1er prospect comme départ fixe
+      // Pour rester cohérent avec le mode durée (optimized-trips):
+      // - start fixé (point_depart si fourni, sinon 1er prospect)
+      // - destination fixée au dernier point fourni (dernier prospect de la liste courante)
       const fixedFirst = point_depart ? null : validEntreprises[0];
-      const candidates = point_depart ? validEntreprises : validEntreprises.slice(1);
-      const start = point_depart
-        ? startPoint
-        : { lat: fixedFirst!.latitude, lng: fixedFirst!.longitude };
+      const fixedLast = validEntreprises.length >= 2 ? validEntreprises[validEntreprises.length - 1] : null;
+      const intermediate = point_depart
+        ? validEntreprises.slice(0, -1)
+        : validEntreprises.slice(1, -1);
 
-      const coordsForMatrix = [
-        `${start.lng},${start.lat}`,
-        ...candidates.map((e) => `${e.longitude},${e.latitude}`),
-      ];
+      if (!fixedLast) {
+        // Cas 1 seul point
+        sortedEntreprises = fixedFirst ? [fixedFirst] : validEntreprises;
+      } else {
+        const start = point_depart
+          ? startPoint
+          : { lat: fixedFirst!.latitude, lng: fixedFirst!.longitude };
 
-      const buildHaversineMatrix = () => {
-        const nodes = [{ lat: start.lat, lng: start.lng }, ...candidates.map((e) => ({ lat: e.latitude, lng: e.longitude }))];
-        return nodes.map((a) =>
-          nodes.map((b) => calculateDistance(a.lat, a.lng, b.lat, b.lng) * 1000) // km -> m
-        );
-      };
+        // Nœuds pour la matrice: start + intermédiaires + end
+        const nodes = [
+          { lat: start.lat, lng: start.lng, name: point_depart ? 'Départ' : fixedFirst!.nom },
+          ...intermediate.map((e) => ({ lat: e.latitude, lng: e.longitude, name: e.nom })),
+          { lat: fixedLast.latitude, lng: fixedLast.longitude, name: fixedLast.nom },
+        ];
 
-      let distMatrix: (number | null)[][] | null = null;
+        const coordsForMatrix = nodes.map((n) => `${n.lng},${n.lat}`);
 
-      // Matrix API: limite Mapbox = 25 coords max
-      if (coordsForMatrix.length <= 25) {
-        const matrixUrl = `https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${coordsForMatrix.join(';')}?annotations=distance,duration&access_token=${MAPBOX_TOKEN}`;
-        const matrixRes = await fetch(matrixUrl);
-        if (matrixRes.ok) {
-          const matrixData = await matrixRes.json();
-          distMatrix = matrixData?.distances ?? null;
-          if (!distMatrix) {
-            console.warn('[optimize-tournee] Matrix API: distances manquantes, fallback Haversine');
+        const buildHaversineMatrix = (): number[][] => {
+          return nodes.map((a) =>
+            nodes.map((b) => calculateDistance(a.lat, a.lng, b.lat, b.lng) * 1000) // km -> m
+          );
+        };
+
+        let rawMatrix: (number | null)[][] | null = null;
+
+        // Matrix API: limite Mapbox = 25 coords max
+        if (coordsForMatrix.length <= 25) {
+          const matrixUrl = `https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${coordsForMatrix.join(';')}?annotations=distance&access_token=${MAPBOX_TOKEN}`;
+          const matrixRes = await fetch(matrixUrl);
+          if (matrixRes.ok) {
+            const matrixData = await matrixRes.json();
+            rawMatrix = matrixData?.distances ?? null;
+            if (!rawMatrix) console.warn('[optimize-tournee] Matrix API: distances manquantes, fallback Haversine');
+          } else {
+            console.warn('[optimize-tournee] Matrix API error status:', matrixRes.status);
           }
         } else {
-          console.warn('[optimize-tournee] Matrix API error status:', matrixRes.status);
+          console.warn(`[optimize-tournee] Trop de points (${coordsForMatrix.length}) pour la Matrix API, fallback Haversine`);
         }
-      } else {
-        console.warn(`[optimize-tournee] Trop de points (${coordsForMatrix.length}) pour la Matrix API, fallback Haversine`);
-      }
 
-      if (!distMatrix) {
-        distMatrix = buildHaversineMatrix();
-      }
+        const dist: number[][] = (rawMatrix ?? buildHaversineMatrix()).map((row) =>
+          row.map((v) => (typeof v === 'number' && Number.isFinite(v) ? v : Number.POSITIVE_INFINITY))
+        );
 
-      // Heuristique: plus proche voisin (chemin ouvert) depuis l'index 0
-      const n = distMatrix.length;
-      const visited = new Array(n).fill(false);
-      visited[0] = true;
-      let current = 0;
-      const orderIdx: number[] = [];
+        // Optimiser la séquence des intermédiaires avec start/end fixés
+        const startIdx = 0;
+        const endIdx = nodes.length - 1;
+        const m = nodes.length - 2; // nb intermédiaires
 
-      const getCost = (i: number, j: number) => {
-        const v = distMatrix?.[i]?.[j];
-        return typeof v === 'number' && Number.isFinite(v) ? v : Number.POSITIVE_INFINITY;
-      };
+        const computePathCost = (route: number[]) => {
+          let total = 0;
+          for (let i = 1; i < route.length; i++) {
+            total += dist[route[i - 1]][route[i]];
+          }
+          return total;
+        };
 
-      for (let step = 0; step < n - 1; step++) {
-        let best = -1;
-        let bestCost = Number.POSITIVE_INFINITY;
-        for (let j = 1; j < n; j++) {
-          if (visited[j]) continue;
-          const c = getCost(current, j);
-          if (c < bestCost) {
-            bestCost = c;
-            best = j;
+        const nearestNeighbor = (): number[] => {
+          const visited = new Array(nodes.length).fill(false);
+          visited[startIdx] = true;
+          visited[endIdx] = true; // end fixé, on ne le visite qu'à la fin
+
+          const route: number[] = [startIdx];
+          let current = startIdx;
+
+          for (let step = 0; step < m; step++) {
+            let best = -1;
+            let bestCost = Number.POSITIVE_INFINITY;
+            for (let j = 1; j <= m; j++) {
+              if (visited[j]) continue;
+              const c = dist[current][j];
+              if (c < bestCost) {
+                bestCost = c;
+                best = j;
+              }
+            }
+            if (best === -1) break;
+            visited[best] = true;
+            route.push(best);
+            current = best;
+          }
+
+          route.push(endIdx);
+          return route;
+        };
+
+        const exactHeldKarpFixedEnd = (): number[] | null => {
+          // DP sur les intermédiaires 1..m, fin fixée sur endIdx
+          if (m === 0) return [startIdx, endIdx];
+          if (m > 12) return null;
+
+          const size = 1 << m;
+          const dp: number[][] = Array.from({ length: size }, () => Array(nodes.length).fill(Number.POSITIVE_INFINITY));
+          const parent: number[][] = Array.from({ length: size }, () => Array(nodes.length).fill(-1));
+
+          // init: start -> i
+          for (let i = 1; i <= m; i++) {
+            const mask = 1 << (i - 1);
+            dp[mask][i] = dist[startIdx][i];
+            parent[mask][i] = startIdx;
+          }
+
+          for (let mask = 1; mask < size; mask++) {
+            for (let last = 1; last <= m; last++) {
+              if (!(mask & (1 << (last - 1)))) continue;
+              const prevMask = mask ^ (1 << (last - 1));
+              if (prevMask === 0) continue;
+
+              for (let prev = 1; prev <= m; prev++) {
+                if (!(prevMask & (1 << (prev - 1)))) continue;
+                const cand = dp[prevMask][prev] + dist[prev][last];
+                if (cand < dp[mask][last]) {
+                  dp[mask][last] = cand;
+                  parent[mask][last] = prev;
+                }
+              }
+            }
+          }
+
+          const fullMask = size - 1;
+          let bestLast = -1;
+          let bestCost = Number.POSITIVE_INFINITY;
+
+          for (let last = 1; last <= m; last++) {
+            const cost = dp[fullMask][last] + dist[last][endIdx];
+            if (cost < bestCost) {
+              bestCost = cost;
+              bestLast = last;
+            }
+          }
+
+          if (bestLast === -1) return null;
+
+          // reconstruct
+          const routeRev: number[] = [endIdx, bestLast];
+          let mask = fullMask;
+          let curr = bestLast;
+
+          while (true) {
+            const p = parent[mask][curr];
+            if (p === -1 || p === startIdx) break;
+            routeRev.push(p);
+            mask = mask ^ (1 << (curr - 1));
+            curr = p;
+          }
+
+          routeRev.push(startIdx);
+          const route = routeRev.reverse();
+          // insert endIdx already present at end
+          return route;
+        };
+
+        let bestRoute = exactHeldKarpFixedEnd() ?? nearestNeighbor();
+
+        // Si heuristique: 2-opt sur les intermédiaires (start/end fixés)
+        if (m > 2 && m > 12) {
+          let improved = true;
+          let iterations = 0;
+          const maxIterations = 50;
+
+          while (improved && iterations < maxIterations) {
+            improved = false;
+            iterations++;
+
+            for (let i = 1; i < bestRoute.length - 2; i++) {
+              for (let k = i + 1; k < bestRoute.length - 1; k++) {
+                const candidate = [
+                  ...bestRoute.slice(0, i),
+                  ...bestRoute.slice(i, k + 1).reverse(),
+                  ...bestRoute.slice(k + 1),
+                ];
+                if (computePathCost(candidate) + 1e-6 < computePathCost(bestRoute)) {
+                  bestRoute = candidate;
+                  improved = true;
+                }
+              }
+            }
           }
         }
-        if (best === -1) break;
-        visited[best] = true;
-        orderIdx.push(best);
-        current = best;
-      }
 
-      const orderedCandidates = orderIdx.map((idx) => candidates[idx - 1]).filter(Boolean);
-      sortedEntreprises = fixedFirst ? [fixedFirst, ...orderedCandidates] : orderedCandidates;
+        // bestRoute = [startIdx, ...intermediateIdx, endIdx]
+        const orderedIntermediate = bestRoute
+          .slice(1, -1)
+          .map((idx) => intermediate[idx - 1])
+          .filter(Boolean);
+
+        sortedEntreprises = point_depart
+          ? [...orderedIntermediate, fixedLast]
+          : [fixedFirst!, ...orderedIntermediate, fixedLast];
+      }
 
       console.log('✅ Ordre optimisé (distance minimale):', sortedEntreprises.map((e) => e.nom));
 
