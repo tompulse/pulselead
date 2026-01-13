@@ -47,14 +47,14 @@ const CGU = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">3. Description des services</h2>
-            <p>PULSE est une plateforme de prospection territoriale intelligente destinée aux commerciaux terrain proposant :</p>
+            <p>PULSE est une plateforme de prospection territoriale intelligente destinée aux commerciaux terrain. L'offre "Commercial Solo" comprend :</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
-              <li><strong>Cartographie interactive du territoire :</strong> visualisation de tous vos prospects et clients sur une carte avec filtres par secteur d'activité, statut commercial et zone géographique</li>
-              <li><strong>Optimisation automatique des tournées :</strong> calcul du meilleur itinéraire en quelques secondes avec GPS intégré pour la navigation</li>
-              <li><strong>CRM terrain mobile :</strong> enregistrement des visites, appels, emails et relances, avec pipeline visuel (Kanban) pour suivre vos opportunités</li>
-              <li><strong>Détection des nouvelles entreprises :</strong> alerte sur les créations d'entreprises et nouveaux établissements dans votre zone, à partir de données officielles publiques</li>
-              <li><strong>Import de fichiers Excel :</strong> importation et enrichissement automatique de vos fichiers prospects existants</li>
-              <li><strong>Tableaux de bord de suivi :</strong> statistiques de performance (visites, taux de conversion, évolution du pipeline)</li>
+              <li><strong>Cartographie territoire :</strong> visualisez tous vos prospects sur une carte interactive</li>
+              <li><strong>Tournées optimisées IA :</strong> calcul automatique du meilleur itinéraire pour réduire vos temps de trajet</li>
+              <li><strong>CRM mobile terrain :</strong> gestion des visites et relances depuis votre smartphone ou tablette</li>
+              <li><strong>Filtres intelligents :</strong> recherche par département, secteur d'activité et taille d'entreprise</li>
+              <li><strong>Pipeline Kanban :</strong> suivi visuel de vos opportunités du premier contact à la signature</li>
+              <li><strong>Relances programmées :</strong> programmez vos rappels clients pour ne plus jamais manquer un suivi</li>
             </ul>
           </section>
 
