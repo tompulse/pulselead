@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as CalendarIcon, Layers } from "lucide-react";
+import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as CalendarIcon, Layers, Scale } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
@@ -19,6 +19,7 @@ import {
   getDivisionEmoji,
 } from "@/utils/nafNomenclatureComplete";
 import { NAF_SOUS_CLASSES, getSousClasseLabel } from "@/utils/nafSousClasses";
+import { CATEGORIES_JURIDIQUES, getCategorieJuridiqueLabel, getCategorieJuridiqueEmoji } from "@/utils/categoriesJuridiques";
 
 // Labels pour les tailles d'entreprise
 const TAILLE_LABELS: Record<string, string> = {
@@ -38,6 +39,7 @@ interface NafFiltersProps {
     nafSousClasses?: string[];
     departments?: string[];
     taillesEntreprise?: string[];
+    categoriesJuridiques?: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   resultsCount?: number;
@@ -86,6 +88,7 @@ export const NafFilters = ({
   const [sectionsOpen, setSectionsOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
+  const [categoriesJuridiquesOpen, setCategoriesJuridiquesOpen] = useState(false);
   const [expanded, setExpanded] = useState<ExpandedLevel>({
     divisions: [],
     groupes: [],
@@ -100,6 +103,7 @@ export const NafFilters = ({
     nafDivisions: filters.nafDivisions,
     departments: filters.departments,
     taillesEntreprise: filters.taillesEntreprise,
+    categoriesJuridiques: filters.categoriesJuridiques,
     searchQuery: filters.searchQuery
   });
 
@@ -209,6 +213,17 @@ export const NafFilters = ({
     }))
     .filter(t => t.count > 0)
     .sort((a, b) => b.count - a.count);
+
+  const availableCategoriesJuridiques = Object.entries(availableFilters?.categoriesJuridiques || {})
+    .map(([code, count]) => ({
+      code,
+      label: getCategorieJuridiqueLabel(code),
+      type: CATEGORIES_JURIDIQUES[code]?.type || '',
+      emoji: getCategorieJuridiqueEmoji(code),
+      count: count as number
+    }))
+    .filter(c => c.count > 0)
+    .sort((a, b) => a.code.localeCompare(b.code));
 
   // Toggle functions pour l'expansion
   const toggleExpand = (level: keyof ExpandedLevel, code: string) => {
@@ -349,6 +364,20 @@ export const NafFilters = ({
     });
   };
 
+  const handleCategorieJuridiqueToggle = (code: string) => {
+    setFilters((prev: any) => {
+      const current = prev.categoriesJuridiques || [];
+      const isSelected = current.includes(code);
+      
+      return {
+        ...prev,
+        categoriesJuridiques: isSelected
+          ? current.filter((c: string) => c !== code)
+          : [...current, code]
+      };
+    });
+  };
+
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
     nafSections: [], 
@@ -358,6 +387,7 @@ export const NafFilters = ({
     nafSousClasses: [],
     departments: [],
     taillesEntreprise: [],
+    categoriesJuridiques: [],
     searchQuery: ""
   }));
 
@@ -367,7 +397,8 @@ export const NafFilters = ({
     (filters.nafClasses?.length || 0) +
     (filters.nafSousClasses?.length || 0) +
     (filters.departments?.length || 0) +
-    (filters.taillesEntreprise?.length || 0);
+    (filters.taillesEntreprise?.length || 0) +
+    (filters.categoriesJuridiques?.length || 0);
 
   // Composant pour afficher une checkbox
   const Checkbox = ({ selected, size = "md" }: { selected: boolean; size?: "sm" | "md" }) => {
@@ -545,6 +576,20 @@ export const NafFilters = ({
                 <button
                   onClick={() => handleTailleEntrepriseToggle(taille)}
                   className="hover:bg-purple-500/20 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            {filters.categoriesJuridiques?.map((code: string) => (
+              <span
+                key={`catjur-${code}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-amber-500/15 text-amber-600 dark:text-amber-400 rounded-full border border-amber-500/30"
+              >
+                <span>{getCategorieJuridiqueEmoji(code)} Cat. {code}</span>
+                <button
+                  onClick={() => handleCategorieJuridiqueToggle(code)}
+                  className="hover:bg-amber-500/20 rounded-full p-0.5 transition-colors"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -805,6 +850,54 @@ export const NafFilters = ({
                       <Checkbox selected={selected} />
                       <span className="text-sm flex-1">{label}</span>
                       <span className="text-xs text-muted-foreground">
+                        {count.toLocaleString('fr-FR')}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </ScrollArea>
+        </CollapsibleContent>
+      </Collapsible>
+
+      {/* Catégorie juridique */}
+      <Collapsible open={categoriesJuridiquesOpen} onOpenChange={setCategoriesJuridiquesOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <div className="flex items-center gap-2">
+            <Scale className="w-4 h-4 text-accent" />
+            <span className="font-medium text-sm">Catégorie juridique</span>
+          </div>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesJuridiquesOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <ScrollArea className="h-[350px]">
+            <div className="px-4 pb-4 space-y-1">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-14 w-full" />
+                ))
+              ) : availableCategoriesJuridiques.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-4">
+                  Aucune catégorie juridique disponible
+                </div>
+              ) : (
+                availableCategoriesJuridiques.map(({ code, label, type, emoji, count }) => {
+                  const selected = filters.categoriesJuridiques?.includes(code);
+                  return (
+                    <div
+                      key={code}
+                      onClick={() => handleCategorieJuridiqueToggle(code)}
+                      className="flex items-start gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                    >
+                      <Checkbox selected={selected} />
+                      <span className="text-lg shrink-0">{emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium leading-tight">{label}</div>
+                        <div className="text-xs text-muted-foreground leading-tight mt-0.5">{type}</div>
+                      </div>
+                      <span className="text-xs text-muted-foreground shrink-0 font-semibold">
                         {count.toLocaleString('fr-FR')}
                       </span>
                     </div>

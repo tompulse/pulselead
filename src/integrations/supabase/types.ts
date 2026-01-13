@@ -512,16 +512,28 @@ export type Database = {
         }
         Returns: Json
       }
-      get_nouveaux_sites_filter_counts_dynamic: {
-        Args: {
-          p_departments?: string[]
-          p_naf_divisions?: string[]
-          p_naf_sections?: string[]
-          p_search_query?: string
-          p_tailles?: string[]
-        }
-        Returns: Json
-      }
+      get_nouveaux_sites_filter_counts_dynamic:
+        | {
+            Args: {
+              p_departments?: string[]
+              p_naf_divisions?: string[]
+              p_naf_sections?: string[]
+              p_search_query?: string
+              p_tailles?: string[]
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_categories_juridiques?: string[]
+              p_departments?: string[]
+              p_naf_divisions?: string[]
+              p_naf_sections?: string[]
+              p_search_query?: string
+              p_tailles?: string[]
+            }
+            Returns: Json
+          }
       get_nouveaux_sites_filter_counts_v2: { Args: never; Returns: Json }
       has_role: {
         Args: {

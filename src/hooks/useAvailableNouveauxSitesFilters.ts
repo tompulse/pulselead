@@ -9,6 +9,7 @@ interface FilterCounts {
   nafSousClasses: Record<string, number>;
   departments: Record<string, number>;
   taillesEntreprise: Record<string, number>;
+  categoriesJuridiques: Record<string, number>;
 }
 
 interface FiltersInput {
@@ -16,6 +17,7 @@ interface FiltersInput {
   nafDivisions?: string[];
   departments?: string[];
   taillesEntreprise?: string[];
+  categoriesJuridiques?: string[];
   searchQuery?: string;
 }
 
@@ -27,6 +29,7 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       filters.nafDivisions || [],
       filters.departments || [],
       filters.taillesEntreprise || [],
+      filters.categoriesJuridiques || [],
       filters.searchQuery || ''
     ],
     queryFn: async (): Promise<FilterCounts> => {
@@ -36,6 +39,7 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
         p_naf_divisions: filters.nafDivisions?.length ? filters.nafDivisions : null,
         p_departments: filters.departments?.length ? filters.departments : null,
         p_tailles: filters.taillesEntreprise?.length ? filters.taillesEntreprise : null,
+        p_categories_juridiques: filters.categoriesJuridiques?.length ? filters.categoriesJuridiques : null,
         p_search_query: filters.searchQuery?.trim() || null
       });
       
@@ -52,6 +56,7 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
         nafSousClasses: (data as any)?.nafSousClasses || {},
         departments: (data as any)?.departments || {},
         taillesEntreprise: (data as any)?.taillesEntreprise || {},
+        categoriesJuridiques: (data as any)?.categoriesJuridiques || {},
       };
     },
     staleTime: 30000, // 30 secondes
