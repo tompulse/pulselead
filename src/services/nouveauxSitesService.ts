@@ -10,6 +10,7 @@ export interface NouveauxSitesFilters {
   nafSousClasses?: string[];
   departments?: string[];
   taillesEntreprise?: string[];
+  categoriesJuridiques?: string[];
 }
 
 export const nouveauxSitesService = {
@@ -92,6 +93,14 @@ export const nouveauxSitesService = {
       // Filtre par taille d'entreprise
       if (filters.taillesEntreprise && filters.taillesEntreprise.length > 0) {
         query = query.in('categorie_entreprise', filters.taillesEntreprise);
+      }
+
+      // Filtre par catégorie juridique (premier chiffre du code)
+      if (filters.categoriesJuridiques && filters.categoriesJuridiques.length > 0) {
+        const catConditions = filters.categoriesJuridiques.map(cat => 
+          `categorie_juridique.like.${cat}%`
+        ).join(',');
+        query = query.or(catConditions);
       }
 
       const { data, error, count } = await query;
