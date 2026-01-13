@@ -7,21 +7,21 @@ const CGU = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <div className="container mx-auto px-4 py-6 sm:py-8 md:py-12 max-w-4xl">
         <Button
           variant="ghost"
           onClick={() => navigate("/")}
-          className="mb-8"
+          className="mb-4 sm:mb-6 md:mb-8 h-9 px-3 text-sm"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
 
-        <h1 className="text-4xl font-bold mb-8">Conditions Générales d'Utilisation (CGU)</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8">Conditions Générales d'Utilisation (CGU)</h1>
 
-        <div className="space-y-8 text-muted-foreground">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8 text-muted-foreground text-sm sm:text-base">
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">1. Objet</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">1. Objet</h2>
             <p>
               Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation de la plateforme PULSE, 
               éditée par Tom Iolov, exerçant sous l'enseigne PULSE en tant qu'entrepreneur individuel, 
@@ -34,21 +34,21 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">2. Accès à la plateforme</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">2. Accès à la plateforme</h2>
             <p>
               L'accès à PULSE nécessite la création d'un compte utilisateur. Vous devez fournir des informations exactes et complètes 
               lors de votre inscription. Vous êtes responsable de la confidentialité de vos identifiants de connexion.
             </p>
-            <p className="mt-4">
+            <p className="mt-2 sm:mt-3 md:mt-4">
               L'accès à certaines fonctionnalités peut nécessiter la souscription d'un abonnement payant conformément aux 
               Conditions Générales de Vente.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">3. Description des services</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">3. Description des services</h2>
             <p>PULSE est une plateforme de prospection intelligente destinée aux commerciaux terrain. L'offre "Commercial Solo" comprend :</p>
-            <ul className="list-disc ml-6 mt-4 space-y-2">
+            <ul className="list-disc ml-4 sm:ml-6 mt-2 sm:mt-3 md:mt-4 space-y-1 sm:space-y-2">
               <li><strong>Liste de prospects filtrée :</strong> accédez aux nouvelles entreprises créées en France selon vos critères</li>
               <li><strong>Tournées optimisées IA :</strong> calcul automatique du meilleur itinéraire pour réduire vos temps de trajet</li>
               <li><strong>CRM mobile terrain :</strong> gestion des visites et relances depuis votre smartphone ou tablette</li>
@@ -59,9 +59,9 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">4. Obligations de l'utilisateur</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">4. Obligations de l'utilisateur</h2>
             <p>En utilisant PULSE, vous vous engagez à :</p>
-            <ul className="list-disc ml-6 mt-4 space-y-2">
+            <ul className="list-disc ml-4 sm:ml-6 mt-2 sm:mt-3 md:mt-4 space-y-1 sm:space-y-2">
               <li>Utiliser la plateforme conformément à sa destination et de manière loyale</li>
               <li>Ne pas porter atteinte aux droits de propriété intellectuelle de PULSE</li>
               <li>Ne pas tenter d'accéder de manière non autorisée au système</li>
@@ -72,20 +72,20 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">5. Propriété intellectuelle</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">5. Propriété intellectuelle</h2>
             <p>
               Tous les éléments de la plateforme PULSE (codes, logiciels, structure, design, contenus, marques, logos) sont protégés 
               par le droit de la propriété intellectuelle. Toute reproduction, représentation, modification ou utilisation non autorisée 
               est strictement interdite.
             </p>
-            <p className="mt-4">
+            <p className="mt-2 sm:mt-3 md:mt-4">
               La licence d'utilisation accordée dans le cadre de l'abonnement est personnelle, non exclusive, non cessible et limitée 
               à la durée de l'abonnement.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">6. Données personnelles</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">6. Données personnelles</h2>
             <p>
               Nous collectons et traitons vos données personnelles conformément au Règlement Général sur la Protection des Données (RGPD) 
               et à notre Politique de Confidentialité. Vous disposez d'un droit d'accès, de rectification, de suppression et d'opposition 
@@ -94,7 +94,7 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">7. Données des entreprises tierces</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">7. Données des entreprises tierces</h2>
             <p>
               Les données d'entreprises fournies par PULSE proviennent de sources publiques et de partenaires. Nous nous efforçons 
               de maintenir ces données à jour mais ne pouvons garantir leur exactitude absolue. L'utilisateur est responsable de vérifier 
@@ -103,7 +103,7 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">8. Disponibilité et maintenance</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">8. Disponibilité et maintenance</h2>
             <p>
               Nous nous efforçons d'assurer l'accessibilité de la plateforme 24h/24 et 7j/7. Toutefois, nous nous réservons le droit 
               d'interrompre temporairement l'accès pour des opérations de maintenance, mises à jour ou en cas de force majeure.
@@ -111,11 +111,11 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">9. Limitation de responsabilité</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">9. Limitation de responsabilité</h2>
             <p>
               PULSE ne pourra être tenue responsable :
             </p>
-            <ul className="list-disc ml-6 mt-4 space-y-2">
+            <ul className="list-disc ml-4 sm:ml-6 mt-2 sm:mt-3 md:mt-4 space-y-1 sm:space-y-2">
               <li>Des dommages indirects résultant de l'utilisation ou de l'impossibilité d'utiliser la plateforme</li>
               <li>De l'inexactitude des données tierces fournies</li>
               <li>Des interruptions de service indépendantes de notre volonté</li>
@@ -124,11 +124,11 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">10. Suspension et résiliation</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">10. Suspension et résiliation</h2>
             <p>
               Nous nous réservons le droit de suspendre ou de résilier l'accès d'un utilisateur en cas de :
             </p>
-            <ul className="list-disc ml-6 mt-4 space-y-2">
+            <ul className="list-disc ml-4 sm:ml-6 mt-2 sm:mt-3 md:mt-4 space-y-1 sm:space-y-2">
               <li>Violation des présentes CGU</li>
               <li>Utilisation frauduleuse de la plateforme</li>
               <li>Non-paiement des sommes dues</li>
@@ -137,7 +137,7 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">11. Modifications des CGU</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">11. Modifications des CGU</h2>
             <p>
               Nous nous réservons le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés de toute 
               modification substantielle par email ou notification sur la plateforme. La poursuite de l'utilisation après modification 
@@ -146,7 +146,7 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">12. Droit applicable et juridiction compétente</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">12. Droit applicable et juridiction compétente</h2>
             <p>
               Les présentes CGU sont régies par le droit français. En cas de litige, les parties s'efforceront de trouver une solution amiable. 
               À défaut, les tribunaux de Paris seront seuls compétents.
@@ -154,14 +154,14 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">13. Contact</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">13. Contact</h2>
             <p>
               Pour toute question concernant les présentes CGU, vous pouvez nous contacter à : tomiolovpro@gmail.com
             </p>
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-accent/20 text-center text-muted-foreground text-sm">
+        <div className="mt-8 sm:mt-10 md:mt-12 pt-4 sm:pt-6 md:pt-8 border-t border-accent/20 text-center text-muted-foreground text-xs sm:text-sm">
           <p>Dernière mise à jour : 13 janvier 2026</p>
         </div>
       </div>
