@@ -19,10 +19,15 @@ const CheckoutSuccess = () => {
         return;
       }
       
-      // Extract name from email if available
-      const email = session.user.email || '';
-      const name = email.split('@')[0].replace(/[._]/g, ' ');
-      setUserName(name.charAt(0).toUpperCase() + name.slice(1));
+      // Utiliser le prénom du metadata si disponible, sinon fallback sur l'email
+      const firstName = session.user.user_metadata?.first_name;
+      if (firstName) {
+        setUserName(firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase());
+      } else {
+        const email = session.user.email || '';
+        const name = email.split('@')[0].replace(/[._]/g, ' ');
+        setUserName(name.charAt(0).toUpperCase() + name.slice(1));
+      }
     };
     
     checkUser();

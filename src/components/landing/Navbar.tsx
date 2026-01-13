@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import lumaLogo from "@/assets/luma-logo-cyan.png";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <img src={lumaLogo} alt="PULSE" className="h-14 w-auto drop-shadow-[0_0_8px_rgba(0,255,240,0.5)]" />
+            <span className="text-2xl font-bold text-white">PULSE<span className="text-accent">.</span></span>
           </div>
 
           {/* Navigation Desktop */}
@@ -68,7 +67,7 @@ export const Navbar = () => {
               asChild
               className="bg-green-600 hover:bg-green-700 text-white font-bold text-sm px-6 py-2.5 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
             >
-              <a href="https://calendly.com/tomiolovpro/30min?month=2025-11" target="_blank" rel="noopener noreferrer">
+              <a href="https://calendly.com/tomiolovpro/30min" target="_blank" rel="noopener noreferrer">
                 Je réserve ma démo
               </a>
             </Button>
@@ -143,7 +142,7 @@ export const Navbar = () => {
                 asChild
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg"
               >
-                <a href="https://calendly.com/tomiolovpro/30min?month=2025-11" target="_blank" rel="noopener noreferrer">
+                <a href="https://calendly.com/tomiolovpro/30min" target="_blank" rel="noopener noreferrer">
                   Je réserve ma démo
                 </a>
               </Button>
