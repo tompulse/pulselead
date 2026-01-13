@@ -518,7 +518,7 @@ export const NafFilters = ({
         <div className="flex items-center gap-2 text-sm">
           <Building2 className="w-4 h-4 text-accent" />
           <span className="font-semibold text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
-          <span className="text-muted-foreground">entreprise{resultsCount > 1 ? 's' : ''} trouvée{resultsCount > 1 ? 's' : ''}</span>
+          <span className="text-muted-foreground">établissement{resultsCount > 1 ? 's' : ''} trouvé{resultsCount > 1 ? 's' : ''}</span>
           {isFetching && <span className="text-xs text-muted-foreground">(mise à jour...)</span>}
         </div>
 
@@ -782,7 +782,10 @@ export const NafFilters = ({
       {/* Départements */}
       <Collapsible open={departmentsOpen} onOpenChange={setDepartmentsOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <span className="font-medium text-sm">Départements</span>
+          <div className="flex items-center gap-2">
+            <span className="text-base">📍</span>
+            <span className="font-medium text-sm">Départements</span>
+          </div>
           <ChevronDown className={`h-4 w-4 text-accent transition-transform ${departmentsOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
@@ -823,7 +826,10 @@ export const NafFilters = ({
       {/* Taille d'entreprise */}
       <Collapsible open={taillesEntrepriseOpen} onOpenChange={setTaillesEntrepriseOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <span className="font-medium text-sm">Taille d'entreprise</span>
+          <div className="flex items-center gap-2">
+            <span className="text-base">📊</span>
+            <span className="font-medium text-sm">Taille d'entreprise</span>
+          </div>
           <ChevronDown className={`h-4 w-4 text-accent transition-transform ${taillesEntrepriseOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
