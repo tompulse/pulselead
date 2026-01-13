@@ -3,9 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar, RotateCcw, FileText, CheckCircle2, XCircle, Phone } from 'lucide-react';
+import { Calendar, RotateCcw, FileText, CheckCircle2, XCircle, Phone, MessageSquare } from 'lucide-react';
 import { ActivityDetailSheet } from '@/components/dashboard/ActivityDetailSheet';
 import { PipelineDetailSheet } from '@/components/dashboard/PipelineDetailSheet';
+import { NotesDetailSheet } from '@/components/dashboard/NotesDetailSheet';
 import { toast } from 'sonner';
 
 interface LeadWithSite {
@@ -40,6 +41,7 @@ export const CRMViewContainer = ({
 }) => {
   const [selectedActivity, setSelectedActivity] = useState<'rdv' | 'a_revoir' | 'a_rappeler' | null>(null);
   const [selectedPipelineStage, setSelectedPipelineStage] = useState<PipelineStageKey | null>(null);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch interactions for activity stats
@@ -113,6 +115,7 @@ export const CRMViewContainer = ({
   const aRappelerCount = interactions.filter(i => i.statut === 'a_rappeler').length;
   const rdvCount = interactions.filter(i => i.type === 'rdv').length;
   const aRevoirCount = interactions.filter(i => i.type === 'a_revoir').length;
+  const notesCount = interactions.filter(i => i.notes && i.notes.trim() !== '').length;
 
   // Count offers by stage
   const getOfferCountByStage = (stageKey: string): number => {
@@ -135,7 +138,7 @@ export const CRMViewContainer = ({
       {/* Activities Section */}
       <div className="flex-1 flex flex-col mb-4 md:mb-6">
         <h3 className="text-accent font-semibold mb-3 md:mb-4 text-sm md:text-base">Activités</h3>
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 flex-1">
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 flex-1">
           {/* A rappeler - Left */}
           <Card 
             className="glass-card border-blue-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 flex"
@@ -189,6 +192,24 @@ export const CRMViewContainer = ({
               <p className="text-xl sm:text-2xl md:text-3xl font-bold text-green-400">{rdvCount}</p>
             </CardContent>
           </Card>
+
+          {/* Notes */}
+          <Card 
+            className="glass-card border-yellow-500/20 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-yellow-500/10 flex"
+            onClick={() => setIsNotesOpen(true)}
+            role="button"
+            tabIndex={0}
+            aria-label={`Voir les ${notesCount} notes`}
+            onKeyDown={(e) => e.key === 'Enter' && setIsNotesOpen(true)}
+          >
+            <CardContent className="p-3 sm:p-4 md:p-6 text-center flex flex-col justify-center items-center flex-1">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-yellow-500/20 flex items-center justify-center mb-2 sm:mb-3">
+                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-yellow-400" aria-hidden="true" />
+              </div>
+              <p className="text-xs sm:text-sm md:text-sm text-muted-foreground mb-1">Notes</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-yellow-400">{notesCount}</p>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
@@ -197,6 +218,14 @@ export const CRMViewContainer = ({
         isOpen={selectedActivity !== null}
         onClose={() => setSelectedActivity(null)}
         activityType={selectedActivity}
+        userId={userId}
+        onEntrepriseSelect={onEntrepriseSelect}
+      />
+
+      {/* Notes Detail Sheet */}
+      <NotesDetailSheet
+        isOpen={isNotesOpen}
+        onClose={() => setIsNotesOpen(false)}
         userId={userId}
         onEntrepriseSelect={onEntrepriseSelect}
       />
