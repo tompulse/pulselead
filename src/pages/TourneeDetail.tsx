@@ -596,10 +596,10 @@ const TourneeDetail = () => {
   const currentStatut = tournee.statut;
 
   return (
-    <div className="h-screen flex flex-col bg-background overflow-y-auto lg:overflow-hidden">
-      {/* Header */}
-      <div className="p-4 border-b border-accent/20 flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour">
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Header - Compact on mobile */}
+      <div className="p-3 sm:p-4 border-b border-accent/20 flex items-center gap-2 sm:gap-4 shrink-0">
+        <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour" className="h-9 w-9 shrink-0">
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="flex-1 min-w-0">
@@ -608,40 +608,40 @@ const TourneeDetail = () => {
               <Input
                 value={editedName}
                 onChange={(e) => setEditedName(e.target.value)}
-                className="h-9 text-lg font-bold bg-card border-accent/30"
+                className="h-8 sm:h-9 text-base sm:text-lg font-bold bg-card border-accent/30 flex-1 min-w-0"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleSaveName();
                   if (e.key === 'Escape') handleCancelEditName();
                 }}
               />
-              <Button size="icon" variant="ghost" onClick={handleSaveName} className="h-8 w-8 text-green-500 hover:text-green-400 hover:bg-green-500/10">
+              <Button size="icon" variant="ghost" onClick={handleSaveName} className="h-8 w-8 text-green-500 hover:text-green-400 hover:bg-green-500/10 shrink-0">
                 <Check className="w-4 h-4" />
               </Button>
-              <Button size="icon" variant="ghost" onClick={handleCancelEditName} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+              <Button size="icon" variant="ghost" onClick={handleCancelEditName} className="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0">
                 <X className="w-4 h-4" />
               </Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <h2 className="font-bold text-lg truncate">{tournee.nom}</h2>
+            <div className="flex items-center gap-2 min-w-0">
+              <h2 className="font-bold text-base sm:text-lg truncate">{tournee.nom}</h2>
               <Button 
                 size="icon" 
                 variant="ghost" 
                 onClick={handleStartEditName}
-                className="h-8 w-8 text-muted-foreground hover:text-accent shrink-0"
+                className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-accent shrink-0"
                 aria-label="Modifier le nom"
               >
-                <Pencil className="w-4 h-4" />
+                <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
             </div>
           )}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="w-4 h-4" />
-            {format(new Date(tournee.date_planifiee), 'EEEE d MMMM yyyy', { locale: fr })}
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mt-0.5">
+            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+            <span className="truncate">{format(new Date(tournee.date_planifiee), 'EEE d MMM yyyy', { locale: fr })}</span>
           </div>
         </div>
-        <Badge variant="outline" className={`
+        <Badge variant="outline" className={`shrink-0 text-xs
           ${currentStatut === 'planifiee' ? 'border-accent/50 text-accent' : ''}
           ${currentStatut === 'en_cours' ? 'border-orange-500/50 text-orange-500' : ''}
           ${currentStatut === 'terminee' ? 'border-green-500/50 text-green-500' : ''}
@@ -650,40 +650,40 @@ const TourneeDetail = () => {
         </Badge>
       </div>
 
-      {/* KPIs */}
-      <div className="p-4 grid grid-cols-4 gap-3">
-        <div className="p-3 rounded-xl bg-accent/10 border border-accent/20 text-center">
-          <MapPin className="w-5 h-5 text-accent mx-auto mb-1" />
-          <div className="font-bold text-xl">{sites.length}</div>
-          <div className="text-xs text-muted-foreground">Arrêts</div>
+      {/* KPIs - Responsive grid */}
+      <div className="p-3 sm:p-4 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <div className="p-2.5 sm:p-3 rounded-xl bg-accent/10 border border-accent/20 text-center">
+          <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-accent mx-auto mb-1" />
+          <div className="font-bold text-lg sm:text-xl">{sites.length}</div>
+          <div className="text-[10px] sm:text-xs text-muted-foreground">Arrêts</div>
         </div>
-        <div className="p-3 rounded-xl bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30 text-center">
-          <Navigation className="w-5 h-5 text-accent mx-auto mb-1" />
-          <div className="font-bold text-xl flex items-center justify-center gap-1">
-            {isRecalculating && <Loader2 className="w-4 h-4 animate-spin" />}
+        <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30 text-center">
+          <Navigation className="w-4 h-4 sm:w-5 sm:h-5 text-accent mx-auto mb-1" />
+          <div className="font-bold text-lg sm:text-xl flex items-center justify-center gap-1">
+            {isRecalculating && <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />}
             {localKpis.distance?.toFixed(0) || '—'}
           </div>
-          <div className="text-xs text-muted-foreground">km</div>
+          <div className="text-[10px] sm:text-xs text-muted-foreground">km</div>
         </div>
-        <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center">
-          <Clock className="w-5 h-5 text-purple-400 mx-auto mb-1" />
-          <div className="font-bold text-xl">{formatDuration(localKpis.temps)}</div>
-          <div className="text-xs text-muted-foreground">durée</div>
+        <div className="p-2.5 sm:p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center">
+          <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 mx-auto mb-1" />
+          <div className="font-bold text-lg sm:text-xl">{formatDuration(localKpis.temps)}</div>
+          <div className="text-[10px] sm:text-xs text-muted-foreground">durée</div>
         </div>
-        <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
-          <CheckCircle className="w-5 h-5 text-green-400 mx-auto mb-1" />
-          <div className="font-bold text-xl">{completedCount}/{sites.length}</div>
-          <div className="text-xs text-muted-foreground">visités</div>
+        <div className="p-2.5 sm:p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
+          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mx-auto mb-1" />
+          <div className="font-bold text-lg sm:text-xl">{completedCount}/{sites.length}</div>
+          <div className="text-[10px] sm:text-xs text-muted-foreground">visités</div>
         </div>
       </div>
 
       {/* Actions supprimées (Démarrer la tournée / Ouvrir GPS) */}
       <div className="px-4" />
 
-      {/* Content: Map + List */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 lg:overflow-hidden">
+      {/* Content: Map + List - Stack on mobile, side by side on desktop */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 overflow-hidden">
         {/* Map */}
-        <div className="h-[300px] lg:h-auto lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0">
+        <div className="h-[250px] sm:h-[300px] lg:h-full lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0">
           {sitesLoading ? (
             <div className="h-full flex items-center justify-center bg-card">
               <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
@@ -695,37 +695,37 @@ const TourneeDetail = () => {
               pointDepartLng={tournee.point_depart_lng || undefined}
             />
           ) : (
-            <div className="h-full flex items-center justify-center bg-card text-muted-foreground">
+            <div className="h-full flex items-center justify-center bg-card text-muted-foreground text-sm">
               Aucun site avec coordonnées GPS
             </div>
           )}
         </div>
 
         {/* Sites list with drag & drop */}
-        <Card className="lg:w-96 glass-card border-accent/20 shrink-0 lg:flex-1 lg:min-h-0">
-          <CardContent className="p-4 h-full flex flex-col">
-            <div className="flex items-center justify-between mb-4 shrink-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold">Itinéraire</h3>
+        <Card className="glass-card border-accent/20 flex-1 min-h-[300px] lg:w-96 lg:shrink-0 lg:flex-initial overflow-hidden flex flex-col">
+          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0 gap-2">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <h3 className="font-semibold text-sm sm:text-base shrink-0">Itinéraire</h3>
                 <Button
                   size="sm"
                   variant="outline"
                   disabled={isOptimizing || sites.length < 2}
                   onClick={handleOptimizeRoute}
-                  className="h-7 text-xs border-accent/30 hover:bg-accent/10 hover:text-accent"
+                  className="h-7 text-[10px] sm:text-xs border-accent/30 hover:bg-accent/10 hover:text-accent px-2 sm:px-3 whitespace-nowrap"
                 >
                   {isOptimizing ? (
                     <Loader2 className="w-3 h-3 mr-1 animate-spin" />
                   ) : (
                     <Sparkles className="w-3 h-3 mr-1" />
                   )}
-                  Revenir à la version optimisée
+                  <span className="hidden xs:inline">Revenir à la version </span>optimisée
                 </Button>
               </div>
-              <span className="text-xs text-muted-foreground hidden sm:block">Glissez pour réorganiser</span>
+              <span className="text-[10px] sm:text-xs text-muted-foreground hidden md:block shrink-0">Glissez pour réorganiser</span>
             </div>
 
-            <ScrollArea className="flex-1 min-h-0">
+            <ScrollArea className="flex-1 -mr-2 pr-2">
               {sitesLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...

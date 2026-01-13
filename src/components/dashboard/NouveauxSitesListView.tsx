@@ -89,7 +89,7 @@ export const NouveauxSitesListView = ({
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3">
               {allSites.map((site) => {
               const nafInfo = getNafCategory(site.code_naf);
               const hasCoordinates = site.latitude && site.longitude;
@@ -115,7 +115,7 @@ export const NouveauxSitesListView = ({
                       onToggleSelection(site);
                     }
                   }}
-                  className={`group relative rounded-xl p-3 md:p-4 lg:p-5 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[200px] md:min-h-[240px] lg:min-h-[280px] overflow-hidden ${
+                  className={`group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden active:scale-[0.99] ${
                     selectionMode 
                       ? isSelected
                         ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15'
@@ -127,40 +127,40 @@ export const NouveauxSitesListView = ({
                   <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
                   
                   {/* Header */}
-                  <div className="relative flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <div className="relative flex items-start justify-between gap-2 mb-2 sm:mb-3">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
                       {selectionMode && (
-                        <div className={`flex-shrink-0 w-5 h-5 rounded border-2 transition-all ${
+                        <div className={`flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 rounded border-2 transition-all ${
                           isSelected 
                             ? 'bg-accent border-accent' 
                             : 'border-accent/50'
                         } flex items-center justify-center`}>
-                          {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
+                          {isSelected && <span className="text-primary text-[10px] sm:text-xs font-bold">✓</span>}
                         </div>
                       )}
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <h4 className="font-bold text-base md:text-lg gradient-text break-words leading-tight" title={site.nom}>
+                      <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
+                        <h4 className="font-bold text-sm sm:text-base gradient-text line-clamp-2 leading-tight" title={site.nom}>
                           {site.nom}
                         </h4>
                         {(site as any).multipleCreations && (
-                          <Badge variant="secondary" className="text-xs bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 shrink-0">
+                          <Badge variant="secondary" className="text-[10px] sm:text-xs bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 shrink-0">
                             ×{(site as any).multipleCreations}
                           </Badge>
                         )}
                       </div>
                     </div>
-                    <div className="flex flex-col items-end gap-1 shrink-0">
+                    <div className="flex flex-col items-end gap-0.5 sm:gap-1 shrink-0">
                       {/* Status badge - prominent position */}
                       {prospectStatus && (
                         <ProspectStatusBadge status={prospectStatus} />
                       )}
                       {site.est_siege && (
-                        <Badge variant="secondary" className="text-xs bg-accent/20 text-accent border-accent/30">
+                        <Badge variant="secondary" className="text-[10px] sm:text-xs bg-accent/20 text-accent border-accent/30">
                           Siège
                         </Badge>
                       )}
                       {site.categorie_entreprise && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-[10px] sm:text-xs">
                           {site.categorie_entreprise}
                         </Badge>
                       )}
@@ -168,44 +168,44 @@ export const NouveauxSitesListView = ({
                   </div>
 
                   {/* Content */}
-                  <div className="relative space-y-2 mb-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                  <div className="relative space-y-1.5 sm:space-y-2 flex-1 overflow-y-auto custom-scrollbar pr-1">
                     {/* Secteur NAF */}
                     {nafInfo && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs">{nafInfo.category.emoji}</span>
-                        <span className="text-xs text-foreground/60">{nafInfo.category.label}</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <span className="text-[10px] sm:text-xs">{nafInfo.category.emoji}</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-1">{nafInfo.category.label}</span>
                       </div>
                     )}
 
                     {/* Code NAF */}
                     {site.code_naf && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs flex-shrink-0">🏷️</span>
-                        <span className="text-xs text-foreground/60">NAF: {site.code_naf}</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <span className="text-[10px] sm:text-xs flex-shrink-0">🏷️</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/60">NAF: {site.code_naf}</span>
                       </div>
                     )}
 
                     {/* SIRET */}
                     {site.siret && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs flex-shrink-0">🏛️</span>
-                        <span className="text-xs text-foreground/60 font-mono">{site.siret}</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <span className="text-[10px] sm:text-xs flex-shrink-0">🏛️</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/60 font-mono truncate">{site.siret}</span>
                       </div>
                     )}
                     
                     {/* Adresse */}
                     {fullAddress && (
-                      <div className="flex items-start gap-2 text-sm">
-                        <span className="text-xs flex-shrink-0">📍</span>
-                        <span className="text-xs text-foreground/60">{fullAddress}</span>
+                      <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <span className="text-[10px] sm:text-xs flex-shrink-0">📍</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-2">{fullAddress}</span>
                       </div>
                     )}
 
                     {/* Date de création */}
                     {site.date_creation && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs flex-shrink-0">📅</span>
-                        <span className="text-xs text-foreground/60">
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <span className="text-[10px] sm:text-xs flex-shrink-0">📅</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/60">
                           Créé le {format(new Date(site.date_creation), 'dd MMM yyyy', { locale: fr })}
                         </span>
                       </div>
