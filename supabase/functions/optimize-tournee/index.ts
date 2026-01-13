@@ -194,19 +194,31 @@ serve(async (req) => {
 
     const trip = mapboxData.trips[0];
     
-    // Récupérer l'ordre optimisé des waypoints
-    const waypointOrder = mapboxData.waypoints
-      .filter((wp: any) => wp.waypoint_index !== undefined)
-      .sort((a: any, b: any) => a.waypoint_index - b.waypoint_index);
+    // Les waypoints dans la réponse Mapbox contiennent:
+    // - waypoint_index: l'ordre dans lequel visiter ce point (0, 1, 2, ...)
+    // - la position dans le tableau correspond à l'ordre d'entrée
+    // 
+    // Donc waypoints[i].waypoint_index nous dit que le point d'entrée i doit être visité en position waypoint_index
     
-    // Si on a un point de départ, on enlève le premier waypoint (qui est le point de départ)
-    const relevantWaypoints = point_depart ? waypointOrder.slice(1) : waypointOrder;
+    const waypoints = mapboxData.waypoints;
     
-    // Réorganiser les entreprises selon l'ordre optimisé de Mapbox
-    const sortedEntreprises = relevantWaypoints.map((wp: any) => {
-      const originalIndex = point_depart ? wp.waypoint_index - 1 : wp.waypoint_index;
-      return validEntreprises[originalIndex];
-    });
+    // Si on a un point de départ personnalisé, le premier waypoint est le départ, on l'ignore
+    const startOffset = point_depart ? 1 : 0;
+    
+    // Créer un tableau avec l'index original et l'ordre de visite
+    const waypointMapping = waypoints
+      .slice(startOffset) // Ignorer le point de départ si présent
+      .map((wp: any, originalIdx: number) => ({
+        originalIndex: originalIdx,
+        visitOrder: wp.waypoint_index - startOffset, // Ajuster l'ordre de visite
+        entreprise: validEntreprises[originalIdx]
+      }));
+    
+    // Trier par ordre de visite (waypoint_index)
+    waypointMapping.sort((a: any, b: any) => a.visitOrder - b.visitOrder);
+    
+    // Extraire les entreprises dans l'ordre optimisé
+    const sortedEntreprises = waypointMapping.map((m: any) => m.entreprise);
     
     console.log('✅ Ordre optimisé par Mapbox (minimum de temps de trajet):', sortedEntreprises.map((e: Entreprise) => e.nom));
 
