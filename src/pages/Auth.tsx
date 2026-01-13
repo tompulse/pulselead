@@ -303,10 +303,8 @@ const Auth = () => {
         if (error) throw error;
 
         toast({
-          title: isDemoAccount ? "Compte démo créé !" : "✉️ Vérifiez votre email",
-          description: isDemoAccount 
-            ? "Vous pouvez maintenant vous connecter" 
-            : "Un lien de confirmation a été envoyé à votre adresse email",
+          title: "✅ Compte créé avec succès !",
+          description: "Vous pouvez maintenant vous connecter",
         });
         setEmail('');
         setPassword('');

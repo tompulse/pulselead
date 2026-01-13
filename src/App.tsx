@@ -20,6 +20,7 @@ const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 import Auth from "./pages/Auth";
 import Subscribe from "./pages/Subscribe";
 import Error404 from "./pages/Error404";
+import Error500 from "./pages/Error500";
 import MentionsLegales from "./pages/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import CGV from "./pages/CGV";
@@ -70,6 +71,7 @@ const App = () => (
                 <SecuritySettings />
               </ProtectedRoute>
             } />
+            <Route path="/error" element={<Error500 />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<Error404 />} />
           </Routes>

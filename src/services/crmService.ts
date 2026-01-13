@@ -9,8 +9,7 @@ export const crmService = {
     userId: string, 
     type: InteractionType,
     notes?: string,
-    nextAction?: string,
-    nextActionDate?: string
+    dateRelance?: string
   ) {
     try {
       // Check if interaction already exists
@@ -28,8 +27,7 @@ export const crmService = {
           .from('lead_interactions')
           .update({ 
             notes,
-            prochaine_action: nextAction,
-            date_prochaine_action: nextActionDate,
+            date_relance: dateRelance || null,
             updated_at: new Date().toISOString()
           })
           .eq('id', existing.id)
@@ -48,8 +46,7 @@ export const crmService = {
             type,
             statut: 'en_cours' as const,
             notes,
-            prochaine_action: nextAction,
-            date_prochaine_action: nextActionDate
+            date_relance: dateRelance || null
           }])
           .select()
           .single();

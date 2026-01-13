@@ -488,6 +488,21 @@ export type Database = {
         }
         Returns: Json
       }
+      get_my_subscription_safe: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          stripe_customer_masked: string
+          stripe_subscription_masked: string
+          subscription_end_date: string
+          subscription_plan: string
+          subscription_start_date: string
+          subscription_status: string
+          updated_at: string
+          user_id: string
+        }[]
+      }
       get_nouveaux_sites_filter_counts: {
         Args: {
           p_categories?: string[]

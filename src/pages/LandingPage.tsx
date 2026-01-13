@@ -209,7 +209,7 @@ CRM simple pour suivre vos visites sur le terrain</p>
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">
-                Les 3 piliers de <span className="gradient-text">PULSE</span>
+                Fonctionnalités <span className="gradient-text">PULSE</span>
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
                 Contrôlez votre territoire, optimisez chaque action commerciale

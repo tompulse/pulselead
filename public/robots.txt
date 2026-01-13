@@ -12,3 +12,12 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://pulse.lovable.app/sitemap.xml
+
+# Disallow admin/internal paths
+Disallow: /dashboard
+Disallow: /auth
+Disallow: /security
+Disallow: /checkout-success
