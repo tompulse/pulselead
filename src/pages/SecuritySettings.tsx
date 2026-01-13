@@ -224,23 +224,39 @@ export default function SecuritySettings() {
   };
 
   const handleOpenPortal = async () => {
+    // Open a popup synchronously to avoid browser popup blockers
+    const popup = window.open("about:blank", "_blank");
+    if (!popup) {
+      toast({
+        title: "Popup bloquée",
+        description:
+          "Autorisez les popups pour ouvrir le portail. Redirection dans cet onglet…",
+      });
+    }
+
     setIsOpeningPortal(true);
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
-      
+      const { data, error } = await supabase.functions.invoke("customer-portal");
       if (error) throw error;
-      
-      if (data?.url) {
-        window.open(data.url, '_blank');
+
+      const url = data?.url;
+      if (!url) throw new Error("URL du portail non disponible");
+
+      if (popup && !popup.closed) {
+        popup.location.href = url;
       } else {
-        throw new Error('URL du portail non disponible');
+        window.location.href = url;
       }
     } catch (error: any) {
-      console.error('Error opening customer portal:', error);
+      console.error("Error opening customer portal:", error);
+      if (popup && !popup.closed) popup.close();
+
       toast({
-        variant: 'destructive',
-        title: 'Erreur',
-        description: 'Impossible d\'ouvrir le portail de gestion. Réessayez plus tard.'
+        variant: "destructive",
+        title: "Erreur",
+        description:
+          error?.message ||
+          "Impossible d'ouvrir le portail de gestion. Réessayez plus tard.",
       });
     } finally {
       setIsOpeningPortal(false);
