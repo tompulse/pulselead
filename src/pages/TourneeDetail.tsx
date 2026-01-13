@@ -277,8 +277,15 @@ const TourneeDetail = () => {
 
       if (error) throw error;
 
-      const newDistance = data.distance_km || localKpis.distance;
-      const newTemps = data.duration_minutes || localKpis.temps;
+      // Parse response correctly - check nested structure first
+      const newDistance = parseFloat(data.withTolls?.distance_km) || 
+                          parseFloat(data.withoutTolls?.distance_km) || 
+                          parseFloat(data.distance_km) || 
+                          localKpis.distance;
+      const newTemps = data.withTolls?.duration_minutes || 
+                       data.withoutTolls?.duration_minutes || 
+                       data.duration_minutes || 
+                       localKpis.temps;
 
       setLocalKpis({
         distance: newDistance,
