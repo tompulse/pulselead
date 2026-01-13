@@ -6,12 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Route, Loader2, MapPin, Clock, Navigation, Gauge } from 'lucide-react';
+import { Calendar as CalendarIcon, Route, Loader2, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
-
-type OptimizeMode = 'duration' | 'distance';
 
 interface Site {
   id: string;
@@ -41,8 +39,6 @@ export const TourneeCreationModal = ({
   const [nom, setNom] = useState('');
   const [date, setDate] = useState<Date>();
   const [isOptimizing, setIsOptimizing] = useState(false);
-  const [optimizationResult, setOptimizationResult] = useState<any>(null);
-  const [optimizeMode, setOptimizeMode] = useState<OptimizeMode>('duration');
   const queryClient = useQueryClient();
 
   const createTourneeMutation = useMutation({
@@ -72,9 +68,9 @@ export const TourneeCreationModal = ({
         throw new Error('Au moins 2 sites avec coordonnées GPS sont nécessaires');
       }
 
-      // Appeler l'edge function d'optimisation avec le mode choisi
+      // Appeler l'edge function d'optimisation
       const { data: optimData, error: optimError } = await supabase.functions.invoke('optimize-tournee', {
-        body: { entreprises, optimize_by: optimizeMode }
+        body: { entreprises }
       });
 
       if (optimError) {
@@ -89,8 +85,6 @@ export const TourneeCreationModal = ({
         console.error('[TourneeCreation] API returned error:', optimData.error);
         throw new Error(optimData.error);
       }
-
-      setOptimizationResult(optimData);
 
       // Utiliser les données optimisées ou fallback sur l'ordre original
       const ordreOptimise = optimData.ordre_optimise || entreprises.map(e => e.id);
@@ -143,8 +137,6 @@ export const TourneeCreationModal = ({
   const resetForm = () => {
     setNom('');
     setDate(undefined);
-    setOptimizationResult(null);
-    setOptimizeMode('duration');
   };
 
   const handleClose = () => {
@@ -220,70 +212,20 @@ export const TourneeCreationModal = ({
               </div>
             )}
           </div>
-
-          {/* Mode d'optimisation */}
-          <div className="space-y-2">
-            <Label>Optimiser par</Label>
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                type="button"
-                variant={optimizeMode === 'duration' ? 'default' : 'outline'}
-                onClick={() => setOptimizeMode('duration')}
-                className={optimizeMode === 'duration' 
-                  ? 'bg-accent hover:bg-accent/90 text-primary' 
-                  : 'border-accent/30 hover:bg-accent/10'
-                }
-              >
-                <Clock className="w-4 h-4 mr-2" />
-                Durée
-              </Button>
-              <Button
-                type="button"
-                variant={optimizeMode === 'distance' ? 'default' : 'outline'}
-                onClick={() => setOptimizeMode('distance')}
-                className={optimizeMode === 'distance' 
-                  ? 'bg-accent hover:bg-accent/90 text-primary' 
-                  : 'border-accent/30 hover:bg-accent/10'
-                }
-              >
-                <Gauge className="w-4 h-4 mr-2" />
-                Distance
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {optimizeMode === 'duration' 
-                ? 'Minimise le temps de trajet total' 
-                : 'Minimise les kilomètres parcourus'
-              }
-            </p>
-          </div>
-
-          {/* Preview d'optimisation */}
-          {optimizationResult && (
-            <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30 space-y-2">
-              <div className="text-sm font-medium text-green-500">✓ Itinéraire optimisé</div>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="flex items-center gap-1">
-                  <Navigation className="w-3 h-3" />
-                  {optimizationResult.distance_totale_km?.toFixed(1)} km
-                </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {Math.floor((optimizationResult.temps_estime_minutes || 0) / 60)}h
-                  {((optimizationResult.temps_estime_minutes || 0) % 60).toString().padStart(2, '0')}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={handleClose} disabled={isOptimizing}>
+        <DialogFooter className="gap-2">
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            disabled={createTourneeMutation.isPending}
+            className="border-accent/30"
+          >
             Annuler
           </Button>
           <Button
             onClick={() => createTourneeMutation.mutate()}
-            disabled={!nom.trim() || !date || isOptimizing}
+            disabled={!nom.trim() || !date || createTourneeMutation.isPending || selectedSites.length < 2}
             className="bg-accent hover:bg-accent/90 text-primary"
           >
             {isOptimizing ? (

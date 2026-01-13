@@ -19,10 +19,8 @@ import {
   Pencil,
   Check,
   X,
-  Sparkles,
-  Gauge
+  Sparkles
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -441,7 +439,7 @@ const TourneeDetail = () => {
     setEditedName('');
   };
 
-  const handleOptimizeRoute = async (optimizeBy: 'duration' | 'distance' = 'duration') => {
+  const handleOptimizeRoute = async () => {
     if (sites.length < 2) {
       toast.error('Au moins 2 sites sont nécessaires pour optimiser');
       return;
@@ -472,18 +470,14 @@ const TourneeDetail = () => {
         : null;
 
       const { data, error } = await supabase.functions.invoke('optimize-tournee', {
-        body: { 
-          entreprises,
-          point_depart,
-          optimize_by: optimizeBy,
-        },
+        body: { entreprises, point_depart },
       });
 
       if (error) throw error;
 
-      const optimizedOrder = data.ordre_optimise || data.optimizedOrder || [];
-      const newDistance = data.distance_totale_km || data.distance_km || localKpis.distance;
-      const newTemps = data.temps_estime_minutes || data.duration_minutes || localKpis.temps;
+      const optimizedOrder = data.ordre_optimise || [];
+      const newDistance = data.distance_totale_km || localKpis.distance;
+      const newTemps = data.temps_estime_minutes || localKpis.temps;
 
       if (optimizedOrder.length > 0) {
         setOrderedSiteIds(optimizedOrder);
@@ -498,8 +492,7 @@ const TourneeDetail = () => {
           temps_estime_minutes: newTemps,
         });
 
-        const modeLabel = optimizeBy === 'distance' ? 'distance minimale' : 'durée minimale';
-        toast.success(`Optimisé par ${modeLabel} !`);
+        toast.success('Itinéraire optimisé !');
         queryClient.invalidateQueries({ queryKey: ['tournee', tourneeId] });
       } else {
         toast.error('Impossible d\'optimiser l\'itinéraire');
@@ -663,39 +656,20 @@ const TourneeDetail = () => {
             <div className="flex items-center justify-between mb-4 shrink-0">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold">Itinéraire</h3>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={isOptimizing || sites.length < 2}
-                      className="h-7 text-xs border-accent/30 hover:bg-accent/10 hover:text-accent"
-                    >
-                      {isOptimizing ? (
-                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                      ) : (
-                        <Sparkles className="w-3 h-3 mr-1" />
-                      )}
-                      Optimiser
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-48 bg-card border-accent/30">
-                    <DropdownMenuItem 
-                      onSelect={() => handleOptimizeRoute('duration')} 
-                      className="cursor-pointer hover:bg-accent/20"
-                    >
-                      <Clock className="w-4 h-4 mr-2 text-accent" />
-                      Par durée
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onSelect={() => handleOptimizeRoute('distance')} 
-                      className="cursor-pointer hover:bg-accent/20"
-                    >
-                      <Gauge className="w-4 h-4 mr-2 text-accent" />
-                      Par distance
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isOptimizing || sites.length < 2}
+                  onClick={handleOptimizeRoute}
+                  className="h-7 text-xs border-accent/30 hover:bg-accent/10 hover:text-accent"
+                >
+                  {isOptimizing ? (
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3 h-3 mr-1" />
+                  )}
+                  Optimiser
+                </Button>
               </div>
               <span className="text-xs text-muted-foreground hidden sm:block">Glissez pour réorganiser</span>
             </div>
