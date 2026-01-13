@@ -20,7 +20,7 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY") || Deno.env.get("STRIPE_SECRET_TEST");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
@@ -42,19 +42,36 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     
-    if (customers.data.length === 0) {
-      throw new Error("No Stripe customer found for this user");
+    // First, try to get the customer ID from our database
+    const { data: subscription } = await supabaseClient
+      .from('user_subscriptions')
+      .select('stripe_customer_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    
+    let customerId = subscription?.stripe_customer_id;
+    logStep("Database customer ID check", { customerId: customerId ? 'found' : 'not found' });
+    
+    // If not in database, try to find by email in Stripe
+    if (!customerId) {
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+        logStep("Found Stripe customer by email", { customerId });
+      }
     }
     
-    const customerId = customers.data[0].id;
-    logStep("Found Stripe customer", { customerId });
+    if (!customerId) {
+      throw new Error("Aucun abonnement trouvé. Vous devez d'abord souscrire à un abonnement.");
+    }
+    
+    logStep("Using Stripe customer", { customerId });
 
     const origin = req.headers.get("origin") || "https://pulse.lovable.app";
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${origin}/dashboard`,
+      return_url: `${origin}/security`,
     });
     logStep("Customer portal session created", { sessionId: portalSession.id, url: portalSession.url });
 
