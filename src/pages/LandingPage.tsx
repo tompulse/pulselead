@@ -119,8 +119,7 @@ const LandingPage = () => {
                 <br />
                 <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">Roulez moins.</span>
               </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto pt-2">Cartographie de votre territoire • Tournées optimisées
-CRM simple pour suivre vos visites sur le terrain</p>
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto pt-2">Liste de prospects filtrée • Tournées optimisées • CRM simple pour suivre vos visites sur le terrain</p>
               <div className="flex justify-center py-6">
                 <Button onClick={() => navigate('/subscribe')} className="btn-hero-pulse">
                   Essayer gratuitement 7 jours
@@ -217,11 +216,11 @@ CRM simple pour suivre vos visites sur le terrain</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
               <div className="text-center space-y-3 sm:space-y-4">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
-                  <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
+                  <Target className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">Cartographie de votre territoire</h3>
+                <h3 className="text-xl sm:text-2xl font-bold">Liste de prospects filtrée</h3>
                 <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
-                  Tous vos prospects et clients sur une carte interactive. Visualisez votre zone et identifiez les opportunités à proximité
+                  Accédez à toutes les nouvelles entreprises créées en France. Filtrez par département, secteur et taille
                 </p>
               </div>
               <div className="text-center space-y-3 sm:space-y-4">
@@ -230,14 +229,14 @@ CRM simple pour suivre vos visites sur le terrain</p>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold">Tournées optimisées</h3>
                 <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
-                  Itinéraires calculés automatiquement avec GPS intégré. Visitez 2x plus de prospects en divisant par 2 vos kilomètres
+                  Sélectionnez vos prospects, créez votre tournée, et l'IA calcule l'itinéraire optimal avec GPS intégré
                 </p>
               </div>
               <div className="text-center space-y-3 sm:space-y-4">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
                   <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">CRM terrain simple et mobile</h3>
+                <h3 className="text-xl sm:text-2xl font-bold">CRM terrain simple</h3>
                 <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
                   Suivez vos visites, appels et relances directement depuis votre mobile. Simple, rapide, efficace
                 </p>
@@ -329,7 +328,7 @@ CRM simple pour suivre vos visites sur le terrain</p>
                 Choisissez votre formule <span className="gradient-text">PULSE</span>
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Structurez votre prospection, maîtrisez votre territoire
+                Structurez votre prospection, optimisez chaque visite
               </p>
               
               {/* Pricing Cards - 2 columns: PULSE + Sur Mesure */}
@@ -362,11 +361,11 @@ CRM simple pour suivre vos visites sur le terrain</p>
                     <ul className="space-y-2 mb-6 flex-1">
                       <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                         <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Map className="w-3 h-3 text-accent" />
+                          <Target className="w-3 h-3 text-accent" />
                         </div>
                         <div>
-                          <span className="text-white text-sm font-semibold">Cartographie territoire</span>
-                          <p className="text-white/50 text-xs">Visualisez TOUS vos prospects sur une carte</p>
+                          <span className="text-white text-sm font-semibold">Liste de prospects filtrée</span>
+                          <p className="text-white/50 text-xs">Nouvelles entreprises selon vos critères</p>
                         </div>
                       </li>
                       <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
@@ -389,7 +388,7 @@ CRM simple pour suivre vos visites sur le terrain</p>
                       </li>
                       <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
                         <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Target className="w-3 h-3 text-accent" />
+                          <Search className="w-3 h-3 text-accent" />
                         </div>
                         <div>
                           <span className="text-white text-sm font-semibold">Filtres intelligents</span>
@@ -410,8 +409,8 @@ CRM simple pour suivre vos visites sur le terrain</p>
                           <Clock className="w-3 h-3 text-accent" />
                         </div>
                         <div>
-                          <span className="text-white text-sm font-semibold">Relances programmées</span>
-                          <p className="text-white/50 text-xs">Ne ratez plus jamais un rappel client</p>
+                          <span className="text-white text-sm font-semibold">Suivi des relances</span>
+                          <p className="text-white/50 text-xs">Programmez vos rappels dans le CRM</p>
                         </div>
                       </li>
                     </ul>

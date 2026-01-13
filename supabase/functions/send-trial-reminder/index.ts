@@ -124,7 +124,7 @@ const handler = async (req: Request): Promise<Response> => {
                   <li>+850 nouvelles entreprises détectées chaque semaine</li>
                   <li>Création de tournées optimisées illimitées</li>
                   <li>CRM mobile avec suivi des interactions</li>
-                  <li>Cartographie interactive de votre territoire</li>
+                  <li>Liste de prospects filtrée selon vos critères</li>
                 </ul>
               </div>
               
