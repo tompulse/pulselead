@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { MapIcon, Navigation, TrendingUp, CreditCard, RefreshCw } from "lucide-react";
+import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { SubscriptionManagement } from "./SubscriptionManagement";
-import { QualificationProgressDialog } from "./QualificationProgressDialog";
-import { ImportDialog } from "./ImportDialog";
 import { NotificationCenter } from "./NotificationCenter";
 import { AccountMenu } from "./AccountMenu";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Progress } from "@/components/ui/progress";
 
 interface DashboardHeaderProps {
   view: 'prospects' | 'tournees' | 'crm';
@@ -38,14 +38,131 @@ export const DashboardHeader = ({
   onSelectEntreprise
 }: DashboardHeaderProps) => {
   const isMobile = useIsMobile();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
-  const [qualificationDialogOpen, setQualificationDialogOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [progressText, setProgressText] = useState("");
+  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const handleViewChange = (newView: typeof view) => {
     onViewChange(newView);
     trackViewChange(newView);
-    setMobileMenuOpen(false);
+  };
+
+  const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.csv')) {
+      toast({
+        title: "Format invalide",
+        description: "Veuillez sélectionner un fichier CSV",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    setProgress(5);
+    setProgressText("Lecture du fichier...");
+    setResult(null);
+
+    try {
+      // Parse CSV
+      const text = await file.text();
+      const lines = text.split('\n').filter(line => line.trim());
+      
+      if (lines.length < 2) {
+        throw new Error('Le fichier CSV est vide ou ne contient pas de données');
+      }
+
+      const firstLine = lines[0];
+      const delimiter = firstLine.includes(';') ? ';' : ',';
+      const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
+      
+      const jsonData = lines.slice(1).map(line => {
+        const values = line.split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ''));
+        const row: any = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index] || '';
+        });
+        return row;
+      }).filter(row => row.siret);
+
+      setProgress(20);
+      setProgressText(`${jsonData.length} lignes détectées...`);
+
+      // Import en batches
+      const BATCH_SIZE = 500;
+      let totalInserted = 0;
+      let totalErrors = 0;
+
+      for (let i = 0; i < jsonData.length; i += BATCH_SIZE) {
+        const batch = jsonData.slice(i, i + BATCH_SIZE);
+        const currentLine = Math.min(i + BATCH_SIZE, jsonData.length);
+        
+        setProgressText(`Import ${currentLine}/${jsonData.length} lignes...`);
+        
+        const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
+          body: { entreprises: batch }
+        });
+
+        if (error) {
+          console.error(`❌ Erreur batch:`, error);
+          totalErrors += batch.length;
+        } else {
+          totalInserted += responseData?.inserted || 0;
+          totalErrors += responseData?.errors || 0;
+        }
+
+        const progressPercent = 20 + Math.floor((currentLine / jsonData.length) * 80);
+        setProgress(progressPercent);
+      }
+
+      setProgress(100);
+      setProgressText("Import terminé !");
+
+      const successMessage = `${totalInserted} établissements importés${totalErrors > 0 ? ` (${totalErrors} erreurs)` : ''}`;
+      
+      setResult({
+        success: totalInserted > 0,
+        message: successMessage
+      });
+
+      toast({
+        title: totalInserted > 0 ? "✅ Import réussi" : "⚠️ Import partiel",
+        description: successMessage,
+      });
+
+      // Reload after success
+      if (totalInserted > 0) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2500);
+      }
+
+    } catch (error) {
+      console.error('Import error:', error);
+      const message = error instanceof Error ? error.message : "Erreur lors de l'import";
+      
+      setResult({
+        success: false,
+        message
+      });
+
+      toast({
+        title: "❌ Erreur d'import",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const viewConfig = [
@@ -103,42 +220,93 @@ export const DashboardHeader = ({
 
             <div className="flex items-center gap-2">
               {isAdmin && (
-                <>
-                  <ImportDialog />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setQualificationDialogOpen(true)}
-                    className="h-7 px-2 text-xs border-purple-500/50 hover:bg-purple-500/10 hover:border-purple-500 transition-all duration-300"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5 sm:mr-1" />
-                    <span className="hidden lg:inline">Qualifier données</span>
-                  </Button>
-                  <QualificationProgressDialog 
-                    open={qualificationDialogOpen} 
-                    onOpenChange={setQualificationDialogOpen} 
-                  />
-                  <Dialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-7 px-2 text-xs border-accent/50 hover:bg-accent/10 hover:border-accent transition-all duration-300"
-                      >
-                        <CreditCard className="w-3.5 h-3.5 sm:mr-1" />
-                        <span className="hidden lg:inline">Abonnements</span>
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
-                      <DialogHeader>
-                        <DialogTitle>Gestion des abonnements</DialogTitle>
-                      </DialogHeader>
-                      <div className="overflow-y-auto flex-1">
-                        <SubscriptionManagement />
+                <Dialog open={importOpen} onOpenChange={setImportOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 px-3 text-xs border-accent/50 hover:bg-accent/10 hover:border-accent transition-all duration-300"
+                    >
+                      <Upload className="w-3.5 h-3.5 mr-1.5" />
+                      Import CSV
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Importer des établissements (CSV)</DialogTitle>
+                    </DialogHeader>
+                    
+                    <div className="space-y-4">
+                      <div className="text-sm text-muted-foreground">
+                        Sélectionnez votre fichier CSV avec les données des établissements. 
+                        Le fichier sera automatiquement traité avec les correspondances NAF, 
+                        catégories juridiques et coordonnées.
                       </div>
-                    </DialogContent>
-                  </Dialog>
-                </>
+
+                      {loading && (
+                        <div className="space-y-2">
+                          <Progress value={progress} className="w-full" />
+                          <p className="text-xs text-center text-muted-foreground">
+                            {progressText} ({progress}%)
+                          </p>
+                        </div>
+                      )}
+
+                      {result && (
+                        <div className={`flex items-start gap-2 p-3 rounded-lg ${
+                          result.success 
+                            ? 'bg-green-500/10 text-green-700 dark:text-green-400' 
+                            : 'bg-red-500/10 text-red-700 dark:text-red-400'
+                        }`}>
+                          {result.success ? (
+                            <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          ) : (
+                            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          )}
+                          <p className="text-sm">{result.message}</p>
+                        </div>
+                      )}
+
+                      <div className="flex flex-col gap-2">
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".csv"
+                          onChange={handleImportCSV}
+                          disabled={loading}
+                          className="hidden"
+                          id="csv-upload"
+                        />
+                        <label htmlFor="csv-upload">
+                          <Button 
+                            variant="default" 
+                            className="w-full cursor-pointer"
+                            disabled={loading}
+                            asChild
+                          >
+                            <span>
+                              <Upload className="w-4 h-4 mr-2" />
+                              {loading ? 'Import en cours...' : 'Sélectionner un fichier CSV'}
+                            </span>
+                          </Button>
+                        </label>
+                      </div>
+
+                      <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
+                        <p className="font-semibold mb-2">Colonnes attendues :</p>
+                        <ul className="space-y-1 list-disc list-inside">
+                          <li><code>siret</code> - SIRET 14 chiffres</li>
+                          <li><code>Entreprise</code> - Nom de l'entreprise</li>
+                          <li><code>nomUniteLegale</code> + <code>prenom1UniteLegale</code> - Pour les EI</li>
+                          <li><code>activitePrincipaleEtablissement</code> - Code NAF</li>
+                          <li><code>categorieJuridiqueUniteLegale</code> - Code juridique</li>
+                          <li><code>coordonneeLambertAbscisseEtablissement</code> - Lambert X</li>
+                          <li><code>coordonneeLambertOrdonneeEtablissement</code> - Lambert Y</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               )}
               <NotificationCenter userId={userId} onSelectEntreprise={onSelectEntreprise} />
               <AccountMenu
@@ -174,18 +342,6 @@ export const DashboardHeader = ({
           ))}
         </div>
       )}
-      
-      {/* Dialog pour abonnements (mobile aussi) */}
-      <Dialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle>Gestion des abonnements</DialogTitle>
-          </DialogHeader>
-          <div className="overflow-y-auto flex-1">
-            <SubscriptionManagement />
-          </div>
-        </DialogContent>
-      </Dialog>
     </header>
   );
 };
