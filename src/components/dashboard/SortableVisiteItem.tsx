@@ -89,7 +89,7 @@ export const SortableVisiteItem = ({
       <div
         ref={setNodeRef}
         style={style}
-        className={`p-3 rounded-lg border transition-colors ${
+        className={`p-2.5 sm:p-3 rounded-lg border transition-colors ${
           isDragging 
             ? 'bg-accent/20 border-accent shadow-lg' 
             : 'bg-card/50 border-accent/10 hover:border-accent/30'
@@ -106,7 +106,7 @@ export const SortableVisiteItem = ({
           </button>
 
           {/* Index badge */}
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
+          <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold shrink-0 ${
             isLast 
               ? 'bg-green-500 text-white' 
               : visiteStatus.visite
@@ -118,84 +118,84 @@ export const SortableVisiteItem = ({
 
           {/* Site info */}
           <div className="flex-1 min-w-0">
-            <div className="font-medium text-sm leading-tight">{site.nom}</div>
-            <div className="text-xs text-muted-foreground leading-tight mt-0.5">{site.adresse}</div>
+            <div className="font-medium text-xs sm:text-sm leading-tight line-clamp-2">{site.nom}</div>
+            <div className="text-[10px] sm:text-xs text-muted-foreground leading-tight mt-0.5 line-clamp-1">{site.adresse}</div>
             {hasNote && (
-              <div className="mt-1 text-xs text-yellow-400/80 flex items-center gap-1">
-                <MessageSquare className="w-3 h-3" />
-                <span className="truncate">{currentNote.substring(0, 30)}{currentNote.length > 30 ? '...' : ''}</span>
+              <div className="mt-1 text-[10px] sm:text-xs text-yellow-400/80 flex items-center gap-1">
+                <MessageSquare className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
+                <span className="truncate">{currentNote.substring(0, 25)}{currentNote.length > 25 ? '...' : ''}</span>
               </div>
             )}
           </div>
 
           {/* Action buttons - Navigation & Delete only */}
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7"
+              className="h-7 w-7 sm:h-8 sm:w-8"
               onClick={() => onNavigate(site)}
               aria-label="Naviguer vers ce site"
             >
-              <Navigation className="w-3.5 h-3.5 text-accent" />
+              <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
             </Button>
             {onRemove && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive"
+                className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-destructive/10 hover:text-destructive"
                 onClick={() => onRemove(site.id)}
                 aria-label="Supprimer de la tournée"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
             )}
           </div>
         </div>
         
         {/* Action checkboxes - on separate row */}
-        <div className="flex items-center flex-wrap gap-x-3 gap-y-2 mt-2 pl-10">
-          <label className="flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap">
+        <div className="flex items-center flex-wrap gap-x-2 sm:gap-x-3 gap-y-1.5 sm:gap-y-2 mt-2 pl-8 sm:pl-10">
+          <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
             <Checkbox 
               checked={visiteStatus.visite}
               onCheckedChange={(checked) => onVisiteChange(site.id, 'visite', !!checked)}
-              className="h-4 w-4"
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4"
             />
-            <MapPin className="w-3 h-3 text-accent" />
+            <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-accent" />
             <span>Visité</span>
           </label>
           
-          <label className="flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap">
+          <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
             <Checkbox 
               checked={visiteStatus.rdv}
               onCheckedChange={(checked) => onVisiteChange(site.id, 'rdv', !!checked)}
-              className="h-4 w-4"
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4"
             />
-            <Calendar className="w-3 h-3 text-purple-400" />
+            <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-400" />
             <span>RDV</span>
           </label>
           
-          <label className="flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap">
+          <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
             <Checkbox 
               checked={visiteStatus.aRevoir}
               onCheckedChange={(checked) => onVisiteChange(site.id, 'aRevoir', !!checked)}
-              className="h-4 w-4"
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4"
             />
-            <RotateCcw className="w-3 h-3 text-orange-400" />
+            <RotateCcw className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-orange-400" />
             <span>À revoir</span>
           </label>
 
           <button
             type="button"
             onClick={handleOpenNote}
-            className={`flex items-center gap-1 text-xs cursor-pointer whitespace-nowrap px-2 py-1 rounded-md border transition-colors ${
+            className={`flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md border transition-colors ${
               hasNote 
                 ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-400' 
                 : 'border-accent/20 hover:border-yellow-500/40 hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-400'
             }`}
           >
-            <MessageSquare className="w-3 h-3" />
-            <span>{hasNote ? 'Modifier note' : 'Note'}</span>
+            <MessageSquare className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+            <span>{hasNote ? 'Modifier' : 'Note'}</span>
           </button>
         </div>
       </div>
