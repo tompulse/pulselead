@@ -102,8 +102,8 @@ serve(async (req) => {
                       <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
                           <td style="padding: 10px 0;">
-                            <span style="color: #06b6d4; font-size: 20px;">🗺️</span>
-                            <span style="color: #ffffff; font-size: 14px; margin-left: 10px;">Visualisez vos prospects sur la carte interactive</span>
+                            <span style="color: #06b6d4; font-size: 20px;">📋</span>
+                            <span style="color: #ffffff; font-size: 14px; margin-left: 10px;">Explorez la liste de prospects selon vos filtres</span>
                           </td>
                         </tr>
                         <tr>
@@ -139,7 +139,7 @@ serve(async (req) => {
                         Annulez à tout moment depuis votre espace client.
                       </p>
                       <p style="margin: 15px 0 0; font-size: 12px; color: #52525b;">
-                        © 2026 PULSE - Prospection Territoriale Intelligente
+                        © 2026 PULSE - Prospection Intelligente
                       </p>
                     </td>
                   </tr>

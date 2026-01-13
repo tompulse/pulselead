@@ -42,14 +42,14 @@ const CGV = () => {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">3. Services proposés</h2>
-            <p>PULSE propose une plateforme SaaS (Software as a Service) de prospection territoriale intelligente. L'offre "Commercial Solo" à 49€/mois comprend :</p>
+            <p>PULSE propose une plateforme SaaS (Software as a Service) de prospection intelligente. L'offre "Commercial Solo" à 49€/mois comprend :</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
-              <li><strong>Cartographie territoire :</strong> visualisez tous vos prospects sur une carte interactive</li>
+              <li><strong>Liste de prospects filtrée :</strong> accédez aux nouvelles entreprises créées en France selon vos critères</li>
               <li><strong>Tournées optimisées IA :</strong> calcul automatique du meilleur itinéraire pour réduire vos temps de trajet</li>
               <li><strong>CRM mobile terrain :</strong> gestion des visites et relances depuis votre smartphone ou tablette</li>
               <li><strong>Filtres intelligents :</strong> recherche par département, secteur d'activité et taille d'entreprise</li>
               <li><strong>Pipeline Kanban :</strong> suivi visuel de vos opportunités du premier contact à la signature</li>
-              <li><strong>Relances programmées :</strong> programmez vos rappels clients pour ne plus jamais manquer un suivi</li>
+              <li><strong>Suivi des relances :</strong> programmez vos rappels clients et retrouvez-les dans votre CRM</li>
             </ul>
           </section>
 

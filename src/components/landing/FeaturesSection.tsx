@@ -3,14 +3,14 @@ import { MapPin, Target, TrendingUp, Zap, Shield, Clock, BarChart } from "lucide
 export const FeaturesSection = () => {
   const features = [
     {
-      icon: MapPin,
-      title: "Cartographie de votre territoire",
-      description: "Visualisez tous vos prospects et clients sur une carte. Filtrez par secteur, statut, ou type d'activité."
+      icon: Target,
+      title: "Liste de prospects filtrée",
+      description: "Accédez aux nouvelles entreprises créées en France. Filtrez par département, secteur d'activité et taille."
     },
     {
-      icon: Target,
+      icon: MapPin,
       title: "Tournées optimisées automatiquement",
-      description: "L'IA calcule le meilleur itinéraire en 3 secondes. GPS intégré. Gagnez 2h par jour et visitez 2-3 entreprises de plus."
+      description: "L'IA calcule le meilleur itinéraire en 3 secondes. GPS intégré. Gagnez 2h par jour et visitez plus d'entreprises."
     },
     {
       icon: Zap,
@@ -20,7 +20,7 @@ export const FeaturesSection = () => {
     {
       icon: TrendingUp,
       title: "Détection des nouvelles opportunités",
-      description: "Créations d'entreprises et nouveaux établissements dans votre zone (données officielles publiques)."
+      description: "Créations d'entreprises et nouveaux établissements chaque semaine (données officielles publiques)."
     },
     {
       icon: Clock,

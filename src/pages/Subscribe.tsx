@@ -15,14 +15,14 @@ const STRIPE_PRICE_ID = 'price_1SoTNkHjyidZ5i9LuxvK8Tzq';
 
 const features = [
   {
-    icon: '🗺️',
-    title: 'Cartographie territoire',
-    description: 'Visualisez TOUS vos prospects sur une carte. Fini les zones blanches.',
+    icon: '📋',
+    title: 'Liste de prospects filtrée',
+    description: 'Accédez à toutes les nouvelles entreprises créées, filtrées selon vos critères.',
   },
   {
     icon: '🚀',
     title: 'Tournées optimisées IA',
-    description: 'L\'IA calcule votre meilleur itinéraire. Moins de route, plus de RDV.',
+    description: "L'IA calcule votre meilleur itinéraire. Moins de route, plus de RDV.",
   },
   {
     icon: '📱',
@@ -32,7 +32,7 @@ const features = [
   {
     icon: '🎯',
     title: 'Filtres intelligents',
-    description: 'Ciblez par département, secteur d\'activité, taille d\'entreprise.',
+    description: "Ciblez par département, secteur d'activité, taille d'entreprise.",
   },
   {
     icon: '📊',
@@ -40,9 +40,9 @@ const features = [
     description: 'Suivez vos deals du premier contact à la signature.',
   },
   {
-    icon: '🔔',
-    title: 'Relances programmées',
-    description: 'Ne ratez plus jamais un rappel client.',
+    icon: '🔄',
+    title: 'Suivi des relances',
+    description: 'Programmez vos rappels clients et retrouvez-les dans votre CRM.',
   },
 ];
 
