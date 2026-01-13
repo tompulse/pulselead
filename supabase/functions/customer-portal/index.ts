@@ -52,28 +52,65 @@ serve(async (req) => {
     
     let customerId = subscription?.stripe_customer_id;
     logStep("Database customer ID check", { customerId: customerId ? 'found' : 'not found' });
+
+    const origin = req.headers.get("origin") || "https://pulse.lovable.app";
     
-    // If not in database, try to find by email in Stripe
+    // Helper function to create portal session
+    const createPortalSession = async (cid: string) => {
+      return await stripe.billingPortal.sessions.create({
+        customer: cid,
+        return_url: `${origin}/security`,
+      });
+    };
+
+    // Try with database customer ID first
+    if (customerId) {
+      try {
+        const portalSession = await createPortalSession(customerId);
+        logStep("Customer portal session created", { sessionId: portalSession.id });
+        return new Response(JSON.stringify({ url: portalSession.url }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      } catch (stripeError: any) {
+        // If customer doesn't exist in Stripe, try email fallback
+        if (stripeError?.code === 'resource_missing' || stripeError?.message?.includes('No such customer')) {
+          logStep("Database customer ID invalid, trying email fallback", { invalidId: customerId });
+          customerId = null; // Reset to trigger email search
+        } else {
+          throw stripeError;
+        }
+      }
+    }
+    
+    // Fallback: search by email in Stripe
     if (!customerId) {
       const customers = await stripe.customers.list({ email: user.email, limit: 1 });
       if (customers.data.length > 0) {
         customerId = customers.data[0].id;
         logStep("Found Stripe customer by email", { customerId });
+        
+        // Auto-repair: update the database with correct customer ID
+        const { error: updateError } = await supabaseClient
+          .from('user_subscriptions')
+          .update({ stripe_customer_id: customerId })
+          .eq('user_id', user.id);
+        
+        if (updateError) {
+          logStep("Warning: could not auto-repair customer ID", { error: updateError.message });
+        } else {
+          logStep("Auto-repaired customer ID in database");
+        }
       }
     }
     
     if (!customerId) {
       throw new Error("Aucun abonnement trouvé. Vous devez d'abord souscrire à un abonnement.");
     }
-    
-    logStep("Using Stripe customer", { customerId });
 
-    const origin = req.headers.get("origin") || "https://pulse.lovable.app";
-    const portalSession = await stripe.billingPortal.sessions.create({
-      customer: customerId,
-      return_url: `${origin}/security`,
-    });
-    logStep("Customer portal session created", { sessionId: portalSession.id, url: portalSession.url });
+    // Create portal session with verified customer ID
+    const portalSession = await createPortalSession(customerId);
+    logStep("Customer portal session created", { sessionId: portalSession.id });
 
     return new Response(JSON.stringify({ url: portalSession.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
