@@ -18,7 +18,8 @@ import {
   Loader2,
   Pencil,
   Check,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
@@ -57,6 +58,7 @@ const TourneeDetail = () => {
   const [orderedSiteIds, setOrderedSiteIds] = useState<string[]>([]);
   const [visitesStatus, setVisitesStatus] = useState<Record<string, VisiteStatus>>({});
   const [isRecalculating, setIsRecalculating] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
   const [localKpis, setLocalKpis] = useState({
     distance: null as number | null,
     temps: null as number | null,
@@ -430,6 +432,74 @@ const TourneeDetail = () => {
     setEditedName('');
   };
 
+  const handleOptimizeRoute = async () => {
+    if (sites.length < 2) {
+      toast.error('Au moins 2 sites sont nécessaires pour optimiser');
+      return;
+    }
+
+    setIsOptimizing(true);
+    
+    try {
+      const validSites = sites.filter((s: any) => s.latitude && s.longitude);
+      
+      if (validSites.length < 2) {
+        toast.error('Coordonnées GPS manquantes pour optimiser');
+        return;
+      }
+
+      const entreprises = validSites.map((s: any) => ({
+        id: s.id,
+        nom: s.nom,
+        adresse: getFullAddress(s),
+        ville: s.ville,
+        latitude: Number(s.latitude),
+        longitude: Number(s.longitude),
+      }));
+
+      const point_depart = tournee.point_depart_lat && tournee.point_depart_lng
+        ? { lat: Number(tournee.point_depart_lat), lng: Number(tournee.point_depart_lng) }
+        : null;
+
+      const { data, error } = await supabase.functions.invoke('optimize-tournee', {
+        body: { 
+          entreprises,
+          point_depart,
+        },
+      });
+
+      if (error) throw error;
+
+      const optimizedOrder = data.ordre_optimise || data.optimizedOrder || [];
+      const newDistance = data.distance_totale_km || data.distance_km || localKpis.distance;
+      const newTemps = data.temps_estime_minutes || data.duration_minutes || localKpis.temps;
+
+      if (optimizedOrder.length > 0) {
+        setOrderedSiteIds(optimizedOrder);
+        setLocalKpis({
+          distance: newDistance,
+          temps: newTemps,
+        });
+
+        await updateTourneeMutation.mutateAsync({
+          ordre_optimise: optimizedOrder,
+          distance_totale_km: newDistance,
+          temps_estime_minutes: newTemps,
+        });
+
+        toast.success('Itinéraire optimisé !');
+        queryClient.invalidateQueries({ queryKey: ['tournee', tourneeId] });
+      } else {
+        toast.error('Impossible d\'optimiser l\'itinéraire');
+      }
+    } catch (error) {
+      console.error('Error optimizing route:', error);
+      toast.error('Erreur lors de l\'optimisation');
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+
   // Loading state
   if (tourneeLoading) {
     return (
@@ -608,8 +678,24 @@ const TourneeDetail = () => {
         <Card className="lg:w-96 glass-card border-accent/20 shrink-0 lg:flex-1 lg:min-h-0">
           <CardContent className="p-4 h-full flex flex-col">
             <div className="flex items-center justify-between mb-4 shrink-0">
-              <h3 className="font-semibold">Itinéraire</h3>
-              <span className="text-xs text-muted-foreground">Glissez pour réorganiser</span>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold">Itinéraire</h3>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleOptimizeRoute}
+                  disabled={isOptimizing || sites.length < 2}
+                  className="h-7 text-xs border-accent/30 hover:bg-accent/10 hover:text-accent"
+                >
+                  {isOptimizing ? (
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3 h-3 mr-1" />
+                  )}
+                  Optimiser
+                </Button>
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block">Glissez pour réorganiser</span>
             </div>
 
             <ScrollArea className="flex-1 min-h-0">
