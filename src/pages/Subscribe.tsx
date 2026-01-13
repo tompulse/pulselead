@@ -226,65 +226,65 @@ const Subscribe = () => {
         <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-glow/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s' }}></div>
       </div>
 
-      <div className="relative z-10 py-12 px-4">
+      <div className="relative z-10 py-8 sm:py-12 px-3 sm:px-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 sm:mb-12">
             {/* Message personnalisé pour les utilisateurs de retour (cancelled/expired) */}
             {userId && !hasAccess && isReturningUser && (
-              <div className="bg-amber-500/20 border border-amber-500/30 text-amber-400 px-6 py-4 rounded-xl mb-6 max-w-xl mx-auto">
-                <p className="font-bold text-lg">🎉 Bon retour parmi nous !</p>
-                <p className="text-sm mt-1">Vos tournées et données CRM sont toujours là et vous attendent. Réactivez votre accès pour les retrouver.</p>
+              <div className="bg-amber-500/20 border border-amber-500/30 text-amber-400 px-4 sm:px-6 py-3 sm:py-4 rounded-xl mb-4 sm:mb-6 max-w-xl mx-auto">
+                <p className="font-bold text-base sm:text-lg">🎉 Bon retour parmi nous !</p>
+                <p className="text-xs sm:text-sm mt-1">Vos tournées et données CRM sont toujours là. Réactivez votre accès pour les retrouver.</p>
               </div>
             )}
             {/* Message pour nouveaux utilisateurs connectés */}
             {userId && !hasAccess && !isReturningUser && (
-              <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 px-6 py-2 rounded-full mb-4 font-medium">
-                👋 Bienvenue ! Activez votre essai pour accéder à PULSE
+              <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 px-4 sm:px-6 py-2 rounded-full mb-4 font-medium text-sm sm:text-base">
+                👋 Bienvenue ! Activez votre essai
               </div>
             )}
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-400 px-6 py-2 rounded-full mb-6 font-bold shadow-lg">
-              <Sparkles className="w-5 h-5" />
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-400 px-4 sm:px-6 py-2 rounded-full mb-4 sm:mb-6 font-bold shadow-lg text-sm sm:text-base">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
               7 jours d'essai gratuit • CB requise
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
               {userId ? 'Activez votre accès à' : 'Choisissez'} <span className="gradient-text">PULSE</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
               Testez toutes les fonctionnalités gratuitement pendant 7 jours
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
             {/* PULSE Card */}
             <Card className="relative overflow-visible" style={{
               background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%)',
               border: '2px solid rgba(6, 182, 212, 0.5)',
               boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
             }}>
-              <div className="p-8">
-                <h2 className="text-3xl font-bold mb-6 text-center gradient-text">Commercial Solo</h2>
+              <div className="p-4 sm:p-6 md:p-8">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center gradient-text">Commercial Solo</h2>
                 
                 {/* Price Display - Plan unique mensuel */}
-                <div className="text-center mb-8 py-6 px-4 rounded-xl" style={{
+                <div className="text-center mb-6 sm:mb-8 py-4 sm:py-6 px-3 sm:px-4 rounded-xl" style={{
                   background: 'rgba(0, 0, 0, 0.3)',
                   border: '1px solid rgba(6, 182, 212, 0.2)'
                 }}>
-                  <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-5xl font-bold gradient-text">49€</span>
-                    <span className="text-xl text-muted-foreground">/mois</span>
+                  <div className="flex items-baseline justify-center gap-1 sm:gap-2">
+                    <span className="text-4xl sm:text-5xl font-bold gradient-text">49€</span>
+                    <span className="text-lg sm:text-xl text-muted-foreground">/mois</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">Sans engagement • Résiliable à tout moment</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-2">Sans engagement • Résiliable à tout moment</p>
                 </div>
 
                 {/* Features */}
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                   {features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-3 p-3 rounded-lg transition-all hover:bg-white/5">
-                      <span className="text-2xl flex-shrink-0">{feature.icon}</span>
-                      <div>
-                        <span className="font-semibold text-white">{feature.title}</span>
-                        <p className="text-sm text-muted-foreground mt-0.5">{feature.description}</p>
+                    <li key={index} className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg transition-all hover:bg-white/5">
+                      <span className="text-xl sm:text-2xl flex-shrink-0">{feature.icon}</span>
+                      <div className="min-w-0">
+                        <span className="font-semibold text-white text-sm sm:text-base">{feature.title}</span>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-2">{feature.description}</p>
                       </div>
                     </li>
                   ))}
@@ -293,22 +293,22 @@ const Subscribe = () => {
                 <Button
                   onClick={handleSubscribe}
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-lg py-6 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
+                  className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-base sm:text-lg py-5 sm:py-6 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                   size="lg"
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />
                       Redirection...
                     </>
                   ) : (
                     <>
                       Commencer mon essai gratuit
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                     </>
                   )}
                 </Button>
-                <p className="text-xs text-center text-muted-foreground mt-3">
+                <p className="text-[10px] sm:text-xs text-center text-muted-foreground mt-2 sm:mt-3">
                   Vous ne serez débité qu'après 7 jours d'essai
                 </p>
               </div>
@@ -320,44 +320,44 @@ const Subscribe = () => {
               border: '2px solid rgba(14, 165, 233, 0.3)',
               boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
             }}>
-              <div className="p-8">
-                <div className="flex items-center justify-center gap-2 mb-6">
-                  <Building2 className="w-8 h-8 text-cyan-glow" />
-                  <h2 className="text-3xl font-bold gradient-text">Équipes Commerciales</h2>
+              <div className="p-4 sm:p-6 md:p-8">
+                <div className="flex items-center justify-center gap-2 mb-4 sm:mb-6">
+                  <Building2 className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-glow shrink-0" />
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold gradient-text">Équipes Commerciales</h2>
                 </div>
 
-                <p className="text-center text-muted-foreground mb-6">
-                  Solution adaptée aux équipes commerciales avec accompagnement personnalisé
+                <p className="text-center text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
+                  Solution adaptée aux équipes avec accompagnement personnalisé
                 </p>
 
                 {/* Enterprise Features */}
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                   {enterpriseFeatures.map((feature, index) => (
                     <li key={index} className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3 h-3 text-cyan-glow" />
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-cyan-glow" />
                       </div>
-                      <span className="text-white text-sm">{feature}</span>
+                      <span className="text-white text-xs sm:text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 {/* Enterprise Form */}
-                <form onSubmit={handleEnterpriseSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-sm">Nom complet *</Label>
+                <form onSubmit={handleEnterpriseSubmit} className="space-y-3 sm:space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="name" className="text-xs sm:text-sm">Nom complet *</Label>
                       <Input
                         id="name"
                         value={enterpriseForm.name}
                         onChange={(e) => setEnterpriseForm(prev => ({ ...prev, name: e.target.value }))}
                         placeholder="Jean Dupont"
                         required
-                        className="bg-background/50 border-border/50"
+                        className="bg-background/50 border-border/50 h-9 sm:h-10 text-sm"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm">Email pro *</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="email" className="text-xs sm:text-sm">Email pro *</Label>
                       <Input
                         id="email"
                         type="email"
@@ -365,60 +365,60 @@ const Subscribe = () => {
                         onChange={(e) => setEnterpriseForm(prev => ({ ...prev, email: e.target.value }))}
                         placeholder="jean@entreprise.com"
                         required
-                        className="bg-background/50 border-border/50"
+                        className="bg-background/50 border-border/50 h-9 sm:h-10 text-sm"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-sm">Téléphone</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="phone" className="text-xs sm:text-sm">Téléphone</Label>
                       <Input
                         id="phone"
                         type="tel"
                         value={enterpriseForm.phone}
                         onChange={(e) => setEnterpriseForm(prev => ({ ...prev, phone: e.target.value }))}
                         placeholder="06 12 34 56 78"
-                        className="bg-background/50 border-border/50"
+                        className="bg-background/50 border-border/50 h-9 sm:h-10 text-sm"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="teamSize" className="text-sm">Taille équipe</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="teamSize" className="text-xs sm:text-sm">Taille équipe</Label>
                       <Input
                         id="teamSize"
                         value={enterpriseForm.teamSize}
                         onChange={(e) => setEnterpriseForm(prev => ({ ...prev, teamSize: e.target.value }))}
-                        placeholder="Ex: 5-10 commerciaux"
-                        className="bg-background/50 border-border/50"
+                        placeholder="5-10 commerciaux"
+                        className="bg-background/50 border-border/50 h-9 sm:h-10 text-sm"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="message" className="text-sm">Besoins spécifiques</Label>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="message" className="text-xs sm:text-sm">Besoins spécifiques</Label>
                     <Textarea
                       id="message"
                       value={enterpriseForm.message}
                       onChange={(e) => setEnterpriseForm(prev => ({ ...prev, message: e.target.value }))}
-                      placeholder="Décrivez vos besoins, vos objectifs, votre équipe..."
-                      rows={3}
-                      className="bg-background/50 border-border/50 resize-none"
+                      placeholder="Décrivez vos besoins..."
+                      rows={2}
+                      className="bg-background/50 border-border/50 resize-none text-sm"
                     />
                   </div>
 
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-base py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
+                    className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-sm sm:text-base py-4 sm:py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Envoi en cours...
+                        <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />
+                        Envoi...
                       </>
                     ) : (
                       <>
-                        <Send className="w-5 h-5 mr-2" />
+                        <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                         Demander un devis
                       </>
                     )}
@@ -429,111 +429,105 @@ const Subscribe = () => {
           </div>
 
           {/* Trust indicators */}
-          <div className="flex flex-wrap justify-center gap-8 mb-12 text-center">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-8 sm:mb-12 text-center">
             <div className="flex flex-col items-center">
-              <span className="text-2xl mb-1">💳</span>
-              <span className="text-sm text-muted-foreground">Satisfait ou remboursé 14 jours</span>
+              <span className="text-xl sm:text-2xl mb-1">💳</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Satisfait ou remboursé 14j</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-2xl mb-1">🔒</span>
-              <span className="text-sm text-muted-foreground">Paiement 100% sécurisé</span>
+              <span className="text-xl sm:text-2xl mb-1">🔒</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Paiement sécurisé</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-2xl mb-1">✅</span>
-              <span className="text-sm text-muted-foreground">Conforme RGPD</span>
+              <span className="text-xl sm:text-2xl mb-1">✅</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Conforme RGPD</span>
             </div>
           </div>
 
           {/* FAQ Section - Enhanced Legal Compliance */}
-          <div className="bg-card/50 border border-border/50 rounded-lg p-8 max-w-3xl mx-auto backdrop-blur-sm">
-            <h2 className="text-2xl font-bold mb-6 text-center">Questions fréquentes</h2>
-            <div className="space-y-5">
-              <div className="border-b border-border/30 pb-4">
-                <h3 className="font-semibold mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">💳</span>
-                  Quand serai-je débité exactement ?
+          <div className="bg-card/50 border border-border/50 rounded-lg p-4 sm:p-6 md:p-8 max-w-3xl mx-auto backdrop-blur-sm">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center">Questions fréquentes</h2>
+            <div className="space-y-4 sm:space-y-5">
+              <div className="border-b border-border/30 pb-3 sm:pb-4">
+                <h3 className="font-semibold mb-1.5 sm:mb-2 flex items-start gap-2 text-sm sm:text-base">
+                  <span className="text-cyan-400 shrink-0">💳</span>
+                  <span>Quand serai-je débité ?</span>
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  Votre carte bancaire ne sera débitée qu'à la fin de votre période d'essai de 7 jours. 
-                  <strong className="text-foreground"> Nous vous enverrons un email de rappel 3 jours avant le prélèvement</strong> pour que vous puissiez annuler si vous le souhaitez. 
-                  Si vous n'annulez pas, vous serez débité de 49€/mois automatiquement.
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Votre carte ne sera débitée qu'après 7 jours. 
+                  <strong className="text-foreground"> Un rappel 3 jours avant</strong> vous permettra d'annuler si besoin.
                 </p>
               </div>
               
-              <div className="border-b border-border/30 pb-4">
-                <h3 className="font-semibold mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">🔄</span>
-                  Comment annuler mon essai ou mon abonnement ?
+              <div className="border-b border-border/30 pb-3 sm:pb-4">
+                <h3 className="font-semibold mb-1.5 sm:mb-2 flex items-start gap-2 text-sm sm:text-base">
+                  <span className="text-cyan-400 shrink-0">🔄</span>
+                  <span>Comment annuler ?</span>
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  C'est simple et rapide, en 2 clics : allez dans <strong className="text-foreground">Paramètres → Mon Abonnement → "Gérer mon abonnement"</strong>. 
-                  Vous accéderez à votre espace de gestion sécurisé où vous pourrez annuler sans justification et sans frais cachés. 
-                  Un lien de résiliation est également inclus dans chaque email que nous vous envoyons.
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  En 2 clics : <strong className="text-foreground">Paramètres → Mon Abonnement → "Gérer"</strong>. 
+                  Annulation sans justification ni frais cachés.
                 </p>
               </div>
               
-              <div className="border-b border-border/30 pb-4">
-                <h3 className="font-semibold mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">⏸️</span>
-                  Que se passe-t-il si j'annule pendant l'essai ?
+              <div className="border-b border-border/30 pb-3 sm:pb-4">
+                <h3 className="font-semibold mb-1.5 sm:mb-2 flex items-start gap-2 text-sm sm:text-base">
+                  <span className="text-cyan-400 shrink-0">⏸️</span>
+                  <span>Si j'annule pendant l'essai ?</span>
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  <strong className="text-foreground">Vous ne serez pas débité.</strong> Votre accès reste actif jusqu'à la fin des 7 jours d'essai, 
-                  puis il sera automatiquement désactivé. Aucune action supplémentaire requise.
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  <strong className="text-foreground">Aucun prélèvement.</strong> Accès actif jusqu'à la fin des 7 jours, puis désactivation automatique.
                 </p>
               </div>
               
-              <div className="border-b border-border/30 pb-4">
-                <h3 className="font-semibold mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">💾</span>
-                  Mes données sont-elles conservées si j'annule ?
+              <div className="border-b border-border/30 pb-3 sm:pb-4">
+                <h3 className="font-semibold mb-1.5 sm:mb-2 flex items-start gap-2 text-sm sm:text-base">
+                  <span className="text-cyan-400 shrink-0">💾</span>
+                  <span>Mes données sont conservées ?</span>
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  <strong className="text-foreground">Oui, absolument !</strong> Vos tournées, prospects CRM, interactions et paramètres sont conservés indéfiniment. 
-                  Si vous vous réabonnez plus tard (même 6 mois après), vous retrouverez tout exactement comme vous l'aviez laissé.
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  <strong className="text-foreground">Oui !</strong> Tournées, CRM et paramètres conservés indéfiniment. Tout sera là si vous revenez.
                 </p>
               </div>
               
-              <div className="border-b border-border/30 pb-4">
-                <h3 className="font-semibold mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">💰</span>
-                  Comment obtenir un remboursement ?
+              <div className="border-b border-border/30 pb-3 sm:pb-4">
+                <h3 className="font-semibold mb-1.5 sm:mb-2 flex items-start gap-2 text-sm sm:text-base">
+                  <span className="text-cyan-400 shrink-0">💰</span>
+                  <span>Comment obtenir un remboursement ?</span>
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  Conformément au <strong className="text-foreground">droit de rétractation européen</strong>, vous disposez de 14 jours après le premier paiement 
-                  pour demander un remboursement intégral sans justification. Contactez-nous simplement à{' '}
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  <strong className="text-foreground">14 jours de rétractation</strong> après le premier paiement. Contact :{' '}
                   <a href="mailto:tomiolovpro@gmail.com" className="text-cyan-400 hover:underline">tomiolovpro@gmail.com</a>.
                 </p>
               </div>
               
               <div>
-                <h3 className="font-semibold mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">📧</span>
-                  Quels emails vais-je recevoir ?
+                <h3 className="font-semibold mb-1.5 sm:mb-2 flex items-start gap-2 text-sm sm:text-base">
+                  <span className="text-cyan-400 shrink-0">📧</span>
+                  <span>Quels emails vais-je recevoir ?</span>
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  Vous recevrez : (1) un email de bienvenue avec les détails de votre essai, (2) un rappel 3 jours avant la fin de l'essai, 
-                  (3) une confirmation après chaque paiement. Vous pouvez gérer vos préférences depuis votre espace client.
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  (1) Email de bienvenue, (2) rappel 3 jours avant la fin de l'essai, (3) confirmation après chaque paiement.
                 </p>
               </div>
             </div>
             
             {/* Legal mention */}
-            <div className="mt-6 pt-4 border-t border-border/30">
-              <p className="text-xs text-muted-foreground text-center">
-                En cliquant sur "Commencer mon essai gratuit", vous acceptez qu'après 7 jours d'essai gratuit, 
-                votre carte bancaire soit débitée de 49€/mois. Vous pouvez annuler à tout moment avant la fin de l'essai 
-                pour ne pas être facturé. Conformément à la réglementation européenne, vous bénéficiez d'un droit de rétractation de 14 jours.
+            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border/30">
+              <p className="text-[10px] sm:text-xs text-muted-foreground text-center leading-relaxed">
+                En cliquant sur "Commencer mon essai", vous acceptez qu'après 7 jours, 
+                votre carte soit débitée de 49€/mois. Annulation possible à tout moment. 
+                Droit de rétractation 14 jours.
               </p>
             </div>
           </div>
 
           {/* Back to home */}
-          <div className="text-center mt-8">
+          <div className="text-center mt-6 sm:mt-8">
             <Button
               variant="ghost"
               onClick={() => navigate('/')}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground text-sm"
             >
               ← Retour à l'accueil
             </Button>
