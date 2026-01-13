@@ -101,7 +101,7 @@ const PolitiqueConfidentialite = () => {
             <p className="mb-4">
               <strong>Responsable du traitement :</strong> Tom Iolov - PULSE<br />
               <strong>Adresse :</strong> 108 rue de Crimée, 75019 Paris, France<br />
-              <strong>SIRET :</strong> 948 550 561 00010<br />
+              <strong>SIRET :</strong> 948 550 561 00039<br />
               <strong>Email :</strong> tomiolovpro@gmail.com
             </p>
           </section>
