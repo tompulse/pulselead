@@ -26,7 +26,7 @@ export const ResetPasswordEmail = ({
 }: ResetPasswordEmailProps) => (
   <Html>
     <Head />
-    <Preview>Réinitialisez votre mot de passe LUMA</Preview>
+    <Preview>Réinitialisez votre mot de passe PULSE</Preview>
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>🔑 Réinitialisation de mot de passe</Heading>
@@ -36,7 +36,7 @@ export const ResetPasswordEmail = ({
         </Text>
         
         <Text style={text}>
-          Vous avez demandé à réinitialiser votre mot de passe LUMA.
+          Vous avez demandé à réinitialiser votre mot de passe PULSE.
         </Text>
 
         <Section style={warningBox}>
@@ -75,7 +75,7 @@ export const ResetPasswordEmail = ({
         </Section>
 
         <Text style={footer}>
-          L'équipe LUMA
+          L'équipe PULSE
         </Text>
       </Container>
     </Body>

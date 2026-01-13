@@ -27,17 +27,17 @@ export const MagicLinkEmail = ({
 }: MagicLinkEmailProps) => (
   <Html>
     <Head />
-    <Preview>Connectez-vous à LUMA avec ce lien magique</Preview>
+    <Preview>Connectez-vous à PULSE avec ce lien magique</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>🔐 Connexion à LUMA</Heading>
+        <Heading style={h1}>🔐 Connexion à PULSE</Heading>
         
         <Text style={text}>
           Bonjour,
         </Text>
         
         <Text style={text}>
-          Vous avez demandé à vous connecter à votre compte LUMA. 
+          Vous avez demandé à vous connecter à votre compte PULSE. 
           Cliquez sur le bouton ci-dessous pour vous connecter instantanément :
         </Text>
 
@@ -45,7 +45,7 @@ export const MagicLinkEmail = ({
           href={`${supabase_url}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`}
           style={button}
         >
-          Se connecter à LUMA
+          Se connecter à PULSE
         </Link>
 
         <Text style={text}>
@@ -63,7 +63,7 @@ export const MagicLinkEmail = ({
         </Text>
 
         <Text style={footer}>
-          L'équipe LUMA
+          L'équipe PULSE
         </Text>
       </Container>
     </Body>
