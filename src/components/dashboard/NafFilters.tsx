@@ -205,7 +205,10 @@ export const NafFilters = ({
       return numA - numB;
     });
 
+  // Only allow valid company size values
+  const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Non spécifié'];
   const availableTailles = Object.entries(availableFilters?.taillesEntreprise || {})
+    .filter(([taille]) => VALID_TAILLES.includes(taille))
     .map(([taille, count]) => ({
       taille,
       label: TAILLE_LABELS[taille] || taille,
@@ -898,7 +901,6 @@ export const NafFilters = ({
                       className="flex items-start gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                     >
                       <Checkbox selected={selected} />
-                      <span className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-xs font-bold text-accent shrink-0">{code}</span>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium leading-tight">{label}</div>
                         <div className="text-xs text-muted-foreground leading-tight mt-0.5">{type}</div>
