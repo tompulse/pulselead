@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as CalendarIcon, Layers, Scale, MapPin, BarChart3, Building } from "lucide-react";
+import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as CalendarIcon, Layers, Scale, MapPin, BarChart3, Building, Sparkles } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
@@ -30,10 +30,10 @@ const TAILLE_LABELS: Record<string, string> = {
   'Non spécifié': 'Non spécifié'
 };
 
-// Labels pour les types d'établissement
-const TYPE_ETABLISSEMENT_LABELS: Record<string, string> = {
+// Labels pour les types d'évènement
+const TYPE_EVENEMENT_LABELS: Record<string, string> = {
   'siege': 'Nouvelle entreprise',
-  'site': 'Nouveau site (entreprise existante)'
+  'site': 'Nouveau site'
 };
 
 interface NafFiltersProps {
@@ -48,6 +48,8 @@ interface NafFiltersProps {
     taillesEntreprise?: string[];
     categoriesJuridiques?: string[];
     typesEtablissement?: string[];
+    dateCreationFrom?: string;
+    dateCreationTo?: string;
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   resultsCount?: number;
@@ -97,7 +99,6 @@ export const NafFilters = ({
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
   const [categoriesJuridiquesOpen, setCategoriesJuridiquesOpen] = useState(false);
-  const [typesEtablissementOpen, setTypesEtablissementOpen] = useState(false);
   const [expanded, setExpanded] = useState<ExpandedLevel>({
     divisions: [],
     groupes: [],
@@ -237,10 +238,10 @@ export const NafFilters = ({
     .filter(c => c.count > 0)
     .sort((a, b) => a.code.localeCompare(b.code));
 
-  const availableTypesEtablissement = Object.entries(availableFilters?.typesEtablissement || {})
+  const availableTypesEvenement = Object.entries(availableFilters?.typesEtablissement || {})
     .map(([type, count]) => ({
       type,
-      label: TYPE_ETABLISSEMENT_LABELS[type] || type,
+      label: TYPE_EVENEMENT_LABELS[type] || type,
       count: count as number
     }))
     .filter(t => t.count > 0)
@@ -411,6 +412,7 @@ export const NafFilters = ({
       };
     });
   };
+
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
     nafSections: [], 
@@ -422,6 +424,8 @@ export const NafFilters = ({
     taillesEntreprise: [],
     categoriesJuridiques: [],
     typesEtablissement: [],
+    dateCreationFrom: undefined,
+    dateCreationTo: undefined,
     searchQuery: ""
   }));
 
@@ -433,7 +437,9 @@ export const NafFilters = ({
     (filters.departments?.length || 0) +
     (filters.taillesEntreprise?.length || 0) +
     (filters.categoriesJuridiques?.length || 0) +
-    (filters.typesEtablissement?.length || 0);
+    (filters.typesEtablissement?.length || 0) +
+    (filters.dateCreationFrom ? 1 : 0) +
+    (filters.dateCreationTo ? 1 : 0);
 
   // Composant pour afficher une checkbox
   const Checkbox = ({ selected, size = "md" }: { selected: boolean; size?: "sm" | "md" }) => {
@@ -646,6 +652,31 @@ export const NafFilters = ({
                 </button>
               </span>
             ))}
+            {(filters.dateCreationFrom || filters.dateCreationTo) && (
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-orange-500/15 text-orange-600 dark:text-orange-400 rounded-full border border-orange-500/30"
+              >
+                <CalendarIcon className="w-3 h-3" />
+                <span>
+                  {filters.dateCreationFrom && filters.dateCreationTo
+                    ? `${format(new Date(filters.dateCreationFrom), "dd/MM")} - ${format(new Date(filters.dateCreationTo), "dd/MM")}`
+                    : filters.dateCreationFrom 
+                      ? `Depuis ${format(new Date(filters.dateCreationFrom), "dd/MM")}`
+                      : `Jusqu'au ${format(new Date(filters.dateCreationTo!), "dd/MM")}`
+                  }
+                </span>
+                <button
+                  onClick={() => setFilters((prev: any) => ({
+                    ...prev,
+                    dateCreationFrom: undefined,
+                    dateCreationTo: undefined
+                  }))}
+                  className="hover:bg-orange-500/20 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
             {activeFiltersCount > 2 && (
               <button
                 onClick={clearFilters}
@@ -965,47 +996,187 @@ export const NafFilters = ({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Type d'établissement (Siège vs Site) */}
-      <Collapsible open={typesEtablissementOpen} onOpenChange={setTypesEtablissementOpen} className="border-b border-accent/20">
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <div className="flex items-center gap-2">
-            <Building className="w-4 h-4 text-accent" />
-            <span className="font-medium text-sm">Type d'établissement</span>
-          </div>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${typesEtablissementOpen ? 'rotate-180' : ''}`} />
-        </CollapsibleTrigger>
+      {/* Type d'évènement - Boutons stylisés */}
+      <div className="border-b border-accent/20 p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-accent" />
+          <span className="font-medium text-sm">Type d'évènement</span>
+        </div>
         
-        <CollapsibleContent>
-          <div className="px-4 pb-4 space-y-1">
-            {isLoading ? (
-              Array.from({ length: 2 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))
-            ) : availableTypesEtablissement.length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Aucun type disponible
-              </div>
-            ) : (
-              availableTypesEtablissement.map(({ type, label, count }) => {
-                const selected = filters.typesEtablissement?.includes(type);
-                return (
-                  <div
-                    key={type}
-                    onClick={() => handleTypeEtablissementToggle(type)}
-                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                  >
-                    <Checkbox selected={selected} />
-                    <span className="text-sm flex-1">{label}</span>
-                    <span className="text-xs text-muted-foreground shrink-0 font-semibold">
-                      {count.toLocaleString('fr-FR')}
-                    </span>
-                  </div>
-                );
-              })
-            )}
+        {isLoading ? (
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Skeleton className="h-10 flex-1" />
+            <Skeleton className="h-10 flex-1" />
           </div>
-        </CollapsibleContent>
-      </Collapsible>
+        ) : (
+          <div className="flex flex-col sm:flex-row gap-2">
+            {availableTypesEvenement.map(({ type, label, count }) => {
+              const selected = filters.typesEtablissement?.includes(type);
+              const isNouvelle = type === 'siege';
+              return (
+                <button
+                  key={type}
+                  onClick={() => handleTypeEtablissementToggle(type)}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
+                    selected
+                      ? isNouvelle 
+                        ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30'
+                        : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/30'
+                      : 'bg-muted/50 hover:bg-muted border border-border/50 text-foreground hover:border-accent/30'
+                  }`}
+                >
+                  <Building className="w-4 h-4" />
+                  <span className="whitespace-nowrap">{label}</span>
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                    selected 
+                      ? 'bg-white/20 text-white' 
+                      : 'bg-accent/10 text-accent'
+                  }`}>
+                    {count.toLocaleString('fr-FR')}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Filtre par date de création */}
+      <div className="border-b border-accent/20 p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <CalendarIcon className="w-4 h-4 text-accent" />
+          <span className="font-medium text-sm">Date de création</span>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Du</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
+                >
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  {filters.dateCreationFrom 
+                    ? format(new Date(filters.dateCreationFrom), "dd/MM/yyyy") 
+                    : <span className="text-muted-foreground">Date début</span>
+                  }
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={filters.dateCreationFrom ? new Date(filters.dateCreationFrom) : undefined}
+                  onSelect={(date) => setFilters((prev: any) => ({ 
+                    ...prev, 
+                    dateCreationFrom: date ? format(date, "yyyy-MM-dd") : undefined 
+                  }))}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Au</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
+                >
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  {filters.dateCreationTo 
+                    ? format(new Date(filters.dateCreationTo), "dd/MM/yyyy") 
+                    : <span className="text-muted-foreground">Date fin</span>
+                  }
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={filters.dateCreationTo ? new Date(filters.dateCreationTo) : undefined}
+                  onSelect={(date) => setFilters((prev: any) => ({ 
+                    ...prev, 
+                    dateCreationTo: date ? format(date, "yyyy-MM-dd") : undefined 
+                  }))}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+        
+        {/* Boutons raccourcis dates */}
+        <div className="flex flex-wrap gap-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 text-xs px-2 hover:bg-accent/10"
+            onClick={() => {
+              const today = new Date();
+              const lastWeek = new Date(today);
+              lastWeek.setDate(today.getDate() - 7);
+              setFilters((prev: any) => ({
+                ...prev,
+                dateCreationFrom: format(lastWeek, "yyyy-MM-dd"),
+                dateCreationTo: format(today, "yyyy-MM-dd")
+              }));
+            }}
+          >
+            7 derniers jours
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 text-xs px-2 hover:bg-accent/10"
+            onClick={() => {
+              const today = new Date();
+              const lastMonth = new Date(today);
+              lastMonth.setMonth(today.getMonth() - 1);
+              setFilters((prev: any) => ({
+                ...prev,
+                dateCreationFrom: format(lastMonth, "yyyy-MM-dd"),
+                dateCreationTo: format(today, "yyyy-MM-dd")
+              }));
+            }}
+          >
+            30 derniers jours
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 text-xs px-2 hover:bg-accent/10"
+            onClick={() => {
+              const today = new Date();
+              const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+              setFilters((prev: any) => ({
+                ...prev,
+                dateCreationFrom: format(firstDayOfMonth, "yyyy-MM-dd"),
+                dateCreationTo: format(today, "yyyy-MM-dd")
+              }));
+            }}
+          >
+            Ce mois
+          </Button>
+          {(filters.dateCreationFrom || filters.dateCreationTo) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs px-2 text-destructive hover:bg-destructive/10"
+              onClick={() => setFilters((prev: any) => ({
+                ...prev,
+                dateCreationFrom: undefined,
+                dateCreationTo: undefined
+              }))}
+            >
+              <X className="w-3 h-3 mr-1" />
+              Effacer
+            </Button>
+          )}
+        </div>
+      </div>
 
       {activeFiltersCount > 0 && (
         <div className="p-4">

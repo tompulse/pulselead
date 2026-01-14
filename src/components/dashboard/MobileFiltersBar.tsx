@@ -63,7 +63,9 @@ export const MobileFiltersBar = ({
     (filters.departments?.length || 0) +
     (filters.taillesEntreprise?.length || 0) +
     (filters.categoriesJuridiques?.length || 0) +
-    (filters.typesEtablissement?.length || 0);
+    (filters.typesEtablissement?.length || 0) +
+    (filters.dateCreationFrom ? 1 : 0) +
+    (filters.dateCreationTo ? 1 : 0);
 
   return (
     <div className="lg:hidden space-y-1.5 p-2 bg-card/80 backdrop-blur-sm border-b border-accent/20">
