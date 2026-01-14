@@ -783,9 +783,9 @@ export const NafFilters = ({
                         >
                           <Checkbox selected={divisionSelected} />
                           <span className="text-base shrink-0">{division.emoji}</span>
-                          <span className="text-xs font-bold text-accent shrink-0 font-mono">{division.code}</span>
-                          <span className="text-sm leading-snug flex-1 break-words font-medium">{division.label}</span>
-                          <span className="text-xs text-muted-foreground shrink-0 font-semibold">
+                          <span className="text-xs font-medium text-accent shrink-0 font-mono">{division.code}</span>
+                          <span className="text-sm leading-snug flex-1 break-words">{division.label}</span>
+                          <span className="text-xs text-muted-foreground shrink-0">
                             {division.count.toLocaleString('fr-FR')}
                           </span>
                         </div>
