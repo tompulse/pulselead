@@ -596,7 +596,7 @@ const TourneeDetail = () => {
   const currentStatut = tournee.statut;
 
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden">
+    <div className="min-h-screen lg:h-screen flex flex-col bg-background lg:overflow-hidden">
       {/* Header - Compact on mobile */}
       <div className="p-3 sm:p-4 border-b border-accent/20 flex items-center gap-2 sm:gap-4 shrink-0">
         <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour" className="h-9 w-9 shrink-0">
@@ -680,8 +680,8 @@ const TourneeDetail = () => {
       {/* Actions supprimées (Démarrer la tournée / Ouvrir GPS) */}
       <div className="px-4" />
 
-      {/* Content: Map + List - Stack on mobile, side by side on desktop */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 min-h-0">
+      {/* Content: Map + List - Stack on mobile (scrollable), side by side on desktop (fixed) */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 lg:min-h-0">
         {/* Map - hauteur augmentée sur mobile/tablette */}
         <div className="h-[200px] sm:h-[250px] md:h-[300px] lg:min-h-[400px] lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0">
           {sitesLoading ? (
@@ -701,9 +701,9 @@ const TourneeDetail = () => {
           )}
         </div>
 
-        {/* Sites list with drag & drop - hauteur fixe avec scroll interne */}
-        <Card className="glass-card border-accent/20 lg:w-[420px] lg:shrink-0 flex flex-col min-h-[300px] max-h-[350px] sm:max-h-[400px] lg:max-h-none lg:h-full overflow-hidden">
-          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col min-h-0 overflow-hidden">
+        {/* Sites list - scroll page on mobile/tablet, scrollbar on desktop */}
+        <Card className="glass-card border-accent/20 lg:w-[420px] lg:shrink-0 flex flex-col lg:min-h-0 lg:max-h-full lg:overflow-hidden">
+          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col lg:min-h-0 lg:overflow-hidden">
             <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0 gap-2">
               <div className="flex items-center gap-2 min-w-0 flex-1">
                 <h3 className="font-semibold text-sm sm:text-base shrink-0">Itinéraire</h3>
@@ -725,7 +725,7 @@ const TourneeDetail = () => {
               <span className="text-[10px] sm:text-xs text-muted-foreground hidden md:block shrink-0">Glissez pour réorganiser</span>
             </div>
 
-            <ScrollArea className="flex-1 min-h-0 [&>[data-radix-scroll-area-viewport]]:pr-4 [&_[data-radix-scroll-area-scrollbar]]:w-2 [&_[data-radix-scroll-area-scrollbar]]:bg-accent/20 [&_[data-radix-scroll-area-thumb]]:bg-accent/60">
+            <ScrollArea className="flex-1 lg:min-h-0 [&>[data-radix-scroll-area-viewport]]:pr-4 [&_[data-radix-scroll-area-scrollbar]]:w-2 [&_[data-radix-scroll-area-scrollbar]]:bg-accent/20 [&_[data-radix-scroll-area-thumb]]:bg-accent/60 [&_[data-radix-scroll-area-scrollbar]]:hidden lg:[&_[data-radix-scroll-area-scrollbar]]:flex">
               {sitesLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...
