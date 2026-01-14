@@ -153,11 +153,12 @@ serve(async (req) => {
     
     const coordinates = validEntreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
     
-    // IMPORTANT: destination=any permet à Mapbox de choisir la meilleure destination finale
-    // C'est crucial pour une vraie optimisation temporelle
+    // IMPORTANT: roundtrip=true permet une vraie optimisation TSP (Travelling Salesman Problem)
+    // Mapbox optimise l'ordre de TOUS les points pour minimiser le temps total
+    // On ignore simplement le "retour" dans le résultat final
     const optimizationUrl = point_depart
-      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=any&roundtrip=false&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`
-      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?source=first&destination=any&roundtrip=false&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`;
+      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&roundtrip=true&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`
+      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?roundtrip=true&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`;
     
     console.log('🔗 URL Mapbox (sans token):', optimizationUrl.replace(MAPBOX_TOKEN, 'REDACTED'));
     
@@ -210,15 +211,22 @@ serve(async (req) => {
     
     console.log('✅ Ordre optimisé:', sortedEntreprises.map((e: Entreprise) => e.nom));
 
-    const distanceKm = trip.distance / 1000; // Conversion mètres -> km
-    const tempsTrajetMinutes = trip.duration / 60; // Conversion secondes -> minutes
-    // NOTE: On retourne uniquement le temps de trajet, pas le temps de visite
-    // Cela correspond à ce que fait calculate-routes pour la cohérence
+    // Avec roundtrip=true, le trajet inclut le retour au départ
+    // On calcule uniquement la distance/temps SANS le dernier leg (retour)
+    const legs = trip.legs || [];
+    const legsWithoutReturn = legs.slice(0, -1); // Exclure le dernier leg (retour au départ)
     
-    console.log('✅ Itinéraire optimisé:', {
+    const distanceWithoutReturn = legsWithoutReturn.reduce((sum: number, leg: any) => sum + (leg.distance || 0), 0);
+    const durationWithoutReturn = legsWithoutReturn.reduce((sum: number, leg: any) => sum + (leg.duration || 0), 0);
+    
+    const distanceKm = distanceWithoutReturn / 1000; // Conversion mètres -> km
+    const tempsTrajetMinutes = durationWithoutReturn / 60; // Conversion secondes -> minutes
+    
+    console.log('✅ Itinéraire optimisé (sans retour):', {
       distance: Math.round(distanceKm) + ' km',
       temps: Math.round(tempsTrajetMinutes) + ' min',
-      arrêts: sortedEntreprises.length
+      arrêts: sortedEntreprises.length,
+      nbLegs: legsWithoutReturn.length
     });
 
     return new Response(
