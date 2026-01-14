@@ -201,12 +201,12 @@ serve(async (req) => {
 
     const distanceKm = trip.distance / 1000; // Conversion mètres -> km
     const tempsTrajetMinutes = trip.duration / 60; // Conversion secondes -> minutes
-    const tempsVisites = sortedEntreprises.length * 15; // 15 min par visite
-    const tempsTotal = tempsTrajetMinutes + tempsVisites;
+    // NOTE: On retourne uniquement le temps de trajet, pas le temps de visite
+    // Cela correspond à ce que fait calculate-routes pour la cohérence
     
     console.log('✅ Itinéraire optimisé:', {
       distance: Math.round(distanceKm) + ' km',
-      temps: Math.round(tempsTotal) + ' min',
+      temps: Math.round(tempsTrajetMinutes) + ' min',
       arrêts: sortedEntreprises.length
     });
 
@@ -215,9 +215,9 @@ serve(async (req) => {
         ordre_optimise: sortedEntreprises.map((e: Entreprise) => e.id),
         entreprises_ordonnees: sortedEntreprises,
         distance_totale_km: Math.round(distanceKm * 10) / 10,
-        temps_estime_minutes: Math.round(tempsTotal),
+        temps_estime_minutes: Math.round(tempsTrajetMinutes),
         temps_trajet_minutes: Math.round(tempsTrajetMinutes),
-        explication: `Itinéraire optimisé: ${Math.round(distanceKm)} km, ${Math.floor(tempsTotal / 60)}h${Math.round(tempsTotal % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
+        explication: `Itinéraire optimisé: ${Math.round(distanceKm)} km, ${Math.floor(tempsTrajetMinutes / 60)}h${Math.round(tempsTrajetMinutes % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
         route_geometry: trip.geometry,
         waypoints: mapboxData.waypoints,
         legs: trip.legs,
