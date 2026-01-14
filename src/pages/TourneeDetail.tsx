@@ -430,7 +430,7 @@ const TourneeDetail = () => {
   const currentStatut = tournee.statut;
 
   return (
-    <div className="min-h-screen lg:h-screen flex flex-col bg-background lg:overflow-hidden">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Header */}
       <div className="p-3 sm:p-4 border-b border-accent/20 flex items-center gap-2 sm:gap-4 shrink-0">
         <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour" className="h-9 w-9 shrink-0">
@@ -484,37 +484,37 @@ const TourneeDetail = () => {
         </Badge>
       </div>
 
-      {/* KPIs */}
-      <div className="p-3 sm:p-4 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-        <div className="p-2.5 sm:p-3 rounded-xl bg-accent/10 border border-accent/20 text-center">
-          <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-accent mx-auto mb-1" />
-          <div className="font-bold text-lg sm:text-xl">{sites.length}</div>
-          <div className="text-[10px] sm:text-xs text-muted-foreground">Arrêts</div>
+      {/* KPIs - Always 4 cols, compact on mobile */}
+      <div className="p-3 sm:p-4 grid grid-cols-4 gap-1.5 sm:gap-3 shrink-0">
+        <div className="p-2 sm:p-3 rounded-xl bg-accent/10 border border-accent/20 text-center">
+          <MapPin className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-accent mx-auto mb-0.5 sm:mb-1" />
+          <div className="font-bold text-sm sm:text-xl">{sites.length}</div>
+          <div className="text-[9px] sm:text-xs text-muted-foreground">Arrêts</div>
         </div>
-        <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30 text-center">
-          <Navigation className="w-4 h-4 sm:w-5 sm:h-5 text-accent mx-auto mb-1" />
-          <div className="font-bold text-lg sm:text-xl flex items-center justify-center gap-1">
-            {isRecalculating && <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />}
+        <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30 text-center">
+          <Navigation className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-accent mx-auto mb-0.5 sm:mb-1" />
+          <div className="font-bold text-sm sm:text-xl flex items-center justify-center gap-0.5">
+            {isRecalculating && <Loader2 className="w-3 h-3 animate-spin" />}
             {localKpis.distance?.toFixed(0) || '—'}
           </div>
-          <div className="text-[10px] sm:text-xs text-muted-foreground">km</div>
+          <div className="text-[9px] sm:text-xs text-muted-foreground">km</div>
         </div>
-        <div className="p-2.5 sm:p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center">
-          <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 mx-auto mb-1" />
-          <div className="font-bold text-lg sm:text-xl">{formatDuration(localKpis.temps)}</div>
-          <div className="text-[10px] sm:text-xs text-muted-foreground">durée</div>
+        <div className="p-2 sm:p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center">
+          <Clock className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-purple-400 mx-auto mb-0.5 sm:mb-1" />
+          <div className="font-bold text-sm sm:text-xl">{formatDuration(localKpis.temps)}</div>
+          <div className="text-[9px] sm:text-xs text-muted-foreground">durée</div>
         </div>
-        <div className="p-2.5 sm:p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
-          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mx-auto mb-1" />
-          <div className="font-bold text-lg sm:text-xl">{completedCount}/{sites.length}</div>
-          <div className="text-[10px] sm:text-xs text-muted-foreground">visités</div>
+        <div className="p-2 sm:p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
+          <CheckCircle className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-green-400 mx-auto mb-0.5 sm:mb-1" />
+          <div className="font-bold text-sm sm:text-xl">{completedCount}/{sites.length}</div>
+          <div className="text-[9px] sm:text-xs text-muted-foreground">visités</div>
         </div>
       </div>
 
       {/* Content: Map + List */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 lg:min-h-0">
-        {/* Map */}
-        <div className="h-[200px] sm:h-[250px] md:h-[300px] lg:min-h-[400px] lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0">
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 pt-0 min-h-0 overflow-hidden">
+        {/* Map - Mobile: fixed height, Desktop: flex-1 */}
+        <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-full lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0 lg:shrink">
           {sitesLoading ? (
             <div className="h-full flex items-center justify-center bg-card">
               <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
@@ -532,15 +532,15 @@ const TourneeDetail = () => {
           )}
         </div>
 
-        {/* Sites list - No drag-and-drop, just a simple list */}
-        <Card className="glass-card border-accent/20 lg:w-[420px] lg:shrink-0 flex flex-col lg:min-h-0 lg:max-h-full lg:overflow-hidden">
-          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col lg:min-h-0 lg:overflow-hidden">
-            <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
+        {/* Sites list */}
+        <Card className="glass-card border-accent/20 flex-1 lg:flex-none lg:w-[360px] xl:w-[400px] flex flex-col min-h-0 overflow-hidden">
+          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col min-h-0 overflow-hidden">
+            <div className="flex items-center justify-between mb-2 sm:mb-3 shrink-0">
               <h3 className="font-semibold text-sm sm:text-base">Itinéraire optimisé</h3>
               <span className="text-[10px] sm:text-xs text-muted-foreground">{sites.length} arrêts</span>
             </div>
 
-            <ScrollArea className="flex-1 lg:min-h-0">
+            <ScrollArea className="flex-1 min-h-0">
               {sitesLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...
@@ -550,7 +550,7 @@ const TourneeDetail = () => {
                   Aucun site
                 </div>
               ) : (
-                <div className="space-y-2 pr-3">
+                <div className="space-y-2 pr-2 sm:pr-3">
                   {orderedSiteIds.map((siteId, index) => {
                     const site = sites.find((s: any) => s.id === siteId);
                     if (!site) return null;
@@ -561,76 +561,76 @@ const TourneeDetail = () => {
                     return (
                       <div
                         key={siteId}
-                        className="p-3 rounded-lg bg-card/50 border border-accent/10 hover:border-accent/30 transition-colors"
+                        className="p-2 sm:p-3 rounded-lg bg-card/50 border border-accent/10 hover:border-accent/30 transition-colors"
                       >
                         {/* Header */}
-                        <div className="flex items-start gap-2 mb-2">
-                          <div className="w-6 h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center text-xs font-bold shrink-0">
+                        <div className="flex items-start gap-2 mb-1.5 sm:mb-2">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0">
                             {index + 1}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-sm truncate">{site.nom}</div>
-                            <div className="text-xs text-muted-foreground truncate">{getFullAddress(site)}</div>
+                            <div className="font-medium text-xs sm:text-sm truncate">{site.nom}</div>
+                            <div className="text-[10px] sm:text-xs text-muted-foreground truncate">{getFullAddress(site)}</div>
                           </div>
                         </div>
 
                         {/* Status buttons */}
-                        <div className="flex flex-wrap gap-1.5 mb-2">
+                        <div className="flex flex-wrap gap-1 mb-1.5 sm:mb-2">
                           <Button
                             size="sm"
                             variant={status.visite ? 'default' : 'outline'}
                             onClick={() => handleVisiteChange(siteId, 'visite', !status.visite)}
-                            className={`h-7 text-xs px-2 ${status.visite ? 'bg-green-600 hover:bg-green-700' : 'border-green-500/30 text-green-500 hover:bg-green-500/10'}`}
+                            className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.visite ? 'bg-green-600 hover:bg-green-700' : 'border-green-500/30 text-green-500 hover:bg-green-500/10'}`}
                           >
-                            <CheckCircle className="w-3 h-3 mr-1" />
+                            <CheckCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                             Visité
                           </Button>
                           <Button
                             size="sm"
                             variant={status.rdv ? 'default' : 'outline'}
                             onClick={() => handleVisiteChange(siteId, 'rdv', !status.rdv)}
-                            className={`h-7 text-xs px-2 ${status.rdv ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-500/30 text-blue-500 hover:bg-blue-500/10'}`}
+                            className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.rdv ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-500/30 text-blue-500 hover:bg-blue-500/10'}`}
                           >
-                            <Calendar className="w-3 h-3 mr-1" />
+                            <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                             RDV
                           </Button>
                           <Button
                             size="sm"
                             variant={status.aRevoir ? 'default' : 'outline'}
                             onClick={() => handleVisiteChange(siteId, 'aRevoir', !status.aRevoir)}
-                            className={`h-7 text-xs px-2 ${status.aRevoir ? 'bg-orange-600 hover:bg-orange-700' : 'border-orange-500/30 text-orange-500 hover:bg-orange-500/10'}`}
+                            className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.aRevoir ? 'bg-orange-600 hover:bg-orange-700' : 'border-orange-500/30 text-orange-500 hover:bg-orange-500/10'}`}
                           >
                             À revoir
                           </Button>
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => openNoteDialog(siteId)}
-                            className={`h-7 text-xs px-2 flex-1 ${hasNote ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/10' : 'border-accent/30'}`}
+                            className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 flex-1 ${hasNote ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/10' : 'border-accent/30'}`}
                           >
-                            <StickyNote className="w-3 h-3 mr-1" />
-                            {hasNote ? 'Modifier note' : 'Note'}
+                            <StickyNote className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
+                            {hasNote ? 'Modifier' : 'Note'}
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => handleNavigate({ latitude: site.latitude, longitude: site.longitude, adresse: getFullAddress(site) })}
-                            className="h-7 text-xs px-2 border-accent/30"
+                            className="h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 border-accent/30"
                           >
-                            <ExternalLink className="w-3 h-3 mr-1" />
+                            <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                             GPS
                           </Button>
                           <Button
                             size="icon"
                             variant="ghost"
                             onClick={() => handleRemoveSite(siteId)}
-                            className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            className="h-6 w-6 sm:h-7 sm:w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
                       </div>
@@ -645,7 +645,7 @@ const TourneeDetail = () => {
 
       {/* Note Dialog */}
       <Dialog open={noteDialogOpen} onOpenChange={setNoteDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <StickyNote className="w-5 h-5 text-yellow-500" />
@@ -656,9 +656,9 @@ const TourneeDetail = () => {
             value={noteDialogValue}
             onChange={(e) => setNoteDialogValue(e.target.value)}
             placeholder="Ajouter une note..."
-            className="min-h-[120px]"
+            className="min-h-[100px] sm:min-h-[120px]"
           />
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setNoteDialogOpen(false)}>
               Annuler
             </Button>
