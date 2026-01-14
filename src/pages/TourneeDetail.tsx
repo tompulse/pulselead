@@ -681,9 +681,9 @@ const TourneeDetail = () => {
       <div className="px-4" />
 
       {/* Content: Map + List - Stack on mobile, side by side on desktop */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 overflow-hidden">
-        {/* Map */}
-        <div className="h-[250px] sm:h-[300px] lg:h-full lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0">
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 min-h-0">
+        {/* Map - hauteur fixe sur mobile, flex sur desktop */}
+        <div className="h-[250px] sm:h-[300px] lg:min-h-[400px] lg:flex-1 rounded-xl overflow-hidden border border-accent/20">
           {sitesLoading ? (
             <div className="h-full flex items-center justify-center bg-card">
               <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
@@ -701,9 +701,9 @@ const TourneeDetail = () => {
           )}
         </div>
 
-        {/* Sites list with drag & drop */}
-        <Card className="glass-card border-accent/20 flex-1 min-h-[300px] lg:w-96 lg:shrink-0 lg:flex-initial overflow-hidden flex flex-col">
-          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col overflow-hidden">
+        {/* Sites list with drag & drop - hauteur fixe avec scroll interne */}
+        <Card className="glass-card border-accent/20 lg:w-[420px] lg:shrink-0 flex flex-col h-[350px] sm:h-[400px] lg:h-auto lg:max-h-full">
+          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col min-h-0">
             <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0 gap-2">
               <div className="flex items-center gap-2 min-w-0 flex-1">
                 <h3 className="font-semibold text-sm sm:text-base shrink-0">Itinéraire</h3>
@@ -725,7 +725,7 @@ const TourneeDetail = () => {
               <span className="text-[10px] sm:text-xs text-muted-foreground hidden md:block shrink-0">Glissez pour réorganiser</span>
             </div>
 
-            <ScrollArea className="flex-1 -mr-2 pr-2">
+            <ScrollArea className="flex-1 min-h-0">
               {sitesLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...
@@ -744,7 +744,7 @@ const TourneeDetail = () => {
                     items={orderedSiteIds}
                     strategy={verticalListSortingStrategy}
                   >
-                    <div className="space-y-2">
+                    <div className="space-y-2 pr-3">
                       {orderedSiteIds.map((siteId, index) => {
                         const site = sites.find((s: any) => s.id === siteId);
                         if (!site) return null;
