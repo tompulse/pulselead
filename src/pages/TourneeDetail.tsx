@@ -494,10 +494,10 @@ const TourneeDetail = () => {
                 size="sm"
                 variant="outline"
                 onClick={() => openNoteDialog(siteId)}
-                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 flex-1 ${hasNote ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/10' : 'border-accent/30'}`}
+                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${hasNote ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/10' : 'border-accent/30'}`}
               >
                 <StickyNote className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
-                {hasNote ? 'Modifier' : 'Note'}
+                Note
               </Button>
               <Button
                 size="sm"
@@ -606,9 +606,9 @@ const TourneeDetail = () => {
       </div>
 
       {/* Content: Map + List */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 pt-0 min-h-0 lg:overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 pt-0 lg:min-h-0 lg:overflow-hidden">
         {/* Map - Mobile: fixed height, Desktop: flex-1 */}
-        <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-full lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0 lg:shrink">
+        <div className="h-[180px] sm:h-[220px] md:h-[280px] lg:h-auto lg:flex-1 rounded-xl overflow-hidden border border-accent/20">
           {sitesLoading ? (
             <div className="h-full flex items-center justify-center bg-card">
               <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
@@ -627,22 +627,17 @@ const TourneeDetail = () => {
         </div>
 
         {/* Sites list */}
-        <Card className="glass-card border-accent/20 w-full lg:w-[360px] xl:w-[400px] flex flex-col lg:h-full lg:min-h-0 lg:overflow-hidden">
-          <CardContent className="p-3 sm:p-4 flex flex-col lg:flex-1 lg:min-h-0 lg:overflow-hidden">
+        <Card className="glass-card border-accent/20 w-full lg:w-[360px] xl:w-[400px] flex flex-col lg:max-h-full lg:overflow-hidden">
+          <CardContent className="p-3 sm:p-4 flex flex-col flex-1 lg:overflow-hidden">
             <div className="flex items-center justify-between mb-2 sm:mb-3 shrink-0">
               <h3 className="font-semibold text-sm sm:text-base">Itinéraire optimisé</h3>
               <span className="text-[10px] sm:text-xs text-muted-foreground">{sites.length} arrêts</span>
             </div>
 
-            {/* Tablette/Mobile: scroll sur toute la page (pas de ScrollArea interne) */}
-            <div className="lg:hidden">
+            {/* Desktop: scroll interne, Mobile/Tablette: scroll page */}
+            <div className="flex-1 lg:overflow-auto">
               {stopsContent}
             </div>
-
-            {/* Desktop: scroll interne uniquement sur la liste */}
-            <ScrollArea className="hidden lg:block flex-1 min-h-0">
-              {stopsContent}
-            </ScrollArea>
           </CardContent>
         </Card>
       </div>
