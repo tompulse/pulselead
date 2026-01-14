@@ -13,6 +13,7 @@ import {
   Navigation, 
   Clock, 
   CheckCircle,
+  Eye,
   Loader2,
   Pencil,
   Check,
@@ -484,6 +485,7 @@ const TourneeDetail = () => {
                 onClick={() => handleVisiteChange(siteId, 'aRevoir', !status.aRevoir)}
                 className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.aRevoir ? 'bg-orange-600 hover:bg-orange-700' : 'border-orange-500/30 text-orange-500 hover:bg-orange-500/10'}`}
               >
+                <Eye className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                 À revoir
               </Button>
             </div>
