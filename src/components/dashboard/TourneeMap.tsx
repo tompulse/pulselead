@@ -312,12 +312,17 @@ export const TourneeMap = ({
 
         console.log('[TourneeMap] Markers added:', markersRef.current.length);
 
-        // Fit bounds
+        // Fit bounds with more padding on mobile
         setTimeout(() => {
           if (routeCoords.length > 0 && map.current) {
             const bounds = new mapboxgl.LngLatBounds();
             routeCoords.forEach((coord: any) => bounds.extend(coord));
-            map.current.fitBounds(bounds, { padding: 80, duration: 1000, maxZoom: 14 });
+            // Larger padding to see all points better
+            map.current.fitBounds(bounds, { 
+              padding: { top: 60, bottom: 60, left: 40, right: 40 }, 
+              duration: 1000, 
+              maxZoom: 12 
+            });
             console.log('[TourneeMap] Bounds fitted');
           }
         }, 300);
