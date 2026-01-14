@@ -185,11 +185,13 @@ export const NouveauxSitesListView = ({
                       </div>
                     )}
 
-                    {/* SIRET */}
+                    {/* SIREN */}
                     {site.siret && (
                       <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <span className="text-[10px] sm:text-xs flex-shrink-0">🏛️</span>
-                        <span className="text-[10px] sm:text-xs text-foreground/60 font-mono truncate">{site.siret}</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/60 font-mono truncate">
+                          {site.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}
+                        </span>
                       </div>
                     )}
                     
