@@ -99,6 +99,8 @@ export const NafFilters = ({
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
   const [categoriesJuridiquesOpen, setCategoriesJuridiquesOpen] = useState(false);
+  const [typesEvenementOpen, setTypesEvenementOpen] = useState(false);
+  const [dateCreationOpen, setDateCreationOpen] = useState(false);
   const [expanded, setExpanded] = useState<ExpandedLevel>({
     divisions: [],
     groupes: [],
@@ -996,187 +998,205 @@ export const NafFilters = ({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Type d'évènement - Boutons stylisés */}
-      <div className="border-b border-accent/20 p-4 space-y-3">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-accent" />
-          <span className="font-medium text-sm">Type d'évènement</span>
-        </div>
+      {/* Type d'évènement - Collapsible avec Boutons stylisés */}
+      <Collapsible open={typesEvenementOpen} onOpenChange={setTypesEvenementOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-accent" />
+            <span className="font-medium text-sm">Type d'évènement</span>
+          </div>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${typesEvenementOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
         
-        {isLoading ? (
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Skeleton className="h-10 flex-1" />
-            <Skeleton className="h-10 flex-1" />
+        <CollapsibleContent>
+          <div className="px-4 pb-4 space-y-2">
+            {isLoading ? (
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Skeleton className="h-10 flex-1" />
+                <Skeleton className="h-10 flex-1" />
+              </div>
+            ) : availableTypesEvenement.length === 0 ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Aucun type disponible
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-2">
+                {availableTypesEvenement.map(({ type, label, count }) => {
+                  const selected = filters.typesEtablissement?.includes(type);
+                  const isNouvelle = type === 'siege';
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => handleTypeEtablissementToggle(type)}
+                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
+                        selected
+                          ? isNouvelle 
+                            ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30'
+                            : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/30'
+                          : 'bg-muted/50 hover:bg-muted border border-border/50 text-foreground hover:border-accent/30'
+                      }`}
+                    >
+                      <Building className="w-4 h-4" />
+                      <span className="whitespace-nowrap">{label}</span>
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                        selected 
+                          ? 'bg-white/20 text-white' 
+                          : 'bg-accent/10 text-accent'
+                      }`}>
+                        {count.toLocaleString('fr-FR')}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="flex flex-col sm:flex-row gap-2">
-            {availableTypesEvenement.map(({ type, label, count }) => {
-              const selected = filters.typesEtablissement?.includes(type);
-              const isNouvelle = type === 'siege';
-              return (
-                <button
-                  key={type}
-                  onClick={() => handleTypeEtablissementToggle(type)}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
-                    selected
-                      ? isNouvelle 
-                        ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30'
-                        : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/30'
-                      : 'bg-muted/50 hover:bg-muted border border-border/50 text-foreground hover:border-accent/30'
-                  }`}
-                >
-                  <Building className="w-4 h-4" />
-                  <span className="whitespace-nowrap">{label}</span>
-                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                    selected 
-                      ? 'bg-white/20 text-white' 
-                      : 'bg-accent/10 text-accent'
-                  }`}>
-                    {count.toLocaleString('fr-FR')}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
+        </CollapsibleContent>
+      </Collapsible>
 
-      {/* Filtre par date de création */}
-      <div className="border-b border-accent/20 p-4 space-y-3">
-        <div className="flex items-center gap-2">
-          <CalendarIcon className="w-4 h-4 text-accent" />
-          <span className="font-medium text-sm">Date de création</span>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Du</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
-                >
-                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                  {filters.dateCreationFrom 
-                    ? format(new Date(filters.dateCreationFrom), "dd/MM/yyyy") 
-                    : <span className="text-muted-foreground">Date début</span>
-                  }
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={filters.dateCreationFrom ? new Date(filters.dateCreationFrom) : undefined}
-                  onSelect={(date) => setFilters((prev: any) => ({ 
-                    ...prev, 
-                    dateCreationFrom: date ? format(date, "yyyy-MM-dd") : undefined 
-                  }))}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+      {/* Filtre par date de création - Collapsible */}
+      <Collapsible open={dateCreationOpen} onOpenChange={setDateCreationOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="w-4 h-4 text-accent" />
+            <span className="font-medium text-sm">Date de création</span>
           </div>
-          
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Au</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
-                >
-                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                  {filters.dateCreationTo 
-                    ? format(new Date(filters.dateCreationTo), "dd/MM/yyyy") 
-                    : <span className="text-muted-foreground">Date fin</span>
-                  }
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={filters.dateCreationTo ? new Date(filters.dateCreationTo) : undefined}
-                  onSelect={(date) => setFilters((prev: any) => ({ 
-                    ...prev, 
-                    dateCreationTo: date ? format(date, "yyyy-MM-dd") : undefined 
-                  }))}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${dateCreationOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
         
-        {/* Boutons raccourcis dates */}
-        <div className="flex flex-wrap gap-1.5">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs px-2 hover:bg-accent/10"
-            onClick={() => {
-              const today = new Date();
-              const lastWeek = new Date(today);
-              lastWeek.setDate(today.getDate() - 7);
-              setFilters((prev: any) => ({
-                ...prev,
-                dateCreationFrom: format(lastWeek, "yyyy-MM-dd"),
-                dateCreationTo: format(today, "yyyy-MM-dd")
-              }));
-            }}
-          >
-            7 derniers jours
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs px-2 hover:bg-accent/10"
-            onClick={() => {
-              const today = new Date();
-              const lastMonth = new Date(today);
-              lastMonth.setMonth(today.getMonth() - 1);
-              setFilters((prev: any) => ({
-                ...prev,
-                dateCreationFrom: format(lastMonth, "yyyy-MM-dd"),
-                dateCreationTo: format(today, "yyyy-MM-dd")
-              }));
-            }}
-          >
-            30 derniers jours
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs px-2 hover:bg-accent/10"
-            onClick={() => {
-              const today = new Date();
-              const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-              setFilters((prev: any) => ({
-                ...prev,
-                dateCreationFrom: format(firstDayOfMonth, "yyyy-MM-dd"),
-                dateCreationTo: format(today, "yyyy-MM-dd")
-              }));
-            }}
-          >
-            Ce mois
-          </Button>
-          {(filters.dateCreationFrom || filters.dateCreationTo) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 text-xs px-2 text-destructive hover:bg-destructive/10"
-              onClick={() => setFilters((prev: any) => ({
-                ...prev,
-                dateCreationFrom: undefined,
-                dateCreationTo: undefined
-              }))}
-            >
-              <X className="w-3 h-3 mr-1" />
-              Effacer
-            </Button>
-          )}
-        </div>
-      </div>
+        <CollapsibleContent>
+          <div className="px-4 pb-4 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Du</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
+                    >
+                      <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                      {filters.dateCreationFrom 
+                        ? format(new Date(filters.dateCreationFrom), "dd/MM/yyyy") 
+                        : <span className="text-muted-foreground">Date début</span>
+                      }
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={filters.dateCreationFrom ? new Date(filters.dateCreationFrom) : undefined}
+                      onSelect={(date) => setFilters((prev: any) => ({ 
+                        ...prev, 
+                        dateCreationFrom: date ? format(date, "yyyy-MM-dd") : undefined 
+                      }))}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Au</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full h-9 text-sm justify-start text-left font-normal border-accent/30 hover:bg-accent/10 hover:border-accent/50"
+                    >
+                      <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                      {filters.dateCreationTo 
+                        ? format(new Date(filters.dateCreationTo), "dd/MM/yyyy") 
+                        : <span className="text-muted-foreground">Date fin</span>
+                      }
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={filters.dateCreationTo ? new Date(filters.dateCreationTo) : undefined}
+                      onSelect={(date) => setFilters((prev: any) => ({ 
+                        ...prev, 
+                        dateCreationTo: date ? format(date, "yyyy-MM-dd") : undefined 
+                      }))}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+            
+            {/* Boutons raccourcis dates */}
+            <div className="flex flex-wrap gap-1.5">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs px-2 hover:bg-accent/10"
+                onClick={() => {
+                  const today = new Date();
+                  const lastWeek = new Date(today);
+                  lastWeek.setDate(today.getDate() - 7);
+                  setFilters((prev: any) => ({
+                    ...prev,
+                    dateCreationFrom: format(lastWeek, "yyyy-MM-dd"),
+                    dateCreationTo: format(today, "yyyy-MM-dd")
+                  }));
+                }}
+              >
+                7 derniers jours
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs px-2 hover:bg-accent/10"
+                onClick={() => {
+                  const today = new Date();
+                  const lastMonth = new Date(today);
+                  lastMonth.setMonth(today.getMonth() - 1);
+                  setFilters((prev: any) => ({
+                    ...prev,
+                    dateCreationFrom: format(lastMonth, "yyyy-MM-dd"),
+                    dateCreationTo: format(today, "yyyy-MM-dd")
+                  }));
+                }}
+              >
+                30 derniers jours
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs px-2 hover:bg-accent/10"
+                onClick={() => {
+                  const today = new Date();
+                  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                  setFilters((prev: any) => ({
+                    ...prev,
+                    dateCreationFrom: format(firstDayOfMonth, "yyyy-MM-dd"),
+                    dateCreationTo: format(today, "yyyy-MM-dd")
+                  }));
+                }}
+              >
+                Ce mois
+              </Button>
+              {(filters.dateCreationFrom || filters.dateCreationTo) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs px-2 text-destructive hover:bg-destructive/10"
+                  onClick={() => setFilters((prev: any) => ({
+                    ...prev,
+                    dateCreationFrom: undefined,
+                    dateCreationTo: undefined
+                  }))}
+                >
+                  <X className="w-3 h-3 mr-1" />
+                  Effacer
+                </Button>
+              )}
+            </div>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
 
       {activeFiltersCount > 0 && (
         <div className="p-4">
