@@ -429,8 +429,102 @@ const TourneeDetail = () => {
   const completedCount = Object.values(visitesStatus).filter(v => v.visite).length;
   const currentStatut = tournee.statut;
 
+  const stopsContent = sitesLoading ? (
+    <div className="text-center py-8 text-muted-foreground">Chargement...</div>
+  ) : sites.length === 0 ? (
+    <div className="text-center py-8 text-muted-foreground">Aucun site</div>
+  ) : (
+    <div className="space-y-2 pr-2 sm:pr-3">
+      {orderedSiteIds.map((siteId, index) => {
+        const site = sites.find((s: any) => s.id === siteId);
+        if (!site) return null;
+
+        const status = visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false };
+        const hasNote = !!siteNotes[siteId];
+
+        return (
+          <div
+            key={siteId}
+            className="p-2 sm:p-3 rounded-lg bg-card/50 border border-accent/10 hover:border-accent/30 transition-colors"
+          >
+            {/* Header */}
+            <div className="flex items-start gap-2 mb-1.5 sm:mb-2">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0">
+                {index + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-xs sm:text-sm truncate">{site.nom}</div>
+                <div className="text-[10px] sm:text-xs text-muted-foreground truncate">{getFullAddress(site)}</div>
+              </div>
+            </div>
+
+            {/* Status buttons */}
+            <div className="flex flex-wrap gap-1 mb-1.5 sm:mb-2">
+              <Button
+                size="sm"
+                variant={status.visite ? 'default' : 'outline'}
+                onClick={() => handleVisiteChange(siteId, 'visite', !status.visite)}
+                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.visite ? 'bg-green-600 hover:bg-green-700' : 'border-green-500/30 text-green-500 hover:bg-green-500/10'}`}
+              >
+                <CheckCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
+                Visité
+              </Button>
+              <Button
+                size="sm"
+                variant={status.rdv ? 'default' : 'outline'}
+                onClick={() => handleVisiteChange(siteId, 'rdv', !status.rdv)}
+                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.rdv ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-500/30 text-blue-500 hover:bg-blue-500/10'}`}
+              >
+                <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
+                RDV
+              </Button>
+              <Button
+                size="sm"
+                variant={status.aRevoir ? 'default' : 'outline'}
+                onClick={() => handleVisiteChange(siteId, 'aRevoir', !status.aRevoir)}
+                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.aRevoir ? 'bg-orange-600 hover:bg-orange-700' : 'border-orange-500/30 text-orange-500 hover:bg-orange-500/10'}`}
+              >
+                À revoir
+              </Button>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-1">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => openNoteDialog(siteId)}
+                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 flex-1 ${hasNote ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/10' : 'border-accent/30'}`}
+              >
+                <StickyNote className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
+                {hasNote ? 'Modifier' : 'Note'}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleNavigate({ latitude: site.latitude, longitude: site.longitude, adresse: getFullAddress(site) })}
+                className="h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 border-accent/30"
+              >
+                <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
+                GPS
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => handleRemoveSite(siteId)}
+                className="h-6 w-6 sm:h-7 sm:w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-background overflow-y-auto lg:h-screen lg:overflow-hidden">
       {/* Header */}
       <div className="p-3 sm:p-4 border-b border-accent/20 flex items-center gap-2 sm:gap-4 shrink-0">
         <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour" className="h-9 w-9 shrink-0">
@@ -512,7 +606,7 @@ const TourneeDetail = () => {
       </div>
 
       {/* Content: Map + List */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 pt-0 min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 pt-0 min-h-0 lg:overflow-hidden">
         {/* Map - Mobile: fixed height, Desktop: flex-1 */}
         <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-full lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0 lg:shrink">
           {sitesLoading ? (
@@ -533,111 +627,21 @@ const TourneeDetail = () => {
         </div>
 
         {/* Sites list */}
-        <Card className="glass-card border-accent/20 flex-1 lg:flex-none lg:w-[360px] xl:w-[400px] flex flex-col min-h-0 overflow-hidden">
-          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col min-h-0 overflow-hidden">
+        <Card className="glass-card border-accent/20 w-full lg:w-[360px] xl:w-[400px] flex flex-col lg:h-full lg:min-h-0 lg:overflow-hidden">
+          <CardContent className="p-3 sm:p-4 flex flex-col lg:flex-1 lg:min-h-0 lg:overflow-hidden">
             <div className="flex items-center justify-between mb-2 sm:mb-3 shrink-0">
               <h3 className="font-semibold text-sm sm:text-base">Itinéraire optimisé</h3>
               <span className="text-[10px] sm:text-xs text-muted-foreground">{sites.length} arrêts</span>
             </div>
 
-            <ScrollArea className="flex-1 min-h-0">
-              {sitesLoading ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Chargement...
-                </div>
-              ) : sites.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Aucun site
-                </div>
-              ) : (
-                <div className="space-y-2 pr-2 sm:pr-3">
-                  {orderedSiteIds.map((siteId, index) => {
-                    const site = sites.find((s: any) => s.id === siteId);
-                    if (!site) return null;
-                    
-                    const status = visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false };
-                    const hasNote = !!siteNotes[siteId];
-                    
-                    return (
-                      <div
-                        key={siteId}
-                        className="p-2 sm:p-3 rounded-lg bg-card/50 border border-accent/10 hover:border-accent/30 transition-colors"
-                      >
-                        {/* Header */}
-                        <div className="flex items-start gap-2 mb-1.5 sm:mb-2">
-                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0">
-                            {index + 1}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium text-xs sm:text-sm truncate">{site.nom}</div>
-                            <div className="text-[10px] sm:text-xs text-muted-foreground truncate">{getFullAddress(site)}</div>
-                          </div>
-                        </div>
+            {/* Tablette/Mobile: scroll sur toute la page (pas de ScrollArea interne) */}
+            <div className="lg:hidden">
+              {stopsContent}
+            </div>
 
-                        {/* Status buttons */}
-                        <div className="flex flex-wrap gap-1 mb-1.5 sm:mb-2">
-                          <Button
-                            size="sm"
-                            variant={status.visite ? 'default' : 'outline'}
-                            onClick={() => handleVisiteChange(siteId, 'visite', !status.visite)}
-                            className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.visite ? 'bg-green-600 hover:bg-green-700' : 'border-green-500/30 text-green-500 hover:bg-green-500/10'}`}
-                          >
-                            <CheckCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
-                            Visité
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant={status.rdv ? 'default' : 'outline'}
-                            onClick={() => handleVisiteChange(siteId, 'rdv', !status.rdv)}
-                            className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.rdv ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-500/30 text-blue-500 hover:bg-blue-500/10'}`}
-                          >
-                            <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
-                            RDV
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant={status.aRevoir ? 'default' : 'outline'}
-                            onClick={() => handleVisiteChange(siteId, 'aRevoir', !status.aRevoir)}
-                            className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.aRevoir ? 'bg-orange-600 hover:bg-orange-700' : 'border-orange-500/30 text-orange-500 hover:bg-orange-500/10'}`}
-                          >
-                            À revoir
-                          </Button>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex items-center gap-1">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => openNoteDialog(siteId)}
-                            className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 flex-1 ${hasNote ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/10' : 'border-accent/30'}`}
-                          >
-                            <StickyNote className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
-                            {hasNote ? 'Modifier' : 'Note'}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleNavigate({ latitude: site.latitude, longitude: site.longitude, adresse: getFullAddress(site) })}
-                            className="h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 border-accent/30"
-                          >
-                            <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
-                            GPS
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => handleRemoveSite(siteId)}
-                            className="h-6 w-6 sm:h-7 sm:w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+            {/* Desktop: scroll interne uniquement sur la liste */}
+            <ScrollArea className="hidden lg:block flex-1 min-h-0">
+              {stopsContent}
             </ScrollArea>
           </CardContent>
         </Card>
