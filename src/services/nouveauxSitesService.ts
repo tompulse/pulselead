@@ -12,6 +12,8 @@ export interface NouveauxSitesFilters {
   taillesEntreprise?: string[];
   categoriesJuridiques?: string[];
   typesEtablissement?: string[];
+  dateCreationFrom?: string;
+  dateCreationTo?: string;
 }
 
 export const nouveauxSitesService = {
@@ -116,6 +118,14 @@ export const nouveauxSitesService = {
         if (typeConditions.length > 0) {
           query = query.or(typeConditions.join(','));
         }
+      }
+
+      // Filtre par date de création
+      if (filters.dateCreationFrom) {
+        query = query.gte('date_creation', filters.dateCreationFrom);
+      }
+      if (filters.dateCreationTo) {
+        query = query.lte('date_creation', filters.dateCreationTo);
       }
 
       const { data, error, count } = await query;
