@@ -682,8 +682,8 @@ const TourneeDetail = () => {
 
       {/* Content: Map + List - Stack on mobile, side by side on desktop */}
       <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 min-h-0">
-        {/* Map - hauteur fixe sur mobile, flex sur desktop */}
-        <div className="h-[250px] sm:h-[300px] lg:min-h-[400px] lg:flex-1 rounded-xl overflow-hidden border border-accent/20">
+        {/* Map - hauteur augmentée sur mobile/tablette */}
+        <div className="h-[200px] sm:h-[250px] md:h-[300px] lg:min-h-[400px] lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0">
           {sitesLoading ? (
             <div className="h-full flex items-center justify-center bg-card">
               <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
@@ -725,7 +725,7 @@ const TourneeDetail = () => {
               <span className="text-[10px] sm:text-xs text-muted-foreground hidden md:block shrink-0">Glissez pour réorganiser</span>
             </div>
 
-            <ScrollArea className="flex-1 min-h-0">
+            <ScrollArea className="flex-1 min-h-0 [&>[data-radix-scroll-area-viewport]]:pr-4 [&_[data-radix-scroll-area-scrollbar]]:w-2 [&_[data-radix-scroll-area-scrollbar]]:bg-accent/20 [&_[data-radix-scroll-area-thumb]]:bg-accent/60">
               {sitesLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...
