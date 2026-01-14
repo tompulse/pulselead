@@ -210,15 +210,15 @@ export const UnifiedEntreprisePanel = ({
                     ) : null}
                   </div>
 
-                  {/* SIRET */}
+                  {/* SIREN */}
                   <div className="space-y-1 pt-3 border-t border-accent/10">
                     <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
                       <Hash className="w-3.5 h-3.5" />
-                      SIRET
+                      SIREN
                     </div>
                     <p className="text-sm font-mono">
                       {displayEntreprise.siret 
-                        ? displayEntreprise.siret.replace(/(\d{3})(\d{3})(\d{3})(\d{5})/, '$1 $2 $3 $4')
+                        ? displayEntreprise.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')
                         : <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
                     </p>
                   </div>
