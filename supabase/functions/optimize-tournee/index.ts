@@ -211,36 +211,70 @@ serve(async (req) => {
     
     console.log('✅ Ordre optimisé:', sortedEntreprises.map((e: Entreprise) => e.nom));
 
-    // Avec roundtrip=true, le trajet inclut le retour au départ
-    // On calcule uniquement la distance/temps SANS le dernier leg (retour)
-    const legs = trip.legs || [];
-    const legsWithoutReturn = legs.slice(0, -1); // Exclure le dernier leg (retour au départ)
-    
-    const distanceWithoutReturn = legsWithoutReturn.reduce((sum: number, leg: any) => sum + (leg.distance || 0), 0);
-    const durationWithoutReturn = legsWithoutReturn.reduce((sum: number, leg: any) => sum + (leg.duration || 0), 0);
-    
-    const distanceKm = distanceWithoutReturn / 1000; // Conversion mètres -> km
-    const tempsTrajetMinutes = durationWithoutReturn / 60; // Conversion secondes -> minutes
-    
-    console.log('✅ Itinéraire optimisé (sans retour):', {
-      distance: Math.round(distanceKm) + ' km',
-      temps: Math.round(tempsTrajetMinutes) + ' min',
+    // KPI: recalculer via Directions API sur l'ordre optimisé (sans retour)
+    // Objectif: mêmes km/durée que la carte et que calculate-routes (cohérence produit)
+    const routePoints = [
+      ...(point_depart ? [{ lat: startPoint.lat, lng: startPoint.lng }] : []),
+      ...sortedEntreprises.map((e) => ({ lat: e.latitude, lng: e.longitude })),
+    ].filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng));
+
+    let distanceKm: number | null = null;
+    let tempsTrajetMinutes: number | null = null;
+    let routeGeometry: any = trip.geometry;
+
+    if (routePoints.length >= 2) {
+      const directionsCoords = routePoints.map((p) => `${p.lng},${p.lat}`).join(';');
+      const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${directionsCoords}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
+
+      const directionsRes = await fetch(directionsUrl);
+      if (directionsRes.ok) {
+        const directionsData = await directionsRes.json();
+        const route = directionsData?.routes?.[0];
+
+        if (route?.distance != null && route?.duration != null) {
+          distanceKm = route.distance / 1000;
+          tempsTrajetMinutes = route.duration / 60;
+          routeGeometry = route.geometry;
+        } else {
+          console.warn('[optimize-tournee] Directions: aucune route trouvée');
+        }
+      } else {
+        console.warn('[optimize-tournee] Directions error status:', directionsRes.status);
+      }
+    }
+
+    // Fallback robuste si Directions échoue
+    if (distanceKm === null || tempsTrajetMinutes === null) {
+      // Avec roundtrip=true, le trajet inclut le retour au départ: on retire le dernier leg si possible
+      const legs = trip.legs || [];
+      const legsWithoutReturn = legs.length > 1 ? legs.slice(0, -1) : legs;
+
+      const distanceMeters = legsWithoutReturn.reduce((sum: number, leg: any) => sum + (leg.distance || 0), 0);
+      const durationSeconds = legsWithoutReturn.reduce((sum: number, leg: any) => sum + (leg.duration || 0), 0);
+
+      distanceKm = distanceMeters / 1000;
+      tempsTrajetMinutes = durationSeconds / 60;
+    }
+
+    console.log('✅ KPI final (trajet pur):', {
+      distance_km: Math.round((distanceKm || 0) * 10) / 10,
+      duration_min: Math.round(tempsTrajetMinutes || 0),
       arrêts: sortedEntreprises.length,
-      nbLegs: legsWithoutReturn.length
     });
 
     return new Response(
       JSON.stringify({
         ordre_optimise: sortedEntreprises.map((e: Entreprise) => e.id),
         entreprises_ordonnees: sortedEntreprises,
-        distance_totale_km: Math.round(distanceKm * 10) / 10,
-        temps_estime_minutes: Math.round(tempsTrajetMinutes),
-        temps_trajet_minutes: Math.round(tempsTrajetMinutes),
-        explication: `Itinéraire optimisé: ${Math.round(distanceKm)} km, ${Math.floor(tempsTrajetMinutes / 60)}h${Math.round(tempsTrajetMinutes % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
-        route_geometry: trip.geometry,
+        distance_totale_km: Math.round(((distanceKm || 0) * 10)) / 10,
+        temps_estime_minutes: Math.round(tempsTrajetMinutes || 0),
+        temps_trajet_minutes: Math.round(tempsTrajetMinutes || 0),
+        explication: `Itinéraire optimisé: ${Math.round(distanceKm || 0)} km, ${Math.floor((tempsTrajetMinutes || 0) / 60)}h${Math.round((tempsTrajetMinutes || 0) % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
+        route_geometry: routeGeometry,
         waypoints: mapboxData.waypoints,
         legs: trip.legs,
-        fallback: false
+        fallback: false,
+        kpi_source: distanceKm !== null && tempsTrajetMinutes !== null ? 'directions' : 'optimized_trips'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
