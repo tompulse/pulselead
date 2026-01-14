@@ -12,37 +12,28 @@ import {
   MapPin, 
   Navigation, 
   Clock, 
-  Compass,
-  Play,
   CheckCircle,
   Loader2,
   Pencil,
   Check,
   X,
-  Sparkles
+  Trash2,
+  ExternalLink,
+  StickyNote
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { TourneeMap } from '@/components/dashboard/TourneeMap';
-import { SortableVisiteItem } from '@/components/dashboard/SortableVisiteItem';
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 interface VisiteStatus {
   visite: boolean;
@@ -59,28 +50,17 @@ const TourneeDetail = () => {
   const [visitesStatus, setVisitesStatus] = useState<Record<string, VisiteStatus>>({});
   const [siteNotes, setSiteNotes] = useState<Record<string, string>>({});
   const [isRecalculating, setIsRecalculating] = useState(false);
-  const [isOptimizing, setIsOptimizing] = useState(false);
   const [localKpis, setLocalKpis] = useState({
     distance: null as number | null,
     temps: null as number | null,
   });
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState('');
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 10 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { 
-        delay: 250,
-        tolerance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+  
+  // Note dialog state
+  const [noteDialogOpen, setNoteDialogOpen] = useState(false);
+  const [noteDialogSiteId, setNoteDialogSiteId] = useState<string | null>(null);
+  const [noteDialogValue, setNoteDialogValue] = useState('');
 
   // Fetch tournee data
   const { data: tournee, isLoading: tourneeLoading, error: tourneeError } = useQuery({
@@ -137,6 +117,33 @@ const TourneeDetail = () => {
     enabled: orderedSiteIds.length > 0
   });
 
+  // Fetch existing notes from lead_interactions
+  useEffect(() => {
+    const fetchNotes = async () => {
+      if (orderedSiteIds.length === 0) return;
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) return;
+
+      const { data } = await supabase
+        .from('lead_interactions')
+        .select('entreprise_id, notes')
+        .eq('user_id', session.user.id)
+        .in('entreprise_id', orderedSiteIds)
+        .not('notes', 'is', null);
+
+      if (data) {
+        const notesMap: Record<string, string> = {};
+        data.forEach(item => {
+          if (item.notes) notesMap[item.entreprise_id] = item.notes;
+        });
+        setSiteNotes(notesMap);
+      }
+    };
+
+    fetchNotes();
+  }, [orderedSiteIds]);
+
   // Auto-calculate route if KPIs are missing
   useEffect(() => {
     const calculateMissingKpis = async () => {
@@ -170,7 +177,6 @@ const TourneeDetail = () => {
               temps: newTemps || null,
             });
 
-            // Save to database
             await supabase
               .from('tournees')
               .update({
@@ -240,76 +246,6 @@ const TourneeDetail = () => {
     return site.adresse || `${site.code_postal || ''} ${site.ville || ''}`.trim();
   };
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-    
-    if (over && active.id !== over.id) {
-      const oldIndex = orderedSiteIds.indexOf(active.id as string);
-      const newIndex = orderedSiteIds.indexOf(over.id as string);
-      
-      const newOrder = arrayMove(orderedSiteIds, oldIndex, newIndex);
-      setOrderedSiteIds(newOrder);
-      
-      await recalculateRoute(newOrder);
-    }
-  };
-
-  const recalculateRoute = async (newOrder: string[]) => {
-    setIsRecalculating(true);
-    
-    try {
-      const orderedSites = newOrder
-        .map(id => sites.find((s: any) => s.id === id))
-        .filter((s: any) => s?.latitude && s?.longitude);
-
-      if (orderedSites.length < 2) {
-        setIsRecalculating(false);
-        return;
-      }
-
-      const waypoints = orderedSites.map((s: any) => ({
-        lat: Number(s.latitude),
-        lng: Number(s.longitude),
-      }));
-
-      const { data, error } = await supabase.functions.invoke('calculate-routes', {
-        body: { waypoints },
-      });
-
-      if (error) throw error;
-
-      // Parse response correctly - check nested structure first
-      const newDistance = parseFloat(data.withTolls?.distance_km) || 
-                          parseFloat(data.withoutTolls?.distance_km) || 
-                          parseFloat(data.distance_km) || 
-                          localKpis.distance;
-      const newTemps = data.withTolls?.duration_minutes || 
-                       data.withoutTolls?.duration_minutes || 
-                       data.duration_minutes || 
-                       localKpis.temps;
-
-      setLocalKpis({
-        distance: newDistance,
-        temps: newTemps,
-      });
-
-      await updateTourneeMutation.mutateAsync({
-        ordre_optimise: newOrder,
-        distance_totale_km: newDistance,
-        temps_estime_minutes: newTemps,
-      });
-
-      toast.success('Itinéraire recalculé');
-    } catch (error) {
-      console.error('Error recalculating route:', error);
-      await updateTourneeMutation.mutateAsync({
-        ordre_optimise: newOrder,
-      });
-    } finally {
-      setIsRecalculating(false);
-    }
-  };
-
   const handleVisiteChange = async (siteId: string, field: keyof VisiteStatus, value: boolean) => {
     const newStatus = {
       ...visitesStatus,
@@ -344,28 +280,33 @@ const TourneeDetail = () => {
     }
   };
 
-  const handleNoteChange = async (siteId: string, note: string) => {
-    // Update local state
+  const openNoteDialog = (siteId: string) => {
+    setNoteDialogSiteId(siteId);
+    setNoteDialogValue(siteNotes[siteId] || '');
+    setNoteDialogOpen(true);
+  };
+
+  const handleSaveNote = async () => {
+    if (!noteDialogSiteId) return;
+
+    const note = noteDialogValue.trim();
     setSiteNotes(prev => ({
       ...prev,
-      [siteId]: note,
+      [noteDialogSiteId]: note,
     }));
 
-    // Get user session
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user?.id) return;
 
     try {
-      // Check if interaction exists for this site
       const { data: existing } = await supabase
         .from('lead_interactions')
         .select('id')
-        .eq('entreprise_id', siteId)
+        .eq('entreprise_id', noteDialogSiteId)
         .eq('user_id', session.user.id)
         .maybeSingle();
 
       if (existing) {
-        // Update existing interaction with note
         await supabase
           .from('lead_interactions')
           .update({ 
@@ -373,16 +314,15 @@ const TourneeDetail = () => {
             updated_at: new Date().toISOString()
           })
           .eq('id', existing.id);
-      } else {
-        // Create new interaction with note
+      } else if (note) {
         await supabase
           .from('lead_interactions')
           .insert({
-            entreprise_id: siteId,
+            entreprise_id: noteDialogSiteId,
             user_id: session.user.id,
             type: 'visite',
             statut: 'en_cours',
-            notes: note || null,
+            notes: note,
           });
       }
 
@@ -390,8 +330,11 @@ const TourneeDetail = () => {
       queryClient.invalidateQueries({ queryKey: ['crm-notes'] });
     } catch (error) {
       console.error('Error saving note:', error);
-      toast.error('Erreur lors de l\'enregistrement de la note');
+      toast.error('Erreur lors de l\'enregistrement');
     }
+
+    setNoteDialogOpen(false);
+    setNoteDialogSiteId(null);
   };
 
   const handleNavigate = (site: { latitude?: number; longitude?: number; adresse: string }) => {
@@ -402,64 +345,21 @@ const TourneeDetail = () => {
     }
   };
 
-  const openInGoogleMaps = () => {
-    if (sites.length === 0) return;
-
-    const validSites = sites.filter((s: any) => s.latitude && s.longitude);
-    if (validSites.length === 0) return;
-
-    const origin = `${validSites[0].latitude},${validSites[0].longitude}`;
-    const destination = validSites.length > 1 
-      ? `${validSites[validSites.length - 1].latitude},${validSites[validSites.length - 1].longitude}`
-      : origin;
-    
-    const waypoints = validSites.length > 2
-      ? validSites.slice(1, -1).map((s: any) => `${s.latitude},${s.longitude}`).join('|')
-      : '';
-
-    let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
-    if (waypoints) {
-      url += `&waypoints=${waypoints}`;
-    }
-    url += '&travelmode=driving';
-
-    window.open(url, '_blank');
-  };
-
-  const handleStartTournee = async () => {
-    await updateTourneeMutation.mutateAsync({ statut: 'en_cours' });
-    toast.success('Tournée démarrée');
-  };
-
-  const handleEndTournee = async () => {
-    await updateTourneeMutation.mutateAsync({ statut: 'terminee' });
-    toast.success('Tournée terminée');
-  };
-
   const handleRemoveSite = async (siteId: string) => {
     const newOrder = orderedSiteIds.filter(id => id !== siteId);
-    const newEntreprisesIds = tournee.entreprises_ids.filter(id => id !== siteId);
+    const newEntreprisesIds = tournee.entreprises_ids.filter((id: string) => id !== siteId);
     
-    // Remove from visitesStatus
     const newVisitesStatus = { ...visitesStatus };
     delete newVisitesStatus[siteId];
     
     setOrderedSiteIds(newOrder);
     setVisitesStatus(newVisitesStatus);
     
-    // Update database
     await updateTourneeMutation.mutateAsync({
       ordre_optimise: newOrder,
       entreprises_ids: newEntreprisesIds,
       visites_effectuees: newVisitesStatus,
     });
-    
-    // Recalculate route if needed
-    if (newOrder.length >= 2) {
-      await recalculateRoute(newOrder);
-    } else {
-      setLocalKpis({ distance: null, temps: null });
-    }
     
     toast.success('Site supprimé de la tournée');
     queryClient.invalidateQueries({ queryKey: ['tournee-sites', tourneeId, newOrder] });
@@ -488,72 +388,6 @@ const TourneeDetail = () => {
   const handleCancelEditName = () => {
     setIsEditingName(false);
     setEditedName('');
-  };
-
-  const handleOptimizeRoute = async () => {
-    if (sites.length < 2) {
-      toast.error('Au moins 2 sites sont nécessaires pour optimiser');
-      return;
-    }
-
-    setIsOptimizing(true);
-    
-    try {
-      const validSites = sites.filter((s: any) => s.latitude && s.longitude);
-      
-      if (validSites.length < 2) {
-        toast.error('Coordonnées GPS manquantes pour optimiser');
-        setIsOptimizing(false);
-        return;
-      }
-
-      const entreprises = validSites.map((s: any) => ({
-        id: s.id,
-        nom: s.nom,
-        adresse: getFullAddress(s),
-        ville: s.ville,
-        latitude: Number(s.latitude),
-        longitude: Number(s.longitude),
-      }));
-
-      const point_depart = tournee.point_depart_lat && tournee.point_depart_lng
-        ? { lat: Number(tournee.point_depart_lat), lng: Number(tournee.point_depart_lng) }
-        : null;
-
-      const { data, error } = await supabase.functions.invoke('optimize-tournee', {
-        body: { entreprises, point_depart },
-      });
-
-      if (error) throw error;
-
-      const optimizedOrder = data.ordre_optimise || [];
-      const newDistance = data.distance_totale_km || localKpis.distance;
-      const newTemps = data.temps_estime_minutes || localKpis.temps;
-
-      if (optimizedOrder.length > 0) {
-        setOrderedSiteIds(optimizedOrder);
-        setLocalKpis({
-          distance: newDistance,
-          temps: newTemps,
-        });
-
-        await updateTourneeMutation.mutateAsync({
-          ordre_optimise: optimizedOrder,
-          distance_totale_km: newDistance,
-          temps_estime_minutes: newTemps,
-        });
-
-        toast.success('Itinéraire optimisé !');
-        queryClient.invalidateQueries({ queryKey: ['tournee', tourneeId] });
-      } else {
-        toast.error('Impossible d\'optimiser l\'itinéraire');
-      }
-    } catch (error) {
-      console.error('Error optimizing route:', error);
-      toast.error('Erreur lors de l\'optimisation');
-    } finally {
-      setIsOptimizing(false);
-    }
   };
 
   // Loading state
@@ -597,7 +431,7 @@ const TourneeDetail = () => {
 
   return (
     <div className="min-h-screen lg:h-screen flex flex-col bg-background lg:overflow-hidden">
-      {/* Header - Compact on mobile */}
+      {/* Header */}
       <div className="p-3 sm:p-4 border-b border-accent/20 flex items-center gap-2 sm:gap-4 shrink-0">
         <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour" className="h-9 w-9 shrink-0">
           <ArrowLeft className="w-5 h-5" />
@@ -650,7 +484,7 @@ const TourneeDetail = () => {
         </Badge>
       </div>
 
-      {/* KPIs - Responsive grid */}
+      {/* KPIs */}
       <div className="p-3 sm:p-4 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <div className="p-2.5 sm:p-3 rounded-xl bg-accent/10 border border-accent/20 text-center">
           <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-accent mx-auto mb-1" />
@@ -677,12 +511,9 @@ const TourneeDetail = () => {
         </div>
       </div>
 
-      {/* Actions supprimées (Démarrer la tournée / Ouvrir GPS) */}
-      <div className="px-4" />
-
-      {/* Content: Map + List - Stack on mobile (scrollable), side by side on desktop (fixed) */}
+      {/* Content: Map + List */}
       <div className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-3 sm:p-4 lg:min-h-0">
-        {/* Map - hauteur augmentée sur mobile/tablette */}
+        {/* Map */}
         <div className="h-[200px] sm:h-[250px] md:h-[300px] lg:min-h-[400px] lg:flex-1 rounded-xl overflow-hidden border border-accent/20 shrink-0">
           {sitesLoading ? (
             <div className="h-full flex items-center justify-center bg-card">
@@ -701,31 +532,15 @@ const TourneeDetail = () => {
           )}
         </div>
 
-        {/* Sites list - scroll page on mobile/tablet, scrollbar on desktop */}
+        {/* Sites list - No drag-and-drop, just a simple list */}
         <Card className="glass-card border-accent/20 lg:w-[420px] lg:shrink-0 flex flex-col lg:min-h-0 lg:max-h-full lg:overflow-hidden">
           <CardContent className="p-3 sm:p-4 flex-1 flex flex-col lg:min-h-0 lg:overflow-hidden">
-            <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0 gap-2">
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                <h3 className="font-semibold text-sm sm:text-base shrink-0">Itinéraire</h3>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={isOptimizing || sites.length < 2}
-                  onClick={handleOptimizeRoute}
-                  className="h-7 text-[10px] sm:text-xs border-accent/30 hover:bg-accent/10 hover:text-accent px-2 sm:px-3 whitespace-nowrap"
-                >
-                  {isOptimizing ? (
-                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                  ) : (
-                    <Sparkles className="w-3 h-3 mr-1" />
-                  )}
-                  <span className="hidden xs:inline">Revenir à la version </span>optimisée
-                </Button>
-              </div>
-              <span className="text-[10px] sm:text-xs text-muted-foreground hidden md:block shrink-0">Glissez pour réorganiser</span>
+            <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
+              <h3 className="font-semibold text-sm sm:text-base">Itinéraire optimisé</h3>
+              <span className="text-[10px] sm:text-xs text-muted-foreground">{sites.length} arrêts</span>
             </div>
 
-            <ScrollArea className="flex-1 lg:min-h-0 [&>[data-radix-scroll-area-viewport]]:pr-4 [&_[data-radix-scroll-area-scrollbar]]:w-2 [&_[data-radix-scroll-area-scrollbar]]:bg-accent/20 [&_[data-radix-scroll-area-thumb]]:bg-accent/60 [&_[data-radix-scroll-area-scrollbar]]:hidden lg:[&_[data-radix-scroll-area-scrollbar]]:flex">
+            <ScrollArea className="flex-1 lg:min-h-0">
               {sitesLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Chargement...
@@ -735,51 +550,124 @@ const TourneeDetail = () => {
                   Aucun site
                 </div>
               ) : (
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={orderedSiteIds}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <div className="space-y-2 pr-3">
-                      {orderedSiteIds.map((siteId, index) => {
-                        const site = sites.find((s: any) => s.id === siteId);
-                        if (!site) return null;
-                        
-                        return (
-                          <SortableVisiteItem
-                            key={siteId}
-                            id={siteId}
-                            index={index}
-                            isLast={index === orderedSiteIds.length - 1}
-                            site={{
-                              id: site.id,
-                              nom: site.nom,
-                              adresse: getFullAddress(site),
-                              ville: site.ville,
-                              latitude: site.latitude,
-                              longitude: site.longitude,
-                            }}
-                            visiteStatus={visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false }}
-                            currentNote={siteNotes[siteId] || ''}
-                            onVisiteChange={handleVisiteChange}
-                            onNavigate={handleNavigate}
-                            onRemove={handleRemoveSite}
-                            onNoteChange={handleNoteChange}
-                          />
-                        );
-                      })}
-                    </div>
-                  </SortableContext>
-                </DndContext>
+                <div className="space-y-2 pr-3">
+                  {orderedSiteIds.map((siteId, index) => {
+                    const site = sites.find((s: any) => s.id === siteId);
+                    if (!site) return null;
+                    
+                    const status = visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false };
+                    const hasNote = !!siteNotes[siteId];
+                    
+                    return (
+                      <div
+                        key={siteId}
+                        className="p-3 rounded-lg bg-card/50 border border-accent/10 hover:border-accent/30 transition-colors"
+                      >
+                        {/* Header */}
+                        <div className="flex items-start gap-2 mb-2">
+                          <div className="w-6 h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center text-xs font-bold shrink-0">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm truncate">{site.nom}</div>
+                            <div className="text-xs text-muted-foreground truncate">{getFullAddress(site)}</div>
+                          </div>
+                        </div>
+
+                        {/* Status buttons */}
+                        <div className="flex flex-wrap gap-1.5 mb-2">
+                          <Button
+                            size="sm"
+                            variant={status.visite ? 'default' : 'outline'}
+                            onClick={() => handleVisiteChange(siteId, 'visite', !status.visite)}
+                            className={`h-7 text-xs px-2 ${status.visite ? 'bg-green-600 hover:bg-green-700' : 'border-green-500/30 text-green-500 hover:bg-green-500/10'}`}
+                          >
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Visité
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant={status.rdv ? 'default' : 'outline'}
+                            onClick={() => handleVisiteChange(siteId, 'rdv', !status.rdv)}
+                            className={`h-7 text-xs px-2 ${status.rdv ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-500/30 text-blue-500 hover:bg-blue-500/10'}`}
+                          >
+                            <Calendar className="w-3 h-3 mr-1" />
+                            RDV
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant={status.aRevoir ? 'default' : 'outline'}
+                            onClick={() => handleVisiteChange(siteId, 'aRevoir', !status.aRevoir)}
+                            className={`h-7 text-xs px-2 ${status.aRevoir ? 'bg-orange-600 hover:bg-orange-700' : 'border-orange-500/30 text-orange-500 hover:bg-orange-500/10'}`}
+                          >
+                            À revoir
+                          </Button>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-1.5">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openNoteDialog(siteId)}
+                            className={`h-7 text-xs px-2 flex-1 ${hasNote ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/10' : 'border-accent/30'}`}
+                          >
+                            <StickyNote className="w-3 h-3 mr-1" />
+                            {hasNote ? 'Modifier note' : 'Note'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleNavigate({ latitude: site.latitude, longitude: site.longitude, adresse: getFullAddress(site) })}
+                            className="h-7 text-xs px-2 border-accent/30"
+                          >
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            GPS
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => handleRemoveSite(siteId)}
+                            className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </ScrollArea>
           </CardContent>
         </Card>
       </div>
+
+      {/* Note Dialog */}
+      <Dialog open={noteDialogOpen} onOpenChange={setNoteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <StickyNote className="w-5 h-5 text-yellow-500" />
+              Note
+            </DialogTitle>
+          </DialogHeader>
+          <Textarea
+            value={noteDialogValue}
+            onChange={(e) => setNoteDialogValue(e.target.value)}
+            placeholder="Ajouter une note..."
+            className="min-h-[120px]"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNoteDialogOpen(false)}>
+              Annuler
+            </Button>
+            <Button onClick={handleSaveNote} className="bg-yellow-500 hover:bg-yellow-600 text-black">
+              Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
