@@ -1070,7 +1070,7 @@ export const NafFilters = ({
                 })()}
                 {/* Non = établissement secondaire */}
                 {(() => {
-                  const nonSiegeCount = availableTypesEvenement.find(t => t.type === 'etablissement')?.count || 0;
+                  const nonSiegeCount = availableTypesEvenement.find(t => t.type === 'site')?.count || 0;
                   const selected = filters.typesEtablissement?.includes('etablissement');
                   return (
                     <button
