@@ -135,11 +135,11 @@ serve(async (req) => {
                   <tr>
                     <td style="padding: 20px 40px; border-top: 1px solid rgba(6, 182, 212, 0.2); text-align: center;">
                       <p style="margin: 0; font-size: 12px; color: #71717a;">
-                        Vous ne serez débité qu'à la fin de votre période d'essai.<br>
-                        Annulez à tout moment depuis votre espace client.
+                        Vous ne serez débité de 49€/mois qu'à la fin de votre période d'essai.<br>
+                        Annulez à tout moment depuis <a href="https://pulse.lovable.app/security" style="color: #06b6d4;">votre espace sécurité</a>.
                       </p>
                       <p style="margin: 15px 0 0; font-size: 12px; color: #52525b;">
-                        © 2026 PULSE - Prospection Intelligente
+                        © 2026 PULSE — Tom Iolov — 108 rue de Crimée, 75019 Paris, France
                       </p>
                     </td>
                   </tr>
