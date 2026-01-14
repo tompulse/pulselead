@@ -19,7 +19,7 @@ import {
   getDivisionEmoji,
 } from "@/utils/nafNomenclatureComplete";
 import { NAF_SOUS_CLASSES, getSousClasseLabel } from "@/utils/nafSousClasses";
-import { CATEGORIES_JURIDIQUES_NIVEAU_I, getCategorieJuridiqueLabel, getCategorieJuridiqueType } from "@/utils/categoriesJuridiques";
+import { CATEGORIES_JURIDIQUES_NIVEAU_I, CATEGORIES_JURIDIQUES_NIVEAU_II, CATEGORIES_JURIDIQUES_NIVEAU_III, getCategorieJuridiqueLabel, getCategorieJuridiqueType } from "@/utils/categoriesJuridiques";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 
 // Labels pour les tailles d'entreprise
@@ -106,6 +106,7 @@ export const NafFilters = ({
     groupes: [],
     classes: []
   });
+  const [expandedCategoriesJuridiques, setExpandedCategoriesJuridiques] = useState<string[]>([]);
   const [nafSearchQuery, setNafSearchQuery] = useState("");
   
   const { isAdmin } = useAdminStatus();
@@ -230,44 +231,75 @@ export const NafFilters = ({
     .filter(t => t.count > 0)
     .sort((a, b) => b.count - a.count);
 
-// Import correct function for full category label
-  const availableCategoriesJuridiques = Object.entries(availableFilters?.categoriesJuridiques || {})
-    .map(([code, count]) => {
-      // Handle NULL values
-      if (code === 'null' || code === '' || !code) {
-        return {
-          code: 'non_specifie',
-          label: 'Non spécifié',
-          type: 'Non classifié',
-          count: count as number
-        };
+  // Structure les catégories juridiques par niveau II (ex: 51, 52, 53, 54, 55, 56, 57, 58)
+  const categoriesJuridiquesHierarchy = useMemo(() => {
+    const rawData = availableFilters?.categoriesJuridiques || {};
+    
+    // Group by niveau II (first 2 digits)
+    const groupedByNiveauII: Record<string, { codes: string[]; totalCount: number }> = {};
+    
+    Object.entries(rawData).forEach(([code, count]) => {
+      if (!code || code === 'null' || code === '') {
+        // Handle "Non spécifié"
+        if (!groupedByNiveauII['non_specifie']) {
+          groupedByNiveauII['non_specifie'] = { codes: [], totalCount: 0 };
+        }
+        groupedByNiveauII['non_specifie'].totalCount += count as number;
+        return;
       }
-      // Get the niveau I group (first digit)
-      const groupe = code.charAt(0);
-      return {
-        code,
-        label: getCategorieJuridiqueLabel(groupe),
-        type: getCategorieJuridiqueType(groupe),
-        count: count as number
-      };
-    })
-    .filter(c => c.count > 0)
-    // Group by niveau I category to consolidate counts
-    .reduce((acc, curr) => {
-      const existing = acc.find(a => a.code.charAt(0) === curr.code.charAt(0));
-      if (existing && curr.code !== 'non_specifie') {
-        existing.count += curr.count;
-      } else if (!existing) {
-        acc.push(curr);
+      
+      const niveauII = code.substring(0, 2);
+      if (!groupedByNiveauII[niveauII]) {
+        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0 };
       }
-      return acc;
-    }, [] as { code: string; label: string; type: string; count: number }[])
-    .sort((a, b) => {
-      // "Non spécifié" always at the end
-      if (a.code === 'non_specifie') return 1;
-      if (b.code === 'non_specifie') return -1;
-      return b.count - a.count; // Sort by count descending
+      groupedByNiveauII[niveauII].codes.push(code);
+      groupedByNiveauII[niveauII].totalCount += count as number;
     });
+    
+    // Convert to array with labels from NIVEAU_II
+    const hierarchy = Object.entries(groupedByNiveauII)
+      .filter(([_, data]) => data.totalCount > 0)
+      .map(([niveauII, data]) => {
+        if (niveauII === 'non_specifie') {
+          return {
+            niveauII: 'non_specifie',
+            label: 'Non spécifié',
+            count: data.totalCount,
+            codes: ['non_specifie'],
+            subCategories: []
+          };
+        }
+        
+        const niveauIIInfo = CATEGORIES_JURIDIQUES_NIVEAU_II[niveauII];
+        const label = niveauIIInfo?.label || `Catégorie ${niveauII}`;
+        
+        // Get detail for each code (niveau III)
+        const subCategories = data.codes.map(code => {
+          const niveauIII = CATEGORIES_JURIDIQUES_NIVEAU_III[code];
+          return {
+            code,
+            label: niveauIII?.label || `Code ${code}`,
+            count: rawData[code] as number
+          };
+        }).filter(sc => sc.count > 0)
+          .sort((a, b) => b.count - a.count);
+        
+        return {
+          niveauII,
+          label,
+          count: data.totalCount,
+          codes: data.codes,
+          subCategories
+        };
+      })
+      .sort((a, b) => {
+        if (a.niveauII === 'non_specifie') return 1;
+        if (b.niveauII === 'non_specifie') return -1;
+        return b.count - a.count;
+      });
+    
+    return hierarchy;
+  }, [availableFilters]);
 
   const availableTypesEvenement = Object.entries(availableFilters?.typesEtablissement || {})
     .map(([type, count]) => ({
@@ -428,6 +460,42 @@ export const NafFilters = ({
           : [...current, code]
       };
     });
+  };
+
+  // Toggle tout un groupe de catégories juridiques (niveau II)
+  const handleCategorieJuridiqueGroupeToggle = (codes: string[]) => {
+    setFilters((prev: any) => {
+      const current = prev.categoriesJuridiques || [];
+      const allSelected = codes.every(code => current.includes(code));
+      
+      if (allSelected) {
+        // Désélectionner tous les codes du groupe
+        return {
+          ...prev,
+          categoriesJuridiques: current.filter((c: string) => !codes.includes(c))
+        };
+      } else {
+        // Sélectionner tous les codes du groupe
+        const newSelection = [...current];
+        codes.forEach(code => {
+          if (!newSelection.includes(code)) {
+            newSelection.push(code);
+          }
+        });
+        return {
+          ...prev,
+          categoriesJuridiques: newSelection
+        };
+      }
+    });
+  };
+
+  const toggleCategorieJuridiqueExpand = (niveauII: string) => {
+    setExpandedCategoriesJuridiques(prev => 
+      prev.includes(niveauII) 
+        ? prev.filter(n => n !== niveauII)
+        : [...prev, niveauII]
+    );
   };
 
   const handleTypeEtablissementToggle = (type: string) => {
@@ -746,7 +814,7 @@ export const NafFilters = ({
             </div>
           </div>
           
-          <ScrollArea className="max-h-[450px]">
+          <ScrollArea className="h-[450px]">
             <div className="px-4 pb-4 space-y-0.5">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
@@ -903,7 +971,7 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className={`${availableDepartments.length <= 5 ? '' : 'max-h-[300px]'}`}>
+          <ScrollArea className="h-[300px]">
             <div className="px-4 pb-4 space-y-1">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
@@ -991,33 +1059,94 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className={`${availableCategoriesJuridiques.length <= 6 ? '' : 'max-h-[350px]'}`}>
-            <div className="px-4 pb-4 space-y-1">
+          <ScrollArea className="h-[400px]">
+            <div className="px-4 pb-4 space-y-0.5">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="h-14 w-full" />
+                  <Skeleton key={i} className="h-12 w-full" />
                 ))
-              ) : availableCategoriesJuridiques.length === 0 ? (
+              ) : categoriesJuridiquesHierarchy.length === 0 ? (
                 <div className="text-sm text-muted-foreground text-center py-4">
                   Aucune catégorie juridique disponible
                 </div>
               ) : (
-                availableCategoriesJuridiques.map(({ code, label, type, count }) => {
-                  const selected = filters.categoriesJuridiques?.includes(code);
+                categoriesJuridiquesHierarchy.map((groupe) => {
+                  const isExpanded = expandedCategoriesJuridiques.includes(groupe.niveauII);
+                  const allSelected = groupe.codes.every(code => 
+                    filters.categoriesJuridiques?.includes(code)
+                  );
+                  const someSelected = groupe.codes.some(code => 
+                    filters.categoriesJuridiques?.includes(code)
+                  ) && !allSelected;
+                  const hasSubCategories = groupe.subCategories && groupe.subCategories.length > 1;
+                  
                   return (
-                    <div
-                      key={code}
-                      onClick={() => handleCategorieJuridiqueToggle(code)}
-                      className="flex items-start gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                    >
-                      <Checkbox selected={selected} />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium leading-tight">{label}</div>
-                        <div className="text-xs text-muted-foreground leading-tight mt-0.5">{type}</div>
+                    <div key={groupe.niveauII} className="space-y-0.5">
+                      {/* Niveau II - En-tête du groupe */}
+                      <div className="flex items-center gap-2">
+                        {/* Bouton d'expansion si sous-catégories */}
+                        {hasSubCategories ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleCategorieJuridiqueExpand(groupe.niveauII);
+                            }}
+                            className="p-1 hover:bg-accent/10 rounded transition-colors shrink-0"
+                          >
+                            {isExpanded ? (
+                              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                            ) : (
+                              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                            )}
+                          </button>
+                        ) : (
+                          <div className="w-5" />
+                        )}
+                        
+                        <div
+                          onClick={() => handleCategorieJuridiqueGroupeToggle(groupe.codes)}
+                          className="flex-1 flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.99]"
+                        >
+                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all shrink-0 ${
+                            allSelected 
+                              ? 'bg-accent border-accent' 
+                              : someSelected 
+                                ? 'border-accent bg-accent/30' 
+                                : 'border-muted-foreground/40'
+                          }`}>
+                            {allSelected && <div className="w-2 h-2 rounded-sm bg-white" />}
+                            {someSelected && <div className="w-1.5 h-0.5 bg-accent" />}
+                          </div>
+                          <span className="text-sm flex-1 leading-tight">{groupe.label}</span>
+                          <span className="text-xs text-muted-foreground font-semibold">
+                            {groupe.count.toLocaleString('fr-FR')}
+                          </span>
+                        </div>
                       </div>
-                      <span className="text-xs text-muted-foreground shrink-0 font-semibold">
-                        {count.toLocaleString('fr-FR')}
-                      </span>
+                      
+                      {/* Sous-catégories (niveau III) */}
+                      {hasSubCategories && isExpanded && (
+                        <div className="ml-6 space-y-0.5 border-l-2 border-accent/10 pl-2">
+                          {groupe.subCategories.map((subCat) => {
+                            const isSubSelected = filters.categoriesJuridiques?.includes(subCat.code);
+                            return (
+                              <div
+                                key={subCat.code}
+                                onClick={() => handleCategorieJuridiqueToggle(subCat.code)}
+                                className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.99]"
+                              >
+                                <Checkbox selected={isSubSelected} size="sm" />
+                                <span className="text-xs flex-1 text-muted-foreground leading-tight">
+                                  {subCat.label}
+                                </span>
+                                <span className="text-xs text-muted-foreground/60">
+                                  {subCat.count.toLocaleString('fr-FR')}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
                 })
