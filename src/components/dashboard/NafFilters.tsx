@@ -1027,12 +1027,12 @@ export const NafFilters = ({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Type d'évènement - Collapsible avec Boutons stylisés */}
+      {/* Siège social - Collapsible avec Oui/Non */}
       <Collapsible open={typesEvenementOpen} onOpenChange={setTypesEvenementOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="font-medium text-sm">Type d'évènement</span>
+            <Building className="w-4 h-4 text-accent" />
+            <span className="font-medium text-sm">Siège social</span>
           </div>
           <ChevronDown className={`h-4 w-4 text-accent transition-transform ${typesEvenementOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
@@ -1040,43 +1040,56 @@ export const NafFilters = ({
         <CollapsibleContent>
           <div className="px-4 pb-4 space-y-2">
             {isLoading ? (
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Skeleton className="h-10 flex-1" />
-                <Skeleton className="h-10 flex-1" />
-              </div>
-            ) : availableTypesEvenement.length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">
-                Aucun type disponible
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
               </div>
             ) : (
               <div className="flex flex-col gap-2">
-                {availableTypesEvenement.map(({ type, label, count }) => {
-                  const selected = filters.typesEtablissement?.includes(type);
-                  const isNouvelle = type === 'siege';
+                {/* Oui = siège */}
+                {(() => {
+                  const siegeCount = availableTypesEvenement.find(t => t.type === 'siege')?.count || 0;
+                  const selected = filters.typesEtablissement?.includes('siege');
                   return (
                     <button
-                      key={type}
-                      onClick={() => handleTypeEtablissementToggle(type)}
+                      onClick={() => handleTypeEtablissementToggle('siege')}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
                         selected
-                          ? isNouvelle 
-                            ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30'
-                            : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/30'
+                          ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30'
                           : 'bg-muted/50 hover:bg-muted border border-border/50 text-foreground hover:border-accent/30'
                       }`}
                     >
-                      <Building className="w-4 h-4 shrink-0" />
-                      <span className="flex-1 text-left">{label}</span>
+                      <span className="flex-1 text-left">Oui</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        selected 
-                          ? 'bg-white/20 text-white' 
-                          : 'bg-accent/10 text-accent'
+                        selected ? 'bg-white/20 text-white' : 'bg-accent/10 text-accent'
                       }`}>
-                        {count.toLocaleString('fr-FR')}
+                        {siegeCount.toLocaleString('fr-FR')}
                       </span>
                     </button>
                   );
-                })}
+                })()}
+                {/* Non = établissement secondaire */}
+                {(() => {
+                  const nonSiegeCount = availableTypesEvenement.find(t => t.type === 'etablissement')?.count || 0;
+                  const selected = filters.typesEtablissement?.includes('etablissement');
+                  return (
+                    <button
+                      onClick={() => handleTypeEtablissementToggle('etablissement')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
+                        selected
+                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/30'
+                          : 'bg-muted/50 hover:bg-muted border border-border/50 text-foreground hover:border-accent/30'
+                      }`}
+                    >
+                      <span className="flex-1 text-left">Non</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        selected ? 'bg-white/20 text-white' : 'bg-accent/10 text-accent'
+                      }`}>
+                        {nonSiegeCount.toLocaleString('fr-FR')}
+                      </span>
+                    </button>
+                  );
+                })()}
               </div>
             )}
           </div>
