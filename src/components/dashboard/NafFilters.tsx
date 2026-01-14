@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as CalendarIcon, Layers, Scale, MapPin, BarChart3 } from "lucide-react";
+import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as CalendarIcon, Layers, Scale, MapPin, BarChart3, Building } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
@@ -30,6 +30,12 @@ const TAILLE_LABELS: Record<string, string> = {
   'Non spécifié': 'Non spécifié'
 };
 
+// Labels pour les types d'établissement
+const TYPE_ETABLISSEMENT_LABELS: Record<string, string> = {
+  'siege': 'Nouvelle entreprise',
+  'site': 'Nouveau site (entreprise existante)'
+};
+
 interface NafFiltersProps {
   filters: {
     searchQuery?: string;
@@ -41,6 +47,7 @@ interface NafFiltersProps {
     departments?: string[];
     taillesEntreprise?: string[];
     categoriesJuridiques?: string[];
+    typesEtablissement?: string[];
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   resultsCount?: number;
@@ -90,6 +97,7 @@ export const NafFilters = ({
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
   const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
   const [categoriesJuridiquesOpen, setCategoriesJuridiquesOpen] = useState(false);
+  const [typesEtablissementOpen, setTypesEtablissementOpen] = useState(false);
   const [expanded, setExpanded] = useState<ExpandedLevel>({
     divisions: [],
     groupes: [],
@@ -105,6 +113,7 @@ export const NafFilters = ({
     departments: filters.departments,
     taillesEntreprise: filters.taillesEntreprise,
     categoriesJuridiques: filters.categoriesJuridiques,
+    typesEtablissement: filters.typesEtablissement,
     searchQuery: filters.searchQuery
   });
 
@@ -228,6 +237,14 @@ export const NafFilters = ({
     .filter(c => c.count > 0)
     .sort((a, b) => a.code.localeCompare(b.code));
 
+  const availableTypesEtablissement = Object.entries(availableFilters?.typesEtablissement || {})
+    .map(([type, count]) => ({
+      type,
+      label: TYPE_ETABLISSEMENT_LABELS[type] || type,
+      count: count as number
+    }))
+    .filter(t => t.count > 0)
+    .sort((a, b) => b.count - a.count);
   // Toggle functions pour l'expansion
   const toggleExpand = (level: keyof ExpandedLevel, code: string) => {
     setExpanded(prev => ({
@@ -381,6 +398,19 @@ export const NafFilters = ({
     });
   };
 
+  const handleTypeEtablissementToggle = (type: string) => {
+    setFilters((prev: any) => {
+      const current = prev.typesEtablissement || [];
+      const isSelected = current.includes(type);
+      
+      return {
+        ...prev,
+        typesEtablissement: isSelected
+          ? current.filter((t: string) => t !== type)
+          : [...current, type]
+      };
+    });
+  };
   const clearFilters = () => setFilters((prev: any) => ({ 
     ...prev, 
     nafSections: [], 
@@ -391,6 +421,7 @@ export const NafFilters = ({
     departments: [],
     taillesEntreprise: [],
     categoriesJuridiques: [],
+    typesEtablissement: [],
     searchQuery: ""
   }));
 
@@ -401,7 +432,8 @@ export const NafFilters = ({
     (filters.nafSousClasses?.length || 0) +
     (filters.departments?.length || 0) +
     (filters.taillesEntreprise?.length || 0) +
-    (filters.categoriesJuridiques?.length || 0);
+    (filters.categoriesJuridiques?.length || 0) +
+    (filters.typesEtablissement?.length || 0);
 
   // Composant pour afficher une checkbox
   const Checkbox = ({ selected, size = "md" }: { selected: boolean; size?: "sm" | "md" }) => {
@@ -594,6 +626,21 @@ export const NafFilters = ({
                 <button
                   onClick={() => handleCategorieJuridiqueToggle(code)}
                   className="hover:bg-amber-500/20 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            {filters.typesEtablissement?.map((type: string) => (
+              <span
+                key={`type-${type}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/30"
+              >
+                <Building className="w-3 h-3" />
+                <span>{type === 'siege' ? 'Nouvelle entreprise' : 'Nouveau site'}</span>
+                <button
+                  onClick={() => handleTypeEtablissementToggle(type)}
+                  className="hover:bg-emerald-500/20 rounded-full p-0.5 transition-colors"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -918,7 +965,48 @@ export const NafFilters = ({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Bouton réinitialiser */}
+      {/* Type d'établissement (Siège vs Site) */}
+      <Collapsible open={typesEtablissementOpen} onOpenChange={setTypesEtablissementOpen} className="border-b border-accent/20">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
+          <div className="flex items-center gap-2">
+            <Building className="w-4 h-4 text-accent" />
+            <span className="font-medium text-sm">Type d'établissement</span>
+          </div>
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${typesEtablissementOpen ? 'rotate-180' : ''}`} />
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <div className="px-4 pb-4 space-y-1">
+            {isLoading ? (
+              Array.from({ length: 2 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))
+            ) : availableTypesEtablissement.length === 0 ? (
+              <div className="text-sm text-muted-foreground text-center py-4">
+                Aucun type disponible
+              </div>
+            ) : (
+              availableTypesEtablissement.map(({ type, label, count }) => {
+                const selected = filters.typesEtablissement?.includes(type);
+                return (
+                  <div
+                    key={type}
+                    onClick={() => handleTypeEtablissementToggle(type)}
+                    className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                  >
+                    <Checkbox selected={selected} />
+                    <span className="text-sm flex-1">{label}</span>
+                    <span className="text-xs text-muted-foreground shrink-0 font-semibold">
+                      {count.toLocaleString('fr-FR')}
+                    </span>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+
       {activeFiltersCount > 0 && (
         <div className="p-4">
           <Button

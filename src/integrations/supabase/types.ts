@@ -515,6 +515,18 @@ export type Database = {
       get_nouveaux_sites_filter_counts_dynamic:
         | {
             Args: {
+              p_categories_juridiques?: string[]
+              p_departments?: string[]
+              p_naf_divisions?: string[]
+              p_naf_sections?: string[]
+              p_search_query?: string
+              p_tailles?: string[]
+              p_types_etablissement?: string[]
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
               p_departments?: string[]
               p_naf_divisions?: string[]
               p_naf_sections?: string[]

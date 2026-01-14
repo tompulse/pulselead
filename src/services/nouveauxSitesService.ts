@@ -11,6 +11,7 @@ export interface NouveauxSitesFilters {
   departments?: string[];
   taillesEntreprise?: string[];
   categoriesJuridiques?: string[];
+  typesEtablissement?: string[];
 }
 
 export const nouveauxSitesService = {
@@ -101,6 +102,20 @@ export const nouveauxSitesService = {
           `categorie_juridique.like.${cat}%`
         ).join(',');
         query = query.or(catConditions);
+      }
+
+      // Filtre par type d'établissement (siège vs site)
+      if (filters.typesEtablissement && filters.typesEtablissement.length > 0) {
+        const typeConditions: string[] = [];
+        if (filters.typesEtablissement.includes('siege')) {
+          typeConditions.push('est_siege.eq.true');
+        }
+        if (filters.typesEtablissement.includes('site')) {
+          typeConditions.push('est_siege.eq.false');
+        }
+        if (typeConditions.length > 0) {
+          query = query.or(typeConditions.join(','));
+        }
       }
 
       const { data, error, count } = await query;
