@@ -746,7 +746,7 @@ export const NafFilters = ({
             </div>
           </div>
           
-          <ScrollArea className="h-[450px]">
+          <ScrollArea className="max-h-[450px]">
             <div className="px-4 pb-4 space-y-0.5">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
@@ -903,7 +903,7 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className="h-[300px]">
+          <ScrollArea className={`${availableDepartments.length <= 5 ? '' : 'max-h-[300px]'}`}>
             <div className="px-4 pb-4 space-y-1">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
@@ -947,7 +947,7 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className="h-[200px]">
+          <ScrollArea className={`${availableTailles.length <= 4 ? '' : 'max-h-[200px]'}`}>
             <div className="px-4 pb-4 space-y-1">
               {isLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
@@ -991,7 +991,7 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className="h-[350px]">
+          <ScrollArea className={`${availableCategoriesJuridiques.length <= 6 ? '' : 'max-h-[350px]'}`}>
             <div className="px-4 pb-4 space-y-1">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
