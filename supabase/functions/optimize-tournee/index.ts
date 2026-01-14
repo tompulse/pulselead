@@ -81,6 +81,100 @@ async function hydrateCoordinates(entreprises: Entreprise[], token: string): Pro
   return enriched;
 }
 
+// Calculer la matrice de durées entre tous les points via Mapbox Matrix API
+async function getDistanceMatrix(points: { lat: number; lng: number }[], token: string): Promise<number[][] | null> {
+  if (points.length < 2) return null;
+  
+  const coords = points.map(p => `${p.lng},${p.lat}`).join(';');
+  const url = `https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${coords}?annotations=duration&access_token=${token}`;
+  
+  const res = await fetch(url);
+  if (!res.ok) {
+    console.warn('[optimize-tournee] Matrix API error:', res.status);
+    return null;
+  }
+  
+  const data = await res.json();
+  if (data.code !== 'Ok' || !data.durations) {
+    console.warn('[optimize-tournee] Matrix API no durations:', data.code);
+    return null;
+  }
+  
+  return data.durations;
+}
+
+// Algorithme Nearest Neighbor pour TSP (meilleur compromis vitesse/qualité)
+function nearestNeighborTSP(matrix: number[][], startIdx: number): number[] {
+  const n = matrix.length;
+  const visited = new Set<number>([startIdx]);
+  const path = [startIdx];
+  let current = startIdx;
+  
+  while (visited.size < n) {
+    let nearestIdx = -1;
+    let nearestDist = Infinity;
+    
+    for (let i = 0; i < n; i++) {
+      if (!visited.has(i) && matrix[current][i] < nearestDist) {
+        nearestDist = matrix[current][i];
+        nearestIdx = i;
+      }
+    }
+    
+    if (nearestIdx === -1) break;
+    
+    visited.add(nearestIdx);
+    path.push(nearestIdx);
+    current = nearestIdx;
+  }
+  
+  return path;
+}
+
+// Amélioration 2-opt pour optimiser le chemin
+function twoOptImprove(path: number[], matrix: number[][]): number[] {
+  let improved = true;
+  let bestPath = [...path];
+  
+  while (improved) {
+    improved = false;
+    
+    for (let i = 1; i < bestPath.length - 1; i++) {
+      for (let j = i + 1; j < bestPath.length; j++) {
+        // Calculer le coût actuel du segment
+        const costBefore = 
+          matrix[bestPath[i - 1]][bestPath[i]] + 
+          (j < bestPath.length - 1 ? matrix[bestPath[j]][bestPath[j + 1]] : 0);
+        
+        // Calculer le coût si on inverse le segment
+        const costAfter = 
+          matrix[bestPath[i - 1]][bestPath[j]] + 
+          (j < bestPath.length - 1 ? matrix[bestPath[i]][bestPath[j + 1]] : 0);
+        
+        if (costAfter < costBefore - 0.1) { // Seuil pour éviter les micro-optimisations
+          // Inverser le segment entre i et j
+          const newPath = [...bestPath];
+          const segment = newPath.slice(i, j + 1).reverse();
+          newPath.splice(i, j - i + 1, ...segment);
+          bestPath = newPath;
+          improved = true;
+        }
+      }
+    }
+  }
+  
+  return bestPath;
+}
+
+// Calculer le coût total d'un chemin
+function calculatePathCost(path: number[], matrix: number[][]): number {
+  let cost = 0;
+  for (let i = 0; i < path.length - 1; i++) {
+    cost += matrix[path[i]][path[i + 1]];
+  }
+  return cost;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -148,84 +242,95 @@ serve(async (req) => {
       console.warn(`⚠️ ${enrichedEntreprises.length - validEntreprises.length} entreprise(s) ignorée(s) (géocodage impossible)`);
     }
 
-    // Utiliser l'API Mapbox Optimized Trips (optimise par temps de trajet)
-    console.log('🎯 Appel Mapbox Optimized Trips API');
+    // NOUVEAU: Utiliser l'API Matrix + algorithme TSP personnalisé
+    console.log('🎯 Calcul de la matrice de durées via Mapbox Matrix API...');
     
-    const coordinates = validEntreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
+    // Construire la liste de tous les points (départ + entreprises)
+    const allPoints = [
+      { lat: startPoint.lat, lng: startPoint.lng },
+      ...validEntreprises.map(e => ({ lat: e.latitude, lng: e.longitude }))
+    ];
     
-    // IMPORTANT: roundtrip=true permet une vraie optimisation TSP (Travelling Salesman Problem)
-    // Mapbox optimise l'ordre de TOUS les points pour minimiser le temps total
-    // On ignore simplement le "retour" dans le résultat final
-    const optimizationUrl = point_depart
-      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&roundtrip=true&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`
-      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?roundtrip=true&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`;
+    const matrix = await getDistanceMatrix(allPoints, MAPBOX_TOKEN);
     
-    console.log('🔗 URL Mapbox (sans token):', optimizationUrl.replace(MAPBOX_TOKEN, 'REDACTED'));
+    let sortedEntreprises: Entreprise[];
     
-    const mapboxResponse = await fetch(optimizationUrl);
-    
-    if (!mapboxResponse.ok) {
-      console.error('❌ Erreur Mapbox Optimization:', mapboxResponse.status);
-      const errorText = await mapboxResponse.text();
-      console.error('Détails:', errorText);
-      throw new Error(`Erreur Mapbox Optimization (${mapboxResponse.status}): ${errorText}`);
+    if (matrix) {
+      console.log('✅ Matrice reçue, optimisation TSP avec Nearest Neighbor + 2-opt...');
+      
+      // Nearest Neighbor depuis le point de départ (index 0)
+      const initialPath = nearestNeighborTSP(matrix, 0);
+      console.log('📍 Chemin initial (Nearest Neighbor):', initialPath.map(i => i === 0 ? 'DÉPART' : validEntreprises[i - 1].nom));
+      
+      const initialCost = calculatePathCost(initialPath, matrix);
+      console.log('⏱️ Durée initiale:', Math.round(initialCost / 60), 'min');
+      
+      // Amélioration 2-opt
+      const optimizedPath = twoOptImprove(initialPath, matrix);
+      const optimizedCost = calculatePathCost(optimizedPath, matrix);
+      console.log('📍 Chemin optimisé (2-opt):', optimizedPath.map(i => i === 0 ? 'DÉPART' : validEntreprises[i - 1].nom));
+      console.log('⏱️ Durée optimisée:', Math.round(optimizedCost / 60), 'min');
+      console.log('🎉 Gain:', Math.round((initialCost - optimizedCost) / 60), 'min');
+      
+      // Extraire les entreprises dans l'ordre optimisé (sans le point de départ)
+      sortedEntreprises = optimizedPath
+        .filter(i => i > 0) // Exclure le point de départ
+        .map(i => validEntreprises[i - 1]); // Décaler l'index car 0 = départ
+    } else {
+      // Fallback: utiliser l'API Optimized Trips de Mapbox
+      console.log('⚠️ Fallback vers Mapbox Optimized Trips API...');
+      
+      const coordinates = validEntreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
+      const optimizationUrl = point_depart
+        ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
+        : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?roundtrip=false&geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
+      
+      const mapboxResponse = await fetch(optimizationUrl);
+      
+      if (!mapboxResponse.ok) {
+        console.error('❌ Erreur Mapbox Optimization:', mapboxResponse.status);
+        // Fallback ultime: garder l'ordre original
+        sortedEntreprises = validEntreprises;
+      } else {
+        const mapboxData = await mapboxResponse.json();
+        
+        if (!mapboxData.trips || mapboxData.trips.length === 0) {
+          sortedEntreprises = validEntreprises;
+        } else {
+          const waypoints = mapboxData.waypoints;
+          const startOffset = point_depart ? 1 : 0;
+          
+          const waypointMapping = waypoints
+            .slice(startOffset)
+            .map((wp: any, originalIdx: number) => ({
+              originalIndex: originalIdx,
+              visitOrder: wp.waypoint_index - startOffset,
+              entreprise: validEntreprises[originalIdx]
+            }));
+          
+          waypointMapping.sort((a: any, b: any) => a.visitOrder - b.visitOrder);
+          sortedEntreprises = waypointMapping.map((m: any) => m.entreprise);
+        }
+      }
     }
+    
+    console.log('✅ Ordre final optimisé:', sortedEntreprises.map((e: Entreprise) => e.nom));
 
-    const mapboxData = await mapboxResponse.json();
-    console.log('Response Mapbox code:', mapboxData.code);
-    console.log('Waypoints reçus:', mapboxData.waypoints?.length);
-    
-    if (!mapboxData.trips || mapboxData.trips.length === 0) {
-      console.error('Pas de trips dans la réponse:', mapboxData);
-      throw new Error("Aucun itinéraire optimisé trouvé par Mapbox");
-    }
-
-    const trip = mapboxData.trips[0];
-    const waypoints = mapboxData.waypoints;
-    
-    // Si on a un point de départ personnalisé, le premier waypoint est le départ, on l'ignore
-    const startOffset = point_depart ? 1 : 0;
-    
-    // Les waypoints dans la réponse Mapbox contiennent:
-    // - waypoint_index: l'ordre dans lequel visiter ce point dans le trajet optimisé
-    // - la position dans le tableau correspond à l'ordre d'entrée original
-    console.log('📍 Waypoints bruts:', waypoints.map((wp: any, i: number) => ({
-      inputIndex: i,
-      waypoint_index: wp.waypoint_index,
-      name: wp.name
-    })));
-    
-    const waypointMapping = waypoints
-      .slice(startOffset)
-      .map((wp: any, originalIdx: number) => ({
-        originalIndex: originalIdx,
-        visitOrder: wp.waypoint_index - startOffset,
-        entreprise: validEntreprises[originalIdx]
-      }));
-    
-    // Trier par ordre de visite (waypoint_index)
-    waypointMapping.sort((a: any, b: any) => a.visitOrder - b.visitOrder);
-    
-    // Extraire les entreprises dans l'ordre optimisé
-    const sortedEntreprises = waypointMapping.map((m: any) => m.entreprise);
-    
-    console.log('✅ Ordre optimisé:', sortedEntreprises.map((e: Entreprise) => e.nom));
-
-    // KPI: recalculer via Directions API sur l'ordre optimisé (sans retour)
-    // Objectif: mêmes km/durée que la carte et que calculate-routes (cohérence produit)
+    // KPI: calculer via Directions API sur l'ordre optimisé
     const routePoints = [
-      ...(point_depart ? [{ lat: startPoint.lat, lng: startPoint.lng }] : []),
+      { lat: startPoint.lat, lng: startPoint.lng },
       ...sortedEntreprises.map((e) => ({ lat: e.latitude, lng: e.longitude })),
     ].filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng));
 
     let distanceKm: number | null = null;
     let tempsTrajetMinutes: number | null = null;
-    let routeGeometry: any = trip.geometry;
+    let routeGeometry: any = null;
 
     if (routePoints.length >= 2) {
       const directionsCoords = routePoints.map((p) => `${p.lng},${p.lat}`).join(';');
       const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${directionsCoords}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
 
+      console.log('📊 Calcul KPI via Directions API...');
       const directionsRes = await fetch(directionsUrl);
       if (directionsRes.ok) {
         const directionsData = await directionsRes.json();
@@ -243,20 +348,16 @@ serve(async (req) => {
       }
     }
 
-    // Fallback robuste si Directions échoue
-    if (distanceKm === null || tempsTrajetMinutes === null) {
-      // Avec roundtrip=true, le trajet inclut le retour au départ: on retire le dernier leg si possible
-      const legs = trip.legs || [];
-      const legsWithoutReturn = legs.length > 1 ? legs.slice(0, -1) : legs;
-
-      const distanceMeters = legsWithoutReturn.reduce((sum: number, leg: any) => sum + (leg.distance || 0), 0);
-      const durationSeconds = legsWithoutReturn.reduce((sum: number, leg: any) => sum + (leg.duration || 0), 0);
-
-      distanceKm = distanceMeters / 1000;
-      tempsTrajetMinutes = durationSeconds / 60;
+    // Fallback KPI depuis la matrice si disponible
+    if ((distanceKm === null || tempsTrajetMinutes === null) && matrix) {
+      const pathIndices = [0, ...sortedEntreprises.map((e) => validEntreprises.indexOf(e) + 1)];
+      const durationSec = calculatePathCost(pathIndices, matrix);
+      tempsTrajetMinutes = durationSec / 60;
+      // Estimation distance: ~50km/h moyen
+      distanceKm = (tempsTrajetMinutes / 60) * 50;
     }
 
-    console.log('✅ KPI final (trajet pur):', {
+    console.log('✅ KPI final:', {
       distance_km: Math.round((distanceKm || 0) * 10) / 10,
       duration_min: Math.round(tempsTrajetMinutes || 0),
       arrêts: sortedEntreprises.length,
@@ -271,10 +372,8 @@ serve(async (req) => {
         temps_trajet_minutes: Math.round(tempsTrajetMinutes || 0),
         explication: `Itinéraire optimisé: ${Math.round(distanceKm || 0)} km, ${Math.floor((tempsTrajetMinutes || 0) / 60)}h${Math.round((tempsTrajetMinutes || 0) % 60).toString().padStart(2, '0')} avec ${sortedEntreprises.length} arrêts`,
         route_geometry: routeGeometry,
-        waypoints: mapboxData.waypoints,
-        legs: trip.legs,
         fallback: false,
-        kpi_source: distanceKm !== null && tempsTrajetMinutes !== null ? 'directions' : 'optimized_trips'
+        algorithm: matrix ? 'nearest_neighbor_2opt' : 'mapbox_optimized_trips'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
