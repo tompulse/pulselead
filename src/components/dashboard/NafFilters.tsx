@@ -230,15 +230,44 @@ export const NafFilters = ({
     .filter(t => t.count > 0)
     .sort((a, b) => b.count - a.count);
 
+// Import correct function for full category label
   const availableCategoriesJuridiques = Object.entries(availableFilters?.categoriesJuridiques || {})
-    .map(([code, count]) => ({
-      code,
-      label: getCategorieJuridiqueLabel(code),
-      type: getCategorieJuridiqueType(code),
-      count: count as number
-    }))
+    .map(([code, count]) => {
+      // Handle NULL values
+      if (code === 'null' || code === '' || !code) {
+        return {
+          code: 'non_specifie',
+          label: 'Non spécifié',
+          type: 'Non classifié',
+          count: count as number
+        };
+      }
+      // Get the niveau I group (first digit)
+      const groupe = code.charAt(0);
+      return {
+        code,
+        label: getCategorieJuridiqueLabel(groupe),
+        type: getCategorieJuridiqueType(groupe),
+        count: count as number
+      };
+    })
     .filter(c => c.count > 0)
-    .sort((a, b) => a.code.localeCompare(b.code));
+    // Group by niveau I category to consolidate counts
+    .reduce((acc, curr) => {
+      const existing = acc.find(a => a.code.charAt(0) === curr.code.charAt(0));
+      if (existing && curr.code !== 'non_specifie') {
+        existing.count += curr.count;
+      } else if (!existing) {
+        acc.push(curr);
+      }
+      return acc;
+    }, [] as { code: string; label: string; type: string; count: number }[])
+    .sort((a, b) => {
+      // "Non spécifié" always at the end
+      if (a.code === 'non_specifie') return 1;
+      if (b.code === 'non_specifie') return -1;
+      return b.count - a.count; // Sort by count descending
+    });
 
   const availableTypesEvenement = Object.entries(availableFilters?.typesEtablissement || {})
     .map(([type, count]) => ({
@@ -1020,7 +1049,7 @@ export const NafFilters = ({
                 Aucun type disponible
               </div>
             ) : (
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col gap-2">
                 {availableTypesEvenement.map(({ type, label, count }) => {
                   const selected = filters.typesEtablissement?.includes(type);
                   const isNouvelle = type === 'siege';
@@ -1028,7 +1057,7 @@ export const NafFilters = ({
                     <button
                       key={type}
                       onClick={() => handleTypeEtablissementToggle(type)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
                         selected
                           ? isNouvelle 
                             ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30'
@@ -1036,9 +1065,9 @@ export const NafFilters = ({
                           : 'bg-muted/50 hover:bg-muted border border-border/50 text-foreground hover:border-accent/30'
                       }`}
                     >
-                      <Building className="w-4 h-4" />
-                      <span className="whitespace-nowrap">{label}</span>
-                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      <Building className="w-4 h-4 shrink-0" />
+                      <span className="flex-1 text-left">{label}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
                         selected 
                           ? 'bg-white/20 text-white' 
                           : 'bg-accent/10 text-accent'
@@ -1066,7 +1095,7 @@ export const NafFilters = ({
         
         <CollapsibleContent>
           <div className="px-4 pb-4 space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="flex flex-col gap-2">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Du</Label>
                 <Popover>
