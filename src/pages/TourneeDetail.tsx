@@ -596,7 +596,7 @@ const TourneeDetail = () => {
   const currentStatut = tournee.statut;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Header - Compact on mobile */}
       <div className="p-3 sm:p-4 border-b border-accent/20 flex items-center gap-2 sm:gap-4 shrink-0">
         <Button variant="ghost" size="icon" onClick={handleBack} aria-label="Retour" className="h-9 w-9 shrink-0">
@@ -702,8 +702,8 @@ const TourneeDetail = () => {
         </div>
 
         {/* Sites list with drag & drop - hauteur fixe avec scroll interne */}
-        <Card className="glass-card border-accent/20 lg:w-[420px] lg:shrink-0 flex flex-col h-[350px] sm:h-[400px] lg:h-auto lg:max-h-full">
-          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col min-h-0">
+        <Card className="glass-card border-accent/20 lg:w-[420px] lg:shrink-0 flex flex-col min-h-[300px] max-h-[350px] sm:max-h-[400px] lg:max-h-none lg:h-full overflow-hidden">
+          <CardContent className="p-3 sm:p-4 flex-1 flex flex-col min-h-0 overflow-hidden">
             <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0 gap-2">
               <div className="flex items-center gap-2 min-w-0 flex-1">
                 <h3 className="font-semibold text-sm sm:text-base shrink-0">Itinéraire</h3>
