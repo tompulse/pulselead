@@ -39,7 +39,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const formattedDate = formatDate(trialEndDate);
     const displayName = firstName || "cher utilisateur";
-    const manageUrl = portalUrl || "https://pulse.lovable.app/dashboard";
+    const manageUrl = portalUrl || "https://pulse.lovable.app/security";
 
     const emailResponse = await resend.emails.send({
       from: "PULSE <onboarding@resend.dev>",
@@ -142,7 +142,7 @@ const handler = async (req: Request): Promise<Response> => {
               </p>
               <p style="margin: 16px 0 0 0; font-size: 12px; color: #444444;">
                 PULSE — Vendez plus. Roulez moins.<br>
-                75A Erosi Manjgaladze Street, 0180 Tbilisi, Georgia
+                Tom Iolov — 108 rue de Crimée, 75019 Paris, France
               </p>
             </td>
           </tr>
