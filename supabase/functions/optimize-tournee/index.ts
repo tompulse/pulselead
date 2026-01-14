@@ -153,9 +153,13 @@ serve(async (req) => {
     
     const coordinates = validEntreprises.map(e => `${e.longitude},${e.latitude}`).join(';');
     
+    // IMPORTANT: destination=any permet à Mapbox de choisir la meilleure destination finale
+    // C'est crucial pour une vraie optimisation temporelle
     const optimizationUrl = point_depart
-      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`
-      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?source=first&destination=last&roundtrip=false&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`;
+      ? `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${startPoint.lng},${startPoint.lat};${coordinates}?source=first&destination=any&roundtrip=false&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`
+      : `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?source=first&destination=any&roundtrip=false&geometries=geojson&overview=full&steps=true&annotations=duration,distance&access_token=${MAPBOX_TOKEN}`;
+    
+    console.log('🔗 URL Mapbox (sans token):', optimizationUrl.replace(MAPBOX_TOKEN, 'REDACTED'));
     
     const mapboxResponse = await fetch(optimizationUrl);
     
@@ -168,6 +172,7 @@ serve(async (req) => {
 
     const mapboxData = await mapboxResponse.json();
     console.log('Response Mapbox code:', mapboxData.code);
+    console.log('Waypoints reçus:', mapboxData.waypoints?.length);
     
     if (!mapboxData.trips || mapboxData.trips.length === 0) {
       console.error('Pas de trips dans la réponse:', mapboxData);
@@ -181,8 +186,14 @@ serve(async (req) => {
     const startOffset = point_depart ? 1 : 0;
     
     // Les waypoints dans la réponse Mapbox contiennent:
-    // - waypoint_index: l'ordre dans lequel visiter ce point (0, 1, 2, ...)
-    // - la position dans le tableau correspond à l'ordre d'entrée
+    // - waypoint_index: l'ordre dans lequel visiter ce point dans le trajet optimisé
+    // - la position dans le tableau correspond à l'ordre d'entrée original
+    console.log('📍 Waypoints bruts:', waypoints.map((wp: any, i: number) => ({
+      inputIndex: i,
+      waypoint_index: wp.waypoint_index,
+      name: wp.name
+    })));
+    
     const waypointMapping = waypoints
       .slice(startOffset)
       .map((wp: any, originalIdx: number) => ({
