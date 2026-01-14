@@ -10,6 +10,7 @@ interface FilterCounts {
   departments: Record<string, number>;
   taillesEntreprise: Record<string, number>;
   categoriesJuridiques: Record<string, number>;
+  typesEtablissement: Record<string, number>;
 }
 
 interface FiltersInput {
@@ -18,6 +19,7 @@ interface FiltersInput {
   departments?: string[];
   taillesEntreprise?: string[];
   categoriesJuridiques?: string[];
+  typesEtablissement?: string[];
   searchQuery?: string;
 }
 
@@ -30,6 +32,7 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       filters.departments || [],
       filters.taillesEntreprise || [],
       filters.categoriesJuridiques || [],
+      filters.typesEtablissement || [],
       filters.searchQuery || ''
     ],
     queryFn: async (): Promise<FilterCounts> => {
@@ -40,6 +43,7 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
         p_departments: filters.departments?.length ? filters.departments : null,
         p_tailles: filters.taillesEntreprise?.length ? filters.taillesEntreprise : null,
         p_categories_juridiques: filters.categoriesJuridiques?.length ? filters.categoriesJuridiques : null,
+        p_types_etablissement: filters.typesEtablissement?.length ? filters.typesEtablissement : null,
         p_search_query: filters.searchQuery?.trim() || null
       });
       
@@ -57,6 +61,7 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
         departments: (data as any)?.departments || {},
         taillesEntreprise: (data as any)?.taillesEntreprise || {},
         categoriesJuridiques: (data as any)?.categoriesJuridiques || {},
+        typesEtablissement: (data as any)?.typesEtablissement || {},
       };
     },
     staleTime: 30000, // 30 secondes

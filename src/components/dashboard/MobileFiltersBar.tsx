@@ -61,7 +61,9 @@ export const MobileFiltersBar = ({
     (filters.nafClasses?.length || 0) +
     (filters.nafSousClasses?.length || 0) +
     (filters.departments?.length || 0) +
-    (filters.taillesEntreprise?.length || 0);
+    (filters.taillesEntreprise?.length || 0) +
+    (filters.categoriesJuridiques?.length || 0) +
+    (filters.typesEtablissement?.length || 0);
 
   return (
     <div className="lg:hidden space-y-1.5 p-2 bg-card/80 backdrop-blur-sm border-b border-accent/20">
