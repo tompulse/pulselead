@@ -312,17 +312,21 @@ export const TourneeMap = ({
 
         console.log('[TourneeMap] Markers added:', markersRef.current.length);
 
-        // Fit bounds with balanced zoom
+        // Fit bounds - more zoom out on mobile only
         setTimeout(() => {
           if (routeCoords.length > 0 && map.current) {
             const bounds = new mapboxgl.LngLatBounds();
             routeCoords.forEach((coord: any) => bounds.extend(coord));
+            
+            const isMobile = window.innerWidth < 640;
             map.current.fitBounds(bounds, { 
-              padding: { top: 50, bottom: 50, left: 35, right: 35 }, 
+              padding: isMobile 
+                ? { top: 40, bottom: 40, left: 25, right: 25 }
+                : { top: 50, bottom: 50, left: 35, right: 35 }, 
               duration: 1000, 
-              maxZoom: 13 
+              maxZoom: isMobile ? 11 : 13
             });
-            console.log('[TourneeMap] Bounds fitted');
+            console.log('[TourneeMap] Bounds fitted, mobile:', isMobile);
           }
         }, 300);
       } catch (error) {
