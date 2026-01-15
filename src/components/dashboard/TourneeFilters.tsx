@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -68,24 +68,61 @@ export const TourneeFilters = ({
     searchQuery: filters.searchQuery
   });
   
-  // Filtrer les catégories/départements/formes pour n'afficher que ceux qui ont des entreprises
-  const availableCategories = availableFiltersData 
-    ? DETAILED_CATEGORIES.map(cat => cat.key).filter(
-        key => (availableFiltersData.categories[key] || 0) > 0
-      )
-    : [];
-  
-  const availableDepartments = availableFiltersData 
-    ? [...new Set(Object.keys(availableFiltersData.departments))].filter(
-        dept => DEPARTMENT_NAMES[dept] && (availableFiltersData.departments[dept] || 0) > 0
-      ).sort()
-    : [];
-  
-  const availableFormes = availableFiltersData
-    ? FORMES_JURIDIQUES.filter(
-        forme => (availableFiltersData.formes[forme.value] || 0) > 0
-      )
-    : [];
+  // Listes : on affiche TOUJOURS toutes les options (multi-sélection),
+  // même quand les compteurs dynamiques tombent à 0 après un premier choix.
+  const selectedCategories = filters.categories || [];
+  const selectedDepartments = filters.departments || [];
+  const selectedFormes = filters.formesJuridiques || [];
+
+  const allCategoryKeys = useMemo(() => DETAILED_CATEGORIES.map((c) => c.key), []);
+  const allDepartments = useMemo(() => {
+    return Object.keys(DEPARTMENT_NAMES).sort((a, b) => {
+      const na = Number.parseInt(a, 10);
+      const nb = Number.parseInt(b, 10);
+      if (Number.isNaN(na) || Number.isNaN(nb)) return a.localeCompare(b);
+      return na - nb;
+    });
+  }, []);
+
+  const availableCategories = useMemo(() => {
+    const counts = (availableFiltersData?.categories || {}) as Record<string, number>;
+    return allCategoryKeys
+      .map((key) => ({ key, count: Number(counts[key] ?? 0) }))
+      .sort((a, b) => {
+        const aSel = selectedCategories.includes(a.key);
+        const bSel = selectedCategories.includes(b.key);
+        if (aSel !== bSel) return aSel ? -1 : 1;
+        return b.count - a.count;
+      });
+  }, [availableFiltersData, allCategoryKeys, selectedCategories]);
+
+  const availableDepartments = useMemo(() => {
+    const counts = (availableFiltersData?.departments || {}) as Record<string, number>;
+    return allDepartments
+      .map((dept) => ({ dept, count: Number(counts[dept] ?? 0) }))
+      .sort((a, b) => {
+        const aSel = selectedDepartments.includes(a.dept);
+        const bSel = selectedDepartments.includes(b.dept);
+        if (aSel !== bSel) return aSel ? -1 : 1;
+        if (a.count !== b.count) return b.count - a.count;
+        const na = Number.parseInt(a.dept, 10);
+        const nb = Number.parseInt(b.dept, 10);
+        if (Number.isNaN(na) || Number.isNaN(nb)) return a.dept.localeCompare(b.dept);
+        return na - nb;
+      });
+  }, [availableFiltersData, allDepartments, selectedDepartments]);
+
+  const availableFormes = useMemo(() => {
+    const counts = (availableFiltersData?.formes || {}) as Record<string, number>;
+    return FORMES_JURIDIQUES
+      .map((forme) => ({ ...forme, count: Number(counts[forme.value] ?? 0) }))
+      .sort((a, b) => {
+        const aSel = selectedFormes.includes(a.value);
+        const bSel = selectedFormes.includes(b.value);
+        if (aSel !== bSel) return aSel ? -1 : 1;
+        return b.count - a.count;
+      });
+  }, [availableFiltersData, selectedFormes]);
   
   const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
@@ -242,13 +279,12 @@ export const TourneeFilters = ({
             ) : (
               <ScrollArea className="h-64 mt-2 overscroll-contain">
                 <div className="space-y-1 pr-4">
-                  {availableDepartments.map((deptCode) => {
-                    const selected = filters.departments?.includes(deptCode);
-                    const count = availableFiltersData?.departments[deptCode] || 0;
+                  {availableDepartments.map(({ dept, count }) => {
+                    const selected = filters.departments?.includes(dept);
                     return (
                       <div
-                        key={deptCode}
-                        onClick={() => handleDepartmentToggle(deptCode)}
+                        key={dept}
+                        onClick={() => handleDepartmentToggle(dept)}
                         className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                       >
                         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
@@ -257,7 +293,7 @@ export const TourneeFilters = ({
                           {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                         </div>
                         <span className="text-sm leading-tight flex-1">
-                          {deptCode} - {DEPARTMENT_NAMES[deptCode]}
+                          {dept} - {DEPARTMENT_NAMES[dept]}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {count}
@@ -290,13 +326,12 @@ export const TourneeFilters = ({
             ) : (
               <ScrollArea className="h-64 mt-2 overscroll-contain">
                 <div className="space-y-1 pr-4">
-                  {availableCategories.map((categoryKey) => {
-                    const selected = filters.categories?.includes(categoryKey);
-                    const count = availableFiltersData?.categories[categoryKey] || 0;
+                  {availableCategories.map(({ key, count }) => {
+                    const selected = filters.categories?.includes(key);
                     return (
                       <div
-                        key={categoryKey}
-                        onClick={() => handleCategoryToggle(categoryKey)}
+                        key={key}
+                        onClick={() => handleCategoryToggle(key)}
                         className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
                       >
                         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
@@ -305,7 +340,7 @@ export const TourneeFilters = ({
                           {selected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                         </div>
                         <span className="text-sm leading-tight flex-1">
-                          {getCategoryLabel(categoryKey)}
+                          {getCategoryLabel(key)}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {count}
@@ -341,7 +376,6 @@ export const TourneeFilters = ({
                 <div className="space-y-1 pr-4">
                   {availableFormes.map((forme) => {
                     const selected = filters.formesJuridiques?.includes(forme.value);
-                    const count = availableFiltersData?.formes[forme.value] || 0;
                     return (
                       <div
                         key={forme.value}
@@ -357,7 +391,7 @@ export const TourneeFilters = ({
                           {forme.label}
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {count}
+                          {forme.count}
                         </span>
                       </div>
                     );
