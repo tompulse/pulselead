@@ -121,25 +121,35 @@ export const NafFilters = ({
     searchQuery: filters.searchQuery
   });
 
+  // Get selected NAF codes to keep them visible even if count is 0
+  const selectedNafDivisions = filters.nafDivisions || [];
+  const selectedNafGroupes = filters.nafGroupes || [];
+  const selectedNafClasses = filters.nafClasses || [];
+  const selectedNafSousClasses = filters.nafSousClasses || [];
+
   // Construire la hiérarchie NAF par DIVISIONS (point d'entrée numérique)
+  // Keep selected items visible even if their count becomes 0
   const nafHierarchy = useMemo(() => {
     if (!availableFilters) return [];
 
     const divisions = Object.entries(NAF_DIVISIONS)
       .map(([divCode, divInfo]) => {
         const divisionCount = availableFilters.nafDivisions?.[divCode] || 0;
+        const isDivisionSelected = selectedNafDivisions.includes(divCode);
         
         // Groupes de cette division
         const groupes = Object.entries(NAF_GROUPES)
           .filter(([_, grpInfo]) => grpInfo.division === divCode)
           .map(([grpCode, grpInfo]) => {
             const groupeCount = availableFilters.nafGroupes?.[grpCode] || 0;
+            const isGroupeSelected = selectedNafGroupes.includes(grpCode);
             
             // Classes de ce groupe
             const classes = Object.entries(NAF_CLASSES)
               .filter(([_, clsInfo]) => clsInfo.groupe === grpCode)
               .map(([clsCode, clsInfo]) => {
                 const classeCount = availableFilters.nafClasses?.[clsCode] || 0;
+                const isClasseSelected = selectedNafClasses.includes(clsCode);
                 
                 // Sous-classes de cette classe
                 const sousClasses = Object.entries(availableFilters.nafSousClasses || {})
@@ -149,27 +159,29 @@ export const NafFilters = ({
                     label: getSousClasseLabel(scCode),
                     count: count as number
                   }))
-                  .filter(sc => sc.count > 0)
+                  .filter(sc => sc.count > 0 || selectedNafSousClasses.includes(sc.code))
                   .sort((a, b) => a.code.localeCompare(b.code));
                 
                 return {
                   code: clsCode,
                   label: clsInfo.label,
                   count: classeCount,
-                  sousClasses
+                  sousClasses,
+                  isSelected: isClasseSelected
                 };
               })
-              .filter(cls => cls.count > 0)
+              .filter(cls => cls.count > 0 || cls.isSelected)
               .sort((a, b) => a.code.localeCompare(b.code));
             
             return {
               code: grpCode,
               label: grpInfo.label,
               count: groupeCount,
-              classes
+              classes,
+              isSelected: isGroupeSelected
             };
           })
-          .filter(grp => grp.count > 0)
+          .filter(grp => grp.count > 0 || grp.isSelected || grp.classes.some(c => c.isSelected))
           .sort((a, b) => a.code.localeCompare(b.code));
         
         return {
@@ -177,14 +189,15 @@ export const NafFilters = ({
           label: divInfo.label,
           emoji: getDivisionEmoji(divCode),
           count: divisionCount,
-          groupes
+          groupes,
+          isSelected: isDivisionSelected
         };
       })
-      .filter(div => div.count > 0)
+      .filter(div => div.count > 0 || div.isSelected || div.groupes.some(g => g.isSelected || g.classes.some(c => c.isSelected)))
       .sort((a, b) => a.code.localeCompare(b.code)); // Tri numérique croissant
 
     return divisions;
-  }, [availableFilters]);
+  }, [availableFilters, selectedNafDivisions, selectedNafGroupes, selectedNafClasses, selectedNafSousClasses]);
 
   // Filtrer par recherche
   const filteredHierarchy = useMemo(() => {
@@ -235,12 +248,15 @@ export const NafFilters = ({
     .sort((a, b) => b.count - a.count);
 
   // Structure les catégories juridiques par niveau II (ex: 51, 52, 53, 54, 55, 56, 57, 58)
+  // Keep selected items visible even if their count becomes 0
+  const selectedCategoriesJuridiques = filters.categoriesJuridiques || [];
   const categoriesJuridiquesHierarchy = useMemo(() => {
     const rawData = availableFilters?.categoriesJuridiques || {};
     
     // Group by niveau II (first 2 digits)
     const groupedByNiveauII: Record<string, { codes: string[]; totalCount: number }> = {};
     
+    // First, add all codes from rawData
     Object.entries(rawData).forEach(([code, count]) => {
       if (!code || code === 'null' || code === '') {
         // Handle "Non spécifié"
@@ -255,21 +271,41 @@ export const NafFilters = ({
       if (!groupedByNiveauII[niveauII]) {
         groupedByNiveauII[niveauII] = { codes: [], totalCount: 0 };
       }
-      groupedByNiveauII[niveauII].codes.push(code);
+      if (!groupedByNiveauII[niveauII].codes.includes(code)) {
+        groupedByNiveauII[niveauII].codes.push(code);
+      }
       groupedByNiveauII[niveauII].totalCount += count as number;
+    });
+    
+    // Add selected codes that might not be in rawData (count = 0)
+    selectedCategoriesJuridiques.forEach(code => {
+      if (!code || code === 'null' || code === '' || code === 'non_specifie') {
+        if (!groupedByNiveauII['non_specifie']) {
+          groupedByNiveauII['non_specifie'] = { codes: [], totalCount: 0 };
+        }
+        return;
+      }
+      const niveauII = code.substring(0, 2);
+      if (!groupedByNiveauII[niveauII]) {
+        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0 };
+      }
+      if (!groupedByNiveauII[niveauII].codes.includes(code)) {
+        groupedByNiveauII[niveauII].codes.push(code);
+      }
     });
     
     // Convert to array with labels from NIVEAU_II
     const hierarchy = Object.entries(groupedByNiveauII)
-      .filter(([_, data]) => data.totalCount > 0)
       .map(([niveauII, data]) => {
         if (niveauII === 'non_specifie') {
+          const isSelected = selectedCategoriesJuridiques.includes('non_specifie');
           return {
             niveauII: 'non_specifie',
             label: 'Non spécifié',
             count: data.totalCount,
             codes: ['non_specifie'],
-            subCategories: []
+            subCategories: [],
+            isSelected
           };
         }
         
@@ -279,22 +315,28 @@ export const NafFilters = ({
         // Get detail for each code (niveau III)
         const subCategories = data.codes.map(code => {
           const niveauIII = CATEGORIES_JURIDIQUES_NIVEAU_III[code];
+          const isSelected = selectedCategoriesJuridiques.includes(code);
           return {
             code,
             label: niveauIII?.label || `Code ${code}`,
-            count: rawData[code] as number
+            count: (rawData[code] as number) || 0,
+            isSelected
           };
-        }).filter(sc => sc.count > 0)
+        }).filter(sc => sc.count > 0 || sc.isSelected)
           .sort((a, b) => b.count - a.count);
+        
+        const hasSelectedChild = subCategories.some(sc => sc.isSelected);
         
         return {
           niveauII,
           label,
           count: data.totalCount,
           codes: data.codes,
-          subCategories
+          subCategories,
+          isSelected: hasSelectedChild
         };
       })
+      .filter(group => group.count > 0 || group.isSelected)
       .sort((a, b) => {
         if (a.niveauII === 'non_specifie') return 1;
         if (b.niveauII === 'non_specifie') return -1;
@@ -302,7 +344,7 @@ export const NafFilters = ({
       });
     
     return hierarchy;
-  }, [availableFilters]);
+  }, [availableFilters, selectedCategoriesJuridiques]);
 
   const selectedTypesEtablissement = filters.typesEtablissement || [];
   const availableTypesEvenement = Object.entries(availableFilters?.typesEtablissement || {})
