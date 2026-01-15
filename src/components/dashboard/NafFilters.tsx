@@ -210,9 +210,11 @@ export const NafFilters = ({
     });
   }, [nafHierarchy, nafSearchQuery]);
 
+  // Always show selected departments + departments with count > 0
+  const selectedDepartments = filters.departments || [];
   const availableDepartments = Object.entries(availableFilters?.departments || {})
     .map(([dept, count]) => ({ dept, count: count as number }))
-    .filter(d => d.count > 0)
+    .filter(d => d.count > 0 || selectedDepartments.includes(d.dept))
     .sort((a, b) => {
       const numA = parseInt(a.dept);
       const numB = parseInt(b.dept);
@@ -221,6 +223,7 @@ export const NafFilters = ({
 
   // Only allow valid company size values
   const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Non spécifié'];
+  const selectedTailles = filters.taillesEntreprise || [];
   const availableTailles = Object.entries(availableFilters?.taillesEntreprise || {})
     .filter(([taille]) => VALID_TAILLES.includes(taille))
     .map(([taille, count]) => ({
@@ -228,7 +231,7 @@ export const NafFilters = ({
       label: TAILLE_LABELS[taille] || taille,
       count: count as number
     }))
-    .filter(t => t.count > 0)
+    .filter(t => t.count > 0 || selectedTailles.includes(t.taille))
     .sort((a, b) => b.count - a.count);
 
   // Structure les catégories juridiques par niveau II (ex: 51, 52, 53, 54, 55, 56, 57, 58)
@@ -301,13 +304,14 @@ export const NafFilters = ({
     return hierarchy;
   }, [availableFilters]);
 
+  const selectedTypesEtablissement = filters.typesEtablissement || [];
   const availableTypesEvenement = Object.entries(availableFilters?.typesEtablissement || {})
     .map(([type, count]) => ({
       type,
       label: TYPE_EVENEMENT_LABELS[type] || type,
       count: count as number
     }))
-    .filter(t => t.count > 0)
+    .filter(t => t.count > 0 || selectedTypesEtablissement.includes(t.type))
     .sort((a, b) => b.count - a.count);
   // Toggle functions pour l'expansion
   const toggleExpand = (level: keyof ExpandedLevel, code: string) => {
