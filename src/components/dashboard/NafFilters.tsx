@@ -129,38 +129,40 @@ export const NafFilters = ({
   const selectedNafSousClasses = filters.nafSousClasses || [];
 
   // Construire la hiérarchie NAF par DIVISIONS (point d'entrée numérique)
-  // Keep selected items visible even if their count becomes 0
+  // On affiche TOUTES les divisions/groupes/classes de la nomenclature pour permettre la multi-sélection
+  // même quand les compteurs dynamiques tombent à 0 après un premier choix.
   const nafHierarchy = useMemo(() => {
-    if (!availableFilters) return [];
-
+    // On construit toujours la hiérarchie complète, les counts servent d'indication
     const divisions = Object.entries(NAF_DIVISIONS)
       .map(([divCode, divInfo]) => {
-        const divisionCount = availableFilters.nafDivisions?.[divCode] || 0;
+        const divisionCount = (availableFilters?.nafDivisions?.[divCode] as number) || 0;
         const isDivisionSelected = selectedNafDivisions.includes(divCode);
         
         // Groupes de cette division
         const groupes = Object.entries(NAF_GROUPES)
           .filter(([_, grpInfo]) => grpInfo.division === divCode)
           .map(([grpCode, grpInfo]) => {
-            const groupeCount = availableFilters.nafGroupes?.[grpCode] || 0;
+            const groupeCount = (availableFilters?.nafGroupes?.[grpCode] as number) || 0;
             const isGroupeSelected = selectedNafGroupes.includes(grpCode);
             
             // Classes de ce groupe
             const classes = Object.entries(NAF_CLASSES)
               .filter(([_, clsInfo]) => clsInfo.groupe === grpCode)
               .map(([clsCode, clsInfo]) => {
-                const classeCount = availableFilters.nafClasses?.[clsCode] || 0;
+                const classeCount = (availableFilters?.nafClasses?.[clsCode] as number) || 0;
                 const isClasseSelected = selectedNafClasses.includes(clsCode);
                 
-                // Sous-classes de cette classe
-                const sousClasses = Object.entries(availableFilters.nafSousClasses || {})
+                // Sous-classes de cette classe (depuis NAF_SOUS_CLASSES)
+                const sousClasses = Object.entries(NAF_SOUS_CLASSES)
                   .filter(([scCode]) => scCode.startsWith(clsCode))
-                  .map(([scCode, count]) => ({
-                    code: scCode,
-                    label: getSousClasseLabel(scCode),
-                    count: count as number
-                  }))
-                  .filter(sc => sc.count > 0 || selectedNafSousClasses.includes(sc.code))
+                  .map(([scCode, scInfo]) => {
+                    const scCount = (availableFilters?.nafSousClasses?.[scCode] as number) || 0;
+                    return {
+                      code: scCode,
+                      label: scInfo.label,
+                      count: scCount
+                    };
+                  })
                   .sort((a, b) => a.code.localeCompare(b.code));
                 
                 return {
@@ -171,7 +173,6 @@ export const NafFilters = ({
                   isSelected: isClasseSelected
                 };
               })
-              .filter(cls => cls.count > 0 || cls.isSelected)
               .sort((a, b) => a.code.localeCompare(b.code));
             
             return {
@@ -182,7 +183,6 @@ export const NafFilters = ({
               isSelected: isGroupeSelected
             };
           })
-          .filter(grp => grp.count > 0 || grp.isSelected || grp.classes.some(c => c.isSelected))
           .sort((a, b) => a.code.localeCompare(b.code));
         
         return {
