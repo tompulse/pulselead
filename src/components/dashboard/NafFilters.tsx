@@ -20,6 +20,7 @@ import {
 } from "@/utils/nafNomenclatureComplete";
 import { NAF_SOUS_CLASSES, getSousClasseLabel } from "@/utils/nafSousClasses";
 import { CATEGORIES_JURIDIQUES_NIVEAU_I, CATEGORIES_JURIDIQUES_NIVEAU_II, CATEGORIES_JURIDIQUES_NIVEAU_III, getCategorieJuridiqueLabel, getCategorieJuridiqueType } from "@/utils/categoriesJuridiques";
+import { B2B_LEGAL_CATEGORY_WHITELIST } from "@/utils/b2bLegalCategoryWhitelist";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 
 // Labels pour les tailles d'entreprise
@@ -192,9 +193,8 @@ export const NafFilters = ({
           groupes,
           isSelected: isDivisionSelected
         };
-      })
-      .filter(div => div.count > 0 || div.isSelected || div.groupes.some(g => g.isSelected || g.classes.some(c => c.isSelected)))
-      .sort((a, b) => a.code.localeCompare(b.code)); // Tri numérique croissant
+       })
+       .sort((a, b) => a.code.localeCompare(b.code)); // Tri numérique croissant
 
     return divisions;
   }, [availableFilters, selectedNafDivisions, selectedNafGroupes, selectedNafClasses, selectedNafSousClasses]);
@@ -223,29 +223,54 @@ export const NafFilters = ({
     });
   }, [nafHierarchy, nafSearchQuery]);
 
-  // Always show selected departments + departments with count > 0
+  // Départements : on affiche TOUJOURS la liste (01-95) pour permettre la multi-sélection.
+  // Les compteurs dynamiques peuvent tomber à 0 après un premier choix (car les counts se basent
+  // sur les filtres courants), mais l'utilisateur doit pouvoir ajouter d'autres départements.
   const selectedDepartments = filters.departments || [];
-  const availableDepartments = Object.entries(availableFilters?.departments || {})
-    .map(([dept, count]) => ({ dept, count: count as number }))
-    .filter(d => d.count > 0 || selectedDepartments.includes(d.dept))
-    .sort((a, b) => {
-      const numA = parseInt(a.dept);
-      const numB = parseInt(b.dept);
-      return numA - numB;
+  const allDepartments = useMemo(() => {
+    return Object.keys(DEPARTMENT_NAMES).sort((a, b) => {
+      const na = Number.parseInt(a, 10);
+      const nb = Number.parseInt(b, 10);
+      if (Number.isNaN(na) || Number.isNaN(nb)) return a.localeCompare(b);
+      return na - nb;
     });
+  }, []);
 
-  // Only allow valid company size values
+  const availableDepartments = useMemo(() => {
+    const counts = (availableFilters?.departments || {}) as Record<string, number>;
+    return allDepartments
+      .map((dept) => ({ dept, count: Number(counts[dept] ?? 0) }))
+      .sort((a, b) => {
+        const aSel = selectedDepartments.includes(a.dept);
+        const bSel = selectedDepartments.includes(b.dept);
+        if (aSel !== bSel) return aSel ? -1 : 1;
+        if (a.count !== b.count) return b.count - a.count;
+        const na = Number.parseInt(a.dept, 10);
+        const nb = Number.parseInt(b.dept, 10);
+        if (Number.isNaN(na) || Number.isNaN(nb)) return a.dept.localeCompare(b.dept);
+        return na - nb;
+      });
+  }, [availableFilters, allDepartments, selectedDepartments]);
+
+  // Tailles : on affiche toujours GE/ETI/PME/Non spécifié pour permettre la multi-sélection.
   const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Non spécifié'];
   const selectedTailles = filters.taillesEntreprise || [];
-  const availableTailles = Object.entries(availableFilters?.taillesEntreprise || {})
-    .filter(([taille]) => VALID_TAILLES.includes(taille))
-    .map(([taille, count]) => ({
-      taille,
-      label: TAILLE_LABELS[taille] || taille,
-      count: count as number
-    }))
-    .filter(t => t.count > 0 || selectedTailles.includes(t.taille))
-    .sort((a, b) => b.count - a.count);
+  const availableTailles = useMemo(() => {
+    const counts = (availableFilters?.taillesEntreprise || {}) as Record<string, number>;
+
+    return VALID_TAILLES
+      .map((taille) => ({
+        taille,
+        label: TAILLE_LABELS[taille] || taille,
+        count: Number(counts[taille] ?? 0),
+      }))
+      .sort((a, b) => {
+        const aSel = selectedTailles.includes(a.taille);
+        const bSel = selectedTailles.includes(b.taille);
+        if (aSel !== bSel) return aSel ? -1 : 1;
+        return b.count - a.count;
+      });
+  }, [availableFilters, selectedTailles]);
 
   // Structure les catégories juridiques par niveau II (ex: 51, 52, 53, 54, 55, 56, 57, 58)
   // Keep selected items visible even if their count becomes 0
@@ -255,8 +280,19 @@ export const NafFilters = ({
     
     // Group by niveau II (first 2 digits)
     const groupedByNiveauII: Record<string, { codes: string[]; totalCount: number }> = {};
-    
-    // First, add all codes from rawData
+
+    // Pré-seed avec la whitelist B2B pour que l'utilisateur puisse multi-sélectionner même si les counts valent 0
+    B2B_LEGAL_CATEGORY_WHITELIST.forEach((code) => {
+      const niveauII = code.substring(0, 2);
+      if (!groupedByNiveauII[niveauII]) {
+        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0 };
+      }
+      if (!groupedByNiveauII[niveauII].codes.includes(code)) {
+        groupedByNiveauII[niveauII].codes.push(code);
+      }
+    });
+
+    // Puis, injecter les codes réellement présents (avec leurs counts)
     Object.entries(rawData).forEach(([code, count]) => {
       if (!code || code === 'null' || code === '') {
         // Handle "Non spécifié"
@@ -322,8 +358,7 @@ export const NafFilters = ({
             count: (rawData[code] as number) || 0,
             isSelected
           };
-        }).filter(sc => sc.count > 0 || sc.isSelected)
-          .sort((a, b) => b.count - a.count);
+         }).sort((a, b) => b.count - a.count);
         
         const hasSelectedChild = subCategories.some(sc => sc.isSelected);
         
@@ -335,9 +370,8 @@ export const NafFilters = ({
           subCategories,
           isSelected: hasSelectedChild
         };
-      })
-      .filter(group => group.count > 0 || group.isSelected)
-      .sort((a, b) => {
+       })
+       .sort((a, b) => {
         if (a.niveauII === 'non_specifie') return 1;
         if (b.niveauII === 'non_specifie') return -1;
         return b.count - a.count;
@@ -347,14 +381,23 @@ export const NafFilters = ({
   }, [availableFilters, selectedCategoriesJuridiques]);
 
   const selectedTypesEtablissement = filters.typesEtablissement || [];
-  const availableTypesEvenement = Object.entries(availableFilters?.typesEtablissement || {})
-    .map(([type, count]) => ({
-      type,
-      label: TYPE_EVENEMENT_LABELS[type] || type,
-      count: count as number
-    }))
-    .filter(t => t.count > 0 || selectedTypesEtablissement.includes(t.type))
-    .sort((a, b) => b.count - a.count);
+  const availableTypesEvenement = useMemo(() => {
+    const counts = (availableFilters?.typesEtablissement || {}) as Record<string, number>;
+    const allTypes = Object.keys(TYPE_EVENEMENT_LABELS);
+
+    return allTypes
+      .map((type) => ({
+        type,
+        label: TYPE_EVENEMENT_LABELS[type] || type,
+        count: Number(counts[type] ?? 0),
+      }))
+      .sort((a, b) => {
+        const aSel = selectedTypesEtablissement.includes(a.type);
+        const bSel = selectedTypesEtablissement.includes(b.type);
+        if (aSel !== bSel) return aSel ? -1 : 1;
+        return b.count - a.count;
+      });
+  }, [availableFilters, selectedTypesEtablissement]);
   // Toggle functions pour l'expansion
   const toggleExpand = (level: keyof ExpandedLevel, code: string) => {
     setExpanded(prev => ({
