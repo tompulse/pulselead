@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle } from "lucide-react";
+import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle, Lightbulb } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { NotificationCenter } from "./NotificationCenter";
 import { AccountMenu } from "./AccountMenu";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 
 interface DashboardHeaderProps {
   view: 'prospects' | 'tournees' | 'crm';
@@ -39,12 +40,32 @@ export const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   const isMobile = useIsMobile();
   const [importOpen, setImportOpen] = useState(false);
+  const [ideasOpen, setIdeasOpen] = useState(false);
+  const [ideas, setIdeas] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [progressText, setProgressText] = useState("");
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Load ideas from localStorage on mount
+  useEffect(() => {
+    const savedIdeas = localStorage.getItem('pulse_dev_ideas');
+    if (savedIdeas) {
+      setIdeas(savedIdeas);
+    }
+  }, []);
+
+  // Save ideas to localStorage
+  const handleSaveIdeas = () => {
+    localStorage.setItem('pulse_dev_ideas', ideas);
+    toast({
+      title: "💡 Idées sauvegardées",
+      description: "Vos idées ont été enregistrées localement.",
+    });
+    setIdeasOpen(false);
+  };
 
   const handleViewChange = (newView: typeof view) => {
     onViewChange(newView);
@@ -303,6 +324,58 @@ export const DashboardHeader = ({
                           <li><code>coordonneeLambertAbscisseEtablissement</code> - Lambert X</li>
                           <li><code>coordonneeLambertOrdonneeEtablissement</code> - Lambert Y</li>
                         </ul>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
+              
+              {/* Ideas Button - Admin Only */}
+              {isAdmin && (
+                <Dialog open={ideasOpen} onOpenChange={setIdeasOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 px-3 text-xs border-yellow-500/50 hover:bg-yellow-500/10 hover:border-yellow-500 transition-all duration-300"
+                    >
+                      <Lightbulb className="w-3.5 h-3.5 mr-1.5 text-yellow-500" />
+                      Idées
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2">
+                        <Lightbulb className="w-5 h-5 text-yellow-500" />
+                        Idées développement
+                      </DialogTitle>
+                    </DialogHeader>
+                    
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Notez vos idées d'amélioration pour l'application. Elles seront sauvegardées localement.
+                      </p>
+                      
+                      <Textarea
+                        value={ideas}
+                        onChange={(e) => setIdeas(e.target.value)}
+                        placeholder="Ex: Ajouter un filtre par date de création...&#10;Améliorer l'affichage mobile...&#10;Nouvelle fonctionnalité CRM..."
+                        className="min-h-[200px] resize-none"
+                      />
+                      
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setIdeasOpen(false)}
+                        >
+                          Annuler
+                        </Button>
+                        <Button
+                          onClick={handleSaveIdeas}
+                          className="bg-yellow-500 hover:bg-yellow-600 text-black"
+                        >
+                          Sauvegarder
+                        </Button>
                       </div>
                     </div>
                   </DialogContent>
