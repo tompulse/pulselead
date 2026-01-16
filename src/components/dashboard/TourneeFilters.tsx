@@ -86,43 +86,21 @@ export const TourneeFilters = ({
 
   const availableCategories = useMemo(() => {
     const counts = (availableFiltersData?.categories || {}) as Record<string, number>;
-    return allCategoryKeys
-      .map((key) => ({ key, count: Number(counts[key] ?? 0) }))
-      .sort((a, b) => {
-        const aSel = selectedCategories.includes(a.key);
-        const bSel = selectedCategories.includes(b.key);
-        if (aSel !== bSel) return aSel ? -1 : 1;
-        return b.count - a.count;
-      });
-  }, [availableFiltersData, allCategoryKeys, selectedCategories]);
+    // Keep original order from DETAILED_CATEGORIES, just add counts
+    return allCategoryKeys.map((key) => ({ key, count: Number(counts[key] ?? 0) }));
+  }, [availableFiltersData, allCategoryKeys]);
 
   const availableDepartments = useMemo(() => {
     const counts = (availableFiltersData?.departments || {}) as Record<string, number>;
-    return allDepartments
-      .map((dept) => ({ dept, count: Number(counts[dept] ?? 0) }))
-      .sort((a, b) => {
-        const aSel = selectedDepartments.includes(a.dept);
-        const bSel = selectedDepartments.includes(b.dept);
-        if (aSel !== bSel) return aSel ? -1 : 1;
-        if (a.count !== b.count) return b.count - a.count;
-        const na = Number.parseInt(a.dept, 10);
-        const nb = Number.parseInt(b.dept, 10);
-        if (Number.isNaN(na) || Number.isNaN(nb)) return a.dept.localeCompare(b.dept);
-        return na - nb;
-      });
-  }, [availableFiltersData, allDepartments, selectedDepartments]);
+    // Keep numeric order (01, 02, 03, ... 95)
+    return allDepartments.map((dept) => ({ dept, count: Number(counts[dept] ?? 0) }));
+  }, [availableFiltersData, allDepartments]);
 
   const availableFormes = useMemo(() => {
     const counts = (availableFiltersData?.formes || {}) as Record<string, number>;
-    return FORMES_JURIDIQUES
-      .map((forme) => ({ ...forme, count: Number(counts[forme.value] ?? 0) }))
-      .sort((a, b) => {
-        const aSel = selectedFormes.includes(a.value);
-        const bSel = selectedFormes.includes(b.value);
-        if (aSel !== bSel) return aSel ? -1 : 1;
-        return b.count - a.count;
-      });
-  }, [availableFiltersData, selectedFormes]);
+    // Keep original order from FORMES_JURIDIQUES
+    return FORMES_JURIDIQUES.map((forme) => ({ ...forme, count: Number(counts[forme.value] ?? 0) }));
+  }, [availableFiltersData]);
   
   const handleCategoryToggle = (categoryKey: string) => {
     setFilters((prev: any) => {
