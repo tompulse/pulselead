@@ -238,39 +238,22 @@ export const NafFilters = ({
 
   const availableDepartments = useMemo(() => {
     const counts = (availableFilters?.departments || {}) as Record<string, number>;
-    return allDepartments
-      .map((dept) => ({ dept, count: Number(counts[dept] ?? 0) }))
-      .sort((a, b) => {
-        const aSel = selectedDepartments.includes(a.dept);
-        const bSel = selectedDepartments.includes(b.dept);
-        if (aSel !== bSel) return aSel ? -1 : 1;
-        if (a.count !== b.count) return b.count - a.count;
-        const na = Number.parseInt(a.dept, 10);
-        const nb = Number.parseInt(b.dept, 10);
-        if (Number.isNaN(na) || Number.isNaN(nb)) return a.dept.localeCompare(b.dept);
-        return na - nb;
-      });
-  }, [availableFilters, allDepartments, selectedDepartments]);
+    // Keep numeric order (01, 02, 03, ... 95) - no sorting by count or selection
+    return allDepartments.map((dept) => ({ dept, count: Number(counts[dept] ?? 0) }));
+  }, [availableFilters, allDepartments]);
 
   // Tailles : on affiche toujours GE/ETI/PME/Non spécifié pour permettre la multi-sélection.
   const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Non spécifié'];
   const selectedTailles = filters.taillesEntreprise || [];
   const availableTailles = useMemo(() => {
     const counts = (availableFilters?.taillesEntreprise || {}) as Record<string, number>;
-
-    return VALID_TAILLES
-      .map((taille) => ({
-        taille,
-        label: TAILLE_LABELS[taille] || taille,
-        count: Number(counts[taille] ?? 0),
-      }))
-      .sort((a, b) => {
-        const aSel = selectedTailles.includes(a.taille);
-        const bSel = selectedTailles.includes(b.taille);
-        if (aSel !== bSel) return aSel ? -1 : 1;
-        return b.count - a.count;
-      });
-  }, [availableFilters, selectedTailles]);
+    // Keep fixed order: GE, ETI, PME, Non spécifié - no sorting by count or selection
+    return VALID_TAILLES.map((taille) => ({
+      taille,
+      label: TAILLE_LABELS[taille] || taille,
+      count: Number(counts[taille] ?? 0),
+    }));
+  }, [availableFilters]);
 
   // Structure les catégories juridiques par niveau II (ex: 51, 52, 53, 54, 55, 56, 57, 58)
   // Keep selected items visible even if their count becomes 0
