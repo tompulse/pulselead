@@ -23,11 +23,7 @@ export const REGIONS_DATA: Record<string, {
     zoom: 7,
     departments: ["18", "28", "36", "37", "41", "45"]
   },
-  "Corse": {
-    center: [9.0915, 42.0396],
-    zoom: 8,
-    departments: ["2A", "2B"]
-  },
+  // Corse excluded - no prospect data available
   "Grand Est": {
     center: [6.1838, 48.6994],
     zoom: 7,
@@ -94,5 +90,6 @@ export const DEPARTMENT_NAMES: Record<string, string> = {
   "82": "Tarn-et-Garonne", "83": "Var", "84": "Vaucluse", "85": "Vendée",
   "86": "Vienne", "87": "Haute-Vienne", "88": "Vosges", "89": "Yonne",
   "90": "Territoire de Belfort", "91": "Essonne", "92": "Hauts-de-Seine", "93": "Seine-Saint-Denis",
-  "94": "Val-de-Marne", "95": "Val-d'Oise", "2A": "Corse-du-Sud", "2B": "Haute-Corse"
+  "94": "Val-de-Marne", "95": "Val-d'Oise"
+  // Corse (2A, 2B) excluded - no prospect data available
 };

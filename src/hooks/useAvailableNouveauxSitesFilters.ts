@@ -37,10 +37,11 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
     ],
     queryFn: async (): Promise<FilterCounts> => {
       // Use the dynamic PostgreSQL function for contextual counts
+      // NOTE: p_departments is always null so department counts remain global (not contextual)
       const { data, error } = await supabase.rpc('get_nouveaux_sites_filter_counts_dynamic', {
         p_naf_sections: filters.nafSections?.length ? filters.nafSections : null,
         p_naf_divisions: filters.nafDivisions?.length ? filters.nafDivisions : null,
-        p_departments: filters.departments?.length ? filters.departments : null,
+        p_departments: null, // Always null to keep global department counts visible
         p_tailles: filters.taillesEntreprise?.length ? filters.taillesEntreprise : null,
         p_categories_juridiques: filters.categoriesJuridiques?.length ? filters.categoriesJuridiques : null,
         p_types_etablissement: filters.typesEtablissement?.length ? filters.typesEtablissement : null,
