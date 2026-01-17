@@ -144,11 +144,11 @@ const LandingPage = () => {
               <div className="mt-8 sm:mt-10 flex justify-center gap-2 sm:gap-6 max-w-3xl mx-auto px-2">
                 <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
                   <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text whitespace-nowrap">+1 900</div>
-                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">entreprises/sem.</p>
+                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">entreprises par sem.</p>
                 </div>
                 <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
                   <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
-                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">gagnées/jour</p>
+                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">gagnées par jour</p>
                 </div>
                 <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
                   <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
