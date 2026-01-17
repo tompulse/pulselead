@@ -1181,7 +1181,7 @@ export const NafFilters = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className="h-[400px]">
+          <ScrollArea className="h-[500px]">
             <div className="px-4 pb-4 space-y-0.5">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
