@@ -97,31 +97,33 @@ const LandingPage = () => {
             </div>
 
             {/* Mobile hamburger menu - visible only below sm */}
-            <Sheet>
-              <SheetTrigger asChild className="sm:hidden">
-                <Button variant="ghost" size="icon" className="h-10 w-10 text-white" aria-label="Ouvrir le menu">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-72 bg-card/95 backdrop-blur-xl border-accent/20">
-                <nav className="flex flex-col gap-4 mt-8">
-                  <a href="#solution" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Fonctionnalités</a>
-                  <a href="#avantages" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Avantages</a>
-                  <a href="#pricing" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Tarifs</a>
-                  <a href="#contact" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Contact</a>
-                  <div className="border-t border-accent/20 pt-4 mt-4 space-y-3">
-                    <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold">
-                      <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
-                        Réserver ma démo
-                      </a>
-                    </Button>
-                    <Button variant="outline" onClick={() => navigate('/auth')} className="w-full border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold">
-                      Connexion
-                    </Button>
-                  </div>
-                </nav>
-              </SheetContent>
-            </Sheet>
+            <div className="sm:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-10 w-10 text-white" aria-label="Ouvrir le menu">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-72 bg-card/95 backdrop-blur-xl border-accent/20">
+                  <nav className="flex flex-col gap-4 mt-8">
+                    <a href="#solution" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Fonctionnalités</a>
+                    <a href="#avantages" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Avantages</a>
+                    <a href="#pricing" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Tarifs</a>
+                    <a href="#contact" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Contact</a>
+                    <div className="border-t border-accent/20 pt-4 mt-4 space-y-3">
+                      <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold">
+                        <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
+                          Réserver ma démo
+                        </a>
+                      </Button>
+                      <Button variant="outline" onClick={() => navigate('/auth')} className="w-full border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold">
+                        Connexion
+                      </Button>
+                    </div>
+                  </nav>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </header>
