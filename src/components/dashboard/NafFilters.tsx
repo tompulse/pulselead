@@ -37,6 +37,20 @@ const TYPE_EVENEMENT_LABELS: Record<string, string> = {
   'site': 'Nouveau site'
 };
 
+// Helper pour formater le double compteur
+const formatDualCount = (contextual: number, global: number, hasFilters: boolean) => {
+  if (!hasFilters || contextual === global) {
+    return <span className="text-muted-foreground text-xs tabular-nums">{contextual.toLocaleString('fr-FR')}</span>;
+  }
+  return (
+    <span className="text-xs tabular-nums">
+      <span className="text-accent font-medium">{contextual.toLocaleString('fr-FR')}</span>
+      <span className="text-muted-foreground/50 mx-0.5">/</span>
+      <span className="text-muted-foreground/70">{global.toLocaleString('fr-FR')}</span>
+    </span>
+  );
+};
+
 interface NafFiltersProps {
   filters: {
     searchQuery?: string;
@@ -122,6 +136,16 @@ export const NafFilters = ({
     searchQuery: filters.searchQuery
   });
 
+  // Check if any filters are active (to show dual counts)
+  const hasActiveFilters = 
+    (filters.nafSections?.length || 0) > 0 ||
+    (filters.nafDivisions?.length || 0) > 0 ||
+    (filters.departments?.length || 0) > 0 ||
+    (filters.taillesEntreprise?.length || 0) > 0 ||
+    (filters.categoriesJuridiques?.length || 0) > 0 ||
+    (filters.typesEtablissement?.length || 0) > 0 ||
+    (filters.searchQuery?.trim() || '').length > 0;
+
   // Get selected NAF codes to keep them visible even if count is 0
   const selectedNafDivisions = filters.nafDivisions || [];
   const selectedNafGroupes = filters.nafGroupes || [];
@@ -132,35 +156,43 @@ export const NafFilters = ({
   // On affiche TOUTES les divisions/groupes/classes de la nomenclature pour permettre la multi-sélection
   // même quand les compteurs dynamiques tombent à 0 après un premier choix.
   const nafHierarchy = useMemo(() => {
+    const contextual = availableFilters?.contextual;
+    const global = availableFilters?.global;
+    
     // On construit toujours la hiérarchie complète, les counts servent d'indication
     const divisions = Object.entries(NAF_DIVISIONS)
       .map(([divCode, divInfo]) => {
-        const divisionCount = (availableFilters?.nafDivisions?.[divCode] as number) || 0;
+        const divisionCount = (contextual?.nafDivisions?.[divCode] as number) || 0;
+        const divisionGlobalCount = (global?.nafDivisions?.[divCode] as number) || 0;
         const isDivisionSelected = selectedNafDivisions.includes(divCode);
         
         // Groupes de cette division
         const groupes = Object.entries(NAF_GROUPES)
           .filter(([_, grpInfo]) => grpInfo.division === divCode)
           .map(([grpCode, grpInfo]) => {
-            const groupeCount = (availableFilters?.nafGroupes?.[grpCode] as number) || 0;
+            const groupeCount = (contextual?.nafGroupes?.[grpCode] as number) || 0;
+            const groupeGlobalCount = (global?.nafGroupes?.[grpCode] as number) || 0;
             const isGroupeSelected = selectedNafGroupes.includes(grpCode);
             
             // Classes de ce groupe
             const classes = Object.entries(NAF_CLASSES)
               .filter(([_, clsInfo]) => clsInfo.groupe === grpCode)
               .map(([clsCode, clsInfo]) => {
-                const classeCount = (availableFilters?.nafClasses?.[clsCode] as number) || 0;
+                const classeCount = (contextual?.nafClasses?.[clsCode] as number) || 0;
+                const classeGlobalCount = (global?.nafClasses?.[clsCode] as number) || 0;
                 const isClasseSelected = selectedNafClasses.includes(clsCode);
                 
                 // Sous-classes de cette classe (depuis NAF_SOUS_CLASSES)
                 const sousClasses = Object.entries(NAF_SOUS_CLASSES)
                   .filter(([scCode]) => scCode.startsWith(clsCode))
                   .map(([scCode, scInfo]) => {
-                    const scCount = (availableFilters?.nafSousClasses?.[scCode] as number) || 0;
+                    const scCount = (contextual?.nafSousClasses?.[scCode] as number) || 0;
+                    const scGlobalCount = (global?.nafSousClasses?.[scCode] as number) || 0;
                     return {
                       code: scCode,
                       label: scInfo.label,
-                      count: scCount
+                      count: scCount,
+                      globalCount: scGlobalCount
                     };
                   })
                   .sort((a, b) => a.code.localeCompare(b.code));
@@ -169,6 +201,7 @@ export const NafFilters = ({
                   code: clsCode,
                   label: clsInfo.label,
                   count: classeCount,
+                  globalCount: classeGlobalCount,
                   sousClasses,
                   isSelected: isClasseSelected
                 };
@@ -179,6 +212,7 @@ export const NafFilters = ({
               code: grpCode,
               label: grpInfo.label,
               count: groupeCount,
+              globalCount: groupeGlobalCount,
               classes,
               isSelected: isGroupeSelected
             };
@@ -190,6 +224,7 @@ export const NafFilters = ({
           label: divInfo.label,
           emoji: getDivisionEmoji(divCode),
           count: divisionCount,
+          globalCount: divisionGlobalCount,
           groupes,
           isSelected: isDivisionSelected
         };
@@ -237,21 +272,28 @@ export const NafFilters = ({
   }, []);
 
   const availableDepartments = useMemo(() => {
-    const counts = (availableFilters?.departments || {}) as Record<string, number>;
+    const contextualCounts = (availableFilters?.contextual?.departments || {}) as Record<string, number>;
+    const globalCounts = (availableFilters?.global?.departments || {}) as Record<string, number>;
     // Keep numeric order (01, 02, 03, ... 95) - no sorting by count or selection
-    return allDepartments.map((dept) => ({ dept, count: Number(counts[dept] ?? 0) }));
+    return allDepartments.map((dept) => ({ 
+      dept, 
+      count: Number(contextualCounts[dept] ?? 0),
+      globalCount: Number(globalCounts[dept] ?? 0)
+    }));
   }, [availableFilters, allDepartments]);
 
   // Tailles : on affiche toujours GE/ETI/PME/Non spécifié pour permettre la multi-sélection.
   const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Non spécifié'];
   const selectedTailles = filters.taillesEntreprise || [];
   const availableTailles = useMemo(() => {
-    const counts = (availableFilters?.taillesEntreprise || {}) as Record<string, number>;
+    const contextualCounts = (availableFilters?.contextual?.taillesEntreprise || {}) as Record<string, number>;
+    const globalCounts = (availableFilters?.global?.taillesEntreprise || {}) as Record<string, number>;
     // Keep fixed order: GE, ETI, PME, Non spécifié - no sorting by count or selection
     return VALID_TAILLES.map((taille) => ({
       taille,
       label: TAILLE_LABELS[taille] || taille,
-      count: Number(counts[taille] ?? 0),
+      count: Number(contextualCounts[taille] ?? 0),
+      globalCount: Number(globalCounts[taille] ?? 0),
     }));
   }, [availableFilters]);
 
@@ -259,16 +301,17 @@ export const NafFilters = ({
   // Keep selected items visible even if their count becomes 0
   const selectedCategoriesJuridiques = filters.categoriesJuridiques || [];
   const categoriesJuridiquesHierarchy = useMemo(() => {
-    const rawData = availableFilters?.categoriesJuridiques || {};
+    const rawData = availableFilters?.contextual?.categoriesJuridiques || {};
+    const globalData = availableFilters?.global?.categoriesJuridiques || {};
     
     // Group by niveau II (first 2 digits)
-    const groupedByNiveauII: Record<string, { codes: string[]; totalCount: number }> = {};
+    const groupedByNiveauII: Record<string, { codes: string[]; totalCount: number; globalCount: number }> = {};
 
     // Pré-seed avec la whitelist B2B pour que l'utilisateur puisse multi-sélectionner même si les counts valent 0
     B2B_LEGAL_CATEGORY_WHITELIST.forEach((code) => {
       const niveauII = code.substring(0, 2);
       if (!groupedByNiveauII[niveauII]) {
-        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0 };
+        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0, globalCount: 0 };
       }
       if (!groupedByNiveauII[niveauII].codes.includes(code)) {
         groupedByNiveauII[niveauII].codes.push(code);
@@ -280,7 +323,7 @@ export const NafFilters = ({
       if (!code || code === 'null' || code === '') {
         // Handle "Non spécifié"
         if (!groupedByNiveauII['non_specifie']) {
-          groupedByNiveauII['non_specifie'] = { codes: [], totalCount: 0 };
+          groupedByNiveauII['non_specifie'] = { codes: [], totalCount: 0, globalCount: 0 };
         }
         groupedByNiveauII['non_specifie'].totalCount += count as number;
         return;
@@ -288,25 +331,39 @@ export const NafFilters = ({
       
       const niveauII = code.substring(0, 2);
       if (!groupedByNiveauII[niveauII]) {
-        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0 };
+        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0, globalCount: 0 };
       }
       if (!groupedByNiveauII[niveauII].codes.includes(code)) {
         groupedByNiveauII[niveauII].codes.push(code);
       }
       groupedByNiveauII[niveauII].totalCount += count as number;
     });
+
+    // Inject global counts
+    Object.entries(globalData).forEach(([code, count]) => {
+      if (!code || code === 'null' || code === '') {
+        if (groupedByNiveauII['non_specifie']) {
+          groupedByNiveauII['non_specifie'].globalCount += count as number;
+        }
+        return;
+      }
+      const niveauII = code.substring(0, 2);
+      if (groupedByNiveauII[niveauII]) {
+        groupedByNiveauII[niveauII].globalCount += count as number;
+      }
+    });
     
     // Add selected codes that might not be in rawData (count = 0)
     selectedCategoriesJuridiques.forEach(code => {
       if (!code || code === 'null' || code === '' || code === 'non_specifie') {
         if (!groupedByNiveauII['non_specifie']) {
-          groupedByNiveauII['non_specifie'] = { codes: [], totalCount: 0 };
+          groupedByNiveauII['non_specifie'] = { codes: [], totalCount: 0, globalCount: 0 };
         }
         return;
       }
       const niveauII = code.substring(0, 2);
       if (!groupedByNiveauII[niveauII]) {
-        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0 };
+        groupedByNiveauII[niveauII] = { codes: [], totalCount: 0, globalCount: 0 };
       }
       if (!groupedByNiveauII[niveauII].codes.includes(code)) {
         groupedByNiveauII[niveauII].codes.push(code);
@@ -322,6 +379,7 @@ export const NafFilters = ({
             niveauII: 'non_specifie',
             label: 'Non spécifié',
             count: data.totalCount,
+            globalCount: data.globalCount,
             codes: ['non_specifie'],
             subCategories: [],
             isSelected
@@ -339,6 +397,7 @@ export const NafFilters = ({
             code,
             label: niveauIII?.label || `Code ${code}`,
             count: (rawData[code] as number) || 0,
+            globalCount: (globalData[code] as number) || 0,
             isSelected
           };
          }).sort((a, b) => b.count - a.count);
@@ -349,6 +408,7 @@ export const NafFilters = ({
           niveauII,
           label,
           count: data.totalCount,
+          globalCount: data.globalCount,
           codes: data.codes,
           subCategories,
           isSelected: hasSelectedChild
@@ -365,14 +425,16 @@ export const NafFilters = ({
 
   const selectedTypesEtablissement = filters.typesEtablissement || [];
   const availableTypesEvenement = useMemo(() => {
-    const counts = (availableFilters?.typesEtablissement || {}) as Record<string, number>;
+    const contextualCounts = (availableFilters?.contextual?.typesEtablissement || {}) as Record<string, number>;
+    const globalCounts = (availableFilters?.global?.typesEtablissement || {}) as Record<string, number>;
     const allTypes = Object.keys(TYPE_EVENEMENT_LABELS);
 
     return allTypes
       .map((type) => ({
         type,
         label: TYPE_EVENEMENT_LABELS[type] || type,
-        count: Number(counts[type] ?? 0),
+        count: Number(contextualCounts[type] ?? 0),
+        globalCount: Number(globalCounts[type] ?? 0),
       }))
       .sort((a, b) => {
         const aSel = selectedTypesEtablissement.includes(a.type);
@@ -925,9 +987,7 @@ export const NafFilters = ({
                           <span className="text-base shrink-0">{division.emoji}</span>
                           <span className="text-xs font-medium text-accent shrink-0 font-mono">{division.code}</span>
                           <span className="text-sm leading-snug flex-1 break-words">{division.label}</span>
-                          <span className="text-xs text-muted-foreground shrink-0">
-                            {division.count.toLocaleString('fr-FR')}
-                          </span>
+                          {formatDualCount(division.count, division.globalCount, hasActiveFilters)}
                         </div>
                       </div>
                       
@@ -958,9 +1018,7 @@ export const NafFilters = ({
                                 <Checkbox selected={groupeSelected} size="sm" />
                                 <span className="text-xs font-mono text-accent/80 shrink-0">{groupe.code}</span>
                                 <span className="text-xs leading-snug flex-1 break-words">{groupe.label}</span>
-                                <span className="text-xs text-muted-foreground shrink-0">
-                                  {groupe.count.toLocaleString('fr-FR')}
-                                </span>
+                                {formatDualCount(groupe.count, groupe.globalCount, hasActiveFilters)}
                               </div>
                             </div>
                             
@@ -991,9 +1049,7 @@ export const NafFilters = ({
                                       <Checkbox selected={classeSelected} size="sm" />
                                       <span className="text-[10px] font-mono text-muted-foreground shrink-0">{classe.code}</span>
                                       <span className="text-[11px] leading-snug flex-1 break-words">{classe.label}</span>
-                                      <span className="text-[10px] text-muted-foreground shrink-0">
-                                        {classe.count.toLocaleString('fr-FR')}
-                                      </span>
+                                      {formatDualCount(classe.count, classe.globalCount, hasActiveFilters)}
                                     </div>
                                   </div>
                                   
@@ -1010,9 +1066,7 @@ export const NafFilters = ({
                                           <Checkbox selected={sousClasseSelected} size="sm" />
                                           <span className="text-[10px] font-mono text-accent/60 shrink-0">{sousClasse.code}</span>
                                           <span className="text-[10px] leading-snug flex-1 break-words ml-1">{sousClasse.label}</span>
-                                          <span className="text-[10px] text-muted-foreground/70 shrink-0 ml-auto">
-                                            {sousClasse.count.toLocaleString('fr-FR')}
-                                          </span>
+                                          {formatDualCount(sousClasse.count, sousClasse.globalCount, hasActiveFilters)}
                                         </div>
                                       </div>
                                     );
@@ -1054,7 +1108,7 @@ export const NafFilters = ({
                   Aucun département disponible
                 </div>
               ) : (
-                availableDepartments.map(({ dept, count }) => {
+                availableDepartments.map(({ dept, count, globalCount }) => {
                   const selected = filters.departments?.includes(dept);
                   return (
                     <div
@@ -1064,9 +1118,7 @@ export const NafFilters = ({
                     >
                       <Checkbox selected={selected} />
                       <span className="text-sm flex-1">{dept} - {DEPARTMENT_NAMES[dept] || dept}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {count.toLocaleString('fr-FR')}
-                      </span>
+                      {formatDualCount(count, globalCount, hasActiveFilters)}
                     </div>
                   );
                 })
@@ -1098,7 +1150,7 @@ export const NafFilters = ({
                   Aucune taille disponible
                 </div>
               ) : (
-                availableTailles.map(({ taille, label, count }) => {
+                availableTailles.map(({ taille, label, count, globalCount }) => {
                   const selected = filters.taillesEntreprise?.includes(taille);
                   return (
                     <div
@@ -1108,9 +1160,7 @@ export const NafFilters = ({
                     >
                       <Checkbox selected={selected} />
                       <span className="text-sm flex-1">{label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {count.toLocaleString('fr-FR')}
-                      </span>
+                      {formatDualCount(count, globalCount, hasActiveFilters)}
                     </div>
                   );
                 })
@@ -1190,9 +1240,7 @@ export const NafFilters = ({
                             {someSelected && <div className="w-1.5 h-0.5 bg-accent" />}
                           </div>
                           <span className="text-sm flex-1 leading-tight">{groupe.label}</span>
-                          <span className="text-xs text-muted-foreground font-semibold">
-                            {groupe.count.toLocaleString('fr-FR')}
-                          </span>
+                          {formatDualCount(groupe.count, groupe.globalCount, hasActiveFilters)}
                         </div>
                       </div>
                       
@@ -1211,9 +1259,7 @@ export const NafFilters = ({
                                 <span className="text-xs flex-1 text-muted-foreground leading-tight">
                                   {subCat.label}
                                 </span>
-                                <span className="text-xs text-muted-foreground/60">
-                                  {subCat.count.toLocaleString('fr-FR')}
-                                </span>
+                                {formatDualCount(subCat.count, subCat.globalCount, hasActiveFilters)}
                               </div>
                             );
                           })}
@@ -1249,7 +1295,9 @@ export const NafFilters = ({
               <div className="flex flex-col gap-2">
                 {/* Oui = siège */}
                 {(() => {
-                  const siegeCount = availableTypesEvenement.find(t => t.type === 'siege')?.count || 0;
+                  const siegeData = availableTypesEvenement.find(t => t.type === 'siege');
+                  const siegeCount = siegeData?.count || 0;
+                  const siegeGlobalCount = siegeData?.globalCount || 0;
                   const selected = filters.typesEtablissement?.includes('siege');
                   return (
                     <button
@@ -1264,14 +1312,19 @@ export const NafFilters = ({
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         selected ? 'bg-white/20 text-white' : 'bg-accent/10 text-accent'
                       }`}>
-                        {siegeCount.toLocaleString('fr-FR')}
+                        {hasActiveFilters && siegeCount !== siegeGlobalCount 
+                          ? `${siegeCount.toLocaleString('fr-FR')} / ${siegeGlobalCount.toLocaleString('fr-FR')}`
+                          : siegeCount.toLocaleString('fr-FR')
+                        }
                       </span>
                     </button>
                   );
                 })()}
                 {/* Non = établissement secondaire */}
                 {(() => {
-                  const nonSiegeCount = availableTypesEvenement.find(t => t.type === 'site')?.count || 0;
+                  const siteData = availableTypesEvenement.find(t => t.type === 'site');
+                  const nonSiegeCount = siteData?.count || 0;
+                  const nonSiegeGlobalCount = siteData?.globalCount || 0;
                   const selected = filters.typesEtablissement?.includes('etablissement');
                   return (
                     <button
@@ -1286,7 +1339,10 @@ export const NafFilters = ({
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         selected ? 'bg-white/20 text-white' : 'bg-accent/10 text-accent'
                       }`}>
-                        {nonSiegeCount.toLocaleString('fr-FR')}
+                        {hasActiveFilters && nonSiegeCount !== nonSiegeGlobalCount 
+                          ? `${nonSiegeCount.toLocaleString('fr-FR')} / ${nonSiegeGlobalCount.toLocaleString('fr-FR')}`
+                          : nonSiegeCount.toLocaleString('fr-FR')
+                        }
                       </span>
                     </button>
                   );
