@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { ArrowRight, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User, MapPin, BarChart3, Users, ChevronDown, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone, Construction, Menu, Building2 } from "lucide-react";
+import { ArrowRight, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User, MapPin, BarChart3, Users, ChevronDown, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone, Construction, Menu, Building2, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -194,73 +194,86 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Problems Section */}
-        <section className="py-20 sm:py-24 lg:py-28 px-6 relative z-10" style={{
-        background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
-        borderTop: '1px solid rgba(6, 182, 212, 0.15)',
-        borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
-      }}>
-          <div className="container mx-auto max-w-6xl">
+        {/* Problems Section - Dark dramatic style */}
+        <section className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 overflow-hidden">
+          {/* Animated gradient orb */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="container mx-auto max-w-6xl relative">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Ce qui désorganise votre prospection</h2>
+              <div className="inline-flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-full border border-red-500/20 mb-6 mx-auto block w-fit">
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span className="text-red-400 text-sm font-medium">Les freins à votre croissance</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10 sm:mb-14">Ce qui désorganise votre prospection</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-              <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
-                <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Aucune visibilité sur votre secteur</h3>
-                <p className="text-white/70 text-base sm:text-lg">Impossible de savoir où sont vos prospects, qui cibler en priorité, quel territoire couvrir</p>
+              <Card className="relative group bg-gradient-to-b from-white/5 to-transparent p-6 sm:p-8 border border-white/10 hover:border-red-500/30 transition-all duration-500 rounded-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3 sm:mb-4 relative z-10" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 relative z-10">Aucune visibilité sur votre secteur</h3>
+                <p className="text-white/60 text-base sm:text-lg relative z-10">Impossible de savoir où sont vos prospects, qui cibler en priorité, quel territoire couvrir</p>
               </Card>
-              <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
-                <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Informations éparpillées partout</h3>
-                <p className="text-white/70 text-base sm:text-lg">Excel, carnets, post-its... Relances oubliées, données perdues, aucun historique structuré</p>
+              <Card className="relative group bg-gradient-to-b from-white/5 to-transparent p-6 sm:p-8 border border-white/10 hover:border-red-500/30 transition-all duration-500 rounded-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3 sm:mb-4 relative z-10" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 relative z-10">Informations éparpillées partout</h3>
+                <p className="text-white/60 text-base sm:text-lg relative z-10">Excel, carnets, post-its... Relances oubliées, données perdues, aucun historique structuré</p>
               </Card>
-              <Card className="glass-card p-6 sm:p-8 border-white/10 hover:border-accent/50 transition-all">
-                <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Trajets improvisés inefficaces</h3>
-                <p className="text-white/70 text-base sm:text-lg">Des kilomètres inutiles, du temps perdu, moins de visites, moins de chiffre d'affaires</p>
+              <Card className="relative group bg-gradient-to-b from-white/5 to-transparent p-6 sm:p-8 border border-white/10 hover:border-red-500/30 transition-all duration-500 rounded-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <Route className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3 sm:mb-4 relative z-10" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 relative z-10">Trajets improvisés inefficaces</h3>
+                <p className="text-white/60 text-base sm:text-lg relative z-10">Des kilomètres inutiles, du temps perdu, moins de visites, moins de chiffre d'affaires</p>
               </Card>
             </div>
             </div>
           </div>
         </section>
 
-        {/* Solution Section */}
-        <section id="solution" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20" style={{
-        background: 'radial-gradient(ellipse at top, rgba(6, 182, 212, 0.08) 0%, transparent 60%)'
-      }}>
-          <div className="container mx-auto max-w-6xl">
+        {/* Solution Section - Cyan glow style */}
+        <section id="solution" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20 overflow-hidden">
+          {/* Background elements */}
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent"></div>
+          <div className="absolute top-20 right-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div className="container mx-auto max-w-6xl relative">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
+              <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-full border border-accent/20 mb-6 mx-auto block w-fit">
+                <Zap className="w-4 h-4 text-accent" />
+                <span className="text-accent text-sm font-medium">La solution tout-en-un</span>
+              </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">
                 Fonctionnalités <span className="gradient-text">PULSE</span>
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-12 sm:mb-16 max-w-2xl mx-auto">
                 Contrôlez votre territoire, optimisez chaque action commerciale
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
-              <div className="text-center space-y-3 sm:space-y-4">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+              <div className="group text-center space-y-3 sm:space-y-4 p-6 rounded-2xl hover:bg-white/5 transition-all duration-300">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-4 sm:mb-6 border border-accent/30 group-hover:border-accent/50 group-hover:scale-105 transition-all duration-300 shadow-lg shadow-accent/10">
                   <Target className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold">Liste de prospects filtrée</h3>
-                <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
+                <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed">
                   Accédez à toutes les nouvelles entreprises créées en France. Filtrez par département, secteur et taille
                 </p>
               </div>
-              <div className="text-center space-y-3 sm:space-y-4">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
+              <div className="group text-center space-y-3 sm:space-y-4 p-6 rounded-2xl hover:bg-white/5 transition-all duration-300">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-4 sm:mb-6 border border-accent/30 group-hover:border-accent/50 group-hover:scale-105 transition-all duration-300 shadow-lg shadow-accent/10">
                   <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold">Tournées optimisées</h3>
-                <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
+                <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed">
                   Sélectionnez vos prospects, créez votre tournée, et l'IA calcule l'itinéraire optimal avec GPS intégré
                 </p>
               </div>
-              <div className="text-center space-y-3 sm:space-y-4">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
+              <div className="group text-center space-y-3 sm:space-y-4 p-6 rounded-2xl hover:bg-white/5 transition-all duration-300">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-4 sm:mb-6 border border-accent/30 group-hover:border-accent/50 group-hover:scale-105 transition-all duration-300 shadow-lg shadow-accent/10">
                   <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold">CRM terrain simple</h3>
-                <p className="text-white/70 text-sm sm:text-base md:text-lg leading-relaxed">
+                <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed">
                   Suivez vos visites, appels et relances directement depuis votre mobile. Simple, rapide, efficace
                 </p>
               </div>
@@ -269,71 +282,113 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Before/After Section */}
-        <section id="avantages" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20" style={{
-        background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(0, 0, 0, 0.3) 100%)',
-        borderTop: '1px solid rgba(6, 182, 212, 0.15)',
-        borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
-      }}>
-          <div className="container mx-auto max-w-6xl">
+        {/* Before/After Section - Split contrast design */}
+        <section id="avantages" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20 overflow-hidden">
+          {/* Diagonal split background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-red-950/20 via-transparent to-emerald-950/20 pointer-events-none"></div>
+          
+          <div className="container mx-auto max-w-6xl relative">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">Avant / Après PULSE</h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Passez du chaos à une prospection structurée et méthodique
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
-              <Card className="glass-card p-6 sm:p-8 md:p-10 border-red-500/30">
-                <div className="flex items-center gap-3 mb-6 sm:mb-8">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                    <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Sans PULSE</h3>
+              <div className="text-center mb-12 sm:mb-16">
+                <div className="inline-flex items-center gap-3 mb-6">
+                  <span className="h-px w-8 sm:w-12 bg-gradient-to-r from-transparent to-red-500"></span>
+                  <span className="text-red-400 text-sm font-medium uppercase tracking-wider">Transformation</span>
+                  <span className="h-px w-8 sm:w-12 bg-gradient-to-r from-emerald-500 to-transparent"></span>
                 </div>
-                <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>RDV manqués et opportunités perdues faute de suivi</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Journées à tourner en rond sans vraie stratégie terrain</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Relances oubliées, prospects jamais recontactés</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Fin de mois stressante sans visibilité sur le pipeline</span>
-                  </li>
-                </ul>
-              </Card>
-              <Card className="glass-card p-6 sm:p-8 md:p-10 border-accent/50">
-                <div className="flex items-center gap-3 mb-6 sm:mb-8">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-accent/20 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">Avant / Après <span className="gradient-text">PULSE</span></h2>
+                <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
+                  Passez du chaos à une prospection structurée et méthodique
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-0">
+              {/* Before Card */}
+              <div className="relative md:pr-4 lg:pr-8">
+                <Card className="h-full bg-gradient-to-br from-red-950/30 to-transparent p-6 sm:p-8 md:p-10 border border-red-500/20 rounded-2xl md:rounded-r-none">
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-red-500/20 flex items-center justify-center">
+                      <TrendingDown className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
+                    </div>
+                    <div>
+                      <span className="text-red-400 text-xs font-medium uppercase tracking-wider">Avant</span>
+                      <h3 className="text-xl sm:text-2xl font-bold">Sans PULSE</h3>
+                    </div>
                   </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Avec PULSE</h3>
+                  <ul className="space-y-5 sm:space-y-6 text-sm sm:text-base md:text-lg text-white/70">
+                    <li className="flex items-start gap-4">
+                      <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-red-500 text-sm">✗</span>
+                      </span>
+                      <span>RDV manqués et opportunités perdues faute de suivi</span>
+                    </li>
+                    <li className="flex items-start gap-4">
+                      <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-red-500 text-sm">✗</span>
+                      </span>
+                      <span>Journées à tourner en rond sans vraie stratégie terrain</span>
+                    </li>
+                    <li className="flex items-start gap-4">
+                      <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-red-500 text-sm">✗</span>
+                      </span>
+                      <span>Relances oubliées, prospects jamais recontactés</span>
+                    </li>
+                    <li className="flex items-start gap-4">
+                      <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-red-500 text-sm">✗</span>
+                      </span>
+                      <span>Fin de mois stressante sans visibilité sur le pipeline</span>
+                    </li>
+                  </ul>
+                </Card>
+              </div>
+              
+              {/* After Card */}
+              <div className="relative md:pl-4 lg:pl-8">
+                {/* Center divider on desktop */}
+                <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10">
+                  <div className="w-12 h-12 rounded-full bg-blue-deep border-2 border-accent flex items-center justify-center">
+                    <ArrowRight className="w-5 h-5 text-accent" />
+                  </div>
                 </div>
-                <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>+30% de nouveaux RDV grâce à une prospection ciblée</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Tournées optimisées : plus de visites, moins de km</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Relances automatiques, aucun prospect n'est oublié</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Pipeline clair : vous savez exactement où vous en êtes</span>
-                  </li>
-                </ul>
-              </Card>
+                <Card className="h-full bg-gradient-to-br from-emerald-950/30 to-transparent p-6 sm:p-8 md:p-10 border border-emerald-500/20 rounded-2xl md:rounded-l-none">
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-500" />
+                    </div>
+                    <div>
+                      <span className="text-emerald-400 text-xs font-medium uppercase tracking-wider">Après</span>
+                      <h3 className="text-xl sm:text-2xl font-bold">Avec PULSE</h3>
+                    </div>
+                  </div>
+                  <ul className="space-y-5 sm:space-y-6 text-sm sm:text-base md:text-lg text-white/70">
+                    <li className="flex items-start gap-4">
+                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      </span>
+                      <span><strong className="text-emerald-400">+30%</strong> de nouveaux RDV grâce à une prospection ciblée</span>
+                    </li>
+                    <li className="flex items-start gap-4">
+                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      </span>
+                      <span>Tournées optimisées : plus de visites, moins de km</span>
+                    </li>
+                    <li className="flex items-start gap-4">
+                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      </span>
+                      <span>Relances automatiques, aucun prospect n'est oublié</span>
+                    </li>
+                    <li className="flex items-start gap-4">
+                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      </span>
+                      <span>Pipeline clair : vous savez exactement où vous en êtes</span>
+                    </li>
+                  </ul>
+                </Card>
+              </div>
             </div>
             </div>
           </div>
@@ -341,11 +396,13 @@ const LandingPage = () => {
 
 
 
-        {/* Pricing */}
-        <section id="pricing" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20" style={{
-        background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.08) 0%, transparent 60%)'
-      }}>
-          <div className="container mx-auto max-w-7xl">
+        {/* Pricing - Premium gradient background */}
+        <section id="pricing" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20 overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(6,182,212,0.08)_0%,_transparent_70%)] pointer-events-none"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div className="container mx-auto max-w-7xl relative">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
                 Choisissez votre formule <span className="gradient-text">PULSE</span>
@@ -550,14 +607,18 @@ const LandingPage = () => {
         </section>
 
 
-        {/* FAQ */}
-        <section className="py-20 sm:py-24 lg:py-28 px-6 relative z-10" style={{
-        background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(0, 0, 0, 0.3) 100%)',
-        borderTop: '1px solid rgba(6, 182, 212, 0.15)'
-      }}>
-          <div className="container mx-auto max-w-4xl">
+        {/* FAQ - Clean minimal style */}
+        <section className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+          <div className="absolute bottom-1/4 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div className="container mx-auto max-w-4xl relative">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Vos questions, nos réponses</h2>
+              <div className="inline-flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10 mb-6 mx-auto block w-fit">
+                <HelpCircle className="w-4 h-4 text-white/60" />
+                <span className="text-white/60 text-sm font-medium">FAQ</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10 sm:mb-14">Vos questions, nos réponses</h2>
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-6">
                 <AccordionTrigger className="text-xl font-semibold hover:text-accent">
