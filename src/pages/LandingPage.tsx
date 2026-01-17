@@ -450,30 +450,33 @@ const LandingPage = () => {
         {/* ═══════════════════════════════════════════════════════════════════
             FAQ SECTION
         ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-12 sm:py-14 px-6 relative z-10" style={{
+        <section className="py-10 sm:py-12 px-6 relative z-10" style={{
           background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.06) 0%, transparent 60%)'
         }}>
-          <div className="container mx-auto max-w-4xl">
+          <div className="container mx-auto max-w-5xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Vos questions, nos réponses</h2>
-              <Accordion type="single" collapsible className="space-y-3">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">Vos questions, nos réponses</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {[
                   { q: "Comment PULSE structure ma prospection ?", a: "PULSE vous donne une vision complète de votre territoire avec tous vos prospects, des tournées calculées automatiquement pour optimiser vos déplacements, et un CRM mobile pour suivre chaque action." },
                   { q: "Les données sont-elles fiables ?", a: "Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement." },
                   { q: "Peut-on l'utiliser partout en France ?", a: "Oui, PULSE couvre l'intégralité du territoire français métropolitain." },
                   { q: "Comment fonctionne l'essai gratuit ?", a: "Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Annulez à tout moment sans frais." },
-                  { q: "Puis-je personnaliser mes critères ?", a: "Absolument ! Filtrez par département, secteur d'activité (NAF), taille d'entreprise et forme juridique." }
+                  { q: "Puis-je personnaliser mes critères ?", a: "Absolument ! Filtrez par département, secteur d'activité (NAF), taille d'entreprise et forme juridique." },
+                  { q: "Y a-t-il un engagement ?", a: "Non, PULSE est sans engagement. Vous pouvez résilier à tout moment depuis votre espace client." }
                 ].map((item, i) => (
-                  <AccordionItem key={i} value={`item-${i}`} className="border border-white/10 rounded-lg px-5 sm:px-6">
-                    <AccordionTrigger className="text-lg sm:text-xl font-semibold hover:text-accent py-4">
-                      {item.q}
-                    </AccordionTrigger>
-                    <AccordionContent className="text-white/70 text-base sm:text-lg pb-4">
-                      {item.a}
-                    </AccordionContent>
-                  </AccordionItem>
+                  <Accordion key={i} type="single" collapsible>
+                    <AccordionItem value={`item-${i}`} className="border border-white/10 rounded-lg px-4">
+                      <AccordionTrigger className="text-sm sm:text-base font-semibold hover:text-accent py-3">
+                        {item.q}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-white/70 text-sm pb-3">
+                        {item.a}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 ))}
-              </Accordion>
+              </div>
             </div>
           </div>
         </section>
