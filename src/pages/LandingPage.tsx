@@ -1,122 +1,95 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
-import { ArrowRight, Star, AlertCircle, Clock, Target, Zap, TrendingUp, Check, Sparkles, Quote, Map, User, MapPin, BarChart3, Users, ChevronDown, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone, Construction, Menu, Building2, HelpCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import React from "react";
+import { ArrowRight, Target, Zap, TrendingUp, Check, MapPin, BarChart3, Users, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ContactSection from "@/components/landing/ContactSection";
+
 const LandingPage = () => {
   const navigate = useNavigate();
 
-  // Scroll animations
-  const heroAnimation = useScrollAnimation({
-    threshold: 0.2
-  });
-  const problemsAnimation = useScrollAnimation({
-    threshold: 0.2
-  });
-  const solutionAnimation = useScrollAnimation({
-    threshold: 0.2
-  });
-  const beforeAfterAnimation = useScrollAnimation({
-    threshold: 0.2
-  });
-  const featuresAnimation = useScrollAnimation({
-    threshold: 0.2
-  });
-  const pricingAnimation = useScrollAnimation({
-    threshold: 0.2
-  });
-  const faqAnimation = useScrollAnimation({
-    threshold: 0.2
-  });
-  return <div className="min-h-screen relative overflow-hidden" style={{
-    background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))'
-  }}>
-      {/* Decorative elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {/* Large glowing orb top right */}
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{
-        animationDuration: '8s'
-      }}></div>
-        {/* Medium glowing orb bottom left */}
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-glow/10 rounded-full blur-3xl animate-pulse" style={{
-        animationDuration: '10s'
-      }}></div>
+  const heroAnimation = useScrollAnimation({ threshold: 0.2 });
+  const problemsAnimation = useScrollAnimation({ threshold: 0.2 });
+  const solutionAnimation = useScrollAnimation({ threshold: 0.2 });
+  const beforeAfterAnimation = useScrollAnimation({ threshold: 0.2 });
+  const pricingAnimation = useScrollAnimation({ threshold: 0.2 });
+  const faqAnimation = useScrollAnimation({ threshold: 0.2 });
+
+  return (
+    <div className="min-h-screen relative overflow-hidden bg-[#0a0f1a]">
+      {/* Subtle background gradient */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-accent/5 rounded-full blur-[120px]"></div>
       </div>
+
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-lg border-b border-white/10">
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0f1a]/90 backdrop-blur-xl border-b border-white/5">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="text-xl sm:text-2xl font-bold shrink-0">
+            <div className="text-xl sm:text-2xl font-bold">
               <span className="text-white">PULSE</span>
-              <span className="text-accent ml-1">.</span>
+              <span className="text-accent">.</span>
             </div>
 
-            {/* Desktop nav - centered absolutely, visible from lg breakpoint */}
-            <nav className="hidden lg:flex items-center gap-6 xl:gap-8 absolute left-1/2 transform -translate-x-1/2">
-              <a href="#solution" className="text-sm xl:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Fonctionnalités</a>
-              <a href="#avantages" className="text-sm xl:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Avantages</a>
-              <a href="#pricing" className="text-sm xl:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Tarifs</a>
-              <a href="#contact" className="text-sm xl:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Contact</a>
+            {/* Desktop nav */}
+            <nav className="hidden lg:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
+              <a href="#solution" className="text-sm text-white/60 hover:text-white transition-colors">Fonctionnalités</a>
+              <a href="#avantages" className="text-sm text-white/60 hover:text-white transition-colors">Avantages</a>
+              <a href="#pricing" className="text-sm text-white/60 hover:text-white transition-colors">Tarifs</a>
+              <a href="#contact" className="text-sm text-white/60 hover:text-white transition-colors">Contact</a>
             </nav>
 
-            {/* Tablet nav - flex positioned, visible from sm to lg */}
-            <nav className="hidden sm:flex lg:hidden items-center gap-4 md:gap-6 flex-1 justify-center mx-2">
-              <a href="#solution" className="text-xs md:text-sm text-white/70 hover:text-accent transition-colors whitespace-nowrap">Fonctionnalités</a>
-              <a href="#avantages" className="text-xs md:text-sm text-white/70 hover:text-accent transition-colors whitespace-nowrap">Avantages</a>
-              <a href="#pricing" className="text-xs md:text-sm text-white/70 hover:text-accent transition-colors whitespace-nowrap">Tarifs</a>
-              <a href="#contact" className="text-xs md:text-sm text-white/70 hover:text-accent transition-colors whitespace-nowrap">Contact</a>
+            {/* Tablet nav */}
+            <nav className="hidden sm:flex lg:hidden items-center gap-4 flex-1 justify-center mx-4">
+              <a href="#solution" className="text-xs text-white/60 hover:text-white transition-colors">Fonctionnalités</a>
+              <a href="#avantages" className="text-xs text-white/60 hover:text-white transition-colors">Avantages</a>
+              <a href="#pricing" className="text-xs text-white/60 hover:text-white transition-colors">Tarifs</a>
+              <a href="#contact" className="text-xs text-white/60 hover:text-white transition-colors">Contact</a>
             </nav>
 
-            {/* Desktop buttons - visible from lg breakpoint */}
-            <div className="hidden lg:flex items-center gap-3 shrink-0">
-              <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 h-8 px-3 text-xs">
+            {/* Desktop buttons */}
+            <div className="hidden lg:flex items-center gap-3">
+              <Button asChild variant="ghost" className="text-white/70 hover:text-white hover:bg-white/5">
                 <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
-                  Réserver ma démo
+                  Réserver une démo
                 </a>
               </Button>
-              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-8 px-3 text-xs">
+              <Button onClick={() => navigate('/auth')} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
                 Connexion
               </Button>
             </div>
 
-            {/* Tablet buttons - visible from sm to lg */}
-            <div className="hidden sm:flex lg:hidden items-center gap-2 shrink-0">
-              <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold h-8 px-2 md:px-3 text-[10px] md:text-xs whitespace-nowrap">
-                <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
-                  Réserver ma démo
-                </a>
-              </Button>
-              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-8 px-2 md:px-3 text-[10px] md:text-xs">
+            {/* Tablet buttons */}
+            <div className="hidden sm:flex lg:hidden items-center gap-2">
+              <Button onClick={() => navigate('/auth')} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-4 text-xs">
                 Connexion
               </Button>
             </div>
 
-            {/* Mobile hamburger menu - visible only below sm */}
+            {/* Mobile menu */}
             <div className="sm:hidden">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-10 w-10 text-white" aria-label="Ouvrir le menu">
-                    <Menu className="h-6 w-6" />
+                  <Button variant="ghost" size="icon" className="text-white">
+                    <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-72 bg-card/95 backdrop-blur-xl border-accent/20">
+                <SheetContent side="right" className="w-72 bg-[#0a0f1a] border-white/10">
                   <nav className="flex flex-col gap-4 mt-8">
-                    <a href="#solution" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Fonctionnalités</a>
-                    <a href="#avantages" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Avantages</a>
-                    <a href="#pricing" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Tarifs</a>
-                    <a href="#contact" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Contact</a>
-                    <div className="border-t border-accent/20 pt-4 mt-4 space-y-3">
-                      <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold">
+                    <a href="#solution" className="text-lg text-white/80 hover:text-white py-2">Fonctionnalités</a>
+                    <a href="#avantages" className="text-lg text-white/80 hover:text-white py-2">Avantages</a>
+                    <a href="#pricing" className="text-lg text-white/80 hover:text-white py-2">Tarifs</a>
+                    <a href="#contact" className="text-lg text-white/80 hover:text-white py-2">Contact</a>
+                    <div className="border-t border-white/10 pt-4 mt-4 space-y-3">
+                      <Button asChild variant="outline" className="w-full border-white/20 text-white">
                         <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
-                          Réserver ma démo
+                          Réserver une démo
                         </a>
                       </Button>
-                      <Button variant="outline" onClick={() => navigate('/auth')} className="w-full border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold">
+                      <Button onClick={() => navigate('/auth')} className="w-full bg-accent text-black font-semibold">
                         Connexion
                       </Button>
                     </div>
@@ -129,627 +102,444 @@ const LandingPage = () => {
       </header>
 
       <main className="pt-20">
-        {/* Hero Section */}
-        <section className="py-16 sm:py-20 lg:py-24 px-6 relative z-10">
-          <div className="container mx-auto max-w-6xl">
-            <div ref={heroAnimation.ref} className={`text-center space-y-3 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
-              <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/20 mb-4">
-                <Target className="w-4 h-4 text-accent" />
-                <span className="text-sm text-white/90 font-medium">Essai gratuit 7 jours</span>
-              </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                Vendez plus.
-                <br />
-                <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">Roulez moins.</span>
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto pt-2">Liste de prospects filtrée • Tournées optimisées • CRM simple pour suivre vos visites sur le terrain</p>
-              <div className="flex justify-center py-6">
-                <Button onClick={() => navigate('/subscribe')} className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg sm:text-xl px-8 sm:px-10 py-6 sm:py-7 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300">
-                  Commencer maintenant
-                  <ArrowRight className="ml-4 w-8 h-8" />
-                </Button>
+        {/* ═══════════════════════════════════════════════════════════════════
+            HERO SECTION - Accroche principale
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section className="py-16 sm:py-20 lg:py-28 px-6">
+          <div className="container mx-auto max-w-5xl">
+            <div ref={heroAnimation.ref} className={`text-center scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
+              
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-full border border-accent/20 mb-8">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span className="text-sm text-white/80">7 jours d'essai gratuit • Sans engagement</span>
               </div>
 
-              {/* Stats Section */}
-              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
-                {/* Stat 1 */}
-                <div className="text-center space-y-2 animate-fade-in" style={{
-                animationDelay: '0.1s'
-              }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+1 900</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">nouvelles entreprises détectées chaque semaine</p>
+              {/* Headline */}
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6">
+                Trouvez vos clients.
+                <br />
+                <span className="bg-gradient-to-r from-accent via-cyan-400 to-accent bg-clip-text text-transparent">
+                  Pas votre chemin.
+                </span>
+              </h1>
+
+              {/* Subheadline */}
+              <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10">
+                PULSE détecte les nouvelles entreprises de votre secteur, optimise vos tournées et centralise votre suivi commercial.
+              </p>
+
+              {/* CTA */}
+              <Button 
+                onClick={() => navigate('/subscribe')} 
+                className="bg-accent hover:bg-accent/90 text-black font-bold text-lg px-10 py-7 rounded-xl shadow-2xl shadow-accent/20 hover:shadow-accent/30 hover:scale-[1.02] transition-all"
+              >
+                Commencer gratuitement
+                <ArrowRight className="ml-3 w-5 h-5" />
+              </Button>
+
+              {/* Stats */}
+              <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+                <div className="text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-accent">+1 900</div>
+                  <p className="text-white/50 text-sm mt-1">entreprises/semaine</p>
                 </div>
-                
-                {/* Stat 2 */}
-                <div className="text-center space-y-2 animate-fade-in" style={{
-                animationDelay: '0.2s'
-              }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">gagnées par jour en moyenne</p>
+                <div className="text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-accent">1h30</div>
+                  <p className="text-white/50 text-sm mt-1">gagnées/jour</p>
                 </div>
-                
-                {/* Stat 3 */}
-                <div className="text-center space-y-2 animate-fade-in" style={{
-                animationDelay: '0.3s'
-              }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">de taux de satisfaction</p>
+                <div className="text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-accent">92%</div>
+                  <p className="text-white/50 text-sm mt-1">de satisfaction</p>
                 </div>
               </div>
 
               {/* Trust badges */}
-              <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-white/50 animate-fade-in" style={{
-              animationDelay: '0.4s'
-            }}>
+              <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-white/40">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
+                  <Check className="w-4 h-4 text-emerald-500" />
                   <span>Conforme RGPD</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Database className="w-4 h-4 text-accent" />
-                  <span>Données publiques officielles</span>
+                  <span>Données INSEE officielles</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Problems Section - Dark dramatic style */}
-        <section className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 overflow-hidden">
-          {/* Animated gradient orb */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-500/5 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="container mx-auto max-w-6xl relative">
+        {/* ═══════════════════════════════════════════════════════════════════
+            PROBLEMS SECTION - Le problème que vous résolvez
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section className="py-20 sm:py-24 px-6">
+          <div className="container mx-auto max-w-5xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <div className="inline-flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-full border border-red-500/20 mb-6 mx-auto block w-fit">
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                <span className="text-red-400 text-sm font-medium">Les freins à votre croissance</span>
+              
+              <div className="text-center mb-14">
+                <span className="text-red-400/70 text-xs font-semibold uppercase tracking-widest">Le constat</span>
+                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
+                  Vous perdez du temps et des opportunités
+                </h2>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10 sm:mb-14">Ce qui désorganise votre prospection</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-              <Card className="relative group bg-gradient-to-b from-white/5 to-transparent p-6 sm:p-8 border border-white/10 hover:border-red-500/30 transition-all duration-500 rounded-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3 sm:mb-4 relative z-10" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 relative z-10">Aucune visibilité sur votre secteur</h3>
-                <p className="text-white/60 text-base sm:text-lg relative z-10">Impossible de savoir où sont vos prospects, qui cibler en priorité, quel territoire couvrir</p>
-              </Card>
-              <Card className="relative group bg-gradient-to-b from-white/5 to-transparent p-6 sm:p-8 border border-white/10 hover:border-red-500/30 transition-all duration-500 rounded-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3 sm:mb-4 relative z-10" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 relative z-10">Informations éparpillées partout</h3>
-                <p className="text-white/60 text-base sm:text-lg relative z-10">Excel, carnets, post-its... Relances oubliées, données perdues, aucun historique structuré</p>
-              </Card>
-              <Card className="relative group bg-gradient-to-b from-white/5 to-transparent p-6 sm:p-8 border border-white/10 hover:border-red-500/30 transition-all duration-500 rounded-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <Route className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3 sm:mb-4 relative z-10" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 relative z-10">Trajets improvisés inefficaces</h3>
-                <p className="text-white/60 text-base sm:text-lg relative z-10">Des kilomètres inutiles, du temps perdu, moins de visites, moins de chiffre d'affaires</p>
-              </Card>
-            </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="bg-white/[0.02] border-white/5 p-6 hover:border-red-500/20 transition-colors">
+                  <MapPin className="w-8 h-8 text-red-400/70 mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Aucune visibilité terrain</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    Vous ne savez pas où sont vos prospects ni lesquels cibler en priorité.
+                  </p>
+                </Card>
+
+                <Card className="bg-white/[0.02] border-white/5 p-6 hover:border-red-500/20 transition-colors">
+                  <FileText className="w-8 h-8 text-red-400/70 mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Données éparpillées</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    Excel, carnets, post-its... Vos informations sont perdues et inutilisables.
+                  </p>
+                </Card>
+
+                <Card className="bg-white/[0.02] border-white/5 p-6 hover:border-red-500/20 transition-colors">
+                  <Route className="w-8 h-8 text-red-400/70 mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Trajets improvisés</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    Des kilomètres inutiles, du temps perdu, moins de visites par jour.
+                  </p>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Solution Section - Cyan glow style */}
-        <section id="solution" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20 overflow-hidden">
-          {/* Background elements */}
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent"></div>
-          <div className="absolute top-20 right-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+        {/* ═══════════════════════════════════════════════════════════════════
+            SOLUTION SECTION - Comment PULSE résout le problème
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section id="solution" className="py-20 sm:py-24 px-6 scroll-mt-20 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-accent/[0.04] to-accent/[0.02] pointer-events-none"></div>
           
-          <div className="container mx-auto max-w-6xl relative">
+          <div className="container mx-auto max-w-5xl relative">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
-              <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-full border border-accent/20 mb-6 mx-auto block w-fit">
-                <Zap className="w-4 h-4 text-accent" />
-                <span className="text-accent text-sm font-medium">La solution tout-en-un</span>
+              
+              <div className="text-center mb-14">
+                <span className="text-accent text-xs font-semibold uppercase tracking-widest">La solution</span>
+                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
+                  Tout ce qu'il vous faut pour prospecter
+                </h2>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 sm:mb-6">
-                Fonctionnalités <span className="gradient-text">PULSE</span>
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-12 sm:mb-16 max-w-2xl mx-auto">
-                Contrôlez votre territoire, optimisez chaque action commerciale
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
-              <div className="group text-center space-y-3 sm:space-y-4 p-6 rounded-2xl hover:bg-white/5 transition-all duration-300">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-4 sm:mb-6 border border-accent/30 group-hover:border-accent/50 group-hover:scale-105 transition-all duration-300 shadow-lg shadow-accent/10">
-                  <Target className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="text-center group">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <Target className="w-7 h-7 text-accent" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Prospects qualifiés</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    Accédez aux nouvelles entreprises créées chaque semaine. Filtrez par zone, secteur et taille.
+                  </p>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">Liste de prospects filtrée</h3>
-                <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed">
-                  Accédez à toutes les nouvelles entreprises créées en France. Filtrez par département, secteur et taille
-                </p>
-              </div>
-              <div className="group text-center space-y-3 sm:space-y-4 p-6 rounded-2xl hover:bg-white/5 transition-all duration-300">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-4 sm:mb-6 border border-accent/30 group-hover:border-accent/50 group-hover:scale-105 transition-all duration-300 shadow-lg shadow-accent/10">
-                  <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
+
+                <div className="text-center group">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <Route className="w-7 h-7 text-accent" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Tournées optimisées</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    L'IA calcule le meilleur itinéraire. Moins de route, plus de rendez-vous.
+                  </p>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">Tournées optimisées</h3>
-                <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed">
-                  Sélectionnez vos prospects, créez votre tournée, et l'IA calcule l'itinéraire optimal avec GPS intégré
-                </p>
-              </div>
-              <div className="group text-center space-y-3 sm:space-y-4 p-6 rounded-2xl hover:bg-white/5 transition-all duration-300">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-4 sm:mb-6 border border-accent/30 group-hover:border-accent/50 group-hover:scale-105 transition-all duration-300 shadow-lg shadow-accent/10">
-                  <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
+
+                <div className="text-center group">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <Smartphone className="w-7 h-7 text-accent" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">CRM mobile</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    Suivez vos visites et relances depuis votre téléphone. Simple et efficace.
+                  </p>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">CRM terrain simple</h3>
-                <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed">
-                  Suivez vos visites, appels et relances directement depuis votre mobile. Simple, rapide, efficace
-                </p>
-              </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Before/After Section - Split contrast design */}
-        <section id="avantages" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20 overflow-hidden">
-          {/* Diagonal split background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-red-950/20 via-transparent to-emerald-950/20 pointer-events-none"></div>
-          
-          <div className="container mx-auto max-w-6xl relative">
+        {/* ═══════════════════════════════════════════════════════════════════
+            BEFORE/AFTER SECTION - Transformation
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section id="avantages" className="py-20 sm:py-24 px-6 scroll-mt-20">
+          <div className="container mx-auto max-w-4xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
-              <div className="text-center mb-12 sm:mb-16">
-                <div className="inline-flex items-center gap-3 mb-6">
-                  <span className="h-px w-8 sm:w-12 bg-gradient-to-r from-transparent to-red-500"></span>
-                  <span className="text-red-400 text-sm font-medium uppercase tracking-wider">Transformation</span>
-                  <span className="h-px w-8 sm:w-12 bg-gradient-to-r from-emerald-500 to-transparent"></span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">Avant / Après <span className="gradient-text">PULSE</span></h2>
-                <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
-                  Passez du chaos à une prospection structurée et méthodique
-                </p>
-              </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-0">
-              {/* Before Card */}
-              <div className="relative md:pr-4 lg:pr-8">
-                <Card className="h-full bg-gradient-to-br from-red-950/30 to-transparent p-6 sm:p-8 md:p-10 border border-red-500/20 rounded-2xl md:rounded-r-none">
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-red-500/20 flex items-center justify-center">
-                      <TrendingDown className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
+              <div className="text-center mb-14">
+                <span className="text-white/40 text-xs font-semibold uppercase tracking-widest">Transformation</span>
+                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
+                  Avant / Après <span className="text-accent">PULSE</span>
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Before */}
+                <Card className="bg-red-500/[0.03] border-red-500/10 p-6 sm:p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <TrendingDown className="w-5 h-5 text-red-400" />
                     </div>
-                    <div>
-                      <span className="text-red-400 text-xs font-medium uppercase tracking-wider">Avant</span>
-                      <h3 className="text-xl sm:text-2xl font-bold">Sans PULSE</h3>
-                    </div>
+                    <span className="font-semibold text-lg">Sans PULSE</span>
                   </div>
-                  <ul className="space-y-5 sm:space-y-6 text-sm sm:text-base md:text-lg text-white/70">
-                    <li className="flex items-start gap-4">
-                      <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-red-500 text-sm">✗</span>
-                      </span>
-                      <span>RDV manqués et opportunités perdues faute de suivi</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-red-500 text-sm">✗</span>
-                      </span>
-                      <span>Journées à tourner en rond sans vraie stratégie terrain</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-red-500 text-sm">✗</span>
-                      </span>
-                      <span>Relances oubliées, prospects jamais recontactés</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-red-500 text-sm">✗</span>
-                      </span>
-                      <span>Fin de mois stressante sans visibilité sur le pipeline</span>
-                    </li>
+                  <ul className="space-y-4">
+                    {[
+                      "Opportunités perdues faute de suivi",
+                      "Journées improvisées sans stratégie",
+                      "Relances oubliées, prospects jamais recontactés",
+                      "Fin de mois stressante"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 text-white/60">
+                        <span className="text-red-400 mt-0.5">✕</span>
+                        <span className="text-sm">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+
+                {/* After */}
+                <Card className="bg-emerald-500/[0.03] border-emerald-500/10 p-6 sm:p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-emerald-400" />
+                    </div>
+                    <span className="font-semibold text-lg">Avec PULSE</span>
+                  </div>
+                  <ul className="space-y-4">
+                    {[
+                      "+30% de RDV grâce au ciblage précis",
+                      "Tournées planifiées, temps optimisé",
+                      "Relances programmées, rien n'est oublié",
+                      "Pipeline clair, objectifs maîtrisés"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 text-white/60">
+                        <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </Card>
               </div>
-              
-              {/* After Card */}
-              <div className="relative md:pl-4 lg:pl-8">
-                {/* Center divider on desktop */}
-                <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10">
-                  <div className="w-12 h-12 rounded-full bg-blue-deep border-2 border-accent flex items-center justify-center">
-                    <ArrowRight className="w-5 h-5 text-accent" />
-                  </div>
-                </div>
-                <Card className="h-full bg-gradient-to-br from-emerald-950/30 to-transparent p-6 sm:p-8 md:p-10 border border-emerald-500/20 rounded-2xl md:rounded-l-none">
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-500" />
-                    </div>
-                    <div>
-                      <span className="text-emerald-400 text-xs font-medium uppercase tracking-wider">Après</span>
-                      <h3 className="text-xl sm:text-2xl font-bold">Avec PULSE</h3>
-                    </div>
-                  </div>
-                  <ul className="space-y-5 sm:space-y-6 text-sm sm:text-base md:text-lg text-white/70">
-                    <li className="flex items-start gap-4">
-                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-3.5 h-3.5 text-emerald-500" />
-                      </span>
-                      <span><strong className="text-emerald-400">+30%</strong> de nouveaux RDV grâce à une prospection ciblée</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-3.5 h-3.5 text-emerald-500" />
-                      </span>
-                      <span>Tournées optimisées : plus de visites, moins de km</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-3.5 h-3.5 text-emerald-500" />
-                      </span>
-                      <span>Relances automatiques, aucun prospect n'est oublié</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-3.5 h-3.5 text-emerald-500" />
-                      </span>
-                      <span>Pipeline clair : vous savez exactement où vous en êtes</span>
-                    </li>
-                  </ul>
-                </Card>
-              </div>
-            </div>
             </div>
           </div>
         </section>
 
-
-
-        {/* Pricing - Premium gradient background */}
-        <section id="pricing" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20 overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(6,182,212,0.08)_0%,_transparent_70%)] pointer-events-none"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+        {/* ═══════════════════════════════════════════════════════════════════
+            PRICING SECTION - Tarification
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section id="pricing" className="py-20 sm:py-24 px-6 scroll-mt-20 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-accent/[0.04] to-accent/[0.02] pointer-events-none"></div>
           
-          <div className="container mx-auto max-w-7xl relative">
+          <div className="container mx-auto max-w-5xl relative">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
-                Choisissez votre formule <span className="gradient-text">PULSE</span>
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Structurez votre prospection, optimisez chaque visite
-              </p>
               
-              {/* Pricing Cards - 2 columns: PULSE + Sur Mesure */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto items-stretch mb-8">
+              <div className="text-center mb-14">
+                <span className="text-accent text-xs font-semibold uppercase tracking-widest">Tarifs</span>
+                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
+                  Un prix simple, tout inclus
+                </h2>
+                <p className="text-white/50 mt-3">Sans engagement • Annulable à tout moment</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 
-                {/* PULSE Offer */}
-                <Card className="relative overflow-visible flex flex-col" style={{
-                background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
-                border: '2px solid rgba(6, 182, 212, 0.5)',
-                boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
-              }}>
-                  {/* Badge essai gratuit */}
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
-                    🎁 7 JOURS D'ESSAI GRATUIT
+                {/* Commercial Solo */}
+                <Card className="relative bg-accent/[0.05] border-accent/30 p-6 sm:p-8">
+                  <div className="absolute -top-3 left-6 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    7 JOURS GRATUITS
                   </div>
                   
-                  <div className="p-6 md:p-8 pt-10 flex flex-col flex-1">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Commercial Solo</h3>
-                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    border: '1px solid rgba(6, 182, 212, 0.2)'
-                  }}>
-                      <div className="flex items-baseline justify-center gap-2 mb-1">
-                        <span className="text-4xl md:text-5xl font-bold gradient-text">49€</span>
-                        <span className="text-base text-white/60">/mois</span>
-                      </div>
-                      <p className="text-sm text-white/50 mt-2">Sans engagement • Résiliable à tout moment</p>
-                    </div>
-
-                    <ul className="space-y-2 mb-6 flex-1">
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Target className="w-3 h-3 text-accent" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Liste de prospects filtrée</span>
-                          <p className="text-white/50 text-xs">Nouvelles entreprises selon vos critères</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Route className="w-3 h-3 text-accent" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Tournées optimisées IA</span>
-                          <p className="text-white/50 text-xs">Moins de route, plus de RDV</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Smartphone className="w-3 h-3 text-accent" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">CRM mobile terrain</span>
-                          <p className="text-white/50 text-xs">Visites et relances depuis votre poche</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Search className="w-3 h-3 text-accent" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Filtres intelligents</span>
-                          <p className="text-white/50 text-xs">Département, activité, taille d'entreprise</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <BarChart3 className="w-3 h-3 text-accent" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Pipeline Kanban</span>
-                          <p className="text-white/50 text-xs">Du premier contact à la signature</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Clock className="w-3 h-3 text-accent" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Suivi des relances</span>
-                          <p className="text-white/50 text-xs">Programmez vos rappels dans le CRM</p>
-                        </div>
-                      </li>
-                    </ul>
-
-                    <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] mt-auto" onClick={() => navigate('/subscribe')}>
-                      Essayer gratuitement 7 jours
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
+                  <h3 className="text-2xl font-bold text-accent mt-2">Commercial Solo</h3>
+                  <p className="text-white/50 text-sm mt-1 mb-6">Pour les commerciaux indépendants</p>
+                  
+                  <div className="flex items-baseline gap-1 mb-6">
+                    <span className="text-4xl font-bold">49€</span>
+                    <span className="text-white/50">/mois</span>
                   </div>
+
+                  <ul className="space-y-3 mb-8">
+                    {[
+                      { icon: Target, text: "Liste de prospects filtrée" },
+                      { icon: Route, text: "Tournées optimisées IA" },
+                      { icon: Smartphone, text: "CRM mobile terrain" },
+                      { icon: Search, text: "Filtres avancés (NAF, taille, zone)" },
+                      { icon: BarChart3, text: "Pipeline Kanban" },
+                      { icon: Clock, text: "Suivi des relances" },
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm">
+                        <item.icon className="w-4 h-4 text-accent flex-shrink-0" />
+                        <span className="text-white/70">{item.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button 
+                    onClick={() => navigate('/subscribe')} 
+                    className="w-full bg-accent hover:bg-accent/90 text-black font-semibold py-6"
+                  >
+                    Démarrer l'essai gratuit
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
                 </Card>
 
-                {/* Sur Mesure / Enterprise */}
-                <Card className="relative overflow-visible flex flex-col" style={{
-                background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                border: '2px solid rgba(14, 165, 233, 0.3)',
-                boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-              }}>
-                  <div className="p-6 md:p-8 flex flex-col flex-1">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-center gradient-text">Équipes Commerciales</h3>
-                    <div className="mb-6 text-center py-3 px-4 rounded-xl" style={{
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    border: '1px solid rgba(14, 165, 233, 0.2)'
-                  }}>
-                      <div className="flex items-baseline justify-center gap-2">
-                        <span className="text-3xl md:text-4xl font-bold gradient-text">
-                          Sur devis
-                        </span>
-                      </div>
-                      <p className="text-xs text-white/50 mt-2">Pour les équipes ambitieuses</p>
-                    </div>
-
-                    <ul className="space-y-2 mb-6 flex-1">
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Tout PULSE inclus</span>
-                          <p className="text-white/50 text-xs">Toutes les fonctionnalités de l'offre standard</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Users className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Équipes illimitées</span>
-                          <p className="text-white/50 text-xs">Invitez tous vos commerciaux</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Sparkles className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Onboarding personnalisé</span>
-                          <p className="text-white/50 text-xs">Formation dédiée à votre équipe</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Phone className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Support prioritaire</span>
-                          <p className="text-white/50 text-xs">Réponse sous 24h garantie</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <TrendingUp className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Session d'analyse mensuelle</span>
-                          <p className="text-white/50 text-xs">Optimisez vos performances</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2 p-2 rounded-lg transition-all hover:bg-white/5">
-                        <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Building2 className="w-3 h-3 text-cyan-glow" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-semibold">Intégrations sur mesure</span>
-                          <p className="text-white/50 text-xs">Connectez vos outils existants</p>
-                        </div>
-                      </li>
-                    </ul>
-
-                    <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 text-sm py-5 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] mt-auto" onClick={() => navigate('/subscribe')}>
-                      Demander un devis
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
+                {/* Équipes */}
+                <Card className="bg-white/[0.02] border-white/10 p-6 sm:p-8">
+                  <h3 className="text-2xl font-bold">Équipes Commerciales</h3>
+                  <p className="text-white/50 text-sm mt-1 mb-6">Pour les équipes ambitieuses</p>
+                  
+                  <div className="flex items-baseline gap-1 mb-6">
+                    <span className="text-4xl font-bold">Sur devis</span>
                   </div>
+
+                  <ul className="space-y-3 mb-8">
+                    {[
+                      { icon: Check, text: "Tout PULSE inclus" },
+                      { icon: Users, text: "Utilisateurs illimités" },
+                      { icon: Sparkles, text: "Onboarding personnalisé" },
+                      { icon: Phone, text: "Support prioritaire" },
+                      { icon: TrendingUp, text: "Analyse mensuelle" },
+                      { icon: Building2, text: "Intégrations sur mesure" },
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm">
+                        <item.icon className="w-4 h-4 text-white/40 flex-shrink-0" />
+                        <span className="text-white/60">{item.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button 
+                    onClick={() => navigate('/subscribe')} 
+                    variant="outline"
+                    className="w-full border-white/20 text-white hover:bg-white/5 py-6"
+                  >
+                    Demander un devis
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
                 </Card>
               </div>
 
-              {/* Trust indicators */}
-              <div className="flex flex-wrap justify-center gap-8 text-center text-white/70">
+              {/* Trust */}
+              <div className="flex flex-wrap justify-center gap-8 mt-10 text-sm text-white/40">
                 <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-500" />
-                  <span className="text-sm font-medium">Conforme RGPD</span>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>Paiement sécurisé</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">🔒</span>
-                  <span className="text-sm">Paiement 100% sécurisé</span>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>Annulation en 2 clics</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Database className="w-5 h-5 text-accent" />
-                  <span className="text-sm">Données publiques officielles</span>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>Données conservées</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-
-        {/* FAQ - Clean minimal style */}
-        <section className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-          <div className="absolute bottom-1/4 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
-          
-          <div className="container mx-auto max-w-4xl relative">
+        {/* ═══════════════════════════════════════════════════════════════════
+            FAQ SECTION
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section className="py-20 sm:py-24 px-6">
+          <div className="container mx-auto max-w-3xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <div className="inline-flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10 mb-6 mx-auto block w-fit">
-                <HelpCircle className="w-4 h-4 text-white/60" />
-                <span className="text-white/60 text-sm font-medium">FAQ</span>
+              
+              <div className="text-center mb-14">
+                <span className="text-white/40 text-xs font-semibold uppercase tracking-widest">FAQ</span>
+                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
+                  Questions fréquentes
+                </h2>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10 sm:mb-14">Vos questions, nos réponses</h2>
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-6">
-                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  Comment PULSE structure ma prospection ?
-                </AccordionTrigger>
-                <AccordionContent className="text-white/70 text-lg">
-                  PULSE vous donne une vision complète de votre territoire avec tous vos prospects sur une carte interactive, 
-                  des tournées calculées automatiquement pour optimiser vos déplacements, et un CRM mobile pour suivre chaque action. 
-                  Tout est centralisé, organisé et accessible en temps réel.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-2" className="border border-white/10 rounded-lg px-6">
-                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  Les données sont-elles fiables ?
-                </AccordionTrigger>
-                <AccordionContent className="text-white/70 text-lg">
-                  Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement. 
-                  Nous enrichissons également les informations via nos algorithmes propriétaires.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-6">
-                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  Peut-on l'utiliser partout en France ?
-                </AccordionTrigger>
-                <AccordionContent className="text-white/70 text-lg">
-                  Oui, PULSE couvre l'intégralité du territoire français, de la plus grande ville au plus petit bourg.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" className="border border-white/10 rounded-lg px-6">
-                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  Quelles données vais-je retrouver ?
-                </AccordionTrigger>
-                <AccordionContent className="text-white/70 text-lg">
-                  PULSE vous donne accès à toutes les entreprises de votre territoire : nouvelles créations, établissements existants. 
-                  Vous pouvez filtrer par département, secteur d'activité (NAF), taille d'entreprise et forme juridique.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-5" className="border border-white/10 rounded-lg px-6">
-                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  Puis-je personnaliser mes critères de recherche ?
-                </AccordionTrigger>
-                <AccordionContent className="text-white/70 text-lg">
-                  Absolument ! Toutes les offres incluent des filtres avancés : département, secteur d'activité (code NAF), taille d'entreprise, 
-                  forme juridique. Vous ciblez précisément les prospects qui vous intéressent.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-6" className="border border-white/10 rounded-lg px-6">
-                <AccordionTrigger className="text-xl font-semibold hover:text-accent">
-                  Comment fonctionne l'essai gratuit de 7 jours ?
-                </AccordionTrigger>
-                <AccordionContent className="text-white/70 text-lg">
-                  Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités de PULSE. 
-                  Vous pouvez annuler à tout moment pendant les 7 jours sans aucun frais.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+              <Accordion type="single" collapsible className="space-y-3">
+                {[
+                  {
+                    q: "D'où viennent les données ?",
+                    a: "Toutes nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement."
+                  },
+                  {
+                    q: "PULSE fonctionne-t-il partout en France ?",
+                    a: "Oui, PULSE couvre l'intégralité du territoire français métropolitain."
+                  },
+                  {
+                    q: "Comment fonctionne l'essai gratuit ?",
+                    a: "Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Annulez à tout moment sans frais."
+                  },
+                  {
+                    q: "Puis-je personnaliser mes critères de recherche ?",
+                    a: "Absolument. Filtrez par département, secteur d'activité (code NAF), taille d'entreprise et forme juridique."
+                  },
+                  {
+                    q: "Comment annuler mon abonnement ?",
+                    a: "En 2 clics depuis votre espace personnel. Vos données sont conservées si vous souhaitez revenir."
+                  }
+                ].map((item, i) => (
+                  <AccordionItem key={i} value={`item-${i}`} className="border border-white/5 rounded-lg px-5 bg-white/[0.01]">
+                    <AccordionTrigger className="text-left font-medium hover:text-accent py-4">
+                      {item.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-white/60 pb-4">
+                      {item.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
           </div>
         </section>
 
         <ContactSection />
 
-        {/* Footer */}
-        <footer className="border-t border-white/10 py-8 px-6">
-          <div className="container mx-auto max-w-6xl">
-            <div className="grid md:grid-cols-3 gap-8 mb-8">
-              <div>
-                <div className="text-2xl font-bold mb-4">
+        {/* ═══════════════════════════════════════════════════════════════════
+            FOOTER
+        ═══════════════════════════════════════════════════════════════════ */}
+        <footer className="border-t border-white/5 py-10 px-6">
+          <div className="container mx-auto max-w-5xl">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-6">
+                <div className="text-xl font-bold">
                   <span className="text-white">PULSE</span>
                   <span className="text-accent">.</span>
                 </div>
-                <p className="text-white/60">La prospection terrain réinventée</p>
+                <span className="text-white/40 text-sm hidden sm:inline">La prospection terrain, simplifiée.</span>
               </div>
-              <div>
-                <h4 className="font-bold mb-4">Produit</h4>
-                <ul className="space-y-2 text-white/60">
-                  <li><a href="#" className="hover:text-accent transition-colors">Fonctionnalités</a></li>
-                  <li><a href="#" className="hover:text-accent transition-colors">Tarifs</a></li>
-                  <li><a href="#" className="hover:text-accent transition-colors">Démo</a></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold mb-4">Contact</h4>
-                <ul className="space-y-2 text-white/60">
-                  <li className="flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    <a href="mailto:tomiolovpro@gmail.com" className="hover:text-accent transition-colors">
-                      tomiolovpro@gmail.com
-                    </a>
-                  </li>
-                </ul>
+              
+              <div className="flex items-center gap-4 text-white/40 text-sm">
+                <a href="mailto:tomiolovpro@gmail.com" className="hover:text-white transition-colors flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  <span className="hidden sm:inline">tomiolovpro@gmail.com</span>
+                </a>
               </div>
             </div>
-            <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-white/40 text-sm">
-              <p>&copy; 2025 Individual Entrepreneur PULSE. Tous droits réservés.</p>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <a href="/mentions-legales" className="hover:text-accent transition-colors">Mentions Légales</a>
-                <span className="text-white/20">•</span>
-                <a href="/cgu" className="hover:text-accent transition-colors">CGU</a>
-                <span className="text-white/20">•</span>
-                <a href="/cgv" className="hover:text-accent transition-colors">CGV</a>
-                <span className="text-white/20">•</span>
-                <a href="/confidentialite" className="hover:text-accent transition-colors">Confidentialité</a>
+            
+            <div className="border-t border-white/5 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-white/30 text-xs">
+              <p>© 2026 PULSE. Tous droits réservés.</p>
+              <div className="flex items-center gap-4">
+                <a href="/mentions-legales" className="hover:text-white/60 transition-colors">Mentions légales</a>
+                <a href="/cgu" className="hover:text-white/60 transition-colors">CGU</a>
+                <a href="/cgv" className="hover:text-white/60 transition-colors">CGV</a>
+                <a href="/confidentialite" className="hover:text-white/60 transition-colors">Confidentialité</a>
               </div>
             </div>
           </div>
         </footer>
 
         {/* Sticky CTA Mobile */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
-          <Button onClick={() => navigate('/subscribe')} className="w-full bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold py-4 rounded-full shadow-lg shadow-accent/40" aria-label="Essayer gratuitement">
-            Essayer gratuitement 7 jours
-            <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#0a0f1a] via-[#0a0f1a]/95 to-transparent md:hidden z-40">
+          <Button 
+            onClick={() => navigate('/subscribe')} 
+            className="w-full bg-accent text-black font-bold py-5 rounded-xl shadow-xl"
+          >
+            Essayer gratuitement
+            <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </main>
-    </div>;
+    </div>
+  );
 };
 
-// Import X icon
-const X = ({
-  className
-}: {
-  className?: string;
-}) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>;
 export default LandingPage;
