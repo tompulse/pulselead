@@ -105,7 +105,7 @@ const LandingPage = () => {
         </div>
       </header>
 
-      <main className="pt-20">
+      <main className="pt-14 sm:pt-16">
         {/* ═══════════════════════════════════════════════════════════════════
             HERO SECTION - Accroche principale
         ═══════════════════════════════════════════════════════════════════ */}
