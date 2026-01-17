@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Factory } from "lucide-react";
@@ -9,7 +9,7 @@ import { fr } from "date-fns/locale";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { ProspectStatusBadge, ProspectStatus } from "./ProspectStatusBadge";
 import { useProspectStatuses } from "@/hooks/useProspectStatuses";
-
+import { RelatedEstablishmentsCard } from "./RelatedEstablishmentsCard";
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
   onSiteSelect?: (site: any) => void;
@@ -27,6 +27,8 @@ export const NouveauxSitesListView = ({
   onToggleSelection,
   userId
 }: NouveauxSitesListViewProps) => {
+  // State for flip card - shows related establishments
+  const [expandedCard, setExpandedCard] = useState<{ siteId: string; name: string; relatedIds: string[] } | null>(null);
   const { 
     data, 
     isLoading,
@@ -143,7 +145,18 @@ export const NouveauxSitesListView = ({
                           {site.nom}
                         </h4>
                         {(site as any).multipleCreations && (
-                          <Badge variant="secondary" className="text-[10px] sm:text-xs bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 shrink-0">
+                          <Badge 
+                            variant="secondary" 
+                            className="text-[10px] sm:text-xs bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 shrink-0 cursor-pointer hover:bg-orange-500/30 hover:scale-105 transition-all"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedCard({
+                                siteId: site.id,
+                                name: site.nom,
+                                relatedIds: (site as any).relatedIds || [site.id]
+                              });
+                            }}
+                          >
                             ×{(site as any).multipleCreations}
                           </Badge>
                         )}
@@ -214,6 +227,14 @@ export const NouveauxSitesListView = ({
                     )}
                   </div>
 
+                  {/* Flip Card - Related Establishments */}
+                  {expandedCard?.siteId === site.id && (
+                    <RelatedEstablishmentsCard
+                      companyName={expandedCard.name}
+                      relatedIds={expandedCard.relatedIds}
+                      onClose={() => setExpandedCard(null)}
+                    />
+                  )}
                 </div>
               );
             })}
