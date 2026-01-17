@@ -7,7 +7,7 @@ import { MagicLinkEmail } from './_templates/magic-link.tsx'
 import { ResetPasswordEmail } from './_templates/reset-password.tsx'
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY') as string)
-const hookSecret = Deno.env.get('SEN_EMAIL_HOOK_SECRET') as string
+const hookSecret = Deno.env.get('SEND_EMAIL_HOOK_SECRET') as string
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
