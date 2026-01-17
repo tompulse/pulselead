@@ -125,7 +125,7 @@ serve(async (req) => {
                   <!-- CTA Button -->
                   <tr>
                     <td style="padding: 20px 40px 40px; text-align: center;">
-                      <a href="https://pulse.lovable.app/dashboard" style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #0ea5e9, #06b6d4); color: #000000; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 8px;">
+                      <a href="https://pulselead.lovable.app/dashboard" style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #0ea5e9, #06b6d4); color: #000000; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 8px;">
                         Accéder à mon tableau de bord
                       </a>
                     </td>
@@ -136,7 +136,7 @@ serve(async (req) => {
                     <td style="padding: 20px 40px; border-top: 1px solid rgba(6, 182, 212, 0.2); text-align: center;">
                       <p style="margin: 0; font-size: 12px; color: #71717a;">
                         Vous ne serez débité de 49€/mois qu'à la fin de votre période d'essai.<br>
-                        Annulez à tout moment depuis <a href="https://pulse.lovable.app/security" style="color: #06b6d4;">votre espace sécurité</a>.
+                        Annulez à tout moment depuis <a href="https://pulselead.lovable.app/security" style="color: #06b6d4;">votre espace sécurité</a>.
                       </p>
                       <p style="margin: 15px 0 0; font-size: 12px; color: #52525b;">
                         © 2026 PULSE — Tom Iolov — 108 rue de Crimée, 75019 Paris, France
