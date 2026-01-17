@@ -13,6 +13,11 @@ interface FilterCounts {
   typesEtablissement: Record<string, number>;
 }
 
+interface DualFilterCounts {
+  contextual: FilterCounts;
+  global: FilterCounts;
+}
+
 interface FiltersInput {
   nafSections?: string[];
   nafDivisions?: string[];
@@ -23,10 +28,22 @@ interface FiltersInput {
   searchQuery?: string;
 }
 
+const emptyFilterCounts: FilterCounts = {
+  nafSections: {},
+  nafDivisions: {},
+  nafGroupes: {},
+  nafClasses: {},
+  nafSousClasses: {},
+  departments: {},
+  taillesEntreprise: {},
+  categoriesJuridiques: {},
+  typesEtablissement: {},
+};
+
 export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
   return useQuery({
     queryKey: [
-      'nouveaux-sites-available-filters-dynamic',
+      'nouveaux-sites-available-filters-dual',
       filters.nafSections || [],
       filters.nafDivisions || [],
       filters.departments || [],
@@ -35,37 +52,75 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       filters.typesEtablissement || [],
       filters.searchQuery || ''
     ],
-    queryFn: async (): Promise<FilterCounts> => {
-      // Use the dynamic PostgreSQL function for contextual counts
-      // All filters are passed for full cross-filtering
-      const { data, error } = await supabase.rpc('get_nouveaux_sites_filter_counts_dynamic', {
-        p_naf_sections: filters.nafSections?.length ? filters.nafSections : null,
-        p_naf_divisions: filters.nafDivisions?.length ? filters.nafDivisions : null,
-        p_departments: filters.departments?.length ? filters.departments : null,
-        p_tailles: filters.taillesEntreprise?.length ? filters.taillesEntreprise : null,
-        p_categories_juridiques: filters.categoriesJuridiques?.length ? filters.categoriesJuridiques : null,
-        p_types_etablissement: filters.typesEtablissement?.length ? filters.typesEtablissement : null,
-        p_search_query: filters.searchQuery?.trim() || null
-      });
+    queryFn: async (): Promise<DualFilterCounts> => {
+      // Fetch both contextual (with filters) and global (without filters) counts in parallel
+      const hasActiveFilters = 
+        (filters.nafSections?.length || 0) > 0 ||
+        (filters.nafDivisions?.length || 0) > 0 ||
+        (filters.departments?.length || 0) > 0 ||
+        (filters.taillesEntreprise?.length || 0) > 0 ||
+        (filters.categoriesJuridiques?.length || 0) > 0 ||
+        (filters.typesEtablissement?.length || 0) > 0 ||
+        (filters.searchQuery?.trim() || '').length > 0;
+
+      const [contextualResult, globalResult] = await Promise.all([
+        // Contextual counts (with all filters applied)
+        supabase.rpc('get_nouveaux_sites_filter_counts_dynamic', {
+          p_naf_sections: filters.nafSections?.length ? filters.nafSections : null,
+          p_naf_divisions: filters.nafDivisions?.length ? filters.nafDivisions : null,
+          p_departments: filters.departments?.length ? filters.departments : null,
+          p_tailles: filters.taillesEntreprise?.length ? filters.taillesEntreprise : null,
+          p_categories_juridiques: filters.categoriesJuridiques?.length ? filters.categoriesJuridiques : null,
+          p_types_etablissement: filters.typesEtablissement?.length ? filters.typesEtablissement : null,
+          p_search_query: filters.searchQuery?.trim() || null
+        }),
+        // Global counts (no filters) - only fetch if we have active filters
+        hasActiveFilters 
+          ? supabase.rpc('get_nouveaux_sites_filter_counts_dynamic', {
+              p_naf_sections: null,
+              p_naf_divisions: null,
+              p_departments: null,
+              p_tailles: null,
+              p_categories_juridiques: null,
+              p_types_etablissement: null,
+              p_search_query: null
+            })
+          : Promise.resolve({ data: null, error: null })
+      ]);
       
-      if (error) {
-        console.error('Error fetching dynamic filter counts:', error);
-        throw error;
+      if (contextualResult.error) {
+        console.error('Error fetching contextual filter counts:', contextualResult.error);
+        throw contextualResult.error;
       }
 
-      return {
-        nafSections: (data as any)?.nafSections || {},
-        nafDivisions: (data as any)?.nafDivisions || {},
-        nafGroupes: (data as any)?.nafGroupes || {},
-        nafClasses: (data as any)?.nafClasses || {},
-        nafSousClasses: (data as any)?.nafSousClasses || {},
-        departments: (data as any)?.departments || {},
-        taillesEntreprise: (data as any)?.taillesEntreprise || {},
-        categoriesJuridiques: (data as any)?.categoriesJuridiques || {},
-        typesEtablissement: (data as any)?.typesEtablissement || {},
+      const contextual: FilterCounts = {
+        nafSections: (contextualResult.data as any)?.nafSections || {},
+        nafDivisions: (contextualResult.data as any)?.nafDivisions || {},
+        nafGroupes: (contextualResult.data as any)?.nafGroupes || {},
+        nafClasses: (contextualResult.data as any)?.nafClasses || {},
+        nafSousClasses: (contextualResult.data as any)?.nafSousClasses || {},
+        departments: (contextualResult.data as any)?.departments || {},
+        taillesEntreprise: (contextualResult.data as any)?.taillesEntreprise || {},
+        categoriesJuridiques: (contextualResult.data as any)?.categoriesJuridiques || {},
+        typesEtablissement: (contextualResult.data as any)?.typesEtablissement || {},
       };
+
+      // If no active filters, global = contextual
+      const global: FilterCounts = hasActiveFilters && globalResult.data ? {
+        nafSections: (globalResult.data as any)?.nafSections || {},
+        nafDivisions: (globalResult.data as any)?.nafDivisions || {},
+        nafGroupes: (globalResult.data as any)?.nafGroupes || {},
+        nafClasses: (globalResult.data as any)?.nafClasses || {},
+        nafSousClasses: (globalResult.data as any)?.nafSousClasses || {},
+        departments: (globalResult.data as any)?.departments || {},
+        taillesEntreprise: (globalResult.data as any)?.taillesEntreprise || {},
+        categoriesJuridiques: (globalResult.data as any)?.categoriesJuridiques || {},
+        typesEtablissement: (globalResult.data as any)?.typesEtablissement || {},
+      } : contextual;
+
+      return { contextual, global };
     },
-    staleTime: 30000, // 30 secondes
+    staleTime: 30000,
     gcTime: 60000,
   });
 }
