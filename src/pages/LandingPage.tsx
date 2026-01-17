@@ -141,18 +141,18 @@ const LandingPage = () => {
               </Button>
 
               {/* Stats - Encapsulés dans des mini-cards */}
-              <div className="mt-8 sm:mt-10 grid grid-cols-3 gap-2 sm:gap-6 max-w-3xl mx-auto">
-                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
-                  <div className="text-xl sm:text-3xl md:text-4xl font-bold gradient-text whitespace-nowrap">+1 900</div>
-                  <p className="text-white/60 text-[10px] sm:text-sm mt-1">entreprises/sem.</p>
+              <div className="mt-8 sm:mt-10 flex justify-center gap-2 sm:gap-6 max-w-3xl mx-auto px-2">
+                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
+                  <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text whitespace-nowrap">+1 900</div>
+                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">entreprises/sem.</p>
                 </div>
-                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
-                  <div className="text-xl sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
-                  <p className="text-white/60 text-[10px] sm:text-sm mt-1">gagnées/jour</p>
+                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
+                  <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
+                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">gagnées/jour</p>
                 </div>
-                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
-                  <div className="text-xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
-                  <p className="text-white/60 text-[10px] sm:text-sm mt-1">satisfaction</p>
+                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
+                  <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
+                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">satisfaction</p>
                 </div>
               </div>
 
@@ -383,8 +383,8 @@ const LandingPage = () => {
                         </li>
                       ))}
                     </ul>
-                    <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" onClick={() => navigate('/subscribe')}>
-                      Essayer gratuitement 7 jours
+                    <Button className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" onClick={() => navigate('/subscribe')}>
+                      Commencer maintenant
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </div>
@@ -458,7 +458,7 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-5xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">Vos questions, nos réponses</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl mx-auto">
                 {[
                   { q: "Comment PULSE structure ma prospection ?", a: "PULSE vous donne une vision complète de votre territoire avec tous vos prospects, des tournées calculées automatiquement pour optimiser vos déplacements, et un CRM mobile pour suivre chaque action." },
                   { q: "Les données sont-elles fiables ?", a: "Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement." },
