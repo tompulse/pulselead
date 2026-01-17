@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
 
     // Envoyer l'email via Resend
     const { error } = await resend.emails.send({
-      from: 'PULSE <onboarding@resend.dev>',
+      from: 'PULSE <noreply@pulse-lead.com>',
       to: [user.email],
       subject,
       html,

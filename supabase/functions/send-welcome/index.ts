@@ -50,9 +50,7 @@ serve(async (req) => {
     const displayName = firstName || email.split('@')[0].replace(/[._]/g, ' ');
 
     const { data, error } = await resend.emails.send({
-      // Important: en mode dev/test, utiliser un expéditeur Resend vérifié.
-      // Pour envoyer depuis @pulse.lovable.app, il faut d'abord vérifier le domaine chez Resend.
-      from: "PULSE <onboarding@resend.dev>",
+      from: "PULSE <noreply@pulse-lead.com>",
       to: [email],
       subject: "🚀 Bienvenue sur PULSE - Votre essai gratuit a commencé !",
       html: `
