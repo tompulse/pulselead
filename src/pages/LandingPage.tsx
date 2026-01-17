@@ -258,7 +258,9 @@ const LandingPage = () => {
             BEFORE/AFTER SECTION - Transformation
         ═══════════════════════════════════════════════════════════════════ */}
         <section id="avantages" className="py-14 sm:py-16 px-6 scroll-mt-20 relative z-10" style={{
-          background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3))'
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%)',
+          borderTop: '1px solid rgba(16, 185, 129, 0.15)',
+          borderBottom: '1px solid rgba(16, 185, 129, 0.15)'
         }}>
           <div className="container mx-auto max-w-5xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
