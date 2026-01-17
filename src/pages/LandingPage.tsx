@@ -202,7 +202,7 @@ const LandingPage = () => {
         </section>
 
         {/* Solution Section */}
-        <section id="solution" className="py-12 px-6 relative z-10" style={{
+        <section id="solution" className="py-12 px-6 relative z-10 scroll-mt-20" style={{
         background: 'radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%)'
       }}>
           <div className="container mx-auto max-w-6xl">
@@ -247,7 +247,7 @@ const LandingPage = () => {
         </section>
 
         {/* Before/After Section */}
-        <section id="avantages" className="py-12 px-6 relative z-10" style={{
+        <section id="avantages" className="py-12 px-6 relative z-10 scroll-mt-20" style={{
         background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4)), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(6, 182, 212, 0.03) 50px, rgba(6, 182, 212, 0.03) 51px)',
         backgroundSize: '100% 100%, 100px 100%'
       }}>
@@ -318,7 +318,7 @@ const LandingPage = () => {
 
 
         {/* Pricing */}
-        <section id="pricing" className="py-16 px-6 relative z-10" style={{
+        <section id="pricing" className="py-16 px-6 relative z-10 scroll-mt-20" style={{
         background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
         borderTop: '2px solid rgba(6, 182, 212, 0.2)'
       }}>

@@ -3,7 +3,7 @@ import { MessageSquare } from "lucide-react";
 import { trackEvent } from "@/utils/analytics";
 const ContactSection = () => {
   const waUrl = `https://wa.me/33760227532?text=${encodeURIComponent("Bonjour, je souhaite en savoir plus sur PULSE.")}`;
-  return <section className="relative py-16 px-4 sm:px-6 lg:px-8">
+  return <section id="contact" className="relative py-16 px-4 sm:px-6 lg:px-8 scroll-mt-20">
       <div className="container mx-auto max-w-4xl">
         <div className="glass-card p-8 md:p-10 border-accent/30 shadow-2xl shadow-accent/20 transition-colors text-center">
           <div className="space-y-6">
