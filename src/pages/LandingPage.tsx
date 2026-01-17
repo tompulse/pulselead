@@ -65,11 +65,11 @@ const LandingPage = () => {
             </nav>
 
             {/* Tablet nav - flex positioned, visible from sm to lg */}
-            <nav className="hidden sm:flex lg:hidden items-center gap-2 md:gap-4 flex-1 justify-center mx-2">
-              <a href="#solution" className="text-[10px] md:text-xs text-white/70 hover:text-accent transition-colors whitespace-nowrap">Fonctionnalités</a>
-              <a href="#avantages" className="text-[10px] md:text-xs text-white/70 hover:text-accent transition-colors whitespace-nowrap">Avantages</a>
-              <a href="#pricing" className="text-[10px] md:text-xs text-white/70 hover:text-accent transition-colors whitespace-nowrap">Tarifs</a>
-              <a href="#contact" className="text-[10px] md:text-xs text-white/70 hover:text-accent transition-colors whitespace-nowrap">Contact</a>
+            <nav className="hidden sm:flex lg:hidden items-center gap-4 md:gap-6 flex-1 justify-center mx-2">
+              <a href="#solution" className="text-xs md:text-sm text-white/70 hover:text-accent transition-colors whitespace-nowrap">Fonctionnalités</a>
+              <a href="#avantages" className="text-xs md:text-sm text-white/70 hover:text-accent transition-colors whitespace-nowrap">Avantages</a>
+              <a href="#pricing" className="text-xs md:text-sm text-white/70 hover:text-accent transition-colors whitespace-nowrap">Tarifs</a>
+              <a href="#contact" className="text-xs md:text-sm text-white/70 hover:text-accent transition-colors whitespace-nowrap">Contact</a>
             </nav>
 
             {/* Desktop buttons - visible from lg breakpoint */}
@@ -86,12 +86,12 @@ const LandingPage = () => {
 
             {/* Tablet buttons - visible from sm to lg */}
             <div className="hidden sm:flex lg:hidden items-center gap-2 shrink-0">
-              <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold h-7 px-2 text-[10px] md:text-xs">
+              <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold h-8 px-3 text-xs">
                 <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
                   Démo
                 </a>
               </Button>
-              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-7 px-2 text-[10px] md:text-xs">
+              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-8 px-3 text-xs">
                 Connexion
               </Button>
             </div>
