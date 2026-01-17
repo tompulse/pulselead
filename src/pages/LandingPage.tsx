@@ -182,7 +182,7 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-8 sm:mb-10">
-                Ce qui vous freine aujourd'hui
+                Ce qui vous <span className="text-red-500">freine</span> aujourd'hui
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
                 <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/50 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
@@ -216,7 +216,7 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
-                Fonctionnalités <span className="gradient-text">PULSE</span>
+                Fonctionnalités
               </h2>
               <p className="text-lg sm:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
                 Contrôlez votre territoire, optimisez chaque action commerciale
