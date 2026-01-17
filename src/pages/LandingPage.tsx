@@ -114,45 +114,45 @@ const LandingPage = () => {
             <div ref={heroAnimation.ref} className={`text-center scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/20 mb-6">
-                <Target className="w-4 h-4 text-accent" />
-                <span className="text-sm text-white/90 font-medium">Essai gratuit 7 jours</span>
+              <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-accent/20 mb-5">
+                <Target className="w-3.5 h-3.5 text-accent" />
+                <span className="text-xs sm:text-sm text-white/90 font-medium">Essai gratuit 7 jours</span>
               </div>
 
-              {/* Headline - Ancienne accroche */}
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] mb-5">
+              {/* Headline - Harmonisé */}
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] mb-4">
                 Vendez plus.
                 <br />
                 <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">Roulez moins.</span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-lg sm:text-xl md:text-2xl text-white/70 max-w-3xl mx-auto mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-6">
                 Liste de prospects filtrée • Tournées optimisées • CRM simple pour suivre vos visites sur le terrain
               </p>
 
               {/* CTA */}
               <Button 
                 onClick={() => navigate('/subscribe')} 
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg sm:text-xl px-8 sm:px-12 py-6 sm:py-7 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
               >
                 Commencer maintenant
-                <ArrowRight className="ml-3 w-6 h-6" />
+                <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
 
-              {/* Stats */}
-              <div className="mt-10 sm:mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto">
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">+1 900</div>
-                  <p className="text-white/60 text-sm sm:text-base mt-1">nouvelles entreprises/semaine</p>
+              {/* Stats - Encapsulés dans des mini-cards */}
+              <div className="mt-8 sm:mt-10 grid grid-cols-3 gap-3 sm:gap-6 max-w-3xl mx-auto">
+                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+1 900</div>
+                  <p className="text-white/60 text-xs sm:text-sm mt-1">entreprises/semaine</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">1h30</div>
-                  <p className="text-white/60 text-sm sm:text-base mt-1">gagnées par jour</p>
+                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
+                  <p className="text-white/60 text-xs sm:text-sm mt-1">gagnées/jour</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">92%</div>
-                  <p className="text-white/60 text-sm sm:text-base mt-1">de satisfaction</p>
+                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
+                  <p className="text-white/60 text-xs sm:text-sm mt-1">de satisfaction</p>
                 </div>
               </div>
 
