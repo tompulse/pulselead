@@ -30,7 +30,7 @@ const LandingPage = () => {
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-xl border-b border-white/10">
+      <header className="sticky top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-xl border-b border-white/10">
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-xl sm:text-2xl font-bold">
@@ -209,7 +209,9 @@ const LandingPage = () => {
             SOLUTION SECTION - Fonctionnalités PULSE
         ═══════════════════════════════════════════════════════════════════ */}
         <section id="solution" className="py-14 sm:py-16 px-6 scroll-mt-20 relative z-10" style={{
-          background: 'radial-gradient(ellipse at center, rgba(6, 182, 212, 0.08) 0%, transparent 70%)'
+          background: 'radial-gradient(ellipse at center, rgba(6, 182, 212, 0.08) 0%, transparent 70%)',
+          borderTop: '1px solid rgba(6, 182, 212, 0.15)',
+          borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
