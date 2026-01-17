@@ -39,7 +39,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const formattedDate = formatDate(trialEndDate);
     const displayName = firstName || "cher utilisateur";
-    const manageUrl = portalUrl || "https://pulse.lovable.app/security";
+    const manageUrl = portalUrl || "https://pulselead.lovable.app/security";
 
     const emailResponse = await resend.emails.send({
       from: "PULSE <onboarding@resend.dev>",
