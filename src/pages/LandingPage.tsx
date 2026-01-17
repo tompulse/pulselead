@@ -141,18 +141,18 @@ const LandingPage = () => {
               </Button>
 
               {/* Stats - Encapsulés dans des mini-cards */}
-              <div className="mt-8 sm:mt-10 grid grid-cols-3 gap-3 sm:gap-6 max-w-3xl mx-auto">
-                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+1 900</div>
-                  <p className="text-white/60 text-xs sm:text-sm mt-1">entreprises/semaine</p>
+              <div className="mt-8 sm:mt-10 grid grid-cols-3 gap-2 sm:gap-6 max-w-3xl mx-auto">
+                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
+                  <div className="text-xl sm:text-3xl md:text-4xl font-bold gradient-text whitespace-nowrap">+1 900</div>
+                  <p className="text-white/60 text-[10px] sm:text-sm mt-1">entreprises/sem.</p>
                 </div>
-                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
-                  <p className="text-white/60 text-xs sm:text-sm mt-1">gagnées/jour</p>
+                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
+                  <div className="text-xl sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
+                  <p className="text-white/60 text-[10px] sm:text-sm mt-1">gagnées/jour</p>
                 </div>
-                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
-                  <p className="text-white/60 text-xs sm:text-sm mt-1">de satisfaction</p>
+                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
+                  <div className="text-xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
+                  <p className="text-white/60 text-[10px] sm:text-sm mt-1">satisfaction</p>
                 </div>
               </div>
 
@@ -221,14 +221,14 @@ const LandingPage = () => {
               <p className="text-lg sm:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
                 Contrôlez votre territoire, optimisez chaque action commerciale
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
                 <div className="text-center space-y-3 group cursor-default">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10 group-hover:border-accent/60 group-hover:shadow-xl group-hover:shadow-accent/30 group-hover:scale-110 transition-all duration-300">
                     <Target className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold group-hover:text-accent transition-colors duration-300">Liste de prospects filtrée</h3>
                   <p className="text-white/60 text-sm sm:text-base">
-                    Accédez à toutes les nouvelles entreprises créées en France. Filtrez par code NAF, département, taille, catégorie juridique, siège social et date de création
+                    Accédez à toutes les nouvelles entreprises créées en France. Filtrez par code NAF, département, taille, etc.
                   </p>
                 </div>
                 <div className="text-center space-y-3 group cursor-default">
@@ -533,8 +533,8 @@ const LandingPage = () => {
 
         {/* Sticky CTA Mobile */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
-          <Button onClick={() => navigate('/subscribe')} className="w-full bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold py-4 rounded-full shadow-lg shadow-accent/40">
-            Essayer gratuitement 7 jours
+          <Button onClick={() => navigate('/subscribe')} className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 rounded-full shadow-lg shadow-green-500/40">
+            Commencer maintenant
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
