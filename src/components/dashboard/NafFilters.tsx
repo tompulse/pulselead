@@ -1287,12 +1287,12 @@ export const NafFilters = ({
         <CollapsibleContent>
           <div className="px-4 pb-4">
             {isLoading ? (
-              <div className="grid grid-cols-2 gap-3">
-                <Skeleton className="h-24 w-full rounded-xl" />
-                <Skeleton className="h-24 w-full rounded-xl" />
+              <div className="grid grid-cols-2 gap-2">
+                <Skeleton className="h-16 w-full rounded-lg" />
+                <Skeleton className="h-16 w-full rounded-lg" />
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 {/* Oui = siège */}
                 {(() => {
                   const siegeData = availableTypesEvenement.find(t => t.type === 'siege');
@@ -1302,17 +1302,17 @@ export const NafFilters = ({
                   return (
                     <button
                       onClick={() => handleTypeEtablissementToggle('siege')}
-                      className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl font-medium text-sm transition-all active:scale-[0.97] overflow-hidden ${
+                      className={`relative flex items-center gap-2 px-3 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
                         selected
-                          ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/25 ring-2 ring-emerald-400/50'
-                          : 'bg-gradient-to-br from-muted/80 to-muted/40 hover:from-emerald-500/10 hover:to-emerald-600/5 border border-border/50 text-foreground hover:border-emerald-500/30'
+                          ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/25 ring-1 ring-emerald-400/50'
+                          : 'bg-muted/50 hover:bg-emerald-500/10 border border-border/50 text-foreground hover:border-emerald-500/30'
                       }`}
                     >
-                      <div className={`p-2 rounded-full ${selected ? 'bg-white/20' : 'bg-emerald-500/10'}`}>
-                        <Building className={`w-5 h-5 ${selected ? 'text-white' : 'text-emerald-500'}`} />
+                      <div className={`p-1.5 rounded-md ${selected ? 'bg-white/20' : 'bg-emerald-500/10'}`}>
+                        <Building className={`w-4 h-4 ${selected ? 'text-white' : 'text-emerald-500'}`} />
                       </div>
-                      <span className={`font-semibold ${selected ? 'text-white' : 'text-foreground'}`}>Oui</span>
-                      <span className={`text-xs px-2.5 py-1 rounded-full tabular-nums ${
+                      <span className={`flex-1 text-left text-sm ${selected ? 'text-white font-medium' : 'text-foreground'}`}>Oui</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full tabular-nums ${
                         selected ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-500'
                       }`}>
                         {hasActiveFilters && siegeCount !== siegeGlobalCount 
@@ -1332,17 +1332,17 @@ export const NafFilters = ({
                   return (
                     <button
                       onClick={() => handleTypeEtablissementToggle('etablissement')}
-                      className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl font-medium text-sm transition-all active:scale-[0.97] overflow-hidden ${
+                      className={`relative flex items-center gap-2 px-3 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
                         selected
-                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 ring-2 ring-blue-400/50'
-                          : 'bg-gradient-to-br from-muted/80 to-muted/40 hover:from-blue-500/10 hover:to-blue-600/5 border border-border/50 text-foreground hover:border-blue-500/30'
+                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/25 ring-1 ring-blue-400/50'
+                          : 'bg-muted/50 hover:bg-blue-500/10 border border-border/50 text-foreground hover:border-blue-500/30'
                       }`}
                     >
-                      <div className={`p-2 rounded-full ${selected ? 'bg-white/20' : 'bg-blue-500/10'}`}>
-                        <MapPin className={`w-5 h-5 ${selected ? 'text-white' : 'text-blue-500'}`} />
+                      <div className={`p-1.5 rounded-md ${selected ? 'bg-white/20' : 'bg-blue-500/10'}`}>
+                        <MapPin className={`w-4 h-4 ${selected ? 'text-white' : 'text-blue-500'}`} />
                       </div>
-                      <span className={`font-semibold ${selected ? 'text-white' : 'text-foreground'}`}>Non</span>
-                      <span className={`text-xs px-2.5 py-1 rounded-full tabular-nums ${
+                      <span className={`flex-1 text-left text-sm ${selected ? 'text-white font-medium' : 'text-foreground'}`}>Non</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full tabular-nums ${
                         selected ? 'bg-white/20 text-white' : 'bg-blue-500/10 text-blue-500'
                       }`}>
                         {hasActiveFilters && nonSiegeCount !== nonSiegeGlobalCount 
