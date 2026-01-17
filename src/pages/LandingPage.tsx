@@ -56,7 +56,7 @@ const LandingPage = () => {
 
             {/* Desktop buttons */}
             <div className="hidden lg:flex items-center gap-3">
-              <Button asChild variant="ghost" className="text-white/70 hover:text-white hover:bg-white/5">
+              <Button asChild variant="outline" className="border-2 border-accent text-accent hover:bg-accent/10 font-semibold px-6">
                 <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
                   Réserver une démo
                 </a>
