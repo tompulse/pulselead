@@ -19,14 +19,18 @@ const LandingPage = () => {
   const faqAnimation = useScrollAnimation({ threshold: 0.2 });
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#0a0f1a]">
-      {/* Subtle background gradient */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-accent/5 rounded-full blur-[120px]"></div>
+    <div className="min-h-screen relative overflow-hidden" style={{
+      background: 'radial-gradient(ellipse at top, hsl(220, 60%, 12%), hsl(220, 60%, 8%), hsl(0, 0%, 0%))'
+    }}>
+      {/* Vibrant background elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-accent/15 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '8s' }}></div>
+        <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[80px] animate-pulse" style={{ animationDuration: '10s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-[120px]"></div>
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0f1a]/90 backdrop-blur-xl border-b border-white/5">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-xl border-b border-white/10">
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-xl sm:text-2xl font-bold">
@@ -77,7 +81,7 @@ const LandingPage = () => {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-72 bg-[#0a0f1a] border-white/10">
+                <SheetContent side="right" className="w-72 bg-card/95 backdrop-blur-xl border-accent/20">
                   <nav className="flex flex-col gap-4 mt-8">
                     <a href="#solution" className="text-lg text-white/80 hover:text-white py-2">Fonctionnalités</a>
                     <a href="#avantages" className="text-lg text-white/80 hover:text-white py-2">Avantages</a>
@@ -105,64 +109,62 @@ const LandingPage = () => {
         {/* ═══════════════════════════════════════════════════════════════════
             HERO SECTION - Accroche principale
         ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-16 sm:py-20 lg:py-28 px-6">
-          <div className="container mx-auto max-w-5xl">
+        <section className="py-12 sm:py-16 lg:py-20 px-6 relative z-10">
+          <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-full border border-accent/20 mb-8">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span className="text-sm text-white/80">7 jours d'essai gratuit • Sans engagement</span>
+              <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/20 mb-6">
+                <Target className="w-4 h-4 text-accent" />
+                <span className="text-sm text-white/90 font-medium">Essai gratuit 7 jours</span>
               </div>
 
-              {/* Headline */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6">
-                Trouvez vos clients.
+              {/* Headline - Ancienne accroche */}
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] mb-5">
+                Vendez plus.
                 <br />
-                <span className="bg-gradient-to-r from-accent via-cyan-400 to-accent bg-clip-text text-transparent">
-                  Pas votre chemin.
-                </span>
+                <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">Roulez moins.</span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10">
-                PULSE détecte les nouvelles entreprises de votre secteur, optimise vos tournées et centralise votre suivi commercial.
+              <p className="text-lg sm:text-xl md:text-2xl text-white/70 max-w-3xl mx-auto mb-8">
+                Liste de prospects filtrée • Tournées optimisées • CRM simple pour suivre vos visites sur le terrain
               </p>
 
               {/* CTA */}
               <Button 
                 onClick={() => navigate('/subscribe')} 
-                className="bg-accent hover:bg-accent/90 text-black font-bold text-lg px-10 py-7 rounded-xl shadow-2xl shadow-accent/20 hover:shadow-accent/30 hover:scale-[1.02] transition-all"
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg sm:text-xl px-8 sm:px-12 py-6 sm:py-7 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
               >
-                Commencer gratuitement
-                <ArrowRight className="ml-3 w-5 h-5" />
+                Commencer maintenant
+                <ArrowRight className="ml-3 w-6 h-6" />
               </Button>
 
               {/* Stats */}
-              <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+              <div className="mt-10 sm:mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto">
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-accent">+1 900</div>
-                  <p className="text-white/50 text-sm mt-1">entreprises/semaine</p>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">+1 900</div>
+                  <p className="text-white/60 text-sm sm:text-base mt-1">nouvelles entreprises/semaine</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-accent">1h30</div>
-                  <p className="text-white/50 text-sm mt-1">gagnées/jour</p>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">1h30</div>
+                  <p className="text-white/60 text-sm sm:text-base mt-1">gagnées par jour</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-accent">92%</div>
-                  <p className="text-white/50 text-sm mt-1">de satisfaction</p>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">92%</div>
+                  <p className="text-white/60 text-sm sm:text-base mt-1">de satisfaction</p>
                 </div>
               </div>
 
               {/* Trust badges */}
-              <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-white/40">
+              <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-white/50">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
+                  <Check className="w-4 h-4 text-green-500" />
                   <span>Conforme RGPD</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Database className="w-4 h-4 text-accent" />
-                  <span>Données INSEE officielles</span>
+                  <span>Données publiques officielles</span>
                 </div>
               </div>
             </div>
@@ -170,42 +172,33 @@ const LandingPage = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            PROBLEMS SECTION - Le problème que vous résolvez
+            PROBLEMS SECTION - Le problème
         ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-20 sm:py-24 px-6">
-          <div className="container mx-auto max-w-5xl">
+        <section className="py-14 sm:py-16 px-6 relative z-10" style={{
+          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
+          borderTop: '1px solid rgba(239, 68, 68, 0.1)',
+          borderBottom: '1px solid rgba(239, 68, 68, 0.1)'
+        }}>
+          <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              
-              <div className="text-center mb-14">
-                <span className="text-red-400/70 text-xs font-semibold uppercase tracking-widest">Le constat</span>
-                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
-                  Vous perdez du temps et des opportunités
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="bg-white/[0.02] border-white/5 p-6 hover:border-red-500/20 transition-colors">
-                  <MapPin className="w-8 h-8 text-red-400/70 mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Aucune visibilité terrain</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    Vous ne savez pas où sont vos prospects ni lesquels cibler en priorité.
-                  </p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-8 sm:mb-10">
+                Ce qui vous freine aujourd'hui
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
+                  <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Aucune visibilité secteur</h3>
+                  <p className="text-white/60 text-sm sm:text-base">Impossible de savoir où sont vos prospects, qui cibler en priorité</p>
                 </Card>
-
-                <Card className="bg-white/[0.02] border-white/5 p-6 hover:border-red-500/20 transition-colors">
-                  <FileText className="w-8 h-8 text-red-400/70 mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Données éparpillées</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    Excel, carnets, post-its... Vos informations sont perdues et inutilisables.
-                  </p>
+                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
+                  <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Données éparpillées</h3>
+                  <p className="text-white/60 text-sm sm:text-base">Excel, carnets, post-its... Relances oubliées, historique perdu</p>
                 </Card>
-
-                <Card className="bg-white/[0.02] border-white/5 p-6 hover:border-red-500/20 transition-colors">
-                  <Route className="w-8 h-8 text-red-400/70 mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Trajets improvisés</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    Des kilomètres inutiles, du temps perdu, moins de visites par jour.
-                  </p>
+                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
+                  <Route className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Trajets improvisés</h3>
+                  <p className="text-white/60 text-sm sm:text-base">Des kilomètres inutiles, du temps perdu, moins de visites</p>
                 </Card>
               </div>
             </div>
@@ -213,49 +206,45 @@ const LandingPage = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SOLUTION SECTION - Comment PULSE résout le problème
+            SOLUTION SECTION - Fonctionnalités PULSE
         ═══════════════════════════════════════════════════════════════════ */}
-        <section id="solution" className="py-20 sm:py-24 px-6 scroll-mt-20 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-accent/[0.04] to-accent/[0.02] pointer-events-none"></div>
-          
-          <div className="container mx-auto max-w-5xl relative">
+        <section id="solution" className="py-14 sm:py-16 px-6 scroll-mt-20 relative z-10" style={{
+          background: 'radial-gradient(ellipse at center, rgba(6, 182, 212, 0.08) 0%, transparent 70%)'
+        }}>
+          <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
-              
-              <div className="text-center mb-14">
-                <span className="text-accent text-xs font-semibold uppercase tracking-widest">La solution</span>
-                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
-                  Tout ce qu'il vous faut pour prospecter
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="text-center group">
-                  <div className="w-16 h-16 mx-auto rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                    <Target className="w-7 h-7 text-accent" />
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
+                Fonctionnalités <span className="gradient-text">PULSE</span>
+              </h2>
+              <p className="text-lg sm:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
+                Contrôlez votre territoire, optimisez chaque action commerciale
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10">
+                <div className="text-center space-y-3">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10">
+                    <Target className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Prospects qualifiés</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    Accédez aux nouvelles entreprises créées chaque semaine. Filtrez par zone, secteur et taille.
+                  <h3 className="text-xl sm:text-2xl font-bold">Liste de prospects filtrée</h3>
+                  <p className="text-white/60 text-sm sm:text-base">
+                    Accédez à toutes les nouvelles entreprises créées en France. Filtrez par département, secteur et taille
                   </p>
                 </div>
-
-                <div className="text-center group">
-                  <div className="w-16 h-16 mx-auto rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                    <Route className="w-7 h-7 text-accent" />
+                <div className="text-center space-y-3">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10">
+                    <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Tournées optimisées</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    L'IA calcule le meilleur itinéraire. Moins de route, plus de rendez-vous.
+                  <h3 className="text-xl sm:text-2xl font-bold">Tournées optimisées IA</h3>
+                  <p className="text-white/60 text-sm sm:text-base">
+                    Sélectionnez vos prospects, créez votre tournée, l'IA calcule l'itinéraire optimal
                   </p>
                 </div>
-
-                <div className="text-center group">
-                  <div className="w-16 h-16 mx-auto rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                    <Smartphone className="w-7 h-7 text-accent" />
+                <div className="text-center space-y-3">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10">
+                    <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">CRM mobile</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    Suivez vos visites et relances depuis votre téléphone. Simple et efficace.
+                  <h3 className="text-xl sm:text-2xl font-bold">CRM terrain simple</h3>
+                  <p className="text-white/60 text-sm sm:text-base">
+                    Suivez vos visites, appels et relances depuis votre mobile. Simple, rapide, efficace
                   </p>
                 </div>
               </div>
@@ -266,61 +255,68 @@ const LandingPage = () => {
         {/* ═══════════════════════════════════════════════════════════════════
             BEFORE/AFTER SECTION - Transformation
         ═══════════════════════════════════════════════════════════════════ */}
-        <section id="avantages" className="py-20 sm:py-24 px-6 scroll-mt-20">
-          <div className="container mx-auto max-w-4xl">
+        <section id="avantages" className="py-14 sm:py-16 px-6 scroll-mt-20 relative z-10" style={{
+          background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3))'
+        }}>
+          <div className="container mx-auto max-w-5xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
-              
-              <div className="text-center mb-14">
-                <span className="text-white/40 text-xs font-semibold uppercase tracking-widest">Transformation</span>
-                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
-                  Avant / Après <span className="text-accent">PULSE</span>
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-8">
+                Avant / Après <span className="gradient-text">PULSE</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                 {/* Before */}
-                <Card className="bg-red-500/[0.03] border-red-500/10 p-6 sm:p-8">
+                <Card className="glass-card p-6 sm:p-8 border-red-500/30">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                      <TrendingDown className="w-5 h-5 text-red-400" />
+                    <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                      <TrendingDown className="w-6 h-6 text-red-500" />
                     </div>
-                    <span className="font-semibold text-lg">Sans PULSE</span>
+                    <h3 className="text-xl sm:text-2xl font-bold">Sans PULSE</h3>
                   </div>
-                  <ul className="space-y-4">
-                    {[
-                      "Opportunités perdues faute de suivi",
-                      "Journées improvisées sans stratégie",
-                      "Relances oubliées, prospects jamais recontactés",
-                      "Fin de mois stressante"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-white/60">
-                        <span className="text-red-400 mt-0.5">✕</span>
-                        <span className="text-sm">{item}</span>
-                      </li>
-                    ))}
+                  <ul className="space-y-4 text-sm sm:text-base text-white/70">
+                    <li className="flex items-start gap-3">
+                      <span className="text-red-500 mt-1 text-lg">✗</span>
+                      <span>RDV manqués et opportunités perdues faute de suivi</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-red-500 mt-1 text-lg">✗</span>
+                      <span>Journées à tourner en rond sans stratégie terrain</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-red-500 mt-1 text-lg">✗</span>
+                      <span>Relances oubliées, prospects jamais recontactés</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-red-500 mt-1 text-lg">✗</span>
+                      <span>Fin de mois stressante sans visibilité pipeline</span>
+                    </li>
                   </ul>
                 </Card>
 
                 {/* After */}
-                <Card className="bg-emerald-500/[0.03] border-emerald-500/10 p-6 sm:p-8">
+                <Card className="glass-card p-6 sm:p-8 border-emerald-500/30">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-emerald-400" />
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 text-emerald-500" />
                     </div>
-                    <span className="font-semibold text-lg">Avec PULSE</span>
+                    <h3 className="text-xl sm:text-2xl font-bold">Avec PULSE</h3>
                   </div>
-                  <ul className="space-y-4">
-                    {[
-                      "+30% de RDV grâce au ciblage précis",
-                      "Tournées planifiées, temps optimisé",
-                      "Relances programmées, rien n'est oublié",
-                      "Pipeline clair, objectifs maîtrisés"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-white/60">
-                        <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{item}</span>
-                      </li>
-                    ))}
+                  <ul className="space-y-4 text-sm sm:text-base text-white/70">
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span><strong className="text-emerald-400">+30%</strong> de nouveaux RDV grâce au ciblage</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Tournées optimisées : plus de visites, moins de km</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Relances programmées, aucun prospect oublié</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Pipeline clair : vous savez où vous en êtes</span>
+                    </li>
                   </ul>
                 </Card>
               </div>
@@ -331,110 +327,118 @@ const LandingPage = () => {
         {/* ═══════════════════════════════════════════════════════════════════
             PRICING SECTION - Tarification
         ═══════════════════════════════════════════════════════════════════ */}
-        <section id="pricing" className="py-20 sm:py-24 px-6 scroll-mt-20 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-accent/[0.04] to-accent/[0.02] pointer-events-none"></div>
-          
-          <div className="container mx-auto max-w-5xl relative">
+        <section id="pricing" className="py-14 sm:py-16 px-6 scroll-mt-20 relative z-10" style={{
+          background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
+          borderTop: '2px solid rgba(6, 182, 212, 0.2)'
+        }}>
+          <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
+                Choisissez votre formule <span className="gradient-text">PULSE</span>
+              </h2>
+              <p className="text-lg sm:text-xl text-white/60 text-center mb-8 max-w-2xl mx-auto">
+                Structurez votre prospection, optimisez chaque visite
+              </p>
               
-              <div className="text-center mb-14">
-                <span className="text-accent text-xs font-semibold uppercase tracking-widest">Tarifs</span>
-                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
-                  Un prix simple, tout inclus
-                </h2>
-                <p className="text-white/50 mt-3">Sans engagement • Annulable à tout moment</p>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
                 {/* Commercial Solo */}
-                <Card className="relative bg-accent/[0.05] border-accent/30 p-6 sm:p-8">
-                  <div className="absolute -top-3 left-6 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    7 JOURS GRATUITS
+                <Card className="relative overflow-visible flex flex-col" style={{
+                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
+                  border: '2px solid rgba(6, 182, 212, 0.5)',
+                  boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+                }}>
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
+                    🎁 7 JOURS D'ESSAI GRATUIT
                   </div>
-                  
-                  <h3 className="text-2xl font-bold text-accent mt-2">Commercial Solo</h3>
-                  <p className="text-white/50 text-sm mt-1 mb-6">Pour les commerciaux indépendants</p>
-                  
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-4xl font-bold">49€</span>
-                    <span className="text-white/50">/mois</span>
+                  <div className="p-5 sm:p-6 pt-8 flex flex-col flex-1">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">Commercial Solo</h3>
+                    <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(6,182,212,0.2)' }}>
+                      <div className="flex items-baseline justify-center gap-2 mb-1">
+                        <span className="text-4xl sm:text-5xl font-bold gradient-text">49€</span>
+                        <span className="text-base text-white/60">/mois</span>
+                      </div>
+                      <p className="text-sm text-white/50">Sans engagement • Résiliable à tout moment</p>
+                    </div>
+                    <ul className="space-y-2 mb-5 flex-1">
+                      {[
+                        { icon: Target, label: "Liste de prospects filtrée", desc: "Nouvelles entreprises selon vos critères" },
+                        { icon: Route, label: "Tournées optimisées IA", desc: "Moins de route, plus de RDV" },
+                        { icon: Smartphone, label: "CRM mobile terrain", desc: "Visites et relances depuis votre poche" },
+                        { icon: Search, label: "Filtres intelligents", desc: "Département, activité, taille" },
+                        { icon: BarChart3, label: "Pipeline Kanban", desc: "Du contact à la signature" },
+                        { icon: Clock, label: "Suivi des relances", desc: "Programmez vos rappels" },
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 p-2 rounded-lg hover:bg-white/5 transition-all">
+                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <item.icon className="w-3 h-3 text-accent" />
+                          </div>
+                          <div>
+                            <span className="text-white text-sm font-semibold">{item.label}</span>
+                            <p className="text-white/50 text-xs">{item.desc}</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button className="w-full bg-gradient-to-r from-accent to-cyan-glow text-black hover:opacity-90 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" onClick={() => navigate('/subscribe')}>
+                      Essayer gratuitement 7 jours
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
                   </div>
-
-                  <ul className="space-y-3 mb-8">
-                    {[
-                      { icon: Target, text: "Liste de prospects filtrée" },
-                      { icon: Route, text: "Tournées optimisées IA" },
-                      { icon: Smartphone, text: "CRM mobile terrain" },
-                      { icon: Search, text: "Filtres avancés (NAF, taille, zone)" },
-                      { icon: BarChart3, text: "Pipeline Kanban" },
-                      { icon: Clock, text: "Suivi des relances" },
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm">
-                        <item.icon className="w-4 h-4 text-accent flex-shrink-0" />
-                        <span className="text-white/70">{item.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button 
-                    onClick={() => navigate('/subscribe')} 
-                    className="w-full bg-accent hover:bg-accent/90 text-black font-semibold py-6"
-                  >
-                    Démarrer l'essai gratuit
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
                 </Card>
 
-                {/* Équipes */}
-                <Card className="bg-white/[0.02] border-white/10 p-6 sm:p-8">
-                  <h3 className="text-2xl font-bold">Équipes Commerciales</h3>
-                  <p className="text-white/50 text-sm mt-1 mb-6">Pour les équipes ambitieuses</p>
-                  
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-4xl font-bold">Sur devis</span>
+                {/* Équipes Commerciales */}
+                <Card className="relative overflow-visible flex flex-col" style={{
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                  border: '2px solid rgba(14, 165, 233, 0.3)',
+                  boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                }}>
+                  <div className="p-5 sm:p-6 flex flex-col flex-1">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">Équipes Commerciales</h3>
+                    <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(14,165,233,0.2)' }}>
+                      <span className="text-3xl sm:text-4xl font-bold gradient-text">Sur devis</span>
+                      <p className="text-xs text-white/50 mt-2">Pour les équipes ambitieuses</p>
+                    </div>
+                    <ul className="space-y-2 mb-5 flex-1">
+                      {[
+                        { icon: Check, label: "Tout PULSE inclus", desc: "Toutes les fonctionnalités standard" },
+                        { icon: Users, label: "Équipes illimitées", desc: "Invitez tous vos commerciaux" },
+                        { icon: Sparkles, label: "Onboarding personnalisé", desc: "Formation dédiée" },
+                        { icon: Phone, label: "Support prioritaire", desc: "Réponse sous 24h garantie" },
+                        { icon: TrendingUp, label: "Session d'analyse mensuelle", desc: "Optimisez vos performances" },
+                        { icon: Building2, label: "Intégrations sur mesure", desc: "Connectez vos outils" },
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 p-2 rounded-lg hover:bg-white/5 transition-all">
+                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <item.icon className="w-3 h-3 text-cyan-glow" />
+                          </div>
+                          <div>
+                            <span className="text-white text-sm font-semibold">{item.label}</span>
+                            <p className="text-white/50 text-xs">{item.desc}</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" onClick={() => navigate('/subscribe')}>
+                      Demander un devis
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
                   </div>
-
-                  <ul className="space-y-3 mb-8">
-                    {[
-                      { icon: Check, text: "Tout PULSE inclus" },
-                      { icon: Users, text: "Utilisateurs illimités" },
-                      { icon: Sparkles, text: "Onboarding personnalisé" },
-                      { icon: Phone, text: "Support prioritaire" },
-                      { icon: TrendingUp, text: "Analyse mensuelle" },
-                      { icon: Building2, text: "Intégrations sur mesure" },
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm">
-                        <item.icon className="w-4 h-4 text-white/40 flex-shrink-0" />
-                        <span className="text-white/60">{item.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button 
-                    onClick={() => navigate('/subscribe')} 
-                    variant="outline"
-                    className="w-full border-white/20 text-white hover:bg-white/5 py-6"
-                  >
-                    Demander un devis
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
                 </Card>
               </div>
 
-              {/* Trust */}
-              <div className="flex flex-wrap justify-center gap-8 mt-10 text-sm text-white/40">
+              {/* Trust indicators */}
+              <div className="flex flex-wrap justify-center gap-6 sm:gap-8 text-sm text-white/60">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>Paiement sécurisé</span>
+                  <Check className="w-5 h-5 text-green-500" />
+                  <span>Conforme RGPD</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>Annulation en 2 clics</span>
+                  <span className="text-xl">🔒</span>
+                  <span>Paiement 100% sécurisé</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>Données conservées</span>
+                  <Database className="w-5 h-5 text-accent" />
+                  <span>Données publiques officielles</span>
                 </div>
               </div>
             </div>
@@ -444,44 +448,25 @@ const LandingPage = () => {
         {/* ═══════════════════════════════════════════════════════════════════
             FAQ SECTION
         ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-20 sm:py-24 px-6">
-          <div className="container mx-auto max-w-3xl">
+        <section className="py-12 sm:py-14 px-6 relative z-10" style={{
+          background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.06) 0%, transparent 60%)'
+        }}>
+          <div className="container mx-auto max-w-4xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              
-              <div className="text-center mb-14">
-                <span className="text-white/40 text-xs font-semibold uppercase tracking-widest">FAQ</span>
-                <h2 className="text-3xl sm:text-4xl font-bold mt-4">
-                  Questions fréquentes
-                </h2>
-              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8">Vos questions, nos réponses</h2>
               <Accordion type="single" collapsible className="space-y-3">
                 {[
-                  {
-                    q: "D'où viennent les données ?",
-                    a: "Toutes nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement."
-                  },
-                  {
-                    q: "PULSE fonctionne-t-il partout en France ?",
-                    a: "Oui, PULSE couvre l'intégralité du territoire français métropolitain."
-                  },
-                  {
-                    q: "Comment fonctionne l'essai gratuit ?",
-                    a: "Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Annulez à tout moment sans frais."
-                  },
-                  {
-                    q: "Puis-je personnaliser mes critères de recherche ?",
-                    a: "Absolument. Filtrez par département, secteur d'activité (code NAF), taille d'entreprise et forme juridique."
-                  },
-                  {
-                    q: "Comment annuler mon abonnement ?",
-                    a: "En 2 clics depuis votre espace personnel. Vos données sont conservées si vous souhaitez revenir."
-                  }
+                  { q: "Comment PULSE structure ma prospection ?", a: "PULSE vous donne une vision complète de votre territoire avec tous vos prospects, des tournées calculées automatiquement pour optimiser vos déplacements, et un CRM mobile pour suivre chaque action." },
+                  { q: "Les données sont-elles fiables ?", a: "Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement." },
+                  { q: "Peut-on l'utiliser partout en France ?", a: "Oui, PULSE couvre l'intégralité du territoire français métropolitain." },
+                  { q: "Comment fonctionne l'essai gratuit ?", a: "Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Annulez à tout moment sans frais." },
+                  { q: "Puis-je personnaliser mes critères ?", a: "Absolument ! Filtrez par département, secteur d'activité (NAF), taille d'entreprise et forme juridique." }
                 ].map((item, i) => (
-                  <AccordionItem key={i} value={`item-${i}`} className="border border-white/5 rounded-lg px-5 bg-white/[0.01]">
-                    <AccordionTrigger className="text-left font-medium hover:text-accent py-4">
+                  <AccordionItem key={i} value={`item-${i}`} className="border border-white/10 rounded-lg px-5 sm:px-6">
+                    <AccordionTrigger className="text-lg sm:text-xl font-semibold hover:text-accent py-4">
                       {item.q}
                     </AccordionTrigger>
-                    <AccordionContent className="text-white/60 pb-4">
+                    <AccordionContent className="text-white/70 text-base sm:text-lg pb-4">
                       {item.a}
                     </AccordionContent>
                   </AccordionItem>
@@ -496,44 +481,53 @@ const LandingPage = () => {
         {/* ═══════════════════════════════════════════════════════════════════
             FOOTER
         ═══════════════════════════════════════════════════════════════════ */}
-        <footer className="border-t border-white/5 py-10 px-6">
-          <div className="container mx-auto max-w-5xl">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-6">
-                <div className="text-xl font-bold">
+        <footer className="border-t border-white/10 py-8 px-6">
+          <div className="container mx-auto max-w-6xl">
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
+              <div>
+                <div className="text-2xl font-bold mb-4">
                   <span className="text-white">PULSE</span>
                   <span className="text-accent">.</span>
                 </div>
-                <span className="text-white/40 text-sm hidden sm:inline">La prospection terrain, simplifiée.</span>
+                <p className="text-white/60">La prospection terrain réinventée</p>
               </div>
-              
-              <div className="flex items-center gap-4 text-white/40 text-sm">
-                <a href="mailto:tomiolovpro@gmail.com" className="hover:text-white transition-colors flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  <span className="hidden sm:inline">tomiolovpro@gmail.com</span>
-                </a>
+              <div>
+                <h4 className="font-bold mb-4">Produit</h4>
+                <ul className="space-y-2 text-white/60">
+                  <li><a href="#solution" className="hover:text-accent transition-colors">Fonctionnalités</a></li>
+                  <li><a href="#pricing" className="hover:text-accent transition-colors">Tarifs</a></li>
+                  <li><a href="https://calendly.com/tomiolovpro/pulse" className="hover:text-accent transition-colors">Démo</a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4">Contact</h4>
+                <ul className="space-y-2 text-white/60">
+                  <li className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    <a href="mailto:tomiolovpro@gmail.com" className="hover:text-accent transition-colors">tomiolovpro@gmail.com</a>
+                  </li>
+                </ul>
               </div>
             </div>
-            
-            <div className="border-t border-white/5 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-white/30 text-xs">
+            <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-white/40 text-sm">
               <p>© 2026 PULSE. Tous droits réservés.</p>
-              <div className="flex items-center gap-4">
-                <a href="/mentions-legales" className="hover:text-white/60 transition-colors">Mentions légales</a>
-                <a href="/cgu" className="hover:text-white/60 transition-colors">CGU</a>
-                <a href="/cgv" className="hover:text-white/60 transition-colors">CGV</a>
-                <a href="/confidentialite" className="hover:text-white/60 transition-colors">Confidentialité</a>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <a href="/mentions-legales" className="hover:text-accent transition-colors">Mentions Légales</a>
+                <span className="text-white/20">•</span>
+                <a href="/cgu" className="hover:text-accent transition-colors">CGU</a>
+                <span className="text-white/20">•</span>
+                <a href="/cgv" className="hover:text-accent transition-colors">CGV</a>
+                <span className="text-white/20">•</span>
+                <a href="/confidentialite" className="hover:text-accent transition-colors">Confidentialité</a>
               </div>
             </div>
           </div>
         </footer>
 
         {/* Sticky CTA Mobile */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#0a0f1a] via-[#0a0f1a]/95 to-transparent md:hidden z-40">
-          <Button 
-            onClick={() => navigate('/subscribe')} 
-            className="w-full bg-accent text-black font-bold py-5 rounded-xl shadow-xl"
-          >
-            Essayer gratuitement
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
+          <Button onClick={() => navigate('/subscribe')} className="w-full bg-gradient-to-r from-accent to-cyan-glow text-primary font-bold py-4 rounded-full shadow-lg shadow-accent/40">
+            Essayer gratuitement 7 jours
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
