@@ -191,14 +191,14 @@ const LandingPage = () => {
                   <p className="text-white/60 text-sm sm:text-base">Impossible de savoir où sont vos prospects, qui cibler en priorité</p>
                 </Card>
                 <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
-                  <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Données éparpillées</h3>
-                  <p className="text-white/60 text-sm sm:text-base">Excel, carnets, post-its... Relances oubliées, historique perdu</p>
-                </Card>
-                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
                   <Route className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
                   <h3 className="text-xl sm:text-2xl font-bold mb-2">Trajets improvisés</h3>
                   <p className="text-white/60 text-sm sm:text-base">Des kilomètres inutiles, du temps perdu, moins de visites</p>
+                </Card>
+                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
+                  <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Données éparpillées</h3>
+                  <p className="text-white/60 text-sm sm:text-base">Excel, carnets, post-its... Relances oubliées, historique perdu</p>
                 </Card>
               </div>
             </div>
