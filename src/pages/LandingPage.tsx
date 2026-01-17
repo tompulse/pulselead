@@ -105,11 +105,11 @@ const LandingPage = () => {
         </div>
       </header>
 
-      <main className="pt-14 sm:pt-16">
+      <main className="pt-12">
         {/* ═══════════════════════════════════════════════════════════════════
             HERO SECTION - Accroche principale
         ═══════════════════════════════════════════════════════════════════ */}
-        <section className="pt-2 sm:pt-4 pb-12 sm:pb-14 px-6 relative z-10">
+        <section className="pt-0 pb-10 sm:pb-12 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               
