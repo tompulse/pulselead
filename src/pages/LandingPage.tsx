@@ -269,6 +269,20 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* Section Divider */}
+        <div className="relative py-8 sm:py-12">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-full max-w-4xl mx-auto px-6">
+              <div className="h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
+            </div>
+          </div>
+          <div className="relative flex justify-center">
+            <div className="bg-blue-deep px-6 py-2">
+              <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+
         {/* Before/After Section */}
         <section id="avantages" className="py-12 px-6 relative z-10 scroll-mt-20" style={{
         background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4)), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(6, 182, 212, 0.03) 50px, rgba(6, 182, 212, 0.03) 51px)',
