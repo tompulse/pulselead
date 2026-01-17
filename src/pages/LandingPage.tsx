@@ -49,21 +49,22 @@ const LandingPage = () => {
       </div>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-lg border-b border-white/10">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold">
               <span className="text-white">PULSE</span>
               <span className="text-accent ml-1">.</span>
             </div>
 
-            <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
-              <a href="#solution" className="text-white/70 hover:text-accent transition-colors">Fonctionnalités</a>
-              <a href="#avantages" className="text-white/70 hover:text-accent transition-colors">Avantages</a>
-              <a href="#pricing" className="text-white/70 hover:text-accent transition-colors">Tarifs</a>
-              <a href="#contact" className="text-white/70 hover:text-accent transition-colors">Contact</a>
+            {/* Desktop & Tablet nav - visible from sm breakpoint */}
+            <nav className="hidden sm:flex items-center gap-3 md:gap-6 lg:gap-8 absolute left-1/2 transform -translate-x-1/2">
+              <a href="#solution" className="text-xs md:text-sm lg:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Fonctionnalités</a>
+              <a href="#avantages" className="text-xs md:text-sm lg:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Avantages</a>
+              <a href="#pricing" className="text-xs md:text-sm lg:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Tarifs</a>
+              <a href="#contact" className="text-xs md:text-sm lg:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Contact</a>
             </nav>
 
-            {/* Desktop buttons */}
+            {/* Desktop buttons - visible from md breakpoint */}
             <div className="hidden md:flex items-center gap-3">
               <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 h-8 px-3 text-xs">
                 <a href="https://calendly.com/tomiolovpro/30min" target="_blank" rel="noopener noreferrer">
@@ -75,9 +76,16 @@ const LandingPage = () => {
               </Button>
             </div>
 
-            {/* Mobile hamburger menu */}
+            {/* Tablet buttons - visible only on sm, hidden on md+ */}
+            <div className="hidden sm:flex md:hidden items-center gap-2">
+              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-7 px-2 text-xs">
+                Connexion
+              </Button>
+            </div>
+
+            {/* Mobile hamburger menu - visible only below sm */}
             <Sheet>
-              <SheetTrigger asChild className="md:hidden">
+              <SheetTrigger asChild className="sm:hidden">
                 <Button variant="ghost" size="icon" className="h-10 w-10 text-white" aria-label="Ouvrir le menu">
                   <Menu className="h-6 w-6" />
                 </Button>
