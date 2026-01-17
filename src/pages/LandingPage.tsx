@@ -51,21 +51,29 @@ const LandingPage = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-blue-deep/80 backdrop-blur-lg border-b border-white/10">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="text-xl sm:text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold shrink-0">
               <span className="text-white">PULSE</span>
               <span className="text-accent ml-1">.</span>
             </div>
 
-            {/* Desktop & Tablet nav - visible from sm breakpoint */}
-            <nav className="hidden sm:flex items-center gap-3 md:gap-6 lg:gap-8 absolute left-1/2 transform -translate-x-1/2">
-              <a href="#solution" className="text-xs md:text-sm lg:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Fonctionnalités</a>
-              <a href="#avantages" className="text-xs md:text-sm lg:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Avantages</a>
-              <a href="#pricing" className="text-xs md:text-sm lg:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Tarifs</a>
-              <a href="#contact" className="text-xs md:text-sm lg:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Contact</a>
+            {/* Desktop nav - centered absolutely, visible from lg breakpoint */}
+            <nav className="hidden lg:flex items-center gap-6 xl:gap-8 absolute left-1/2 transform -translate-x-1/2">
+              <a href="#solution" className="text-sm xl:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Fonctionnalités</a>
+              <a href="#avantages" className="text-sm xl:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Avantages</a>
+              <a href="#pricing" className="text-sm xl:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Tarifs</a>
+              <a href="#contact" className="text-sm xl:text-base text-white/70 hover:text-accent transition-colors whitespace-nowrap">Contact</a>
             </nav>
 
-            {/* Desktop buttons - visible from md breakpoint */}
-            <div className="hidden md:flex items-center gap-3">
+            {/* Tablet nav - flex positioned, visible from sm to lg */}
+            <nav className="hidden sm:flex lg:hidden items-center gap-2 md:gap-4 flex-1 justify-center mx-2">
+              <a href="#solution" className="text-[10px] md:text-xs text-white/70 hover:text-accent transition-colors whitespace-nowrap">Fonctionnalités</a>
+              <a href="#avantages" className="text-[10px] md:text-xs text-white/70 hover:text-accent transition-colors whitespace-nowrap">Avantages</a>
+              <a href="#pricing" className="text-[10px] md:text-xs text-white/70 hover:text-accent transition-colors whitespace-nowrap">Tarifs</a>
+              <a href="#contact" className="text-[10px] md:text-xs text-white/70 hover:text-accent transition-colors whitespace-nowrap">Contact</a>
+            </nav>
+
+            {/* Desktop buttons - visible from lg breakpoint */}
+            <div className="hidden lg:flex items-center gap-3 shrink-0">
               <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 h-8 px-3 text-xs">
                 <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
                   Réserver ma démo
@@ -76,9 +84,14 @@ const LandingPage = () => {
               </Button>
             </div>
 
-            {/* Tablet buttons - visible only on sm, hidden on md+ */}
-            <div className="hidden sm:flex md:hidden items-center gap-2">
-              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-7 px-2 text-xs">
+            {/* Tablet buttons - visible from sm to lg */}
+            <div className="hidden sm:flex lg:hidden items-center gap-2 shrink-0">
+              <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold h-7 px-2 text-[10px] md:text-xs">
+                <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
+                  Démo
+                </a>
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-7 px-2 text-[10px] md:text-xs">
                 Connexion
               </Button>
             </div>
