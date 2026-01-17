@@ -67,7 +67,7 @@ const LandingPage = () => {
             {/* Desktop buttons - visible from md breakpoint */}
             <div className="hidden md:flex items-center gap-3">
               <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 h-8 px-3 text-xs">
-                <a href="https://calendly.com/tomiolovpro/30min" target="_blank" rel="noopener noreferrer">
+                <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
                   Réserver ma démo
                 </a>
               </Button>
@@ -98,7 +98,7 @@ const LandingPage = () => {
                   <a href="#contact" className="text-lg font-medium text-foreground hover:text-accent transition-colors py-2">Contact</a>
                   <div className="border-t border-accent/20 pt-4 mt-4 space-y-3">
                     <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold">
-                      <a href="https://calendly.com/tomiolovpro/30min" target="_blank" rel="noopener noreferrer">
+                      <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
                         Réserver ma démo
                       </a>
                     </Button>
