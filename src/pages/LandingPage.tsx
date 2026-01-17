@@ -130,7 +130,7 @@ const LandingPage = () => {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="py-8 px-6 relative z-10">
+        <section className="py-16 sm:py-20 lg:py-24 px-6 relative z-10">
           <div className="container mx-auto max-w-6xl">
             <div ref={heroAnimation.ref} className={`text-center space-y-3 scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/20 mb-4">
@@ -195,10 +195,10 @@ const LandingPage = () => {
         </section>
 
         {/* Problems Section */}
-        <section className="py-12 px-6 relative z-10" style={{
+        <section className="py-20 sm:py-24 lg:py-28 px-6 relative z-10" style={{
         background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
-        borderTop: '1px solid rgba(6, 182, 212, 0.1)',
-        borderBottom: '1px solid rgba(6, 182, 212, 0.1)'
+        borderTop: '1px solid rgba(6, 182, 212, 0.15)',
+        borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
       }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
@@ -225,8 +225,8 @@ const LandingPage = () => {
         </section>
 
         {/* Solution Section */}
-        <section id="solution" className="py-12 px-6 relative z-10 scroll-mt-20" style={{
-        background: 'radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%)'
+        <section id="solution" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20" style={{
+        background: 'radial-gradient(ellipse at top, rgba(6, 182, 212, 0.08) 0%, transparent 60%)'
       }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
@@ -269,24 +269,11 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section Divider */}
-        <div className="relative py-8 sm:py-12">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full max-w-4xl mx-auto px-6">
-              <div className="h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
-            </div>
-          </div>
-          <div className="relative flex justify-center">
-            <div className="bg-blue-deep px-6 py-2">
-              <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-
         {/* Before/After Section */}
-        <section id="avantages" className="py-12 px-6 relative z-10 scroll-mt-20" style={{
-        background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4)), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(6, 182, 212, 0.03) 50px, rgba(6, 182, 212, 0.03) 51px)',
-        backgroundSize: '100% 100%, 100px 100%'
+        <section id="avantages" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20" style={{
+        background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(0, 0, 0, 0.3) 100%)',
+        borderTop: '1px solid rgba(6, 182, 212, 0.15)',
+        borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
       }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
@@ -355,9 +342,8 @@ const LandingPage = () => {
 
 
         {/* Pricing */}
-        <section id="pricing" className="py-16 px-6 relative z-10 scroll-mt-20" style={{
-        background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
-        borderTop: '2px solid rgba(6, 182, 212, 0.2)'
+        <section id="pricing" className="py-20 sm:py-24 lg:py-28 px-6 relative z-10 scroll-mt-20" style={{
+        background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.08) 0%, transparent 60%)'
       }}>
           <div className="container mx-auto max-w-7xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
@@ -565,8 +551,9 @@ const LandingPage = () => {
 
 
         {/* FAQ */}
-        <section className="py-12 px-6 relative z-10" style={{
-        background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.06) 0%, transparent 60%)'
+        <section className="py-20 sm:py-24 lg:py-28 px-6 relative z-10" style={{
+        background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(0, 0, 0, 0.3) 100%)',
+        borderTop: '1px solid rgba(6, 182, 212, 0.15)'
       }}>
           <div className="container mx-auto max-w-4xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
