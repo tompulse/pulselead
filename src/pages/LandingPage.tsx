@@ -291,19 +291,19 @@ const LandingPage = () => {
                 <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Prospection désorganisée sans vision claire de votre territoire</span>
+                    <span>RDV manqués et opportunités perdues faute de suivi</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Trajets improvisés, temps perdu dans les bouchons et les détours</span>
+                    <span>Journées à tourner en rond sans vraie stratégie terrain</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Notes éparpillées sur des carnets, Excel, post-its perdus</span>
+                    <span>Relances oubliées, prospects jamais recontactés</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-red-500 mt-1 text-xl">✗</span>
-                    <span>Aucune visibilité sur vos prospects cibles et votre secteur</span>
+                    <span>Fin de mois stressante sans visibilité sur le pipeline</span>
                   </li>
                 </ul>
               </Card>
@@ -317,19 +317,19 @@ const LandingPage = () => {
                 <ul className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/70">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Prospection structurée avec visibilité complète de tous vos prospects cibles</span>
+                    <span>+30% de nouveaux RDV grâce à une prospection ciblée</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Tournées méthodiques et optimisées qui vous font gagner 2h par jour</span>
+                    <span>Tournées optimisées : plus de visites, moins de km</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>CRM organisé : toutes vos actions centralisées et accessibles partout</span>
+                    <span>Relances automatiques, aucun prospect n'est oublié</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                    <span>Maîtrise totale de votre activité avec suivi en temps réel</span>
+                    <span>Pipeline clair : vous savez exactement où vous en êtes</span>
                   </li>
                 </ul>
               </Card>
