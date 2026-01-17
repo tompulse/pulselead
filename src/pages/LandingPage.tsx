@@ -171,7 +171,7 @@ const LandingPage = () => {
                 animationDelay: '0.3s'
               }}>
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">de satisfaction</p>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">de taux de satisfaction</p>
                 </div>
               </div>
 
