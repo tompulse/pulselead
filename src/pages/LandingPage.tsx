@@ -86,12 +86,12 @@ const LandingPage = () => {
 
             {/* Tablet buttons - visible from sm to lg */}
             <div className="hidden sm:flex lg:hidden items-center gap-2 shrink-0">
-              <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold h-8 px-3 text-xs">
+              <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-semibold h-8 px-2 md:px-3 text-[10px] md:text-xs whitespace-nowrap">
                 <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noopener noreferrer">
-                  Démo
+                  Réserver ma démo
                 </a>
               </Button>
-              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-8 px-3 text-xs">
+              <Button variant="outline" onClick={() => navigate('/auth')} className="border-accent/50 text-accent hover:bg-accent hover:text-black font-semibold h-8 px-2 md:px-3 text-[10px] md:text-xs">
                 Connexion
               </Button>
             </div>
@@ -142,8 +142,8 @@ const LandingPage = () => {
               </h1>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto pt-2">Liste de prospects filtrée • Tournées optimisées • CRM simple pour suivre vos visites sur le terrain</p>
               <div className="flex justify-center py-6">
-                <Button onClick={() => navigate('/subscribe')} className="btn-hero-pulse">
-                  Essayer gratuitement 7 jours
+                <Button onClick={() => navigate('/subscribe')} className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg sm:text-xl px-8 sm:px-10 py-6 sm:py-7 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300">
+                  Commencer maintenant
                   <ArrowRight className="ml-4 w-8 h-8" />
                 </Button>
               </div>
@@ -154,15 +154,15 @@ const LandingPage = () => {
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.1s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+850</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">nouvelles entreprises détectées par semaine</p>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+1 900</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">nouvelles entreprises détectées chaque semaine</p>
                 </div>
                 
                 {/* Stat 2 */}
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.2s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">2h</div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
                   <p className="text-white/70 text-sm sm:text-base md:text-lg">gagnées par jour en moyenne</p>
                 </div>
                 
@@ -170,8 +170,8 @@ const LandingPage = () => {
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.3s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">7 jours</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">d'essai gratuit sans engagement</p>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">49€</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">par mois • Sans engagement</p>
                 </div>
               </div>
 
