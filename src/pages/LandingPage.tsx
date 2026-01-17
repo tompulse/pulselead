@@ -170,8 +170,8 @@ const LandingPage = () => {
                 <div className="text-center space-y-2 animate-fade-in" style={{
                 animationDelay: '0.3s'
               }}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">49€</div>
-                  <p className="text-white/70 text-sm sm:text-base md:text-lg">par mois • Sans engagement</p>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
+                  <p className="text-white/70 text-sm sm:text-base md:text-lg">de satisfaction</p>
                 </div>
               </div>
 
