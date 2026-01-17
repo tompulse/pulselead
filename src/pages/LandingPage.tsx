@@ -228,7 +228,7 @@ const LandingPage = () => {
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold group-hover:text-accent transition-colors duration-300">Liste de prospects filtrée</h3>
                   <p className="text-white/60 text-sm sm:text-base">
-                    Accédez à toutes les nouvelles entreprises créées en France. Filtrez par département, secteur et taille
+                    Accédez à toutes les nouvelles entreprises créées en France. Filtrez par code NAF, département, taille, catégorie juridique, siège social et date de création
                   </p>
                 </div>
                 <div className="text-center space-y-3 group cursor-default">
@@ -368,7 +368,7 @@ const LandingPage = () => {
                         { icon: Target, label: "Liste de prospects filtrée", desc: "Nouvelles entreprises selon vos critères" },
                         { icon: Route, label: "Tournées optimisées IA", desc: "Moins de route, plus de RDV" },
                         { icon: Smartphone, label: "CRM mobile terrain", desc: "Visites et relances depuis votre poche" },
-                        { icon: Search, label: "Filtres intelligents", desc: "Département, activité, taille" },
+                        { icon: Search, label: "Filtres intelligents", desc: "Code NAF, département, taille, juridique, siège social, date" },
                         { icon: BarChart3, label: "Pipeline Kanban", desc: "Du contact à la signature" },
                         { icon: Clock, label: "Suivi des relances", desc: "Programmez vos rappels" },
                       ].map((item, i) => (
@@ -464,7 +464,7 @@ const LandingPage = () => {
                   { q: "Les données sont-elles fiables ?", a: "Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement." },
                   { q: "Peut-on l'utiliser partout en France ?", a: "Oui, PULSE couvre l'intégralité du territoire français métropolitain." },
                   { q: "Comment fonctionne l'essai gratuit ?", a: "Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Annulez à tout moment sans frais." },
-                  { q: "Puis-je personnaliser mes critères ?", a: "Absolument ! Filtrez par département, secteur d'activité (NAF), taille d'entreprise et forme juridique." },
+                  { q: "Puis-je personnaliser mes critères ?", a: "Absolument ! Filtrez par code NAF, département, taille d'entreprise, catégorie juridique, siège social et date de création." },
                   { q: "Y a-t-il un engagement ?", a: "Non, PULSE est sans engagement. Vous pouvez résilier à tout moment depuis votre espace client." }
                 ].map((item, i) => (
                   <Accordion key={i} type="single" collapsible>
