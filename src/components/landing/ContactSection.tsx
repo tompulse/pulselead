@@ -5,7 +5,7 @@ const ContactSection = () => {
   const waUrl = `https://wa.me/33760227532?text=${encodeURIComponent("Bonjour, je souhaite en savoir plus sur PULSE.")}`;
   return <section id="contact" className="relative py-16 px-4 sm:px-6 lg:px-8 scroll-mt-20">
       <div className="container mx-auto max-w-4xl">
-        <div className="glass-card p-8 md:p-10 border-accent/30 shadow-2xl shadow-accent/20 transition-colors text-center">
+        <div className="glass-card p-8 md:p-10 border-accent/30 shadow-2xl shadow-accent/20 transition-all duration-300 text-center hover:border-accent/50 hover:shadow-3xl hover:shadow-accent/30 hover:scale-[1.01]">
           <div className="space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold gradient-text">
               Une question ? Parlons-en ! 

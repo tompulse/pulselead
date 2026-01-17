@@ -142,15 +142,15 @@ const LandingPage = () => {
 
               {/* Stats - Encapsulés dans des mini-cards */}
               <div className="mt-8 sm:mt-10 grid grid-cols-3 gap-3 sm:gap-6 max-w-3xl mx-auto">
-                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center">
+                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">+1 900</div>
                   <p className="text-white/60 text-xs sm:text-sm mt-1">entreprises/semaine</p>
                 </div>
-                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center">
+                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
                   <p className="text-white/60 text-xs sm:text-sm mt-1">gagnées/jour</p>
                 </div>
-                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center">
+                <div className="glass-card p-3 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default">
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
                   <p className="text-white/60 text-xs sm:text-sm mt-1">de satisfaction</p>
                 </div>
@@ -185,17 +185,17 @@ const LandingPage = () => {
                 Ce qui vous freine aujourd'hui
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
+                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/50 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
                   <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
                   <h3 className="text-xl sm:text-2xl font-bold mb-2">Aucune visibilité secteur</h3>
                   <p className="text-white/60 text-sm sm:text-base">Impossible de savoir où sont vos prospects, qui cibler en priorité</p>
                 </Card>
-                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
+                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/50 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
                   <Route className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
                   <h3 className="text-xl sm:text-2xl font-bold mb-2">Trajets improvisés</h3>
                   <p className="text-white/60 text-sm sm:text-base">Des kilomètres inutiles, du temps perdu, moins de visites</p>
                 </Card>
-                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/30 transition-all">
+                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/50 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
                   <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
                   <h3 className="text-xl sm:text-2xl font-bold mb-2">Données éparpillées</h3>
                   <p className="text-white/60 text-sm sm:text-base">Excel, carnets, post-its... Relances oubliées, historique perdu</p>
@@ -222,29 +222,29 @@ const LandingPage = () => {
                 Contrôlez votre territoire, optimisez chaque action commerciale
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10">
-                <div className="text-center space-y-3">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10">
+                <div className="text-center space-y-3 group cursor-default">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10 group-hover:border-accent/60 group-hover:shadow-xl group-hover:shadow-accent/30 group-hover:scale-110 transition-all duration-300">
                     <Target className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold">Liste de prospects filtrée</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold group-hover:text-accent transition-colors duration-300">Liste de prospects filtrée</h3>
                   <p className="text-white/60 text-sm sm:text-base">
                     Accédez à toutes les nouvelles entreprises créées en France. Filtrez par département, secteur et taille
                   </p>
                 </div>
-                <div className="text-center space-y-3">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10">
+                <div className="text-center space-y-3 group cursor-default">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10 group-hover:border-accent/60 group-hover:shadow-xl group-hover:shadow-accent/30 group-hover:scale-110 transition-all duration-300">
                     <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold">Tournées optimisées IA</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold group-hover:text-accent transition-colors duration-300">Tournées optimisées IA</h3>
                   <p className="text-white/60 text-sm sm:text-base">
                     Sélectionnez vos prospects, créez votre tournée, l'IA calcule l'itinéraire optimal
                   </p>
                 </div>
-                <div className="text-center space-y-3">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10">
+                <div className="text-center space-y-3 group cursor-default">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10 group-hover:border-accent/60 group-hover:shadow-xl group-hover:shadow-accent/30 group-hover:scale-110 transition-all duration-300">
                     <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold">CRM terrain simple</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold group-hover:text-accent transition-colors duration-300">CRM terrain simple</h3>
                   <p className="text-white/60 text-sm sm:text-base">
                     Suivez vos visites, appels et relances depuis votre mobile. Simple, rapide, efficace
                   </p>
@@ -269,7 +269,7 @@ const LandingPage = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                 {/* Before */}
-                <Card className="glass-card p-6 sm:p-8 border-red-500/30">
+                <Card className="glass-card p-6 sm:p-8 border-red-500/30 hover:border-red-500/60 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
                       <TrendingDown className="w-6 h-6 text-red-500" />
@@ -297,7 +297,7 @@ const LandingPage = () => {
                 </Card>
 
                 {/* After */}
-                <Card className="glass-card p-6 sm:p-8 border-emerald-500/30">
+                <Card className="glass-card p-6 sm:p-8 border-emerald-500/30 hover:border-emerald-500/60 hover:shadow-xl hover:shadow-emerald-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
                       <TrendingUp className="w-6 h-6 text-emerald-500" />
@@ -346,7 +346,7 @@ const LandingPage = () => {
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
                 {/* Commercial Solo */}
-                <Card className="relative overflow-visible flex flex-col" style={{
+                <Card className="relative overflow-visible flex flex-col hover:scale-[1.02] transition-all duration-300 cursor-default" style={{
                   background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
                   border: '2px solid rgba(6, 182, 212, 0.5)',
                   boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
@@ -391,7 +391,7 @@ const LandingPage = () => {
                 </Card>
 
                 {/* Équipes Commerciales */}
-                <Card className="relative overflow-visible flex flex-col" style={{
+                <Card className="relative overflow-visible flex flex-col hover:scale-[1.02] transition-all duration-300 cursor-default" style={{
                   background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
                   border: '2px solid rgba(14, 165, 233, 0.3)',
                   boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
@@ -468,7 +468,7 @@ const LandingPage = () => {
                   { q: "Y a-t-il un engagement ?", a: "Non, PULSE est sans engagement. Vous pouvez résilier à tout moment depuis votre espace client." }
                 ].map((item, i) => (
                   <Accordion key={i} type="single" collapsible>
-                    <AccordionItem value={`item-${i}`} className="border border-white/10 rounded-lg px-4">
+                    <AccordionItem value={`item-${i}`} className="border border-white/10 rounded-lg px-4 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300">
                       <AccordionTrigger className="text-sm sm:text-base font-semibold hover:text-accent py-3">
                         {item.q}
                       </AccordionTrigger>
