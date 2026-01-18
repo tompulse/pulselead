@@ -28,19 +28,12 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
     deleteReminder,
   } = useNotifications(userId);
 
-  // Separate reminders with and without dates
-  const { datedReminders, undatedReminders } = useMemo(() => {
-    const dated = reminders.filter(r => r.date_relance);
-    const undated = reminders.filter(r => !r.date_relance);
-    return { datedReminders: dated, undatedReminders: undated };
-  }, [reminders]);
-
-  // Group dated reminders by date
+  // Group reminders by date
   const groupedReminders = useMemo(() => {
-    const groups: Record<string, typeof datedReminders> = {};
+    const groups: Record<string, typeof reminders> = {};
     
-    datedReminders.forEach(reminder => {
-      const dateKey = startOfDay(parseISO(reminder.date_relance!)).toISOString();
+    reminders.forEach(reminder => {
+      const dateKey = startOfDay(parseISO(reminder.date_relance)).toISOString();
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
@@ -51,7 +44,7 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
     return Object.entries(groups).sort(([a], [b]) => 
       new Date(a).getTime() - new Date(b).getTime()
     );
-  }, [datedReminders]);
+  }, [reminders]);
 
   const formatDateHeader = (dateStr: string) => {
     const date = parseISO(dateStr);
@@ -120,7 +113,6 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
               </div>
             ) : (
               <div className="space-y-6 pr-4">
-                {/* Dated reminders grouped by date */}
                 {groupedReminders.map(([dateKey, dateReminders]) => (
                   <div key={dateKey} className="space-y-3">
                     {/* Date header */}
@@ -142,7 +134,7 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
                       <div
                         key={reminder.id}
                         className={`relative w-full text-left p-3 rounded-xl border transition-all group ${
-                          isToday(parseISO(reminder.date_relance!))
+                          isToday(parseISO(reminder.date_relance))
                             ? 'bg-red-500/10 border-red-500/30 hover:border-red-500/50'
                             : 'bg-card/50 border-border/50 hover:border-accent/50'
                         } hover:bg-card`}
@@ -184,59 +176,6 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
                     ))}
                   </div>
                 ))}
-
-                {/* Undated reminders section */}
-                {undatedReminders.length > 0 && (
-                  <div className="space-y-3">
-                    <div className="text-sm font-semibold text-muted-foreground sticky top-0 bg-background py-2">
-                      📌 Sans date planifiée
-                      <span className="ml-2 text-xs font-normal">
-                        ({undatedReminders.length} prospect{undatedReminders.length > 1 ? 's' : ''})
-                      </span>
-                    </div>
-                    
-                    {undatedReminders.map((reminder) => (
-                      <div
-                        key={reminder.id}
-                        className="relative w-full text-left p-3 rounded-xl border transition-all group bg-card/30 border-border/30 hover:border-accent/50 hover:bg-card"
-                      >
-                        <button
-                          onClick={() => handleReminderClick(reminder.entreprise_id)}
-                          className="w-full text-left"
-                        >
-                          <div className="flex items-center justify-between gap-2 pr-6">
-                            <p className="text-sm font-medium truncate flex-1 min-w-0 max-w-[160px] sm:max-w-[200px]">{reminder.entreprise_nom}</p>
-                            <Badge 
-                              variant="outline" 
-                              className={`shrink-0 text-[10px] px-2 py-0.5 whitespace-nowrap ${
-                                reminder.type === 'a_revoir'
-                                  ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
-                                  : reminder.type === 'a_rappeler'
-                                    ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                                    : reminder.type === 'rdv'
-                                      ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
-                                      : 'bg-accent/10 text-accent border-accent/30'
-                              }`}
-                            >
-                              {reminder.type === 'a_revoir' ? 'À revoir' 
-                                : reminder.type === 'a_rappeler' ? 'À rappeler'
-                                : reminder.type === 'rdv' ? 'RDV'
-                                : reminder.type}
-                            </Badge>
-                          </div>
-                        </button>
-                        {/* Delete button */}
-                        <button
-                          onClick={(e) => handleDeleteReminder(e, reminder.id)}
-                          className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/20 text-muted-foreground hover:text-destructive"
-                          aria-label="Supprimer la relance"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
           </ScrollArea>
