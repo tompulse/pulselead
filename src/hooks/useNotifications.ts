@@ -177,6 +177,36 @@ export const useNotifications = (userId: string | undefined) => {
     return () => clearInterval(interval);
   }, [permission.permission, reminders, checkDueReminders]);
 
+  // Delete a reminder
+  const deleteReminder = useCallback(async (reminderId: string) => {
+    try {
+      const { error } = await supabase
+        .from('lead_interactions')
+        .delete()
+        .eq('id', reminderId);
+
+      if (error) throw error;
+
+      // Remove from local state
+      setReminders(prev => prev.filter(r => r.id !== reminderId));
+      
+      toast({
+        title: 'Relance supprimée',
+        description: 'La relance a été retirée de votre liste',
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting reminder:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de supprimer la relance',
+        variant: 'destructive',
+      });
+      return false;
+    }
+  }, [toast]);
+
   return {
     permission,
     reminders,
@@ -185,6 +215,7 @@ export const useNotifications = (userId: string | undefined) => {
     fetchReminders,
     sendNotification,
     checkDueReminders,
+    deleteReminder,
     todayReminders: reminders.filter(r => r.date_relance === new Date().toISOString().split('T')[0]),
   };
 };
