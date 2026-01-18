@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   ArrowLeft,
-  Calendar,
+  Calendar as CalendarIcon,
   MapPin,
   Navigation,
   Clock,
@@ -37,6 +37,9 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 interface VisiteStatus {
   visite: boolean;
@@ -73,7 +76,7 @@ const TourneeDetail = () => {
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const [pendingSiteId, setPendingSiteId] = useState<string | null>(null);
   const [pendingSiteName, setPendingSiteName] = useState<string>('');
-  const [pendingDate, setPendingDate] = useState('');
+  const [pendingDate, setPendingDate] = useState<Date | undefined>(undefined);
 
   // Fetch tournee data
   const { data: tournee, isLoading: tourneeLoading, error: tourneeError } = useQuery({
@@ -319,7 +322,7 @@ const TourneeDetail = () => {
       defaultDate.setDate(defaultDate.getDate() + 1);
     }
 
-    setPendingDate(defaultDate.toISOString().slice(0, 16));
+    setPendingDate(defaultDate);
     setDateDialogOpen(true);
   };
 
@@ -345,7 +348,7 @@ const TourneeDetail = () => {
   const handleConfirmDate = async () => {
     if (!pendingSiteId || !pendingAction || !pendingDate) return;
 
-    const dateIso = new Date(pendingDate).toISOString();
+    const dateIso = pendingDate.toISOString();
 
     const fieldMap: Record<PendingAction, keyof VisiteStatus> = {
       rdv: 'rdv',
@@ -359,7 +362,7 @@ const TourneeDetail = () => {
     setPendingAction(null);
     setPendingSiteId(null);
     setPendingSiteName('');
-    setPendingDate('');
+    setPendingDate(undefined);
   };
 
   const handleCancelDate = () => {
@@ -367,7 +370,7 @@ const TourneeDetail = () => {
     setPendingAction(null);
     setPendingSiteId(null);
     setPendingSiteName('');
-    setPendingDate('');
+    setPendingDate(undefined);
   };
 
   const formatDuration = (minutes: number | null) => {
@@ -826,16 +829,33 @@ const TourneeDetail = () => {
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
-              <label htmlFor="relance-date" className="text-sm font-medium">
-                {pendingAction === 'rdv' ? 'Date et heure du RDV' : 'Date de relance'}
+              <label className="text-sm font-medium">
+                {pendingAction === 'rdv' ? 'Date du RDV' : 'Date de relance'}
               </label>
-              <Input
-                id="relance-date"
-                type="datetime-local"
-                value={pendingDate}
-                onChange={(e) => setPendingDate(e.target.value)}
-                className="w-full"
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !pendingDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {pendingDate ? format(pendingDate, "PPP", { locale: fr }) : <span>Choisir une date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={pendingDate}
+                    onSelect={setPendingDate}
+                    initialFocus
+                    locale={fr}
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
               <p className="text-xs text-muted-foreground">
                 📅 Cette relance apparaîtra dans vos notifications (🔔) à la date choisie
               </p>
