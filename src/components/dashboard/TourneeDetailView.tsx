@@ -315,7 +315,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         });
         
         const messages: Record<keyof VisiteStatus, string> = {
-          visite: 'Visite enregistrée',
+          visite: `Visite du ${new Date().toLocaleDateString('fr-FR')} enregistrée`,
           rdv: dateRelance ? `RDV planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'RDV enregistré',
           aRevoir: dateRelance ? `Revisite planifiée le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'À revoir enregistré',
           aRappeler: dateRelance ? `Rappel planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'À rappeler enregistré',
