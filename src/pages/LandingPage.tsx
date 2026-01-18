@@ -40,6 +40,20 @@ const LandingPage = () => {
     setUserId(null);
   };
 
+  // Handle dashboard button click - redirect to auth if not logged in, dashboard if has access
+  const handleDashboardClick = () => {
+    if (!isLoggedIn) {
+      // Not logged in - go to auth page, then redirect to dashboard check
+      navigate('/auth?redirect=dashboard');
+    } else if (hasAccess) {
+      // Logged in with access - go to dashboard
+      navigate('/dashboard');
+    } else {
+      // Logged in but no access - initiate checkout
+      initiateCheckout();
+    }
+  };
+
   // Check if user just logged in and should go to checkout
   // BUT first verify they don't already have access (admin or active subscription)
   useEffect(() => {
@@ -136,48 +150,26 @@ const LandingPage = () => {
                   Réserver une démo
                 </a>
               </Button>
-              {isLoggedIn && hasAccess ? (
-                <>
-                  <Button onClick={() => navigate('/dashboard')} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Mon tableau de bord
-                  </Button>
-                  <Button onClick={handleLogout} variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold px-4">
-                    <LogOut className="h-4 w-4" />
-                  </Button>
-                </>
-              ) : isLoggedIn ? (
-                <Button onClick={handleLogout} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Se déconnecter
-                </Button>
-              ) : (
-                <Button onClick={() => navigate('/auth')} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
-                  Connexion
+              <Button onClick={handleDashboardClick} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Mon tableau de bord
+              </Button>
+              {isLoggedIn && (
+                <Button onClick={handleLogout} variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold px-4">
+                  <LogOut className="h-4 w-4" />
                 </Button>
               )}
             </div>
 
             {/* Tablet buttons */}
             <div className="hidden sm:flex lg:hidden items-center gap-2">
-              {isLoggedIn && hasAccess ? (
-                <>
-                  <Button onClick={() => navigate('/dashboard')} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-3 text-xs">
-                    <LayoutDashboard className="mr-1 h-3 w-3" />
-                    Dashboard
-                  </Button>
-                  <Button onClick={handleLogout} variant="outline" className="border-white/20 text-white hover:bg-white/10 h-9 px-2">
-                    <LogOut className="h-3 w-3" />
-                  </Button>
-                </>
-              ) : isLoggedIn ? (
-                <Button onClick={handleLogout} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-4 text-xs">
-                  <LogOut className="mr-1 h-3 w-3" />
-                  Déconnexion
-                </Button>
-              ) : (
-                <Button onClick={() => navigate('/auth')} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-4 text-xs">
-                  Connexion
+              <Button onClick={handleDashboardClick} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-3 text-xs">
+                <LayoutDashboard className="mr-1 h-3 w-3" />
+                Dashboard
+              </Button>
+              {isLoggedIn && (
+                <Button onClick={handleLogout} variant="outline" className="border-white/20 text-white hover:bg-white/10 h-9 px-2">
+                  <LogOut className="h-3 w-3" />
                 </Button>
               )}
             </div>
@@ -202,25 +194,14 @@ const LandingPage = () => {
                           Réserver une démo
                         </a>
                       </Button>
-                      {isLoggedIn && hasAccess ? (
-                        <>
-                          <Button onClick={() => navigate('/dashboard')} className="w-full bg-accent text-black font-semibold">
-                            <LayoutDashboard className="mr-2 h-4 w-4" />
-                            Mon tableau de bord
-                          </Button>
-                          <Button onClick={handleLogout} variant="outline" className="w-full border-white/20 text-white">
-                            <LogOut className="mr-2 h-4 w-4" />
-                            Se déconnecter
-                          </Button>
-                        </>
-                      ) : isLoggedIn ? (
-                        <Button onClick={handleLogout} className="w-full bg-accent text-black font-semibold">
+                      <Button onClick={handleDashboardClick} className="w-full bg-accent text-black font-semibold">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Mon tableau de bord
+                      </Button>
+                      {isLoggedIn && (
+                        <Button onClick={handleLogout} variant="outline" className="w-full border-white/20 text-white">
                           <LogOut className="mr-2 h-4 w-4" />
                           Se déconnecter
-                        </Button>
-                      ) : (
-                        <Button onClick={() => navigate('/auth')} className="w-full bg-accent text-black font-semibold">
-                          Connexion
                         </Button>
                       )}
                     </div>
