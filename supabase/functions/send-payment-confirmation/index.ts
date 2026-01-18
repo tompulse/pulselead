@@ -55,7 +55,7 @@ serve(async (req) => {
     const formattedNextPayment = formatDate(nextPaymentDate);
 
     const { data, error } = await resend.emails.send({
-      from: "PULSE <mail@pulse-lead.com>",
+      from: "PULSE <noreply@mail.pulse-lead.com>",
       to: [email],
       subject: "🎉 Bienvenue dans la famille PULSE !",
       html: `

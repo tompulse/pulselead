@@ -50,7 +50,7 @@ serve(async (req) => {
     const displayName = firstName || email.split('@')[0].replace(/[._]/g, ' ');
 
     const { data, error } = await resend.emails.send({
-      from: "PULSE <mail@pulse-lead.com>",
+      from: "PULSE <noreply@mail.pulse-lead.com>",
       to: [email],
       subject: "🚀 Bienvenue sur PULSE - Votre essai gratuit a commencé !",
       html: `
