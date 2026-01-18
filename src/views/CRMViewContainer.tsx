@@ -112,7 +112,7 @@ export const CRMViewContainer = ({
   });
 
   // Calculate activity stats from real data
-  const aRappelerCount = interactions.filter(i => i.statut === 'a_rappeler').length;
+  const aRappelerCount = interactions.filter(i => i.type === 'a_rappeler' || i.type === 'appel').length;
   const rdvCount = interactions.filter(i => i.type === 'rdv').length;
   const aRevoirCount = interactions.filter(i => i.type === 'a_revoir').length;
   const notesCount = interactions.filter(i => i.notes && i.notes.trim() !== '').length;
