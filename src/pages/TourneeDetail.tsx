@@ -28,6 +28,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { TourneeMap } from '@/components/dashboard/TourneeMap';
+import { NavigationChoiceDialog } from '@/components/dashboard/NavigationChoiceDialog';
 import {
   Dialog,
   DialogContent,
@@ -75,6 +76,10 @@ const TourneeDetail = () => {
   const [pendingSiteId, setPendingSiteId] = useState<string | null>(null);
   const [pendingSiteName, setPendingSiteName] = useState<string>('');
   const [pendingDate, setPendingDate] = useState<Date | undefined>(undefined);
+
+  // Navigation dialog state (GPS choice)
+  const [navDialogOpen, setNavDialogOpen] = useState(false);
+  const [navTarget, setNavTarget] = useState<{ latitude?: number | null; longitude?: number | null; address: string } | null>(null);
 
   // Fetch tournee data
   const { data: tournee, isLoading: tourneeLoading, error: tourneeError } = useQuery({
@@ -469,12 +474,13 @@ const TourneeDetail = () => {
     setNoteDialogSiteId(null);
   };
 
-  const handleNavigate = (site: { latitude?: number; longitude?: number; adresse: string }) => {
-    if (site.latitude && site.longitude) {
-      window.open(`https://www.google.com/maps/dir/?api=1&destination=${site.latitude},${site.longitude}&travelmode=driving`, '_blank');
-    } else {
-      window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(site.adresse)}`, '_blank');
-    }
+  const handleNavigate = (site: { latitude?: number | null; longitude?: number | null; adresse: string }) => {
+    setNavTarget({
+      latitude: site.latitude,
+      longitude: site.longitude,
+      address: site.adresse,
+    });
+    setNavDialogOpen(true);
   };
 
   const handleRemoveSite = async (siteId: string) => {
@@ -862,6 +868,15 @@ const TourneeDetail = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Navigation choice dialog */}
+      <NavigationChoiceDialog
+        open={navDialogOpen}
+        onOpenChange={setNavDialogOpen}
+        latitude={navTarget?.latitude}
+        longitude={navTarget?.longitude}
+        address={navTarget?.address || ''}
+      />
     </div>
   );
 };
