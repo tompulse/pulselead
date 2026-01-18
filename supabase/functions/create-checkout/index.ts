@@ -74,7 +74,7 @@ serve(async (req) => {
         metadata: {
           user_id: user.id,
         },
-        description: "Accès complet à PULSE pendant 7 jours gratuits, puis 79€/mois",
+        description: "Prospection intelligente B2B — Liste filtrée de prospects, tournées optimisées IA & CRM terrain. TVA non applicable, art. 293 B du CGI.",
       },
       // Personnalisation du checkout
       custom_text: {
@@ -89,7 +89,7 @@ serve(async (req) => {
         terms_of_service: "required",
       },
       success_url: `${origin}/checkout-success?trial=true`,
-      cancel_url: `${origin}/subscribe?checkout=cancelled`,
+      cancel_url: `${origin}/?checkout=cancelled`,
       metadata: {
         user_id: user.id,
       },
