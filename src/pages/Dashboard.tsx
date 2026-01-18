@@ -157,8 +157,8 @@ const DashboardContent = () => {
     if (!loading && !adminLoading && !subscriptionLoading && userId) {
       // Bypass pour admins et utilisateur démo
       if (!isAdmin && !isDemoUser && !hasAccess) {
-        // Redirection silencieuse - la page subscribe explique déjà tout
-        navigate("/subscribe");
+        // Redirection vers la landing avec trigger de checkout
+        navigate("/?checkout=pending");
       }
     }
   }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate]);
