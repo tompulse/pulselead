@@ -370,6 +370,48 @@ const TourneeDetail = () => {
     setPendingDate('');
   };
 
+  const formatDuration = (minutes: number | null) => {
+    if (!minutes) return '0h00';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h${mins.toString().padStart(2, '0')}`;
+  };
+
+  const getFullAddress = (site: any) => {
+    const parts = [site.numero_voie, site.type_voie, site.libelle_voie].filter(Boolean).join(' ');
+    if (parts) {
+      return `${parts}, ${site.code_postal || ''} ${site.ville || ''}`.trim();
+    }
+    return site.adresse || `${site.code_postal || ''} ${site.ville || ''}`.trim();
+  };
+
+  const getDialogTitle = () => {
+    switch (pendingAction) {
+      case 'rdv': return 'Planifier le RDV';
+      case 'aRevoir': return 'Planifier la revisite';
+      case 'aRappeler': return 'Planifier le rappel';
+      default: return 'Planifier';
+    }
+  };
+
+  const getDialogColor = () => {
+    switch (pendingAction) {
+      case 'rdv': return 'text-purple-400';
+      case 'aRevoir': return 'text-orange-400';
+      case 'aRappeler': return 'text-blue-400';
+      default: return 'text-accent';
+    }
+  };
+
+  const getButtonColor = () => {
+    switch (pendingAction) {
+      case 'rdv': return 'bg-purple-500 hover:bg-purple-600';
+      case 'aRevoir': return 'bg-orange-500 hover:bg-orange-600';
+      case 'aRappeler': return 'bg-blue-500 hover:bg-blue-600';
+      default: return 'bg-accent hover:bg-accent/90';
+    }
+  };
+
   const openNoteDialog = (siteId: string) => {
     setNoteDialogSiteId(siteId);
     setNoteDialogValue(siteNotes[siteId] || '');
@@ -529,7 +571,7 @@ const TourneeDetail = () => {
         const site = sites.find((s: any) => s.id === siteId);
         if (!site) return null;
 
-        const status = visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false };
+        const status = visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false, aRappeler: false };
         const hasNote = !!siteNotes[siteId];
 
         return (
@@ -548,12 +590,12 @@ const TourneeDetail = () => {
               </div>
             </div>
 
-            {/* Status buttons */}
+            {/* Status buttons: Visité, RDV, À revoir, À rappeler */}
             <div className="flex flex-wrap gap-1 mb-1.5 sm:mb-2">
               <Button
                 size="sm"
                 variant={status.visite ? 'default' : 'outline'}
-                onClick={() => handleVisiteChange(siteId, 'visite', !status.visite)}
+                onClick={() => handleStatusClick(siteId, site.nom, 'visite')}
                 className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.visite ? 'bg-green-600 hover:bg-green-700' : 'border-green-500/30 text-green-500 hover:bg-green-500/10'}`}
               >
                 <CheckCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
@@ -562,8 +604,8 @@ const TourneeDetail = () => {
               <Button
                 size="sm"
                 variant={status.rdv ? 'default' : 'outline'}
-                onClick={() => handleVisiteChange(siteId, 'rdv', !status.rdv)}
-                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.rdv ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-500/30 text-blue-500 hover:bg-blue-500/10'}`}
+                onClick={() => handleStatusClick(siteId, site.nom, 'rdv')}
+                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.rdv ? 'bg-purple-600 hover:bg-purple-700' : 'border-purple-500/30 text-purple-500 hover:bg-purple-500/10'}`}
               >
                 <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                 RDV
@@ -571,15 +613,24 @@ const TourneeDetail = () => {
               <Button
                 size="sm"
                 variant={status.aRevoir ? 'default' : 'outline'}
-                onClick={() => handleVisiteChange(siteId, 'aRevoir', !status.aRevoir)}
+                onClick={() => handleStatusClick(siteId, site.nom, 'aRevoir')}
                 className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.aRevoir ? 'bg-orange-600 hover:bg-orange-700' : 'border-orange-500/30 text-orange-500 hover:bg-orange-500/10'}`}
               >
                 <Eye className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                 À revoir
               </Button>
+              <Button
+                size="sm"
+                variant={status.aRappeler ? 'default' : 'outline'}
+                onClick={() => handleStatusClick(siteId, site.nom, 'aRappeler')}
+                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.aRappeler ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-500/30 text-blue-500 hover:bg-blue-500/10'}`}
+              >
+                <Phone className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
+                À rappeler
+              </Button>
             </div>
 
-            {/* Actions */}
+            {/* Actions: Note, GPS, Delete */}
             <div className="flex items-center gap-1">
               <Button
                 size="sm"
@@ -754,6 +805,50 @@ const TourneeDetail = () => {
             </Button>
             <Button onClick={handleSaveNote} className="bg-yellow-500 hover:bg-yellow-600 text-black">
               Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Date Dialog for RDV / À revoir / À rappeler */}
+      <Dialog open={dateDialogOpen} onOpenChange={setDateDialogOpen}>
+        <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)]">
+          <DialogHeader>
+            <DialogTitle className={`flex items-center gap-2 ${getDialogColor()}`}>
+              {pendingAction === 'rdv' && <Calendar className="w-5 h-5" />}
+              {pendingAction === 'aRevoir' && <Eye className="w-5 h-5" />}
+              {pendingAction === 'aRappeler' && <Phone className="w-5 h-5" />}
+              {getDialogTitle()}
+            </DialogTitle>
+            <DialogDescription>
+              Pour <span className="font-semibold text-foreground">{pendingSiteName}</span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="relance-date" className="text-sm font-medium">
+                {pendingAction === 'rdv' ? 'Date et heure du RDV' : 'Date de relance'}
+              </label>
+              <Input
+                id="relance-date"
+                type="datetime-local"
+                value={pendingDate}
+                onChange={(e) => setPendingDate(e.target.value)}
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                📅 Cette relance apparaîtra dans vos notifications (🔔) à la date choisie
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={handleCancelDate}>
+              <X className="w-4 h-4 mr-1" />
+              Annuler
+            </Button>
+            <Button onClick={handleConfirmDate} disabled={!pendingDate} className={getButtonColor()}>
+              <Check className="w-4 h-4 mr-1" />
+              Confirmer
             </Button>
           </DialogFooter>
         </DialogContent>
