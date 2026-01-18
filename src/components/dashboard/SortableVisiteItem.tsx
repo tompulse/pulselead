@@ -196,19 +196,19 @@ export const SortableVisiteItem = ({
             <div className="font-semibold text-sm sm:text-base leading-tight">{site.nom}</div>
             <div className="text-xs sm:text-sm text-muted-foreground leading-tight mt-0.5 line-clamp-1">{site.adresse}</div>
             
-            {/* Action buttons - Row 1: Status */}
-            <div className="flex flex-wrap gap-2 mt-3">
+            {/* Action buttons - Row 1: Status (Visité, RDV, À revoir, À rappeler) */}
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleActionClick('visite')}
-                className={`h-8 px-3 text-xs font-medium transition-all ${
+                className={`h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs font-medium transition-all ${
                   visiteStatus.visite
                     ? 'bg-green-500/20 border-green-500 text-green-400 hover:bg-green-500/30'
                     : 'border-green-500/30 text-green-400 hover:bg-green-500/10 hover:border-green-500'
                 }`}
               >
-                <Check className="w-3.5 h-3.5 mr-1.5" />
+                <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" />
                 Visité
               </Button>
 
@@ -216,13 +216,13 @@ export const SortableVisiteItem = ({
                 variant="outline"
                 size="sm"
                 onClick={() => handleActionClick('rdv')}
-                className={`h-8 px-3 text-xs font-medium transition-all ${
+                className={`h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs font-medium transition-all ${
                   visiteStatus.rdv
                     ? 'bg-purple-500/20 border-purple-500 text-purple-400 hover:bg-purple-500/30'
                     : 'border-purple-500/30 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500'
                 }`}
               >
-                <Calendar className="w-3.5 h-3.5 mr-1.5" />
+                <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" />
                 RDV
               </Button>
 
@@ -230,13 +230,13 @@ export const SortableVisiteItem = ({
                 variant="outline"
                 size="sm"
                 onClick={() => handleActionClick('aRevoir')}
-                className={`h-8 px-3 text-xs font-medium transition-all ${
+                className={`h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs font-medium transition-all ${
                   visiteStatus.aRevoir
                     ? 'bg-orange-500/20 border-orange-500 text-orange-400 hover:bg-orange-500/30'
                     : 'border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500'
                 }`}
               >
-                <Eye className="w-3.5 h-3.5 mr-1.5" />
+                <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" />
                 À revoir
               </Button>
 
@@ -244,13 +244,13 @@ export const SortableVisiteItem = ({
                 variant="outline"
                 size="sm"
                 onClick={() => handleActionClick('aRappeler')}
-                className={`h-8 px-3 text-xs font-medium transition-all ${
+                className={`h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-xs font-medium transition-all ${
                   visiteStatus.aRappeler
                     ? 'bg-blue-500/20 border-blue-500 text-blue-400 hover:bg-blue-500/30'
                     : 'border-blue-500/30 text-blue-400 hover:bg-blue-500/10 hover:border-blue-500'
                 }`}
               >
-                <Phone className="w-3.5 h-3.5 mr-1.5" />
+                <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" />
                 À rappeler
               </Button>
             </div>
