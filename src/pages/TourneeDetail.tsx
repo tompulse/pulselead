@@ -240,7 +240,7 @@ const TourneeDetail = () => {
       type: string;
       dateRelance?: string;
     }) => {
-      const statut = type === 'a_revoir' || type === 'a_rappeler' ? 'a_rappeler' : 'en_cours';
+      const statut = type === 'a_rappeler' ? 'a_rappeler' : 'en_cours';
 
       const { error } = await supabase.functions.invoke('sync-interaction', {
         body: {

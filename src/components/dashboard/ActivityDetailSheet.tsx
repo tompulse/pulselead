@@ -81,7 +81,8 @@ export const ActivityDetailSheet = ({
       if (activityType === 'a_revoir') {
         query = query.eq('type', 'a_revoir');
       } else if (activityType === 'a_rappeler') {
-        query = query.eq('statut', 'a_rappeler');
+        // Include both 'a_rappeler' and legacy 'appel' types
+        query = query.in('type', ['a_rappeler', 'appel']);
       } else {
         query = query.eq('type', activityType);
       }
