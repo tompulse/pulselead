@@ -38,8 +38,6 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
 
 interface VisiteStatus {
   visite: boolean;
@@ -832,30 +830,22 @@ const TourneeDetail = () => {
               <label className="text-sm font-medium">
                 {pendingAction === 'rdv' ? 'Date du RDV' : 'Date de relance'}
               </label>
-              <Popover modal={true}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !pendingDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarLucide className="mr-2 h-4 w-4" />
-                    {pendingDate ? format(pendingDate, "PPP", { locale: fr }) : <span>Choisir une date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-[9999]" align="center" sideOffset={4}>
-                  <Calendar
-                    mode="single"
-                    selected={pendingDate}
-                    onSelect={setPendingDate}
-                    initialFocus
-                    locale={fr}
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="rounded-lg border bg-popover p-3">
+                <div className="flex items-center justify-between gap-3 pb-2">
+                  <div className="text-sm text-muted-foreground">Date sélectionnée</div>
+                  <div className="text-sm font-medium text-foreground">
+                    {pendingDate ? format(pendingDate, "dd/MM/yyyy", { locale: fr }) : "—"}
+                  </div>
+                </div>
+                <Calendar
+                  mode="single"
+                  selected={pendingDate}
+                  onSelect={setPendingDate}
+                  initialFocus
+                  locale={fr}
+                  className="p-3 pointer-events-auto"
+                />
+              </div>
               <p className="text-xs text-muted-foreground">
                 📅 Cette relance apparaîtra dans vos notifications (🔔) à la date choisie
               </p>
