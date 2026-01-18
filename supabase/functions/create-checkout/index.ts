@@ -56,7 +56,7 @@ serve(async (req) => {
       logStep("No existing customer, will create new one");
     }
 
-    const origin = req.headers.get("origin") || "https://pulse.lovable.app";
+    const origin = req.headers.get("origin") || "https://pulse-lead.com";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -82,7 +82,7 @@ serve(async (req) => {
           message: "🚀 Vous ne serez débité que dans 7 jours. Annulez à tout moment.",
         },
         terms_of_service_acceptance: {
-          message: "En continuant, vous acceptez nos [conditions générales](https://pulse.lovable.app/cgu)",
+          message: "En continuant, vous acceptez nos [conditions générales](https://pulse-lead.com/cgu)",
         },
       },
       consent_collection: {
