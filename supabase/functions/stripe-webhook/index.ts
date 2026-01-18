@@ -279,15 +279,21 @@ serve(async (req) => {
               const userEmail = userData?.user?.email;
               const firstName = userData?.user?.user_metadata?.first_name;
 
-              if (userEmail) {
+          if (userEmail) {
+                // Récupérer le montant réel payé (après réduction éventuelle)
+                const amountPaid = invoice.amount_paid / 100; // Stripe stocke en centimes
+                const currency = invoice.currency?.toUpperCase() || 'EUR';
+
                 await supabaseAdmin.functions.invoke('send-payment-confirmation', {
                   body: {
                     email: userEmail,
                     firstName,
                     nextPaymentDate: unixToISOString(subscription.current_period_end),
+                    amountPaid,
+                    currency,
                   },
                 });
-                logStep("Payment confirmation email sent", { email: userEmail, firstName });
+                logStep("Payment confirmation email sent", { email: userEmail, firstName, amountPaid, currency });
               }
             } catch (emailError: any) {
               logStep("Error sending payment confirmation email", { error: emailError?.message ?? String(emailError) });
