@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  MapPin, 
-  Navigation, 
-  Clock, 
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  Navigation,
+  Clock,
   CheckCircle,
   Eye,
   Loader2,
@@ -20,7 +20,8 @@ import {
   X,
   Trash2,
   ExternalLink,
-  StickyNote
+  StickyNote,
+  Phone,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
@@ -32,6 +33,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,13 +42,16 @@ interface VisiteStatus {
   visite: boolean;
   rdv: boolean;
   aRevoir: boolean;
+  aRappeler?: boolean;
 }
+
+type PendingAction = 'rdv' | 'aRevoir' | 'aRappeler';
 
 const TourneeDetail = () => {
   const { tourneeId } = useParams<{ tourneeId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  
+
   const [orderedSiteIds, setOrderedSiteIds] = useState<string[]>([]);
   const [visitesStatus, setVisitesStatus] = useState<Record<string, VisiteStatus>>({});
   const [siteNotes, setSiteNotes] = useState<Record<string, string>>({});
@@ -57,11 +62,18 @@ const TourneeDetail = () => {
   });
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState('');
-  
+
   // Note dialog state
   const [noteDialogOpen, setNoteDialogOpen] = useState(false);
   const [noteDialogSiteId, setNoteDialogSiteId] = useState<string | null>(null);
   const [noteDialogValue, setNoteDialogValue] = useState('');
+
+  // Date dialog state (RDV / À revoir / À rappeler)
+  const [dateDialogOpen, setDateDialogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
+  const [pendingSiteId, setPendingSiteId] = useState<string | null>(null);
+  const [pendingSiteName, setPendingSiteName] = useState<string>('');
+  const [pendingDate, setPendingDate] = useState('');
 
   // Fetch tournee data
   const { data: tournee, isLoading: tourneeLoading, error: tourneeError } = useQuery({
@@ -218,13 +230,24 @@ const TourneeDetail = () => {
 
   // Sync interaction to CRM
   const syncToCRM = useMutation({
-    mutationFn: async ({ entrepriseId, type }: { entrepriseId: string; type: string }) => {
+    mutationFn: async ({
+      entrepriseId,
+      type,
+      dateRelance,
+    }: {
+      entrepriseId: string;
+      type: string;
+      dateRelance?: string;
+    }) => {
+      const statut = type === 'a_revoir' || type === 'a_rappeler' ? 'a_rappeler' : 'en_cours';
+
       const { error } = await supabase.functions.invoke('sync-interaction', {
         body: {
           entreprise_id: entrepriseId,
           type,
-          statut: 'en_cours',
+          statut,
           notes: `Depuis tournée: ${tournee?.nom}`,
+          date_relance: dateRelance ?? null,
         },
       });
 
@@ -232,53 +255,119 @@ const TourneeDetail = () => {
     },
   });
 
-  const formatDuration = (minutes: number | null) => {
-    if (!minutes) return '0h00';
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h${mins.toString().padStart(2, '0')}`;
-  };
-
-  const getFullAddress = (site: any) => {
-    const parts = [site.numero_voie, site.type_voie, site.libelle_voie].filter(Boolean).join(' ');
-    if (parts) {
-      return `${parts}, ${site.code_postal || ''} ${site.ville || ''}`.trim();
-    }
-    return site.adresse || `${site.code_postal || ''} ${site.ville || ''}`.trim();
-  };
-
-  const handleVisiteChange = async (siteId: string, field: keyof VisiteStatus, value: boolean) => {
+  const handleVisiteChange = async (
+    siteId: string,
+    field: keyof VisiteStatus,
+    value: boolean,
+    dateRelance?: string
+  ) => {
     const newStatus = {
       ...visitesStatus,
       [siteId]: {
-        ...(visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false }),
+        ...(visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false, aRappeler: false }),
         [field]: value,
       },
     };
-    
+
     setVisitesStatus(newStatus);
 
     await updateTourneeMutation.mutateAsync({
       visites_effectuees: newStatus,
     });
 
-    if (value) {
-      const typeMap: Record<keyof VisiteStatus, string> = {
-        visite: 'visite',
-        rdv: 'rdv',
-        aRevoir: 'a_revoir',
+    if (!value) return;
+
+    const typeMap: Record<keyof VisiteStatus, string> = {
+      visite: 'visite',
+      rdv: 'rdv',
+      aRevoir: 'a_revoir',
+      aRappeler: 'a_rappeler',
+    };
+
+    try {
+      const type = typeMap[field];
+      await syncToCRM.mutateAsync({
+        entrepriseId: siteId,
+        type,
+        dateRelance,
+      });
+
+      const labelDate = (dateRelance ? new Date(dateRelance) : new Date()).toLocaleDateString('fr-FR');
+
+      const messages: Record<keyof VisiteStatus, string> = {
+        visite: `Visite du ${labelDate} enregistrée`,
+        rdv: dateRelance ? `RDV planifié le ${labelDate}` : 'RDV enregistré',
+        aRevoir: dateRelance ? `Revisite planifiée le ${labelDate}` : 'À revoir enregistré',
+        aRappeler: dateRelance ? `Rappel planifié le ${labelDate}` : 'À rappeler enregistré',
       };
-      
-      try {
-        await syncToCRM.mutateAsync({
-          entrepriseId: siteId,
-          type: typeMap[field],
-        });
-        toast.success(`${field === 'visite' ? 'Visite' : field === 'rdv' ? 'RDV' : 'À revoir'} enregistré`);
-      } catch (error) {
-        console.error('Error syncing to CRM:', error);
-      }
+
+      toast.success(messages[field] || 'Action enregistrée');
+    } catch (error) {
+      console.error('Error syncing to CRM:', error);
     }
+  };
+
+  const openDateDialogFor = (siteId: string, siteName: string, action: PendingAction) => {
+    setPendingSiteId(siteId);
+    setPendingSiteName(siteName);
+    setPendingAction(action);
+
+    const defaultDate = new Date();
+    if (action === 'rdv') {
+      defaultDate.setDate(defaultDate.getDate() + 7);
+    } else {
+      defaultDate.setDate(defaultDate.getDate() + 1);
+    }
+
+    setPendingDate(defaultDate.toISOString().slice(0, 16));
+    setDateDialogOpen(true);
+  };
+
+  const handleStatusClick = (siteId: string, siteName: string, field: keyof VisiteStatus) => {
+    const current = visitesStatus[siteId]?.[field] || false;
+
+    if (current) {
+      void handleVisiteChange(siteId, field, false);
+      return;
+    }
+
+    if (field === 'visite') {
+      // Date du jour implicitement (interaction créée maintenant)
+      void handleVisiteChange(siteId, 'visite', true);
+      return;
+    }
+
+    if (field === 'rdv') return openDateDialogFor(siteId, siteName, 'rdv');
+    if (field === 'aRevoir') return openDateDialogFor(siteId, siteName, 'aRevoir');
+    if (field === 'aRappeler') return openDateDialogFor(siteId, siteName, 'aRappeler');
+  };
+
+  const handleConfirmDate = async () => {
+    if (!pendingSiteId || !pendingAction || !pendingDate) return;
+
+    const dateIso = new Date(pendingDate).toISOString();
+
+    const fieldMap: Record<PendingAction, keyof VisiteStatus> = {
+      rdv: 'rdv',
+      aRevoir: 'aRevoir',
+      aRappeler: 'aRappeler',
+    };
+
+    await handleVisiteChange(pendingSiteId, fieldMap[pendingAction], true, dateIso);
+
+    setDateDialogOpen(false);
+    setPendingAction(null);
+    setPendingSiteId(null);
+    setPendingSiteName('');
+    setPendingDate('');
+  };
+
+  const handleCancelDate = () => {
+    setDateDialogOpen(false);
+    setPendingAction(null);
+    setPendingSiteId(null);
+    setPendingSiteName('');
+    setPendingDate('');
   };
 
   const openNoteDialog = (siteId: string) => {
