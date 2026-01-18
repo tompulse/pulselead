@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { GripVertical, MapPin, Navigation, Calendar, RotateCcw, Trash2, MessageSquare, X, Check } from 'lucide-react';
+import { GripVertical, MapPin, Navigation, Calendar, Eye, Phone, Trash2, FileText, X, Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +18,7 @@ interface VisiteStatus {
   visite: boolean;
   rdv: boolean;
   aRevoir: boolean;
+  aRappeler?: boolean;
 }
 
 interface SortableVisiteItemProps {
@@ -57,7 +57,7 @@ export const SortableVisiteItem = ({
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [noteText, setNoteText] = useState(currentNote);
   const [relanceDate, setRelanceDate] = useState('');
-  const [pendingField, setPendingField] = useState<'aRevoir' | 'rdv' | null>(null);
+  const [pendingField, setPendingField] = useState<'aRevoir' | 'rdv' | 'aRappeler' | null>(null);
 
   const {
     attributes,
@@ -87,25 +87,32 @@ export const SortableVisiteItem = ({
     setIsNoteDialogOpen(false);
   };
 
-  const handleCheckboxChange = (field: keyof VisiteStatus, checked: boolean) => {
-    if (!checked) {
-      // If unchecking, just update without date
+  const handleActionClick = (field: keyof VisiteStatus) => {
+    const currentValue = visiteStatus[field] || false;
+    
+    if (currentValue) {
+      // If already active, toggle off
       onVisiteChange(site.id, field, false);
       return;
     }
 
-    // For "À revoir" or "RDV", ask for a date
-    if (field === 'aRevoir' || field === 'rdv') {
-      setPendingField(field);
-      // Default to tomorrow
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      setRelanceDate(tomorrow.toISOString().slice(0, 16));
-      setIsDateDialogOpen(true);
-    } else {
-      // For "visite", no date needed
+    // For visite, no date needed
+    if (field === 'visite') {
       onVisiteChange(site.id, field, true);
+      return;
     }
+
+    // For RDV, À revoir, À rappeler - ask for date
+    setPendingField(field as 'aRevoir' | 'rdv' | 'aRappeler');
+    // Default to tomorrow for relance, next week for RDV
+    const defaultDate = new Date();
+    if (field === 'rdv') {
+      defaultDate.setDate(defaultDate.getDate() + 7);
+    } else {
+      defaultDate.setDate(defaultDate.getDate() + 1);
+    }
+    setRelanceDate(defaultDate.toISOString().slice(0, 16));
+    setIsDateDialogOpen(true);
   };
 
   const handleConfirmDate = () => {
@@ -125,18 +132,45 @@ export const SortableVisiteItem = ({
 
   const hasNote = currentNote && currentNote.trim().length > 0;
 
+  const getDialogTitle = () => {
+    switch (pendingField) {
+      case 'rdv': return 'Planifier le RDV';
+      case 'aRevoir': return 'Planifier la revisite';
+      case 'aRappeler': return 'Planifier le rappel';
+      default: return 'Planifier';
+    }
+  };
+
+  const getDialogColor = () => {
+    switch (pendingField) {
+      case 'rdv': return 'text-purple-400';
+      case 'aRevoir': return 'text-orange-400';
+      case 'aRappeler': return 'text-blue-400';
+      default: return 'text-accent';
+    }
+  };
+
+  const getButtonColor = () => {
+    switch (pendingField) {
+      case 'rdv': return 'bg-purple-500 hover:bg-purple-600';
+      case 'aRevoir': return 'bg-orange-500 hover:bg-orange-600';
+      case 'aRappeler': return 'bg-blue-500 hover:bg-blue-600';
+      default: return 'bg-accent hover:bg-accent/90';
+    }
+  };
+
   return (
     <>
       <div
         ref={setNodeRef}
         style={style}
-        className={`p-2.5 sm:p-3 rounded-lg border transition-colors ${
+        className={`p-3 sm:p-4 rounded-xl border transition-colors ${
           isDragging 
             ? 'bg-accent/20 border-accent shadow-lg' 
-            : 'bg-card/50 border-accent/10 hover:border-accent/30'
+            : 'bg-card/50 border-border/50 hover:border-accent/30'
         }`}
       >
-        <div className="flex items-start gap-2">
+        <div className="flex items-start gap-3">
           {/* Drag handle */}
           <button
             {...attributes}
@@ -147,7 +181,7 @@ export const SortableVisiteItem = ({
           </button>
 
           {/* Index badge */}
-          <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold shrink-0 ${
+          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
             isLast 
               ? 'bg-green-500 text-white' 
               : visiteStatus.visite
@@ -159,85 +193,114 @@ export const SortableVisiteItem = ({
 
           {/* Site info */}
           <div className="flex-1 min-w-0">
-            <div className="font-medium text-xs sm:text-sm leading-tight line-clamp-2">{site.nom}</div>
-            <div className="text-[10px] sm:text-xs text-muted-foreground leading-tight mt-0.5 line-clamp-1">{site.adresse}</div>
+            <div className="font-semibold text-sm sm:text-base leading-tight">{site.nom}</div>
+            <div className="text-xs sm:text-sm text-muted-foreground leading-tight mt-0.5 line-clamp-1">{site.adresse}</div>
+            
+            {/* Action buttons - Row 1: Status */}
+            <div className="flex flex-wrap gap-2 mt-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleActionClick('visite')}
+                className={`h-8 px-3 text-xs font-medium transition-all ${
+                  visiteStatus.visite
+                    ? 'bg-green-500/20 border-green-500 text-green-400 hover:bg-green-500/30'
+                    : 'border-green-500/30 text-green-400 hover:bg-green-500/10 hover:border-green-500'
+                }`}
+              >
+                <Check className="w-3.5 h-3.5 mr-1.5" />
+                Visité
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleActionClick('rdv')}
+                className={`h-8 px-3 text-xs font-medium transition-all ${
+                  visiteStatus.rdv
+                    ? 'bg-purple-500/20 border-purple-500 text-purple-400 hover:bg-purple-500/30'
+                    : 'border-purple-500/30 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500'
+                }`}
+              >
+                <Calendar className="w-3.5 h-3.5 mr-1.5" />
+                RDV
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleActionClick('aRevoir')}
+                className={`h-8 px-3 text-xs font-medium transition-all ${
+                  visiteStatus.aRevoir
+                    ? 'bg-orange-500/20 border-orange-500 text-orange-400 hover:bg-orange-500/30'
+                    : 'border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500'
+                }`}
+              >
+                <Eye className="w-3.5 h-3.5 mr-1.5" />
+                À revoir
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleActionClick('aRappeler')}
+                className={`h-8 px-3 text-xs font-medium transition-all ${
+                  visiteStatus.aRappeler
+                    ? 'bg-blue-500/20 border-blue-500 text-blue-400 hover:bg-blue-500/30'
+                    : 'border-blue-500/30 text-blue-400 hover:bg-blue-500/10 hover:border-blue-500'
+                }`}
+              >
+                <Phone className="w-3.5 h-3.5 mr-1.5" />
+                À rappeler
+              </Button>
+            </div>
+
+            {/* Action buttons - Row 2: Utilities */}
+            <div className="flex flex-wrap gap-2 mt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOpenNote}
+                className={`h-8 px-3 text-xs font-medium transition-all ${
+                  hasNote
+                    ? 'bg-yellow-500/20 border-yellow-500 text-yellow-400 hover:bg-yellow-500/30'
+                    : 'border-border text-muted-foreground hover:text-yellow-400 hover:border-yellow-500/50'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5 mr-1.5" />
+                Note
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onNavigate(site)}
+                className="h-8 px-3 text-xs font-medium border-border text-muted-foreground hover:text-accent hover:border-accent/50"
+              >
+                <Navigation className="w-3.5 h-3.5 mr-1.5" />
+                GPS
+              </Button>
+
+              {onRemove && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onRemove(site.id)}
+                  className="h-8 w-8 p-0 border-border text-muted-foreground hover:text-destructive hover:border-destructive/50"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              )}
+            </div>
+
+            {/* Note preview */}
             {hasNote && (
-              <div className="mt-1 text-[10px] sm:text-xs text-yellow-400/80 flex items-center gap-1">
-                <MessageSquare className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
-                <span className="truncate">{currentNote.substring(0, 25)}{currentNote.length > 25 ? '...' : ''}</span>
+              <div className="mt-2 text-xs text-yellow-400/80 flex items-center gap-1 bg-yellow-500/10 px-2 py-1 rounded">
+                <FileText className="w-3 h-3 shrink-0" />
+                <span className="truncate">{currentNote.substring(0, 50)}{currentNote.length > 50 ? '...' : ''}</span>
               </div>
             )}
           </div>
-
-          {/* Action buttons - Navigation & Delete only */}
-          <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 sm:h-8 sm:w-8"
-              onClick={() => onNavigate(site)}
-              aria-label="Naviguer vers ce site"
-            >
-              <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
-            </Button>
-            {onRemove && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => onRemove(site.id)}
-                aria-label="Supprimer de la tournée"
-              >
-                <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </Button>
-            )}
-          </div>
-        </div>
-        
-        {/* Action checkboxes - on separate row */}
-        <div className="flex items-center flex-wrap gap-x-2 sm:gap-x-3 gap-y-1.5 sm:gap-y-2 mt-2 pl-8 sm:pl-10">
-          <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
-            <Checkbox 
-              checked={visiteStatus.visite}
-              onCheckedChange={(checked) => handleCheckboxChange('visite', !!checked)}
-              className="h-3.5 w-3.5 sm:h-4 sm:w-4"
-            />
-            <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-accent" />
-            <span>Visité</span>
-          </label>
-          
-          <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
-            <Checkbox 
-              checked={visiteStatus.rdv}
-              onCheckedChange={(checked) => handleCheckboxChange('rdv', !!checked)}
-              className="h-3.5 w-3.5 sm:h-4 sm:w-4"
-            />
-            <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-400" />
-            <span>RDV</span>
-          </label>
-          
-          <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
-            <Checkbox 
-              checked={visiteStatus.aRevoir}
-              onCheckedChange={(checked) => handleCheckboxChange('aRevoir', !!checked)}
-              className="h-3.5 w-3.5 sm:h-4 sm:w-4"
-            />
-            <RotateCcw className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-orange-400" />
-            <span>À revoir</span>
-          </label>
-
-          <button
-            type="button"
-            onClick={handleOpenNote}
-            className={`flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md border transition-colors ${
-              hasNote 
-                ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-400' 
-                : 'border-accent/20 hover:border-yellow-500/40 hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-400'
-            }`}
-          >
-            <MessageSquare className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-            <span>{hasNote ? 'Modifier' : 'Note'}</span>
-          </button>
         </div>
       </div>
 
@@ -246,7 +309,7 @@ export const SortableVisiteItem = ({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-yellow-400" />
+              <FileText className="w-5 h-5 text-yellow-400" />
               Note pour {site.nom}
             </DialogTitle>
           </DialogHeader>
@@ -268,7 +331,7 @@ export const SortableVisiteItem = ({
             </Button>
             <Button
               onClick={handleSaveNote}
-              className="bg-accent hover:bg-accent/90 text-primary"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black"
             >
               <Check className="w-4 h-4 mr-1" />
               Enregistrer
@@ -277,13 +340,15 @@ export const SortableVisiteItem = ({
         </DialogContent>
       </Dialog>
 
-      {/* Date Picker Dialog for À revoir / RDV */}
+      {/* Date Picker Dialog */}
       <Dialog open={isDateDialogOpen} onOpenChange={setIsDateDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Calendar className={`w-5 h-5 ${pendingField === 'rdv' ? 'text-purple-400' : 'text-orange-400'}`} />
-              {pendingField === 'rdv' ? 'Planifier le RDV' : 'Planifier la relance'}
+            <DialogTitle className={`flex items-center gap-2 ${getDialogColor()}`}>
+              {pendingField === 'rdv' && <Calendar className="w-5 h-5" />}
+              {pendingField === 'aRevoir' && <Eye className="w-5 h-5" />}
+              {pendingField === 'aRappeler' && <Phone className="w-5 h-5" />}
+              {getDialogTitle()}
             </DialogTitle>
           </DialogHeader>
           <div className="py-4 space-y-4">
@@ -301,6 +366,9 @@ export const SortableVisiteItem = ({
                 onChange={(e) => setRelanceDate(e.target.value)}
                 className="w-full"
               />
+              <p className="text-xs text-muted-foreground">
+                📅 Cette relance apparaîtra dans vos notifications (🔔) à la date choisie
+              </p>
             </div>
           </div>
           <DialogFooter className="flex gap-2">
@@ -314,7 +382,7 @@ export const SortableVisiteItem = ({
             <Button
               onClick={handleConfirmDate}
               disabled={!relanceDate}
-              className={pendingField === 'rdv' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-orange-500 hover:bg-orange-600'}
+              className={getButtonColor()}
             >
               <Check className="w-4 h-4 mr-1" />
               Confirmer

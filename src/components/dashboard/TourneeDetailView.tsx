@@ -68,6 +68,7 @@ interface VisiteStatus {
   visite: boolean;
   rdv: boolean;
   aRevoir: boolean;
+  aRappeler?: boolean;
 }
 
 interface RouteEndpoint {
@@ -285,7 +286,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     const newStatus = {
       ...visitesStatus,
       [siteId]: {
-        ...(visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false }),
+        ...(visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false, aRappeler: false }),
         [field]: value,
       },
     };
@@ -303,21 +304,23 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         visite: 'visite',
         rdv: 'rdv',
         aRevoir: 'a_revoir',
+        aRappeler: 'a_rappeler',
       };
       
       try {
         await syncToCRM.mutateAsync({
           entrepriseId: siteId,
-          type: typeMap[field],
+          type: typeMap[field] || field,
           dateRelance,
         });
         
         const messages: Record<keyof VisiteStatus, string> = {
           visite: 'Visite enregistrée',
           rdv: dateRelance ? `RDV planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'RDV enregistré',
-          aRevoir: dateRelance ? `Relance planifiée le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'À revoir enregistré',
+          aRevoir: dateRelance ? `Revisite planifiée le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'À revoir enregistré',
+          aRappeler: dateRelance ? `Rappel planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'À rappeler enregistré',
         };
-        toast.success(messages[field]);
+        toast.success(messages[field] || 'Action enregistrée');
       } catch (error) {
         console.error('Error syncing to CRM:', error);
       }

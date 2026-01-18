@@ -7,7 +7,7 @@ const corsHeaders = {
 
 interface InteractionRequest {
   entreprise_id: string;
-  type: 'appel' | 'email' | 'visite' | 'rdv' | 'autre' | 'a_revoir';
+  type: 'appel' | 'email' | 'visite' | 'rdv' | 'autre' | 'a_revoir' | 'a_rappeler';
   statut?: 'a_rappeler' | 'en_cours' | 'gagne' | 'perdu' | 'sans_suite';
   notes?: string;
   date_relance?: string;
