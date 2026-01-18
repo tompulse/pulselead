@@ -128,17 +128,17 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
                       <button
                         key={reminder.id}
                         onClick={() => handleReminderClick(reminder.entreprise_id)}
-                        className={`w-full text-left p-4 rounded-xl border transition-all ${
+                        className={`w-full text-left p-3 rounded-xl border transition-all ${
                           isToday(parseISO(reminder.date_relance))
                             ? 'bg-red-500/10 border-red-500/30 hover:border-red-500/50'
                             : 'bg-card/50 border-border/50 hover:border-accent/50'
                         } hover:bg-card`}
                       >
-                        <div className="flex items-center justify-between gap-3">
-                          <p className="font-semibold truncate flex-1 min-w-0">{reminder.entreprise_nom}</p>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-sm font-medium truncate flex-1 min-w-0 max-w-[180px] sm:max-w-[220px]">{reminder.entreprise_nom}</p>
                           <Badge 
                             variant="outline" 
-                            className={`shrink-0 text-xs whitespace-nowrap ${
+                            className={`shrink-0 text-[10px] px-2 py-0.5 whitespace-nowrap ${
                               reminder.type === 'a_revoir'
                                 ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
                                 : reminder.type === 'a_rappeler'
