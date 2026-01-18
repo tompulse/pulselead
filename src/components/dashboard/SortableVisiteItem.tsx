@@ -96,9 +96,10 @@ export const SortableVisiteItem = ({
       return;
     }
 
-    // For visite, no date needed
+    // For visite, use today's date automatically
     if (field === 'visite') {
-      onVisiteChange(site.id, field, true);
+      const today = new Date().toISOString();
+      onVisiteChange(site.id, field, true, today);
       return;
     }
 
