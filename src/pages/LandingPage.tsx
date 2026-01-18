@@ -15,15 +15,18 @@ const LandingPage = () => {
   const [searchParams] = useSearchParams();
   const { initiateCheckout, isLoading: checkoutLoading } = useStripeCheckout();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Check auth state
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
+      setUserId(session?.user?.id || null);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
       setIsLoggedIn(!!session);
+      setUserId(session?.user?.id || null);
     });
 
     return () => subscription.unsubscribe();
@@ -32,16 +35,54 @@ const LandingPage = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsLoggedIn(false);
+    setUserId(null);
   };
 
   // Check if user just logged in and should go to checkout
+  // BUT first verify they don't already have access (admin or active subscription)
   useEffect(() => {
-    if (searchParams.get('checkout') === 'pending') {
-      // Clean URL and trigger checkout
+    const checkAccessAndRedirect = async () => {
+      if (searchParams.get('checkout') !== 'pending' || !userId) return;
+
+      // Clean URL immediately
       window.history.replaceState(null, '', '/');
-      initiateCheckout();
-    }
-  }, [searchParams, initiateCheckout]);
+
+      try {
+        // Check if user is admin
+        const { data: isAdmin } = await supabase.rpc('has_role', {
+          _user_id: userId,
+          _role: 'admin'
+        });
+
+        if (isAdmin) {
+          // Admin users go directly to dashboard
+          navigate('/dashboard');
+          return;
+        }
+
+        // Check subscription access
+        const { data: accessData } = await supabase.rpc('check_subscription_access', {
+          _user_id: userId
+        });
+
+        const access = accessData as { has_access?: boolean } | null;
+        if (access?.has_access) {
+          // User already has access, go to dashboard
+          navigate('/dashboard');
+          return;
+        }
+
+        // No access, proceed to checkout
+        initiateCheckout();
+      } catch (error) {
+        console.error('Error checking access:', error);
+        // On error, still try checkout
+        initiateCheckout();
+      }
+    };
+
+    checkAccessAndRedirect();
+  }, [searchParams, userId, navigate, initiateCheckout]);
 
   const heroAnimation = useScrollAnimation({ threshold: 0.2 });
   const problemsAnimation = useScrollAnimation({ threshold: 0.2 });
