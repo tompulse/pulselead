@@ -1,0 +1,30 @@
+{
+  "name": "PULSE - Prospection B2B Intelligente",
+  "short_name": "PULSE",
+  "description": "Liste de prospects filtrée, tournées optimisées IA et CRM terrain intégré.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D1422",
+  "theme_color": "#00BFFF",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
