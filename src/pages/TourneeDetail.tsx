@@ -708,7 +708,7 @@ const TourneeDetail = () => {
             </div>
           )}
           <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mt-0.5">
-            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+            <CalendarLucide className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             <span className="truncate">{format(new Date(tournee.date_planifiee), 'EEE d MMM yyyy', { locale: fr })}</span>
           </div>
         </div>
@@ -816,7 +816,7 @@ const TourneeDetail = () => {
         <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)]">
           <DialogHeader>
             <DialogTitle className={`flex items-center gap-2 ${getDialogColor()}`}>
-              {pendingAction === 'rdv' && <Calendar className="w-5 h-5" />}
+              {pendingAction === 'rdv' && <CalendarLucide className="w-5 h-5" />}
               {pendingAction === 'aRevoir' && <Eye className="w-5 h-5" />}
               {pendingAction === 'aRappeler' && <Phone className="w-5 h-5" />}
               {getDialogTitle()}
