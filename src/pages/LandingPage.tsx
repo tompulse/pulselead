@@ -54,6 +54,20 @@ const LandingPage = () => {
     }
   };
 
+  // Handle CTA "Commencer maintenant" click - same logic: dashboard if access, otherwise checkout
+  const handleCTAClick = () => {
+    if (!isLoggedIn) {
+      // Not logged in - go to auth page, then redirect to checkout
+      navigate('/auth?redirect=checkout');
+    } else if (hasAccess) {
+      // Logged in with access - go directly to dashboard
+      navigate('/dashboard');
+    } else {
+      // Logged in but no access - initiate checkout
+      initiateCheckout();
+    }
+  };
+
   // Check if user just logged in and should go to checkout
   // BUT first verify they don't already have access (admin or active subscription)
   useEffect(() => {
@@ -241,11 +255,11 @@ const LandingPage = () => {
 
               {/* CTA */}
               <Button 
-                onClick={initiateCheckout}
-                disabled={checkoutLoading}
+                onClick={handleCTAClick}
+                disabled={checkoutLoading || subscriptionLoading}
                 className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
               >
-                {checkoutLoading ? 'Redirection...' : 'Commencer maintenant'}
+                {checkoutLoading || subscriptionLoading ? 'Redirection...' : 'Commencer maintenant'}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
 
@@ -495,10 +509,10 @@ const LandingPage = () => {
                     </ul>
                     <Button 
                       className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" 
-                      onClick={initiateCheckout}
-                      disabled={checkoutLoading}
+                      onClick={handleCTAClick}
+                      disabled={checkoutLoading || subscriptionLoading}
                     >
-                      {checkoutLoading ? 'Redirection...' : 'Commencer maintenant'}
+                      {checkoutLoading || subscriptionLoading ? 'Redirection...' : 'Commencer maintenant'}
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </div>
