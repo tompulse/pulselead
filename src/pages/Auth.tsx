@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import { z } from "zod";
 
 type AuthMode = 'login' | 'signup' | 'forgot' | 'reset';
@@ -40,8 +40,25 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [isRecoveryHandled, setIsRecoveryHandled] = useState(false);
+  const [hasExistingSession, setHasExistingSession] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Vérifier s'il y a une session existante (pour afficher le bouton déconnexion)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setHasExistingSession(!!session);
+    });
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setHasExistingSession(false);
+    toast({
+      title: "Déconnexion réussie",
+      description: "Vous pouvez maintenant vous connecter avec un autre compte",
+    });
+  };
 
   const isLogin = mode === 'login';
   const isForgot = mode === 'forgot';
@@ -566,7 +583,17 @@ const Auth = () => {
           )}
         </div>
 
-        <div className="text-center mt-6">
+        <div className="text-center mt-6 flex flex-col gap-2">
+          {hasExistingSession && (
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="text-red-400 border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Se déconnecter
+            </Button>
+          )}
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
