@@ -114,21 +114,12 @@ const Auth = () => {
       }
     });
 
-    // Check for existing session - but NOT if we're in reset mode or have recovery token in URL
-    const hash = window.location.hash;
-    const hasRecoveryToken = hash.includes('type=recovery') || hash.includes('access_token');
-    const shouldCheckSession = initialMode !== 'reset' && !hasRecoveryToken;
-    
-    if (shouldCheckSession) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session && !isRecoveryHandled && mode !== 'reset') {
-          navigate(getRedirectPath());
-        }
-      });
-    }
+    // IMPORTANT: Ne PAS rediriger automatiquement si l'utilisateur a une session existante
+    // L'utilisateur doit pouvoir se connecter manuellement avec ses identifiants
+    // La redirection ne se fait QUE après une action de connexion explicite (SIGNED_IN event)
 
     return () => subscription.unsubscribe();
-  }, [navigate, mode, isRecoveryHandled, initialMode, redirectTo]);
+  }, [navigate, mode, isRecoveryHandled, redirectTo]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
