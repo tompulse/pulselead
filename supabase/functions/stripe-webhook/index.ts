@@ -241,6 +241,16 @@ serve(async (req) => {
         logStep("Invoice paid", { invoiceId: invoice.id, subscriptionId });
 
         if (subscriptionId) {
+          // Récupérer le statut AVANT la mise à jour pour détecter la conversion trial -> active
+          const { data: existingSub } = await supabaseAdmin
+            .from('user_subscriptions')
+            .select('subscription_status, user_id')
+            .eq('stripe_subscription_id', subscriptionId)
+            .single();
+
+          const previousStatus = existingSub?.subscription_status;
+          const userId = existingSub?.user_id;
+
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           
           // Mettre à jour le statut vers 'active' après paiement réussi
@@ -256,7 +266,32 @@ serve(async (req) => {
           if (error) {
             logStep("Error updating subscription after payment", { error: error.message });
           } else {
-            logStep("Subscription activated after payment", { status: subscription.status });
+            logStep("Subscription activated after payment", { status: subscription.status, previousStatus });
+          }
+
+          // Envoyer l'email de confirmation UNIQUEMENT si c'est une conversion trial -> active (premier paiement)
+          if (previousStatus === 'trialing' && subscription.status === 'active' && userId) {
+            logStep("Detected trial to active conversion, sending payment confirmation email");
+
+            try {
+              // Récupérer les infos utilisateur
+              const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
+              const userEmail = userData?.user?.email;
+              const firstName = userData?.user?.user_metadata?.first_name;
+
+              if (userEmail) {
+                await supabaseAdmin.functions.invoke('send-payment-confirmation', {
+                  body: {
+                    email: userEmail,
+                    firstName,
+                    nextPaymentDate: unixToISOString(subscription.current_period_end),
+                  },
+                });
+                logStep("Payment confirmation email sent", { email: userEmail, firstName });
+              }
+            } catch (emailError: any) {
+              logStep("Error sending payment confirmation email", { error: emailError?.message ?? String(emailError) });
+            }
           }
         }
         break;

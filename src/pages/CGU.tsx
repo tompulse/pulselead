@@ -43,6 +43,12 @@ const CGU = () => {
               L'accès à certaines fonctionnalités peut nécessiter la souscription d'un abonnement payant conformément aux 
               Conditions Générales de Vente.
             </p>
+            <p className="mt-2 sm:mt-3 md:mt-4 p-4 bg-muted/30 rounded-lg border border-accent/20">
+              <strong>Essai gratuit :</strong> Un essai gratuit de <strong>7 jours</strong> est proposé aux nouveaux utilisateurs de l'offre 
+              "Commercial Solo". Pendant cette période, vous bénéficiez d'un accès complet à toutes les fonctionnalités. 
+              L'essai nécessite l'enregistrement d'un moyen de paiement qui <strong>ne sera débité qu'à l'issue de la période d'essai</strong>, 
+              sauf annulation de votre part avant cette date.
+            </p>
           </section>
 
           <section>
@@ -162,7 +168,7 @@ const CGU = () => {
         </div>
 
         <div className="mt-8 sm:mt-10 md:mt-12 pt-4 sm:pt-6 md:pt-8 border-t border-accent/20 text-center text-muted-foreground text-xs sm:text-sm">
-          <p>Dernière mise à jour : 13 janvier 2026</p>
+          <p>Dernière mise à jour : 18 janvier 2026</p>
         </div>
       </div>
     </div>

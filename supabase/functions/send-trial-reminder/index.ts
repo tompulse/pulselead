@@ -42,7 +42,7 @@ const handler = async (req: Request): Promise<Response> => {
     const manageUrl = portalUrl || "https://pulselead.lovable.app/security";
 
     const emailResponse = await resend.emails.send({
-      from: "PULSE <noreply@pulse-lead.com>",
+      from: "PULSE <mail@pulse-lead.com>",
       to: [email],
       subject: "⏰ Votre essai PULSE se termine dans 3 jours",
       html: `
@@ -60,8 +60,11 @@ const handler = async (req: Request): Promise<Response> => {
           
           <!-- Header -->
           <tr>
-            <td align="center" style="padding-bottom: 30px;">
-              <h1 style="margin: 0; font-size: 32px; font-weight: bold; color: #00BFFF;">PULSE</h1>
+            <td align="center" style="padding-bottom: 10px;">
+              <h1 style="margin: 0; font-size: 36px; font-weight: bold; color: #00BFFF;">PULSE</h1>
+              <p style="margin: 8px 0 0; font-size: 14px; color: #06b6d4; font-style: italic;">
+                Vendez plus. Roulez moins.
+              </p>
             </td>
           </tr>
           
@@ -71,62 +74,84 @@ const handler = async (req: Request): Promise<Response> => {
               
               <!-- Icon -->
               <div style="text-align: center; margin-bottom: 24px;">
-                <span style="font-size: 48px;">⏰</span>
+                <span style="font-size: 56px;">⏰</span>
               </div>
               
               <!-- Title -->
-              <h2 style="margin: 0 0 20px 0; font-size: 24px; font-weight: 600; color: #ffffff; text-align: center;">
-                Votre essai se termine bientôt
+              <h2 style="margin: 0 0 24px 0; font-size: 26px; font-weight: 600; color: #ffffff; text-align: center;">
+                Plus que 3 jours pour profiter de PULSE !
               </h2>
               
               <!-- Message -->
-              <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #b0b0b0;">
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #b0b0b0;">
                 Bonjour ${displayName},
               </p>
               
               <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #b0b0b0;">
-                Votre période d'essai gratuit PULSE se termine dans <strong style="color: #ffffff;">3 jours</strong>, le <strong style="color: #00BFFF;">${formattedDate}</strong>.
+                Votre période d'essai gratuit se termine le <strong style="color: #00BFFF;">${formattedDate}</strong>.
+              </p>
+              
+              <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #b0b0b0;">
+                Pendant ces derniers jours, vous avez pu découvrir comment PULSE peut transformer votre quotidien de commercial terrain. Nous espérons que vous avez apprécié l'expérience ! 🚀
               </p>
               
               <!-- Alert Box -->
               <div style="background: rgba(255, 171, 0, 0.1); border: 1px solid rgba(255, 171, 0, 0.3); border-radius: 12px; padding: 20px; margin: 24px 0;">
                 <p style="margin: 0; font-size: 15px; color: #ffab00; font-weight: 600;">
-                  💳 Ce qui va se passer
+                  💳 Ce qui va se passer le ${formattedDate}
                 </p>
                 <p style="margin: 12px 0 0 0; font-size: 14px; line-height: 1.6; color: #b0b0b0;">
-                  À partir du <strong style="color: #ffffff;">${formattedDate}</strong>, votre carte bancaire sera automatiquement débitée de <strong style="color: #ffffff;">49€/mois</strong> pour continuer à profiter de PULSE.
+                  Votre carte bancaire sera automatiquement débitée de <strong style="color: #ffffff;">49€/mois</strong> pour continuer à profiter de PULSE sans interruption.
                 </p>
               </div>
-              
-              <p style="margin: 0 0 32px 0; font-size: 16px; line-height: 1.6; color: #b0b0b0;">
-                Si vous ne souhaitez pas être prélevé, vous pouvez annuler votre abonnement avant la fin de l'essai. Aucun frais ne vous sera facturé.
-              </p>
               
               <!-- CTA Buttons -->
               <div style="text-align: center; margin: 32px 0;">
-                <a href="${manageUrl}" style="display: inline-block; background: linear-gradient(135deg, #00BFFF, #0099CC); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; margin-bottom: 12px;">
-                  ✨ Continuer avec PULSE
+                <a href="https://pulselead.lovable.app/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00BFFF, #06b6d4); color: #000000; text-decoration: none; padding: 18px 40px; border-radius: 10px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);">
+                  ✨ Continuer avec PULSE →
                 </a>
               </div>
               
-              <div style="text-align: center;">
-                <a href="${manageUrl}" style="display: inline-block; color: #888888; text-decoration: underline; font-size: 14px;">
+              <div style="text-align: center; margin-bottom: 24px;">
+                <a href="${manageUrl}" style="color: #888888; text-decoration: underline; font-size: 14px;">
                   Gérer ou annuler mon abonnement
                 </a>
               </div>
               
-              <!-- What you'll lose -->
-              <div style="background: rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 20px; margin-top: 32px;">
-                <p style="margin: 0 0 12px 0; font-size: 14px; color: #888888; font-weight: 600;">
-                  En restant avec PULSE, vous gardez accès à :
+              <!-- What you'll keep -->
+              <div style="background: rgba(0, 191, 255, 0.05); border: 1px solid rgba(0, 191, 255, 0.2); border-radius: 12px; padding: 20px; margin-top: 24px;">
+                <p style="margin: 0 0 12px 0; font-size: 15px; color: #00BFFF; font-weight: 600;">
+                  🎁 En restant avec PULSE, vous gardez accès à :
                 </p>
                 <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #b0b0b0; line-height: 1.8;">
-                  <li>+850 nouvelles entreprises détectées chaque semaine</li>
-                  <li>Création de tournées optimisées illimitées</li>
-                  <li>CRM mobile avec suivi des interactions</li>
-                  <li>Liste de prospects filtrée selon vos critères</li>
+                  <li><strong style="color: #ffffff;">+1 900 nouvelles entreprises</strong> détectées chaque semaine</li>
+                  <li>Création de <strong style="color: #ffffff;">tournées optimisées illimitées</strong></li>
+                  <li>CRM mobile avec suivi complet des interactions</li>
+                  <li>Pipeline Kanban pour suivre vos opportunités</li>
+                  <li>Filtres intelligents par NAF, département, taille</li>
                 </ul>
               </div>
+              
+              <!-- Help Section -->
+              <div style="text-align: center; margin-top: 32px; padding: 24px; background: rgba(37, 211, 102, 0.08); border: 1px solid rgba(37, 211, 102, 0.2); border-radius: 12px;">
+                <p style="margin: 0 0 16px; font-size: 15px; color: #ffffff; font-weight: 600;">
+                  💬 Des questions avant de vous décider ?
+                </p>
+                <p style="margin: 0 0 16px; font-size: 14px; color: #b0b0b0;">
+                  Je suis disponible pour un appel rapide ou par WhatsApp !
+                </p>
+                <a href="https://calendly.com/tomiolovpro/pulse" style="display: inline-block; padding: 10px 20px; background: rgba(0, 191, 255, 0.15); border: 1px solid rgba(0, 191, 255, 0.4); color: #00BFFF; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 8px; margin-right: 10px;">
+                  📅 Réserver un appel
+                </a>
+                <a href="https://wa.me/33760227532" style="display: inline-block; padding: 10px 20px; background: rgba(37, 211, 102, 0.15); border: 1px solid rgba(37, 211, 102, 0.4); color: #25D366; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 8px;">
+                  💬 WhatsApp
+                </a>
+              </div>
+              
+              <!-- Cancellation note -->
+              <p style="margin: 24px 0 0 0; font-size: 13px; line-height: 1.6; color: #888888; text-align: center;">
+                Si vous ne souhaitez pas être prélevé, vous pouvez annuler votre abonnement avant le ${formattedDate}. Aucun frais ne vous sera facturé.
+              </p>
               
             </td>
           </tr>
@@ -135,14 +160,14 @@ const handler = async (req: Request): Promise<Response> => {
           <tr>
             <td style="padding: 30px 20px; text-align: center;">
               <p style="margin: 0 0 8px 0; font-size: 13px; color: #666666;">
-                Vous recevez cet email car vous vous êtes inscrit à PULSE.
+                Vous recevez cet email car vous avez souscrit un essai gratuit PULSE.
               </p>
-              <p style="margin: 0; font-size: 13px; color: #666666;">
-                Des questions ? Contactez-nous à <a href="mailto:tomiolovpro@gmail.com" style="color: #00BFFF;">tomiolovpro@gmail.com</a>
+              <p style="margin: 0 0 16px; font-size: 13px; color: #666666;">
+                Contact : <a href="mailto:tomiolovpro@gmail.com" style="color: #00BFFF;">tomiolovpro@gmail.com</a>
               </p>
-              <p style="margin: 16px 0 0 0; font-size: 12px; color: #444444;">
-                PULSE — Vendez plus. Roulez moins.<br>
-                Tom Iolov — 108 rue de Crimée, 75019 Paris, France
+              <p style="margin: 0; font-size: 12px; color: #444444;">
+                © 2026 PULSE — Tom Iolov — 108 rue de Crimée, 75019 Paris<br>
+                SIRET 948 550 561 00039
               </p>
             </td>
           </tr>

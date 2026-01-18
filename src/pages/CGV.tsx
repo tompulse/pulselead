@@ -72,6 +72,21 @@ const CGV = () => {
           </section>
 
           <section>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">5bis. Essai gratuit</h2>
+            <p className="mb-2 sm:mb-3">
+              PULSE propose un <strong>essai gratuit de 7 jours</strong> pour l'offre "Commercial Solo".
+            </p>
+            <p className="mb-2 sm:mb-3"><strong>Conditions de l'essai gratuit :</strong></p>
+            <ul className="list-disc ml-4 sm:ml-6 mt-2 sm:mt-3 space-y-1 sm:space-y-2">
+              <li>L'essai gratuit nécessite l'enregistrement d'un <strong>moyen de paiement valide</strong> (carte bancaire)</li>
+              <li><strong>Aucun prélèvement n'est effectué</strong> pendant la période d'essai de 7 jours</li>
+              <li>Un <strong>email de rappel est envoyé 3 jours</strong> avant la fin de l'essai</li>
+              <li>À l'issue de l'essai, l'abonnement est <strong>automatiquement converti</strong> en abonnement payant au tarif de 49€/mois, sauf résiliation avant la fin de l'essai</li>
+              <li>Vous pouvez <strong>annuler à tout moment</strong> pendant l'essai depuis votre espace client ou via le portail de gestion Stripe, <strong>sans frais</strong></li>
+            </ul>
+          </section>
+
+          <section>
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">6. Paiement</h2>
             <p>
               Le paiement s'effectue en ligne de manière sécurisée via Stripe, notre prestataire de paiement certifié PCI-DSS. 
@@ -80,6 +95,10 @@ const CGV = () => {
             <p className="mt-2 sm:mt-3 md:mt-4">
               Le paiement est exigible immédiatement à la commande. En cas d'abonnement, le paiement est prélevé automatiquement 
               à chaque échéance mensuelle.
+            </p>
+            <p className="mt-2 sm:mt-3 md:mt-4">
+              <strong>Pour les utilisateurs bénéficiant d'un essai gratuit :</strong> le premier prélèvement intervient à l'issue 
+              de la période d'essai de 7 jours, sauf annulation de votre part avant cette date.
             </p>
           </section>
 
@@ -144,7 +163,7 @@ const CGV = () => {
         </div>
 
         <div className="mt-8 sm:mt-10 md:mt-12 pt-4 sm:pt-6 md:pt-8 border-t border-accent/20 text-center text-muted-foreground text-xs sm:text-sm">
-          <p>Dernière mise à jour : 13 janvier 2026</p>
+          <p>Dernière mise à jour : 18 janvier 2026</p>
         </div>
       </div>
     </div>
