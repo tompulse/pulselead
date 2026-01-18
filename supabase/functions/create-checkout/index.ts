@@ -88,6 +88,7 @@ serve(async (req) => {
       consent_collection: {
         terms_of_service: "required",
       },
+      allow_promotion_codes: true,
       success_url: `${origin}/checkout-success?trial=true`,
       cancel_url: `${origin}/?checkout=cancelled`,
       metadata: {

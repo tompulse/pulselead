@@ -15,6 +15,8 @@ interface PaymentConfirmationRequest {
   email: string;
   firstName?: string;
   nextPaymentDate?: string;
+  amountPaid?: number;
+  currency?: string;
 }
 
 const formatDate = (dateString?: string): string => {
@@ -43,8 +45,8 @@ serve(async (req) => {
       });
     }
 
-    const { email, firstName, nextPaymentDate }: PaymentConfirmationRequest = await req.json();
-    logStep("Sending payment confirmation email", { email, firstName });
+    const { email, firstName, nextPaymentDate, amountPaid, currency }: PaymentConfirmationRequest = await req.json();
+    logStep("Sending payment confirmation email", { email, firstName, amountPaid, currency });
 
     if (!email) {
       throw new Error("No email provided");
@@ -53,6 +55,10 @@ serve(async (req) => {
     const resend = new Resend(resendApiKey);
     const displayName = firstName || email.split('@')[0].replace(/[._]/g, ' ');
     const formattedNextPayment = formatDate(nextPaymentDate);
+    
+    // Formatage du prix (avec gestion des réductions)
+    const displayAmount = amountPaid ?? 79;
+    const displayCurrency = currency === 'EUR' ? '€' : (currency || '€');
 
     const { data, error } = await resend.emails.send({
       from: "PULSE <noreply@mail.pulse-lead.com>",
@@ -105,7 +111,7 @@ serve(async (req) => {
                           ✓ Paiement confirmé
                         </p>
                         <p style="margin: 0 0 12px; font-size: 32px; color: #ffffff; font-weight: bold;">
-                          79€<span style="font-size: 16px; color: #888888;">/mois</span>
+                          ${displayAmount}${displayCurrency}<span style="font-size: 16px; color: #888888;">/mois</span>
                         </p>
                         ${formattedNextPayment ? `
                         <p style="margin: 0; font-size: 14px; color: #888888;">
