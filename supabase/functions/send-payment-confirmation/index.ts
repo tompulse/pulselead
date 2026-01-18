@@ -105,7 +105,7 @@ serve(async (req) => {
                           ✓ Paiement confirmé
                         </p>
                         <p style="margin: 0 0 12px; font-size: 32px; color: #ffffff; font-weight: bold;">
-                          49€<span style="font-size: 16px; color: #888888;">/mois</span>
+                          79€<span style="font-size: 16px; color: #888888;">/mois</span>
                         </p>
                         ${formattedNextPayment ? `
                         <p style="margin: 0; font-size: 14px; color: #888888;">

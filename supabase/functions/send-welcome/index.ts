@@ -160,7 +160,7 @@ serve(async (req) => {
                     <td style="padding: 24px 40px; border-top: 1px solid rgba(0, 191, 255, 0.2); text-align: center; background: rgba(0,0,0,0.2);">
                       <p style="margin: 0 0 12px; font-size: 13px; color: #888888;">
                         ⚠️ <strong style="color: #ffab00;">Important :</strong> Votre essai se termine le ${trialEndDate || '[date]'}.<br>
-                        À cette date, votre carte sera débitée de <strong style="color: #ffffff;">49€/mois</strong>.
+                        À cette date, votre carte sera débitée de <strong style="color: #ffffff;">79€/mois</strong>.
                       </p>
                       <p style="margin: 0 0 16px; font-size: 13px; color: #888888;">
                         Annulez à tout moment depuis <a href="https://pulselead.lovable.app/security" style="color: #00BFFF;">votre espace sécurité</a> — sans frais.

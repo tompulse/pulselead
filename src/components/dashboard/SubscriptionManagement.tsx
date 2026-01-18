@@ -281,7 +281,7 @@ export const SubscriptionManagement = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="monthly">Mensuel (49€/mois)</SelectItem>
+                  <SelectItem value="monthly">Mensuel (79€/mois)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

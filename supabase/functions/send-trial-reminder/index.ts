@@ -101,7 +101,7 @@ const handler = async (req: Request): Promise<Response> => {
                   💳 Ce qui va se passer le ${formattedDate}
                 </p>
                 <p style="margin: 12px 0 0 0; font-size: 14px; line-height: 1.6; color: #b0b0b0;">
-                  Votre carte bancaire sera automatiquement débitée de <strong style="color: #ffffff;">49€/mois</strong> pour continuer à profiter de PULSE sans interruption.
+                  Votre carte bancaire sera automatiquement débitée de <strong style="color: #ffffff;">79€/mois</strong> pour continuer à profiter de PULSE sans interruption.
                 </p>
               </div>
               

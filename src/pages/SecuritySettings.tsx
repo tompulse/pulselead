@@ -353,7 +353,7 @@ export default function SecuritySettings() {
                     </div>
                     {subscriptionPlan && (
                       <p className="text-xs sm:text-sm text-muted-foreground">
-                        Plan : <span className="text-foreground">Commercial Solo — 49€/mois</span>
+                        Plan : <span className="text-foreground">Commercial Solo — 79€/mois</span>
                       </p>
                     )}
                   </div>
