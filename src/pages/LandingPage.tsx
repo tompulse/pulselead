@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles, LogOut } from "lucide-react";
+import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles, LogOut, LayoutDashboard } from "lucide-react";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -16,6 +17,7 @@ const LandingPage = () => {
   const { initiateCheckout, isLoading: checkoutLoading } = useStripeCheckout();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const { hasAccess, isLoading: subscriptionLoading } = useSubscription(userId || undefined);
 
   // Check auth state
   useEffect(() => {
@@ -134,7 +136,17 @@ const LandingPage = () => {
                   Réserver une démo
                 </a>
               </Button>
-              {isLoggedIn ? (
+              {isLoggedIn && hasAccess ? (
+                <>
+                  <Button onClick={() => navigate('/dashboard')} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Mon tableau de bord
+                  </Button>
+                  <Button onClick={handleLogout} variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold px-4">
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : isLoggedIn ? (
                 <Button onClick={handleLogout} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
                   <LogOut className="mr-2 h-4 w-4" />
                   Se déconnecter
@@ -148,7 +160,17 @@ const LandingPage = () => {
 
             {/* Tablet buttons */}
             <div className="hidden sm:flex lg:hidden items-center gap-2">
-              {isLoggedIn ? (
+              {isLoggedIn && hasAccess ? (
+                <>
+                  <Button onClick={() => navigate('/dashboard')} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-3 text-xs">
+                    <LayoutDashboard className="mr-1 h-3 w-3" />
+                    Dashboard
+                  </Button>
+                  <Button onClick={handleLogout} variant="outline" className="border-white/20 text-white hover:bg-white/10 h-9 px-2">
+                    <LogOut className="h-3 w-3" />
+                  </Button>
+                </>
+              ) : isLoggedIn ? (
                 <Button onClick={handleLogout} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-4 text-xs">
                   <LogOut className="mr-1 h-3 w-3" />
                   Déconnexion
@@ -180,7 +202,18 @@ const LandingPage = () => {
                           Réserver une démo
                         </a>
                       </Button>
-                      {isLoggedIn ? (
+                      {isLoggedIn && hasAccess ? (
+                        <>
+                          <Button onClick={() => navigate('/dashboard')} className="w-full bg-accent text-black font-semibold">
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            Mon tableau de bord
+                          </Button>
+                          <Button onClick={handleLogout} variant="outline" className="w-full border-white/20 text-white">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Se déconnecter
+                          </Button>
+                        </>
+                      ) : isLoggedIn ? (
                         <Button onClick={handleLogout} className="w-full bg-accent text-black font-semibold">
                           <LogOut className="mr-2 h-4 w-4" />
                           Se déconnecter
