@@ -82,7 +82,8 @@ const Auth = () => {
   // Get redirect destination from URL params
   const redirectTo = searchParams.get('redirect');
   const getRedirectPath = () => {
-    if (redirectTo === 'subscribe') return '/subscribe';
+    // 'checkout' triggers Stripe checkout after login, 'subscribe' is legacy
+    if (redirectTo === 'checkout' || redirectTo === 'subscribe') return '/?checkout=pending';
     return '/dashboard';
   };
 
