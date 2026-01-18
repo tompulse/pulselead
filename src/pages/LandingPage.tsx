@@ -1,18 +1,38 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
-import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles, LogOut } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ContactSection from "@/components/landing/ContactSection";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { supabase } from "@/integrations/supabase/client";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { initiateCheckout, isLoading: checkoutLoading } = useStripeCheckout();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check auth state
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+  };
 
   // Check if user just logged in and should go to checkout
   useEffect(() => {
@@ -73,16 +93,30 @@ const LandingPage = () => {
                   Réserver une démo
                 </a>
               </Button>
-              <Button onClick={() => navigate('/auth')} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
-                Connexion
-              </Button>
+              {isLoggedIn ? (
+                <Button onClick={handleLogout} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Se déconnecter
+                </Button>
+              ) : (
+                <Button onClick={() => navigate('/auth')} className="bg-accent hover:bg-accent/90 text-black font-semibold px-6">
+                  Connexion
+                </Button>
+              )}
             </div>
 
             {/* Tablet buttons */}
             <div className="hidden sm:flex lg:hidden items-center gap-2">
-              <Button onClick={() => navigate('/auth')} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-4 text-xs">
-                Connexion
-              </Button>
+              {isLoggedIn ? (
+                <Button onClick={handleLogout} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-4 text-xs">
+                  <LogOut className="mr-1 h-3 w-3" />
+                  Déconnexion
+                </Button>
+              ) : (
+                <Button onClick={() => navigate('/auth')} className="bg-accent hover:bg-accent/90 text-black font-semibold h-9 px-4 text-xs">
+                  Connexion
+                </Button>
+              )}
             </div>
 
             {/* Mobile menu */}
@@ -105,9 +139,16 @@ const LandingPage = () => {
                           Réserver une démo
                         </a>
                       </Button>
-                      <Button onClick={() => navigate('/auth')} className="w-full bg-accent text-black font-semibold">
-                        Connexion
-                      </Button>
+                      {isLoggedIn ? (
+                        <Button onClick={handleLogout} className="w-full bg-accent text-black font-semibold">
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Se déconnecter
+                        </Button>
+                      ) : (
+                        <Button onClick={() => navigate('/auth')} className="w-full bg-accent text-black font-semibold">
+                          Connexion
+                        </Button>
+                      )}
                     </div>
                   </nav>
                 </SheetContent>
