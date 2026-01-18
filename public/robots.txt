@@ -14,7 +14,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://pulse.lovable.app/sitemap.xml
+Sitemap: https://pulselead.lovable.app/sitemap.xml
 
 # Disallow admin/internal paths
 Disallow: /dashboard
