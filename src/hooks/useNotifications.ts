@@ -76,10 +76,8 @@ export const useNotifications = (userId: string | undefined) => {
     setIsLoading(true);
     try {
       const today = new Date();
-      const todayStr = today.toISOString().split('T')[0];
+      const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
       
-      // Fetch all interactions with types 'a_rappeler', 'a_revoir', 'rdv'
-      // Include those with future dates OR without dates (to not lose them)
       const { data, error } = await supabase
         .from('lead_interactions')
         .select(`
@@ -90,19 +88,16 @@ export const useNotifications = (userId: string | undefined) => {
           type
         `)
         .eq('user_id', userId)
-        .in('type', ['a_rappeler', 'a_revoir', 'rdv'])
-        .order('date_relance', { ascending: true, nullsFirst: false });
+        .not('date_relance', 'is', null)
+        .gte('date_relance', today.toISOString().split('T')[0])
+        .lte('date_relance', nextWeek.toISOString().split('T')[0])
+        .order('date_relance', { ascending: true });
 
       if (error) throw error;
 
+      // Fetch entreprise names
       if (data && data.length > 0) {
-        // Filter: future dates OR no date set
-        const filteredData = data.filter(r => {
-          if (!r.date_relance) return true; // Show those without date
-          return r.date_relance >= todayStr; // Show future dates
-        });
-
-        const entrepriseIds = [...new Set(filteredData.map(r => r.entreprise_id))];
+        const entrepriseIds = [...new Set(data.map(r => r.entreprise_id))];
         const { data: entreprises } = await supabase
           .from('nouveaux_sites')
           .select('id, nom')
@@ -110,7 +105,7 @@ export const useNotifications = (userId: string | undefined) => {
 
         const entrepriseMap = new Map(entreprises?.map(e => [e.id, e.nom]) || []);
         
-        const remindersWithNames = filteredData.map(r => ({
+        const remindersWithNames = data.map(r => ({
           ...r,
           entreprise_nom: entrepriseMap.get(r.entreprise_id) || 'Entreprise inconnue',
         }));
