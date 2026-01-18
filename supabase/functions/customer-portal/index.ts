@@ -49,7 +49,7 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const origin = req.headers.get("origin") || "https://pulse.lovable.app";
+    const origin = req.headers.get("origin") || "https://pulse-lead.com";
 
     const isMissingCustomerOrResource = (err: any) => {
       const msg = String(err?.message ?? err?.raw?.message ?? "");
