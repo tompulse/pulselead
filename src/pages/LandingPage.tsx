@@ -416,6 +416,7 @@ const LandingPage = () => {
                         <span className="text-base text-white/60">/mois</span>
                       </div>
                       <p className="text-sm text-white/50">Sans engagement • Résiliable à tout moment</p>
+                      <p className="text-[10px] text-white/30 mt-1">TVA non applicable, art. 293 B du CGI</p>
                     </div>
                     <ul className="space-y-2 mb-5 flex-1">
                       {[
