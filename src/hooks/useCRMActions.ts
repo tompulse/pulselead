@@ -19,7 +19,12 @@ export const useCRMActions = (entrepriseId: string, userId: string) => {
     mutationFn: ({ type, notes }: { type: InteractionType; notes?: string }) =>
       crmService.addInteraction(entrepriseId, userId, type, notes),
     onSuccess: (result) => {
+      // Invalidate all CRM-related queries for bidirectional sync
       queryClient.invalidateQueries({ queryKey: ['crm', entrepriseId, userId] });
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-notes'] });
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
       toast({
         title: result.isNew ? "Interaction ajoutée" : "Interaction mise à jour",
         description: "L'action a été enregistrée avec succès",
@@ -39,7 +44,12 @@ export const useCRMActions = (entrepriseId: string, userId: string) => {
     mutationFn: (type: InteractionType) =>
       crmService.removeInteraction(entrepriseId, userId, type),
     onSuccess: () => {
+      // Invalidate all CRM-related queries for bidirectional sync
       queryClient.invalidateQueries({ queryKey: ['crm', entrepriseId, userId] });
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-notes'] });
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
       toast({
         title: "Interaction supprimée",
         description: "L'action a été retirée",
@@ -59,7 +69,10 @@ export const useCRMActions = (entrepriseId: string, userId: string) => {
     mutationFn: (status: LeadStatus) =>
       crmService.updateLeadStatus(entrepriseId, userId, status),
     onSuccess: () => {
+      // Invalidate all CRM-related queries for bidirectional sync
       queryClient.invalidateQueries({ queryKey: ['crm', entrepriseId, userId] });
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-leads-with-sites'] });
       toast({
         title: "Statut mis à jour",
         description: "Le statut du lead a été modifié",

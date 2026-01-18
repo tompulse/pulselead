@@ -122,9 +122,10 @@ export const ActivityDetailSheet = ({
         description: "L'interaction a été retirée",
       });
 
-      // Refresh data
+      // Refresh data - invalidate all related queries for bidirectional sync
       queryClient.invalidateQueries({ queryKey: ['activity-interactions', userId, activityType] });
       queryClient.invalidateQueries({ queryKey: ['crm-interactions', userId] });
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders', userId] });
     } catch {
       toast({
         title: 'Erreur',

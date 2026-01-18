@@ -307,6 +307,12 @@ const TourneeDetail = () => {
       };
 
       toast.success(messages[field] || 'Action enregistrée');
+      
+      // Invalidate all CRM-related queries for bidirectional sync
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-notes'] });
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
     } catch (error) {
       console.error('Error syncing to CRM:', error);
     }
@@ -464,7 +470,11 @@ const TourneeDetail = () => {
       }
 
       toast.success('Note enregistrée');
+      // Invalidate all CRM-related queries for bidirectional sync
       queryClient.invalidateQueries({ queryKey: ['crm-notes'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
     } catch (error) {
       console.error('Error saving note:', error);
       toast.error('Erreur lors de l\'enregistrement');
