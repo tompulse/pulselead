@@ -109,7 +109,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "PULSE <noreply@pulse-lead.com>",
+        from: "PULSE <mail@pulse-lead.com>",
         to: ["tomiolovpro@gmail.com"],
         subject: `🏢 Nouvelle demande entreprise - ${name}`,
         html: htmlContent,

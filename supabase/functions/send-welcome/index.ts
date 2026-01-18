@@ -50,7 +50,7 @@ serve(async (req) => {
     const displayName = firstName || email.split('@')[0].replace(/[._]/g, ' ');
 
     const { data, error } = await resend.emails.send({
-      from: "PULSE <noreply@pulse-lead.com>",
+      from: "PULSE <mail@pulse-lead.com>",
       to: [email],
       subject: "🚀 Bienvenue sur PULSE - Votre essai gratuit a commencé !",
       html: `
@@ -60,60 +60,63 @@ serve(async (req) => {
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
         </head>
-        <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0a0a; padding: 40px 20px;">
+        <body style="margin: 0; padding: 0; background-color: #0D1422; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0D1422; padding: 40px 20px;">
             <tr>
               <td align="center">
-                <table width="600" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(6, 182, 212, 0.05)); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 16px; overflow: hidden;">
+                <table width="600" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, rgba(0, 191, 255, 0.1), rgba(6, 182, 212, 0.05)); border: 1px solid rgba(0, 191, 255, 0.3); border-radius: 16px; overflow: hidden;">
                   <!-- Header -->
                   <tr>
-                    <td style="padding: 40px 40px 20px; text-align: center;">
-                      <h1 style="margin: 0; font-size: 32px; font-weight: bold; color: #0ea5e9;">
+                    <td style="padding: 40px 40px 10px; text-align: center;">
+                      <h1 style="margin: 0; font-size: 36px; font-weight: bold; color: #00BFFF;">
                         PULSE
                       </h1>
+                      <p style="margin: 8px 0 0; font-size: 14px; color: #06b6d4; font-style: italic;">
+                        Vendez plus. Roulez moins.
+                      </p>
                     </td>
                   </tr>
                   
                   <!-- Main Content -->
                   <tr>
-                    <td style="padding: 20px 40px;">
-                      <h2 style="margin: 0 0 20px; font-size: 24px; color: #ffffff; text-align: center;">
+                    <td style="padding: 30px 40px;">
+                      <h2 style="margin: 0 0 20px; font-size: 26px; color: #ffffff; text-align: center;">
                         🎉 Bienvenue ${displayName} !
                       </h2>
                       
-                      <p style="margin: 0 0 20px; font-size: 16px; color: #a1a1aa; line-height: 1.6;">
-                        Votre essai gratuit de 7 jours a commencé ! Vous avez maintenant accès à toutes les fonctionnalités pour transformer votre prospection terrain.
+                      <p style="margin: 0 0 20px; font-size: 16px; color: #b0b0b0; line-height: 1.6;">
+                        Votre essai gratuit de <strong style="color: #00BFFF;">7 jours</strong> a commencé ! Vous avez maintenant accès à toutes les fonctionnalités pour transformer votre prospection terrain.
                       </p>
                       
                       ${trialEndDate ? `
-                      <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px; padding: 20px; margin: 20px 0;">
-                        <p style="margin: 0; font-size: 14px; color: #06b6d4; font-weight: 600;">
+                      <div style="background: rgba(0, 191, 255, 0.1); border: 1px solid rgba(0, 191, 255, 0.3); border-radius: 12px; padding: 20px; margin: 24px 0; text-align: center;">
+                        <p style="margin: 0; font-size: 15px; color: #00BFFF; font-weight: 600;">
                           📅 Votre essai se termine le : ${trialEndDate}
                         </p>
                       </div>
                       ` : ''}
                       
-                      <h3 style="margin: 30px 0 15px; font-size: 18px; color: #ffffff;">
-                        Commencez dès maintenant :
+                      <h3 style="margin: 30px 0 20px; font-size: 18px; color: #ffffff;">
+                        🚀 Commencez dès maintenant :
                       </h3>
                       
-                      <table width="100%" cellpadding="0" cellspacing="0">
+                      <table width="100%" cellpadding="0" cellspacing="0" style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px;">
                         <tr>
-                          <td style="padding: 10px 0;">
-                            <span style="color: #06b6d4; font-size: 20px;">📋</span>
-                            <span style="color: #ffffff; font-size: 14px; margin-left: 10px;">Explorez la liste de prospects selon vos filtres</span>
+                          <td style="padding: 12px 20px; border-bottom: 1px solid rgba(0, 191, 255, 0.1);">
+                            <span style="color: #00BFFF; font-size: 20px; vertical-align: middle;">1️⃣</span>
+                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Explorez la liste de prospects selon vos filtres</span>
                           </td>
                         </tr>
                         <tr>
-                          <td style="padding: 10px 0;">
-                            <span style="color: #06b6d4; font-size: 20px;">🚀</span>
-                            <span style="color: #ffffff; font-size: 14px; margin-left: 10px;">Créez votre première tournée optimisée</span>
+                          <td style="padding: 12px 20px; border-bottom: 1px solid rgba(0, 191, 255, 0.1);">
+                            <span style="color: #00BFFF; font-size: 20px; vertical-align: middle;">2️⃣</span>
+                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Créez votre première tournée optimisée</span>
                           </td>
                         </tr>
                         <tr>
-                          <td style="padding: 10px 0;">
-                            <span style="color: #06b6d4; font-size: 20px;">📱</span>
-                            <span style="color: #ffffff; font-size: 14px; margin-left: 10px;">Enregistrez vos visites et programmez vos relances</span>
+                          <td style="padding: 12px 20px;">
+                            <span style="color: #00BFFF; font-size: 20px; vertical-align: middle;">3️⃣</span>
+                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Enregistrez vos visites et programmez vos relances</span>
                           </td>
                         </tr>
                       </table>
@@ -122,22 +125,49 @@ serve(async (req) => {
                   
                   <!-- CTA Button -->
                   <tr>
-                    <td style="padding: 20px 40px 40px; text-align: center;">
-                      <a href="https://pulselead.lovable.app/dashboard" style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #0ea5e9, #06b6d4); color: #000000; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 8px;">
-                        Accéder à mon tableau de bord
+                    <td style="padding: 10px 40px 30px; text-align: center;">
+                      <a href="https://pulselead.lovable.app/dashboard" style="display: inline-block; padding: 18px 48px; background: linear-gradient(135deg, #00BFFF, #06b6d4); color: #000000; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);">
+                        Accéder à mon tableau de bord →
                       </a>
+                    </td>
+                  </tr>
+                  
+                  <!-- Help Section -->
+                  <tr>
+                    <td style="padding: 0 40px 30px;">
+                      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 24px; text-align: center;">
+                        <p style="margin: 0 0 16px; font-size: 16px; color: #ffffff; font-weight: 600;">
+                          💬 Une question ? On est là pour vous !
+                        </p>
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td align="center" style="padding: 8px;">
+                              <a href="https://calendly.com/tomiolovpro/pulse" style="display: inline-block; padding: 12px 24px; background: rgba(0, 191, 255, 0.15); border: 1px solid rgba(0, 191, 255, 0.4); color: #00BFFF; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 8px; margin-right: 10px;">
+                                📅 Réserver une démo
+                              </a>
+                              <a href="https://wa.me/33760227532" style="display: inline-block; padding: 12px 24px; background: rgba(37, 211, 102, 0.15); border: 1px solid rgba(37, 211, 102, 0.4); color: #25D366; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 8px;">
+                                💬 WhatsApp
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
                     </td>
                   </tr>
                   
                   <!-- Footer -->
                   <tr>
-                    <td style="padding: 20px 40px; border-top: 1px solid rgba(6, 182, 212, 0.2); text-align: center;">
-                      <p style="margin: 0; font-size: 12px; color: #71717a;">
-                        Vous ne serez débité de 49€/mois qu'à la fin de votre période d'essai.<br>
-                        Annulez à tout moment depuis <a href="https://pulselead.lovable.app/security" style="color: #06b6d4;">votre espace sécurité</a>.
+                    <td style="padding: 24px 40px; border-top: 1px solid rgba(0, 191, 255, 0.2); text-align: center; background: rgba(0,0,0,0.2);">
+                      <p style="margin: 0 0 12px; font-size: 13px; color: #888888;">
+                        ⚠️ <strong style="color: #ffab00;">Important :</strong> Votre essai se termine le ${trialEndDate || '[date]'}.<br>
+                        À cette date, votre carte sera débitée de <strong style="color: #ffffff;">49€/mois</strong>.
                       </p>
-                      <p style="margin: 15px 0 0; font-size: 12px; color: #52525b;">
-                        © 2026 PULSE — Tom Iolov — 108 rue de Crimée, 75019 Paris, France
+                      <p style="margin: 0 0 16px; font-size: 13px; color: #888888;">
+                        Annulez à tout moment depuis <a href="https://pulselead.lovable.app/security" style="color: #00BFFF;">votre espace sécurité</a> — sans frais.
+                      </p>
+                      <p style="margin: 0; font-size: 12px; color: #555555;">
+                        © 2026 PULSE — Tom Iolov — 108 rue de Crimée, 75019 Paris<br>
+                        SIRET 948 550 561 00039 — <a href="mailto:tomiolovpro@gmail.com" style="color: #06b6d4;">tomiolovpro@gmail.com</a>
                       </p>
                     </td>
                   </tr>
