@@ -18,13 +18,13 @@ const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 
 // Eagerly load light pages
 import Auth from "./pages/Auth";
-import Subscribe from "./pages/Subscribe";
 import Error404 from "./pages/Error404";
 import Error500 from "./pages/Error500";
 import MentionsLegales from "./pages/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import CGV from "./pages/CGV";
 import CGU from "./pages/CGU";
+import { Navigate } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
@@ -50,7 +50,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/subscribe" element={<Subscribe />} />
+            <Route path="/subscribe" element={<Navigate to="/" replace />} />
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>

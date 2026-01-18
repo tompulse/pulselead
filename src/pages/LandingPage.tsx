@@ -1,15 +1,27 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import React from "react";
-import { ArrowRight, Target, Zap, TrendingUp, Check, MapPin, BarChart3, Users, Phone, Mail, TrendingDown, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ContactSection from "@/components/landing/ContactSection";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { initiateCheckout, isLoading: checkoutLoading } = useStripeCheckout();
+
+  // Check if user just logged in and should go to checkout
+  useEffect(() => {
+    if (searchParams.get('checkout') === 'pending') {
+      // Clean URL and trigger checkout
+      window.history.replaceState(null, '', '/');
+      initiateCheckout();
+    }
+  }, [searchParams, initiateCheckout]);
 
   const heroAnimation = useScrollAnimation({ threshold: 0.2 });
   const problemsAnimation = useScrollAnimation({ threshold: 0.2 });
@@ -133,10 +145,11 @@ const LandingPage = () => {
 
               {/* CTA */}
               <Button 
-                onClick={() => navigate('/subscribe')} 
+                onClick={initiateCheckout}
+                disabled={checkoutLoading}
                 className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
               >
-                Commencer maintenant
+                {checkoutLoading ? 'Redirection...' : 'Commencer maintenant'}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
 
@@ -383,8 +396,12 @@ const LandingPage = () => {
                         </li>
                       ))}
                     </ul>
-                    <Button className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" onClick={() => navigate('/subscribe')}>
-                      Commencer maintenant
+                    <Button 
+                      className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" 
+                      onClick={initiateCheckout}
+                      disabled={checkoutLoading}
+                    >
+                      {checkoutLoading ? 'Redirection...' : 'Commencer maintenant'}
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </div>
@@ -422,9 +439,11 @@ const LandingPage = () => {
                         </li>
                       ))}
                     </ul>
-                    <Button className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" onClick={() => navigate('/subscribe')}>
-                      Demander un devis
-                      <ArrowRight className="ml-2 w-4 h-4" />
+                    <Button asChild className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto">
+                      <a href="mailto:tomiolovpro@gmail.com?subject=Demande de devis PULSE Équipes">
+                        Demander un devis
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </a>
                     </Button>
                   </div>
                 </Card>
@@ -533,8 +552,12 @@ const LandingPage = () => {
 
         {/* Sticky CTA Mobile */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
-          <Button onClick={() => navigate('/subscribe')} className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 rounded-full shadow-lg shadow-green-500/40">
-            Commencer maintenant
+          <Button 
+            onClick={initiateCheckout} 
+            disabled={checkoutLoading}
+            className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 rounded-full shadow-lg shadow-green-500/40"
+          >
+            {checkoutLoading ? 'Redirection...' : 'Commencer maintenant'}
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
