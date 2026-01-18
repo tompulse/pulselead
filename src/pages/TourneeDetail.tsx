@@ -832,7 +832,7 @@ const TourneeDetail = () => {
               <label className="text-sm font-medium">
                 {pendingAction === 'rdv' ? 'Date du RDV' : 'Date de relance'}
               </label>
-              <Popover>
+              <Popover modal={true}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -845,7 +845,7 @@ const TourneeDetail = () => {
                     {pendingDate ? format(pendingDate, "PPP", { locale: fr }) : <span>Choisir une date</span>}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 z-[9999]" align="center" sideOffset={4}>
                   <Calendar
                     mode="single"
                     selected={pendingDate}
