@@ -42,7 +42,7 @@ const handler = async (req: Request): Promise<Response> => {
     const manageUrl = portalUrl || "https://pulselead.lovable.app/security";
 
     const emailResponse = await resend.emails.send({
-      from: "PULSE <mail@pulse-lead.com>",
+      from: "PULSE <noreply@mail.pulse-lead.com>",
       to: [email],
       subject: "⏰ Votre essai PULSE se termine dans 3 jours",
       html: `
