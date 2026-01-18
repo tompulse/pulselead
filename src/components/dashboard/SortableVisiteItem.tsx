@@ -4,6 +4,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { GripVertical, MapPin, Navigation, Calendar, RotateCcw, Trash2, MessageSquare, X, Check } from 'lucide-react';
 import {
   Dialog,
@@ -33,7 +35,7 @@ interface SortableVisiteItemProps {
   };
   visiteStatus: VisiteStatus;
   currentNote?: string;
-  onVisiteChange: (siteId: string, field: keyof VisiteStatus, value: boolean) => void;
+  onVisiteChange: (siteId: string, field: keyof VisiteStatus, value: boolean, dateRelance?: string) => void;
   onNavigate: (site: { latitude?: number; longitude?: number; adresse: string }) => void;
   onRemove?: (siteId: string) => void;
   onNoteChange?: (siteId: string, note: string) => void;
@@ -52,7 +54,10 @@ export const SortableVisiteItem = ({
   onNoteChange,
 }: SortableVisiteItemProps) => {
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
+  const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [noteText, setNoteText] = useState(currentNote);
+  const [relanceDate, setRelanceDate] = useState('');
+  const [pendingField, setPendingField] = useState<'aRevoir' | 'rdv' | null>(null);
 
   const {
     attributes,
@@ -80,6 +85,42 @@ export const SortableVisiteItem = ({
       onNoteChange(site.id, noteText);
     }
     setIsNoteDialogOpen(false);
+  };
+
+  const handleCheckboxChange = (field: keyof VisiteStatus, checked: boolean) => {
+    if (!checked) {
+      // If unchecking, just update without date
+      onVisiteChange(site.id, field, false);
+      return;
+    }
+
+    // For "À revoir" or "RDV", ask for a date
+    if (field === 'aRevoir' || field === 'rdv') {
+      setPendingField(field);
+      // Default to tomorrow
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      setRelanceDate(tomorrow.toISOString().slice(0, 16));
+      setIsDateDialogOpen(true);
+    } else {
+      // For "visite", no date needed
+      onVisiteChange(site.id, field, true);
+    }
+  };
+
+  const handleConfirmDate = () => {
+    if (pendingField && relanceDate) {
+      onVisiteChange(site.id, pendingField, true, relanceDate);
+    }
+    setIsDateDialogOpen(false);
+    setPendingField(null);
+    setRelanceDate('');
+  };
+
+  const handleCancelDate = () => {
+    setIsDateDialogOpen(false);
+    setPendingField(null);
+    setRelanceDate('');
   };
 
   const hasNote = currentNote && currentNote.trim().length > 0;
@@ -158,7 +199,7 @@ export const SortableVisiteItem = ({
           <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
             <Checkbox 
               checked={visiteStatus.visite}
-              onCheckedChange={(checked) => onVisiteChange(site.id, 'visite', !!checked)}
+              onCheckedChange={(checked) => handleCheckboxChange('visite', !!checked)}
               className="h-3.5 w-3.5 sm:h-4 sm:w-4"
             />
             <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-accent" />
@@ -168,7 +209,7 @@ export const SortableVisiteItem = ({
           <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
             <Checkbox 
               checked={visiteStatus.rdv}
-              onCheckedChange={(checked) => onVisiteChange(site.id, 'rdv', !!checked)}
+              onCheckedChange={(checked) => handleCheckboxChange('rdv', !!checked)}
               className="h-3.5 w-3.5 sm:h-4 sm:w-4"
             />
             <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-400" />
@@ -178,7 +219,7 @@ export const SortableVisiteItem = ({
           <label className="flex items-center gap-1 text-[10px] sm:text-xs cursor-pointer whitespace-nowrap">
             <Checkbox 
               checked={visiteStatus.aRevoir}
-              onCheckedChange={(checked) => onVisiteChange(site.id, 'aRevoir', !!checked)}
+              onCheckedChange={(checked) => handleCheckboxChange('aRevoir', !!checked)}
               className="h-3.5 w-3.5 sm:h-4 sm:w-4"
             />
             <RotateCcw className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-orange-400" />
@@ -231,6 +272,52 @@ export const SortableVisiteItem = ({
             >
               <Check className="w-4 h-4 mr-1" />
               Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Date Picker Dialog for À revoir / RDV */}
+      <Dialog open={isDateDialogOpen} onOpenChange={setIsDateDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className={`w-5 h-5 ${pendingField === 'rdv' ? 'text-purple-400' : 'text-orange-400'}`} />
+              {pendingField === 'rdv' ? 'Planifier le RDV' : 'Planifier la relance'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Pour <span className="font-semibold text-foreground">{site.nom}</span>
+            </p>
+            <div className="space-y-2">
+              <Label htmlFor="relance-date">
+                {pendingField === 'rdv' ? 'Date et heure du RDV' : 'Date de relance'}
+              </Label>
+              <Input
+                id="relance-date"
+                type="datetime-local"
+                value={relanceDate}
+                onChange={(e) => setRelanceDate(e.target.value)}
+                className="w-full"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleCancelDate}
+            >
+              <X className="w-4 h-4 mr-1" />
+              Annuler
+            </Button>
+            <Button
+              onClick={handleConfirmDate}
+              disabled={!relanceDate}
+              className={pendingField === 'rdv' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-orange-500 hover:bg-orange-600'}
+            >
+              <Check className="w-4 h-4 mr-1" />
+              Confirmer
             </Button>
           </DialogFooter>
         </DialogContent>

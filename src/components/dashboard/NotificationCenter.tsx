@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Bell, BellRing, Calendar, Check, X } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Bell, BellRing, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNotifications } from '@/hooks/useNotifications';
-import { format, isToday, isTomorrow, parseISO } from 'date-fns';
+import { format, isToday, isTomorrow, parseISO, startOfDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 interface NotificationCenterProps {
@@ -22,22 +22,34 @@ interface NotificationCenterProps {
 export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationCenterProps) => {
   const [open, setOpen] = useState(false);
   const { 
-    permission, 
     reminders, 
     isLoading, 
-    requestPermission,
     todayReminders,
   } = useNotifications(userId);
 
-  const formatReminderDate = (dateStr: string) => {
-    const date = parseISO(dateStr);
-    if (isToday(date)) return "Aujourd'hui";
-    if (isTomorrow(date)) return 'Demain';
-    return format(date, 'EEEE d MMMM', { locale: fr });
-  };
+  // Group reminders by date
+  const groupedReminders = useMemo(() => {
+    const groups: Record<string, typeof reminders> = {};
+    
+    reminders.forEach(reminder => {
+      const dateKey = startOfDay(parseISO(reminder.date_relance)).toISOString();
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(reminder);
+    });
 
-  const handleEnableNotifications = async () => {
-    await requestPermission();
+    // Sort by date and return as array of [dateKey, reminders]
+    return Object.entries(groups).sort(([a], [b]) => 
+      new Date(a).getTime() - new Date(b).getTime()
+    );
+  }, [reminders]);
+
+  const formatDateHeader = (dateStr: string) => {
+    const date = parseISO(dateStr);
+    if (isToday(date)) return "📅 Aujourd'hui";
+    if (isTomorrow(date)) return '📅 Demain';
+    return format(date, "📅 EEEE d MMMM", { locale: fr });
   };
 
   const handleReminderClick = (entrepriseId: string) => {
@@ -54,7 +66,7 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
           variant="ghost"
           size="icon"
           className="relative"
-          aria-label="Notifications"
+          aria-label="Relances à venir"
         >
           {todayReminders.length > 0 ? (
             <>
@@ -79,39 +91,8 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
           </SheetTitle>
         </SheetHeader>
 
-        <div className="mt-6 space-y-4">
-          {/* Notification Permission Banner */}
-          {permission.isSupported && permission.permission !== 'granted' && (
-            <div className="p-4 rounded-lg bg-accent/10 border border-accent/20 space-y-3">
-              <div className="flex items-start gap-3">
-                <BellRing className="h-5 w-5 text-accent mt-0.5" />
-                <div>
-                  <p className="font-medium text-sm">Activez les notifications</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Recevez des rappels sur votre téléphone ou tablette pour ne jamais oublier une relance
-                  </p>
-                </div>
-              </div>
-              <Button 
-                onClick={handleEnableNotifications}
-                className="w-full bg-accent text-black hover:bg-accent/90"
-                size="sm"
-              >
-                <Check className="h-4 w-4 mr-2" />
-                Activer les notifications
-              </Button>
-            </div>
-          )}
-
-          {permission.permission === 'granted' && (
-            <div className="flex items-center gap-2 text-xs text-green-500 bg-green-500/10 px-3 py-2 rounded-lg">
-              <Check className="h-4 w-4" />
-              Notifications activées
-            </div>
-          )}
-
-          {/* Reminders List */}
-          <ScrollArea className="h-[calc(100vh-250px)]">
+        <div className="mt-6">
+          <ScrollArea className="h-[calc(100vh-120px)]">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="animate-spin w-6 h-6 border-2 border-accent border-t-transparent rounded-full" />
@@ -120,40 +101,67 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
               <div className="text-center py-12 text-muted-foreground">
                 <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p className="font-medium">Aucune relance programmée</p>
-                <p className="text-sm mt-1">Planifiez vos relances depuis les fiches prospects</p>
+                <p className="text-sm mt-1">
+                  Cochez "À revoir" ou "À rappeler" sur un prospect pour planifier une relance
+                </p>
               </div>
             ) : (
-              <div className="space-y-3 pr-4">
-                {reminders.map((reminder) => (
-                  <button
-                    key={reminder.id}
-                    onClick={() => handleReminderClick(reminder.entreprise_id)}
-                    className="w-full text-left p-4 rounded-xl bg-card/50 border border-border/50 hover:border-accent/50 hover:bg-card transition-all"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold truncate">{reminder.entreprise_nom}</p>
-                        <p className="text-xs text-accent font-medium mt-1">
-                          {formatReminderDate(reminder.date_relance)}
-                        </p>
-                        {reminder.notes && (
-                          <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
-                            {reminder.notes}
-                          </p>
-                        )}
-                      </div>
-                      <Badge 
-                        variant="outline" 
-                        className={`shrink-0 ${
-                          isToday(parseISO(reminder.date_relance)) 
-                            ? 'bg-red-500/20 text-red-400 border-red-500/30' 
-                            : 'bg-accent/10 text-accent border-accent/30'
-                        }`}
-                      >
-                        {reminder.type}
-                      </Badge>
+              <div className="space-y-6 pr-4">
+                {groupedReminders.map(([dateKey, dateReminders]) => (
+                  <div key={dateKey} className="space-y-3">
+                    {/* Date header */}
+                    <div className={`text-sm font-semibold capitalize sticky top-0 bg-background py-2 ${
+                      isToday(parseISO(dateKey)) 
+                        ? 'text-red-400' 
+                        : isTomorrow(parseISO(dateKey))
+                          ? 'text-orange-400'
+                          : 'text-accent'
+                    }`}>
+                      {formatDateHeader(dateKey)}
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
+                        ({dateReminders.length} relance{dateReminders.length > 1 ? 's' : ''})
+                      </span>
                     </div>
-                  </button>
+                    
+                    {/* Reminders for this date */}
+                    {dateReminders.map((reminder) => (
+                      <button
+                        key={reminder.id}
+                        onClick={() => handleReminderClick(reminder.entreprise_id)}
+                        className={`w-full text-left p-4 rounded-xl border transition-all ${
+                          isToday(parseISO(reminder.date_relance))
+                            ? 'bg-red-500/10 border-red-500/30 hover:border-red-500/50'
+                            : 'bg-card/50 border-border/50 hover:border-accent/50'
+                        } hover:bg-card`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold truncate">{reminder.entreprise_nom}</p>
+                            {reminder.notes && (
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                {reminder.notes}
+                              </p>
+                            )}
+                          </div>
+                          <Badge 
+                            variant="outline" 
+                            className={`shrink-0 ${
+                              reminder.type === 'a_revoir' || reminder.type === 'a_rappeler'
+                                ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
+                                : reminder.type === 'rdv'
+                                  ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+                                  : 'bg-accent/10 text-accent border-accent/30'
+                            }`}
+                          >
+                            {reminder.type === 'a_revoir' ? 'À revoir' 
+                              : reminder.type === 'a_rappeler' ? 'À rappeler'
+                              : reminder.type === 'rdv' ? 'RDV'
+                              : reminder.type}
+                          </Badge>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 ))}
               </div>
             )}
