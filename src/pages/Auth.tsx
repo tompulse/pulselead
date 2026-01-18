@@ -99,9 +99,10 @@ const Auth = () => {
   // Get redirect destination from URL params
   const redirectTo = searchParams.get('redirect');
   const getRedirectPath = () => {
-    // 'checkout' triggers Stripe checkout after login, 'subscribe' is legacy
-    if (redirectTo === 'checkout' || redirectTo === 'subscribe') return '/?checkout=pending';
-    return '/dashboard';
+    // 'checkout' triggers Stripe checkout after login
+    if (redirectTo === 'checkout') return '/?checkout=pending';
+    // Simple connexion → retour à la landing (pas dashboard pour éviter boucle)
+    return '/';
   };
 
   useEffect(() => {
