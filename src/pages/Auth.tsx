@@ -101,6 +101,8 @@ const Auth = () => {
   const getRedirectPath = () => {
     // 'checkout' triggers Stripe checkout after login
     if (redirectTo === 'checkout') return '/?checkout=pending';
+    // 'dashboard' goes to dashboard check (will verify access there)
+    if (redirectTo === 'dashboard') return '/dashboard';
     // Simple connexion → retour à la landing (pas dashboard pour éviter boucle)
     return '/';
   };
