@@ -247,7 +247,6 @@ const TourneeDetail = () => {
           entreprise_id: entrepriseId,
           type,
           statut,
-          notes: `Depuis tournée: ${tournee?.nom}`,
           date_relance: dateRelance ?? null,
         },
       });
