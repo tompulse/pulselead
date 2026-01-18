@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   ArrowLeft,
-  Calendar as CalendarIcon,
+  Calendar as CalendarLucide,
   MapPin,
   Navigation,
   Clock,
@@ -610,7 +610,7 @@ const TourneeDetail = () => {
                 onClick={() => handleStatusClick(siteId, site.nom, 'rdv')}
                 className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${status.rdv ? 'bg-purple-600 hover:bg-purple-700' : 'border-purple-500/30 text-purple-500 hover:bg-purple-500/10'}`}
               >
-                <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
+                <CalendarLucide className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                 RDV
               </Button>
               <Button
@@ -841,7 +841,7 @@ const TourneeDetail = () => {
                       !pendingDate && "text-muted-foreground"
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <CalendarLucide className="mr-2 h-4 w-4" />
                     {pendingDate ? format(pendingDate, "PPP", { locale: fr }) : <span>Choisir une date</span>}
                   </Button>
                 </PopoverTrigger>
