@@ -184,13 +184,14 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
 
   // Sync interaction to CRM
   const syncToCRM = useMutation({
-    mutationFn: async ({ entrepriseId, type }: { entrepriseId: string; type: string }) => {
+    mutationFn: async ({ entrepriseId, type, dateRelance }: { entrepriseId: string; type: string; dateRelance?: string }) => {
       const { error } = await supabase.functions.invoke('sync-interaction', {
         body: {
           entreprise_id: entrepriseId,
           type,
-          statut: 'en_cours',
+          statut: type === 'a_revoir' ? 'a_rappeler' : 'en_cours',
           notes: `Depuis tournée: ${tournee.nom}`,
+          date_relance: dateRelance || null,
         },
       });
 
@@ -280,7 +281,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     }
   };
 
-  const handleVisiteChange = async (siteId: string, field: keyof VisiteStatus, value: boolean) => {
+  const handleVisiteChange = async (siteId: string, field: keyof VisiteStatus, value: boolean, dateRelance?: string) => {
     const newStatus = {
       ...visitesStatus,
       [siteId]: {
@@ -308,8 +309,15 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         await syncToCRM.mutateAsync({
           entrepriseId: siteId,
           type: typeMap[field],
+          dateRelance,
         });
-        toast.success(`${field === 'visite' ? 'Visite' : field === 'rdv' ? 'RDV' : 'À revoir'} enregistré`);
+        
+        const messages: Record<keyof VisiteStatus, string> = {
+          visite: 'Visite enregistrée',
+          rdv: dateRelance ? `RDV planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'RDV enregistré',
+          aRevoir: dateRelance ? `Relance planifiée le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'À revoir enregistré',
+        };
+        toast.success(messages[field]);
       } catch (error) {
         console.error('Error syncing to CRM:', error);
       }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MapPin, Calendar, StickyNote, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,11 +39,23 @@ export const UnifiedCRMActions = ({
   const [selectedType, setSelectedType] = useState<'email' | 'visite' | 'rdv' | 'autre'>('visite');
   const [notes, setNotes] = useState('');
   const [prochaine_action, setProchaine_action] = useState('');
-  const [date_prochaine_action, setDate_prochaine_action] = useState('');
+  const [date_relance, setDate_relance] = useState('');
   const [statut, setStatut] = useState<'a_rappeler' | 'en_cours' | 'gagne' | 'perdu' | 'sans_suite'>('en_cours');
   const [nouveau_statut_lead, setNouveauStatutLead] = useState<'nouveau' | 'contacte' | 'qualifie' | 'proposition' | 'negociation' | 'gagne' | 'perdu'>('contacte');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Auto-show date field when statut is "a_rappeler"
+  const showDateField = statut === 'a_rappeler' || selectedType === 'rdv';
+
+  // Set default date when switching to a_rappeler
+  useEffect(() => {
+    if (statut === 'a_rappeler' && !date_relance) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      setDate_relance(tomorrow.toISOString().slice(0, 16));
+    }
+  }, [statut, date_relance]);
 
   const handleQuickAction = (type: typeof selectedType) => {
     setSelectedType(type);
@@ -55,6 +67,10 @@ export const UnifiedCRMActions = ({
     } else if (type === 'rdv') {
       setProchaine_action('Préparer la présentation');
       setNouveauStatutLead('proposition');
+      // Default date for RDV
+      const nextWeek = new Date();
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      setDate_relance(nextWeek.toISOString().slice(0, 16));
     } else if (type === 'email') {
       setProchaine_action('Relancer dans 3 jours');
       setNouveauStatutLead('contacte');
@@ -65,6 +81,16 @@ export const UnifiedCRMActions = ({
   };
 
   const handleSubmit = async () => {
+    // Validate: if a_rappeler, date is required
+    if (statut === 'a_rappeler' && !date_relance) {
+      toast({
+        title: "Date requise",
+        description: "Veuillez sélectionner une date de relance",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -75,7 +101,7 @@ export const UnifiedCRMActions = ({
           statut,
           notes: notes || undefined,
           prochaine_action: prochaine_action || undefined,
-          date_prochaine_action: date_prochaine_action || undefined,
+          date_relance: date_relance || undefined,
           nouveau_statut_lead,
         },
       });
@@ -91,7 +117,13 @@ export const UnifiedCRMActions = ({
 
       const message = actionMessages[selectedType] || actionMessages.autre;
 
-      if (prochaine_action) {
+      if (date_relance && statut === 'a_rappeler') {
+        toast({
+          title: message.title,
+          description: `${message.description} • Relance le ${new Date(date_relance).toLocaleDateString('fr-FR')}`,
+          duration: 2500,
+        });
+      } else if (prochaine_action) {
         toast({
           title: message.title,
           description: `${message.description} • Prochaine action : ${prochaine_action}`,
@@ -108,7 +140,7 @@ export const UnifiedCRMActions = ({
       // Reset form
       setNotes('');
       setProchaine_action('');
-      setDate_prochaine_action('');
+      setDate_relance('');
       setStatut('en_cours');
       setNouveauStatutLead('contacte');
       setShowSuggestions(false);
@@ -211,6 +243,27 @@ export const UnifiedCRMActions = ({
               </Select>
             </div>
 
+            {/* Date field - shown when statut is a_rappeler or type is rdv */}
+            {showDateField && (
+              <div className="space-y-2 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                <Label htmlFor="date_relance" className="flex items-center gap-2 text-orange-400">
+                  <Calendar className="w-4 h-4" />
+                  {selectedType === 'rdv' ? 'Date et heure du RDV' : 'Date de relance'} *
+                </Label>
+                <Input
+                  id="date_relance"
+                  type="datetime-local"
+                  value={date_relance}
+                  onChange={(e) => setDate_relance(e.target.value)}
+                  className="border-orange-500/30 focus:border-orange-500"
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  Cette relance apparaîtra dans vos notifications à la date choisie
+                </p>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label>Statut du lead</Label>
               <Select value={nouveau_statut_lead} onValueChange={(v: any) => setNouveauStatutLead(v)}>
@@ -264,16 +317,6 @@ export const UnifiedCRMActions = ({
                   ))}
                 </div>
               )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="date_prochaine_action">Date de la prochaine action</Label>
-              <Input
-                id="date_prochaine_action"
-                type="datetime-local"
-                value={date_prochaine_action}
-                onChange={(e) => setDate_prochaine_action(e.target.value)}
-              />
             </div>
           </div>
 
