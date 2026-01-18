@@ -134,23 +134,18 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
                             : 'bg-card/50 border-border/50 hover:border-accent/50'
                         } hover:bg-card`}
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold truncate">{reminder.entreprise_nom}</p>
-                            {reminder.notes && (
-                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                {reminder.notes}
-                              </p>
-                            )}
-                          </div>
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="font-semibold truncate flex-1 min-w-0">{reminder.entreprise_nom}</p>
                           <Badge 
                             variant="outline" 
-                            className={`shrink-0 ${
-                              reminder.type === 'a_revoir' || reminder.type === 'a_rappeler'
+                            className={`shrink-0 text-xs whitespace-nowrap ${
+                              reminder.type === 'a_revoir'
                                 ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
-                                : reminder.type === 'rdv'
-                                  ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
-                                  : 'bg-accent/10 text-accent border-accent/30'
+                                : reminder.type === 'a_rappeler'
+                                  ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                                  : reminder.type === 'rdv'
+                                    ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+                                    : 'bg-accent/10 text-accent border-accent/30'
                             }`}
                           >
                             {reminder.type === 'a_revoir' ? 'À revoir' 
