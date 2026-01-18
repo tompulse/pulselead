@@ -74,7 +74,7 @@ serve(async (req) => {
         metadata: {
           user_id: user.id,
         },
-        description: "Accès complet à PULSE pendant 7 jours gratuits, puis 49€/mois",
+        description: "Accès complet à PULSE pendant 7 jours gratuits, puis 79€/mois",
       },
       // Personnalisation du checkout
       custom_text: {

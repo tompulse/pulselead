@@ -358,7 +358,7 @@ const LandingPage = () => {
                     <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">Commercial Solo</h3>
                     <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(6,182,212,0.2)' }}>
                       <div className="flex items-baseline justify-center gap-2 mb-1">
-                        <span className="text-4xl sm:text-5xl font-bold gradient-text">49€</span>
+                        <span className="text-4xl sm:text-5xl font-bold gradient-text">79€</span>
                         <span className="text-base text-white/60">/mois</span>
                       </div>
                       <p className="text-sm text-white/50">Sans engagement • Résiliable à tout moment</p>

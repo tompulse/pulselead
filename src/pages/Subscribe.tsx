@@ -10,8 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useSubscription } from '@/hooks/useSubscription';
 
-// Prix ID Stripe - Mode Production - Plan mensuel à 49€/mois
-const STRIPE_PRICE_ID = 'price_1SoTNkHjyidZ5i9LuxvK8Tzq';
+// Prix ID Stripe - Mode Production - Plan mensuel à 79€/mois
+const STRIPE_PRICE_ID = 'price_1SqxKmHjyidZ5i9L8tCztpFU';
 
 const features = [
   {
@@ -516,7 +516,7 @@ const Subscribe = () => {
             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border/30">
               <p className="text-[10px] sm:text-xs text-muted-foreground text-center leading-relaxed">
                 En cliquant sur "Commencer mon essai", vous acceptez qu'après 7 jours, 
-                votre carte soit débitée de 49€/mois. Annulation possible à tout moment. 
+                votre carte soit débitée de 79€/mois. Annulation possible à tout moment. 
                 Droit de rétractation 14 jours.
               </p>
             </div>
