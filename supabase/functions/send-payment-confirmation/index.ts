@@ -174,34 +174,6 @@ serve(async (req) => {
                     </td>
                   </tr>
                   
-                  <!-- Premium Support -->
-                  <tr>
-                    <td style="padding: 0 40px 30px;">
-                      <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 171, 0, 0.05)); border: 1px solid rgba(255, 171, 0, 0.3); border-radius: 12px; padding: 24px; text-align: center;">
-                        <p style="margin: 0 0 12px; font-size: 16px; color: #ffab00; font-weight: 600;">
-                          ⭐ Support Premium
-                        </p>
-                        <p style="margin: 0 0 16px; font-size: 14px; color: #b0b0b0;">
-                          En tant que membre, bénéficiez d'un accompagnement personnalisé
-                        </p>
-                        <table width="100%" cellpadding="0" cellspacing="0">
-                          <tr>
-                            <td align="center" style="padding: 8px;">
-                              <a href="mailto:tomiolovpro@gmail.com" style="display: inline-block; padding: 10px 20px; background: rgba(0, 191, 255, 0.15); border: 1px solid rgba(0, 191, 255, 0.4); color: #00BFFF; font-size: 13px; font-weight: 600; text-decoration: none; border-radius: 8px; margin: 4px;">
-                                ✉️ Email
-                              </a>
-                              <a href="https://wa.me/33760227532" style="display: inline-block; padding: 10px 20px; background: rgba(37, 211, 102, 0.15); border: 1px solid rgba(37, 211, 102, 0.4); color: #25D366; font-size: 13px; font-weight: 600; text-decoration: none; border-radius: 8px; margin: 4px;">
-                                💬 WhatsApp
-                              </a>
-                              <a href="https://calendly.com/tomiolovpro/pulse" style="display: inline-block; padding: 10px 20px; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); color: #8b5cf6; font-size: 13px; font-weight: 600; text-decoration: none; border-radius: 8px; margin: 4px;">
-                                📅 Démo personnalisée
-                              </a>
-                            </td>
-                          </tr>
-                        </table>
-                      </div>
-                    </td>
-                  </tr>
                   
                   <!-- Footer -->
                   <tr>
