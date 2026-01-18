@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { TourneeMap } from './TourneeMap';
 import { SortableVisiteItem } from './SortableVisiteItem';
 import { TourneeRouteConfig } from './TourneeRouteConfig';
+import { NavigationChoiceDialog } from './NavigationChoiceDialog';
 import {
   DndContext,
   closestCenter,
@@ -94,6 +95,14 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     distance: tournee.distance_totale_km,
     temps: tournee.temps_estime_minutes,
   });
+  
+  // Navigation dialog state
+  const [navDialogOpen, setNavDialogOpen] = useState(false);
+  const [navTarget, setNavTarget] = useState<{
+    latitude?: number | null;
+    longitude?: number | null;
+    address: string;
+  } | null>(null);
 
   // Route config state
   const [startPoint, setStartPoint] = useState<RouteEndpoint | null>(
@@ -328,11 +337,12 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
   };
 
   const handleNavigate = (site: { latitude?: number; longitude?: number; adresse: string }) => {
-    if (site.latitude && site.longitude) {
-      window.open(`https://www.google.com/maps/dir/?api=1&destination=${site.latitude},${site.longitude}&travelmode=driving`, '_blank');
-    } else {
-      window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(site.adresse)}`, '_blank');
-    }
+    setNavTarget({
+      latitude: site.latitude,
+      longitude: site.longitude,
+      address: site.adresse,
+    });
+    setNavDialogOpen(true);
   };
 
   const openInGoogleMaps = () => {
@@ -687,6 +697,15 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
           </CardContent>
         </Card>
       </div>
+      
+      {/* Navigation Choice Dialog */}
+      <NavigationChoiceDialog
+        open={navDialogOpen}
+        onOpenChange={setNavDialogOpen}
+        latitude={navTarget?.latitude}
+        longitude={navTarget?.longitude}
+        address={navTarget?.address || ''}
+      />
     </div>
   );
 };
