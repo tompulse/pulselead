@@ -396,7 +396,7 @@ export default function SecuritySettings() {
                         </p>
                         {formattedEndDate && (
                           <p className="text-sm text-muted-foreground">
-                            Premier prélèvement prévu le <strong className="text-foreground">{formattedEndDate}</strong> (49€)
+                            Premier prélèvement prévu le <strong className="text-foreground">{formattedEndDate}</strong> (79€)
                           </p>
                         )}
                       </div>
