@@ -1,11 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
-interface NotificationPermission {
-  permission: 'granted' | 'denied' | 'default';
-  isSupported: boolean;
-}
 
 interface Reminder {
   id: string;
@@ -17,64 +13,15 @@ interface Reminder {
 }
 
 export const useNotifications = (userId: string | undefined) => {
-  const [permission, setPermission] = useState<NotificationPermission>({
-    permission: 'default',
-    isSupported: false,
-  });
-  const [reminders, setReminders] = useState<Reminder[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  // Check if notifications are supported
-  useEffect(() => {
-    const isSupported = 'Notification' in window && 'serviceWorker' in navigator;
-    setPermission({
-      permission: isSupported ? Notification.permission : 'denied',
-      isSupported,
-    });
-  }, []);
-
-  // Request notification permission
-  const requestPermission = useCallback(async () => {
-    if (!permission.isSupported) {
-      toast({
-        title: 'Notifications non supportées',
-        description: 'Votre navigateur ne supporte pas les notifications push',
-        variant: 'destructive',
-      });
-      return false;
-    }
-
-    try {
-      const result = await Notification.requestPermission();
-      setPermission(prev => ({ ...prev, permission: result }));
+  // Use react-query for reminders to enable bidirectional sync with CRM
+  const { data: reminders = [], isLoading, refetch: fetchReminders } = useQuery({
+    queryKey: ['notification-reminders', userId],
+    queryFn: async () => {
+      if (!userId) return [];
       
-      if (result === 'granted') {
-        toast({
-          title: 'Notifications activées ✅',
-          description: 'Vous recevrez des rappels pour vos relances',
-        });
-        return true;
-      } else {
-        toast({
-          title: 'Notifications refusées',
-          description: 'Vous ne recevrez pas de rappels push',
-          variant: 'destructive',
-        });
-        return false;
-      }
-    } catch (error) {
-      console.error('Error requesting notification permission:', error);
-      return false;
-    }
-  }, [permission.isSupported, toast]);
-
-  // Fetch upcoming reminders
-  const fetchReminders = useCallback(async () => {
-    if (!userId) return;
-    
-    setIsLoading(true);
-    try {
       const today = new Date();
       const todayStr = today.toISOString().split('T')[0];
       
@@ -95,40 +42,77 @@ export const useNotifications = (userId: string | undefined) => {
 
       if (error) throw error;
 
-      if (data && data.length > 0) {
-        // Filter: future dates OR no date set
-        const filteredData = data.filter(r => {
-          if (!r.date_relance) return true; // Show those without date
-          return r.date_relance >= todayStr; // Show future dates
-        });
+      if (!data || data.length === 0) return [];
 
-        const entrepriseIds = [...new Set(filteredData.map(r => r.entreprise_id))];
-        const { data: entreprises } = await supabase
-          .from('nouveaux_sites')
-          .select('id, nom')
-          .in('id', entrepriseIds);
+      // Filter: future dates OR no date set
+      const filteredData = data.filter(r => {
+        if (!r.date_relance) return true; // Show those without date
+        return r.date_relance >= todayStr; // Show future dates
+      });
 
-        const entrepriseMap = new Map(entreprises?.map(e => [e.id, e.nom]) || []);
-        
-        const remindersWithNames = filteredData.map(r => ({
-          ...r,
-          entreprise_nom: entrepriseMap.get(r.entreprise_id) || 'Entreprise inconnue',
-        }));
-        
-        setReminders(remindersWithNames);
-      } else {
-        setReminders([]);
-      }
-    } catch (error) {
-      console.error('Error fetching reminders:', error);
-    } finally {
-      setIsLoading(false);
+      const entrepriseIds = [...new Set(filteredData.map(r => r.entreprise_id))];
+      const { data: entreprises } = await supabase
+        .from('nouveaux_sites')
+        .select('id, nom')
+        .in('id', entrepriseIds);
+
+      const entrepriseMap = new Map(entreprises?.map(e => [e.id, e.nom]) || []);
+      
+      const remindersWithNames: Reminder[] = filteredData.map(r => ({
+        ...r,
+        entreprise_nom: entrepriseMap.get(r.entreprise_id) || 'Entreprise inconnue',
+      }));
+      
+      return remindersWithNames;
+    },
+    enabled: !!userId,
+    staleTime: 30000, // 30 seconds
+  });
+
+  // Delete reminder mutation
+  const deleteReminderMutation = useMutation({
+    mutationFn: async (reminderId: string) => {
+      const { error } = await supabase
+        .from('lead_interactions')
+        .delete()
+        .eq('id', reminderId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      // Invalidate all related queries for bidirectional sync
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders', userId] });
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions', userId] });
+      queryClient.invalidateQueries({ queryKey: ['crm-notes', userId] });
+      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
+      
+      toast({
+        title: 'Relance supprimée',
+        description: 'La relance a été retirée de votre liste',
+      });
+    },
+    onError: (error) => {
+      console.error('Error deleting reminder:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de supprimer la relance',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const deleteReminder = useCallback(async (reminderId: string) => {
+    try {
+      await deleteReminderMutation.mutateAsync(reminderId);
+      return true;
+    } catch {
+      return false;
     }
-  }, [userId]);
+  }, [deleteReminderMutation]);
 
   // Send a local notification
   const sendNotification = useCallback((title: string, body: string, data?: any) => {
-    if (permission.permission !== 'granted') return;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
     try {
       const notification = new Notification(title, {
@@ -145,7 +129,43 @@ export const useNotifications = (userId: string | undefined) => {
     } catch (error) {
       console.error('Error sending notification:', error);
     }
-  }, [permission.permission]);
+  }, []);
+
+  // Request notification permission
+  const requestPermission = useCallback(async () => {
+    const isSupported = 'Notification' in window && 'serviceWorker' in navigator;
+    
+    if (!isSupported) {
+      toast({
+        title: 'Notifications non supportées',
+        description: 'Votre navigateur ne supporte pas les notifications push',
+        variant: 'destructive',
+      });
+      return false;
+    }
+
+    try {
+      const result = await Notification.requestPermission();
+      
+      if (result === 'granted') {
+        toast({
+          title: 'Notifications activées ✅',
+          description: 'Vous recevrez des rappels pour vos relances',
+        });
+        return true;
+      } else {
+        toast({
+          title: 'Notifications refusées',
+          description: 'Vous ne recevrez pas de rappels push',
+          variant: 'destructive',
+        });
+        return false;
+      }
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
+      return false;
+    }
+  }, [toast]);
 
   // Check for due reminders and notify
   const checkDueReminders = useCallback(() => {
@@ -163,54 +183,12 @@ export const useNotifications = (userId: string | undefined) => {
     return dueToday.length;
   }, [reminders, sendNotification]);
 
-  // Initial fetch
-  useEffect(() => {
-    fetchReminders();
-  }, [fetchReminders]);
-
-  // Check for due reminders every minute
-  useEffect(() => {
-    if (permission.permission !== 'granted' || reminders.length === 0) return;
-
-    const interval = setInterval(() => {
-      checkDueReminders();
-    }, 60000); // Check every minute
-
-    // Check immediately on mount
-    checkDueReminders();
-
-    return () => clearInterval(interval);
-  }, [permission.permission, reminders, checkDueReminders]);
-
-  // Delete a reminder
-  const deleteReminder = useCallback(async (reminderId: string) => {
-    try {
-      const { error } = await supabase
-        .from('lead_interactions')
-        .delete()
-        .eq('id', reminderId);
-
-      if (error) throw error;
-
-      // Remove from local state
-      setReminders(prev => prev.filter(r => r.id !== reminderId));
-      
-      toast({
-        title: 'Relance supprimée',
-        description: 'La relance a été retirée de votre liste',
-      });
-      
-      return true;
-    } catch (error) {
-      console.error('Error deleting reminder:', error);
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de supprimer la relance',
-        variant: 'destructive',
-      });
-      return false;
-    }
-  }, [toast]);
+  // Permission state
+  const isSupported = typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator;
+  const permission = {
+    permission: isSupported ? Notification.permission : 'denied' as NotificationPermission,
+    isSupported,
+  };
 
   return {
     permission,

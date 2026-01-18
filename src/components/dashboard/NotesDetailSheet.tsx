@@ -98,6 +98,8 @@ export const NotesDetailSheet = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crm-notes', userId] });
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions', userId] });
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders', userId] });
       setEditingId(null);
       toast.success('Note mise à jour');
     },
@@ -117,6 +119,8 @@ export const NotesDetailSheet = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crm-notes', userId] });
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions', userId] });
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders', userId] });
       toast.success('Note supprimée');
     },
     onError: () => {
