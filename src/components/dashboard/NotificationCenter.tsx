@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Bell, BellRing, Calendar } from 'lucide-react';
+import { Bell, BellRing, Calendar, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -25,6 +25,7 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
     reminders, 
     isLoading, 
     todayReminders,
+    deleteReminder,
   } = useNotifications(userId);
 
   // Group reminders by date
@@ -57,6 +58,11 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
       onSelectEntreprise(entrepriseId);
       setOpen(false);
     }
+  };
+
+  const handleDeleteReminder = async (e: React.MouseEvent, reminderId: string) => {
+    e.stopPropagation(); // Prevent triggering the parent button click
+    await deleteReminder(reminderId);
   };
 
   return (
@@ -125,36 +131,48 @@ export const NotificationCenter = ({ userId, onSelectEntreprise }: NotificationC
                     
                     {/* Reminders for this date */}
                     {dateReminders.map((reminder) => (
-                      <button
+                      <div
                         key={reminder.id}
-                        onClick={() => handleReminderClick(reminder.entreprise_id)}
-                        className={`w-full text-left p-3 rounded-xl border transition-all ${
+                        className={`relative w-full text-left p-3 rounded-xl border transition-all group ${
                           isToday(parseISO(reminder.date_relance))
                             ? 'bg-red-500/10 border-red-500/30 hover:border-red-500/50'
                             : 'bg-card/50 border-border/50 hover:border-accent/50'
                         } hover:bg-card`}
                       >
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="text-sm font-medium truncate flex-1 min-w-0 max-w-[180px] sm:max-w-[220px]">{reminder.entreprise_nom}</p>
-                          <Badge 
-                            variant="outline" 
-                            className={`shrink-0 text-[10px] px-2 py-0.5 whitespace-nowrap ${
-                              reminder.type === 'a_revoir'
-                                ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
-                                : reminder.type === 'a_rappeler'
-                                  ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                                  : reminder.type === 'rdv'
-                                    ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
-                                    : 'bg-accent/10 text-accent border-accent/30'
-                            }`}
-                          >
-                            {reminder.type === 'a_revoir' ? 'À revoir' 
-                              : reminder.type === 'a_rappeler' ? 'À rappeler'
-                              : reminder.type === 'rdv' ? 'RDV'
-                              : reminder.type}
-                          </Badge>
-                        </div>
-                      </button>
+                        <button
+                          onClick={() => handleReminderClick(reminder.entreprise_id)}
+                          className="w-full text-left"
+                        >
+                          <div className="flex items-center justify-between gap-2 pr-6">
+                            <p className="text-sm font-medium truncate flex-1 min-w-0 max-w-[160px] sm:max-w-[200px]">{reminder.entreprise_nom}</p>
+                            <Badge 
+                              variant="outline" 
+                              className={`shrink-0 text-[10px] px-2 py-0.5 whitespace-nowrap ${
+                                reminder.type === 'a_revoir'
+                                  ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
+                                  : reminder.type === 'a_rappeler'
+                                    ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                                    : reminder.type === 'rdv'
+                                      ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+                                      : 'bg-accent/10 text-accent border-accent/30'
+                              }`}
+                            >
+                              {reminder.type === 'a_revoir' ? 'À revoir' 
+                                : reminder.type === 'a_rappeler' ? 'À rappeler'
+                                : reminder.type === 'rdv' ? 'RDV'
+                                : reminder.type}
+                            </Badge>
+                          </div>
+                        </button>
+                        {/* Delete button */}
+                        <button
+                          onClick={(e) => handleDeleteReminder(e, reminder.id)}
+                          className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/20 text-muted-foreground hover:text-destructive"
+                          aria-label="Supprimer la relance"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 ))}
