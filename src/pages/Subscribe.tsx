@@ -230,13 +230,7 @@ const Subscribe = () => {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
-            {/* Message personnalisé pour les utilisateurs de retour (cancelled/expired) */}
-            {userId && !hasAccess && isReturningUser && (
-              <div className="bg-amber-500/20 border border-amber-500/30 text-amber-400 px-4 sm:px-6 py-3 sm:py-4 rounded-xl mb-4 sm:mb-6 max-w-xl mx-auto">
-                <p className="font-bold text-base sm:text-lg">🎉 Bon retour parmi nous !</p>
-                <p className="text-xs sm:text-sm mt-1">Vos tournées et données CRM sont toujours là. Réactivez votre accès pour les retrouver.</p>
-              </div>
-            )}
+            {/* Message pour utilisateurs de retour supprimé - on affiche directement le contenu */}
             {/* Message pour nouveaux utilisateurs connectés */}
             {userId && !hasAccess && !isReturningUser && (
               <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 px-4 sm:px-6 py-2 rounded-full mb-4 font-medium text-sm sm:text-base">
