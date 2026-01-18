@@ -157,8 +157,9 @@ const DashboardContent = () => {
     if (!loading && !adminLoading && !subscriptionLoading && userId) {
       // Bypass pour admins et utilisateur démo
       if (!isAdmin && !isDemoUser && !hasAccess) {
-        // Redirection vers la landing avec trigger de checkout
-        navigate("/?checkout=pending");
+        // Redirection vers la landing SANS déclencher checkout automatique
+        // L'utilisateur devra cliquer sur un CTA explicite pour aller vers Stripe
+        navigate("/");
       }
     }
   }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate]);
