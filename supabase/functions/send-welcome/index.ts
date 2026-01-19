@@ -26,8 +26,8 @@ serve(async (req) => {
       });
     }
 
-    const { userId, email, trialEnd, firstName, lastName } = await req.json();
-    logStep("Sending welcome email", { userId, email, firstName });
+    const { userId, email, trialEnd, firstName, lastName, amountAfterTrial } = await req.json();
+    logStep("Sending welcome email", { userId, email, firstName, amountAfterTrial });
 
     if (!email) {
       throw new Error("No email provided");
@@ -48,11 +48,14 @@ serve(async (req) => {
 
     // Utiliser le prénom si disponible, sinon fallback sur l'email
     const displayName = firstName || email.split('@')[0].replace(/[._]/g, ' ');
+    
+    // Montant après la période d'essai (par défaut 79€, mais peut être réduit avec un code promo)
+    const displayAmount = amountAfterTrial ?? 79;
 
     const { data, error } = await resend.emails.send({
       from: "PULSE <noreply@mail.pulse-lead.com>",
       to: [email],
-      subject: "🚀 Bienvenue sur PULSE - Votre essai gratuit a commencé !",
+      subject: "🚀 Bienvenue sur PULSE - Ton essai gratuit a commencé !",
       html: `
         <!DOCTYPE html>
         <html>
@@ -72,7 +75,7 @@ serve(async (req) => {
                         PULSE
                       </h1>
                       <p style="margin: 8px 0 0; font-size: 14px; color: #06b6d4; font-style: italic;">
-                        Vendez plus. Roulez moins.
+                        Vends plus. Roule moins.
                       </p>
                     </td>
                   </tr>
@@ -85,38 +88,38 @@ serve(async (req) => {
                       </h2>
                       
                       <p style="margin: 0 0 20px; font-size: 16px; color: #b0b0b0; line-height: 1.6;">
-                        Votre essai gratuit de <strong style="color: #00BFFF;">7 jours</strong> a commencé ! Vous avez maintenant accès à toutes les fonctionnalités pour transformer votre prospection terrain.
+                        Ton essai gratuit de <strong style="color: #00BFFF;">7 jours</strong> a commencé ! Tu as maintenant accès à toutes les fonctionnalités pour transformer ta prospection terrain.
                       </p>
                       
                       ${trialEndDate ? `
                       <div style="background: rgba(0, 191, 255, 0.1); border: 1px solid rgba(0, 191, 255, 0.3); border-radius: 12px; padding: 20px; margin: 24px 0; text-align: center;">
                         <p style="margin: 0; font-size: 15px; color: #00BFFF; font-weight: 600;">
-                          📅 Votre essai se termine le : ${trialEndDate}
+                          📅 Ton essai se termine le : ${trialEndDate}
                         </p>
                       </div>
                       ` : ''}
                       
                       <h3 style="margin: 30px 0 20px; font-size: 18px; color: #ffffff;">
-                        🚀 Commencez dès maintenant :
+                        🚀 Commence dès maintenant :
                       </h3>
                       
                       <table width="100%" cellpadding="0" cellspacing="0" style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px;">
                         <tr>
                           <td style="padding: 12px 20px; border-bottom: 1px solid rgba(0, 191, 255, 0.1);">
                             <span style="color: #00BFFF; font-size: 20px; vertical-align: middle;">1️⃣</span>
-                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Explorez la liste de prospects selon vos filtres</span>
+                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Explore la liste de prospects selon tes filtres</span>
                           </td>
                         </tr>
                         <tr>
                           <td style="padding: 12px 20px; border-bottom: 1px solid rgba(0, 191, 255, 0.1);">
                             <span style="color: #00BFFF; font-size: 20px; vertical-align: middle;">2️⃣</span>
-                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Créez votre première tournée optimisée</span>
+                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Crée ta première tournée optimisée</span>
                           </td>
                         </tr>
                         <tr>
                           <td style="padding: 12px 20px;">
                             <span style="color: #00BFFF; font-size: 20px; vertical-align: middle;">3️⃣</span>
-                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Enregistrez vos visites et programmez vos relances</span>
+                            <span style="color: #ffffff; font-size: 15px; margin-left: 12px; vertical-align: middle;">Enregistre tes visites et programme tes relances</span>
                           </td>
                         </tr>
                       </table>
@@ -126,7 +129,7 @@ serve(async (req) => {
                   <!-- CTA Button -->
                   <tr>
                     <td style="padding: 10px 40px 30px; text-align: center;">
-                      <a href="https://pulselead.lovable.app/dashboard" style="display: inline-block; padding: 18px 48px; background: linear-gradient(135deg, #00BFFF, #06b6d4); color: #000000; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);">
+                      <a href="https://pulse-lead.com/dashboard" style="display: inline-block; padding: 18px 48px; background: linear-gradient(135deg, #00BFFF, #06b6d4); color: #000000; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);">
                         Accéder à mon tableau de bord →
                       </a>
                     </td>
@@ -137,7 +140,7 @@ serve(async (req) => {
                     <td style="padding: 0 40px 30px;">
                       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 24px; text-align: center;">
                         <p style="margin: 0 0 16px; font-size: 16px; color: #ffffff; font-weight: 600;">
-                          💬 Une question ? On est là pour vous !
+                          💬 Une question ? Je suis là pour toi !
                         </p>
                         <table width="100%" cellpadding="0" cellspacing="0">
                           <tr>
@@ -159,11 +162,11 @@ serve(async (req) => {
                   <tr>
                     <td style="padding: 24px 40px; border-top: 1px solid rgba(0, 191, 255, 0.2); text-align: center; background: rgba(0,0,0,0.2);">
                       <p style="margin: 0 0 12px; font-size: 13px; color: #888888;">
-                        ⚠️ <strong style="color: #ffab00;">Important :</strong> Votre essai se termine le ${trialEndDate || '[date]'}.<br>
-                        À cette date, votre carte sera débitée de <strong style="color: #ffffff;">79€/mois</strong>.
+                        ⚠️ <strong style="color: #ffab00;">Important :</strong> Ton essai se termine le ${trialEndDate || '[date]'}.<br>
+                        À cette date, ta carte sera débitée de <strong style="color: #ffffff;">${displayAmount}€/mois</strong>.
                       </p>
                       <p style="margin: 0 0 16px; font-size: 13px; color: #888888;">
-                        Annulez à tout moment depuis <a href="https://pulselead.lovable.app/security" style="color: #00BFFF;">votre espace sécurité</a> — sans frais.
+                        Annule à tout moment depuis <a href="https://pulse-lead.com/security" style="color: #00BFFF;">ton espace sécurité</a> — sans frais.
                       </p>
                       <p style="margin: 0; font-size: 12px; color: #555555;">
                         © 2026 PULSE — Tom Iolov — 108 rue de Crimée, 75019 Paris<br>

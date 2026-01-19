@@ -151,6 +151,21 @@ serve(async (req) => {
               logStep("Could not retrieve user metadata for welcome email");
             }
 
+            // Récupérer le montant prévu après essai (en tenant compte des codes promo)
+            let amountAfterTrial = 79; // Prix par défaut
+            try {
+              // Récupérer les prochaines factures pour voir le montant prévu
+              const upcomingInvoice = await stripe.invoices.retrieveUpcoming({
+                subscription: subscriptionId,
+              });
+              if (upcomingInvoice.amount_due) {
+                amountAfterTrial = upcomingInvoice.amount_due / 100; // Stripe stocke en centimes
+              }
+              logStep("Retrieved upcoming invoice amount", { amountAfterTrial });
+            } catch (invoiceError: any) {
+              logStep("Could not retrieve upcoming invoice, using default amount", { error: invoiceError?.message });
+            }
+
             try {
               await supabaseAdmin.functions.invoke('send-welcome', {
                 body: {
@@ -158,9 +173,10 @@ serve(async (req) => {
                   email: session.customer_email || session.customer_details?.email,
                   trialEnd: trialEndIso,
                   firstName,
+                  amountAfterTrial,
                 },
               });
-              logStep("Welcome email triggered", { trialEnd: trialEndIso, firstName });
+              logStep("Welcome email triggered", { trialEnd: trialEndIso, firstName, amountAfterTrial });
             } catch (emailError: any) {
               logStep("Error sending welcome email", { error: emailError?.message ?? String(emailError) });
             }

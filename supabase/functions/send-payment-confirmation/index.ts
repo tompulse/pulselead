@@ -56,7 +56,7 @@ serve(async (req) => {
     const displayName = firstName || email.split('@')[0].replace(/[._]/g, ' ');
     const formattedNextPayment = formatDate(nextPaymentDate);
     
-    // Formatage du prix (avec gestion des réductions)
+    // Formatage du prix (avec gestion des réductions via codes promo)
     const displayAmount = amountPaid ?? 79;
     const displayCurrency = currency === 'EUR' ? '€' : (currency || '€');
 
@@ -84,7 +84,7 @@ serve(async (req) => {
                         PULSE
                       </h1>
                       <p style="margin: 8px 0 0; font-size: 14px; color: #06b6d4; font-style: italic;">
-                        Vendez plus. Roulez moins.
+                        Vends plus. Roule moins.
                       </p>
                     </td>
                   </tr>
@@ -97,8 +97,8 @@ serve(async (req) => {
                         Bienvenue dans la famille PULSE, ${displayName} !
                       </h2>
                       <p style="margin: 0; font-size: 16px; color: #b0b0b0; line-height: 1.6;">
-                        Votre paiement a été confirmé avec succès.<br>
-                        Vous faites désormais partie de la communauté des commerciaux qui vendent plus en roulant moins !
+                        Ton paiement a été confirmé avec succès.<br>
+                        Tu fais désormais partie de la communauté des commerciaux qui vendent plus en roulant moins !
                       </p>
                     </td>
                   </tr>
@@ -127,7 +127,7 @@ serve(async (req) => {
                     <td style="padding: 0 40px 30px;">
                       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 24px;">
                         <p style="margin: 0 0 16px; font-size: 16px; color: #ffffff; font-weight: 600;">
-                          🎁 Votre abonnement "Commercial Solo" inclut :
+                          🎁 Ton abonnement "Commercial Solo" inclut :
                         </p>
                         <table width="100%" cellpadding="0" cellspacing="0">
                           <tr>
@@ -174,7 +174,7 @@ serve(async (req) => {
                   <!-- CTA Button -->
                   <tr>
                     <td style="padding: 0 40px 30px; text-align: center;">
-                      <a href="https://pulselead.lovable.app/dashboard" style="display: inline-block; padding: 18px 48px; background: linear-gradient(135deg, #00BFFF, #06b6d4); color: #000000; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);">
+                      <a href="https://pulse-lead.com/dashboard" style="display: inline-block; padding: 18px 48px; background: linear-gradient(135deg, #00BFFF, #06b6d4); color: #000000; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);">
                         Accéder à mon espace →
                       </a>
                     </td>
@@ -185,8 +185,8 @@ serve(async (req) => {
                   <tr>
                     <td style="padding: 24px 40px; border-top: 1px solid rgba(0, 191, 255, 0.2); text-align: center; background: rgba(0,0,0,0.2);">
                       <p style="margin: 0 0 12px; font-size: 13px; color: #888888;">
-                        Vous pouvez gérer votre abonnement à tout moment depuis<br>
-                        <a href="https://pulselead.lovable.app/security" style="color: #00BFFF;">votre espace sécurité</a>
+                        Tu peux gérer ton abonnement à tout moment depuis<br>
+                        <a href="https://pulse-lead.com/security" style="color: #00BFFF;">ton espace sécurité</a>
                       </p>
                       <p style="margin: 0; font-size: 12px; color: #555555;">
                         © 2026 PULSE — Tom Iolov — 108 rue de Crimée, 75019 Paris<br>
