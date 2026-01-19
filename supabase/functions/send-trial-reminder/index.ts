@@ -13,6 +13,7 @@ interface TrialReminderRequest {
   firstName?: string;
   trialEndDate: string;
   portalUrl?: string;
+  amountAfterTrial?: number;
 }
 
 const formatDate = (dateString: string): string => {
@@ -31,20 +32,21 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, firstName, trialEndDate, portalUrl }: TrialReminderRequest = await req.json();
+    const { email, firstName, trialEndDate, portalUrl, amountAfterTrial }: TrialReminderRequest = await req.json();
 
     if (!email || !trialEndDate) {
       throw new Error("Email and trialEndDate are required");
     }
 
     const formattedDate = formatDate(trialEndDate);
-    const displayName = firstName || "cher utilisateur";
-    const manageUrl = portalUrl || "https://pulselead.lovable.app/security";
+    const displayName = firstName || "cher ami";
+    const manageUrl = portalUrl || "https://pulse-lead.com/security";
+    const displayAmount = amountAfterTrial ?? 79;
 
     const emailResponse = await resend.emails.send({
       from: "PULSE <noreply@mail.pulse-lead.com>",
       to: [email],
-      subject: "⏰ Votre essai PULSE se termine dans 3 jours",
+      subject: "⏰ Ton essai PULSE se termine dans 3 jours",
       html: `
 <!DOCTYPE html>
 <html lang="fr">
@@ -63,7 +65,7 @@ const handler = async (req: Request): Promise<Response> => {
             <td align="center" style="padding-bottom: 10px;">
               <h1 style="margin: 0; font-size: 36px; font-weight: bold; color: #00BFFF;">PULSE</h1>
               <p style="margin: 8px 0 0; font-size: 14px; color: #06b6d4; font-style: italic;">
-                Vendez plus. Roulez moins.
+                Vends plus. Roule moins.
               </p>
             </td>
           </tr>
@@ -84,15 +86,15 @@ const handler = async (req: Request): Promise<Response> => {
               
               <!-- Message -->
               <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #b0b0b0;">
-                Bonjour ${displayName},
+                Salut ${displayName},
               </p>
               
               <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #b0b0b0;">
-                Votre période d'essai gratuit se termine le <strong style="color: #00BFFF;">${formattedDate}</strong>.
+                Ta période d'essai gratuit se termine le <strong style="color: #00BFFF;">${formattedDate}</strong>.
               </p>
               
               <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #b0b0b0;">
-                Pendant ces derniers jours, vous avez pu découvrir comment PULSE peut transformer votre quotidien de commercial terrain. Nous espérons que vous avez apprécié l'expérience ! 🚀
+                Pendant ces derniers jours, tu as pu découvrir comment PULSE peut transformer ton quotidien de commercial terrain. J'espère que tu as apprécié l'expérience ! 🚀
               </p>
               
               <!-- Alert Box -->
@@ -101,13 +103,13 @@ const handler = async (req: Request): Promise<Response> => {
                   💳 Ce qui va se passer le ${formattedDate}
                 </p>
                 <p style="margin: 12px 0 0 0; font-size: 14px; line-height: 1.6; color: #b0b0b0;">
-                  Votre carte bancaire sera automatiquement débitée de <strong style="color: #ffffff;">79€/mois</strong> pour continuer à profiter de PULSE sans interruption.
+                  Ta carte bancaire sera automatiquement débitée de <strong style="color: #ffffff;">${displayAmount}€/mois</strong> pour continuer à profiter de PULSE sans interruption.
                 </p>
               </div>
               
               <!-- CTA Buttons -->
               <div style="text-align: center; margin: 32px 0;">
-                <a href="https://pulselead.lovable.app/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00BFFF, #06b6d4); color: #000000; text-decoration: none; padding: 18px 40px; border-radius: 10px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);">
+                <a href="https://pulse-lead.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00BFFF, #06b6d4); color: #000000; text-decoration: none; padding: 18px 40px; border-radius: 10px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);">
                   ✨ Continuer avec PULSE →
                 </a>
               </div>
@@ -121,13 +123,13 @@ const handler = async (req: Request): Promise<Response> => {
               <!-- What you'll keep -->
               <div style="background: rgba(0, 191, 255, 0.05); border: 1px solid rgba(0, 191, 255, 0.2); border-radius: 12px; padding: 20px; margin-top: 24px;">
                 <p style="margin: 0 0 12px 0; font-size: 15px; color: #00BFFF; font-weight: 600;">
-                  🎁 En restant avec PULSE, vous gardez accès à :
+                  🎁 En restant avec PULSE, tu gardes accès à :
                 </p>
                 <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #b0b0b0; line-height: 1.8;">
                   <li><strong style="color: #ffffff;">+1 900 nouvelles entreprises</strong> détectées chaque semaine</li>
                   <li>Création de <strong style="color: #ffffff;">tournées optimisées illimitées</strong></li>
                   <li>CRM mobile avec suivi complet des interactions</li>
-                  <li>Pipeline Kanban pour suivre vos opportunités</li>
+                  <li>Pipeline Kanban pour suivre tes opportunités</li>
                   <li>Filtres intelligents par NAF, département, taille</li>
                 </ul>
               </div>
@@ -135,7 +137,7 @@ const handler = async (req: Request): Promise<Response> => {
               <!-- Help Section -->
               <div style="text-align: center; margin-top: 32px; padding: 24px; background: rgba(37, 211, 102, 0.08); border: 1px solid rgba(37, 211, 102, 0.2); border-radius: 12px;">
                 <p style="margin: 0 0 16px; font-size: 15px; color: #ffffff; font-weight: 600;">
-                  💬 Des questions avant de vous décider ?
+                  💬 Des questions avant de te décider ?
                 </p>
                 <p style="margin: 0 0 16px; font-size: 14px; color: #b0b0b0;">
                   Je suis disponible pour un appel rapide ou par WhatsApp !
@@ -150,7 +152,7 @@ const handler = async (req: Request): Promise<Response> => {
               
               <!-- Cancellation note -->
               <p style="margin: 24px 0 0 0; font-size: 13px; line-height: 1.6; color: #888888; text-align: center;">
-                Si vous ne souhaitez pas être prélevé, vous pouvez annuler votre abonnement avant le ${formattedDate}. Aucun frais ne vous sera facturé.
+                Si tu ne souhaites pas être prélevé, tu peux annuler ton abonnement avant le ${formattedDate}. Aucun frais ne te sera facturé.
               </p>
               
             </td>
@@ -160,7 +162,7 @@ const handler = async (req: Request): Promise<Response> => {
           <tr>
             <td style="padding: 30px 20px; text-align: center;">
               <p style="margin: 0 0 8px 0; font-size: 13px; color: #666666;">
-                Vous recevez cet email car vous avez souscrit un essai gratuit PULSE.
+                Tu reçois cet email car tu as souscrit un essai gratuit PULSE.
               </p>
               <p style="margin: 0 0 16px; font-size: 13px; color: #666666;">
                 Contact : <a href="mailto:tomiolovpro@gmail.com" style="color: #00BFFF;">tomiolovpro@gmail.com</a>
