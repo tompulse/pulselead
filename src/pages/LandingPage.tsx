@@ -591,7 +591,7 @@ const LandingPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl mx-auto">
                 {[
                   { q: "Comment PULSE structure ma prospection ?", a: "PULSE vous donne une vision complète de votre territoire avec tous vos prospects, des tournées calculées automatiquement pour optimiser vos déplacements, et un CRM mobile pour suivre chaque action." },
-                  { q: "Les données sont-elles fiables ?", a: "Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour quotidiennement." },
+                  { q: "Les données sont-elles fiables ?", a: "Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour chaque semaine." },
                   { q: "Peut-on l'utiliser partout en France ?", a: "Oui, PULSE couvre l'intégralité du territoire français métropolitain." },
                   { q: "Comment fonctionne l'essai gratuit ?", a: "Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Annulez à tout moment sans frais." },
                   { q: "Puis-je personnaliser mes critères ?", a: "Absolument ! Filtrez par code NAF, département, taille d'entreprise, catégorie juridique, siège social et date de création." },
