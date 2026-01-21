@@ -167,13 +167,13 @@ export const NouveauxSitesListView = ({
                       {prospectStatus && (
                         <ProspectStatusBadge status={prospectStatus} />
                       )}
-                      {site.est_siege && (
-                        <Badge variant="secondary" className="text-[10px] sm:text-xs bg-accent/20 text-accent border-accent/30">
-                          Siège
-                        </Badge>
-                      )}
+                      {/* Siège ou Site secondaire */}
+                      <Badge variant="secondary" className="text-[10px] sm:text-xs bg-accent/20 text-accent border-accent/30">
+                        {site.est_siege ? 'Siège' : 'Site secondaire'}
+                      </Badge>
+                      {/* Taille entreprise - même style que Siège */}
                       {site.categorie_entreprise && (
-                        <Badge variant="outline" className="text-[10px] sm:text-xs">
+                        <Badge variant="secondary" className="text-[10px] sm:text-xs bg-accent/20 text-accent border-accent/30">
                           {site.categorie_entreprise}
                         </Badge>
                       )}
