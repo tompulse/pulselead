@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 export const AnalyticsViewContainer = () => {
   const { 
     tourneeStats, 
+    recentTournees,
     crmStats, 
     activityStats, 
     timeSeriesData,
@@ -25,7 +26,6 @@ export const AnalyticsViewContainer = () => {
     queryClient.invalidateQueries({ queryKey: ['admin-activity-stats'] });
     queryClient.invalidateQueries({ queryKey: ['admin-timeseries'] });
     queryClient.invalidateQueries({ queryKey: ['admin-users-activity'] });
-    queryClient.invalidateQueries({ queryKey: ['admin-recent-tournees'] });
   };
 
   return (
@@ -73,6 +73,7 @@ export const AnalyticsViewContainer = () => {
         {/* Tables */}
         <AnalyticsTables 
           usersActivity={usersActivity.data}
+          recentTournees={recentTournees}
           isLoading={usersActivity.isLoading}
         />
       </div>
