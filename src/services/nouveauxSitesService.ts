@@ -44,8 +44,7 @@ export const nouveauxSitesService = {
             `ville.ilike.${like}`,
             `adresse.ilike.${like}`,
             `siret.eq.${term}`,
-            `code_naf.ilike.${like}`,
-            `categorie_detaillee.ilike.${like}`
+            `code_naf.ilike.${like}`
           ];
           
           // Ajouter les conditions NAF issues des synonymes métier
