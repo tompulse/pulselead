@@ -239,21 +239,31 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     }
   };
 
-  const recalculateRoute = async (newOrder: string[]) => {
+  const recalculateRoute = async (newOrder: string[], sitesToUse?: any[]) => {
     setIsRecalculating(true);
     
     try {
+      // Use provided sites or current sites
+      const siteList = sitesToUse || sites;
+      
       // Get sites with coordinates in new order
       const orderedSites = newOrder
-        .map(id => sites.find(s => s.id === id))
-        .filter(s => s?.latitude && s?.longitude);
+        .map(id => siteList.find((s: any) => s.id === id))
+        .filter((s: any) => s?.latitude && s?.longitude);
 
       if (orderedSites.length < 2) {
+        // Less than 2 sites, reset KPIs
+        setLocalKpis({ distance: null, temps: null });
+        await updateTourneeMutation.mutateAsync({
+          ordre_optimise: newOrder,
+          distance_totale_km: null,
+          temps_estime_minutes: null,
+        });
         setIsRecalculating(false);
         return;
       }
 
-      const waypoints = orderedSites.map(s => ({
+      const waypoints = orderedSites.map((s: any) => ({
         lat: Number(s.latitude),
         lng: Number(s.longitude),
       }));
@@ -264,8 +274,9 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
 
       if (error) throw error;
 
-      const newDistance = data.distance_km || localKpis.distance;
-      const newTemps = data.duration_minutes || localKpis.temps;
+      // Parse correctly from edge function response
+      const newDistance = parseFloat(data.withTolls?.distance_km) || parseFloat(data.withoutTolls?.distance_km) || null;
+      const newTemps = data.withTolls?.duration_minutes || data.withoutTolls?.duration_minutes || null;
 
       setLocalKpis({
         distance: newDistance,
@@ -289,6 +300,33 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     } finally {
       setIsRecalculating(false);
     }
+  };
+
+  // Handle removing a site from the tour
+  const handleRemoveSite = async (siteId: string) => {
+    const newOrder = orderedSiteIds.filter(id => id !== siteId);
+    const newEntreprisesIds = tournee.entreprises_ids.filter((id: string) => id !== siteId);
+    
+    const newVisitesStatus = { ...visitesStatus };
+    delete newVisitesStatus[siteId];
+    
+    setOrderedSiteIds(newOrder);
+    setVisitesStatus(newVisitesStatus);
+    
+    // First update entreprises_ids and visites
+    await updateTourneeMutation.mutateAsync({
+      entreprises_ids: newEntreprisesIds,
+      visites_effectuees: newVisitesStatus,
+    });
+    
+    toast.success('Site supprimé de la tournée');
+    
+    // Recalculate with remaining sites
+    const remainingSites = sites.filter((s: any) => s.id !== siteId);
+    await recalculateRoute(newOrder, remainingSites);
+    
+    // Refresh queries
+    queryClient.invalidateQueries({ queryKey: ['tournee-sites', tournee.id] });
   };
 
   const handleVisiteChange = async (siteId: string, field: keyof VisiteStatus, value: boolean, dateRelance?: string) => {
@@ -465,8 +503,9 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
 
       if (error) throw error;
 
-      const newDistance = data.distance_km || localKpis.distance;
-      const newTemps = data.duration_minutes || localKpis.temps;
+      // Parse correctly from edge function response
+      const newDistance = parseFloat(data.withTolls?.distance_km) || parseFloat(data.withoutTolls?.distance_km) || null;
+      const newTemps = data.withTolls?.duration_minutes || data.withoutTolls?.duration_minutes || null;
 
       setLocalKpis({
         distance: newDistance,
@@ -669,6 +708,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
                             visiteStatus={visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false }}
                             onVisiteChange={handleVisiteChange}
                             onNavigate={handleNavigate}
+                            onRemove={handleRemoveSite}
                           />
                         );
                       })}
