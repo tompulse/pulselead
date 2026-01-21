@@ -49,7 +49,7 @@ export const AnalyticsKPICards = ({
 
   const kpis = [
     {
-      title: "Tournées créées",
+      title: "Tournées",
       value: tourneeStats?.total || 0,
       icon: Route,
       color: "text-accent",
@@ -57,39 +57,39 @@ export const AnalyticsKPICards = ({
       subtitle: `${tourneeStats?.terminees || 0} terminées`,
     },
     {
-      title: "Distance totale",
-      value: `${tourneeStats?.totalKm || 0} km`,
+      title: "Km parcourus",
+      value: `${tourneeStats?.totalKm || 0}`,
       icon: MapPin,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
-      subtitle: `~${tourneeStats?.avgKmPerTournee || 0} km/tournée`,
+      subtitle: `Moy: ${tourneeStats?.avgKmPerTournee || 0} km`,
     },
     {
-      title: "Temps total",
+      title: "Durée totale",
       value: formatDuration(tourneeStats?.totalMinutes || 0),
       icon: Clock,
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
-      subtitle: `~${tourneeStats?.avgMinutesPerTournee || 0} min/tournée`,
+      subtitle: `Moy: ${tourneeStats?.avgMinutesPerTournee || 0} min`,
     },
     {
-      title: "Arrêts total",
+      title: "Arrêts",
       value: tourneeStats?.totalStops || 0,
       icon: Target,
       color: "text-purple-500",
       bgColor: "bg-purple-500/10",
-      subtitle: `~${tourneeStats?.avgStopsPerTournee || 0} arrêts/tournée`,
+      subtitle: `Moy: ${tourneeStats?.avgStopsPerTournee || 0}/tournée`,
     },
     {
-      title: "Leads CRM",
+      title: "Prospects CRM",
       value: crmStats?.totalLeads || 0,
       icon: Users,
       color: "text-green-500",
       bgColor: "bg-green-500/10",
-      subtitle: `${crmStats?.conversionRate || 0}% conversion`,
+      subtitle: `${crmStats?.conversionRate || 0}% gagnés`,
     },
     {
-      title: "Interactions",
+      title: "Actions CRM",
       value: crmStats?.totalInteractions || 0,
       icon: Phone,
       color: "text-cyan-500",
@@ -97,7 +97,7 @@ export const AnalyticsKPICards = ({
       subtitle: `${activityStats?.callsMade || 0} appels`,
     },
     {
-      title: "RDV programmés",
+      title: "RDV",
       value: crmStats?.rdvScheduled || 0,
       icon: Calendar,
       color: "text-pink-500",
@@ -105,12 +105,12 @@ export const AnalyticsKPICards = ({
       subtitle: `${activityStats?.visitsCompleted || 0} visites`,
     },
     {
-      title: "Relances en cours",
+      title: "À rappeler",
       value: activityStats?.pendingFollowups || 0,
       icon: TrendingUp,
       color: "text-amber-500",
       bgColor: "bg-amber-500/10",
-      subtitle: `${crmStats?.toCall || 0} à appeler`,
+      subtitle: `${crmStats?.toCall || 0} en attente`,
     },
   ];
 
