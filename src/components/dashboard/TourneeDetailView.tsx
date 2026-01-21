@@ -251,8 +251,25 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         .map(id => siteList.find((s: any) => s.id === id))
         .filter((s: any) => s?.latitude && s?.longitude);
 
-      if (orderedSites.length < 2) {
-        // Less than 2 sites, reset KPIs
+      // Include start point + arrival option so KPIs match the displayed map route
+      const hasStart = !!(startPoint && startPoint.lat !== 0 && startPoint.lng !== 0);
+      const startPointBody = hasStart ? { lat: startPoint!.lat, lng: startPoint!.lng } : undefined;
+
+      const waypoints: { lat: number; lng: number }[] = orderedSites.map((s: any) => ({
+        lat: Number(s.latitude),
+        lng: Number(s.longitude),
+      }));
+
+      // Arrival option
+      if (arrivalOption.type === 'return_start' && hasStart) {
+        waypoints.push({ lat: startPoint!.lat, lng: startPoint!.lng });
+      } else if (arrivalOption.type === 'custom_address' && arrivalOption.lat && arrivalOption.lng) {
+        waypoints.push({ lat: arrivalOption.lat, lng: arrivalOption.lng });
+      }
+
+      const totalPoints = (hasStart ? 1 : 0) + waypoints.length;
+      if (totalPoints < 2) {
+        // Not enough points to compute a route
         setLocalKpis({ distance: null, temps: null });
         await updateTourneeMutation.mutateAsync({
           ordre_optimise: newOrder,
@@ -263,13 +280,8 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         return;
       }
 
-      const waypoints = orderedSites.map((s: any) => ({
-        lat: Number(s.latitude),
-        lng: Number(s.longitude),
-      }));
-
       const { data, error } = await supabase.functions.invoke('calculate-routes', {
-        body: { waypoints },
+        body: { waypoints, startPoint: startPointBody },
       });
 
       if (error) throw error;
@@ -472,33 +484,34 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         return;
       }
 
+      const hasStart = !!(start && start.lat !== 0 && start.lng !== 0);
+      const startPointBody = hasStart ? { lat: start!.lat, lng: start!.lng } : undefined;
+
+      // For the calculate-routes function: pass only the "rest" points as waypoints.
+      // The start is sent separately as startPoint so KPIs match the map route.
       const waypoints: { lat: number; lng: number }[] = [];
-      
-      // Add start point
-      if (start && start.lat !== 0) {
-        waypoints.push({ lat: start.lat, lng: start.lng });
-      }
-      
+
       // Add all sites
       orderedSites.forEach(s => {
         waypoints.push({ lat: Number(s.latitude), lng: Number(s.longitude) });
       });
       
       // Add arrival point based on option
-      if (arrival.type === 'return_start' && start && start.lat !== 0) {
-        waypoints.push({ lat: start.lat, lng: start.lng });
+      if (arrival.type === 'return_start' && hasStart) {
+        waypoints.push({ lat: start!.lat, lng: start!.lng });
       } else if (arrival.type === 'custom_address' && arrival.lat && arrival.lng) {
         waypoints.push({ lat: arrival.lat, lng: arrival.lng });
       }
       // For 'last_prospect', no need to add anything as it's already the last site
 
-      if (waypoints.length < 2) {
+      const totalPoints = (hasStart ? 1 : 0) + waypoints.length;
+      if (totalPoints < 2) {
         setIsRecalculating(false);
         return;
       }
 
       const { data, error } = await supabase.functions.invoke('calculate-routes', {
-        body: { waypoints },
+        body: { waypoints, startPoint: startPointBody },
       });
 
       if (error) throw error;

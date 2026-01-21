@@ -168,22 +168,32 @@ const TourneeDetail = () => {
   useEffect(() => {
     const calculateMissingKpis = async () => {
       if (
-        sites.length >= 2 &&
+        sites.length >= 1 &&
         (localKpis.distance === null || localKpis.temps === null) &&
         !isRecalculating
       ) {
-        const validSites = sites.filter((s: any) => s.latitude && s.longitude);
-        if (validSites.length < 2) return;
+        // Respect ordering and include point de départ (otherwise KPIs won't match the map)
+        const orderedSites = orderedSiteIds
+          .map(id => (sites as any[]).find(s => s.id === id))
+          .filter((s: any) => s?.latitude && s?.longitude);
+
+        const hasStart = !!(tournee?.point_depart_lat && tournee?.point_depart_lng);
+        const totalPoints = (hasStart ? 1 : 0) + orderedSites.length;
+        if (totalPoints < 2) return;
 
         setIsRecalculating(true);
         try {
-          const waypoints = validSites.map((s: any) => ({
+          const waypoints = orderedSites.map((s: any) => ({
             lat: Number(s.latitude),
             lng: Number(s.longitude),
           }));
 
+          const startPoint = hasStart
+            ? { lat: Number(tournee!.point_depart_lat), lng: Number(tournee!.point_depart_lng) }
+            : undefined;
+
           const { data, error } = await supabase.functions.invoke('calculate-routes', {
-            body: { waypoints },
+            body: { waypoints, startPoint },
           });
 
           if (error) throw error;
@@ -215,7 +225,7 @@ const TourneeDetail = () => {
     };
 
     calculateMissingKpis();
-  }, [sites, localKpis.distance, localKpis.temps, tourneeId]);
+  }, [sites, orderedSiteIds, tournee?.point_depart_lat, tournee?.point_depart_lng, localKpis.distance, localKpis.temps, tourneeId, isRecalculating]);
 
   // Update tournee mutation
   const updateTourneeMutation = useMutation({
@@ -524,20 +534,30 @@ const TourneeDetail = () => {
     
     toast.success('Site supprimé de la tournée');
     
-    // Immediately recalculate KPIs with the remaining sites
-    const remainingSites = sites.filter((s: any) => s.id !== siteId);
-    const validSites = remainingSites.filter((s: any) => s.latitude && s.longitude);
-    
-    if (validSites.length >= 2) {
+    // Immediately recalculate KPIs with the remaining sites (include point de départ)
+    const remainingSites = (sites as any[]).filter((s: any) => s.id !== siteId);
+
+    const orderedRemaining = newOrder
+      .map(id => remainingSites.find(s => s.id === id))
+      .filter((s: any) => s?.latitude && s?.longitude);
+
+    const hasStart = !!(tournee?.point_depart_lat && tournee?.point_depart_lng);
+    const totalPoints = (hasStart ? 1 : 0) + orderedRemaining.length;
+
+    if (totalPoints >= 2) {
       setIsRecalculating(true);
       try {
-        const waypoints = validSites.map((s: any) => ({
+        const waypoints = orderedRemaining.map((s: any) => ({
           lat: Number(s.latitude),
           lng: Number(s.longitude),
         }));
 
+        const startPoint = hasStart
+          ? { lat: Number(tournee.point_depart_lat), lng: Number(tournee.point_depart_lng) }
+          : undefined;
+
         const { data, error } = await supabase.functions.invoke('calculate-routes', {
-          body: { waypoints },
+          body: { waypoints, startPoint },
         });
 
         if (error) throw error;
@@ -563,8 +583,8 @@ const TourneeDetail = () => {
       } finally {
         setIsRecalculating(false);
       }
-    } else if (validSites.length < 2) {
-      // Less than 2 sites, reset KPIs
+    } else {
+      // Not enough points to compute a route (no start + 0/1 stop)
       setLocalKpis({ distance: null, temps: null });
       await supabase
         .from('tournees')
