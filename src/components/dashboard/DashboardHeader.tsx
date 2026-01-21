@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle, Lightbulb } from "lucide-react";
+import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle, Lightbulb, BarChart3 } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -10,10 +10,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
+import { DashboardView } from "@/contexts/DashboardContext";
 
 interface DashboardHeaderProps {
-  view: 'prospects' | 'tournees' | 'crm';
-  onViewChange: (view: 'prospects' | 'tournees' | 'crm') => void;
+  view: DashboardView;
+  onViewChange: (view: DashboardView) => void;
   isAdmin: boolean;
   onLogout: () => void;
   userId: string;
@@ -186,11 +187,17 @@ export const DashboardHeader = ({
     }
   };
 
-  const viewConfig = [
-    { key: 'prospects' as const, label: 'Prospects', icon: MapIcon },
-    { key: 'tournees' as const, label: 'Tournées', icon: Navigation },
-    { key: 'crm' as const, label: 'CRM', icon: TrendingUp },
+  // Base views for all users
+  const baseViewConfig: { key: DashboardView; label: string; icon: typeof MapIcon }[] = [
+    { key: 'prospects', label: 'Prospects', icon: MapIcon },
+    { key: 'tournees', label: 'Tournées', icon: Navigation },
+    { key: 'crm', label: 'CRM', icon: TrendingUp },
   ];
+  
+  // Add analytics view only for admins
+  const viewConfig = isAdmin 
+    ? [...baseViewConfig, { key: 'analytics' as DashboardView, label: 'Analytics', icon: BarChart3 }]
+    : baseViewConfig;
 
   return (
     <header className="glass-card border-b border-accent/20 px-4 py-3 z-10 backdrop-blur-xl shrink-0 shadow-md">
