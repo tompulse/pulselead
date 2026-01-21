@@ -20,12 +20,15 @@ export const AnalyticsViewContainer = () => {
   
   const queryClient = useQueryClient();
 
-  const handleRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ['admin-tournee-stats'] });
-    queryClient.invalidateQueries({ queryKey: ['admin-crm-stats'] });
-    queryClient.invalidateQueries({ queryKey: ['admin-activity-stats'] });
-    queryClient.invalidateQueries({ queryKey: ['admin-timeseries'] });
-    queryClient.invalidateQueries({ queryKey: ['admin-users-activity'] });
+  const handleRefresh = async () => {
+    // Force immediate refetch of mounted queries
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['admin-tournee-stats'], refetchType: 'active' }),
+      queryClient.invalidateQueries({ queryKey: ['admin-crm-stats'], refetchType: 'active' }),
+      queryClient.invalidateQueries({ queryKey: ['admin-activity-stats'], refetchType: 'active' }),
+      queryClient.invalidateQueries({ queryKey: ['admin-timeseries'], refetchType: 'active' }),
+      queryClient.invalidateQueries({ queryKey: ['admin-users-activity'], refetchType: 'active' }),
+    ]);
   };
 
   return (
