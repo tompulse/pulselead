@@ -13,8 +13,8 @@ import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { OnboardingWizard } from "@/components/landing/OnboardingWizard";
 import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
-
 import { CRMViewContainer } from "@/views/CRMViewContainer";
+import { AnalyticsViewContainer } from "@/views/AnalyticsViewContainer";
 import { trackEntrepriseView } from "@/utils/analytics";
 
 const DashboardContent = () => {
@@ -253,6 +253,9 @@ const DashboardContent = () => {
                 handleEntrepriseSelect(entreprise);
               }}
             />
+          )}
+          {view === 'analytics' && isAdmin && (
+            <AnalyticsViewContainer />
           )}
         </main>
       </div>
