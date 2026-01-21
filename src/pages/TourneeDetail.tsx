@@ -76,6 +76,7 @@ const TourneeDetail = () => {
   const [pendingSiteId, setPendingSiteId] = useState<string | null>(null);
   const [pendingSiteName, setPendingSiteName] = useState<string>('');
   const [pendingDate, setPendingDate] = useState<Date | undefined>(undefined);
+  const [pendingTime, setPendingTime] = useState<string>('09:00');
 
   // Navigation dialog state (GPS choice)
   const [navDialogOpen, setNavDialogOpen] = useState(false);
@@ -356,7 +357,16 @@ const TourneeDetail = () => {
   const handleConfirmDate = async () => {
     if (!pendingSiteId || !pendingAction || !pendingDate) return;
 
-    const dateIso = pendingDate.toISOString();
+    // Combine date and time for RDV
+    let dateIso: string;
+    if (pendingAction === 'rdv' && pendingTime) {
+      const [hours, minutes] = pendingTime.split(':').map(Number);
+      const dateWithTime = new Date(pendingDate);
+      dateWithTime.setHours(hours, minutes, 0, 0);
+      dateIso = dateWithTime.toISOString();
+    } else {
+      dateIso = pendingDate.toISOString();
+    }
 
     const fieldMap: Record<PendingAction, keyof VisiteStatus> = {
       rdv: 'rdv',
@@ -371,6 +381,7 @@ const TourneeDetail = () => {
     setPendingSiteId(null);
     setPendingSiteName('');
     setPendingDate(undefined);
+    setPendingTime('09:00');
   };
 
   const handleCancelDate = () => {
@@ -379,6 +390,7 @@ const TourneeDetail = () => {
     setPendingSiteId(null);
     setPendingSiteName('');
     setPendingDate(undefined);
+    setPendingTime('09:00');
   };
 
   const formatDuration = (minutes: number | null) => {
@@ -503,6 +515,7 @@ const TourneeDetail = () => {
     setOrderedSiteIds(newOrder);
     setVisitesStatus(newVisitesStatus);
     
+    // Save to database first
     await updateTourneeMutation.mutateAsync({
       ordre_optimise: newOrder,
       entreprises_ids: newEntreprisesIds,
@@ -510,7 +523,62 @@ const TourneeDetail = () => {
     });
     
     toast.success('Site supprimé de la tournée');
-    queryClient.invalidateQueries({ queryKey: ['tournee-sites', tourneeId, newOrder] });
+    
+    // Immediately recalculate KPIs with the remaining sites
+    const remainingSites = sites.filter((s: any) => s.id !== siteId);
+    const validSites = remainingSites.filter((s: any) => s.latitude && s.longitude);
+    
+    if (validSites.length >= 2) {
+      setIsRecalculating(true);
+      try {
+        const waypoints = validSites.map((s: any) => ({
+          lat: Number(s.latitude),
+          lng: Number(s.longitude),
+        }));
+
+        const { data, error } = await supabase.functions.invoke('calculate-routes', {
+          body: { waypoints },
+        });
+
+        if (error) throw error;
+
+        const newDistance = parseFloat(data.withTolls?.distance_km) || parseFloat(data.withoutTolls?.distance_km) || null;
+        const newTemps = data.withTolls?.duration_minutes || data.withoutTolls?.duration_minutes || null;
+
+        setLocalKpis({
+          distance: newDistance,
+          temps: newTemps,
+        });
+
+        await supabase
+          .from('tournees')
+          .update({
+            distance_totale_km: newDistance,
+            temps_estime_minutes: newTemps,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', tourneeId);
+      } catch (error) {
+        console.error('Error recalculating route after removal:', error);
+      } finally {
+        setIsRecalculating(false);
+      }
+    } else if (validSites.length < 2) {
+      // Less than 2 sites, reset KPIs
+      setLocalKpis({ distance: null, temps: null });
+      await supabase
+        .from('tournees')
+        .update({
+          distance_totale_km: null,
+          temps_estime_minutes: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', tourneeId);
+    }
+
+    // Refresh the sites query to update the map
+    queryClient.invalidateQueries({ queryKey: ['tournee-sites', tourneeId] });
+    queryClient.invalidateQueries({ queryKey: ['tournee', tourneeId] });
   };
 
   const handleBack = () => {
@@ -861,10 +929,30 @@ const TourneeDetail = () => {
                   className="p-3 pointer-events-auto"
                 />
               </div>
-              <p className="text-xs text-muted-foreground">
-                📅 Cette relance apparaîtra dans vos notifications (🔔) à la date choisie
-              </p>
             </div>
+            
+            {/* Time picker for RDV only */}
+            {pendingAction === 'rdv' && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  Heure du RDV
+                </label>
+                <Input
+                  type="time"
+                  value={pendingTime}
+                  onChange={(e) => setPendingTime(e.target.value)}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground">
+                  ⏰ L'heure sera visible dans votre CRM
+                </p>
+              </div>
+            )}
+            
+            <p className="text-xs text-muted-foreground">
+              📅 Cette relance apparaîtra dans vos notifications (🔔) à la date choisie
+            </p>
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={handleCancelDate}>

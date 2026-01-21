@@ -44,10 +44,17 @@ const ACTIVITY_CONFIG = {
   },
 };
 
-const formatInteractionDate = (dateStr: string) => {
+const formatInteractionDate = (dateStr: string, includeTime = false) => {
   const date = new Date(dateStr);
-  if (isToday(date)) return "Aujourd'hui";
-  if (isYesterday(date)) return "Hier";
+  if (isToday(date)) {
+    return includeTime ? `Aujourd'hui à ${format(date, 'HH:mm')}` : "Aujourd'hui";
+  }
+  if (isYesterday(date)) {
+    return includeTime ? `Hier à ${format(date, 'HH:mm')}` : "Hier";
+  }
+  if (includeTime) {
+    return format(date, 'd MMM à HH:mm', { locale: fr });
+  }
   return format(date, 'd MMM', { locale: fr });
 };
 
@@ -174,7 +181,11 @@ export const ActivityDetailSheet = ({
                 <p className="text-sm mt-1">Les {config?.title?.toLowerCase()} apparaîtront ici</p>
               </div>
             ) : (
-              interactions.map((interaction) => (
+              interactions.map((interaction) => {
+                const isRdv = interaction.type === 'rdv';
+                const hasScheduledDate = isRdv && interaction.date_relance;
+                
+                return (
                 <div
                   key={interaction.id}
                   className="p-4 rounded-lg bg-card border border-border/50 hover:border-accent/30 transition-colors"
@@ -187,9 +198,21 @@ export const ActivityDetailSheet = ({
                       <p className="text-sm text-muted-foreground truncate">
                         {interaction.site?.ville || '—'}
                       </p>
+                      
+                      {/* For RDV: Show scheduled date/time prominently */}
+                      {hasScheduledDate && (
+                        <div className="flex items-center gap-1.5 mt-2 px-2 py-1 rounded bg-green-500/10 border border-green-500/20 w-fit">
+                          <Calendar className="w-3.5 h-3.5 text-green-400" />
+                          <span className="text-xs font-medium text-green-400">
+                            {formatInteractionDate(interaction.date_relance!, true)}
+                          </span>
+                        </div>
+                      )}
+                      
                       <p className="text-xs text-muted-foreground mt-1">
-                        {formatInteractionDate(interaction.date_interaction)}
+                        {hasScheduledDate ? 'Créé ' : ''}{formatInteractionDate(interaction.date_interaction)}
                       </p>
+                      
                       {interaction.notes && (
                         <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                           {interaction.notes}
@@ -221,7 +244,7 @@ export const ActivityDetailSheet = ({
                     </div>
                   </div>
                 </div>
-              ))
+              )})
             )}
           </div>
         </ScrollArea>
