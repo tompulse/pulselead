@@ -75,10 +75,11 @@ export const useAdminAnalytics = () => {
       }
       
       const result = data as any;
-      const total = result?.total || 0;
-      const totalKm = Number(result?.total_km) || 0;
-      const totalMinutes = Number(result?.total_minutes) || 0;
-      const totalStops = Number(result?.total_stops) || 0;
+      // RPC returns camelCase keys (totalKm, totalMinutes, totalStops). Keep backward-compat with snake_case.
+      const total = Number(result?.total) || 0;
+      const totalKm = Number(result?.totalKm ?? result?.total_km) || 0;
+      const totalMinutes = Number(result?.totalMinutes ?? result?.total_minutes) || 0;
+      const totalStops = Number(result?.totalStops ?? result?.total_stops) || 0;
       
       return {
         stats: {
@@ -93,6 +94,7 @@ export const useAdminAnalytics = () => {
           avgStopsPerTournee: total > 0 ? Math.round((totalStops / total) * 10) / 10 : 0,
           totalStops,
         },
+        // Some versions return a `tournees` list; keep empty if not provided.
         recentTournees: result?.tournees || [],
       };
     },
@@ -110,7 +112,7 @@ export const useAdminAnalytics = () => {
       }
       
       const result = data as any;
-      const byStatus = result?.by_status || {};
+      const byStatus = result?.byStatus ?? result?.by_status ?? {};
       
       // Conversion rate (gagné / total avec statut final)
       const won = byStatus['gagne'] || 0;
@@ -118,12 +120,12 @@ export const useAdminAnalytics = () => {
       const conversionRate = (won + lost) > 0 ? Math.round((won / (won + lost)) * 100) : 0;
       
       return {
-        totalLeads: result?.total_leads || 0,
+        totalLeads: Number(result?.totalLeads ?? result?.total_leads) || 0,
         byStatus,
-        totalInteractions: result?.total_interactions || 0,
-        interactionsByType: result?.by_interaction_type || {},
-        rdvScheduled: result?.rdv_scheduled || 0,
-        toCall: result?.to_call || 0,
+        totalInteractions: Number(result?.totalInteractions ?? result?.total_interactions) || 0,
+        interactionsByType: result?.interactionsByType ?? result?.by_interaction_type ?? {},
+        rdvScheduled: Number(result?.rdvScheduled ?? result?.rdv_scheduled) || 0,
+        toCall: Number(result?.toCall ?? result?.to_call) || 0,
         toReview: 0,
         conversionRate,
       };
@@ -139,14 +141,16 @@ export const useAdminAnalytics = () => {
       if (error) throw error;
       
       const result = data as any;
-      const byType = result?.by_interaction_type || {};
+      const byType = result?.interactionsByType ?? result?.by_interaction_type ?? {};
+      const toCall = Number(result?.toCall ?? result?.to_call) || 0;
       
       return {
         visitsCompleted: byType['visite'] || 0,
         callsMade: byType['appel'] || 0,
         rdvBooked: byType['rdv'] || 0,
         notesCreated: byType['note'] || 0,
-        pendingFollowups: result?.pending_followups || 0,
+        // Keep consistent with CRM "À rappeler" count
+        pendingFollowups: Number(result?.pendingFollowups ?? result?.pending_followups) || toCall,
       };
     },
   });
@@ -179,6 +183,7 @@ export const useAdminAnalytics = () => {
       
       return ((data as any[]) || []).map((u: any) => ({
         userId: u.user_id,
+        email: u.user_email,
         tourneesCount: u.tournees_count || 0,
         leadsCount: u.leads_count || 0,
         interactionsCount: u.interactions_count || 0,
