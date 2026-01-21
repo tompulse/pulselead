@@ -479,6 +479,10 @@ export type Database = {
     Functions: {
       check_subscription_access: { Args: { _user_id: string }; Returns: Json }
       cleanup_old_audit_logs: { Args: never; Returns: undefined }
+      get_admin_crm_stats: { Args: never; Returns: Json }
+      get_admin_timeseries: { Args: never; Returns: Json }
+      get_admin_tournee_stats: { Args: never; Returns: Json }
+      get_admin_users_activity: { Args: never; Returns: Json }
       get_filter_counts: {
         Args: {
           p_categories?: string[]

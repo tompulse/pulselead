@@ -8,27 +8,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { TourneeStats, UserActivity } from "@/hooks/useAdminAnalytics";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { UserActivity, RecentTournee } from "@/hooks/useAdminAnalytics";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface AnalyticsTablesProps {
   usersActivity?: UserActivity[];
+  recentTournees?: RecentTournee[];
   isLoading: boolean;
-}
-
-interface Tournee {
-  id: string;
-  nom: string;
-  date_planifiee: string;
-  statut: string;
-  distance_totale_km: number | null;
-  temps_estime_minutes: number | null;
-  entreprises_ids: string[];
-  user_id: string;
-  created_at: string;
 }
 
 const formatDuration = (minutes: number | null): string => {
@@ -50,24 +37,10 @@ const getStatusBadge = (statut: string) => {
 
 export const AnalyticsTables = ({ 
   usersActivity,
+  recentTournees,
   isLoading 
 }: AnalyticsTablesProps) => {
-  // Fetch recent tournees for detailed table
-  const { data: recentTournees, isLoading: tourneesLoading } = useQuery({
-    queryKey: ['admin-recent-tournees'],
-    queryFn: async (): Promise<Tournee[]> => {
-      const { data, error } = await supabase
-        .from('tournees')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
-      
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
-  if (isLoading || tourneesLoading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[...Array(2)].map((_, i) => (
@@ -121,7 +94,7 @@ export const AnalyticsTables = ({
                       {formatDuration(tournee.temps_estime_minutes)}
                     </TableCell>
                     <TableCell className="text-right">
-                      {tournee.entreprises_ids?.length || 0}
+                      {tournee.stops_count || 0}
                     </TableCell>
                   </TableRow>
                 ))}
