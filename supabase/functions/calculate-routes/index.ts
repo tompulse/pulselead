@@ -24,8 +24,15 @@ serve(async (req) => {
 
   try {
     const { waypoints, startPoint }: RouteRequest = await req.json();
-    
-    if (!waypoints || waypoints.length < 2) {
+
+    // Accept either:
+    // - 2+ waypoints (classic)
+    // - 1+ waypoints + a startPoint (so KPIs include the start, matching the map)
+    const hasStart = !!(startPoint && Number.isFinite(startPoint.lat) && Number.isFinite(startPoint.lng));
+    const wpCount = Array.isArray(waypoints) ? waypoints.length : 0;
+    const totalPoints = (hasStart ? 1 : 0) + wpCount;
+
+    if (!waypoints || totalPoints < 2) {
       return new Response(
         JSON.stringify({ error: 'Au moins 2 points sont requis' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
