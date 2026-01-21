@@ -128,7 +128,6 @@ export type Database = {
       nouveaux_sites: {
         Row: {
           adresse: string | null
-          categorie_detaillee: string | null
           categorie_entreprise: string | null
           categorie_juridique: string | null
           code_naf: string | null
@@ -156,7 +155,6 @@ export type Database = {
         }
         Insert: {
           adresse?: string | null
-          categorie_detaillee?: string | null
           categorie_entreprise?: string | null
           categorie_juridique?: string | null
           code_naf?: string | null
@@ -184,7 +182,6 @@ export type Database = {
         }
         Update: {
           adresse?: string | null
-          categorie_detaillee?: string | null
           categorie_entreprise?: string | null
           categorie_juridique?: string | null
           code_naf?: string | null
