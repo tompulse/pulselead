@@ -100,11 +100,26 @@ const CGU = () => {
           </section>
 
           <section>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">7. Données des entreprises tierces</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">7. Source et utilisation des données d'entreprises</h2>
             <p>
-              Les données d'entreprises fournies par PULSE proviennent de sources publiques et de partenaires. Nous nous efforçons 
+              PULSE utilise des données publiques issues du répertoire SIRENE (INSEE) pour permettre l'optimisation de tournées commerciales terrain. 
+              Conformément à l'article A123-96 du Code de commerce, seules les entreprises n'ayant pas exercé leur droit d'opposition à la diffusion 
+              sont affichées dans la plateforme.
+            </p>
+            <p className="mt-2 sm:mt-3 md:mt-4">
+              <strong>PULSE n'est pas un outil de prospection téléphonique ou par email</strong>, mais un outil d'aide à la planification de visites 
+              terrain. Les données affichées comprennent : SIRET, dénomination sociale, adresse du siège social, code NAF (activité), date de création, 
+              tranche d'effectifs et forme juridique.
+            </p>
+            <p className="mt-2 sm:mt-3 md:mt-4">
+              Les données proviennent exclusivement de sources publiques officielles et sont mises à jour régulièrement. Nous nous efforçons 
               de maintenir ces données à jour mais ne pouvons garantir leur exactitude absolue. L'utilisateur est responsable de vérifier 
               les informations avant toute utilisation commerciale.
+            </p>
+            <p className="mt-2 sm:mt-3 md:mt-4 p-4 bg-accent/10 rounded-lg border border-accent/20">
+              <strong>Engagement de conformité :</strong> PULSE s'engage à ne diffuser aucune donnée personnelle des dirigeants (noms, prénoms, 
+              téléphones personnels, emails personnels) et à respecter strictement les droits d'opposition exercés par les entreprises conformément 
+              au RGPD et à la législation française sur la protection des données.
             </p>
           </section>
 

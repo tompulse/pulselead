@@ -29,8 +29,8 @@ export const FeaturesSection = () => {
     },
     {
       icon: Shield,
-      title: "Conforme RGPD",
-      description: "Toutes les données publiques proviennent de sources officielles. Sécurité et conformité garanties."
+      title: "Données publiques officielles",
+      description: "Sources SIRENE (INSEE) conformes RGPD. Seules les entreprises sans opposition à la diffusion. Outil de visite terrain, pas de téléprospection."
     },
     {
       icon: BarChart,

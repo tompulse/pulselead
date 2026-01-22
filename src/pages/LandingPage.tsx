@@ -663,6 +663,13 @@ const LandingPage = () => {
                 </ul>
               </div>
             </div>
+            <div className="text-xs text-white/50 text-center mb-6 max-w-3xl mx-auto border-t border-white/10 pt-6">
+              <p>
+                PULSE utilise des données publiques issues du répertoire SIRENE (INSEE). Conformément à l'article A123-96 du Code de commerce, 
+                seules les entreprises n'ayant pas exercé leur droit d'opposition à la diffusion sont affichées. PULSE est un outil d'optimisation 
+                de tournées terrain, pas un outil de prospection téléphonique ou par email.
+              </p>
+            </div>
             <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-white/40 text-sm">
               <p>© 2026 PULSE. Tous droits réservés.</p>
               <div className="flex flex-wrap items-center justify-center gap-3">

@@ -62,7 +62,30 @@ const PolitiqueConfidentialite = () => {
           </section>
 
           <section>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">4. Conservation des données</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">4. Données d'entreprises tierces</h2>
+            <p>
+              <strong>Source :</strong> PULSE utilise des données publiques issues du répertoire SIRENE (INSEE) pour permettre 
+              l'optimisation de tournées commerciales terrain.
+            </p>
+            <p className="mt-2 sm:mt-3 md:mt-4">
+              <strong>Données affichées :</strong> Les informations présentées sont strictement limitées aux données publiques 
+              non personnelles : SIRET, dénomination sociale, adresse du siège social, code NAF (activité), date de création, 
+              tranche d'effectifs et forme juridique.
+            </p>
+            <p className="mt-2 sm:mt-3 md:mt-4">
+              <strong>Conformité RGPD :</strong> Conformément à l'article A123-96 du Code de commerce, seules les entreprises 
+              n'ayant pas exercé leur droit d'opposition à la diffusion sont affichées. PULSE n'affiche aucune donnée personnelle 
+              des dirigeants (noms, prénoms, téléphones, emails personnels).
+            </p>
+            <p className="mt-2 sm:mt-3 md:mt-4">
+              <strong>Usage prévu :</strong> PULSE n'est pas un outil de prospection téléphonique ou par email, mais un outil 
+              d'aide à la planification de visites terrain. Les données sont mises à jour régulièrement mais leur exactitude ne 
+              peut être garantie à 100%. L'utilisateur est responsable de vérifier les informations avant toute utilisation commerciale.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">5. Conservation des données</h2>
             <p>
               Vos données personnelles sont conservées pendant la durée nécessaire aux finalités pour lesquelles elles sont traitées, 
               et conformément aux obligations légales applicables.
@@ -70,7 +93,7 @@ const PolitiqueConfidentialite = () => {
           </section>
 
           <section>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">5. Vos droits</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">6. Vos droits</h2>
             <p>Conformément au RGPD et à la loi Informatique et Libertés, vous disposez des droits suivants :</p>
             <ul className="list-disc ml-4 sm:ml-6 mt-2 sm:mt-3 md:mt-4 space-y-1 sm:space-y-2">
               <li>Droit d'accès à vos données personnelles</li>
@@ -89,7 +112,7 @@ const PolitiqueConfidentialite = () => {
           </section>
 
           <section>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">6. Sécurité</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">7. Sécurité</h2>
             <p>
               Nous mettons en œuvre toutes les mesures techniques et organisationnelles appropriées pour protéger vos données personnelles 
               contre la destruction, la perte, l'altération, la divulgation ou l'accès non autorisé.
@@ -97,7 +120,7 @@ const PolitiqueConfidentialite = () => {
           </section>
 
           <section>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">7. Responsable du traitement</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">8. Responsable du traitement</h2>
             <p className="mb-2 sm:mb-3 md:mb-4">
               <strong>Responsable du traitement :</strong> Tom Iolov - PULSE<br />
               <strong>Adresse :</strong> 108 rue de Crimée, 75019 Paris, France<br />
@@ -107,7 +130,7 @@ const PolitiqueConfidentialite = () => {
           </section>
 
           <section>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">8. Sous-traitants et transferts de données</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">9. Sous-traitants et transferts de données</h2>
             <p>
               Dans le cadre de nos services, nous faisons appel aux sous-traitants suivants :
             </p>
@@ -123,7 +146,7 @@ const PolitiqueConfidentialite = () => {
           </section>
 
           <section>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">9. Contact</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">10. Contact</h2>
             <p>
               Pour toute question relative à cette politique de confidentialité ou pour exercer vos droits RGPD, 
               vous pouvez nous contacter à : tomiolovpro@gmail.com
