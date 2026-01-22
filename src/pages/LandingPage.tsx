@@ -238,21 +238,24 @@ const LandingPage = () => {
             <div ref={heroAnimation.ref} className={`text-center scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-accent/20 mb-5">
-                <Target className="w-3.5 h-3.5 text-accent" />
-                <span className="text-xs sm:text-sm text-white/90 font-medium">Essai gratuit 7 jours</span>
+              <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/30 mb-6">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+                </span>
+                <span className="text-sm text-white/90">Essai gratuit 7 jours</span>
               </div>
 
-              {/* Headline - Harmonisé */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] mb-4">
-                Vendez plus.
+              {/* Headline */}
+              <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold leading-[1.1] mb-6">
+                <span className="text-white">Vendez plus.</span>
                 <br />
-                <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent">Roulez moins.</span>
+                <span className="gradient-text">Roulez moins.</span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-base sm:text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-6">
-                Liste de prospects filtrée • Tournées optimisées • CRM simple pour suivre vos visites sur le terrain
+              <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-8">
+                4,5M d'entreprises • Tournées GPS optimisées • CRM terrain
               </p>
 
               {/* CTA */}
@@ -268,19 +271,19 @@ const LandingPage = () => {
                 <DemoModeButton />
               </div>
 
-              {/* Stats - Encapsulés dans des mini-cards */}
-              <div className="mt-8 sm:mt-10 flex justify-center gap-2 sm:gap-6 max-w-3xl mx-auto px-2">
-                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
-                  <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text whitespace-nowrap">+1 900</div>
-                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">entreprises par sem.</p>
+              {/* Stats KPIs - Épurés */}
+              <div className="mt-10 grid grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
+                <div className="text-center">
+                  <div className="text-3xl sm:text-5xl font-bold gradient-text mb-2">4,5M+</div>
+                  <p className="text-white/60 text-xs sm:text-sm">entreprises</p>
                 </div>
-                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
-                  <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text">1h30</div>
-                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">gagnées par jour</p>
+                <div className="text-center">
+                  <div className="text-3xl sm:text-5xl font-bold gradient-text mb-2">-40%</div>
+                  <p className="text-white/60 text-xs sm:text-sm">de km</p>
                 </div>
-                <div className="glass-card p-2 sm:p-4 border border-accent/20 rounded-xl text-center hover:border-accent/60 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 transition-all duration-300 cursor-default flex-1 max-w-[120px] sm:max-w-none">
-                  <div className="text-lg sm:text-3xl md:text-4xl font-bold gradient-text">92%</div>
-                  <p className="text-white/60 text-[9px] sm:text-sm mt-1">satisfaction</p>
+                <div className="text-center">
+                  <div className="text-3xl sm:text-5xl font-bold gradient-text mb-2">+35%</div>
+                  <p className="text-white/60 text-xs sm:text-sm">de visites</p>
                 </div>
               </div>
 
@@ -300,83 +303,39 @@ const LandingPage = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            PROBLEMS SECTION - Le problème
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-14 sm:py-16 px-6 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
-          borderTop: '1px solid rgba(239, 68, 68, 0.1)',
-          borderBottom: '1px solid rgba(239, 68, 68, 0.1)'
-        }}>
-          <div className="container mx-auto max-w-6xl">
-            <div ref={problemsAnimation.ref} className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-8 sm:mb-10">
-                Ce qui vous <span className="text-red-500">freine</span> aujourd'hui
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/50 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
-                  <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Aucune visibilité secteur</h3>
-                  <p className="text-white/60 text-sm sm:text-base">Impossible de savoir où sont vos prospects, qui cibler en priorité</p>
-                </Card>
-                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/50 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
-                  <Route className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Trajets improvisés</h3>
-                  <p className="text-white/60 text-sm sm:text-base">Des kilomètres inutiles, du temps perdu, moins de visites</p>
-                </Card>
-                <Card className="glass-card p-5 sm:p-6 border-white/10 hover:border-red-500/50 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transition-all duration-300 cursor-default">
-                  <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-3" />
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Données éparpillées</h3>
-                  <p className="text-white/60 text-sm sm:text-base">Excel, carnets, post-its... Relances oubliées, historique perdu</p>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
             SOLUTION SECTION - Fonctionnalités PULSE
         ═══════════════════════════════════════════════════════════════════ */}
-        <section id="solution" className="py-14 sm:py-16 px-6 scroll-mt-20 relative z-10" style={{
-          background: 'radial-gradient(ellipse at center, rgba(6, 182, 212, 0.08) 0%, transparent 70%)',
-          borderTop: '1px solid rgba(6, 182, 212, 0.15)',
-          borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
-        }}>
-          <div className="container mx-auto max-w-6xl">
+        <section id="solution" className="py-20 px-6 scroll-mt-20 relative z-10">
+          <div className="container mx-auto max-w-5xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
-                Fonctionnalités
+              <h2 className="text-4xl sm:text-5xl font-bold text-center mb-12">
+                Tout ce dont vous avez <span className="gradient-text">besoin</span>
               </h2>
-              <p className="text-lg sm:text-xl text-white/60 text-center mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Contrôlez votre territoire, optimisez chaque action commerciale
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
-                <div className="text-center space-y-3 group cursor-default">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10 group-hover:border-accent/60 group-hover:shadow-xl group-hover:shadow-accent/30 group-hover:scale-110 transition-all duration-300">
-                    <Target className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold group-hover:text-accent transition-colors duration-300">Liste de prospects filtrée</h3>
-                  <p className="text-white/60 text-sm sm:text-base">
-                    Accédez à toutes les nouvelles entreprises créées en France. Filtrez par code NAF, département, taille, etc.
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <Card className="glass-card p-8 border-accent/20 hover:border-accent/50 transition-all duration-300">
+                  <Database className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-xl font-bold mb-3">Base 4,5M entreprises</h3>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    Filtrez par NAF, département, taille. Données SIRENE mises à jour chaque semaine.
                   </p>
-                </div>
-                <div className="text-center space-y-3 group cursor-default">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10 group-hover:border-accent/60 group-hover:shadow-xl group-hover:shadow-accent/30 group-hover:scale-110 transition-all duration-300">
-                    <Route className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold group-hover:text-accent transition-colors duration-300">Tournées optimisées IA</h3>
-                  <p className="text-white/60 text-sm sm:text-base">
-                    Sélectionnez vos prospects, créez votre tournée, l'IA calcule l'itinéraire optimal
+                </Card>
+
+                <Card className="glass-card p-8 border-accent/20 hover:border-accent/50 transition-all duration-300">
+                  <Route className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-xl font-bold mb-3">Tournées GPS optimisées</h3>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    -40% de km. Navigation Waze/Maps en 1 clic. Itinéraires calculés automatiquement.
                   </p>
-                </div>
-                <div className="text-center space-y-3 group cursor-default">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-4 border border-accent/30 shadow-lg shadow-accent/10 group-hover:border-accent/60 group-hover:shadow-xl group-hover:shadow-accent/30 group-hover:scale-110 transition-all duration-300">
-                    <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold group-hover:text-accent transition-colors duration-300">CRM terrain simple</h3>
-                  <p className="text-white/60 text-sm sm:text-base">
-                    Suivez vos visites, appels et relances depuis votre mobile. Simple, rapide, efficace
+                </Card>
+
+                <Card className="glass-card p-8 border-accent/20 hover:border-accent/50 transition-all duration-300">
+                  <Smartphone className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="text-xl font-bold mb-3">CRM mobile terrain</h3>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    Notes, rappels, RDV, pipeline Kanban. Simple et rapide depuis votre poche.
                   </p>
-                </div>
+                </Card>
               </div>
             </div>
           </div>
@@ -477,38 +436,31 @@ const LandingPage = () => {
                 Structurez votre prospection, optimisez chaque visite
               </p>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
-                {/* Commercial Solo */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
+                {/* Plan Gratuit */}
                 <Card className="relative overflow-visible flex flex-col hover:scale-[1.02] transition-all duration-300 cursor-default" style={{
-                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)',
-                  border: '2px solid rgba(6, 182, 212, 0.5)',
-                  boxShadow: '0 25px 70px -15px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+                  background: 'linear-gradient(135deg, rgba(100, 100, 100, 0.1) 0%, rgba(50, 50, 50, 0.05) 100%)',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 20px 60px -10px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap">
-                    🎁 7 JOURS D'ESSAI GRATUIT
-                  </div>
-                  <div className="p-5 sm:p-6 pt-8 flex flex-col flex-1">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">Commercial Solo</h3>
-                    <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(6,182,212,0.2)' }}>
+                  <div className="p-5 sm:p-6 flex flex-col flex-1">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-white">Découverte</h3>
+                    <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}>
                       <div className="flex items-baseline justify-center gap-2 mb-1">
-                        <span className="text-4xl sm:text-5xl font-bold gradient-text">79€</span>
-                        <span className="text-base text-white/60">/mois</span>
+                        <span className="text-4xl sm:text-5xl font-bold text-white">0€</span>
                       </div>
-                      <p className="text-sm text-white/50">Sans engagement • Résiliable à tout moment</p>
-                      <p className="text-[10px] text-white/30 mt-1">TVA non applicable, art. 293 B du CGI</p>
+                      <p className="text-sm text-white/50">Gratuit pour toujours</p>
                     </div>
                     <ul className="space-y-2 mb-5 flex-1">
                       {[
-                        { icon: Target, label: "Liste de prospects filtrée", desc: "Nouvelles entreprises selon vos critères" },
-                        { icon: Route, label: "Tournées optimisées IA", desc: "Moins de route, plus de RDV" },
-                        { icon: Smartphone, label: "CRM mobile terrain", desc: "Visites et relances depuis votre poche" },
-                        { icon: Search, label: "Filtres intelligents", desc: "Code NAF, département, taille, juridique, siège social, date" },
-                        { icon: BarChart3, label: "Pipeline Kanban", desc: "Du contact à la signature" },
-                        { icon: Clock, label: "Suivi des relances", desc: "Programmez vos rappels" },
+                        { icon: Target, label: "20 prospects par département", desc: "Testez sur 1 zone de votre choix" },
+                        { icon: Route, label: "1 tournée par mois", desc: "Max 5 prospects par tournée" },
+                        { icon: Smartphone, label: "CRM basique", desc: "Notes uniquement, pas de rappels" },
+                        { icon: MapPin, label: "Visualisation carte", desc: "Voir vos prospects sur la carte" },
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 p-2 rounded-lg hover:bg-white/5 transition-all">
-                          <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <item.icon className="w-3 h-3 text-accent" />
+                          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <item.icon className="w-3 h-3 text-white/60" />
                           </div>
                           <div>
                             <span className="text-white text-sm font-semibold">{item.label}</span>
@@ -518,13 +470,58 @@ const LandingPage = () => {
                       ))}
                     </ul>
                     <Button 
-                      className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto" 
+                      className="w-full bg-white/10 text-white hover:bg-white/20 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto border border-white/20" 
+                      onClick={() => navigate('/auth')}
+                    >
+                      Commencer gratuitement
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </div>
+                </Card>
+
+                {/* Plan PRO */}
+                <Card className="relative overflow-visible flex flex-col hover:scale-[1.05] transition-all duration-300 cursor-default" style={{
+                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(14, 165, 233, 0.12) 100%)',
+                  border: '3px solid rgba(6, 182, 212, 0.6)',
+                  boxShadow: '0 30px 80px -15px rgba(6, 182, 212, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                }}>
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg z-10 whitespace-nowrap animate-pulse">
+                    ⭐ PLUS POPULAIRE
+                  </div>
+                  <div className="p-5 sm:p-6 pt-8 flex flex-col flex-1">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">PRO</h3>
+                    <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(6,182,212,0.3)' }}>
+                      <div className="flex items-baseline justify-center gap-2 mb-1">
+                        <span className="text-4xl sm:text-5xl font-bold gradient-text">49€</span>
+                        <span className="text-base text-white/60">/mois</span>
+                      </div>
+                      <p className="text-sm text-emerald-400 font-semibold">7 jours d'essai gratuit</p>
+                      <p className="text-xs text-white/50 mt-1">Sans engagement • Annulez quand vous voulez</p>
+                      <p className="text-[10px] text-white/30 mt-1">TVA non applicable, art. 293 B du CGI</p>
+                    </div>
+                    <ul className="space-y-3 mb-6 flex-1">
+                      {[
+                        "4,5M+ entreprises France entière",
+                        "Tournées GPS optimisées illimitées",
+                        "CRM complet + Rappels auto",
+                        "Tous filtres (NAF, dép., taille)",
+                        "Export & Analytics"
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3">
+                          <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                          <span className="text-white/90 text-sm">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button 
+                      className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 py-6 text-lg font-bold shadow-2xl hover:shadow-green-500/50 hover:scale-[1.03] transition-all mt-auto" 
                       onClick={handleCTAClick}
                       disabled={checkoutLoading || subscriptionLoading}
                     >
-                      {checkoutLoading || subscriptionLoading ? 'Redirection...' : 'Commencer maintenant'}
-                      <ArrowRight className="ml-2 w-4 h-4" />
+                      {checkoutLoading || subscriptionLoading ? 'Redirection...' : 'Essayer 7 jours gratuit'}
+                      <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
+                    <p className="text-center text-xs text-white/40 mt-2">✅ Garantie satisfait ou remboursé 30 jours</p>
                   </div>
                 </Card>
 
@@ -535,19 +532,19 @@ const LandingPage = () => {
                   boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
                   <div className="p-5 sm:p-6 flex flex-col flex-1">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">Équipes Commerciales</h3>
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">Équipes</h3>
                     <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(14,165,233,0.2)' }}>
                       <span className="text-3xl sm:text-4xl font-bold gradient-text">Sur devis</span>
-                      <p className="text-xs text-white/50 mt-2">Pour les équipes ambitieuses</p>
+                      <p className="text-xs text-white/50 mt-2">Pour les équipes commerciales</p>
                     </div>
                     <ul className="space-y-2 mb-5 flex-1">
                       {[
-                        { icon: Check, label: "Tout PULSE inclus", desc: "Toutes les fonctionnalités standard" },
-                        { icon: Users, label: "Équipes illimitées", desc: "Invitez tous vos commerciaux" },
-                        { icon: Sparkles, label: "Onboarding personnalisé", desc: "Formation dédiée" },
-                        { icon: Phone, label: "Support prioritaire", desc: "Réponse sous 24h garantie" },
-                        { icon: TrendingUp, label: "Session d'analyse mensuelle", desc: "Optimisez vos performances" },
-                        { icon: Building2, label: "Intégrations sur mesure", desc: "Connectez vos outils" },
+                        { icon: Check, label: "Tout PRO inclus", desc: "Fonctionnalités illimitées" },
+                        { icon: Users, label: "Multi-utilisateurs", desc: "Invitez votre équipe" },
+                        { icon: Sparkles, label: "Onboarding dédié", desc: "Formation personnalisée" },
+                        { icon: Phone, label: "Support prioritaire", desc: "Réponse sous 2h" },
+                        { icon: TrendingUp, label: "Analytics équipe", desc: "Dashboard manager" },
+                        { icon: Building2, label: "Intégrations API", desc: "Connectez vos outils" },
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 p-2 rounded-lg hover:bg-white/5 transition-all">
                           <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
