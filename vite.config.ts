@@ -10,6 +10,16 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  preview: {
+    host: "::",
+    port: 4173,
+    allowedHosts: [
+      'pulse-lead.com',
+      'www.pulse-lead.com',
+      'pulselead.lovable.app',
+      'localhost',
+    ],
+  },
   build: {
     // Disable source maps in production (smaller bundle size)
     sourcemap: mode === 'development',
