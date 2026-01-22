@@ -38,26 +38,6 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        // Manual chunk splitting for better caching and parallel loading
-        manualChunks: (id) => {
-          // Keep React together to avoid double import issues
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor-react';
-            }
-            if (id.includes('mapbox-gl')) {
-              return 'vendor-mapbox';
-            }
-            if (id.includes('@radix-ui') || id.includes('lucide-react')) {
-              return 'vendor-ui';
-            }
-            if (id.includes('recharts')) {
-              return 'vendor-charts';
-            }
-            // All other node_modules
-            return 'vendor';
-          }
-        },
         // Optimize asset file names for better caching
         assetFileNames: (assetInfo) => {
           if (!assetInfo.name) return 'assets/[name]-[hash][extname]';
@@ -159,4 +139,3 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
-// Force rebuild 1769122757
