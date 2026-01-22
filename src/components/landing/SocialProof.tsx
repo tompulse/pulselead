@@ -1,0 +1,124 @@
+import { Star, Quote, Building2, TrendingUp, Target } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+const testimonials = [
+  {
+    name: 'Antoine M.',
+    role: 'Commercial terrain',
+    company: 'Énergie renouvelable',
+    content: "J'ai économisé 40% de km sur mes tournées. L'optimisation IA est bluffante, je gagne 2h par jour !",
+    rating: 5,
+    avatar: 'AM'
+  },
+  {
+    name: 'Sophie L.',
+    role: 'Responsable développement',
+    company: 'Services B2B',
+    content: "Fini le temps perdu à chercher des prospects. PULSE me donne directement les nouvelles entreprises de ma zone avec leur téléphone.",
+    rating: 5,
+    avatar: 'SL'
+  },
+  {
+    name: 'Thomas R.',
+    role: 'Indépendant',
+    company: 'Conseil & Formation',
+    content: "Le CRM mobile est ultra-simple. Je note mes visites en 10 secondes, même en voiture. Un vrai gain de productivité.",
+    rating: 5,
+    avatar: 'TR'
+  }
+];
+
+const stats = [
+  { value: '150+', label: 'Commerciaux actifs', icon: Building2 },
+  { value: '40%', label: 'de km économisés', icon: TrendingUp },
+  { value: '2h', label: 'gagnées par jour', icon: Target },
+];
+
+export const SocialProof = () => {
+  return (
+    <section className="py-20 px-6 relative z-10">
+      <div className="container mx-auto max-w-6xl">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          {stats.map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <Card key={idx} className="bg-card/50 backdrop-blur-sm border-white/10 p-6 text-center hover:border-accent/30 transition-all duration-300">
+                <div className="flex justify-center mb-3">
+                  <div className="rounded-full bg-accent/10 p-3">
+                    <Icon className="w-6 h-6 text-accent" />
+                  </div>
+                </div>
+                <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+                <div className="text-sm text-white/60">{stat.label}</div>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Header */}
+        <div className="text-center mb-12">
+          <Badge className="bg-accent/10 text-accent border-accent/20 mb-4">
+            ⭐ Ils utilisent PULSE au quotidien
+          </Badge>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+            Ce qu'en pensent les <span className="text-accent">pros du terrain</span>
+          </h2>
+          <p className="text-lg text-white/60 max-w-2xl mx-auto">
+            Rejoignez des centaines de commerciaux qui optimisent leur prospection avec PULSE
+          </p>
+        </div>
+
+        {/* Testimonials */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {testimonials.map((testimonial, idx) => (
+            <Card key={idx} className="bg-card/50 backdrop-blur-sm border-white/10 p-6 hover:border-accent/30 transition-all duration-300 relative">
+              <Quote className="absolute top-4 right-4 w-8 h-8 text-accent/20" />
+              
+              {/* Rating */}
+              <div className="flex gap-1 mb-4">
+                {Array.from({ length: testimonial.rating }).map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+                ))}
+              </div>
+
+              {/* Content */}
+              <p className="text-white/80 text-sm mb-6 leading-relaxed">
+                "{testimonial.content}"
+              </p>
+
+              {/* Author */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-semibold text-sm">
+                  {testimonial.avatar}
+                </div>
+                <div>
+                  <div className="text-white font-semibold text-sm">{testimonial.name}</div>
+                  <div className="text-white/50 text-xs">{testimonial.role}</div>
+                  <div className="text-white/40 text-xs">{testimonial.company}</div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Trust indicators */}
+        <div className="mt-12 flex flex-wrap justify-center items-center gap-6 text-white/40 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span>Données sécurisées (RGPD)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span>Support réactif 7j/7</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span>Sans engagement</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};

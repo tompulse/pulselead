@@ -10,6 +10,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ContactSection from "@/components/landing/ContactSection";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
+import { DemoModeButton } from "@/components/landing/DemoModeButton";
+import { SocialProof } from "@/components/landing/SocialProof";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -254,14 +256,17 @@ const LandingPage = () => {
               </p>
 
               {/* CTA */}
-              <Button 
-                onClick={handleCTAClick}
-                disabled={checkoutLoading || subscriptionLoading}
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
-              >
-                {checkoutLoading || subscriptionLoading ? 'Redirection...' : 'Commencer maintenant'}
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button 
+                  onClick={handleCTAClick}
+                  disabled={checkoutLoading || subscriptionLoading}
+                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 w-full sm:w-auto"
+                >
+                  {checkoutLoading || subscriptionLoading ? 'Redirection...' : 'Commencer maintenant'}
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+                <DemoModeButton />
+              </div>
 
               {/* Stats - Encapsulés dans des mini-cards */}
               <div className="mt-8 sm:mt-10 flex justify-center gap-2 sm:gap-6 max-w-3xl mx-auto px-2">
@@ -452,6 +457,11 @@ const LandingPage = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
+            SOCIAL PROOF SECTION - Témoignages
+        ═══════════════════════════════════════════════════════════════════ */}
+        <SocialProof />
+
+        {/* ═══════════════════════════════════════════════════════════════════
             PRICING SECTION - Tarification
         ═══════════════════════════════════════════════════════════════════ */}
         <section id="pricing" className="py-14 sm:py-16 px-6 scroll-mt-20 relative z-10" style={{
@@ -587,15 +597,22 @@ const LandingPage = () => {
         }}>
           <div className="container mx-auto max-w-5xl">
             <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">Vos questions, nos réponses</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">
+                Questions <span className="text-accent">fréquentes</span>
+              </h2>
+              <p className="text-center text-white/60 mb-8 max-w-2xl mx-auto">
+                Tout ce que vous devez savoir sur PULSE
+              </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl mx-auto">
                 {[
-                  { q: "Comment PULSE structure ma prospection ?", a: "PULSE vous donne une vision complète de votre territoire avec tous vos prospects, des tournées calculées automatiquement pour optimiser vos déplacements, et un CRM mobile pour suivre chaque action." },
-                  { q: "Les données sont-elles fiables ?", a: "Nos données proviennent de sources officielles (INSEE, SIRENE) et sont mises à jour chaque semaine." },
-                  { q: "Peut-on l'utiliser partout en France ?", a: "Oui, PULSE couvre l'intégralité du territoire français métropolitain." },
-                  { q: "Comment fonctionne l'essai gratuit ?", a: "Vous bénéficiez de 7 jours d'accès complet à toutes les fonctionnalités. Annulez à tout moment sans frais." },
-                  { q: "Puis-je personnaliser mes critères ?", a: "Absolument ! Filtrez par code NAF, département, taille d'entreprise, catégorie juridique, siège social et date de création." },
-                  { q: "Y a-t-il un engagement ?", a: "Non, PULSE est sans engagement. Vous pouvez résilier à tout moment depuis votre espace client." }
+                  { q: "🎯 C'est quoi la différence avec Salesforce/Sparklane ?", a: "PULSE est conçu POUR les commerciaux terrain. Pas de CRM usine à gaz : juste ce qu'il faut pour prospecter intelligemment. Les tournées optimisées IA sont incluses (pas besoin de 10 outils différents), et tout fonctionne en mode mobile." },
+                  { q: "📱 Ça marche vraiment sur téléphone ?", a: "Oui ! PULSE est une PWA (Progressive Web App) : vous l'installez comme une appli, ça fonctionne hors ligne, et c'est optimisé pour iPhone et Android. Ajoutez vos interactions terrain en 10 secondes." },
+                  { q: "🗺️ Comment fonctionne l'optimisation de tournées ?", a: "Sélectionnez vos prospects, PULSE calcule automatiquement l'itinéraire le plus court avec Mapbox. Vous économisez jusqu'à 40% de kilomètres. Vous pouvez modifier l'ordre manuellement et lancer la navigation GPS directement." },
+                  { q: "🔄 Les données sont actualisées quand ?", a: "Données INSEE/SIRENE mises à jour chaque semaine. Vous avez accès aux nouvelles créations d'entreprises en quasi temps-réel (délai INSEE : ~5 jours après l'immatriculation)." },
+                  { q: "💳 Comment fonctionne l'essai 7 jours ?", a: "Vous testez toutes les features gratuitement pendant 7 jours. Votre carte bancaire est demandée, mais vous ne serez débité qu'au 8ème jour. Annulez à tout moment avant sans frais." },
+                  { q: "🔒 Mes données prospects sont sécurisées ?", a: "100%. Hébergement Supabase (certifié RGPD), chiffrement SSL, sauvegardes quotidiennes. Vos prospects et interactions restent privés, jamais partagés avec d'autres users." },
+                  { q: "📞 Je peux avoir le téléphone des prospects ?", a: "On enrichit les données quand disponibles (environ 40% pour les nouvelles créations). Vous pouvez aussi saisir vous-même les infos trouvées sur le terrain, elles seront sauvegardées dans votre CRM." },
+                  { q: "⚡ Je peux annuler quand je veux ?", a: "Oui, sans engagement. Annulez en 1 clic depuis votre espace, pas besoin de nous contacter. Vous gardez l'accès jusqu'à la fin de votre période payée." }
                 ].map((item, i) => (
                   <Accordion key={i} type="single" collapsible>
                     <AccordionItem value={`item-${i}`} className="border border-white/10 rounded-lg px-4 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300">

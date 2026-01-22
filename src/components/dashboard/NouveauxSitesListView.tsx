@@ -115,6 +115,8 @@ export const NouveauxSitesListView = ({
                   onClick={() => {
                     if (selectionMode && onToggleSelection) {
                       onToggleSelection(site);
+                    } else if (!selectionMode && onSiteSelect) {
+                      onSiteSelect(site);
                     }
                   }}
                   className={`group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden active:scale-[0.99] ${
@@ -122,7 +124,7 @@ export const NouveauxSitesListView = ({
                       ? isSelected
                         ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15'
                         : 'border-accent/30 from-card/95 to-card/80 cursor-pointer hover:border-accent/50 hover:bg-accent/5'
-                      : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50'
+                      : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50 cursor-pointer hover:shadow-xl'
                   }`}
                 >
                   {/* Gradient overlay on hover */}

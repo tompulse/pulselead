@@ -1,4 +1,4 @@
-project_id = "pcrxbfbktmekkkqhppjn"
+project_id = "ywavxjmbsywpjzchuuho"
 
 [functions.chat-tournee-assistant]
 verify_jwt = true
@@ -56,4 +56,4 @@ verify_jwt = false
 
 [functions.check-trial-reminders]
 verify_jwt = false
-schedule = "0 9 * * *"
+# schedule = "0 9 * * *"  # Commented out - use Supabase Dashboard to configure cron schedules

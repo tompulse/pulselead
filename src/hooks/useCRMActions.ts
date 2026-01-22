@@ -19,12 +19,9 @@ export const useCRMActions = (entrepriseId: string, userId: string) => {
     mutationFn: ({ type, notes }: { type: InteractionType; notes?: string }) =>
       crmService.addInteraction(entrepriseId, userId, type, notes),
     onSuccess: (result) => {
-      // Invalidate all CRM-related queries for bidirectional sync
+      // Invalidate only the specific CRM queries (reduced from 5 to 2 invalidations)
       queryClient.invalidateQueries({ queryKey: ['crm', entrepriseId, userId] });
-      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
-      queryClient.invalidateQueries({ queryKey: ['crm-notes'] });
-      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
-      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-leads-with-sites'] });
       toast({
         title: result.isNew ? "Interaction ajoutée" : "Interaction mise à jour",
         description: "L'action a été enregistrée avec succès",
@@ -44,12 +41,9 @@ export const useCRMActions = (entrepriseId: string, userId: string) => {
     mutationFn: (type: InteractionType) =>
       crmService.removeInteraction(entrepriseId, userId, type),
     onSuccess: () => {
-      // Invalidate all CRM-related queries for bidirectional sync
+      // Invalidate only the specific CRM queries (reduced from 5 to 2 invalidations)
       queryClient.invalidateQueries({ queryKey: ['crm', entrepriseId, userId] });
-      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
-      queryClient.invalidateQueries({ queryKey: ['crm-notes'] });
-      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
-      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-leads-with-sites'] });
       toast({
         title: "Interaction supprimée",
         description: "L'action a été retirée",
@@ -69,9 +63,8 @@ export const useCRMActions = (entrepriseId: string, userId: string) => {
     mutationFn: (status: LeadStatus) =>
       crmService.updateLeadStatus(entrepriseId, userId, status),
     onSuccess: () => {
-      // Invalidate all CRM-related queries for bidirectional sync
+      // Invalidate only the specific CRM queries (reduced from 3 to 2 invalidations)
       queryClient.invalidateQueries({ queryKey: ['crm', entrepriseId, userId] });
-      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
       queryClient.invalidateQueries({ queryKey: ['crm-leads-with-sites'] });
       toast({
         title: "Statut mis à jour",

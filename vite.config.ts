@@ -11,10 +11,19 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   build: {
-    // Enable source maps for debugging
-    sourcemap: true,
+    // Disable source maps in production (smaller bundle size)
+    sourcemap: mode === 'development',
     // Enable CSS code splitting for better caching
     cssCodeSplit: true,
+    // Enable minification with Terser for better compression
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production', // Remove console.log in production
+        drop_debugger: true,
+        pure_funcs: mode === 'production' ? ['console.log', 'console.info'] : [],
+      },
+    },
     // Optimize chunk size
     chunkSizeWarningLimit: 600,
     rollupOptions: {
@@ -26,6 +35,7 @@ export default defineConfig(({ mode }) => ({
           'ui-vendor': ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
           'chart-vendor': ['recharts'],
           'form-vendor': ['react-hook-form', 'zod'],
+          'map-vendor': ['mapbox-gl'], // Separate Mapbox (heavy library)
         },
         // Optimize asset file names for better caching
         assetFileNames: (assetInfo) => {

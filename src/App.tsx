@@ -26,7 +26,19 @@ import CGV from "./pages/CGV";
 import CGU from "./pages/CGU";
 import { Navigate } from "react-router-dom";
 
-const queryClient = new QueryClient();
+// Optimized QueryClient configuration to reduce unnecessary API calls
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes - data considered fresh
+      gcTime: 30 * 60 * 1000, // 30 minutes - cache retention (formerly cacheTime)
+      refetchOnWindowFocus: false, // Don't refetch when user returns to window
+      refetchOnReconnect: false, // Don't refetch on network reconnection
+      retry: 1, // Only retry failed requests once (instead of 3 times)
+      retryDelay: 1000, // 1 second between retries
+    },
+  },
+});
 
 // Loading fallback component
 const PageLoader = () => (

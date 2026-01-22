@@ -9,6 +9,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { LoadingState, SkeletonTable } from '@/components/ui/loading-state';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 interface ProspectsViewContainerProps {
   filters: any;

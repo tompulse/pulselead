@@ -9,7 +9,8 @@ import { useCRMActions } from "@/hooks/useCRMActions";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale } from "lucide-react";
+import { EnrichDirigeantButton } from "./EnrichDirigeantButton";
+import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafNomenclatureComplete";
@@ -238,6 +239,40 @@ export const UnifiedEntreprisePanel = ({
                       </p>
                     </div>
                   )}
+
+                  {/* Dirigeant */}
+                  <div className="space-y-2 pt-3 border-t border-accent/10">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
+                        <User className="w-3.5 h-3.5" />
+                        Dirigeant
+                      </div>
+                      {!displayEntreprise.dirigeant && displayEntreprise.siret && (
+                        <EnrichDirigeantButton 
+                          siret={displayEntreprise.siret}
+                          entrepriseId={displayEntreprise.id}
+                          currentDirigeant={displayEntreprise.dirigeant}
+                        />
+                      )}
+                    </div>
+                    {displayEntreprise.dirigeant ? (
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium">{displayEntreprise.dirigeant}</p>
+                        {displayEntreprise.fonction_dirigeant && (
+                          <p className="text-xs text-muted-foreground">{displayEntreprise.fonction_dirigeant}</p>
+                        )}
+                        {displayEntreprise.date_enrichissement_dirigeant && (
+                          <p className="text-xs text-green-600 dark:text-green-400">
+                            ✓ Enrichi le {new Date(displayEntreprise.date_enrichissement_dirigeant).toLocaleDateString('fr-FR')}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">
+                        {displayEntreprise.siret ? 'Cliquez pour enrichir' : 'SIRET requis pour enrichir'}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Date de création */}
                   <div className="space-y-1 pt-3 border-t border-accent/10">
