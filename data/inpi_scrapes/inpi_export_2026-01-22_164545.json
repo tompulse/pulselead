@@ -1,0 +1,167 @@
+{
+  "metadata": {
+    "scraped_at": "2026-01-22_164545",
+    "total": 20,
+    "with_dirigeant": 0
+  },
+  "companies": [
+    {
+      "scraped_at": "2026-01-22T16:44:13.410926",
+      "nom": "Makésa Hair",
+      "date_creation": "02/03/2026",
+      "siren": "999239007",
+      "forme_juridique": "Société à responsabilité limitée à associé unique (SARLU ou EURL)",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.427537",
+      "nom": "SARL Campion-Marie",
+      "date_creation": "02/03/2026",
+      "siren": "999558810",
+      "forme_juridique": "SARL, Société à responsabilité limitée (sans autre indication)",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.437852",
+      "nom": "Maison Nectar",
+      "date_creation": "01/03/2026",
+      "siren": "992530220",
+      "forme_juridique": "SASU, Société par actions simplifiée unipersonnelle",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.447169",
+      "nom": "GOKU MARKET",
+      "date_creation": "01/03/2026",
+      "siren": "988107363",
+      "forme_juridique": "SARL, Société à responsabilité limitée (sans autre indication)",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.456255",
+      "nom": "LBL",
+      "date_creation": "01/03/2026",
+      "siren": "999146970",
+      "forme_juridique": "SASU, Société par actions simplifiée unipersonnelle",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.464755",
+      "nom": "L'ATELIER DES MAREES-Hardelot",
+      "date_creation": "01/03/2026",
+      "siren": "999766918",
+      "forme_juridique": "SAS, société par actions simplifiée",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.474066",
+      "nom": "Calice & Co",
+      "date_creation": "01/03/2026",
+      "siren": "999563430",
+      "forme_juridique": "SAS, société par actions simplifiée",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.482406",
+      "nom": "JSK",
+      "date_creation": "20/02/2026",
+      "siren": "100071703",
+      "forme_juridique": "SARL, Société à responsabilité limitée (sans autre indication)|Société à responsabilité limitée à associé unique (SARLU ou EURL)",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.491055",
+      "nom": "NDL DISTRIBUTION",
+      "date_creation": "19/02/2026",
+      "siren": "100008309",
+      "forme_juridique": "Société à responsabilité limitée à associé unique (SARLU ou EURL)",
+      "adresse": "du siège",
+      "code_postal": "10000",
+      "ville": "EUR"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.507230",
+      "nom": "Sashiko IT",
+      "date_creation": "15/02/2026",
+      "siren": "999983984",
+      "forme_juridique": "Société à responsabilité limitée à associé unique (SARLU ou EURL)",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.516606",
+      "nom": "F M coiffeur visagiste",
+      "date_creation": "14/02/2026",
+      "siren": "999835432",
+      "forme_juridique": "Société à responsabilité limitée à associé unique (SARLU ou EURL)",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.536855",
+      "nom": "Olfacta Studio",
+      "date_creation": "13/02/2026",
+      "siren": "999543481",
+      "forme_juridique": "SAS, société par actions simplifiée",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.561497",
+      "nom": "Selfie Life",
+      "date_creation": "10/02/2026",
+      "siren": "999820103",
+      "forme_juridique": "Société à responsabilité limitée à associé unique (SARLU ou EURL)",
+      "adresse": "du siège",
+      "code_postal": "10000",
+      "ville": "EUR"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.581477",
+      "nom": "AMBIANCE MAISON",
+      "date_creation": "09/02/2026",
+      "siren": "999658008",
+      "forme_juridique": "Société à responsabilité limitée à associé unique (SARLU ou EURL)",
+      "adresse": "du siège"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.611596",
+      "nom": "EUROPCAM - INTERNATIONAL",
+      "date_creation": "08/02/2026",
+      "siren": "999440720",
+      "forme_juridique": "SASU, Société par actions simplifiée unipersonnelle"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.640585",
+      "nom": "LHDDP",
+      "date_creation": "07/02/2026",
+      "siren": "999553811",
+      "forme_juridique": "SAS, société par actions simplifiée"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.686743",
+      "nom": "CHARLIE",
+      "date_creation": "04/02/2026",
+      "siren": "994371029",
+      "forme_juridique": "SNC, Société en nom collectif"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.720999",
+      "nom": "LBO",
+      "date_creation": "02/02/2026",
+      "siren": "994302768",
+      "forme_juridique": "SAS, société par actions simplifiée"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.775262",
+      "nom": "SELAS du Docteur Casalan",
+      "date_creation": "02/02/2026",
+      "siren": "998993919",
+      "forme_juridique": "SELAS, Société d'exercice libéral par action simplifiée"
+    },
+    {
+      "scraped_at": "2026-01-22T16:44:13.805104",
+      "nom": "LE FAUBOURG PERPIGNAN LES LAURIERS",
+      "date_creation": "02/02/2026",
+      "siren": "999781511",
+      "forme_juridique": "SASU, Société par actions simplifiée unipersonnelle"
+    }
+  ]
+}

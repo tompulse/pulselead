@@ -15,6 +15,7 @@ import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { AnalyticsViewContainer } from "@/views/AnalyticsViewContainer";
+import { INPIScrapingPanel } from "@/components/dashboard/INPIScrapingPanel";
 import { trackEntrepriseView } from "@/utils/analytics";
 
 const DashboardContent = () => {
@@ -256,6 +257,11 @@ const DashboardContent = () => {
           )}
           {view === 'analytics' && isAdmin && (
             <AnalyticsViewContainer />
+          )}
+          {view === 'scraping' && isAdmin && (
+            <div className="h-full overflow-y-auto p-4">
+              <INPIScrapingPanel />
+            </div>
           )}
         </main>
       </div>

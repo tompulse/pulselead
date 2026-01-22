@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,13 +9,13 @@ import { useCRMActions } from "@/hooks/useCRMActions";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { EnrichDirigeantButton } from "./EnrichDirigeantButton";
-import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User } from "lucide-react";
+import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User, Sparkles } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafNomenclatureComplete";
 import { getCategorieJuridiqueFullLabel } from "@/utils/categoriesJuridiques";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface UnifiedEntreprisePanelProps {
   entreprise: any | null;
@@ -32,6 +32,9 @@ export const UnifiedEntreprisePanel = ({
 }: UnifiedEntreprisePanelProps) => {
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<'info' | 'crm'>('info');
+  const [isEnriching, setIsEnriching] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // If we only have an ID, fetch full data from nouveaux_sites
   const entrepriseId = entreprise?.id;
@@ -121,6 +124,48 @@ export const UnifiedEntreprisePanel = ({
     : null;
 
   const hasCoordinates = displayEntreprise.latitude && displayEntreprise.longitude;
+
+  // Fonction pour enrichir le dirigeant via Pappers
+  const handleEnrichDirigeant = async () => {
+    if (!displayEntreprise.siret) {
+      toast({
+        title: "SIRET requis",
+        description: "Un SIRET est nécessaire pour enrichir les informations du dirigeant.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsEnriching(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('enrich-dirigeant', {
+        body: { siret: displayEntreprise.siret },
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        toast({
+          title: "Dirigeant trouvé !",
+          description: `${data.dirigeant} (${data.fonction})`,
+        });
+        
+        // Rafraîchir les données de l'entreprise
+        queryClient.invalidateQueries({ queryKey: ['entreprise-detail', entrepriseId] });
+      } else {
+        throw new Error(data.error || 'Erreur lors de l\'enrichissement');
+      }
+    } catch (error: any) {
+      console.error('Erreur enrichissement:', error);
+      toast({
+        title: "Erreur d'enrichissement",
+        description: error.message || "Impossible de récupérer les informations du dirigeant. L'entreprise est peut-être trop récente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsEnriching(false);
+    }
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -247,13 +292,6 @@ export const UnifiedEntreprisePanel = ({
                         <User className="w-3.5 h-3.5" />
                         Dirigeant
                       </div>
-                      {!displayEntreprise.dirigeant && displayEntreprise.siret && (
-                        <EnrichDirigeantButton 
-                          siret={displayEntreprise.siret}
-                          entrepriseId={displayEntreprise.id}
-                          currentDirigeant={displayEntreprise.dirigeant}
-                        />
-                      )}
                     </div>
                     {displayEntreprise.dirigeant ? (
                       <div className="space-y-1">
@@ -262,15 +300,45 @@ export const UnifiedEntreprisePanel = ({
                           <p className="text-xs text-muted-foreground">{displayEntreprise.fonction_dirigeant}</p>
                         )}
                         {displayEntreprise.date_enrichissement_dirigeant && (
-                          <p className="text-xs text-green-600 dark:text-green-400">
-                            ✓ Enrichi le {new Date(displayEntreprise.date_enrichissement_dirigeant).toLocaleDateString('fr-FR')}
+                          <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                            ✓ Mis à jour le {new Date(displayEntreprise.date_enrichissement_dirigeant).toLocaleDateString('fr-FR')}
                           </p>
+                        )}
+                        {displayEntreprise.siret && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleEnrichDirigeant}
+                            disabled={isEnriching}
+                            className="mt-2 h-8 text-xs border-blue-500/30 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                          >
+                            <Sparkles className="w-3 h-3 mr-1.5" />
+                            {isEnriching ? 'Recherche...' : 'Actualiser via Pappers'}
+                          </Button>
                         )}
                       </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground italic">
-                        {displayEntreprise.siret ? 'Cliquez pour enrichir' : 'SIRET requis pour enrichir'}
-                      </p>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground italic">
+                          Non renseigné
+                        </p>
+                        {displayEntreprise.siret ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleEnrichDirigeant}
+                            disabled={isEnriching}
+                            className="h-8 text-xs border-blue-500/30 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                          >
+                            <Sparkles className="w-3 h-3 mr-1.5" />
+                            {isEnriching ? 'Recherche...' : 'Trouver via Pappers'}
+                          </Button>
+                        ) : (
+                          <p className="text-xs text-muted-foreground">
+                            SIRET requis pour enrichir
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
 

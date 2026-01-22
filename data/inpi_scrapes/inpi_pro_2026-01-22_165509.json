@@ -1,0 +1,183 @@
+{
+  "metadata": {
+    "scraped_at": "2026-01-22_165509",
+    "total": 14,
+    "with_siren": 14,
+    "with_siret": 0,
+    "with_dirigeant": 8,
+    "with_adresse": 14,
+    "pages_scraped": 1,
+    "duration_seconds": 153,
+    "errors": 1
+  },
+  "companies": [
+    {
+      "siren": "999239007",
+      "nom": "OPENDATA\nARCHIVES HISTORIQUES\nOBSERVATOIRE",
+      "adresse": "du siège 10 RUE Claude Decaen",
+      "code_postal": "39007",
+      "ville": "Retour aux résultats",
+      "code_naf": "4645Z",
+      "dirigeant": "Date de naissance",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/999239007?q=#999239007",
+      "scraped_at": "2026-01-22T16:52:48.587315"
+    },
+    {
+      "siren": "999558810",
+      "nom": "SARL C",
+      "forme_juridique": "SARL",
+      "adresse": "du siège 6 RUE de Limoges",
+      "code_postal": "58810",
+      "ville": "Retour aux résultats",
+      "code_naf": "4711B",
+      "dirigeant": "Date de naissance",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/999558810?q=#999558810",
+      "scraped_at": "2026-01-22T16:52:58.653084"
+    },
+    {
+      "siren": "992530220",
+      "nom": "OPENDATA\nARCHIVES HISTORIQUES\nOBSERVATOIRE",
+      "forme_juridique": "SAS",
+      "adresse": "du siège 13 IMPASSE Sainte Ursule",
+      "code_postal": "30220",
+      "ville": "Retour aux résultats",
+      "code_naf": "4634Z",
+      "fonction_dirigeant": "Président",
+      "url_fiche": "https://data.inpi.fr/entreprises/992530220?q=#992530220",
+      "scraped_at": "2026-01-22T16:53:08.720614"
+    },
+    {
+      "siren": "988107363",
+      "nom": "GOKU MARKET\nSIREN",
+      "adresse": "du siège 9 RUE aux Juifs",
+      "code_postal": "07363",
+      "ville": "Retour aux résultats",
+      "code_naf": "4711B",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/988107363?q=#988107363",
+      "scraped_at": "2026-01-22T16:53:18.945339"
+    },
+    {
+      "siren": "999146970",
+      "nom": "LBL\nSIREN",
+      "forme_juridique": "SAS",
+      "adresse": "du siège 2 RUE de la République",
+      "code_postal": "46970",
+      "ville": "Retour aux résultats",
+      "code_naf": "5610C",
+      "fonction_dirigeant": "Président",
+      "url_fiche": "https://data.inpi.fr/entreprises/999146970?q=#999146970",
+      "scraped_at": "2026-01-22T16:53:28.982253"
+    },
+    {
+      "siren": "999766918",
+      "nom": "L'ATELIER DES MAREES-H",
+      "forme_juridique": "SAS",
+      "adresse": "du siège 77 RUE Louis Seminet",
+      "code_postal": "66918",
+      "ville": "Retour aux résultats",
+      "code_naf": "4759B",
+      "fonction_dirigeant": "Président",
+      "url_fiche": "https://data.inpi.fr/entreprises/999766918?q=#999766918",
+      "scraped_at": "2026-01-22T16:53:39.176256"
+    },
+    {
+      "siren": "999563430",
+      "nom": "OPENDATA\nARCHIVES HISTORIQUES\nOBSERVATOIRE",
+      "forme_juridique": "SAS",
+      "adresse": "du siège 56 RUE Charles de Gaulle",
+      "code_postal": "63430",
+      "ville": "Retour aux résultats",
+      "code_naf": "5610C",
+      "fonction_dirigeant": "Président",
+      "url_fiche": "https://data.inpi.fr/entreprises/999563430?q=#999563430",
+      "scraped_at": "2026-01-22T16:53:49.231279"
+    },
+    {
+      "siren": "100071703",
+      "nom": "JSK\nSIREN",
+      "adresse": "du siège 39 RUE de la Bretonnerie",
+      "code_postal": "71703",
+      "ville": "Retour aux résultats",
+      "code_naf": "4775Z",
+      "dirigeant": "Date de naissance",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/100071703?q=#100071703",
+      "scraped_at": "2026-01-22T16:53:59.292766"
+    },
+    {
+      "siren": "100008309",
+      "nom": "NDL DISTRIBUTION\nSIREN",
+      "adresse": "du siège 130 CHEMIN des Cigales",
+      "code_postal": "08309",
+      "ville": "Retour aux résultats",
+      "code_naf": "4532Z",
+      "dirigeant": "Date de naissance",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/100008309?q=#100008309",
+      "scraped_at": "2026-01-22T16:54:09.545309"
+    },
+    {
+      "siren": "999983984",
+      "nom": "OPENDATA\nARCHIVES HISTORIQUES\nOBSERVATOIRE",
+      "adresse": "du siège 111 RUE Faidherbe",
+      "code_postal": "83984",
+      "ville": "Retour aux résultats",
+      "code_naf": "6202A",
+      "dirigeant": "Date de naissance",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/999983984?q=#999983984",
+      "scraped_at": "2026-01-22T16:54:19.563067"
+    },
+    {
+      "siren": "999835432",
+      "nom": "F M",
+      "adresse": "du siège 12 RUE DASTE",
+      "code_postal": "35432",
+      "ville": "Retour aux résultats",
+      "code_naf": "9602A",
+      "dirigeant": "Date de naissance",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/999835432?q=#999835432",
+      "scraped_at": "2026-01-22T16:54:29.610700"
+    },
+    {
+      "siren": "999543481",
+      "nom": "OPENDATA\nARCHIVES HISTORIQUES\nOBSERVATOIRE",
+      "forme_juridique": "SAS",
+      "adresse": "du siège 52 RUE du Point du Jour",
+      "code_postal": "43481",
+      "ville": "Retour aux résultats",
+      "code_naf": "7022Z",
+      "fonction_dirigeant": "Président",
+      "url_fiche": "https://data.inpi.fr/entreprises/999543481?q=#999543481",
+      "scraped_at": "2026-01-22T16:54:39.657141"
+    },
+    {
+      "siren": "999820103",
+      "nom": "OPENDATA\nARCHIVES HISTORIQUES\nOBSERVATOIRE",
+      "adresse": "du siège 6 RUE du Moulin à Vent",
+      "code_postal": "20103",
+      "ville": "Retour aux résultats",
+      "code_naf": "8230Z",
+      "dirigeant": "Date de naissance",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/999820103?q=#999820103",
+      "scraped_at": "2026-01-22T16:54:49.664715"
+    },
+    {
+      "siren": "999658008",
+      "nom": "AMBIANCE MAISON\nSIREN",
+      "adresse": "du siège 13 RUE de la Commune",
+      "code_postal": "58008",
+      "ville": "Retour aux résultats",
+      "code_naf": "4751Z",
+      "dirigeant": "Date de naissance",
+      "fonction_dirigeant": "Gérant",
+      "url_fiche": "https://data.inpi.fr/entreprises/999658008?q=#999658008",
+      "scraped_at": "2026-01-22T16:54:59.765116"
+    }
+  ]
+}

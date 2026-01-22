@@ -90,7 +90,7 @@ const MentionsLegales = () => {
         </div>
 
         <div className="mt-8 sm:mt-10 md:mt-12 pt-4 sm:pt-6 md:pt-8 border-t border-accent/20 text-center text-muted-foreground text-xs sm:text-sm">
-          <p>Dernière mise à jour : 13 janvier 2026</p>
+          <p>Dernière mise à jour : 22 janvier 2026</p>
         </div>
       </div>
     </div>

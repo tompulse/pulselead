@@ -21,8 +21,12 @@ serve(async (req) => {
 
     console.log('🔍 Enrichissement dirigeant pour SIRET:', siret)
 
-    // Clé API Pappers
-    const PAPPERS_API_KEY = '1e9c651924c40f6cb1d6aa6b0332ffadd084a5c3c06630ef'
+    // Clé API Pappers depuis les secrets Supabase
+    const PAPPERS_API_KEY = Deno.env.get('PAPPERS_API_KEY')
+    
+    if (!PAPPERS_API_KEY) {
+      throw new Error('Clé API Pappers non configurée. Configurez-la avec: supabase secrets set PAPPERS_API_KEY=votre_cle')
+    }
 
     // Appel à l'API Pappers
     const pappersUrl = `https://api.pappers.fr/v2/entreprise?api_token=${PAPPERS_API_KEY}&siret=${siret}`
