@@ -1,4 +1,4 @@
-import { Star, Quote, Building2, TrendingUp, Target } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -29,34 +29,10 @@ const testimonials = [
   }
 ];
 
-const stats = [
-  { value: '150+', label: 'Commerciaux actifs', icon: Building2 },
-  { value: '40%', label: 'de km économisés', icon: TrendingUp },
-  { value: '2h', label: 'gagnées par jour', icon: Target },
-];
-
 export const SocialProof = () => {
   return (
     <section className="py-20 px-6 relative z-10">
       <div className="container mx-auto max-w-6xl">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {stats.map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={idx} className="bg-card/50 backdrop-blur-sm border-white/10 p-6 text-center hover:border-accent/30 transition-all duration-300">
-                <div className="flex justify-center mb-3">
-                  <div className="rounded-full bg-accent/10 p-3">
-                    <Icon className="w-6 h-6 text-accent" />
-                  </div>
-                </div>
-                <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-sm text-white/60">{stat.label}</div>
-              </Card>
-            );
-          })}
-        </div>
-
         {/* Header */}
         <div className="text-center mb-12">
           <Badge className="bg-accent/10 text-accent border-accent/20 mb-4">
