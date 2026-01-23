@@ -112,21 +112,7 @@ const DashboardContent = () => {
         .eq('user_id', session.user.id)
         .single();
 
-      // Load saved filters if any
-      const savedFilters = localStorage.getItem('pulse_initial_filters');
-      if (savedFilters) {
-        try {
-          const parsed = JSON.parse(savedFilters);
-          setFilters(prev => ({
-            ...prev,
-            nafSections: parsed.nafSections || [],
-            nafDivisions: parsed.nafDivisions || [],
-            departments: parsed.departments || []
-          }));
-        } catch (e) {
-          console.error('Error parsing saved filters:', e);
-        }
-      }
+      // Filtres vides par défaut (pas de chargement automatique)
       
       setLoading(false);
     };
