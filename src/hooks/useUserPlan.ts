@@ -8,21 +8,30 @@ interface UserPlan {
   planType: PlanType;
   hasAccess: boolean;
   quotas?: {
-    prospects_viewed: number;
+    prospects_unlocked: number;
     prospects_limit: number;
     tournees_created: number;
     tournees_limit: number;
-    crm_reminders_enabled: boolean;
   };
   subscriptionStatus?: string;
   daysRemaining?: number;
   endDate?: string;
 }
 
+interface UnlockResult {
+  success: boolean;
+  limit_reached: boolean;
+  message?: string;
+  unlocked_count?: number;
+  limit?: number;
+}
+
 interface QuotaCheckResult {
   allowed: boolean;
   limit_reached: boolean;
   message?: string;
+  tournees_created?: number;
+  limit?: number;
 }
 
 export const useUserPlan = (userId: string | undefined) => {
@@ -66,23 +75,71 @@ export const useUserPlan = (userId: string | undefined) => {
     }
   };
 
-  const checkProspectQuota = async (department: string): Promise<QuotaCheckResult> => {
+  const unlockProspect = async (entrepriseId: string): Promise<UnlockResult> => {
     if (!userId) {
-      return { allowed: false, limit_reached: true, message: 'Utilisateur non connecté' };
+      return { 
+        success: false, 
+        limit_reached: false, 
+        message: 'Utilisateur non connecté' 
+      };
     }
 
     try {
-      const { data, error } = await supabase.rpc('increment_prospect_quota', {
+      const { data, error } = await supabase.rpc('unlock_prospect', {
         _user_id: userId,
-        _department: department
+        _entreprise_id: entrepriseId
       });
 
       if (error) throw error;
       
-      return data as QuotaCheckResult;
+      const result = data as UnlockResult;
+      
+      // Refresh plan to update quotas
+      await checkPlan();
+      
+      return result;
     } catch (error: any) {
-      console.error('Error checking prospect quota:', error);
-      return { allowed: false, limit_reached: true, message: 'Erreur de vérification' };
+      console.error('Error unlocking prospect:', error);
+      return { 
+        success: false, 
+        limit_reached: false, 
+        message: 'Erreur lors du déblocage' 
+      };
+    }
+  };
+
+  const isProspectUnlocked = async (entrepriseId: string): Promise<boolean> => {
+    if (!userId) return false;
+
+    try {
+      const { data, error } = await supabase.rpc('is_prospect_unlocked', {
+        _user_id: userId,
+        _entreprise_id: entrepriseId
+      });
+
+      if (error) throw error;
+      
+      return data as boolean;
+    } catch (error: any) {
+      console.error('Error checking if prospect is unlocked:', error);
+      return false;
+    }
+  };
+
+  const getUnlockedProspects = async (): Promise<Array<{ entreprise_id: string; unlocked_at: string }>> => {
+    if (!userId) return [];
+
+    try {
+      const { data, error } = await supabase.rpc('get_unlocked_prospects', {
+        _user_id: userId
+      });
+
+      if (error) throw error;
+      
+      return data || [];
+    } catch (error: any) {
+      console.error('Error getting unlocked prospects:', error);
+      return [];
     }
   };
 
@@ -156,7 +213,9 @@ export const useUserPlan = (userId: string | undefined) => {
     isPro: isPro(),
     isFree: isFree(),
     refresh: checkPlan,
-    checkProspectQuota,
+    unlockProspect,
+    isProspectUnlocked,
+    getUnlockedProspects,
     checkTourneeQuota,
     incrementTourneeQuota,
     showUpgradeMessage,
