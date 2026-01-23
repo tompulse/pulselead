@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MapPin, Calendar, StickyNote, Mail } from "lucide-react";
+import { MapPin, Calendar, StickyNote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -36,7 +36,7 @@ export const UnifiedCRMActions = ({
   size = 'lg',
 }: UnifiedCRMActionsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<'email' | 'visite' | 'rdv' | 'autre'>('visite');
+  const [selectedType, setSelectedType] = useState<'visite' | 'rdv' | 'autre'>('visite');
   const [notes, setNotes] = useState('');
   const [prochaine_action, setProchaine_action] = useState('');
   const [date_relance, setDate_relance] = useState('');
@@ -71,9 +71,6 @@ export const UnifiedCRMActions = ({
       const nextWeek = new Date();
       nextWeek.setDate(nextWeek.getDate() + 7);
       setDate_relance(nextWeek.toISOString().slice(0, 16));
-    } else if (type === 'email') {
-      setProchaine_action('Relancer dans 3 jours');
-      setNouveauStatutLead('contacte');
     }
     
     setIsDialogOpen(true);
@@ -109,7 +106,6 @@ export const UnifiedCRMActions = ({
       if (error) throw error;
 
       const actionMessages = {
-        email: { title: "✉️ Email enregistré !", description: "Votre échange par email a été enregistré" },
         visite: { title: "🚗 Visite enregistrée !", description: "Votre visite sur site a été documentée" },
         rdv: { title: "📅 Rendez-vous confirmé !", description: "Le rendez-vous a été ajouté à votre suivi" },
         autre: { title: "✅ Note enregistrée !", description: "Votre note a été ajoutée avec succès" },
@@ -160,7 +156,6 @@ export const UnifiedCRMActions = ({
   };
 
   const suggestions = {
-    email: ['Envoyer la documentation', 'Planifier un appel', 'Demander plus d\'infos'],
     visite: ['Envoyer proposition commerciale', 'Organiser RDV de closing', 'Demander références'],
     rdv: ['Préparer la présentation', 'Envoyer devis personnalisé', 'Relancer sous 3 jours'],
     autre: ['Faire un suivi', 'Vérifier la disponibilité', 'Relancer'],
@@ -172,7 +167,7 @@ export const UnifiedCRMActions = ({
 
   return (
     <>
-      <div className={`grid ${mode === 'inline' ? 'grid-cols-4' : 'grid-cols-3'} gap-3`}>
+      <div className="grid grid-cols-3 gap-3">
         <Button
           variant="outline"
           size={size}
@@ -196,25 +191,13 @@ export const UnifiedCRMActions = ({
         <Button
           variant="outline"
           size={size}
-          onClick={() => handleQuickAction('email')}
-          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 transition-colors group relative overflow-hidden shadow-sm`}
+          onClick={() => handleQuickAction('autre')}
+          className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500 transition-colors group relative overflow-hidden shadow-sm`}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/5 to-blue-500/0 group-hover:from-blue-500/10 group-hover:to-blue-500/20 transition-all" />
-          <Mail className={`${iconSize} text-blue-500 relative z-10`} />
-          <span className={`${textSize} font-medium relative z-10`}>Email</span>
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/5 to-amber-500/0 group-hover:from-amber-500/10 group-hover:to-amber-500/20 transition-all" />
+          <StickyNote className={`${iconSize} text-amber-500 relative z-10`} />
+          <span className={`${textSize} font-medium relative z-10`}>Note</span>
         </Button>
-        {mode === 'inline' && (
-          <Button
-            variant="outline"
-            size={size}
-            onClick={() => handleQuickAction('autre')}
-            className={`${buttonHeight} flex flex-col items-center justify-center gap-2 border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500 transition-colors group relative overflow-hidden shadow-sm`}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/5 to-amber-500/0 group-hover:from-amber-500/10 group-hover:to-amber-500/20 transition-all" />
-            <StickyNote className={`${iconSize} text-amber-500 relative z-10`} />
-            <span className={`${textSize} font-medium relative z-10`}>Note</span>
-          </Button>
-        )}
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} modal>

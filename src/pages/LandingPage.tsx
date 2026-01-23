@@ -602,7 +602,7 @@ const LandingPage = () => {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl mx-auto">
                 {[
-                  { q: "🎯 C'est quoi la différence avec Salesforce/Sparklane ?", a: "PULSE est conçu POUR les commerciaux terrain. Pas de CRM usine à gaz : juste ce qu'il faut pour prospecter intelligemment. Les tournées optimisées IA sont incluses (pas besoin de 10 outils différents), et tout fonctionne en mode mobile." },
+                  { q: "🎯 Quelle est la différence avec les concurrents ?", a: "PULSE est conçu POUR les commerciaux terrain. Pas de CRM usine à gaz : juste ce qu'il faut pour prospecter intelligemment. Les tournées optimisées IA sont incluses (pas besoin de 10 outils différents), et tout fonctionne en mode mobile." },
                   { q: "📱 Ça marche vraiment sur téléphone ?", a: "Oui ! PULSE est une PWA (Progressive Web App) : vous l'installez comme une appli, ça fonctionne hors ligne, et c'est optimisé pour iPhone et Android. Ajoutez vos interactions terrain en 10 secondes." },
                   { q: "🗺️ Comment fonctionne l'optimisation de tournées ?", a: "Sélectionnez vos prospects, PULSE calcule automatiquement l'itinéraire le plus court avec Mapbox. Vous économisez jusqu'à 40% de kilomètres. Vous pouvez modifier l'ordre manuellement et lancer la navigation GPS directement." },
                   { q: "🔄 Les données sont actualisées quand ?", a: "Données INSEE/SIRENE mises à jour chaque semaine. Vous avez accès aux nouvelles créations d'entreprises en quasi temps-réel (délai INSEE : ~5 jours après l'immatriculation)." },
@@ -664,7 +664,7 @@ const LandingPage = () => {
               <p>
                 PULSE utilise des données publiques issues du répertoire SIRENE (INSEE). Conformément à l'article A123-96 du Code de commerce, 
                 seules les entreprises n'ayant pas exercé leur droit d'opposition à la diffusion sont affichées. PULSE est un outil d'optimisation 
-                de tournées terrain, pas un outil de prospection téléphonique ou par email.
+                de tournées terrain, pas un outil de prospection téléphonique ou par email. Les données affichées sont : SIRET/SIREN, nom de l'entreprise, adresse et date de création.
               </p>
             </div>
             <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-white/40 text-sm">

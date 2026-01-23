@@ -47,18 +47,17 @@ const MentionsLegales = () => {
           <section>
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">Sources de données</h2>
             <p className="mb-2 sm:mb-3 md:mb-4">
-              <strong>Données d'entreprises :</strong> Les informations sur les entreprises, associations et collectivités affichées dans PULSE 
+              <strong>Données d'entreprises :</strong> Les informations sur les entreprises affichées dans PULSE 
               proviennent du répertoire SIRENE géré par l'INSEE (Institut National de la Statistique et des Études Économiques).
             </p>
             <p className="mb-2 sm:mb-3 md:mb-4">
               Ces données sont des données publiques au sens de la loi française. Conformément à l'article A123-96 du Code de commerce, 
-              seules les entreprises n'ayant pas exercé leur droit d'opposition à la diffusion de leurs données à des fins de prospection 
-              commerciale sont affichées.
+              seules les entreprises n'ayant pas exercé leur droit d'opposition à la diffusion sont affichées.
             </p>
             <p className="mb-2 sm:mb-3 md:mb-4">
-              <strong>Usage des données :</strong> PULSE est un outil d'optimisation de tournées commerciales terrain. 
-              Il n'est pas destiné à la prospection téléphonique ou par email. Les données affichées sont strictement limitées 
-              aux informations publiques non personnelles (raison sociale, adresse du siège, activité, effectifs).
+              <strong>Usage des données :</strong> PULSE est un outil d'optimisation de tournées terrain, pas un outil de prospection 
+              téléphonique ou par email. Les données affichées sont strictement limitées aux informations publiques non personnelles : 
+              SIRET/SIREN, nom de l'entreprise, adresse et date de création.
             </p>
           </section>
 

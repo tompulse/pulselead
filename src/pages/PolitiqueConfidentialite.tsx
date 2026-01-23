@@ -64,23 +64,19 @@ const PolitiqueConfidentialite = () => {
           <section>
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">4. Données d'entreprises tierces</h2>
             <p>
-              <strong>Source :</strong> PULSE utilise des données publiques issues du répertoire SIRENE (INSEE) pour permettre 
-              l'optimisation de tournées commerciales terrain.
+              <strong>Source :</strong> PULSE utilise des données publiques issues du répertoire SIRENE (INSEE). 
+              Conformément à l'article A123-96 du Code de commerce, seules les entreprises n'ayant pas exercé leur droit d'opposition 
+              à la diffusion sont affichées. PULSE est un outil d'optimisation de tournées terrain, pas un outil de prospection 
+              téléphonique ou par email.
             </p>
             <p className="mt-2 sm:mt-3 md:mt-4">
               <strong>Données affichées :</strong> Les informations présentées sont strictement limitées aux données publiques 
-              non personnelles : SIRET, dénomination sociale, adresse du siège social, code NAF (activité), date de création, 
-              tranche d'effectifs et forme juridique.
+              non personnelles : SIRET/SIREN, nom de l'entreprise, adresse et date de création.
             </p>
             <p className="mt-2 sm:mt-3 md:mt-4">
-              <strong>Conformité RGPD :</strong> Conformément à l'article A123-96 du Code de commerce, seules les entreprises 
-              n'ayant pas exercé leur droit d'opposition à la diffusion sont affichées. PULSE n'affiche aucune donnée personnelle 
-              des dirigeants (noms, prénoms, téléphones, emails personnels).
-            </p>
-            <p className="mt-2 sm:mt-3 md:mt-4">
-              <strong>Usage prévu :</strong> PULSE n'est pas un outil de prospection téléphonique ou par email, mais un outil 
-              d'aide à la planification de visites terrain. Les données sont mises à jour régulièrement mais leur exactitude ne 
-              peut être garantie à 100%. L'utilisateur est responsable de vérifier les informations avant toute utilisation commerciale.
+              <strong>Conformité RGPD :</strong> Aucune donnée personnelle des dirigeants n'est collectée ou affichée. 
+              Les données sont mises à jour régulièrement mais leur exactitude ne peut être garantie à 100%. 
+              L'utilisateur est responsable de vérifier les informations avant toute utilisation commerciale.
             </p>
           </section>
 

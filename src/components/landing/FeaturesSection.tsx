@@ -15,7 +15,7 @@ export const FeaturesSection = () => {
     {
       icon: Zap,
       title: "CRM simple et mobile",
-      description: "Enregistrez visites, appels et relances depuis votre mobile. Pipeline visuel pour suivre vos opportunités."
+      description: "Enregistrez visites, notes et relances depuis votre mobile. Pipeline visuel pour suivre vos opportunités."
     },
     {
       icon: TrendingUp,
@@ -30,7 +30,7 @@ export const FeaturesSection = () => {
     {
       icon: Shield,
       title: "Données publiques officielles",
-      description: "Sources SIRENE (INSEE) conformes RGPD. Seules les entreprises sans opposition à la diffusion. Outil de visite terrain, pas de téléprospection."
+      description: "Sources SIRENE (INSEE) conformes RGPD. Seules les entreprises sans opposition à la diffusion. Outil d'optimisation de tournées terrain."
     },
     {
       icon: BarChart,
