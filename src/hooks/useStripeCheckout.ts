@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Prix ID Stripe - Mode Production - Plan mensuel à 79€/mois
+// Prix ID Stripe - Mode Production - Plan mensuel à 49€/mois
+// ⚠️ IMPORTANT: Créer un nouveau Price sur Stripe à 49€/mois et remplacer ce price_id
 const STRIPE_PRICE_ID = 'price_1SqxKmHjyidZ5i9L8tCztpFU';
 
 export const useStripeCheckout = () => {

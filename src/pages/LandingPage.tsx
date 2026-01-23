@@ -45,28 +45,28 @@ const LandingPage = () => {
   // Handle dashboard button click - redirect to auth if not logged in, dashboard if has access
   const handleDashboardClick = () => {
     if (!isLoggedIn) {
-      // Not logged in - go to auth page, then redirect to dashboard check
-      navigate('/auth?redirect=dashboard');
+      // Not logged in - go to auth page
+      navigate('/auth');
     } else if (hasAccess) {
       // Logged in with access - go to dashboard
       navigate('/dashboard');
     } else {
-      // Logged in but no access - initiate checkout
-      initiateCheckout();
+      // Logged in but no access - go to plan selection
+      navigate('/plan-selection');
     }
   };
 
-  // Handle CTA "Commencer maintenant" click - same logic: dashboard if access, otherwise checkout
+  // Handle CTA "Commencer maintenant" click - same logic: dashboard if access, otherwise plan selection
   const handleCTAClick = () => {
     if (!isLoggedIn) {
-      // Not logged in - go to auth page, then redirect to checkout
-      navigate('/auth?redirect=checkout');
+      // Not logged in - go to auth page
+      navigate('/auth');
     } else if (hasAccess) {
       // Logged in with access - go directly to dashboard
       navigate('/dashboard');
     } else {
-      // Logged in but no access - initiate checkout
-      initiateCheckout();
+      // Logged in but no access - go to plan selection
+      navigate('/plan-selection');
     }
   };
 

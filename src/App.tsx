@@ -15,6 +15,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const TourneeDetail = lazy(() => import("./pages/TourneeDetail"));
 const SecuritySettings = lazy(() => import("./pages/SecuritySettings"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
+const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 
 // Eagerly load light pages
 import Auth from "./pages/Auth";
@@ -63,6 +64,7 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/subscribe" element={<Navigate to="/" replace />} />
+            <Route path="/plan-selection" element={<PlanSelection />} />
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
