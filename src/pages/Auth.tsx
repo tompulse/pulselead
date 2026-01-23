@@ -34,9 +34,6 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [isRecoveryHandled, setIsRecoveryHandled] = useState(false);
@@ -64,36 +61,18 @@ const Auth = () => {
   const isForgot = mode === 'forgot';
   const isReset = mode === 'reset';
 
-  // Compte démo sans validation stricte
-  const DEMO_EMAIL = 'demo@pulse.com';
-  const isDemoAccount = email.toLowerCase() === DEMO_EMAIL;
-
+  // Schema simplifié pour tous les comptes : email + password uniquement
   const loginSchema = z.object({
     email: z.string().trim().email('Email invalide').max(255, 'Email trop long'),
     password: z.string().min(6, 'Minimum 6 caractères requis')
   });
 
-  const loginSchemaStrict = z.object({
+  const signupSchema = z.object({
     email: z.string().trim().email('Email invalide').max(255, 'Email trop long'),
     password: z.string()
       .min(8, 'Minimum 8 caractères requis')
       .regex(/[A-Z]/, 'Doit contenir au moins une majuscule')
       .regex(/[0-9]/, 'Doit contenir au moins un chiffre')
-  });
-
-  const signupSchema = loginSchemaStrict.extend({
-    firstName: z.string().trim().min(2, 'Prénom requis (min. 2 caractères)').max(50, 'Prénom trop long'),
-    lastName: z.string().trim().min(2, 'Nom requis (min. 2 caractères)').max(50, 'Nom trop long'),
-    phone: z.string()
-      .trim()
-      .regex(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/, 'Numéro de téléphone français invalide')
-      .transform(val => val.replace(/[\s.-]/g, ''))
-  });
-
-  // Schema simplifié pour le compte démo (pas de téléphone requis)
-  const demoSignupSchema = z.object({
-    email: z.string().trim().email('Email invalide'),
-    password: z.string().min(6, 'Minimum 6 caractères requis')
   });
 
   // Get redirect destination from URL params
@@ -246,17 +225,9 @@ const Auth = () => {
       return handleForgotPassword(e);
     }
     
-    // Choisir le schema selon le type de compte
-    let schema;
-    let data;
-    
-    if (isLogin) {
-      schema = isDemoAccount ? loginSchema : loginSchemaStrict;
-      data = { email, password };
-    } else {
-      schema = isDemoAccount ? demoSignupSchema : signupSchema;
-      data = isDemoAccount ? { email, password } : { email, password, firstName, lastName, phone };
-    }
+    // Validation simple : email + password pour login et signup
+    const schema = isLogin ? loginSchema : signupSchema;
+    const data = { email, password };
     
     const validation = schema.safeParse(data);
     
@@ -286,30 +257,13 @@ const Auth = () => {
           description: "Bienvenue sur PULSE !",
         });
       } else {
-        // Pour le compte démo, pas de téléphone ni nom
-        const signupOptions: any = {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-        };
-        
-        if (!isDemoAccount) {
-          const validatedData = validation.data as { 
-            email: string; 
-            password: string; 
-            firstName?: string;
-            lastName?: string;
-            phone?: string 
-          };
-          signupOptions.data = { 
-            first_name: validatedData.firstName,
-            last_name: validatedData.lastName,
-            phone: validatedData.phone 
-          };
-        }
-        
+        // Signup simple : email + password uniquement
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: signupOptions,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+          },
         });
 
         if (error) throw error;
@@ -323,9 +277,6 @@ const Auth = () => {
         // Switch to login mode after signup
         setMode('login');
         setPassword('');
-        setFirstName('');
-        setLastName('');
-        setPhone('');
       }
     } catch (error: any) {
       toast({
@@ -477,74 +428,28 @@ const Auth = () => {
                 </div>
               )}
 
-              {!isLogin && !isForgot && !isDemoAccount && (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-1.5 sm:space-y-2">
-                      <Label htmlFor="firstName" className="text-sm">Prénom *</Label>
-                      <Input
-                        id="firstName"
-                        type="text"
-                        placeholder="Jean"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        className="bg-background/50 border-border focus:border-accent h-10"
-                        disabled={loading}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1.5 sm:space-y-2">
-                      <Label htmlFor="lastName" className="text-sm">Nom *</Label>
-                      <Input
-                        id="lastName"
-                        type="text"
-                        placeholder="Dupont"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        className="bg-background/50 border-border focus:border-accent h-10"
-                        disabled={loading}
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Téléphone *</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="06 12 34 56 78"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="bg-background/50 border-border focus:border-accent"
-                      disabled={loading}
+              {!isLogin && !isForgot && (
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      id="terms"
                       required
+                      disabled={loading}
+                      className="mt-1 w-4 h-4 rounded border-border bg-background/50 text-accent focus:ring-accent focus:ring-offset-0"
                     />
-                    <p className="text-xs text-muted-foreground">Format: 06 12 34 56 78 ou +33 6 12 34 56 78</p>
+                    <Label htmlFor="terms" className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer">
+                      J'accepte les{" "}
+                      <a href="/cgu" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                        Conditions Générales d'Utilisation
+                      </a>
+                      {" "}et la{" "}
+                      <a href="/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                        Politique de Confidentialité
+                      </a>
+                    </Label>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-2">
-                      <input
-                        type="checkbox"
-                        id="terms"
-                        required
-                        disabled={loading}
-                        className="mt-1 w-4 h-4 rounded border-border bg-background/50 text-accent focus:ring-accent focus:ring-offset-0"
-                      />
-                      <Label htmlFor="terms" className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer">
-                        J'accepte les{" "}
-                        <a href="/cgu" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-                          Conditions Générales d'Utilisation
-                        </a>
-                        {" "}et la{" "}
-                        <a href="/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-                          Politique de Confidentialité
-                        </a>
-                      </Label>
-                    </div>
-                  </div>
-                </>
+                </div>
               )}
 
               <Button
