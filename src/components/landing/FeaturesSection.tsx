@@ -30,7 +30,7 @@ export const FeaturesSection = () => {
     {
       icon: Shield,
       title: "Données publiques officielles",
-      description: "Sources SIRENE (INSEE) conformes RGPD. Seules les entreprises sans opposition à la diffusion. Outil d'optimisation de tournées terrain."
+      description: "Sources SIRENE (INSEE) conformes RGPD. Données publiques légales. Outil d'optimisation de tournées terrain."
     },
     {
       icon: BarChart,

@@ -65,9 +65,7 @@ const PolitiqueConfidentialite = () => {
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">4. Données d'entreprises tierces</h2>
             <p>
               <strong>Source :</strong> PULSE utilise des données publiques issues du répertoire SIRENE (INSEE). 
-              Conformément à l'article A123-96 du Code de commerce, seules les entreprises n'ayant pas exercé leur droit d'opposition 
-              à la diffusion sont affichées. PULSE est un outil d'optimisation de tournées terrain, pas un outil de prospection 
-              téléphonique ou par email.
+              PULSE est un outil d'optimisation de tournées terrain, pas un outil de prospection téléphonique ou par email.
             </p>
             <p className="mt-2 sm:mt-3 md:mt-4">
               <strong>Données affichées :</strong> Les informations présentées sont strictement limitées aux données publiques 

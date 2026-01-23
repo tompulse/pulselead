@@ -103,8 +103,7 @@ const CGU = () => {
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">7. Source et utilisation des données d'entreprises</h2>
             <p>
               PULSE utilise des données publiques issues du répertoire SIRENE (INSEE). 
-              Conformément à l'article A123-96 du Code de commerce, seules les entreprises n'ayant pas exercé leur droit d'opposition à la diffusion 
-              sont affichées. PULSE est un outil d'optimisation de tournées terrain, pas un outil de prospection téléphonique ou par email.
+              PULSE est un outil d'optimisation de tournées terrain, pas un outil de prospection téléphonique ou par email.
             </p>
             <p className="mt-2 sm:mt-3 md:mt-4">
               <strong>Données affichées :</strong> Les informations présentées sont strictement limitées aux données publiques non personnelles : 
@@ -116,8 +115,8 @@ const CGU = () => {
               les informations avant toute utilisation commerciale.
             </p>
             <p className="mt-2 sm:mt-3 md:mt-4 p-4 bg-accent/10 rounded-lg border border-accent/20">
-              <strong>Engagement de conformité :</strong> PULSE s'engage à respecter strictement les droits d'opposition exercés par les entreprises 
-              conformément au RGPD et à la législation française sur la protection des données. Aucune donnée personnelle des dirigeants n'est collectée ou affichée.
+              <strong>Engagement de conformité :</strong> PULSE s'engage à respecter strictement le RGPD et la législation française sur la protection des données. 
+              Aucune donnée personnelle des dirigeants n'est collectée ou affichée.
             </p>
           </section>
 

@@ -662,8 +662,7 @@ const LandingPage = () => {
             </div>
             <div className="text-xs text-white/50 text-center mb-6 max-w-3xl mx-auto border-t border-white/10 pt-6">
               <p>
-                PULSE utilise des données publiques issues du répertoire SIRENE (INSEE). Conformément à l'article A123-96 du Code de commerce, 
-                seules les entreprises n'ayant pas exercé leur droit d'opposition à la diffusion sont affichées. PULSE est un outil d'optimisation 
+                PULSE utilise des données publiques issues du répertoire SIRENE (INSEE). PULSE est un outil d'optimisation 
                 de tournées terrain, pas un outil de prospection téléphonique ou par email. Les données affichées sont : SIRET/SIREN, nom de l'entreprise, adresse et date de création.
               </p>
             </div>
