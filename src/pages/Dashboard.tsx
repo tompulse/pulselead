@@ -179,13 +179,6 @@ const DashboardContent = () => {
     );
   }
 
-  if (showWizard) {
-    return <OnboardingWizard onComplete={() => {
-      setShowWizard(false);
-      setLoading(false);
-    }} />;
-  }
-
   if (showOnboarding) {
     return <FilterOnboarding onComplete={handleOnboardingComplete} />;
   }
