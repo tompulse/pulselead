@@ -7,7 +7,7 @@ const testimonials = [
     name: 'Antoine M.',
     role: 'Commercial terrain',
     company: 'Énergie renouvelable',
-    content: "J'ai économisé 40% de km sur mes tournées. L'optimisation IA est bluffante, je gagne 2h par jour !",
+    content: "L'optimisation de tournées m'a fait économiser 40% de km. Je peux filtrer par secteur NAF et créer mes itinéraires en 2 clics. Un vrai game changer !",
     rating: 5,
     avatar: 'AM'
   },
@@ -15,7 +15,7 @@ const testimonials = [
     name: 'Sophie L.',
     role: 'Responsable développement',
     company: 'Services B2B',
-    content: "Fini le temps perdu à chercher des prospects. PULSE me donne directement les nouvelles entreprises de ma zone avec leur téléphone.",
+    content: "Accès à 4,5M d'entreprises avec filtres par département, NAF, effectif... Plus besoin de chercher pendant des heures, tout est là. Le GPS intégré est un énorme plus.",
     rating: 5,
     avatar: 'SL'
   },
@@ -23,7 +23,7 @@ const testimonials = [
     name: 'Thomas R.',
     role: 'Indépendant',
     company: 'Conseil & Formation',
-    content: "Le CRM mobile est ultra-simple. Je note mes visites en 10 secondes, même en voiture. Un vrai gain de productivité.",
+    content: "Le CRM intégré est parfait pour le terrain : notes rapides, rappels, statuts de visite. Je gère tout depuis mon téléphone, même sans réseau. Simple et efficace.",
     rating: 5,
     avatar: 'TR'
   }

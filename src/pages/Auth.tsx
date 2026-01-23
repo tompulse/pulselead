@@ -315,10 +315,13 @@ const Auth = () => {
         if (error) throw error;
 
         toast({
-          title: "✅ Compte créé avec succès !",
-          description: "Vous pouvez maintenant vous connecter",
+          title: "📧 Vérifiez votre boîte mail !",
+          description: "Nous vous avons envoyé un email de confirmation. Cliquez sur le lien pour activer votre compte.",
+          duration: 8000,
         });
-        setEmail('');
+        
+        // Switch to login mode after signup
+        setMode('login');
         setPassword('');
         setFirstName('');
         setLastName('');

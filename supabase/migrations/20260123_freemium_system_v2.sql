@@ -41,6 +41,9 @@ CREATE TABLE IF NOT EXISTS user_quotas (
   tournees_created_count int DEFAULT 0,
   tournees_reset_date timestamptz DEFAULT now(),
   
+  -- First login flag for demo (shown once)
+  is_first_login boolean DEFAULT true,
+  
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
