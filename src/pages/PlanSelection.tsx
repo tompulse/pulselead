@@ -11,25 +11,62 @@ const PlanSelection = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check if user is logged in and if they already selected a plan
+    const checkUserAndPlan = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       if (!session) {
         navigate("/auth");
         return;
       }
+      
       setUserId(session.user.id);
-    });
+      
+      // Check if user already has a plan (and it's not the auto-assigned free plan on first signup)
+      const { data: quotas } = await supabase
+        .from('user_quotas')
+        .select('plan_type, is_first_login')
+        .eq('user_id', session.user.id)
+        .single();
+      
+      // If user has chosen a plan before (is_first_login = false), redirect to dashboard
+      if (quotas && !quotas.is_first_login) {
+        navigate("/dashboard");
+        return;
+      }
+      
+      setChecking(false);
+    };
+    
+    checkUserAndPlan();
   }, [navigate]);
+
+  // Show loading while checking
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-navy-deep to-black-deep flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
+          <p className="text-white/70">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleFreePlan = async () => {
     if (!userId) return;
     
     setLoading(true);
     try {
-      // Le plan free est déjà assigné par défaut via le trigger SQL
-      // On redirige juste vers le dashboard
+      // Mark that user has made their plan choice (set is_first_login to false)
+      await supabase
+        .from('user_quotas')
+        .update({ is_first_login: false })
+        .eq('user_id', userId);
+      
       toast({
         title: "🎉 Bienvenue sur PULSE !",
         description: "Votre plan gratuit est activé. Profitez de 30 prospects et 2 tournées par mois.",

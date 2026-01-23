@@ -102,7 +102,7 @@ export const SubscriptionStatusBanner = ({
               </span>
               {formattedEndDate && (
                 <span className="text-xs text-muted-foreground hidden md:inline">
-                  · Premier prélèvement le {formattedEndDate} (79€)
+                  · Premier prélèvement le {formattedEndDate} (49€)
                 </span>
               )}
             </div>
@@ -139,7 +139,7 @@ export const SubscriptionStatusBanner = ({
         {formattedEndDate && (
           <p className="text-xs text-muted-foreground mt-2 md:hidden flex items-center gap-1">
             <CreditCard className="h-3 w-3" />
-            Premier prélèvement le {formattedEndDate} (79€)
+            Premier prélèvement le {formattedEndDate} (49€)
           </p>
         )}
       </div>

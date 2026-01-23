@@ -258,11 +258,15 @@ const Auth = () => {
         });
       } else {
         // Signup simple : email + password uniquement
+        // Redirection vers plan-selection après confirmation email
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/plan-selection`,
+            data: {
+              needs_plan_selection: true, // Flag to show plan selection
+            }
           },
         });
 

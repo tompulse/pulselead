@@ -42,7 +42,7 @@ const CGV = () => {
 
           <section>
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">3. Services proposés</h2>
-            <p>PULSE propose une plateforme SaaS (Software as a Service) de prospection intelligente. L'offre "Commercial Solo" à 79€/mois comprend :</p>
+            <p>PULSE propose une plateforme SaaS (Software as a Service) de prospection intelligente. L'offre "Commercial Solo" à 49€/mois comprend :</p>
             <ul className="list-disc ml-4 sm:ml-6 mt-2 sm:mt-3 md:mt-4 space-y-1 sm:space-y-2">
               <li><strong>Liste de prospects filtrée :</strong> accédez aux nouvelles entreprises créées en France selon vos critères</li>
               <li><strong>Tournées optimisées IA :</strong> calcul automatique du meilleur itinéraire pour réduire vos temps de trajet</li>
@@ -81,7 +81,7 @@ const CGV = () => {
               <li>L'essai gratuit nécessite l'enregistrement d'un <strong>moyen de paiement valide</strong> (carte bancaire)</li>
               <li><strong>Aucun prélèvement n'est effectué</strong> pendant la période d'essai de 7 jours</li>
               <li>Un <strong>email de rappel est envoyé 3 jours</strong> avant la fin de l'essai</li>
-              <li>À l'issue de l'essai, l'abonnement est <strong>automatiquement converti</strong> en abonnement payant au tarif de 79€/mois, sauf résiliation avant la fin de l'essai</li>
+              <li>À l'issue de l'essai, l'abonnement est <strong>automatiquement converti</strong> en abonnement payant au tarif de 49€/mois, sauf résiliation avant la fin de l'essai</li>
               <li>Vous pouvez <strong>annuler à tout moment</strong> pendant l'essai depuis votre espace client ou via le portail de gestion Stripe, <strong>sans frais</strong></li>
             </ul>
           </section>
