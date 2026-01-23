@@ -299,7 +299,9 @@ const LandingPage = () => {
             SOLUTION SECTION - Fonctionnalités PULSE
         ═══════════════════════════════════════════════════════════════════ */}
         <section id="solution" className="py-20 px-6 scroll-mt-20 relative z-10" style={{
-          borderTop: '2px solid rgba(6, 182, 212, 0.3)'
+          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(14, 165, 233, 0.04) 50%, rgba(0, 0, 0, 0.3) 100%)',
+          borderTop: '2px solid rgba(6, 182, 212, 0.3)',
+          borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
         }}>
           <div className="container mx-auto max-w-5xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
