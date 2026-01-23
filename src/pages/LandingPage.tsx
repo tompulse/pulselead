@@ -295,20 +295,12 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Séparation décorative */}
-        <div className="relative z-10 py-8 px-6">
-          <div className="container mx-auto max-w-4xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-50"></div>
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="w-3 h-3 rounded-full bg-accent shadow-lg shadow-accent/50 animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-
         {/* ═══════════════════════════════════════════════════════════════════
             SOLUTION SECTION - Fonctionnalités PULSE
         ═══════════════════════════════════════════════════════════════════ */}
-        <section id="solution" className="py-20 px-6 scroll-mt-20 relative z-10">
+        <section id="solution" className="py-20 px-6 scroll-mt-20 relative z-10" style={{
+          borderTop: '2px solid rgba(6, 182, 212, 0.3)'
+        }}>
           <div className="container mx-auto max-w-5xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
               <h2 className="text-4xl sm:text-5xl font-bold text-center mb-12">
