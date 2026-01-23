@@ -440,34 +440,29 @@ const LandingPage = () => {
                   border: '2px solid rgba(255, 255, 255, 0.2)',
                   boxShadow: '0 20px 60px -10px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
-                  <div className="p-5 sm:p-6 flex flex-col flex-1">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-white">Découverte</h3>
-                    <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                      <div className="flex items-baseline justify-center gap-2 mb-1">
-                        <span className="text-4xl sm:text-5xl font-bold text-white">0€</span>
+                  <div className="p-4 sm:p-5 flex flex-col flex-1">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2 text-center text-white">Découverte</h3>
+                    <div className="mb-4 text-center py-2 px-3 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div className="flex items-baseline justify-center gap-2">
+                        <span className="text-3xl sm:text-4xl font-bold text-white">0€</span>
                       </div>
-                      <p className="text-sm text-white/50">Gratuit pour toujours</p>
+                      <p className="text-xs text-white/50">Gratuit</p>
                     </div>
-                    <ul className="space-y-2 mb-5 flex-1">
+                    <ul className="space-y-2 mb-4 flex-1">
                       {[
-                        { icon: Target, label: "20 prospects par département", desc: "Testez sur 1 zone de votre choix" },
-                        { icon: Route, label: "1 tournée par mois", desc: "Max 5 prospects par tournée" },
-                        { icon: Smartphone, label: "CRM basique", desc: "Notes uniquement, pas de rappels" },
-                        { icon: MapPin, label: "Visualisation carte", desc: "Voir vos prospects sur la carte" },
+                        { icon: Target, label: "30 prospects max" },
+                        { icon: Route, label: "2 tournées/mois" },
+                        { icon: Smartphone, label: "CRM basique" },
+                        { icon: MapPin, label: "GPS intégré" },
                       ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 p-2 rounded-lg hover:bg-white/5 transition-all">
-                          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <item.icon className="w-3 h-3 text-white/60" />
-                          </div>
-                          <div>
-                            <span className="text-white text-sm font-semibold">{item.label}</span>
-                            <p className="text-white/50 text-xs">{item.desc}</p>
-                          </div>
+                        <li key={i} className="flex items-center gap-2">
+                          <item.icon className="w-4 h-4 text-white/60 flex-shrink-0" />
+                          <span className="text-white text-sm">{item.label}</span>
                         </li>
                       ))}
                     </ul>
                     <Button 
-                      className="w-full bg-white/10 text-white hover:bg-white/20 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto border border-white/20" 
+                      className="w-full bg-white/10 text-white hover:bg-white/20 py-4 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto border border-white/20" 
                       onClick={() => navigate('/auth')}
                     >
                       Commencer gratuitement
@@ -482,57 +477,45 @@ const LandingPage = () => {
                   border: '3px solid rgba(6, 182, 212, 0.7)',
                   boxShadow: '0 30px 80px -15px rgba(6, 182, 212, 0.6), 0 0 100px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                 }}>
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white px-6 py-2 rounded-full text-sm font-black tracking-wide shadow-2xl z-10 whitespace-nowrap border-2 border-white/30" style={{
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white px-4 py-1.5 rounded-full text-xs font-black tracking-wide shadow-2xl z-10 whitespace-nowrap border-2 border-white/30" style={{
                     boxShadow: '0 8px 32px rgba(251, 146, 60, 0.5), 0 0 0 3px rgba(251, 146, 60, 0.2)'
                   }}>
                     ⭐ PLUS POPULAIRE
                   </div>
-                  <div className="p-5 sm:p-6 pt-9 flex flex-col flex-1">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">PRO</h3>
-                    <div className="mb-5 text-center py-4 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(6,182,212,0.4)' }}>
-                      <div className="flex items-baseline justify-center gap-2 mb-2">
-                        <span className="text-5xl sm:text-6xl font-bold gradient-text">49€</span>
-                        <span className="text-lg text-white/70">/mois</span>
+                  <div className="p-4 sm:p-5 pt-7 flex flex-col flex-1">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2 text-center gradient-text">PRO</h3>
+                    <div className="mb-4 text-center py-2 px-3 rounded-xl" style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(6,182,212,0.4)' }}>
+                      <div className="flex items-baseline justify-center gap-1 mb-1">
+                        <span className="text-4xl sm:text-5xl font-bold gradient-text">49€</span>
+                        <span className="text-sm text-white/70">/mois</span>
                       </div>
-                      <div className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/40 rounded-lg p-2 mb-2">
-                        <p className="text-sm text-emerald-400 font-bold">🎁 7 jours d'essai GRATUIT</p>
-                        <p className="text-xs text-emerald-300/80">Testez sans risque, annulez quand vous voulez</p>
-                      </div>
-                      <p className="text-xs text-white/50">Sans engagement • Pause ou annulation en 1 clic</p>
-                      <p className="text-[10px] text-white/30 mt-1">TVA non applicable, art. 293 B du CGI</p>
+                      <p className="text-xs text-emerald-400 font-bold">🎁 7 jours GRATUIT</p>
+                      <p className="text-[10px] text-white/50">Sans engagement</p>
                     </div>
-                    <ul className="space-y-3 mb-6 flex-1">
+                    <ul className="space-y-1.5 mb-4 flex-1">
                       {[
-                        { text: "🗺️ Accès illimité à 4,5M+ entreprises", bold: "Base complète France" },
-                        { text: "🚀 Tournées GPS optimisées IA", bold: "Économisez jusqu'à 40% de km" },
-                        { text: "📊 CRM mobile + Rappels intelligents", bold: "Ne ratez plus aucune relance" },
-                        { text: "🎯 Filtres ultra-précis NAF, dép., taille", bold: "Ciblez vos prospects idéaux" },
-                        { text: "📈 Export CSV + Analytics avancés", bold: "Suivez votre performance en temps réel" },
-                        { text: "💬 Support prioritaire 7j/7", bold: "Réponse sous 24h garantie" }
+                        "🗺️ 4,5M+ entreprises illimitées",
+                        "🚀 Tournées GPS optimisées (-40% km)",
+                        "📊 CRM complet + Rappels auto",
+                        "🎯 Filtres avancés (NAF, dép., taille)",
+                        "📈 Export CSV + Analytics",
+                        "💬 Support prioritaire 7j/7"
                       ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-all">
-                          <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                          <div>
-                            <span className="text-white font-semibold text-sm block">{item.text}</span>
-                            <span className="text-cyan-400/80 text-xs">{item.bold}</span>
-                          </div>
+                        <li key={i} className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                          <span className="text-white text-sm">{item}</span>
                         </li>
                       ))}
                     </ul>
-                    <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-lg p-3 mb-4">
-                      <p className="text-center text-sm text-white/90">
-                        <strong className="text-green-400">ROI moyen : 10x</strong> • +35% de visites en moyenne
-                      </p>
-                    </div>
                     <Button 
-                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 py-6 text-lg font-black shadow-2xl hover:shadow-green-500/60 hover:scale-[1.03] transition-all mt-auto border-2 border-green-400/30" 
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 py-5 text-base font-black shadow-2xl hover:shadow-green-500/60 hover:scale-[1.03] transition-all mt-auto border-2 border-green-400/30" 
                       onClick={handleCTAClick}
                       disabled={checkoutLoading || subscriptionLoading}
                     >
-                      {checkoutLoading || subscriptionLoading ? 'Redirection...' : '🚀 Essayer 7 jours GRATUIT'}
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      {checkoutLoading || subscriptionLoading ? 'Redirection...' : '🚀 Essayer 7 jours'}
+                      <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
-                    <p className="text-center text-xs text-green-400/70 mt-2 font-semibold">✅ Garantie satisfait ou remboursé 30 jours • 🔒 Paiement sécurisé Stripe</p>
+                    <p className="text-center text-[10px] text-green-400/70 mt-1.5">✅ Garantie 30j • 🔒 Paiement sécurisé</p>
                   </div>
                 </Card>
 
@@ -542,33 +525,28 @@ const LandingPage = () => {
                   border: '2px solid rgba(14, 165, 233, 0.3)',
                   boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}>
-                  <div className="p-5 sm:p-6 flex flex-col flex-1">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center gradient-text">Équipes</h3>
-                    <div className="mb-5 text-center py-3 px-4 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(14,165,233,0.2)' }}>
+                  <div className="p-4 sm:p-5 flex flex-col flex-1">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2 text-center gradient-text">Équipes</h3>
+                    <div className="mb-4 text-center py-2 px-3 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(14,165,233,0.2)' }}>
                       <span className="text-3xl sm:text-4xl font-bold gradient-text">Sur devis</span>
-                      <p className="text-xs text-white/50 mt-2">Pour les équipes commerciales</p>
+                      <p className="text-xs text-white/50 mt-1">Équipes commerciales</p>
                     </div>
-                    <ul className="space-y-2 mb-5 flex-1">
+                    <ul className="space-y-2 mb-4 flex-1">
                       {[
-                        { icon: Check, label: "Tout PRO inclus", desc: "Fonctionnalités illimitées" },
-                        { icon: Users, label: "Multi-utilisateurs", desc: "Invitez votre équipe" },
-                        { icon: Sparkles, label: "Onboarding dédié", desc: "Formation personnalisée" },
-                        { icon: Phone, label: "Support prioritaire", desc: "Réponse sous 2h" },
-                        { icon: TrendingUp, label: "Analytics équipe", desc: "Dashboard manager" },
-                        { icon: Building2, label: "Intégrations API", desc: "Connectez vos outils" },
+                        { icon: Check, label: "Tout PRO inclus" },
+                        { icon: Users, label: "Multi-utilisateurs" },
+                        { icon: Sparkles, label: "Onboarding dédié" },
+                        { icon: Phone, label: "Support prioritaire (2h)" },
+                        { icon: TrendingUp, label: "Analytics équipe" },
+                        { icon: Building2, label: "Intégrations API" },
                       ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 p-2 rounded-lg hover:bg-white/5 transition-all">
-                          <div className="w-5 h-5 rounded-full bg-cyan-glow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <item.icon className="w-3 h-3 text-cyan-glow" />
-                          </div>
-                          <div>
-                            <span className="text-white text-sm font-semibold">{item.label}</span>
-                            <p className="text-white/50 text-xs">{item.desc}</p>
-                          </div>
+                        <li key={i} className="flex items-center gap-2">
+                          <item.icon className="w-4 h-4 text-cyan-glow flex-shrink-0" />
+                          <span className="text-white text-sm">{item.label}</span>
                         </li>
                       ))}
                     </ul>
-                    <Button asChild className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 py-5 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto">
+                    <Button asChild className="w-full bg-cyan-glow text-black hover:bg-cyan-glow/90 py-4 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto">
                       <a href="mailto:tomiolovpro@gmail.com?subject=Demande de devis PULSE Équipes">
                         Demander un devis
                         <ArrowRight className="ml-2 w-4 h-4" />
