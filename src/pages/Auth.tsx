@@ -245,21 +245,50 @@ const Auth = () => {
 
     try {
       if (isLogin) {
+        console.log("[AUTH] Attempting login for:", email);
+        
         const { data: { session }, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error("[AUTH] Login error:", error);
+          throw error;
+        }
 
-        if (!session) throw new Error("Session non créée");
+        if (!session) {
+          console.error("[AUTH] No session created");
+          throw new Error("Session non créée");
+        }
+
+        console.log("[AUTH] Login successful, user:", session.user.id);
+
+        // Wait for quotas to be available (trigger might still be running)
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         // Check if user has already chosen a plan
-        const { data: quotas } = await supabase
+        const { data: quotas, error: quotasError } = await supabase
           .from('user_quotas')
           .select('is_first_login')
           .eq('user_id', session.user.id)
           .single();
+
+        if (quotasError) {
+          console.error("[AUTH] Error fetching quotas:", quotasError);
+          // If quotas don't exist, create them as fallback
+          if (quotasError.code === 'PGRST116') {
+            console.log("[AUTH] Creating missing quotas...");
+            await supabase
+              .from('user_quotas')
+              .insert({ user_id: session.user.id, plan_type: 'free', is_first_login: true });
+            // Default to plan selection
+            navigate('/plan-selection');
+            return;
+          }
+        }
+
+        console.log("[AUTH] Quotas found:", quotas);
 
         toast({
           title: "Connexion réussie",
@@ -269,15 +298,19 @@ const Auth = () => {
         // Redirect based on whether user has chosen a plan
         if (quotas && !quotas.is_first_login) {
           // User already chose a plan - go to dashboard
+          console.log("[AUTH] User has plan, redirecting to dashboard");
           navigate('/dashboard');
         } else {
           // New user or hasn't chosen plan - go to plan selection
+          console.log("[AUTH] User needs plan, redirecting to plan selection");
           navigate('/plan-selection');
         }
       } else {
         // Signup simple : email + password uniquement
         // Redirection vers plan-selection après confirmation email
-        const { error } = await supabase.auth.signUp({
+        console.log("[AUTH] Attempting signup for:", email);
+        
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -288,7 +321,12 @@ const Auth = () => {
           },
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error("[AUTH] Signup error:", error);
+          throw error;
+        }
+
+        console.log("[AUTH] Signup successful:", data);
 
         toast({
           title: "📧 Vérifiez votre boîte mail !",
@@ -301,9 +339,10 @@ const Auth = () => {
         setPassword('');
       }
     } catch (error: any) {
+      console.error("[AUTH] Error:", error);
       toast({
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue",
+        title: "Erreur d'authentification",
+        description: error.message || "Une erreur est survenue. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {
