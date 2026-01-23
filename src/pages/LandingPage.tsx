@@ -295,6 +295,16 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* Séparation décorative */}
+        <div className="relative z-10 py-8 px-6">
+          <div className="container mx-auto max-w-4xl">
+            <div className="h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-50"></div>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="w-3 h-3 rounded-full bg-accent shadow-lg shadow-accent/50 animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+
         {/* ═══════════════════════════════════════════════════════════════════
             SOLUTION SECTION - Fonctionnalités PULSE
         ═══════════════════════════════════════════════════════════════════ */}
