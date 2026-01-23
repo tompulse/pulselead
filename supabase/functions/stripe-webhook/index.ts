@@ -123,6 +123,7 @@ serve(async (req) => {
             stripe_subscription_id: subscriptionId,
             subscription_status: subscription.status, // 'trialing' for 7-day trial
             subscription_plan: plan,
+            plan_type: 'pro', // Set to 'pro' when subscription is created
             subscription_start_date: startDate,
             subscription_end_date: endDate,
             updated_at: new Date().toISOString(),
@@ -136,6 +137,22 @@ serve(async (req) => {
             logStep("Error upserting subscription", { error: upsertError.message });
           } else {
             logStep("Subscription saved", subscriptionData);
+            
+            // Also update user_quotas to 'pro' plan_type
+            const { error: quotaError } = await supabaseAdmin
+              .from('user_quotas')
+              .upsert({ 
+                user_id: userId, 
+                plan_type: 'pro' 
+              }, { 
+                onConflict: 'user_id' 
+              });
+            
+            if (quotaError) {
+              logStep("Error updating user_quotas plan_type", { error: quotaError.message });
+            } else {
+              logStep("User quotas updated to 'pro'", { userId });
+            }
           }
 
           // Send welcome email for trial start
@@ -196,10 +213,14 @@ serve(async (req) => {
           .single();
 
         if (existingSub) {
+          // Determine plan_type based on subscription status
+          const planType = (subscription.status === 'active' || subscription.status === 'trialing') ? 'pro' : 'free';
+          
           const { error } = await supabaseAdmin
             .from('user_subscriptions')
             .update({
               subscription_status: subscription.status,
+              plan_type: planType,
               subscription_end_date: unixToISOString(subscription.current_period_end),
               updated_at: new Date().toISOString(),
             })
@@ -208,7 +229,17 @@ serve(async (req) => {
           if (error) {
             logStep("Error updating subscription", { error: error.message });
           } else {
-            logStep("Subscription status updated", { status: subscription.status });
+            logStep("Subscription status updated", { status: subscription.status, planType });
+            
+            // Also update user_quotas
+            const { error: quotaError } = await supabaseAdmin
+              .from('user_quotas')
+              .update({ plan_type: planType })
+              .eq('user_id', existingSub.user_id);
+            
+            if (quotaError) {
+              logStep("Error updating user_quotas", { error: quotaError.message });
+            }
           }
         }
         break;
@@ -218,16 +249,36 @@ serve(async (req) => {
         const subscription = event.data.object as Stripe.Subscription;
         logStep("Subscription cancelled", { subscriptionId: subscription.id });
 
+        // Get user_id before updating
+        const { data: existingSub } = await supabaseAdmin
+          .from('user_subscriptions')
+          .select('user_id')
+          .eq('stripe_subscription_id', subscription.id)
+          .single();
+
         const { error } = await supabaseAdmin
           .from('user_subscriptions')
           .update({
             subscription_status: 'cancelled',
+            plan_type: 'free', // Downgrade to free when subscription is cancelled
             updated_at: new Date().toISOString(),
           })
           .eq('stripe_subscription_id', subscription.id);
 
         if (error) {
           logStep("Error marking subscription cancelled", { error: error.message });
+        } else if (existingSub) {
+          // Also downgrade user_quotas to free
+          const { error: quotaError } = await supabaseAdmin
+            .from('user_quotas')
+            .update({ plan_type: 'free' })
+            .eq('user_id', existingSub.user_id);
+          
+          if (quotaError) {
+            logStep("Error downgrading user_quotas", { error: quotaError.message });
+          } else {
+            logStep("User downgraded to free plan", { userId: existingSub.user_id });
+          }
         }
         break;
       }

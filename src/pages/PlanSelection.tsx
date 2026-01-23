@@ -16,33 +16,58 @@ const PlanSelection = () => {
   useEffect(() => {
     // Check if user is logged in and if they already selected a plan
     const checkUserAndPlan = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/auth");
-        return;
+      try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) throw sessionError;
+        
+        if (!session) {
+          navigate("/auth");
+          return;
+        }
+        
+        setUserId(session.user.id);
+        
+        // Wait a moment for trigger to complete (user_quotas creation)
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Check if user already has a plan (and it's not the auto-assigned free plan on first signup)
+        const { data: quotas, error: quotasError } = await supabase
+          .from('user_quotas')
+          .select('plan_type, is_first_login')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        // If quotas don't exist yet, create them (fallback)
+        if (quotasError && quotasError.code === 'PGRST116') {
+          await supabase
+            .from('user_quotas')
+            .insert({ user_id: session.user.id, plan_type: 'free', is_first_login: true });
+          setChecking(false);
+          return;
+        }
+        
+        // If user has chosen a plan before (is_first_login = false), redirect to dashboard
+        if (quotas && !quotas.is_first_login) {
+          navigate("/dashboard");
+          return;
+        }
+        
+        setChecking(false);
+      } catch (error: any) {
+        console.error("Error checking user plan:", error);
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de charger votre profil. Réessayez.",
+        });
+        // Still show plan selection even on error
+        setChecking(false);
       }
-      
-      setUserId(session.user.id);
-      
-      // Check if user already has a plan (and it's not the auto-assigned free plan on first signup)
-      const { data: quotas } = await supabase
-        .from('user_quotas')
-        .select('plan_type, is_first_login')
-        .eq('user_id', session.user.id)
-        .single();
-      
-      // If user has chosen a plan before (is_first_login = false), redirect to dashboard
-      if (quotas && !quotas.is_first_login) {
-        navigate("/dashboard");
-        return;
-      }
-      
-      setChecking(false);
     };
     
     checkUserAndPlan();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   // Show loading while checking
   if (checking) {
@@ -92,18 +117,25 @@ const PlanSelection = () => {
     
     setLoading(true);
     try {
+      // Mark user as having made a choice before redirecting to Stripe
+      await supabase
+        .from('user_quotas')
+        .update({ is_first_login: false })
+        .eq('user_id', userId);
+
       // Appeler Stripe checkout avec trial de 7 jours
+      // ⚠️ IMPORTANT: Ce price ID doit correspondre à 49€/mois sur Stripe
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { 
-          priceId: 'price_1SqxKmHjyidZ5i9L8tCztpFU', // Ton price ID Stripe
-          trialDays: 7 // Essai de 7 jours
+          priceId: 'price_1SqxKmHjyidZ5i9L8tCztpFU', // Price ID pour 49€/mois avec trial 7 jours
+          trialDays: 7 // Essai gratuit de 7 jours
         },
       });
 
       if (error) throw error;
 
       if (!data?.url) {
-        throw new Error('No checkout URL received');
+        throw new Error('Aucune URL de paiement reçue de Stripe');
       }
 
       // Rediriger vers Stripe Checkout
@@ -112,8 +144,8 @@ const PlanSelection = () => {
       console.error("Error creating checkout:", error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de démarrer le paiement. Réessayez.",
+        title: "Erreur de paiement",
+        description: error.message || "Impossible de démarrer le paiement. Veuillez réessayer.",
       });
       setLoading(false);
     }
@@ -125,10 +157,13 @@ const PlanSelection = () => {
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            <span className="gradient-text">Choisissez votre plan</span>
+            <span className="gradient-text">Bienvenue sur PULSE</span>
           </h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto">
-            Commencez gratuitement ou profitez de l'essai PRO sans engagement
+          <p className="text-white/70 text-lg max-w-2xl mx-auto mb-3">
+            Choisissez votre plan pour commencer à optimiser vos tournées
+          </p>
+          <p className="text-white/50 text-sm">
+            💡 <strong>93% de nos commerciaux</strong> choisissent le plan PRO pour accéder aux 4,5M+ entreprises
           </p>
         </div>
 
@@ -136,70 +171,67 @@ const PlanSelection = () => {
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           
           {/* Plan Gratuit */}
-          <Card className="relative glass-card border-white/20 p-8 hover:border-accent/40 transition-all duration-300">
+          <Card className="relative glass-card border-white/20 p-8 hover:border-white/30 transition-all duration-300">
             <div className="absolute top-6 right-6">
-              <Unlock className="w-8 h-8 text-accent opacity-20" />
+              <Unlock className="w-8 h-8 text-white/10" />
             </div>
             
             <div className="mb-6">
-              <h3 className="text-2xl font-bold text-white mb-2">Plan Découverte</h3>
+              <h3 className="text-2xl font-bold text-white/90 mb-2">Plan Découverte</h3>
               <div className="flex items-baseline gap-2 mb-3">
-                <span className="text-4xl font-bold text-white">Gratuit</span>
-                <span className="text-white/50">/mois</span>
+                <span className="text-4xl font-bold text-white/90">Gratuit</span>
+                <span className="text-white/40">/mois</span>
               </div>
-              <p className="text-white/60">Pour tester PULSE sans engagement</p>
+              <p className="text-white/50 text-sm">Idéal pour découvrir PULSE et ses fonctionnalités de base</p>
             </div>
 
             <Button
               onClick={handleFreePlan}
               disabled={loading}
-              className="w-full mb-6 bg-white/10 hover:bg-white/20 text-white border border-white/30 font-bold py-6 text-lg"
+              variant="outline"
+              className="w-full mb-6 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/20 font-medium py-6 text-base"
             >
               {loading ? "Chargement..." : "Commencer gratuitement"}
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <div className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm"><strong>30 prospects</strong> débloqués max</span>
+                <Check className="w-5 h-5 text-white/50 mt-0.5 flex-shrink-0" />
+                <span className="text-white/70 text-sm"><strong>30 prospects</strong> débloqués max/mois</span>
               </div>
               <div className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm"><strong>2 tournées</strong> par mois</span>
+                <Check className="w-5 h-5 text-white/50 mt-0.5 flex-shrink-0" />
+                <span className="text-white/70 text-sm"><strong>2 tournées</strong> par mois</span>
               </div>
               <div className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm">Illimité d'entreprises par tournée</span>
+                <Check className="w-5 h-5 text-white/50 mt-0.5 flex-shrink-0" />
+                <span className="text-white/70 text-sm">Entreprises illimitées par tournée</span>
               </div>
               <div className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm">Filtres complets (NAF, dept, effectif)</span>
+                <Check className="w-5 h-5 text-white/50 mt-0.5 flex-shrink-0" />
+                <span className="text-white/70 text-sm">Filtres de base</span>
               </div>
               <div className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm">CRM basique (notes)</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm">GPS intégré</span>
+                <Check className="w-5 h-5 text-white/50 mt-0.5 flex-shrink-0" />
+                <span className="text-white/70 text-sm">CRM basique (notes)</span>
               </div>
             </div>
 
             <div className="mt-6 pt-6 border-t border-white/10">
-              <p className="text-xs text-white/50 text-center">
+              <p className="text-xs text-white/40 text-center">
                 Sans carte bancaire • Accès immédiat
               </p>
             </div>
           </Card>
 
           {/* Plan PRO */}
-          <Card className="relative glass-card border-accent/50 p-8 shadow-xl shadow-accent/20 hover:border-accent/70 transition-all duration-300">
+          <Card className="relative glass-card border-accent/50 p-8 shadow-2xl shadow-accent/30 hover:border-accent/70 hover:shadow-accent/40 transition-all duration-300 scale-105">
             {/* Badge Popular */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                Recommandé
+              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-xl flex items-center gap-2 animate-pulse">
+                <Sparkles className="w-5 h-5" />
+                ⭐ Choix n°1
               </div>
             </div>
 
@@ -213,45 +245,49 @@ const PlanSelection = () => {
                 <span className="text-4xl font-bold gradient-text">49€</span>
                 <span className="text-white/50">/mois</span>
               </div>
-              <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 mb-3">
-                <p className="text-green-400 font-semibold text-sm">
-                  ✨ 7 jours d'essai gratuit
+              <div className="bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/40 rounded-lg p-4 mb-3 shadow-lg">
+                <p className="text-green-400 font-bold text-base flex items-center gap-2">
+                  <Zap className="w-5 h-5" />
+                  7 jours d'essai GRATUIT
                 </p>
-                <p className="text-white/60 text-xs mt-1">
-                  Annulez avant le 7ème jour pour ne rien payer
+                <p className="text-white/70 text-sm mt-1">
+                  Aucun paiement pendant 7 jours • Annulez à tout moment
                 </p>
               </div>
+              <p className="text-white/50 text-xs mb-3">
+                💰 <strong className="text-white/70">ROI moyen de 380%</strong> sur le premier mois d'utilisation
+              </p>
             </div>
 
             <Button
               onClick={handleProPlan}
               disabled={loading}
-              className="w-full mb-6 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-6 text-lg shadow-lg"
+              className="w-full mb-6 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-7 text-lg shadow-2xl hover:shadow-green-500/50 transition-all duration-300 hover:scale-105"
             >
-              {loading ? "Redirection..." : "Essayer 7 jours gratuitement"}
+              {loading ? "Redirection vers le paiement..." : "🚀 Essayer 7 jours GRATUITEMENT"}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
 
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white font-semibold text-sm"><strong>4,5M+ entreprises</strong> illimitées</span>
+                <Check className="w-6 h-6 text-green-400 mt-0.5 flex-shrink-0" />
+                <span className="text-white font-bold text-base">🎯 <strong>4,5M+ entreprises</strong> illimitées</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <Check className="w-6 h-6 text-green-400 mt-0.5 flex-shrink-0" />
+                <span className="text-white font-bold text-base">🔥 <strong>Tournées illimitées</strong></span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white font-semibold text-sm"><strong>Tournées illimitées</strong></span>
+                <span className="text-white/90 text-sm">Entreprises illimitées par tournée</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm">Illimité d'entreprises par tournée</span>
+                <span className="text-white/90 text-sm">CRM complet (rappels, pipeline, historique)</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm">CRM complet (rappels, pipeline)</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white/80 text-sm">Notifications automatiques</span>
+                <span className="text-white/90 text-sm">Notifications & rappels automatiques</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />

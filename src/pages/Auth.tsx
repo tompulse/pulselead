@@ -245,17 +245,35 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: { session }, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
         if (error) throw error;
 
+        if (!session) throw new Error("Session non créée");
+
+        // Check if user has already chosen a plan
+        const { data: quotas } = await supabase
+          .from('user_quotas')
+          .select('is_first_login')
+          .eq('user_id', session.user.id)
+          .single();
+
         toast({
           title: "Connexion réussie",
           description: "Bienvenue sur PULSE !",
         });
+
+        // Redirect based on whether user has chosen a plan
+        if (quotas && !quotas.is_first_login) {
+          // User already chose a plan - go to dashboard
+          navigate('/dashboard');
+        } else {
+          // New user or hasn't chosen plan - go to plan selection
+          navigate('/plan-selection');
+        }
       } else {
         // Signup simple : email + password uniquement
         // Redirection vers plan-selection après confirmation email
