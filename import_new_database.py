@@ -2,6 +2,7 @@
 """
 Script d'import de la nouvelle base de données entreprises (1er déc 2025 - 24 jan 2026)
 Avec géocodage automatique des adresses manquantes
+Import dans la table 'nouveaux_sites' (utilisée par l'app)
 """
 
 import csv
@@ -270,22 +271,22 @@ def parse_csv_row(row: Dict[str, str]) -> Optional[Dict]:
 
 def backup_old_table():
     """
-    Backup de l'ancienne table entreprises
+    Backup de l'ancienne table nouveaux_sites
     """
-    print("\n📦 BACKUP: Création table entreprises_backup...")
+    print("\n📦 BACKUP: Création table nouveaux_sites_backup...")
     
     try:
         # Via SQL direct (nécessite service_role)
         sql = """
         -- Drop backup si existe
-        DROP TABLE IF EXISTS public.entreprises_backup CASCADE;
+        DROP TABLE IF EXISTS public.nouveaux_sites_backup CASCADE;
         
         -- Créer backup
-        CREATE TABLE public.entreprises_backup AS 
-        SELECT * FROM public.entreprises;
+        CREATE TABLE public.nouveaux_sites_backup AS 
+        SELECT * FROM public.nouveaux_sites;
         
         -- Compter
-        SELECT COUNT(*) as count FROM public.entreprises_backup;
+        SELECT COUNT(*) as count FROM public.nouveaux_sites_backup;
         """
         
         result = supabase.rpc("exec_sql", {"query": sql}).execute()
@@ -297,7 +298,9 @@ def backup_old_table():
 
 def import_to_supabase(csv_path: str, batch_size: int = 100):
     """
-    Import le CSV dans Supabase avec géocodage automatique
+    Import le CSV dans Supabase avec géocodage automatique et système d'archivage
+    - Les entreprises du CSV sont marquées archived=false (actives)
+    - Les entreprises absentes du CSV sont marquées archived=true (archivées)
     """
     print(f"\n🚀 IMPORT: Lecture {csv_path}...")
     
@@ -306,10 +309,14 @@ def import_to_supabase(csv_path: str, batch_size: int = 100):
     imported = 0
     geocoded = 0
     errors = 0
+    archived_count = 0
     
     batch = []
+    sirets_in_csv = set()
     
     try:
+        # PHASE 1: Import des entreprises du CSV (marquées comme actives)
+        print("\n📥 PHASE 1: Import des nouvelles entreprises...")
         with open(csv_path, 'r', encoding='utf-8') as f:
             # Délimiteur point-virgule
             reader = csv.DictReader(f, delimiter=';')
@@ -323,16 +330,23 @@ def import_to_supabase(csv_path: str, batch_size: int = 100):
                     errors += 1
                     continue
                 
+                # Marquer comme active (non archivée)
+                entreprise["archived"] = False
+                entreprise["date_archive"] = None
+                
                 # Tracking géocodage
                 if entreprise.get("latitude") and entreprise.get("longitude"):
                     geocoded += 1
+                
+                # Tracking SIRETs pour phase 2
+                sirets_in_csv.add(entreprise["siret"])
                 
                 batch.append(entreprise)
                 
                 # Import par batch
                 if len(batch) >= batch_size:
                     try:
-                        supabase.table("entreprises").upsert(
+                        supabase.table("nouveaux_sites").upsert(
                             batch, 
                             on_conflict="siret"
                         ).execute()
@@ -351,7 +365,7 @@ def import_to_supabase(csv_path: str, batch_size: int = 100):
             # Dernier batch
             if batch:
                 try:
-                    supabase.table("entreprises").upsert(
+                    supabase.table("nouveaux_sites").upsert(
                         batch, 
                         on_conflict="siret"
                     ).execute()
@@ -361,6 +375,53 @@ def import_to_supabase(csv_path: str, batch_size: int = 100):
                     print(f"   ❌ Erreur dernier batch: {e}")
                     errors += len(batch)
         
+        # PHASE 2: Archiver les entreprises absentes du CSV
+        print(f"\n🗄️  PHASE 2: Archivage des entreprises absentes du nouveau CSV...")
+        print(f"   SIRETs dans le CSV: {len(sirets_in_csv)}")
+        
+        try:
+            # Récupérer tous les SIRETs actuellement en DB (non archivés)
+            result = supabase.table("nouveaux_sites").select("siret").eq("archived", False).execute()
+            sirets_in_db = {row["siret"] for row in result.data}
+            print(f"   SIRETs actifs en DB: {len(sirets_in_db)}")
+            
+            # Identifier les SIRETs à archiver (en DB mais pas dans le CSV)
+            sirets_to_archive = sirets_in_db - sirets_in_csv
+            archived_count = len(sirets_to_archive)
+            
+            if archived_count > 0:
+                print(f"   ⚠️  {archived_count} entreprises à archiver...")
+                
+                # Archiver par batch
+                archive_batch = []
+                for siret in sirets_to_archive:
+                    archive_batch.append({
+                        "siret": siret,
+                        "archived": True,
+                        "date_archive": datetime.now().isoformat()
+                    })
+                    
+                    if len(archive_batch) >= batch_size:
+                        supabase.table("nouveaux_sites").upsert(
+                            archive_batch,
+                            on_conflict="siret"
+                        ).execute()
+                        archive_batch = []
+                
+                # Dernier batch archivage
+                if archive_batch:
+                    supabase.table("nouveaux_sites").upsert(
+                        archive_batch,
+                        on_conflict="siret"
+                    ).execute()
+                
+                print(f"   ✅ {archived_count} entreprises archivées")
+            else:
+                print(f"   ✅ Aucune entreprise à archiver")
+                
+        except Exception as e:
+            print(f"   ⚠️  Erreur lors de l'archivage: {e}")
+        
         # Résumé
         print("\n" + "="*60)
         print("📊 RÉSUMÉ IMPORT")
@@ -368,6 +429,7 @@ def import_to_supabase(csv_path: str, batch_size: int = 100):
         print(f"Total lignes CSV:          {total}")
         print(f"✅ Importées avec succès:  {imported}")
         print(f"🗺️  Géocodées:             {geocoded} ({geocoded*100/total:.1f}%)")
+        print(f"🗄️  Archivées:             {archived_count}")
         print(f"❌ Erreurs:                {errors}")
         print(f"✓ Taux de succès:          {imported*100/total:.1f}%")
         print("="*60)

@@ -22,6 +22,7 @@ export const nouveauxSitesService = {
       let query = supabase
         .from('nouveaux_sites')
         .select('*', { count: 'exact' })
+        .eq('archived', false) // Exclure les entreprises archivées de l'onglet Prospects
         .order('date_creation', { ascending: false })
         .range(page * pageSize, (page + 1) * pageSize - 1);
 

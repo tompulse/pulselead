@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Navigation, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ArchivedBadge } from '@/components/ui/archived-badge';
 
 type Entreprise = {
   id: string;
@@ -9,6 +10,8 @@ type Entreprise = {
   ville?: string;
   latitude: number;
   longitude: number;
+  archived?: boolean;
+  date_archive?: string;
 };
 
 interface SortableEntrepriseItemProps {
@@ -69,6 +72,12 @@ export const SortableEntrepriseItem = ({
       <div className="relative flex-1 min-w-0">
         <div className="text-sm font-medium truncate flex items-center gap-2">
           {entreprise.nom}
+          {entreprise.archived && (
+            <ArchivedBadge 
+              dateArchive={entreprise.date_archive} 
+              variant="compact"
+            />
+          )}
           {visite?.rdv_pris && (
             <div className="p-1 bg-green-500/10 rounded">
               <CheckCircle2 className="w-3 h-3 text-green-500" />
