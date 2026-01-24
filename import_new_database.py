@@ -317,9 +317,32 @@ def import_to_supabase(csv_path: str, batch_size: int = 100):
     try:
         # PHASE 1: Import des entreprises du CSV (marquées comme actives)
         print("\n📥 PHASE 1: Import des nouvelles entreprises...")
-        with open(csv_path, 'r', encoding='utf-8') as f:
-            # Délimiteur point-virgule
-            reader = csv.DictReader(f, delimiter=';')
+        # Essayer plusieurs encodages (CSV souvent en ISO-8859-1 ou Windows-1252)
+        encodings = ['utf-8', 'iso-8859-1', 'windows-1252', 'cp1252']
+        f = None
+        reader = None
+        
+        for enc in encodings:
+            try:
+                f = open(csv_path, 'r', encoding=enc)
+                reader = csv.DictReader(f, delimiter=';')
+                # Test lecture première ligne
+                next(reader)
+                # Reset au début
+                f.seek(0)
+                reader = csv.DictReader(f, delimiter=';')
+                print(f"   ✓ Encodage détecté: {enc}")
+                break
+            except (UnicodeDecodeError, StopIteration):
+                if f:
+                    f.close()
+                continue
+        
+        if not reader:
+            print("❌ ERREUR: Impossible de détecter l'encodage du CSV")
+            sys.exit(1)
+        
+        with f:
             
             for i, row in enumerate(reader, 1):
                 total += 1
