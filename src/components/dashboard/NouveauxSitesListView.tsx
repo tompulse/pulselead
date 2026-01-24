@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Factory } from "lucide-react";
+import { Loader2, Factory, Lock } from "lucide-react";
 import { nouveauxSitesService, NouveauxSitesFilters } from "@/services/nouveauxSitesService";
 import { getNafCategory } from "@/utils/nafCategories";
 import { format } from "date-fns";
@@ -10,6 +10,7 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { ProspectStatusBadge, ProspectStatus } from "./ProspectStatusBadge";
 import { useProspectStatuses } from "@/hooks/useProspectStatuses";
 import { RelatedEstablishmentsCard } from "./RelatedEstablishmentsCard";
+import { useUserPlan } from "@/hooks/useUserPlan";
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
   onSiteSelect?: (site: any) => void;
@@ -29,6 +30,10 @@ export const NouveauxSitesListView = ({
 }: NouveauxSitesListViewProps) => {
   // State for flip card - shows related establishments
   const [expandedCard, setExpandedCard] = useState<{ siteId: string; name: string; relatedIds: string[] } | null>(null);
+  
+  // User plan & unlock logic
+  const { userPlan, isProspectUnlocked } = useUserPlan(userId || '');
+  const isPro = userPlan?.plan_type === 'pro';
   const { 
     data, 
     isLoading,
@@ -97,6 +102,10 @@ export const NouveauxSitesListView = ({
               const hasCoordinates = site.latitude && site.longitude;
               const isSelected = selectedSites.some(s => s.id === site.id);
               const prospectStatus = statusMap[site.id] as ProspectStatus | undefined;
+              
+              // Check if user can see details
+              const isUnlocked = isProspectUnlocked(site.id);
+              const canSeeDetails = isPro || isUnlocked;
               
               // Format address
               const addressParts = [
@@ -200,26 +209,44 @@ export const NouveauxSitesListView = ({
                       </div>
                     )}
 
-                    {/* SIREN */}
+                    {/* SIREN - Hidden for FREE users */}
                     {site.siret && (
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                        <span className="text-[10px] sm:text-xs flex-shrink-0">🏛️</span>
-                        <span className="text-[10px] sm:text-xs text-foreground/60 font-mono truncate">
-                          {site.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}
-                        </span>
-                      </div>
+                      canSeeDetails ? (
+                        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                          <span className="text-[10px] sm:text-xs flex-shrink-0">🏛️</span>
+                          <span className="text-[10px] sm:text-xs text-foreground/60 font-mono truncate">
+                            {site.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                          <Lock className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-[10px] sm:text-xs text-muted-foreground blur-sm select-none">
+                            990 470 197
+                          </span>
+                        </div>
+                      )
                     )}
                     
-                    {/* Adresse */}
+                    {/* Adresse - Hidden for FREE users */}
                     {fullAddress && (
-                      <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                        <span className="text-[10px] sm:text-xs flex-shrink-0">📍</span>
-                        <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-2">{fullAddress}</span>
-                      </div>
+                      canSeeDetails ? (
+                        <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                          <span className="text-[10px] sm:text-xs flex-shrink-0">📍</span>
+                          <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-2">{fullAddress}</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                          <Lock className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-[10px] sm:text-xs text-muted-foreground blur-sm select-none line-clamp-2">
+                            RUE DE COBLENCE, 58000 NEVERS
+                          </span>
+                        </div>
+                      )
                     )}
 
-                    {/* Date de création */}
-                    {site.date_creation && (
+                    {/* Date de création - Hidden for FREE users */}
+                    {site.date_creation && canSeeDetails && (
                       <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <span className="text-[10px] sm:text-xs flex-shrink-0">📅</span>
                         <span className="text-[10px] sm:text-xs text-foreground/60">
