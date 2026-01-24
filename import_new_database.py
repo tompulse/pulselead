@@ -226,25 +226,26 @@ def parse_csv_row(row: Dict[str, str]) -> Optional[Dict]:
         date_creation = None
         if date_creation_str:
             try:
-                # Format DD/MM/YYYY
-                date_creation = datetime.strptime(date_creation_str, "%d/%m/%Y").date()
+                # Format DD/MM/YYYY → ISO string pour JSON
+                date_obj = datetime.strptime(date_creation_str, "%d/%m/%Y")
+                date_creation = date_obj.strftime("%Y-%m-%d")
             except ValueError:
                 pass
         
-        # Construction objet Supabase
+        # Construction objet Supabase (pour table nouveaux_sites)
         entreprise = {
             "siret": siret,
             "nom": nom[:255],  # Limite longueur
             "adresse": adresse_complete[:500] if adresse_complete else None,
             "code_postal": code_postal if code_postal else None,
+            "ville": commune if commune else None,
             "latitude": lat,
             "longitude": lng,
             "code_naf": code_naf if code_naf else None,
-            "section_naf": section_naf,
+            "naf_section": section_naf,
             "categorie_entreprise": categorie,
-            "statut": "creation",  # Toutes les entreprises de ce CSV sont des créations
-            "date_demarrage": date_creation,
-            "enrichi": False,
+            "date_creation": date_creation,  # ISO string format YYYY-MM-DD
+            "est_siege": row.get("etablissementSiege", "").strip().upper() in ["VRAI", "TRUE", "1"],
         }
         
         return entreprise
