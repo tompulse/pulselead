@@ -166,23 +166,8 @@ def parse_csv_row(row: Dict[str, str]) -> Optional[Dict]:
             except (ValueError, TypeError):
                 pass
         
-        # 2. Si pas de coordonnées, géocoder l'adresse
-        if not lat or not lng:
-            numero = row.get("numeroVoieEtablissement", "").strip()
-            type_voie = row.get("typeVoieEtablissement", "").strip()
-            libelle_voie = row.get("libelleVoieEtablissement", "").strip()
-            code_postal = row.get("codePostalEtablissement", "").strip()
-            commune = row.get("libelleCommuneEtablissement", "").strip()
-            
-            # Construction adresse complète
-            address_parts = [numero, type_voie, libelle_voie]
-            address = " ".join([p for p in address_parts if p]).strip()
-            
-            if address or commune:
-                coords = geocode_address(address, code_postal, commune)
-                if coords:
-                    lat, lng = coords
-                    time.sleep(0.1)  # Rate limiting API
+        # 2. Si pas de coordonnées, on ne géocode pas (on garde NULL)
+        # L'utilisateur veut garder seulement les entreprises déjà géocodées
         
         # 3. Construction adresse complète pour stockage
         complement = row.get("complementAdresseEtablissement", "").strip()
@@ -502,10 +487,11 @@ if __name__ == "__main__":
     
     # Confirmation
     print("\n⚠️  ATTENTION: Cette opération va:")
-    print("   1. Créer un backup de la table entreprises actuelle")
+    print("   1. Créer un backup de la table nouveaux_sites actuelle")
     print("   2. Importer ~45 000 nouvelles entreprises")
-    print("   3. Géocoder automatiquement ~2 300 adresses manquantes")
-    print("   4. Durée estimée: 10-15 minutes")
+    print("   3. Convertir les coordonnées Lambert 93 en GPS")
+    print("   4. Archiver les entreprises absentes du nouveau CSV")
+    print("   5. Durée estimée: 3-5 minutes")
     
     response = input("\n✋ Continuer? (oui/non): ").lower().strip()
     if response not in ["oui", "yes", "y", "o"]:
