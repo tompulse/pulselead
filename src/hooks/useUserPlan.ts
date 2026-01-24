@@ -190,15 +190,7 @@ export const useUserPlan = (userId: string | undefined) => {
   const showUpgradeMessage = (feature: string) => {
     toast({
       title: '✨ Fonctionnalité PRO',
-      description: `${feature} est disponible avec le plan PRO à 49€/mois`,
-      action: (
-        <button
-          onClick={() => window.location.href = '/#pricing'}
-          className="bg-accent text-black px-4 py-2 rounded-lg font-semibold hover:bg-accent/90 transition"
-        >
-          Passer à PRO
-        </button>
-      ),
+      description: `${feature} est disponible avec le plan PRO à 49€/mois. Cliquez pour upgrader.`,
       duration: 5000,
     });
   };
