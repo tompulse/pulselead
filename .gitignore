@@ -23,3 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 nouveaux-sites-supabase.csv
+IMPORT_SUPABASE.csv
+.import_temp.csv
