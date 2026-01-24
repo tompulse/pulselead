@@ -4,12 +4,14 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useCRMActions } from "@/hooks/useCRMActions";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User, Sparkles } from "lucide-react";
+import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User, Sparkles, Lock, Unlock } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafNomenclatureComplete";
@@ -35,6 +37,12 @@ export const UnifiedEntreprisePanel = ({
   const [isEnriching, setIsEnriching] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // User plan & unlock logic
+  const { userPlan, unlockProspect, isProspectUnlocked } = useUserPlan(userId);
+  const isPro = userPlan?.plan_type === 'pro';
+  const isUnlocked = entreprise?.id ? isProspectUnlocked(entreprise.id) : false;
+  const canSeeDetails = isPro || isUnlocked;
 
   // If we only have an ID, fetch full data from nouveaux_sites
   const entrepriseId = entreprise?.id;
@@ -124,6 +132,25 @@ export const UnifiedEntreprisePanel = ({
     : null;
 
   const hasCoordinates = displayEntreprise.latitude && displayEntreprise.longitude;
+  
+  // Handle unlock
+  const handleUnlock = async () => {
+    if (!displayEntreprise?.id) return;
+    
+    const result = await unlockProspect(displayEntreprise.id);
+    if (result.success) {
+      toast({
+        title: "Prospect débloqué !",
+        description: `${result.remaining}/30 prospects restants`,
+      });
+    } else {
+      toast({
+        title: "Limite atteinte",
+        description: result.message,
+        variant: "destructive"
+      });
+    }
+  };
 
   // Fonction pour enrichir le dirigeant via Pappers
   const handleEnrichDirigeant = async () => {
@@ -175,10 +202,25 @@ export const UnifiedEntreprisePanel = ({
       >
         {/* Header */}
         <div className="shrink-0 p-4 pr-12 border-b border-accent/20 bg-gradient-to-r from-accent/5 to-transparent">
-          <h2 className="text-lg font-bold leading-tight">{displayEntreprise.nom || 'Entreprise'}</h2>
-          {cityLine && (
-            <p className="text-sm text-muted-foreground mt-0.5">{cityLine}</p>
-          )}
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1">
+              <h2 className="text-lg font-bold leading-tight">{displayEntreprise.nom || 'Entreprise'}</h2>
+              {cityLine && (
+                <p className="text-sm text-muted-foreground mt-0.5">{cityLine}</p>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Badge variant={isPro ? "default" : "secondary"} className="text-xs">
+                {isPro ? "PRO" : "FREE"}
+              </Badge>
+              {canSeeDetails && !isPro && (
+                <Badge variant="outline" className="gap-1 text-xs bg-emerald-500/10 border-emerald-500/30">
+                  <Unlock className="w-3 h-3" />
+                  Débloqué
+                </Badge>
+              )}
+            </div>
+          </div>
           {leadStatus && (
             <div className="mt-2">
               <LeadStatusBadge statut={leadStatus.statut_actuel} />
@@ -200,39 +242,67 @@ export const UnifiedEntreprisePanel = ({
             <TabsContent value="info" className="h-full m-0 data-[state=active]:flex data-[state=active]:flex-col">
               <ScrollArea className="flex-1">
                 <div className="p-4 space-y-4">
+                  {/* Unlock CTA for FREE users */}
+                  {!canSeeDetails && (
+                    <div className="p-4 bg-accent/5 border-2 border-accent/30 rounded-lg text-center space-y-3">
+                      <Lock className="w-10 h-10 mx-auto text-accent/60" />
+                      <div>
+                        <p className="font-semibold text-sm">Fiche verrouillée</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Débloquez pour voir SIRET, adresse complète et date de création
+                        </p>
+                      </div>
+                      <Button onClick={handleUnlock} className="w-full" size="sm">
+                        <Unlock className="w-4 h-4 mr-2" />
+                        Débloquer ce prospect
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        {userPlan?.unlocked_prospects_count || 0}/30 prospects débloqués
+                      </p>
+                    </div>
+                  )}
+                  
                   {/* Adresse */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
                       <MapPin className="w-3.5 h-3.5" />
                       Adresse
                     </div>
-                    <div className="text-sm">
-                      {formattedAddress && <p>{formattedAddress}</p>}
-                      {cityLine && <p className="font-medium">{cityLine}</p>}
-                      {!formattedAddress && !cityLine && (
-                        <p className="text-muted-foreground italic">Non renseignée</p>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => openGoogleMaps(displayEntreprise.latitude, displayEntreprise.longitude)}
-                        className="h-8 text-xs border-accent/30 hover:bg-accent/10"
-                        disabled={!hasCoordinates}
-                      >
-                        Google Maps
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => openWaze(displayEntreprise.latitude, displayEntreprise.longitude)}
-                        className="h-8 text-xs border-accent/30 hover:bg-accent/10"
-                        disabled={!hasCoordinates}
-                      >
-                        Waze
-                      </Button>
-                    </div>
+                    {canSeeDetails ? (
+                      <>
+                        <div className="text-sm">
+                          {formattedAddress && <p>{formattedAddress}</p>}
+                          {cityLine && <p className="font-medium">{cityLine}</p>}
+                          {!formattedAddress && !cityLine && (
+                            <p className="text-muted-foreground italic">Non renseignée</p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openGoogleMaps(displayEntreprise.latitude, displayEntreprise.longitude)}
+                            className="h-8 text-xs border-accent/30 hover:bg-accent/10"
+                            disabled={!hasCoordinates}
+                          >
+                            Google Maps
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openWaze(displayEntreprise.latitude, displayEntreprise.longitude)}
+                            className="h-8 text-xs border-accent/30 hover:bg-accent/10"
+                            disabled={!hasCoordinates}
+                          >
+                            Waze
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-sm blur-sm select-none text-muted-foreground">
+                        RUE DE COBLENCE, 58000 NEVERS
+                      </div>
+                    )}
                   </div>
 
                   {/* Activité NAF */}
@@ -262,15 +332,21 @@ export const UnifiedEntreprisePanel = ({
                       <Hash className="w-3.5 h-3.5" />
                       SIREN
                     </div>
-                    <p className="text-sm font-mono">
-                      {displayEntreprise.siret 
-                        ? displayEntreprise.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')
-                        : <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
-                    </p>
+                    {canSeeDetails ? (
+                      <p className="text-sm font-mono">
+                        {displayEntreprise.siret 
+                          ? displayEntreprise.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')
+                          : <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
+                      </p>
+                    ) : (
+                      <p className="text-sm font-mono blur-sm select-none text-muted-foreground">
+                        990 470 197
+                      </p>
+                    )}
                   </div>
 
                   {/* Catégorie juridique */}
-                  {displayEntreprise.categorie_juridique && (
+                  {canSeeDetails && displayEntreprise.categorie_juridique && (
                     <div className="space-y-1 pt-3 border-t border-accent/10">
                       <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
                         <Scale className="w-3.5 h-3.5" />

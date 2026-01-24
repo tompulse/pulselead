@@ -161,7 +161,9 @@ export const AccountMenu = ({
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{userEmail || 'Mon compte'}</p>
-            <p className="text-xs text-muted-foreground">Commercial Solo</p>
+            <p className="text-xs text-muted-foreground">
+              {subscriptionPlan === 'pro' ? 'PRO' : 'FREE'}
+            </p>
           </div>
         </DropdownMenuLabel>
         
