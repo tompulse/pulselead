@@ -91,6 +91,10 @@ const Auth = () => {
   };
 
   useEffect(() => {
+    // Check if user just confirmed their email
+    const isEmailConfirmed = searchParams.get('confirmed') === 'true';
+    const confirmedPlan = searchParams.get('plan') || 'free';
+    
     // Listen for auth changes FIRST - this is critical for PASSWORD_RECOVERY
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event, 'Session:', !!session, 'isRecoveryHandled:', isRecoveryHandled);
@@ -114,9 +118,10 @@ const Auth = () => {
       // For SIGNED_IN events, handle new user onboarding with selected plan
       if (session && event === 'SIGNED_IN') {
         console.log('[AUTH EVENT] SIGNED_IN detected, checking user plan status...');
+        console.log('[AUTH EVENT] isEmailConfirmed:', isEmailConfirmed, 'confirmedPlan:', confirmedPlan);
         
-        // Get the plan selected during signup from user metadata
-        const selectedPlanFromMetadata = session.user.user_metadata?.selected_plan || 'free';
+        // Get the plan selected during signup from user metadata or URL param
+        const selectedPlanFromMetadata = session.user.user_metadata?.selected_plan || confirmedPlan || 'free';
         console.log('[AUTH EVENT] Selected plan from metadata:', selectedPlanFromMetadata);
         
         // Wait a bit for trigger to complete
@@ -131,16 +136,21 @@ const Auth = () => {
 
         console.log('[AUTH EVENT] User quotas:', quotas, 'Error:', quotasError);
 
-        if (quotasError && quotasError.code === 'PGRST116') {
-          // First time login - create quotas with the selected plan
-          console.log('[AUTH EVENT] First login, creating quotas with plan:', selectedPlanFromMetadata);
+        // If no quotas exist OR if coming from email confirmation, create/update them
+        if ((quotasError && quotasError.code === 'PGRST116') || isEmailConfirmed) {
+          console.log('[AUTH EVENT] Creating/updating quotas with plan:', selectedPlanFromMetadata);
           
+          // Upsert quotas with the selected plan
           await supabase
             .from('user_quotas')
-            .insert({ 
+            .upsert({ 
               user_id: session.user.id, 
               plan_type: selectedPlanFromMetadata, 
-              is_first_login: false // Mark as having completed onboarding
+              is_first_login: false, // Mark as having completed onboarding
+              unlocked_prospects_count: 0,
+              tournees_created_this_month: 0
+            }, {
+              onConflict: 'user_id'
             });
           
           // If PRO plan, redirect to Stripe checkout
@@ -158,8 +168,11 @@ const Auth = () => {
 
               if (checkoutError) {
                 console.error('[AUTH EVENT] Checkout error:', checkoutError);
-                // Fallback to dashboard even if checkout fails
-                navigate('/dashboard');
+                toast({
+                  title: "Erreur Stripe",
+                  description: "Impossible d'accéder au checkout. Contactez le support.",
+                  variant: "destructive",
+                });
                 return;
               }
 
@@ -170,8 +183,11 @@ const Auth = () => {
               }
             } catch (error) {
               console.error('[AUTH EVENT] Error creating checkout:', error);
-              // Fallback to dashboard
-              navigate('/dashboard');
+              toast({
+                title: "Erreur Stripe",
+                description: "Impossible d'accéder au checkout. Contactez le support.",
+                variant: "destructive",
+              });
               return;
             }
           }
@@ -193,7 +209,7 @@ const Auth = () => {
     // La redirection ne se fait QUE après une action de connexion explicite (SIGNED_IN event)
 
     return () => subscription.unsubscribe();
-  }, [navigate, mode, isRecoveryHandled, redirectTo]);
+  }, [navigate, mode, isRecoveryHandled, redirectTo, searchParams, toast]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -354,7 +370,7 @@ const Auth = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+            emailRedirectTo: `${window.location.origin}/auth?confirmed=true&plan=${selectedPlan}`,
             data: {
               selected_plan: selectedPlan, // Save the plan chosen by user
             }

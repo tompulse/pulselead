@@ -156,10 +156,11 @@ const DashboardContent = () => {
         if (quotas?.plan_type === 'pro' && (!subscription || !['active', 'trialing'].includes(subscription.stripe_subscription_status))) {
           console.log('[DASHBOARD] PRO plan without active subscription, redirecting to Stripe checkout');
           
+          // Show loading message instead of error
           toast({
-            title: "⚠️ Checkout requis",
-            description: "Complétez votre inscription pour accéder au dashboard PRO",
-            duration: 5000,
+            title: "⏳ Redirection en cours...",
+            description: "Finalisation de votre inscription PRO",
+            duration: 10000,
           });
 
           try {
@@ -172,13 +173,27 @@ const DashboardContent = () => {
 
             if (checkoutError || !checkoutData?.url) {
               console.error('[DASHBOARD] Checkout error:', checkoutError);
+              toast({
+                title: "❌ Erreur",
+                description: "Impossible de créer la session Stripe. Veuillez réessayer.",
+                variant: "destructive",
+                duration: 5000,
+              });
               navigate("/");
               return;
             }
 
+            // Redirect to Stripe checkout
+            console.log('[DASHBOARD] Redirecting to Stripe:', checkoutData.url);
             window.location.href = checkoutData.url;
           } catch (error) {
             console.error('[DASHBOARD] Error creating checkout:', error);
+            toast({
+              title: "❌ Erreur",
+              description: "Impossible de créer la session Stripe. Veuillez réessayer.",
+              variant: "destructive",
+              duration: 5000,
+            });
             navigate("/");
           }
           return;
