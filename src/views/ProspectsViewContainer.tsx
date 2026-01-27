@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NouveauxSitesListView } from '@/components/dashboard/NouveauxSitesListView';
 import { NafFilters } from '@/components/dashboard/NafFilters';
 import { MobileFiltersBar } from '@/components/dashboard/MobileFiltersBar';
+import { FreemiumBanner } from '@/components/FreemiumBanner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { nouveauxSitesService } from '@/services/nouveauxSitesService';
@@ -11,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { LoadingState, SkeletonTable } from '@/components/ui/loading-state';
 import { ErrorMessage } from '@/components/ui/error-message';
+import { useUserPlan } from '@/hooks/useUserPlan';
 
 interface ProspectsViewContainerProps {
   filters: any;
@@ -27,6 +29,10 @@ export const ProspectsViewContainer = ({
 }: ProspectsViewContainerProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  
+  // User plan & quotas
+  const { userPlan } = useUserPlan(userId);
+  const isFree = userPlan?.plan_type === 'free';
   
   // État pour le mode tournée
   const [tourneeActive, setTourneeActive] = useState(false);
@@ -198,6 +204,20 @@ export const ProspectsViewContainer = ({
           onStartPointChange={handleStartPointChange}
         />
       </div>
+
+      {/* Freemium Banner - Only for FREE plan */}
+      {isFree && userPlan && (
+        <div className="shrink-0 px-4 pt-4">
+          <FreemiumBanner 
+            quotas={{
+              prospects_unlocked: userPlan.unlocked_prospects_count || 0,
+              prospects_limit: 30,
+              tournees_created: userPlan.tournees_created_this_month || 0,
+              tournees_limit: 2
+            }}
+          />
+        </div>
+      )}
       
       <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden p-4 pt-2">
         {/* Sidebar Filtres NAF - Desktop only - Fixed */}
