@@ -8,7 +8,7 @@
 export const STRIPE_CONFIG = {
   // PRO Plan Payment Link (7-day free trial)
   // Replace with your actual Payment Link URL from Stripe Dashboard
-  PAYMENT_LINK_PRO: import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/test_REPLACE_WITH_YOUR_LINK',
+  PAYMENT_LINK_PRO: import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00',
   
   // PRO Plan Price ID (for webhook verification)
   PRO_PRICE_ID: 'price_1SqxKmHjyidZ5i9L8tCztpFU',
