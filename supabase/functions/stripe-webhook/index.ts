@@ -93,9 +93,28 @@ serve(async (req) => {
         const session = event.data.object as Stripe.Checkout.Session;
         logStep("Checkout completed", { sessionId: session.id, customerId: session.customer });
 
-        const userId = session.metadata?.user_id;
+        // Get user_id from metadata OR find by email
+        let userId = session.metadata?.user_id;
+        const customerEmail = session.customer_email || session.customer_details?.email;
+        
+        if (!userId && customerEmail) {
+          // Try to find user by email (for Payment Link flow)
+          logStep("No user_id in metadata, searching by email", { email: customerEmail });
+          
+          const { data: userData, error: userError } = await supabaseAdmin.auth.admin.listUsers();
+          if (!userError && userData?.users) {
+            const user = userData.users.find(u => u.email === customerEmail);
+            if (user) {
+              userId = user.id;
+              logStep("Found existing user by email", { userId });
+            }
+          }
+        }
+        
         if (!userId) {
-          logStep("No user_id in metadata, skipping");
+          logStep("No user found, will be linked when account is created", { email: customerEmail });
+          // Store session info for later linking (when user creates account)
+          // We'll match via email when the user signs up
           break;
         }
 
