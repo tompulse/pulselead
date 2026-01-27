@@ -13,6 +13,10 @@ type AuthMode = 'login' | 'signup' | 'forgot' | 'reset';
 const Auth = () => {
   const [searchParams] = useSearchParams();
   
+  // Get selected plan from URL params
+  const selectedPlan = searchParams.get('plan') || 'free'; // Default to 'free' if no plan specified
+  const isPro = selectedPlan === 'pro';
+  
   // Check for reset mode from URL params OR hash fragment (Supabase recovery links)
   const getInitialMode = (): AuthMode => {
     // Check URL params first
@@ -107,40 +111,80 @@ const Auth = () => {
         return;
       }
       
-      // For SIGNED_IN events, check if user needs plan selection
+      // For SIGNED_IN events, handle new user onboarding with selected plan
       if (session && event === 'SIGNED_IN') {
         console.log('[AUTH EVENT] SIGNED_IN detected, checking user plan status...');
+        
+        // Get the plan selected during signup from user metadata
+        const selectedPlanFromMetadata = session.user.user_metadata?.selected_plan || 'free';
+        console.log('[AUTH EVENT] Selected plan from metadata:', selectedPlanFromMetadata);
         
         // Wait a bit for trigger to complete
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Check if user has already chosen a plan
+        // Check if user already has quotas
         const { data: quotas, error: quotasError } = await supabase
           .from('user_quotas')
-          .select('is_first_login')
+          .select('plan_type, is_first_login')
           .eq('user_id', session.user.id)
           .single();
 
         console.log('[AUTH EVENT] User quotas:', quotas, 'Error:', quotasError);
 
         if (quotasError && quotasError.code === 'PGRST116') {
-          // Quotas don't exist yet - create them and go to plan selection
-          console.log('[AUTH EVENT] No quotas found, creating and redirecting to plan selection');
+          // First time login - create quotas with the selected plan
+          console.log('[AUTH EVENT] First login, creating quotas with plan:', selectedPlanFromMetadata);
+          
           await supabase
             .from('user_quotas')
-            .insert({ user_id: session.user.id, plan_type: 'free', is_first_login: true });
-          navigate('/plan-selection');
+            .insert({ 
+              user_id: session.user.id, 
+              plan_type: selectedPlanFromMetadata, 
+              is_first_login: false // Mark as having completed onboarding
+            });
+          
+          // If PRO plan, redirect to Stripe checkout
+          if (selectedPlanFromMetadata === 'pro') {
+            console.log('[AUTH EVENT] PRO plan selected, redirecting to Stripe checkout...');
+            
+            // Call Stripe checkout Edge Function
+            try {
+              const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+                body: { 
+                  priceId: 'price_1SqxKmHjyidZ5i9L8tCztpFU', // PRO plan price ID
+                  trialDays: 7
+                },
+              });
+
+              if (checkoutError) {
+                console.error('[AUTH EVENT] Checkout error:', checkoutError);
+                // Fallback to dashboard even if checkout fails
+                navigate('/dashboard');
+                return;
+              }
+
+              if (checkoutData?.url) {
+                console.log('[AUTH EVENT] Redirecting to Stripe:', checkoutData.url);
+                window.location.href = checkoutData.url;
+                return;
+              }
+            } catch (error) {
+              console.error('[AUTH EVENT] Error creating checkout:', error);
+              // Fallback to dashboard
+              navigate('/dashboard');
+              return;
+            }
+          }
+          
+          // FREE plan - go directly to dashboard
+          console.log('[AUTH EVENT] FREE plan, redirecting to dashboard');
+          navigate('/dashboard');
           return;
         }
 
-        // If is_first_login is true, user hasn't chosen a plan yet
-        if (quotas && quotas.is_first_login) {
-          console.log('[AUTH EVENT] User needs to select plan, redirecting to plan-selection');
-          navigate('/plan-selection');
-        } else {
-          console.log('[AUTH EVENT] User already has plan, redirecting to dashboard');
-          navigate(getRedirectPath());
-        }
+        // User already has quotas - normal dashboard access
+        console.log('[AUTH EVENT] User already has quotas, redirecting to dashboard');
+        navigate('/dashboard');
       }
     });
 
@@ -303,17 +347,16 @@ const Auth = () => {
         // Let the onAuthStateChange handler manage the redirection
         // It will check is_first_login and redirect accordingly
       } else {
-        // Signup simple : email + password uniquement
-        // Redirection vers plan-selection après confirmation email
-        console.log("[AUTH] Attempting signup for:", email);
+        // Signup with selected plan
+        console.log("[AUTH] Attempting signup for:", email, "with plan:", selectedPlan);
         
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/plan-selection`,
+            emailRedirectTo: `${window.location.origin}/dashboard`,
             data: {
-              needs_plan_selection: true, // Flag to show plan selection
+              selected_plan: selectedPlan, // Save the plan chosen by user
             }
           },
         });
@@ -323,11 +366,13 @@ const Auth = () => {
           throw error;
         }
 
-        console.log("[AUTH] Signup successful:", data);
+        console.log("[AUTH] Signup successful with plan:", selectedPlan, data);
 
         toast({
           title: "📧 Vérifiez votre boîte mail !",
-          description: "Nous vous avons envoyé un email de confirmation. Cliquez sur le lien pour activer votre compte.",
+          description: isPro 
+            ? "Confirmez votre email pour accéder au checkout et profiter de 7 jours d'essai gratuit !" 
+            : "Confirmez votre email pour accéder à votre dashboard gratuit !",
           duration: 8000,
         });
         
@@ -370,6 +415,24 @@ const Auth = () => {
           <p className="text-muted-foreground text-base">
             {getTitle()}
           </p>
+          
+          {/* Plan Badge - Only show for signup/login, not for reset/forgot */}
+          {!isReset && !isForgot && (
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full" style={{
+              background: isPro 
+                ? 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(14, 165, 233, 0.1) 100%)' 
+                : 'rgba(100, 100, 100, 0.1)',
+              border: isPro ? '2px solid rgba(6, 182, 212, 0.5)' : '2px solid rgba(255, 255, 255, 0.2)',
+            }}>
+              <span className="text-lg">{isPro ? '⭐' : '🎯'}</span>
+              <div className="text-left">
+                <p className="text-xs text-white/50 leading-tight">Plan sélectionné</p>
+                <p className={`text-sm font-bold leading-tight ${isPro ? 'gradient-text' : 'text-white'}`}>
+                  {isPro ? 'PRO - 7j gratuits' : 'GRATUIT'}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Auth Form */}

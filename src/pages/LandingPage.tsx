@@ -255,11 +255,10 @@ const LandingPage = () => {
               {/* CTA */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button 
-                  onClick={handleCTAClick}
-                  disabled={checkoutLoading || subscriptionLoading}
+                  onClick={() => navigate('/auth?plan=free')}
                   className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 w-full sm:w-auto"
                 >
-                  {checkoutLoading || subscriptionLoading ? 'Redirection...' : 'Commencer maintenant'}
+                  Commencer maintenant
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
@@ -463,7 +462,7 @@ const LandingPage = () => {
                     </ul>
                     <Button 
                       className="w-full bg-white/10 text-white hover:bg-white/20 py-4 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto border border-white/20" 
-                      onClick={() => navigate('/auth')}
+                      onClick={() => navigate('/auth?plan=free')}
                     >
                       Commencer gratuitement
                       <ArrowRight className="ml-2 w-4 h-4" />
@@ -509,10 +508,9 @@ const LandingPage = () => {
                     </ul>
                     <Button 
                       className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 py-5 text-base font-black shadow-2xl hover:shadow-green-500/60 hover:scale-[1.03] transition-all mt-auto border-2 border-green-400/30" 
-                      onClick={handleCTAClick}
-                      disabled={checkoutLoading || subscriptionLoading}
+                      onClick={() => navigate('/auth?plan=pro')}
                     >
-                      {checkoutLoading || subscriptionLoading ? 'Redirection...' : '🚀 Essayer 7 jours'}
+                      🚀 Essayer 7 jours GRATUIT
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                     <p className="text-center text-[10px] text-green-400/70 mt-1.5">✅ Garantie 30j • 🔒 Paiement sécurisé</p>
