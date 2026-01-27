@@ -130,15 +130,70 @@ const DashboardContent = () => {
 
   // Vérifier l'accès à l'abonnement après le chargement (attendre que le statut admin soit vérifié)
   useEffect(() => {
-    if (!loading && !adminLoading && !subscriptionLoading && userId) {
-      // Bypass pour admins et utilisateur démo
-      if (!isAdmin && !isDemoUser && !hasAccess) {
-        // Redirection vers la landing SANS déclencher checkout automatique
-        // L'utilisateur devra cliquer sur un CTA explicite pour aller vers Stripe
-        navigate("/");
+    const checkAccessAndRedirect = async () => {
+      if (!loading && !adminLoading && !subscriptionLoading && userId) {
+        // Bypass pour admins et utilisateur démo
+        if (isAdmin || isDemoUser) {
+          return;
+        }
+
+        // Check if user has PRO plan without active subscription
+        const { data: quotas } = await supabase
+          .from('user_quotas')
+          .select('plan_type')
+          .eq('user_id', userId)
+          .single();
+
+        const { data: subscription } = await supabase
+          .from('user_subscriptions')
+          .select('stripe_subscription_status')
+          .eq('user_id', userId)
+          .single();
+
+        console.log('[DASHBOARD] Plan type:', quotas?.plan_type, 'Subscription status:', subscription?.stripe_subscription_status);
+
+        // If PRO plan but no active subscription → Redirect to Stripe checkout
+        if (quotas?.plan_type === 'pro' && (!subscription || !['active', 'trialing'].includes(subscription.stripe_subscription_status))) {
+          console.log('[DASHBOARD] PRO plan without active subscription, redirecting to Stripe checkout');
+          
+          toast({
+            title: "⚠️ Checkout requis",
+            description: "Complétez votre inscription pour accéder au dashboard PRO",
+            duration: 5000,
+          });
+
+          try {
+            const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+              body: { 
+                priceId: 'price_1SqxKmHjyidZ5i9L8tCztpFU',
+                trialDays: 7
+              },
+            });
+
+            if (checkoutError || !checkoutData?.url) {
+              console.error('[DASHBOARD] Checkout error:', checkoutError);
+              navigate("/");
+              return;
+            }
+
+            window.location.href = checkoutData.url;
+          } catch (error) {
+            console.error('[DASHBOARD] Error creating checkout:', error);
+            navigate("/");
+          }
+          return;
+        }
+
+        // FREE plan or PRO with active subscription
+        if (!hasAccess && quotas?.plan_type !== 'free') {
+          console.log('[DASHBOARD] No access and not FREE plan, redirecting to landing');
+          navigate("/");
+        }
       }
-    }
-  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate]);
+    };
+
+    checkAccessAndRedirect();
+  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate, toast]);
 
 
   const handleLogout = async () => {

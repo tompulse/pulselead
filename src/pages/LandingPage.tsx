@@ -255,10 +255,10 @@ const LandingPage = () => {
               {/* CTA */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button 
-                  onClick={() => navigate('/auth?plan=free')}
+                  onClick={() => navigate('/auth?plan=pro')}
                   className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 w-full sm:w-auto"
                 >
-                  Commencer maintenant
+                  🚀 Essayer 7 jours GRATUIT
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
