@@ -1,55 +1,65 @@
 -- ============================================
--- 🔧 FIX TRIGGER PLAN PRO/FREE
+-- 🔧 ROLLBACK COMPLET - TRIGGER MINIMAL
 -- ============================================
--- Supprime et recrée le trigger pour qu'il respecte
--- le plan choisi par l'user (free ou pro)
+-- On supprime complètement la logique du trigger
+-- Tout sera géré côté frontend
 -- ============================================
 
--- Supprimer l'ancien trigger défectueux (avec CASCADE)
+-- Supprimer le trigger problématique
 DROP TRIGGER IF EXISTS on_user_created_initialize_quota ON auth.users CASCADE;
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users CASCADE;
 DROP FUNCTION IF EXISTS initialize_user_quota() CASCADE;
 
--- Créer nouveau trigger qui LIT le plan choisi
+-- Créer un trigger MINIMAL qui ne fait RIEN
+-- Toute la logique sera dans le frontend
 CREATE OR REPLACE FUNCTION initialize_user_quota()
 RETURNS TRIGGER
 SECURITY DEFINER
 SET search_path = public
 LANGUAGE plpgsql
 AS $$
-DECLARE
-  selected_plan TEXT;
 BEGIN
-  -- Lire le plan depuis metadata (free par défaut)
-  selected_plan := COALESCE(
-    NEW.raw_user_meta_data->>'selected_plan',
-    'free'
-  );
-  
-  -- Créer quotas avec le BON plan
-  INSERT INTO public.user_quotas (
-    user_id,
-    plan_type,
-    is_first_login,
-    unlocked_prospects_count,
-    tournees_created_this_month
-  ) VALUES (
-    NEW.id,
-    selected_plan, -- Plan choisi par l'user (free ou pro)
-    false, -- Déjà choisi son plan
-    0,
-    0
-  );
-  
+  -- Ne rien faire, juste retourner le user
+  -- La création des quotas sera gérée par le frontend
   RETURN NEW;
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Ne jamais bloquer la création du user
+    RETURN NEW;
 END;
 $$;
 
--- Recréer le trigger
+-- Recréer le trigger (vide)
 CREATE TRIGGER on_user_created_initialize_quota
   AFTER INSERT ON auth.users
   FOR EACH ROW
   EXECUTE FUNCTION initialize_user_quota();
 
+-- Vérifier que les RLS policies permettent l'insertion
+-- Policy pour permettre aux users authentifiés d'insérer leurs propres quotas
+DROP POLICY IF EXISTS "Users can insert their own quotas" ON user_quotas;
+CREATE POLICY "Users can insert their own quotas"
+  ON user_quotas
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+-- Policy pour permettre la lecture
+DROP POLICY IF EXISTS "Users can read own quotas" ON user_quotas;
+CREATE POLICY "Users can read own quotas"
+  ON user_quotas
+  FOR SELECT
+  TO authenticated
+  USING (auth.uid() = user_id);
+
+-- Policy pour permettre la mise à jour
+DROP POLICY IF EXISTS "Users can update own quotas" ON user_quotas;
+CREATE POLICY "Users can update own quotas"
+  ON user_quotas
+  FOR UPDATE
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
 -- Vérification
-SELECT 'Trigger mis à jour avec succès ✅' as status;
+SELECT 'Trigger désactivé + RLS policies mises à jour ✅' as status;
