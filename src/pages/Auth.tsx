@@ -13,9 +13,10 @@ type AuthMode = 'login' | 'signup' | 'forgot' | 'reset';
 const Auth = () => {
   const [searchParams] = useSearchParams();
   
-  // Get selected plan from URL params
-  const selectedPlan = searchParams.get('plan') || 'free'; // Default to 'free' if no plan specified
+  // Get selected plan from URL params (null if not specified)
+  const selectedPlan = searchParams.get('plan'); // null if no plan specified
   const isPro = selectedPlan === 'pro';
+  const isFree = selectedPlan === 'free';
   
   // Check for reset mode from URL params OR hash fragment (Supabase recovery links)
   const getInitialMode = (): AuthMode => {
@@ -280,12 +281,14 @@ const Auth = () => {
           email,
           password,
           options: {
-            // Redirect to dashboard with checkout parameter if PRO, direct dashboard if FREE
+            // Redirect based on plan:
+            // - FREE (explicit) → Dashboard directly
+            // - No plan specified → Plan selection page
             emailRedirectTo: selectedPlan === 'free' 
               ? `${window.location.origin}/dashboard`
-              : `${window.location.origin}/dashboard?checkout=required`,
+              : `${window.location.origin}/plan-selection`,
             data: {
-              selected_plan: selectedPlan, // Save the plan chosen by user
+              selected_plan: selectedPlan || 'unset', // Save the plan or 'unset'
             }
           },
         });
@@ -299,9 +302,9 @@ const Auth = () => {
 
         toast({
           title: "📧 Vérifiez votre boîte mail !",
-          description: isPro 
-            ? "Confirmez votre email pour accéder au checkout et profiter de 7 jours d'essai gratuit !" 
-            : "Confirmez votre email pour accéder à votre dashboard gratuit !",
+          description: isFree 
+            ? "Confirmez votre email pour accéder à votre dashboard gratuit !" 
+            : "Confirmez votre email pour choisir votre plan et commencer !",
           duration: 8000,
         });
         
@@ -344,24 +347,6 @@ const Auth = () => {
           <p className="text-muted-foreground text-base">
             {getTitle()}
           </p>
-          
-          {/* Plan Badge - Only show for signup/login, not for reset/forgot */}
-          {!isReset && !isForgot && (
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full" style={{
-              background: isPro 
-                ? 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(14, 165, 233, 0.1) 100%)' 
-                : 'rgba(100, 100, 100, 0.1)',
-              border: isPro ? '2px solid rgba(6, 182, 212, 0.5)' : '2px solid rgba(255, 255, 255, 0.2)',
-            }}>
-              <span className="text-lg">{isPro ? '⭐' : '🎯'}</span>
-              <div className="text-left">
-                <p className="text-xs text-white/50 leading-tight">Plan sélectionné</p>
-                <p className={`text-sm font-bold leading-tight ${isPro ? 'gradient-text' : 'text-white'}`}>
-                  {isPro ? 'PRO - 7j gratuits' : 'GRATUIT'}
-                </p>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Auth Form */}
