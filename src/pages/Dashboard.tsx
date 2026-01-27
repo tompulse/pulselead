@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -40,8 +40,18 @@ const DashboardContent = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [searchParams] = useSearchParams();
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
   const { hasAccess, isLoading: subscriptionLoading, daysRemaining, subscriptionStatus, subscriptionPlan, endDate } = useSubscription(userId || undefined);
+
+  // Check if user comes from email confirmation and needs to choose PRO plan
+  useEffect(() => {
+    const checkoutRequired = searchParams.get('checkout');
+    if (checkoutRequired === 'required' && userId) {
+      console.log('[DASHBOARD] Checkout required, redirecting to plan selection');
+      navigate('/plan-selection');
+    }
+  }, [searchParams, userId, navigate]);
 
   const activeFiltersCount = 
     (filters.nafSections?.length || 0) + 

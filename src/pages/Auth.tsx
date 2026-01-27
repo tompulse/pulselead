@@ -280,10 +280,10 @@ const Auth = () => {
           email,
           password,
           options: {
-            // Redirect to plan selection after email confirmation (unless it's a FREE signup)
+            // Redirect to dashboard with checkout parameter if PRO, direct dashboard if FREE
             emailRedirectTo: selectedPlan === 'free' 
               ? `${window.location.origin}/dashboard`
-              : `${window.location.origin}/plan-selection`,
+              : `${window.location.origin}/dashboard?checkout=required`,
             data: {
               selected_plan: selectedPlan, // Save the plan chosen by user
             }
