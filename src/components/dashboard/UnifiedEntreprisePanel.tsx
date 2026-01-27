@@ -34,7 +34,6 @@ export const UnifiedEntreprisePanel = ({
 }: UnifiedEntreprisePanelProps) => {
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<'info' | 'crm'>('info');
-  const [isEnriching, setIsEnriching] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -152,47 +151,6 @@ export const UnifiedEntreprisePanel = ({
     }
   };
 
-  // Fonction pour enrichir le dirigeant via Pappers
-  const handleEnrichDirigeant = async () => {
-    if (!displayEntreprise.siret) {
-      toast({
-        title: "SIRET requis",
-        description: "Un SIRET est nécessaire pour enrichir les informations du dirigeant.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsEnriching(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('enrich-dirigeant', {
-        body: { siret: displayEntreprise.siret },
-      });
-
-      if (error) throw error;
-
-      if (data.success) {
-        toast({
-          title: "Dirigeant trouvé !",
-          description: `${data.dirigeant} (${data.fonction})`,
-        });
-        
-        // Rafraîchir les données de l'entreprise
-        queryClient.invalidateQueries({ queryKey: ['entreprise-detail', entrepriseId] });
-      } else {
-        throw new Error(data.error || 'Erreur lors de l\'enrichissement');
-      }
-    } catch (error: any) {
-      console.error('Erreur enrichissement:', error);
-      toast({
-        title: "Erreur d'enrichissement",
-        description: error.message || "Impossible de récupérer les informations du dirigeant. L'entreprise est peut-être trop récente.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsEnriching(false);
-    }
-  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -360,63 +318,6 @@ export const UnifiedEntreprisePanel = ({
                       </p>
                     </div>
                   )}
-
-                  {/* Dirigeant */}
-                  <div className="space-y-2 pt-3 border-t border-accent/10">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
-                        <User className="w-3.5 h-3.5" />
-                        Dirigeant
-                      </div>
-                    </div>
-                    {displayEntreprise.dirigeant ? (
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium">{displayEntreprise.dirigeant}</p>
-                        {displayEntreprise.fonction_dirigeant && (
-                          <p className="text-xs text-muted-foreground">{displayEntreprise.fonction_dirigeant}</p>
-                        )}
-                        {displayEntreprise.date_enrichissement_dirigeant && (
-                          <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
-                            ✓ Mis à jour le {new Date(displayEntreprise.date_enrichissement_dirigeant).toLocaleDateString('fr-FR')}
-                          </p>
-                        )}
-                        {displayEntreprise.siret && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={handleEnrichDirigeant}
-                            disabled={isEnriching}
-                            className="mt-2 h-8 text-xs border-blue-500/30 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                          >
-                            <Sparkles className="w-3 h-3 mr-1.5" />
-                            {isEnriching ? 'Recherche...' : 'Actualiser via Pappers'}
-                          </Button>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground italic">
-                          Non renseigné
-                        </p>
-                        {displayEntreprise.siret ? (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={handleEnrichDirigeant}
-                            disabled={isEnriching}
-                            className="h-8 text-xs border-blue-500/30 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                          >
-                            <Sparkles className="w-3 h-3 mr-1.5" />
-                            {isEnriching ? 'Recherche...' : 'Trouver via Pappers'}
-                          </Button>
-                        ) : (
-                          <p className="text-xs text-muted-foreground">
-                            SIRET requis pour enrichir
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
 
                   {/* Date de création */}
                   <div className="space-y-1 pt-3 border-t border-accent/10">
