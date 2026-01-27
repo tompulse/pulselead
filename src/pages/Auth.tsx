@@ -91,10 +91,6 @@ const Auth = () => {
   };
 
   useEffect(() => {
-    // Check if user just confirmed their email
-    const isEmailConfirmed = searchParams.get('confirmed') === 'true';
-    const confirmedPlan = searchParams.get('plan') || 'free';
-    
     // Listen for auth changes FIRST - this is critical for PASSWORD_RECOVERY
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event, 'Session:', !!session, 'isRecoveryHandled:', isRecoveryHandled);
@@ -115,63 +111,15 @@ const Auth = () => {
         return;
       }
       
-      // For SIGNED_IN events, handle new user onboarding with selected plan
+      // For SIGNED_IN events after login, redirect to dashboard
       if (session && event === 'SIGNED_IN') {
-        console.log('[AUTH EVENT] SIGNED_IN detected, checking user plan status...');
-        console.log('[AUTH EVENT] isEmailConfirmed:', isEmailConfirmed, 'confirmedPlan:', confirmedPlan);
-        
-        // Get the plan selected during signup from user metadata or URL param
-        const selectedPlanFromMetadata = session.user.user_metadata?.selected_plan || confirmedPlan || 'free';
-        console.log('[AUTH EVENT] Selected plan from metadata:', selectedPlanFromMetadata);
-        
-        // Wait a bit for trigger to complete
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Check if user already has quotas
-        const { data: quotas, error: quotasError } = await supabase
-          .from('user_quotas')
-          .select('plan_type, is_first_login')
-          .eq('user_id', session.user.id)
-          .single();
-
-        console.log('[AUTH EVENT] User quotas:', quotas, 'Error:', quotasError);
-
-        // If no quotas exist OR if coming from email confirmation, create/update them
-        if ((quotasError && quotasError.code === 'PGRST116') || isEmailConfirmed) {
-          console.log('[AUTH EVENT] Creating/updating quotas with plan:', selectedPlanFromMetadata);
-          
-          // Upsert quotas with the selected plan
-          await supabase
-            .from('user_quotas')
-            .upsert({ 
-              user_id: session.user.id, 
-              plan_type: selectedPlanFromMetadata, 
-              is_first_login: false, // Mark as having completed onboarding
-              unlocked_prospects_count: 0,
-              tournees_created_this_month: 0
-            }, {
-              onConflict: 'user_id'
-            });
-          
-          // Always redirect to dashboard
-          // Dashboard will handle Stripe redirect if needed
-          console.log('[AUTH EVENT] Redirecting to dashboard (plan:', selectedPlanFromMetadata, ')');
-          navigate('/dashboard');
-          return;
-        }
-
-        // User already has quotas - normal dashboard access
-        console.log('[AUTH EVENT] User already has quotas, redirecting to dashboard');
+        console.log('[AUTH EVENT] SIGNED_IN detected, redirecting to dashboard');
         navigate('/dashboard');
       }
     });
 
-    // IMPORTANT: Ne PAS rediriger automatiquement si l'utilisateur a une session existante
-    // L'utilisateur doit pouvoir se connecter manuellement avec ses identifiants
-    // La redirection ne se fait QUE après une action de connexion explicite (SIGNED_IN event)
-
     return () => subscription.unsubscribe();
-  }, [navigate, mode, isRecoveryHandled, redirectTo, searchParams, toast]);
+  }, [navigate, mode, isRecoveryHandled]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -332,7 +280,10 @@ const Auth = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth?confirmed=true&plan=${selectedPlan}`,
+            // Redirect to plan selection after email confirmation (unless it's a FREE signup)
+            emailRedirectTo: selectedPlan === 'free' 
+              ? `${window.location.origin}/dashboard`
+              : `${window.location.origin}/plan-selection`,
             data: {
               selected_plan: selectedPlan, // Save the plan chosen by user
             }

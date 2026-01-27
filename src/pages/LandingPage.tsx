@@ -12,7 +12,6 @@ import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { DemoModeButton } from "@/components/landing/DemoModeButton";
 import { SocialProof } from "@/components/landing/SocialProof";
-import { STRIPE_CONFIG } from "@/config/stripe";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -43,11 +42,11 @@ const LandingPage = () => {
     setUserId(null);
   };
 
-  // Handle dashboard button click - redirect to Stripe if not logged in, dashboard otherwise
+  // Handle dashboard button click - redirect to auth if not logged in, dashboard otherwise
   const handleDashboardClick = () => {
     if (!isLoggedIn) {
-      // Not logged in - go to Stripe Payment Link PRO
-      window.location.href = STRIPE_CONFIG.PAYMENT_LINK_PRO;
+      // Not logged in - go to auth/signup
+      navigate('/auth');
     } else {
       // Logged in - always go to plan selection page (it will redirect to dashboard if already chose a plan)
       navigate('/plan-selection');
@@ -256,7 +255,7 @@ const LandingPage = () => {
               {/* CTA */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button 
-                  onClick={() => window.location.href = STRIPE_CONFIG.PAYMENT_LINK_PRO}
+                  onClick={() => navigate('/auth')}
                   className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 w-full sm:w-auto"
                 >
                   🚀 Essayer 7 jours GRATUIT
@@ -509,7 +508,7 @@ const LandingPage = () => {
                     </ul>
                     <Button 
                       className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 py-5 text-base font-black shadow-2xl hover:shadow-green-500/60 hover:scale-[1.03] transition-all mt-auto border-2 border-green-400/30" 
-                      onClick={() => window.location.href = STRIPE_CONFIG.PAYMENT_LINK_PRO}
+                      onClick={() => navigate('/auth')}
                     >
                       🚀 Essayer 7 jours GRATUIT
                       <ArrowRight className="ml-2 w-4 h-4" />
@@ -672,7 +671,7 @@ const LandingPage = () => {
         {/* Sticky CTA Mobile */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
           <Button 
-            onClick={() => window.location.href = STRIPE_CONFIG.PAYMENT_LINK_PRO}
+            onClick={() => navigate('/auth')}
             className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 rounded-full shadow-lg shadow-green-500/40"
           >
             🚀 Essayer 7j GRATUIT
