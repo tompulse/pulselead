@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Check, Sparkles, Zap, ArrowRight, Lock, Unlock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { STRIPE_CONFIG } from "@/config/stripe";
 
 const PlanSelection = () => {
   const navigate = useNavigate();
@@ -161,8 +162,8 @@ const PlanSelection = () => {
     if (!userId) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Session expirée. Veuillez vous reconnecter.",
+        title: "❌ Session expirée",
+        description: "Reconnecte-toi pour continuer !",
       });
       navigate("/auth");
       return;
@@ -172,10 +173,10 @@ const PlanSelection = () => {
     try {
       console.log("[PRO PLAN] Starting activation for user:", userId);
       
-      // Mark user as having made a choice before redirecting to Stripe
+      // Mark user as having made a choice and set plan_type to pro
       const { data: updateData, error: updateError } = await supabase
         .from('user_quotas')
-        .update({ is_first_login: false })
+        .update({ is_first_login: false, plan_type: 'pro' })
         .eq('user_id', userId)
         .select();
       
@@ -184,36 +185,26 @@ const PlanSelection = () => {
         throw updateError;
       }
       
-      console.log("[PRO PLAN] Update successful:", updateData);
+      console.log("[PRO PLAN] Update successful, redirecting to Stripe Payment Link");
 
-      // Appeler Stripe checkout avec trial de 7 jours
-      // ⚠️ IMPORTANT: Ce price ID doit correspondre à 49€/mois sur Stripe
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { 
-          priceId: 'price_1SqxKmHjyidZ5i9L8tCztpFU', // Price ID pour 49€/mois avec trial 7 jours
-          trialDays: 7 // Essai gratuit de 7 jours
-        },
+      // Redirect to Stripe Payment Link (plus fiable qu'une Edge Function)
+      toast({
+        title: "🚀 Redirection vers le paiement...",
+        description: "Tu vas être redirigé vers Stripe pour finaliser ton inscription PRO !",
+        duration: 3000,
       });
 
-      if (error) {
-        console.error("[PRO PLAN] Stripe checkout error:", error);
-        throw error;
-      }
+      // Small delay to show the toast
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      if (!data?.url) {
-        throw new Error('Aucune URL de paiement reçue de Stripe');
-      }
-
-      console.log("[PRO PLAN] Redirecting to Stripe:", data.url);
-
-      // Rediriger vers Stripe Checkout
-      window.location.href = data.url;
+      // Redirect to Stripe Payment Link
+      window.location.href = STRIPE_CONFIG.PAYMENT_LINK_PRO;
     } catch (error: any) {
       console.error("[PRO PLAN] Error creating checkout:", error);
       toast({
         variant: "destructive",
-        title: "Erreur de paiement",
-        description: error.message || "Impossible de démarrer le paiement. Veuillez réessayer ou contactez le support.",
+        title: "❌ Oups !",
+        description: error.message || "Impossible d'accéder au paiement. Réessaye dans quelques secondes !",
       });
       setLoading(false);
     }
