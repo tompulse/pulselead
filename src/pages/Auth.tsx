@@ -88,7 +88,7 @@ const Auth = () => {
 
   useEffect(() => {
     // Listen for auth changes FIRST - this is critical for PASSWORD_RECOVERY
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event, 'Session:', !!session, 'isRecoveryHandled:', isRecoveryHandled);
       
       // Handle password recovery event - show reset form
@@ -107,9 +107,40 @@ const Auth = () => {
         return;
       }
       
-      // For other events, redirect if logged in
+      // For SIGNED_IN events, check if user needs plan selection
       if (session && event === 'SIGNED_IN') {
-        navigate(getRedirectPath());
+        console.log('[AUTH EVENT] SIGNED_IN detected, checking user plan status...');
+        
+        // Wait a bit for trigger to complete
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Check if user has already chosen a plan
+        const { data: quotas, error: quotasError } = await supabase
+          .from('user_quotas')
+          .select('is_first_login')
+          .eq('user_id', session.user.id)
+          .single();
+
+        console.log('[AUTH EVENT] User quotas:', quotas, 'Error:', quotasError);
+
+        if (quotasError && quotasError.code === 'PGRST116') {
+          // Quotas don't exist yet - create them and go to plan selection
+          console.log('[AUTH EVENT] No quotas found, creating and redirecting to plan selection');
+          await supabase
+            .from('user_quotas')
+            .insert({ user_id: session.user.id, plan_type: 'free', is_first_login: true });
+          navigate('/plan-selection');
+          return;
+        }
+
+        // If is_first_login is true, user hasn't chosen a plan yet
+        if (quotas && quotas.is_first_login) {
+          console.log('[AUTH EVENT] User needs to select plan, redirecting to plan-selection');
+          navigate('/plan-selection');
+        } else {
+          console.log('[AUTH EVENT] User already has plan, redirecting to dashboard');
+          navigate(getRedirectPath());
+        }
       }
     });
 
@@ -264,47 +295,13 @@ const Auth = () => {
 
         console.log("[AUTH] Login successful, user:", session.user.id);
 
-        // Wait for quotas to be available (trigger might still be running)
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Check if user has already chosen a plan
-        const { data: quotas, error: quotasError } = await supabase
-          .from('user_quotas')
-          .select('is_first_login')
-          .eq('user_id', session.user.id)
-          .single();
-
-        if (quotasError) {
-          console.error("[AUTH] Error fetching quotas:", quotasError);
-          // If quotas don't exist, create them as fallback
-          if (quotasError.code === 'PGRST116') {
-            console.log("[AUTH] Creating missing quotas...");
-            await supabase
-              .from('user_quotas')
-              .insert({ user_id: session.user.id, plan_type: 'free', is_first_login: true });
-            // Default to plan selection
-            navigate('/plan-selection');
-            return;
-          }
-        }
-
-        console.log("[AUTH] Quotas found:", quotas);
-
         toast({
           title: "Connexion réussie",
           description: "Bienvenue sur PULSE !",
         });
 
-        // Redirect based on whether user has chosen a plan
-        if (quotas && !quotas.is_first_login) {
-          // User already chose a plan - go to dashboard
-          console.log("[AUTH] User has plan, redirecting to dashboard");
-          navigate('/dashboard');
-        } else {
-          // New user or hasn't chosen plan - go to plan selection
-          console.log("[AUTH] User needs plan, redirecting to plan selection");
-          navigate('/plan-selection');
-        }
+        // Let the onAuthStateChange handler manage the redirection
+        // It will check is_first_login and redirect accordingly
       } else {
         // Signup simple : email + password uniquement
         // Redirection vers plan-selection après confirmation email
