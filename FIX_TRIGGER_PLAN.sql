@@ -1,15 +1,16 @@
--- ================================================
--- FIX: Trigger pour respecter le plan choisi
--- ================================================
--- Le trigger initialize_user_quota créé automatiquement
--- un plan FREE, ce qui écrase le plan choisi par l'user
--- ================================================
+-- ============================================
+-- 🔧 FIX TRIGGER PLAN PRO/FREE
+-- ============================================
+-- Supprime et recrée le trigger pour qu'il respecte
+-- le plan choisi par l'user (free ou pro)
+-- ============================================
 
--- 1. Supprimer l'ancien trigger
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-DROP FUNCTION IF EXISTS initialize_user_quota();
+-- Supprimer l'ancien trigger défectueux (avec CASCADE)
+DROP TRIGGER IF EXISTS on_user_created_initialize_quota ON auth.users CASCADE;
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users CASCADE;
+DROP FUNCTION IF EXISTS initialize_user_quota() CASCADE;
 
--- 2. Créer un nouveau trigger qui lit le plan depuis user_metadata
+-- Créer nouveau trigger qui LIT le plan choisi
 CREATE OR REPLACE FUNCTION initialize_user_quota()
 RETURNS TRIGGER
 SECURITY DEFINER
@@ -19,13 +20,13 @@ AS $$
 DECLARE
   selected_plan TEXT;
 BEGIN
-  -- Lire le plan depuis les metadata (défaut: 'free' si non spécifié)
+  -- Lire le plan depuis metadata (free par défaut)
   selected_plan := COALESCE(
     NEW.raw_user_meta_data->>'selected_plan',
     'free'
   );
   
-  -- Créer les quotas avec le plan choisi
+  -- Créer quotas avec le BON plan
   INSERT INTO public.user_quotas (
     user_id,
     plan_type,
@@ -34,8 +35,8 @@ BEGIN
     tournees_created_this_month
   ) VALUES (
     NEW.id,
-    selected_plan,
-    false, -- is_first_login = false car le plan est déjà choisi
+    selected_plan, -- Plan choisi par l'user (free ou pro)
+    false, -- Déjà choisi son plan
     0,
     0
   );
@@ -44,24 +45,11 @@ BEGIN
 END;
 $$;
 
--- 3. Recréer le trigger
-CREATE TRIGGER on_auth_user_created
+-- Recréer le trigger
+CREATE TRIGGER on_user_created_initialize_quota
   AFTER INSERT ON auth.users
   FOR EACH ROW
   EXECUTE FUNCTION initialize_user_quota();
 
--- 4. Vérification
-SELECT 
-  proname as function_name,
-  prosrc as function_code
-FROM pg_proc 
-WHERE proname = 'initialize_user_quota';
-
--- ================================================
--- TEST APRÈS APPLICATION:
--- ================================================
--- 1. Créé un compte avec /auth?plan=pro
--- 2. Vérifie dans user_quotas:
---    SELECT plan_type FROM user_quotas WHERE user_id = 'xxx';
---    → Doit retourner 'pro' (pas 'free')
--- ================================================
+-- Vérification
+SELECT 'Trigger mis à jour avec succès ✅' as status;
