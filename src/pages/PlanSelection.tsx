@@ -112,8 +112,8 @@ const PlanSelection = () => {
     if (!userId) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Session expirée. Veuillez vous reconnecter.",
+        title: "❌ Session expirée",
+        description: "Reconnecte-toi pour continuer !",
       });
       navigate("/auth");
       return;
@@ -123,11 +123,18 @@ const PlanSelection = () => {
     try {
       console.log("[FREE PLAN] Starting activation for user:", userId);
       
-      // Mark that user has made their plan choice (set is_first_login to false)
+      // Upsert instead of update to handle cases where user_quotas doesn't exist yet
       const { data: updateData, error: updateError } = await supabase
         .from('user_quotas')
-        .update({ is_first_login: false })
-        .eq('user_id', userId)
+        .upsert({ 
+          user_id: userId,
+          is_first_login: false,
+          plan_type: 'free',
+          unlocked_prospects_count: 0,
+          tournees_created_this_month: 0
+        }, {
+          onConflict: 'user_id'
+        })
         .select();
       
       if (updateError) {
@@ -138,8 +145,8 @@ const PlanSelection = () => {
       console.log("[FREE PLAN] Update successful:", updateData);
       
       toast({
-        title: "🎉 Bienvenue sur PULSE !",
-        description: "Votre plan gratuit est activé. Profitez de 30 prospects et 2 tournées par mois.",
+        title: "🎉 Bienvenue sur PULSE FREE !",
+        description: "Ton plan gratuit est activé. 30 prospects et 2 tournées/mois. Let's go !",
         duration: 5000,
       });
       
@@ -151,8 +158,8 @@ const PlanSelection = () => {
       console.error("[FREE PLAN] Error activating free plan:", error);
       toast({
         variant: "destructive",
-        title: "Erreur d'activation",
-        description: error.message || "Impossible d'activer le plan gratuit. Réessayez ou contactez le support.",
+        title: "❌ Oups !",
+        description: error.message || "Impossible d'activer le plan gratuit. Réessaye dans quelques secondes !",
       });
       setLoading(false);
     }
