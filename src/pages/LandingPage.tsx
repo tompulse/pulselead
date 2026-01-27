@@ -43,11 +43,11 @@ const LandingPage = () => {
     setUserId(null);
   };
 
-  // Handle dashboard button click - redirect to auth if not logged in, plan selection if new user, dashboard otherwise
+  // Handle dashboard button click - redirect to Stripe if not logged in, dashboard otherwise
   const handleDashboardClick = () => {
     if (!isLoggedIn) {
-      // Not logged in - go to auth page
-      navigate('/auth');
+      // Not logged in - go to Stripe Payment Link PRO
+      window.location.href = STRIPE_CONFIG.PAYMENT_LINK_PRO;
     } else {
       // Logged in - always go to plan selection page (it will redirect to dashboard if already chose a plan)
       navigate('/plan-selection');
