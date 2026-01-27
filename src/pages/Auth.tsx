@@ -153,47 +153,9 @@ const Auth = () => {
               onConflict: 'user_id'
             });
           
-          // If PRO plan, redirect to Stripe checkout
-          if (selectedPlanFromMetadata === 'pro') {
-            console.log('[AUTH EVENT] PRO plan selected, redirecting to Stripe checkout...');
-            
-            // Call Stripe checkout Edge Function
-            try {
-              const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
-                body: { 
-                  priceId: 'price_1SqxKmHjyidZ5i9L8tCztpFU', // PRO plan price ID
-                  trialDays: 7
-                },
-              });
-
-              if (checkoutError) {
-                console.error('[AUTH EVENT] Checkout error:', checkoutError);
-                toast({
-                  title: "Erreur Stripe",
-                  description: "Impossible d'accéder au checkout. Contactez le support.",
-                  variant: "destructive",
-                });
-                return;
-              }
-
-              if (checkoutData?.url) {
-                console.log('[AUTH EVENT] Redirecting to Stripe:', checkoutData.url);
-                window.location.href = checkoutData.url;
-                return;
-              }
-            } catch (error) {
-              console.error('[AUTH EVENT] Error creating checkout:', error);
-              toast({
-                title: "Erreur Stripe",
-                description: "Impossible d'accéder au checkout. Contactez le support.",
-                variant: "destructive",
-              });
-              return;
-            }
-          }
-          
-          // FREE plan - go directly to dashboard
-          console.log('[AUTH EVENT] FREE plan, redirecting to dashboard');
+          // Always redirect to dashboard
+          // Dashboard will handle Stripe redirect if needed
+          console.log('[AUTH EVENT] Redirecting to dashboard (plan:', selectedPlanFromMetadata, ')');
           navigate('/dashboard');
           return;
         }

@@ -156,12 +156,15 @@ const DashboardContent = () => {
         if (quotas?.plan_type === 'pro' && (!subscription || !['active', 'trialing'].includes(subscription.stripe_subscription_status))) {
           console.log('[DASHBOARD] PRO plan without active subscription, redirecting to Stripe checkout');
           
-          // Show loading message instead of error
+          // Show loading message
           toast({
-            title: "⏳ Redirection en cours...",
-            description: "Finalisation de votre inscription PRO",
-            duration: 10000,
+            title: "⏳ Redirection automatique...",
+            description: "Finalisation de votre inscription PRO (7j gratuits)",
+            duration: 15000,
           });
+
+          // Delay to let user see the message
+          await new Promise(resolve => setTimeout(resolve, 1000));
 
           try {
             const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
@@ -171,15 +174,17 @@ const DashboardContent = () => {
               },
             });
 
+            console.log('[DASHBOARD] Checkout response:', { checkoutData, checkoutError });
+
             if (checkoutError || !checkoutData?.url) {
               console.error('[DASHBOARD] Checkout error:', checkoutError);
               toast({
-                title: "❌ Erreur",
-                description: "Impossible de créer la session Stripe. Veuillez réessayer.",
-                variant: "destructive",
-                duration: 5000,
+                title: "⚠️ Checkout Stripe",
+                description: "Redirection manuelle requise. Cliquez sur 'Accéder au checkout' dans votre dashboard.",
+                variant: "default",
+                duration: 10000,
               });
-              navigate("/");
+              // Don't navigate away, let user see the dashboard with manual button
               return;
             }
 
@@ -189,12 +194,12 @@ const DashboardContent = () => {
           } catch (error) {
             console.error('[DASHBOARD] Error creating checkout:', error);
             toast({
-              title: "❌ Erreur",
-              description: "Impossible de créer la session Stripe. Veuillez réessayer.",
-              variant: "destructive",
-              duration: 5000,
+              title: "⚠️ Checkout Stripe",
+              description: "Redirection manuelle requise. Cliquez sur 'Accéder au checkout' dans votre dashboard.",
+              variant: "default",
+              duration: 10000,
             });
-            navigate("/");
+            // Don't navigate away, let user see the dashboard with manual button
           }
           return;
         }
