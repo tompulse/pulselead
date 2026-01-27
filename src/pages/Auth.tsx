@@ -56,8 +56,8 @@ const Auth = () => {
     await supabase.auth.signOut();
     setHasExistingSession(false);
     toast({
-      title: "Déconnexion réussie",
-      description: "Vous pouvez maintenant vous connecter avec un autre compte",
+      title: "✌️ À bientôt !",
+      description: "Vous êtes déconnecté. Revenez vite !",
     });
   };
 
@@ -134,7 +134,7 @@ const Auth = () => {
     if (!validation.success) {
       toast({
         variant: "destructive",
-        title: "Mot de passe invalide",
+        title: "🔐 Mot de passe trop faible",
         description: validation.error.errors[0].message,
       });
       return;
@@ -143,8 +143,8 @@ const Auth = () => {
     if (password !== confirmPassword) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Les mots de passe ne correspondent pas",
+        title: "❌ Oups !",
+        description: "Les deux mots de passe ne correspondent pas",
       });
       return;
     }
@@ -157,8 +157,8 @@ const Auth = () => {
       if (error) throw error;
 
       toast({
-        title: "✅ Mot de passe modifié !",
-        description: "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe",
+        title: "🎉 Mot de passe modifié !",
+        description: "C'est bon ! Connectez-vous avec votre nouveau mot de passe",
       });
       
       // Sign out and redirect to login
@@ -168,8 +168,8 @@ const Auth = () => {
       setConfirmPassword('');
     } catch (error: any) {
       toast({
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue",
+        title: "❌ Oups !",
+        description: error.message || "Quelque chose s'est mal passé... Réessayez !",
         variant: "destructive",
       });
     } finally {
@@ -184,8 +184,8 @@ const Auth = () => {
     if (!emailValidation.success) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Veuillez entrer une adresse email valide",
+        title: "📧 Email invalide",
+        description: "Entrez une adresse email valide pour continuer",
       });
       return;
     }
@@ -236,7 +236,7 @@ const Auth = () => {
       const errors = validation.error.errors.map(e => e.message).join(', ');
       toast({
         variant: "destructive",
-        title: "Erreur de validation",
+        title: "⚠️ Informations incorrectes",
         description: errors,
       });
       return;
@@ -266,8 +266,8 @@ const Auth = () => {
         console.log("[AUTH] Login successful, user:", session.user.id);
 
         toast({
-          title: "Connexion réussie",
-          description: "Bienvenue sur PULSE !",
+          title: "🎉 Content de te revoir !",
+          description: "Connexion réussie. Bienvenue sur PULSE !",
         });
 
         // Let the onAuthStateChange handler manage the redirection
@@ -312,8 +312,8 @@ const Auth = () => {
     } catch (error: any) {
       console.error("[AUTH] Error:", error);
       toast({
-        title: "Erreur d'authentification",
-        description: error.message || "Une erreur est survenue. Veuillez réessayer.",
+        title: "❌ Erreur de connexion",
+        description: error.message || "Impossible de se connecter. Réessayez dans quelques secondes !",
         variant: "destructive",
       });
     } finally {

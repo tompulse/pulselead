@@ -34,7 +34,7 @@ const CheckoutSuccess = () => {
     if (!validation.success) {
       toast({
         variant: "destructive",
-        title: "Erreur de validation",
+        title: "⚠️ Informations incorrectes",
         description: validation.error.errors.map(e => e.message).join(', '),
       });
       return;
@@ -73,7 +73,7 @@ const CheckoutSuccess = () => {
         console.error('[CHECKOUT SUCCESS] Auto-login failed:', loginError);
         toast({
           title: "✅ Compte créé !",
-          description: "Connectez-vous pour accéder à votre dashboard PRO.",
+          description: "Plus qu'une étape : connectez-vous pour accéder à votre dashboard PRO !",
         });
         navigate('/auth?mode=login');
         return;
@@ -82,8 +82,8 @@ const CheckoutSuccess = () => {
       console.log('[CHECKOUT SUCCESS] Logged in successfully, redirecting to dashboard...');
 
       toast({
-        title: "🎉 Bienvenue sur PULSE PRO !",
-        description: "Votre essai gratuit de 7 jours a commencé.",
+        title: "🚀 Bienvenue sur PULSE PRO !",
+        description: "Votre essai gratuit de 7 jours commence maintenant. Let's go !",
         duration: 3000,
       });
 
@@ -97,7 +97,7 @@ const CheckoutSuccess = () => {
       
       if (error.message?.includes('already registered')) {
         toast({
-          title: "📧 Compte existant",
+          title: "👋 Compte déjà existant !",
           description: "Cet email est déjà enregistré. Connectez-vous pour accéder à votre dashboard PRO.",
         });
         setTimeout(() => {
@@ -105,8 +105,8 @@ const CheckoutSuccess = () => {
         }, 2000);
       } else {
         toast({
-          title: "Erreur",
-          description: error.message || "Une erreur est survenue",
+          title: "❌ Oups !",
+          description: error.message || "Quelque chose s'est mal passé... Réessayez !",
           variant: "destructive",
         });
       }
