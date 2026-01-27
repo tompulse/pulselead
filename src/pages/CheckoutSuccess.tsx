@@ -45,33 +45,52 @@ const CheckoutSuccess = () => {
     try {
       console.log('[CHECKOUT SUCCESS] Creating account for:', email);
 
-      // Create Supabase account
+      // Create Supabase account with auto-confirmation
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
           data: {
             selected_plan: 'pro',
-            stripe_session_id: sessionId, // Store for webhook linking
-          }
+            stripe_session_id: sessionId,
+          },
+          // Skip email confirmation for Stripe customers (they already paid)
+          emailRedirectTo: `${window.location.origin}/dashboard`,
         },
       });
 
       if (error) throw error;
 
-      console.log('[CHECKOUT SUCCESS] Account created successfully');
+      console.log('[CHECKOUT SUCCESS] Account created, logging in...');
 
-      toast({
-        title: "🎉 Compte créé !",
-        description: "Vérifiez votre email pour confirmer votre compte et accéder à votre dashboard PRO.",
-        duration: 8000,
+      // Auto-login after signup (since they already paid)
+      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      // Wait a bit then redirect to login
-      setTimeout(() => {
+      if (loginError) {
+        console.error('[CHECKOUT SUCCESS] Auto-login failed:', loginError);
+        toast({
+          title: "✅ Compte créé !",
+          description: "Connectez-vous pour accéder à votre dashboard PRO.",
+        });
         navigate('/auth?mode=login');
-      }, 3000);
+        return;
+      }
+
+      console.log('[CHECKOUT SUCCESS] Logged in successfully, redirecting to dashboard...');
+
+      toast({
+        title: "🎉 Bienvenue sur PULSE PRO !",
+        description: "Votre essai gratuit de 7 jours a commencé.",
+        duration: 3000,
+      });
+
+      // Redirect to dashboard directly
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
 
     } catch (error: any) {
       console.error('[CHECKOUT SUCCESS] Error:', error);
