@@ -11,6 +11,8 @@ import { ProspectStatusBadge, ProspectStatus } from "./ProspectStatusBadge";
 import { useProspectStatuses } from "@/hooks/useProspectStatuses";
 import { RelatedEstablishmentsCard } from "./RelatedEstablishmentsCard";
 import { useUserPlan } from "@/hooks/useUserPlan";
+import { EnlargedProspectDialog } from "@/components/prospects/EnlargedProspectDialog";
+import { toast } from "sonner";
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
   onSiteSelect?: (site: any) => void;
@@ -31,8 +33,12 @@ export const NouveauxSitesListView = ({
   // State for flip card - shows related establishments
   const [expandedCard, setExpandedCard] = useState<{ siteId: string; name: string; relatedIds: string[] } | null>(null);
   
+  // State for enlarged prospect dialog
+  const [selectedProspect, setSelectedProspect] = useState<any | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
   // User plan & unlock logic
-  const { userPlan, isProspectUnlocked, isLoading: planLoading, unlockedProspectIds } = useUserPlan(userId || '');
+  const { userPlan, isProspectUnlocked, isLoading: planLoading, unlockedProspectIds, unlockProspect } = useUserPlan(userId || '');
   const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
   const isFree = userPlan?.plan_type === 'free';
   
@@ -149,8 +155,10 @@ export const NouveauxSitesListView = ({
                   onClick={() => {
                     if (selectionMode && onToggleSelection) {
                       onToggleSelection(site);
-                    } else if (!selectionMode && onSiteSelect) {
-                      onSiteSelect(site);
+                    } else if (!selectionMode) {
+                      // Ouvrir le Dialog agrandit au lieu du panneau latéral
+                      setSelectedProspect(site);
+                      setDialogOpen(true);
                     }
                   }}
                   className={`group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden active:scale-[0.99] ${
@@ -313,6 +321,38 @@ export const NouveauxSitesListView = ({
         </>
         )}
       </div>
+
+      {/* Enlarged Prospect Dialog */}
+      {selectedProspect && (
+        <EnlargedProspectDialog
+          site={selectedProspect}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          canSeeDetails={isPro || isProspectUnlocked(selectedProspect.id)}
+          isPro={isPro}
+          onUnlock={async (siteId: string) => {
+            const result = await unlockProspect(siteId);
+            
+            if (result.success) {
+              toast.success('Prospect débloqué !', {
+                description: `${result.remaining}/${result.limit} prospects restants`,
+              });
+              return { success: true, limit_reached: false, remaining: result.remaining, limit: result.limit };
+            } else if (result.limit_reached) {
+              return { success: false, limit_reached: true };
+            } else {
+              toast.error('Erreur', {
+                description: result.message || 'Impossible de débloquer ce prospect',
+              });
+              return { success: false, limit_reached: false };
+            }
+          }}
+          onUnlockSuccess={() => {
+            // Refresh data after unlock
+            // The unlockedProspectIds will be updated by useUserPlan hook
+          }}
+        />
+      )}
     </div>
   );
 };
