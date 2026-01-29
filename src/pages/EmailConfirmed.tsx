@@ -10,27 +10,14 @@ const EmailConfirmed = () => {
   const [status, setStatus] = useState<'checking' | 'redirecting'>('checking');
 
   useEffect(() => {
-    const handleEmailConfirmation = async () => {
-      try {
-        console.log('[EMAIL CONFIRMED] Checking session...');
-        
-        // 1. Vérifier la session utilisateur
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError || !session) {
-          console.error('[EMAIL CONFIRMED] No session found, redirecting to auth');
-          toast({
-            title: "⚠️ Session expirée",
-            description: "Connectez-vous pour continuer",
-            variant: "destructive",
-          });
-          navigate('/auth?mode=login');
-          return;
-        }
+    let redirectTimeout: NodeJS.Timeout;
 
+    // Fonction pour gérer la redirection après confirmation email
+    const handleRedirection = async (session: any) => {
+      try {
         console.log('[EMAIL CONFIRMED] Session found:', session.user.id);
 
-        // 2. Vérifier les quotas (plan actif ou non)
+        // Vérifier les quotas (plan actif ou non)
         const { data: quotas, error: quotasError } = await supabase
           .from('user_quotas')
           .select('plan_type, is_first_login, subscription_status')
@@ -39,7 +26,7 @@ const EmailConfirmed = () => {
 
         console.log('[EMAIL CONFIRMED] Quotas:', quotas, 'Error:', quotasError);
 
-        // 3. Si plan actif (is_first_login = false et plan_type existe) → Dashboard
+        // Si plan actif (is_first_login = false et plan_type existe) → Dashboard
         if (quotas && quotas.is_first_login === false && quotas.plan_type) {
           console.log('[EMAIL CONFIRMED] Active plan found, redirecting to dashboard');
           toast({
@@ -50,7 +37,7 @@ const EmailConfirmed = () => {
           return;
         }
 
-        // 4. Sinon → Redirection Stripe (avec toast + délai pour UX)
+        // Sinon → Redirection Stripe (avec toast + délai pour UX)
         console.log('[EMAIL CONFIRMED] No active plan, redirecting to Stripe');
         setStatus('redirecting');
         
@@ -60,8 +47,8 @@ const EmailConfirmed = () => {
           duration: 3000,
         });
 
-        // Redirection vers Stripe après 2 secondes (pour laisser le temps de lire le toast)
-        setTimeout(() => {
+        // Redirection vers Stripe après 2 secondes
+        redirectTimeout = setTimeout(() => {
           const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
           
           console.log('[EMAIL CONFIRMED] Redirecting to Stripe:', paymentUrl);
@@ -79,7 +66,41 @@ const EmailConfirmed = () => {
       }
     };
 
-    handleEmailConfirmation();
+    // Écouter les événements d'authentification (CRITIQUE pour les liens email)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[EMAIL CONFIRMED] Auth event:', event, 'Session:', !!session);
+
+      // Quand l'email est confirmé, Supabase émet un événement SIGNED_IN
+      if (event === 'SIGNED_IN' && session) {
+        console.log('[EMAIL CONFIRMED] SIGNED_IN event detected');
+        await handleRedirection(session);
+        return;
+      }
+
+      // Si l'utilisateur a déjà une session active (refresh de page)
+      if (event === 'INITIAL_SESSION' && session) {
+        console.log('[EMAIL CONFIRMED] Existing session detected');
+        await handleRedirection(session);
+        return;
+      }
+
+      // Si pas de session après un délai, rediriger vers login
+      if (!session && event === 'INITIAL_SESSION') {
+        console.log('[EMAIL CONFIRMED] No session, redirecting to auth');
+        toast({
+          title: "⚠️ Session expirée",
+          description: "Connectez-vous pour continuer",
+          variant: "destructive",
+        });
+        navigate('/auth?mode=login');
+      }
+    });
+
+    // Cleanup
+    return () => {
+      subscription.unsubscribe();
+      if (redirectTimeout) clearTimeout(redirectTimeout);
+    };
   }, [navigate, toast]);
 
   return (
