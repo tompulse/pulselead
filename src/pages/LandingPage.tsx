@@ -376,8 +376,14 @@ const LandingPage = () => {
                 Structurez votre prospection, optimisez chaque visite
               </p>
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
-                {/* Plan Gratuit */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
+                {/* ═══════════════════════════════════════════════════════════════════
+                    🔒 PLAN GRATUIT - MASQUÉ (Code conservé pour réactivation future)
+                    
+                    Pour réactiver : 
+                    1. Changer grid-cols-2 en grid-cols-3
+                    2. Décommenter la Card ci-dessous
+                ═══════════════════════════════════════════════════════════════════
                 <Card className="relative overflow-visible flex flex-col hover:scale-[1.02] transition-all duration-300 cursor-default" style={{
                   background: 'linear-gradient(135deg, rgba(100, 100, 100, 0.1) 0%, rgba(50, 50, 50, 0.05) 100%)',
                   border: '2px solid rgba(255, 255, 255, 0.2)',
@@ -413,6 +419,7 @@ const LandingPage = () => {
                     </Button>
                   </div>
                 </Card>
+                ═══════════════════════════════════════════════════════════════════ */}
 
                 {/* Plan PRO */}
                 <Card className="relative overflow-visible flex flex-col hover:scale-[1.05] transition-all duration-300 cursor-default" style={{

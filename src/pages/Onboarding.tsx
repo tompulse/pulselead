@@ -146,17 +146,24 @@ const Onboarding = () => {
             <span className="gradient-text">Bienvenue sur PULSE</span> 🎉
           </h1>
           <p className="text-white/70 text-lg max-w-2xl mx-auto mb-3">
-            Choisissez votre plan pour commencer à optimiser vos tournées
+            Démarrez votre essai gratuit de 7 jours maintenant
           </p>
           <p className="text-white/50 text-sm">
-            💡 <strong>93% de nos utilisateurs</strong> choisissent le plan PRO pour accéder aux 4,5M+ entreprises
+            ✨ <strong>Accès illimité à 4,5M+ entreprises</strong> • Tournées GPS optimisées • CRM complet
           </p>
         </div>
 
         {/* Plans Grid */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="flex justify-center max-w-2xl mx-auto">
           
-          {/* Plan Gratuit */}
+          {/* ═══════════════════════════════════════════════════════════════════
+              🔒 PLAN GRATUIT - MASQUÉ (Code conservé pour réactivation future)
+              
+              Pour réactiver :
+              1. Changer "flex justify-center" en "grid md:grid-cols-2 gap-8"
+              2. Changer max-w-2xl en max-w-5xl
+              3. Décommenter la Card ci-dessous
+          ═══════════════════════════════════════════════════════════════════
           <Card className="relative glass-card border-white/20 p-8 hover:border-white/30 transition-all duration-300 animate-slide-up">
             <div className="absolute top-6 right-6">
               <Unlock className="w-8 h-8 text-white/10" />
@@ -210,9 +217,10 @@ const Onboarding = () => {
               </p>
             </div>
           </Card>
+          ═══════════════════════════════════════════════════════════════════ */}
 
-          {/* Plan PRO */}
-          <Card className="relative glass-card border-accent/50 p-8 shadow-2xl shadow-accent/30 hover:border-accent/70 hover:shadow-accent/40 transition-all duration-300 scale-105 animate-slide-up" style={{ animationDelay: '100ms' }}>
+          {/* Plan PRO - Seule option disponible */}
+          <Card className="relative glass-card border-accent/50 p-8 shadow-2xl shadow-accent/30 hover:border-accent/70 hover:shadow-accent/40 transition-all duration-300 animate-slide-up w-full max-w-md"
             {/* Badge Popular */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-xl flex items-center gap-2 animate-pulse">
