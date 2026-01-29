@@ -10,7 +10,6 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprisePanel";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
-import { UnlockedProspectsView } from "@/components/dashboard/UnlockedProspectsView";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { AnalyticsViewContainer } from "@/views/AnalyticsViewContainer";
@@ -34,6 +33,7 @@ const DashboardContent = () => {
     departments: [] as string[],
     taillesEntreprise: [] as string[],
     searchQuery: "",
+    showUnlockedOnly: false,
   });
 
   const { view, setView, selectedEntreprise, setSelectedEntreprise, crmPanelOpen, setCrmPanelOpen } = useDashboard();
@@ -265,14 +265,6 @@ const DashboardContent = () => {
               userId={userId}
               onEntrepriseSelect={handleEntrepriseSelect}
             />
-          )}
-          {view === 'unlocked' && userId && (
-            <div className="h-full overflow-y-auto p-4">
-              <UnlockedProspectsView 
-                userId={userId}
-                onEntrepriseSelect={handleEntrepriseSelect}
-              />
-            </div>
           )}
           {view === 'tournees' && userId && (
             <TourneesViewContainer userId={userId} />

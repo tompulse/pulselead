@@ -190,7 +190,6 @@ export const DashboardHeader = ({
   // Base views for all users
   const baseViewConfig: { key: DashboardView; label: string; icon: typeof MapIcon }[] = [
     { key: 'prospects', label: 'Prospects', icon: MapIcon },
-    { key: 'unlocked', label: 'Débloqués', icon: Unlock },
     { key: 'tournees', label: 'Tournées', icon: Navigation },
     { key: 'crm', label: 'CRM', icon: TrendingUp },
   ];

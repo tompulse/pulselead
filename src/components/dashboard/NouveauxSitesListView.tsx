@@ -71,6 +71,15 @@ export const NouveauxSitesListView = ({
   const allSites = data?.pages.flatMap(page => page.data) || [];
   const totalCount = data?.pages[0]?.total || 0;
 
+  // Filtrer les prospects débloqués si le filtre est activé
+  const filteredSites = useMemo(() => {
+    if (!filters.showUnlockedOnly) {
+      return allSites;
+    }
+    // Afficher uniquement les prospects débloqués
+    return allSites.filter(site => isPro || isProspectUnlocked(site.id));
+  }, [allSites, filters.showUnlockedOnly, isPro, isProspectUnlocked]);
+
   // Get all entreprise IDs for status lookup
   const entrepriseIds = useMemo(() => allSites.map(site => site.id), [allSites]);
   
@@ -97,25 +106,25 @@ export const NouveauxSitesListView = ({
   return (
     <div className="h-full flex flex-col lg:overflow-hidden">
       <div className="flex-1 overflow-y-auto lg:overflow-y-auto pr-3" style={{ WebkitOverflowScrolling: 'touch' }}>
-        {isLoading && allSites.length === 0 ? (
+        {isLoading && filteredSites.length === 0 ? (
           <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
             <Loader2 className="w-12 h-12 animate-spin mx-auto text-accent mb-4" />
             <p className="text-muted-foreground text-lg">Chargement des sites...</p>
           </div>
-        ) : allSites.length === 0 ? (
+        ) : filteredSites.length === 0 ? (
           <div className="glass-card rounded-2xl p-16 text-center shadow-2xl border border-accent/20">
             <div className="inline-flex p-4 bg-accent/10 rounded-2xl mb-6">
               <Factory className="w-20 h-20 text-accent opacity-50" />
             </div>
             <h3 className="text-2xl font-bold mb-3">Aucun site trouvé</h3>
             <p className="text-muted-foreground text-lg max-w-md mx-auto">
-              {filters.searchQuery ? "Essayez de modifier votre recherche" : "Importez vos nouveaux sites pour commencer"}
+              {filters.searchQuery ? "Essayez de modifier votre recherche" : filters.showUnlockedOnly ? "Aucun prospect débloqué" : "Importez vos nouveaux sites pour commencer"}
             </p>
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3">
-              {allSites.map((site) => {
+              {filteredSites.map((site) => {
               const nafInfo = getNafCategory(site.code_naf);
               const hasCoordinates = site.latitude && site.longitude;
               const isSelected = selectedSites.some(s => s.id === site.id);
@@ -127,7 +136,7 @@ export const NouveauxSitesListView = ({
               const canSeeDetails = isPro || isUnlocked;
               
               // DEBUG - Première carte seulement
-              if (allSites.indexOf(site) === 0) {
+              if (filteredSites.indexOf(site) === 0) {
                 console.log('🎴 [Première carte]', {
                   nom: site.nom,
                   id: site.id.substring(0, 8),
@@ -149,24 +158,36 @@ export const NouveauxSitesListView = ({
                 ? `${addressParts}, ${site.code_postal} ${site.ville || ''}`
                 : `${site.code_postal || ''} ${site.ville || ''}`.trim();
               
+              // Déterminer si ce prospect est cliquable
+              // Les prospects débloqués ne sont cliquables QUE en mode sélection (tournée)
+              const isAlreadyUnlocked = !isPro && isUnlocked;
+              const isClickable = selectionMode || !isAlreadyUnlocked;
+
               return (
                 <div
                   key={site.id}
                   onClick={() => {
+                    if (!isClickable) {
+                      // Prospect débloqué, pas cliquable en dehors du mode tournée
+                      return;
+                    }
+                    
                     if (selectionMode && onToggleSelection) {
                       onToggleSelection(site);
-                    } else if (!selectionMode) {
+                    } else if (!selectionMode && !isAlreadyUnlocked) {
                       // Ouvrir le Dialog agrandit au lieu du panneau latéral
                       setSelectedProspect(site);
                       setDialogOpen(true);
                     }
                   }}
-                  className={`group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden active:scale-[0.99] ${
-                    selectionMode 
-                      ? isSelected
-                        ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15'
-                        : 'border-accent/30 from-card/95 to-card/80 cursor-pointer hover:border-accent/50 hover:bg-accent/5'
-                      : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50 cursor-pointer hover:shadow-xl'
+                  className={`group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden ${
+                    !isClickable 
+                      ? 'opacity-60 cursor-not-allowed border-accent/20 from-card/80 to-card/60'
+                      : selectionMode 
+                        ? isSelected
+                          ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15 active:scale-[0.99]'
+                          : 'border-accent/30 from-card/95 to-card/80 cursor-pointer hover:border-accent/50 hover:bg-accent/5 active:scale-[0.99]'
+                        : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50 cursor-pointer hover:shadow-xl active:scale-[0.99]'
                   }`}
                 >
                   {/* Gradient overlay on hover */}
@@ -316,7 +337,7 @@ export const NouveauxSitesListView = ({
 
           {/* Display total count */}
           <div className="text-center py-4 text-sm text-muted-foreground">
-            {allSites.length} / {totalCount} sites affichés
+            {filteredSites.length} {filters.showUnlockedOnly ? 'prospect(s) débloqué(s)' : `/ ${totalCount} sites affichés`}
           </div>
         </>
         )}

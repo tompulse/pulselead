@@ -65,6 +65,7 @@ interface NafFiltersProps {
     typesEtablissement?: string[];
     dateCreationFrom?: string;
     dateCreationTo?: string;
+    showUnlockedOnly?: boolean;
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
   resultsCount?: number;
@@ -769,6 +770,19 @@ export const NafFilters = ({
           )}
         </div>
       )}
+
+      {/* Filtre Prospects débloqués */}
+      <div className="p-4 border-b border-accent/20">
+        <div 
+          onClick={() => setFilters(prev => ({ ...prev, showUnlockedOnly: !prev.showUnlockedOnly }))}
+          className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+        >
+          <CustomCheckbox selected={filters.showUnlockedOnly || false} size="sm" />
+          <div className="flex-1">
+            <span className="text-sm font-medium">Prospects débloqués</span>
+          </div>
+        </div>
+      </div>
 
       {/* Barre de recherche */}
       <div className="p-4 border-b border-accent/20 space-y-3">

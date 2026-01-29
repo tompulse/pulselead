@@ -14,6 +14,7 @@ export interface NouveauxSitesFilters {
   typesEtablissement?: string[];
   dateCreationFrom?: string;
   dateCreationTo?: string;
+  showUnlockedOnly?: boolean;
 }
 
 export const nouveauxSitesService = {
