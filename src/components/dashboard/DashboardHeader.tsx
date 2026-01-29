@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle, Lightbulb, BarChart3, Database } from "lucide-react";
+import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle, Lightbulb, BarChart3, Database, Unlock } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -190,6 +190,7 @@ export const DashboardHeader = ({
   // Base views for all users
   const baseViewConfig: { key: DashboardView; label: string; icon: typeof MapIcon }[] = [
     { key: 'prospects', label: 'Prospects', icon: MapIcon },
+    { key: 'unlocked', label: 'Débloqués', icon: Unlock },
     { key: 'tournees', label: 'Tournées', icon: Navigation },
     { key: 'crm', label: 'CRM', icon: TrendingUp },
   ];

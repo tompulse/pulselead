@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Unlock, Loader2, Sparkles, ArrowRight, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Unlock, Loader2, Sparkles, ArrowRight, Plus, MapPin, Factory, Calendar } from "lucide-react";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { getNafCategory } from "@/utils/nafCategories";
 
 interface UnlockedProspectsViewProps {
   userId: string;
@@ -32,9 +36,9 @@ export const UnlockedProspectsView = ({ userId, onEntrepriseSelect }: UnlockedPr
         return;
       }
 
-      // Fetch full entreprise data
+      // Fetch full entreprise data from nouveaux_sites
       const { data, error } = await supabase
-        .from('entreprises')
+        .from('nouveaux_sites')
         .select('*')
         .in('id', unlockedIds.map(u => u.entreprise_id))
         .order('date_creation', { ascending: false });
@@ -49,9 +53,8 @@ export const UnlockedProspectsView = ({ userId, onEntrepriseSelect }: UnlockedPr
     }
   };
 
-  const quotas = userPlan?.quotas;
-  const unlockedCount = quotas?.prospects_unlocked || 0;
-  const limit = quotas?.prospects_limit || 30;
+  const unlockedCount = userPlan?.prospects_unlocked_count || 0;
+  const limit = userPlan?.prospects_limit || 30;
   const remaining = limit - unlockedCount;
 
   if (loading) {
@@ -147,42 +150,87 @@ export const UnlockedProspectsView = ({ userId, onEntrepriseSelect }: UnlockedPr
 
       {/* Prospects grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {prospects.map((prospect) => (
-          <Card 
-            key={prospect.id}
-            className="glass-card border-accent/30 hover:border-accent/60 hover:shadow-xl hover:shadow-accent/20 transition-all cursor-pointer"
-            onClick={() => onEntrepriseSelect && onEntrepriseSelect(prospect)}
-          >
-            <CardContent className="p-4 space-y-2">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="font-bold text-sm line-clamp-2 flex-1">
-                  {prospect.nom || prospect.denomination_unite_legale || 'Entreprise'}
-                </h3>
-                <Unlock className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              </div>
+        {prospects.map((prospect) => {
+          const nafInfo = getNafCategory(prospect.code_naf);
+          
+          const addressParts = [
+            prospect.numero_voie,
+            prospect.type_voie,
+            prospect.libelle_voie
+          ].filter(Boolean).join(' ');
+          
+          const fullAddress = addressParts 
+            ? `${addressParts}, ${prospect.code_postal} ${prospect.ville || ''}`
+            : `${prospect.code_postal || ''} ${prospect.ville || ''}`.trim();
 
-              {prospect.siret && (
-                <p className="text-xs text-muted-foreground font-mono">
-                  {prospect.siret}
-                </p>
-              )}
-
-              {prospect.code_postal && prospect.ville && (
-                <p className="text-xs text-muted-foreground line-clamp-1">
-                  {prospect.code_postal} {prospect.ville}
-                </p>
-              )}
-
-              {prospect.code_naf && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded">
-                    {prospect.code_naf}
-                  </span>
+          return (
+            <Card 
+              key={prospect.id}
+              className="glass-card border-emerald-500/30 hover:border-emerald-500/60 hover:shadow-xl hover:shadow-emerald-500/20 transition-all cursor-pointer group"
+              onClick={() => onEntrepriseSelect && onEntrepriseSelect(prospect)}
+            >
+              <CardContent className="p-4 space-y-3">
+                {/* Header */}
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-bold text-base line-clamp-2 flex-1 gradient-text">
+                    {prospect.nom || prospect.denomination_unite_legale || 'Entreprise'}
+                  </h3>
+                  <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/30 text-emerald-400 gap-1 shrink-0">
+                    <Unlock className="w-3 h-3" />
+                    Débloqué
+                  </Badge>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+
+                {/* NAF Info */}
+                {nafInfo && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <Factory className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-muted-foreground line-clamp-1">
+                      {nafInfo.category.emoji} {nafInfo.category.label}
+                    </span>
+                  </div>
+                )}
+
+                {/* SIRET */}
+                {prospect.siret && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-muted-foreground">🏛️</span>
+                    <span className="text-muted-foreground font-mono">
+                      {prospect.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}
+                    </span>
+                  </div>
+                )}
+
+                {/* Address */}
+                {fullAddress && (
+                  <div className="flex items-start gap-2 text-xs">
+                    <MapPin className="w-3 h-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground line-clamp-2 flex-1">
+                      {fullAddress}
+                    </span>
+                  </div>
+                )}
+
+                {/* Date de création */}
+                {prospect.date_creation && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <Calendar className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      Créé le {format(new Date(prospect.date_creation), 'dd MMM yyyy', { locale: fr })}
+                    </span>
+                  </div>
+                )}
+
+                {/* Hover indicator */}
+                <div className="pt-2 border-t border-accent/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <p className="text-xs text-accent text-center font-medium">
+                    Cliquer pour voir les détails
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

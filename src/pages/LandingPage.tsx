@@ -45,23 +45,18 @@ const LandingPage = () => {
   // Handle dashboard button click - redirect to auth if not logged in, dashboard otherwise
   const handleDashboardClick = () => {
     if (!isLoggedIn) {
-      // Not logged in - go to auth/signup
+      // Not logged in - go to auth/signup pour PRO par défaut
       navigate('/auth');
     } else {
-      // Logged in - always go to plan selection page (it will redirect to dashboard if already chose a plan)
-      navigate('/plan-selection');
+      // Logged in - go to dashboard
+      navigate('/dashboard');
     }
   };
 
-  // Handle CTA "Commencer maintenant" click - always go through plan selection for logged in users
+  // Handle CTA "Commencer maintenant" click - always PRO by default
   const handleCTAClick = () => {
-    if (!isLoggedIn) {
-      // Not logged in - go to auth page
-      navigate('/auth');
-    } else {
-      // Logged in - always go to plan selection page (it will redirect to dashboard if already chose a plan)
-      navigate('/plan-selection');
-    }
+    // Toujours vers auth (PRO par défaut)
+    navigate('/auth');
   };
 
   // Check if user just logged in and should go to checkout

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useSubscription } from "@/hooks/useSubscription";
 
 import { DashboardProvider, useDashboard } from "@/contexts/DashboardContext";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -11,6 +10,7 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { UnifiedEntreprisePanel } from "@/components/dashboard/UnifiedEntreprisePanel";
 import { FilterOnboarding } from "@/components/dashboard/FilterOnboarding";
 import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
+import { UnlockedProspectsView } from "@/components/dashboard/UnlockedProspectsView";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { AnalyticsViewContainer } from "@/views/AnalyticsViewContainer";
@@ -41,7 +41,9 @@ const DashboardContent = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
-  const { hasAccess, isLoading: subscriptionLoading, daysRemaining, subscriptionStatus, subscriptionPlan, endDate } = useSubscription(userId || undefined);
+  
+  // 🔥 SUPPRIMÉ useSubscription - on vérifie juste les quotas directement
+  const [userPlan, setUserPlan] = useState<string | null>(null);
 
   const activeFiltersCount = 
     (filters.nafSections?.length || 0) + 
@@ -61,7 +63,8 @@ const DashboardContent = () => {
 
   useEffect(() => {
     const checkAuthAndRole = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
         setAdminLoading(false);
@@ -105,16 +108,82 @@ const DashboardContent = () => {
         }
       }
       
-      // Check first login for demo modal
-      const { data: quotas } = await supabase
+      // 🔥 VÉRIFICATION : Est-ce que user_quotas existe ?
+      console.log('[DASHBOARD] Checking user quotas...');
+      const { data: quotas, error: quotasError } = await supabase
         .from('user_quotas')
-        .select('is_first_login')
+        .select('plan_type, is_first_login')
         .eq('user_id', session.user.id)
         .single();
 
+      console.log('[DASHBOARD] Quotas result:', quotas, quotasError);
+
+      // 🔥 BLOCAGE : Si pas de quotas valides → retour à l'auth
+      if (!quotas || quotasError?.code === 'PGRST116') {
+        console.log('[DASHBOARD] ❌ No quotas found, redirecting to /auth');
+        toast({
+          variant: "destructive",
+          title: "⚠️ Aucun plan actif",
+          description: "Connecte-toi pour accéder au dashboard",
+        });
+        navigate('/auth');
+        return;
+      }
+
+      // Si is_first_login = true → pas encore validé
+      if (quotas.is_first_login === true) {
+        console.log('[DASHBOARD] ❌ First login not completed, redirecting to /auth');
+        toast({
+          variant: "destructive",
+          title: "⚠️ Configuration incomplète",
+          description: "Finalise ton inscription",
+        });
+        navigate('/auth');
+        return;
+      }
+
+      // 🔥 Si plan PRO, vérifier que la subscription est active
+      if (quotas.plan_type === 'pro') {
+        console.log('[DASHBOARD] PRO plan detected, checking subscription status...');
+        const { data: subscription } = await supabase
+          .from('user_subscriptions')
+          .select('subscription_status')
+          .eq('user_id', session.user.id)
+          .single();
+
+        console.log('[DASHBOARD] Subscription status:', subscription?.subscription_status);
+
+        // Si PRO mais pas de subscription active/trialing → bloquer l'accès
+        if (!subscription || !['active', 'trialing'].includes(subscription.subscription_status)) {
+          console.log('[DASHBOARD] ❌ PRO plan without active subscription, redirecting to Stripe');
+          toast({
+            variant: "destructive",
+            title: "⚠️ Paiement requis",
+            description: "Finalise ton inscription PRO pour accéder au dashboard",
+          });
+          // Rediriger vers Stripe pour finaliser le paiement
+          const stripeUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00g6oH0PR0CU6IH6pp'}?client_reference_id=${session.user.id}`;
+          window.location.href = stripeUrl;
+          return;
+        }
+      }
+
+      // ✅ Plan trouvé et actif
+      console.log('[DASHBOARD] ✅ Plan active:', quotas.plan_type);
+      setUserPlan(quotas.plan_type);
+
       // Filtres vides par défaut (pas de chargement automatique)
       
-      setLoading(false);
+        setLoading(false);
+      } catch (error) {
+        console.error('[DASHBOARD] Fatal error:', error);
+        toast({
+          variant: "destructive",
+          title: "❌ Erreur",
+          description: "Impossible de charger le dashboard.",
+        });
+        navigate('/plan-selection');
+      }
     };
 
     checkAuthAndRole();
@@ -131,7 +200,7 @@ const DashboardContent = () => {
   // Vérifier l'accès à l'abonnement après le chargement (attendre que le statut admin soit vérifié)
   useEffect(() => {
     const checkAccessAndRedirect = async () => {
-      if (!loading && !adminLoading && !subscriptionLoading && userId) {
+      if (!loading && !adminLoading && userId) {
         // Bypass pour admins et utilisateur démo
         if (isAdmin || isDemoUser) {
           return;
@@ -205,7 +274,7 @@ const DashboardContent = () => {
         }
 
         // FREE plan or PRO with active subscription
-        if (!hasAccess && quotas?.plan_type !== 'free') {
+        if (quotas?.plan_type !== 'free' && (!subscription || !['active', 'trialing'].includes(subscription.stripe_subscription_status))) {
           console.log('[DASHBOARD] No access and not FREE plan, redirecting to landing');
           navigate("/");
         }
@@ -213,7 +282,7 @@ const DashboardContent = () => {
     };
 
     checkAccessAndRedirect();
-  }, [loading, adminLoading, subscriptionLoading, hasAccess, userId, isAdmin, isDemoUser, navigate, toast]);
+  }, [loading, adminLoading, userId, isAdmin, isDemoUser, userPlan, navigate, toast]);
 
 
   const handleLogout = async () => {
@@ -245,9 +314,7 @@ const DashboardContent = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-accent">PULSE</h1>
-          <p className="text-muted-foreground text-base">
-            {subscriptionLoading ? "Vérification de votre abonnement..." : "Chargement..."}
-          </p>
+          <p className="text-muted-foreground text-base">Chargement...</p>
           <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
@@ -285,6 +352,14 @@ const DashboardContent = () => {
               userId={userId}
               onEntrepriseSelect={handleEntrepriseSelect}
             />
+          )}
+          {view === 'unlocked' && userId && (
+            <div className="h-full overflow-y-auto p-4">
+              <UnlockedProspectsView 
+                userId={userId}
+                onEntrepriseSelect={handleEntrepriseSelect}
+              />
+            </div>
           )}
           {view === 'tournees' && userId && (
             <TourneesViewContainer userId={userId} />

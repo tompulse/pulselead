@@ -11,6 +11,7 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
+import { UpgradeModal } from "@/components/UpgradeModal";
 import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User, Sparkles, Lock, Unlock } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,9 +39,13 @@ export const UnifiedEntreprisePanel = ({
   const queryClient = useQueryClient();
   
   // User plan & unlock logic
-  const { userPlan, unlockProspect, isProspectUnlocked } = useUserPlan(userId);
-  const isPro = userPlan?.plan_type === 'pro';
+  const { userPlan, unlockProspect, isProspectUnlocked, isLoading: planLoading } = useUserPlan(userId);
+  const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
+  const isFree = userPlan?.plan_type === 'free';
   const isUnlocked = entreprise?.id ? isProspectUnlocked(entreprise.id) : false;
+  
+  // CRITICAL: Only show details if explicitly PRO or unlocked
+  // Default to LOCKED for FREE users
   const canSeeDetails = isPro || isUnlocked;
 
   // If we only have an ID, fetch full data from nouveaux_sites
@@ -133,18 +138,25 @@ export const UnifiedEntreprisePanel = ({
   const hasCoordinates = displayEntreprise.latitude && displayEntreprise.longitude;
   
   // Handle unlock
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
   const handleUnlock = async () => {
     if (!displayEntreprise?.id) return;
     
     const result = await unlockProspect(displayEntreprise.id);
     if (result.success) {
       toast({
-        title: "Prospect débloqué !",
-        description: `${result.remaining}/30 prospects restants`,
+        title: "✅ Prospect débloqué !",
+        description: `${result.remaining}/${result.limit} prospects restants`,
       });
+      // Reload the component to reflect the change
+      queryClient.invalidateQueries({ queryKey: ['entreprise-detail', entrepriseId] });
+    } else if (result.limit_reached) {
+      // Show upgrade modal
+      setShowUpgradeModal(true);
     } else {
       toast({
-        title: "Limite atteinte",
+        title: "❌ Erreur",
         description: result.message,
         variant: "destructive"
       });
@@ -202,29 +214,40 @@ export const UnifiedEntreprisePanel = ({
                 <div className="p-4 space-y-4">
                   {/* Unlock CTA for FREE users */}
                   {!canSeeDetails && (
-                    <div className="p-4 bg-accent/5 border-2 border-accent/30 rounded-lg text-center space-y-3">
-                      <Lock className="w-10 h-10 mx-auto text-accent/60" />
+                    <div className="p-4 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent border-2 border-accent/30 rounded-lg text-center space-y-3 shadow-lg">
+                      <div className="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-accent/30 to-orange-500/20 flex items-center justify-center">
+                        <Lock className="w-7 h-7 text-accent" />
+                      </div>
                       <div>
-                        <p className="font-semibold text-sm">Fiche verrouillée</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Débloquez pour voir SIRET, adresse complète et date de création
+                        <p className="font-bold text-base">Prospect Verrouillé</p>
+                        <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                          Débloquez pour voir <strong className="text-foreground">SIRET, adresse complète, date de création</strong> et toutes les infos détaillées
                         </p>
                       </div>
-                      <Button onClick={handleUnlock} className="w-full" size="sm">
+                      <Button onClick={handleUnlock} className="w-full bg-gradient-to-r from-accent to-cyan-500 hover:from-accent/90 hover:to-cyan-500/90 text-black font-bold shadow-lg" size="default">
                         <Unlock className="w-4 h-4 mr-2" />
                         Débloquer ce prospect
                       </Button>
-                      <p className="text-xs text-muted-foreground">
-                        {userPlan?.unlocked_prospects_count || 0}/30 prospects débloqués
-                      </p>
+                      <div className="flex items-center justify-center gap-2 text-xs">
+                        <span className="text-muted-foreground">
+                          {userPlan?.prospects_unlocked_count || 0}/30 prospects débloqués
+                        </span>
+                        {userPlan && userPlan.prospects_unlocked_count >= 25 && (
+                          <span className="text-orange-400 font-semibold">⚠️ Bientôt la limite</span>
+                        )}
+                      </div>
                     </div>
                   )}
                   
-                  {/* Adresse */}
-                  <div className="space-y-2">
+                  {/* Adresse - Bloquée pour FREE */}
+                  <div className="space-y-2 relative">
                     <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
-                      <MapPin className="w-3.5 h-3.5" />
-                      Adresse
+                      {canSeeDetails ? (
+                        <MapPin className="w-3.5 h-3.5" />
+                      ) : (
+                        <Lock className="w-3.5 h-3.5 text-orange-500/80" />
+                      )}
+                      Adresse {!canSeeDetails && <span className="text-orange-500/80 text-[10px] font-normal normal-case">(Verrouillée)</span>}
                     </div>
                     {canSeeDetails ? (
                       <>
@@ -257,8 +280,11 @@ export const UnifiedEntreprisePanel = ({
                         </div>
                       </>
                     ) : (
-                      <div className="text-sm blur-sm select-none text-muted-foreground">
-                        RUE DE COBLENCE, 58000 NEVERS
+                      <div className="relative">
+                        <div className="text-sm blur-[4px] select-none text-muted-foreground pointer-events-none">
+                          RUE DE COBLENCE, 58000 NEVERS
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/50 to-transparent pointer-events-none" />
                       </div>
                     )}
                   </div>
@@ -284,11 +310,15 @@ export const UnifiedEntreprisePanel = ({
                     ) : null}
                   </div>
 
-                  {/* SIREN */}
-                  <div className="space-y-1 pt-3 border-t border-accent/10">
+                  {/* SIREN - Bloqué pour FREE */}
+                  <div className="space-y-1 pt-3 border-t border-accent/10 relative">
                     <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
-                      <Hash className="w-3.5 h-3.5" />
-                      SIREN
+                      {canSeeDetails ? (
+                        <Hash className="w-3.5 h-3.5" />
+                      ) : (
+                        <Lock className="w-3.5 h-3.5 text-orange-500/80" />
+                      )}
+                      SIREN {!canSeeDetails && <span className="text-orange-500/80 text-[10px] font-normal normal-case">(Verrouillé)</span>}
                     </div>
                     {canSeeDetails ? (
                       <p className="text-sm font-mono">
@@ -297,9 +327,12 @@ export const UnifiedEntreprisePanel = ({
                           : <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
                       </p>
                     ) : (
-                      <p className="text-sm font-mono blur-sm select-none text-muted-foreground">
-                        990 470 197
-                      </p>
+                      <div className="relative">
+                        <p className="text-sm font-mono blur-[4px] select-none text-muted-foreground pointer-events-none">
+                          990 470 197
+                        </p>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/50 to-transparent pointer-events-none" />
+                      </div>
                     )}
                   </div>
 
@@ -319,15 +352,28 @@ export const UnifiedEntreprisePanel = ({
                     </div>
                   )}
 
-                  {/* Date de création */}
-                  <div className="space-y-1 pt-3 border-t border-accent/10">
+                  {/* Date de création - Bloqué pour FREE */}
+                  <div className="space-y-1 pt-3 border-t border-accent/10 relative">
                     <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
-                      <Calendar className="w-3.5 h-3.5" />
-                      Date de création
+                      {canSeeDetails ? (
+                        <Calendar className="w-3.5 h-3.5" />
+                      ) : (
+                        <Lock className="w-3.5 h-3.5 text-orange-500/80" />
+                      )}
+                      Date de création {!canSeeDetails && <span className="text-orange-500/80 text-[10px] font-normal normal-case">(Verrouillée)</span>}
                     </div>
-                    <p className="text-sm">
-                      {formattedDate || <span className="text-muted-foreground italic">Non renseignée</span>}
-                    </p>
+                    {canSeeDetails ? (
+                      <p className="text-sm">
+                        {formattedDate || <span className="text-muted-foreground italic">Non renseignée</span>}
+                      </p>
+                    ) : (
+                      <div className="relative">
+                        <p className="text-sm blur-[4px] select-none text-muted-foreground pointer-events-none">
+                          15 janvier 2024
+                        </p>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/50 to-transparent pointer-events-none" />
+                      </div>
+                    )}
                   </div>
 
                   {/* Taille entreprise */}
@@ -403,7 +449,7 @@ export const UnifiedEntreprisePanel = ({
           <div className="grid grid-cols-2 gap-2">
             <Button
               onClick={() => openGoogleMaps(displayEntreprise.latitude, displayEntreprise.longitude)}
-              disabled={!hasCoordinates}
+              disabled={!hasCoordinates || !canSeeDetails}
               size="sm"
               className="h-10 bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/20"
             >
@@ -421,6 +467,15 @@ export const UnifiedEntreprisePanel = ({
           </div>
         </div>
       </SheetContent>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        open={showUpgradeModal}
+        onOpenChange={setShowUpgradeModal}
+        feature="Déblocage de prospects"
+        currentQuota={`${userPlan?.prospects_unlocked_count || 0}/${userPlan?.prospects_limit || 30} prospects débloqués`}
+        proFeature="Accès illimité à 4,5M+ entreprises en France"
+      />
     </Sheet>
   );
 };

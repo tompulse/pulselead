@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type DashboardView = 'prospects' | 'tournees' | 'crm' | 'analytics' | 'scraping';
+export type DashboardView = 'prospects' | 'unlocked' | 'tournees' | 'crm' | 'analytics' | 'scraping';
 
 interface DashboardContextType {
   view: DashboardView;

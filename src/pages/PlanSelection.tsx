@@ -36,50 +36,49 @@ const PlanSelection = () => {
         console.log("[PLAN SELECTION] User session found:", session.user.id);
         setUserId(session.user.id);
         
-        // Wait a moment for trigger to complete (user_quotas creation)
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // Reduced wait time since trigger is now disabled
+        await new Promise(resolve => setTimeout(resolve, 300));
         
-        // Check if user already has a plan (and it's not the auto-assigned free plan on first signup)
-        console.log("[PLAN SELECTION] Fetching user quotas...");
+        // Check if user already has chosen a plan
+        console.log("[PLAN SELECTION] Fetching user quotas and subscription...");
         const { data: quotas, error: quotasError } = await supabase
           .from('user_quotas')
           .select('plan_type, is_first_login')
           .eq('user_id', session.user.id)
           .single();
         
-        if (quotasError) {
-          console.error("[PLAN SELECTION] Quotas fetch error:", quotasError);
-          
-          // If quotas don't exist yet, create them (fallback)
-          if (quotasError.code === 'PGRST116') {
-            console.log("[PLAN SELECTION] Quotas not found, creating fallback...");
-            const { error: insertError } = await supabase
-              .from('user_quotas')
-              .insert({ user_id: session.user.id, plan_type: 'free', is_first_login: true });
-            
-            if (insertError) {
-              console.error("[PLAN SELECTION] Failed to create quotas:", insertError);
-              throw insertError;
-            }
-            
-            console.log("[PLAN SELECTION] Quotas created successfully");
-            setChecking(false);
-            return;
-          }
-          
-          throw quotasError;
+        const { data: subscription, error: subError } = await supabase
+          .from('user_subscriptions')
+          .select('subscription_status, plan_type')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        console.log("[PLAN SELECTION] Quotas:", quotas, "Error:", quotasError);
+        console.log("[PLAN SELECTION] Subscription:", subscription, "Error:", subError);
+        
+        // 🔥 SI AUCUN PLAN → AFFICHER SÉLECTION
+        if (!quotas || quotasError) {
+          console.log("[PLAN SELECTION] No quotas found, showing selection");
+          setChecking(false);
+          return;
         }
         
-        console.log("[PLAN SELECTION] Quotas found:", quotas);
-        
-        // If user has chosen a plan before (is_first_login = false), redirect to dashboard
-        if (quotas && !quotas.is_first_login) {
-          console.log("[PLAN SELECTION] User already chose plan, redirecting to dashboard");
+        // Si plan FREE actif → rediriger vers dashboard
+        if (quotas.plan_type === 'free' && quotas.is_first_login === false) {
+          console.log("[PLAN SELECTION] FREE plan active, redirecting to dashboard");
           navigate("/dashboard");
           return;
         }
         
-        console.log("[PLAN SELECTION] User needs to choose plan, showing selection");
+        // Si plan PRO avec subscription active/trialing → rediriger vers dashboard
+        if (quotas.plan_type === 'pro' && subscription && ['active', 'trialing'].includes(subscription.subscription_status)) {
+          console.log("[PLAN SELECTION] PRO plan with active subscription, redirecting to dashboard");
+          navigate("/dashboard");
+          return;
+        }
+        
+        // Plan PRO sans paiement OU is_first_login=true → montrer sélection
+        console.log("[PLAN SELECTION] Showing plan selection");
         setChecking(false);
       } catch (error: any) {
         console.error("[PLAN SELECTION] Fatal error:", error);
@@ -121,45 +120,27 @@ const PlanSelection = () => {
     
     setLoading(true);
     try {
-      console.log("[FREE PLAN] Starting activation for user:", userId);
+      console.log("[FREE PLAN] Activating FREE plan immediately");
       
-      // Upsert instead of update to handle cases where user_quotas doesn't exist yet
-      const { data: updateData, error: updateError } = await supabase
-        .from('user_quotas')
-        .upsert({ 
-          user_id: userId,
-          is_first_login: false,
-          plan_type: 'free',
-          unlocked_prospects_count: 0,
-          tournees_created_this_month: 0
-        }, {
-          onConflict: 'user_id'
-        })
-        .select();
-      
-      if (updateError) {
-        console.error("[FREE PLAN] Update error:", updateError);
-        throw updateError;
-      }
-      
-      console.log("[FREE PLAN] Update successful:", updateData);
-      
+      const { error } = await supabase.rpc('activate_free_plan', {
+        p_user_id: userId
+      });
+
+      if (error) throw error;
+
       toast({
         title: "🎉 Bienvenue sur PULSE FREE !",
-        description: "Ton plan gratuit est activé. 30 prospects et 2 tournées/mois. Let's go !",
-        duration: 5000,
+        description: "30 prospects et 2 tournées/mois",
+        duration: 3000,
       });
-      
-      // Redirect to dashboard after short delay
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
+
+      setTimeout(() => navigate("/dashboard"), 500);
     } catch (error: any) {
-      console.error("[FREE PLAN] Error activating free plan:", error);
+      console.error("[FREE PLAN] Error:", error);
       toast({
         variant: "destructive",
-        title: "❌ Oups !",
-        description: error.message || "Impossible d'activer le plan gratuit. Réessaye dans quelques secondes !",
+        title: "❌ Erreur",
+        description: error.message || "Impossible d'activer le plan gratuit",
       });
       setLoading(false);
     }
@@ -178,36 +159,25 @@ const PlanSelection = () => {
     
     setLoading(true);
     try {
-      console.log("[PRO PLAN] Starting activation for user:", userId);
-      
-      // Mark user as having made a choice and set plan_type to pro
-      const { data: updateData, error: updateError } = await supabase
-        .from('user_quotas')
-        .update({ is_first_login: false, plan_type: 'pro' })
-        .eq('user_id', userId)
-        .select();
-      
-      if (updateError) {
-        console.error("[PRO PLAN] Update error:", updateError);
-        throw updateError;
-      }
-      
-      console.log("[PRO PLAN] Update successful, redirecting to Stripe Payment Link");
+      console.log("[PRO PLAN] Redirecting to Stripe (no plan created yet)");
 
-      // Redirect to Stripe Payment Link (plus fiable qu'une Edge Function)
+      // 🔥 NE PAS créer le plan PRO avant le paiement
+      // Le webhook Stripe créera le plan après paiement réussi
+      
       toast({
         title: "🚀 Redirection vers le paiement...",
-        description: "Tu vas être redirigé vers Stripe pour finaliser ton inscription PRO !",
+        description: "Paiement sécurisé par Stripe. 7 jours d'essai gratuits !",
         duration: 3000,
       });
 
       // Small delay to show the toast
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Redirect to Stripe Payment Link
-      window.location.href = STRIPE_CONFIG.PAYMENT_LINK_PRO;
+      // Redirect to Stripe Payment Link avec client_reference_id = userId
+      const paymentUrl = `${STRIPE_CONFIG.PAYMENT_LINK_PRO}?client_reference_id=${userId}`;
+      window.location.href = paymentUrl;
     } catch (error: any) {
-      console.error("[PRO PLAN] Error creating checkout:", error);
+      console.error("[PRO PLAN] Error redirecting to Stripe:", error);
       toast({
         variant: "destructive",
         title: "❌ Oups !",

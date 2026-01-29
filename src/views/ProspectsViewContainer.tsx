@@ -106,6 +106,21 @@ export const ProspectsViewContainer = ({
       return;
     }
 
+    // Check tournee quota for FREE users
+    if (isFree && userPlan) {
+      const tourneeQuota = await supabase.rpc('check_tournee_quota', {
+        _user_id: userId
+      });
+
+      if (tourneeQuota.data && !tourneeQuota.data.allowed) {
+        toast.error(`Limite atteinte: ${tourneeQuota.data.tournees_created}/${tourneeQuota.data.limit} tournées ce mois`, {
+          description: "Passez à PRO pour des tournées illimitées",
+          duration: 5000,
+        });
+        return;
+      }
+    }
+
     setIsOptimizing(true);
     
     try {
@@ -155,6 +170,13 @@ export const ProspectsViewContainer = ({
         .single();
 
       if (saveError) throw saveError;
+
+      // Increment tournee quota for FREE users
+      if (isFree && userPlan) {
+        await supabase.rpc('increment_tournee_quota', {
+          _user_id: userId
+        });
+      }
 
       toast.success('Tournée créée avec succès !');
       queryClient.invalidateQueries({ queryKey: ['tournees'] });
@@ -210,9 +232,9 @@ export const ProspectsViewContainer = ({
         <div className="shrink-0 px-4 pt-4">
           <FreemiumBanner 
             quotas={{
-              prospects_unlocked: userPlan.unlocked_prospects_count || 0,
+              prospects_unlocked: userPlan.prospects_unlocked_count || 0,
               prospects_limit: 30,
-              tournees_created: userPlan.tournees_created_this_month || 0,
+              tournees_created: userPlan.tournees_created_count || 0,
               tournees_limit: 2
             }}
           />

@@ -5,23 +5,22 @@ import { useToast } from '@/hooks/use-toast';
 export type PlanType = 'free' | 'pro' | 'teams';
 
 interface UserPlan {
-  planType: PlanType;
-  hasAccess: boolean;
-  quotas?: {
-    prospects_unlocked: number;
-    prospects_limit: number;
-    tournees_created: number;
-    tournees_limit: number;
-  };
-  subscriptionStatus?: string;
-  daysRemaining?: number;
-  endDate?: string;
+  plan_type: PlanType;
+  has_access: boolean;
+  prospects_unlocked_count: number; // Renamed to match DB column
+  prospects_limit: number;
+  tournees_created_count: number; // Renamed to match DB column
+  tournees_limit: number;
+  subscription_status?: string;
+  days_remaining?: number;
+  end_date?: string;
 }
 
 interface UnlockResult {
   success: boolean;
   limit_reached: boolean;
   message?: string;
+  remaining?: number;
   unlocked_count?: number;
   limit?: number;
 }
@@ -37,7 +36,26 @@ interface QuotaCheckResult {
 export const useUserPlan = (userId: string | undefined) => {
   const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [unlockedProspectIds, setUnlockedProspectIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
+
+  const loadUnlockedProspects = async () => {
+    if (!userId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_unlocked_prospects')
+        .select('entreprise_id')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      
+      const ids = new Set(data?.map(item => item.entreprise_id) || []);
+      setUnlockedProspectIds(ids);
+    } catch (error: any) {
+      console.error('Error loading unlocked prospects:', error);
+    }
+  };
 
   const checkPlan = async () => {
     if (!userId) {
@@ -46,23 +64,46 @@ export const useUserPlan = (userId: string | undefined) => {
     }
 
     try {
-      const { data, error } = await supabase.rpc('check_subscription_access', {
-        _user_id: userId
-      });
+      // Get user quotas
+      const { data: quotaData, error: quotaError } = await supabase
+        .from('user_quotas')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
 
-      if (error) throw error;
-      
-      if (data && typeof data === 'object') {
-        const accessData = data as any;
+      if (quotaError && quotaError.code !== 'PGRST116') throw quotaError;
+
+      // If no quota exists, create default FREE plan
+      if (!quotaData) {
+        const { data: newQuota, error: createError } = await supabase
+          .from('user_quotas')
+          .insert({ user_id: userId, plan_type: 'free' })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+
         setUserPlan({
-          planType: accessData.plan_type || 'free',
-          hasAccess: accessData.has_access || false,
-          quotas: accessData.quotas,
-          subscriptionStatus: accessData.status,
-          daysRemaining: accessData.days_remaining,
-          endDate: accessData.end_date
+          plan_type: 'free',
+          has_access: true,
+          prospects_unlocked_count: 0,
+          prospects_limit: 30,
+          tournees_created_count: 0,
+          tournees_limit: 2,
+        });
+      } else {
+        setUserPlan({
+          plan_type: quotaData.plan_type as PlanType,
+          has_access: true,
+          prospects_unlocked_count: quotaData.prospects_unlocked_count || 0,
+          prospects_limit: quotaData.plan_type === 'pro' ? 999999 : 30,
+          tournees_created_count: quotaData.tournees_created_count || 0,
+          tournees_limit: quotaData.plan_type === 'pro' ? 999999 : 2,
         });
       }
+
+      // Load unlocked prospects IDs
+      await loadUnlockedProspects();
     } catch (error: any) {
       console.error('Error checking plan:', error);
       toast({
@@ -84,20 +125,91 @@ export const useUserPlan = (userId: string | undefined) => {
       };
     }
 
-    try {
-      const { data, error } = await supabase.rpc('unlock_prospect', {
-        _user_id: userId,
-        _entreprise_id: entrepriseId
-      });
+    // Check if PRO user (no limits)
+    if (userPlan?.plan_type === 'pro') {
+      // PRO users don't need to unlock, they have direct access
+      return {
+        success: true,
+        limit_reached: false,
+        remaining: 999999,
+        message: 'Accès PRO illimité'
+      };
+    }
 
-      if (error) throw error;
-      
-      const result = data as UnlockResult;
-      
-      // Refresh plan to update quotas
-      await checkPlan();
-      
-      return result;
+    // Check if already unlocked
+    if (unlockedProspectIds.has(entrepriseId)) {
+      return {
+        success: true,
+        limit_reached: false,
+        remaining: (userPlan?.prospects_limit || 30) - (userPlan?.prospects_unlocked_count || 0),
+        message: 'Déjà débloqué'
+      };
+    }
+
+    // Check quota limit
+    const currentCount = userPlan?.prospects_unlocked_count || 0;
+    const limit = userPlan?.prospects_limit || 30;
+
+    if (currentCount >= limit) {
+      return {
+        success: false,
+        limit_reached: true,
+        message: `Limite atteinte (${limit}/${limit} prospects débloqués)`,
+        unlocked_count: currentCount,
+        limit: limit
+      };
+    }
+
+    try {
+      // Insert unlock record
+      const { error: insertError } = await supabase
+        .from('user_unlocked_prospects')
+        .insert({
+          user_id: userId,
+          entreprise_id: entrepriseId
+        });
+
+      if (insertError) {
+        // Check if already exists (unique constraint violation)
+        if (insertError.code === '23505') {
+          setUnlockedProspectIds(prev => new Set(prev).add(entrepriseId));
+          return {
+            success: true,
+            limit_reached: false,
+            remaining: limit - currentCount - 1,
+            message: 'Déjà débloqué'
+          };
+        }
+        throw insertError;
+      }
+
+      // Update quota count
+      const { error: updateError } = await supabase
+        .from('user_quotas')
+        .update({ 
+          prospects_unlocked_count: currentCount + 1 
+        })
+        .eq('user_id', userId);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setUnlockedProspectIds(prev => new Set(prev).add(entrepriseId));
+      if (userPlan) {
+        setUserPlan({
+          ...userPlan,
+          prospects_unlocked_count: currentCount + 1
+        });
+      }
+
+      return {
+        success: true,
+        limit_reached: false,
+        remaining: limit - currentCount - 1,
+        unlocked_count: currentCount + 1,
+        limit: limit,
+        message: 'Prospect débloqué avec succès'
+      };
     } catch (error: any) {
       console.error('Error unlocking prospect:', error);
       return { 
@@ -108,31 +220,30 @@ export const useUserPlan = (userId: string | undefined) => {
     }
   };
 
-  const isProspectUnlocked = async (entrepriseId: string): Promise<boolean> => {
+  // Synchronous check using cached data
+  const isProspectUnlocked = (entrepriseId: string): boolean => {
     if (!userId) return false;
-
-    try {
-      const { data, error } = await supabase.rpc('is_prospect_unlocked', {
-        _user_id: userId,
-        _entreprise_id: entrepriseId
-      });
-
-      if (error) throw error;
-      
-      return data as boolean;
-    } catch (error: any) {
-      console.error('Error checking if prospect is unlocked:', error);
-      return false;
+    if (!entrepriseId) return false;
+    
+    // PRO users have access to everything
+    if (userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams') {
+      return true;
     }
+    
+    // FREE users: STRICTLY check if in the unlocked set
+    // If not in set = NOT unlocked = return FALSE
+    return unlockedProspectIds.has(entrepriseId);
   };
 
   const getUnlockedProspects = async (): Promise<Array<{ entreprise_id: string; unlocked_at: string }>> => {
     if (!userId) return [];
 
     try {
-      const { data, error } = await supabase.rpc('get_unlocked_prospects', {
-        _user_id: userId
-      });
+      const { data, error } = await supabase
+        .from('user_unlocked_prospects')
+        .select('entreprise_id, unlocked_at')
+        .eq('user_id', userId)
+        .order('unlocked_at', { ascending: false });
 
       if (error) throw error;
       
@@ -148,43 +259,69 @@ export const useUserPlan = (userId: string | undefined) => {
       return { allowed: false, limit_reached: true, message: 'Utilisateur non connecté' };
     }
 
-    try {
-      const { data, error } = await supabase.rpc('check_tournee_quota', {
-        _user_id: userId
-      });
-
-      if (error) throw error;
-      
-      return data as QuotaCheckResult;
-    } catch (error: any) {
-      console.error('Error checking tournee quota:', error);
-      return { allowed: false, limit_reached: true, message: 'Erreur de vérification' };
+    // PRO users have unlimited tournees
+    if (userPlan?.plan_type === 'pro') {
+      return { allowed: true, limit_reached: false, message: 'Accès PRO illimité' };
     }
+
+    const currentCount = userPlan?.tournees_created_count || 0;
+    const limit = userPlan?.tournees_limit || 2;
+
+    if (currentCount >= limit) {
+      return {
+        allowed: false,
+        limit_reached: true,
+        message: `Limite atteinte (${limit}/${limit} tournées ce mois)`,
+        tournees_created: currentCount,
+        limit: limit
+      };
+    }
+
+    return {
+      allowed: true,
+      limit_reached: false,
+      message: 'Quota disponible',
+      tournees_created: currentCount,
+      limit: limit
+    };
   };
 
   const incrementTourneeQuota = async (): Promise<void> => {
     if (!userId) return;
 
+    // PRO users don't need quota tracking
+    if (userPlan?.plan_type === 'pro') return;
+
     try {
-      const { error } = await supabase.rpc('increment_tournee_quota', {
-        _user_id: userId
-      });
+      const currentCount = userPlan?.tournees_created_count || 0;
+
+      const { error } = await supabase
+        .from('user_quotas')
+        .update({ 
+          tournees_created_count: currentCount + 1 
+        })
+        .eq('user_id', userId);
 
       if (error) throw error;
       
-      // Refresh plan data to update quotas
-      await checkPlan();
+      // Update local state
+      if (userPlan) {
+        setUserPlan({
+          ...userPlan,
+          tournees_created_count: currentCount + 1
+        });
+      }
     } catch (error: any) {
       console.error('Error incrementing tournee quota:', error);
     }
   };
 
   const isPro = () => {
-    return userPlan?.planType === 'pro' || userPlan?.planType === 'teams';
+    return userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
   };
 
   const isFree = () => {
-    return userPlan?.planType === 'free';
+    return userPlan?.plan_type === 'free';
   };
 
   const showUpgradeMessage = (feature: string) => {
@@ -211,5 +348,6 @@ export const useUserPlan = (userId: string | undefined) => {
     checkTourneeQuota,
     incrementTourneeQuota,
     showUpgradeMessage,
+    unlockedProspectIds,
   };
 };

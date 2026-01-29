@@ -112,11 +112,11 @@ const Auth = () => {
         return;
       }
       
-      // For SIGNED_IN events after login, redirect to dashboard
-      if (session && event === 'SIGNED_IN') {
-        console.log('[AUTH EVENT] SIGNED_IN detected, redirecting to dashboard');
-        navigate('/dashboard');
-      }
+      // 🔥 NE PAS REDIRIGER AUTOMATIQUEMENT
+      // Sinon quand l'utilisateur confirme son email dans un autre onglet,
+      // cette page (qui reste ouverte) détecte SIGNED_IN et redirige automatiquement
+      // vers dashboard en créant un plan FREE
+      console.log('[AUTH EVENT] Ignoring automatic redirect - user must login manually');
     });
 
     return () => subscription.unsubscribe();
@@ -266,13 +266,64 @@ const Auth = () => {
 
         console.log("[AUTH] Login successful, user:", session.user.id);
 
-        toast({
-          title: "🎉 Content de te revoir !",
-          description: "Connexion réussie. Bienvenue sur PULSE !",
-        });
+        // 🔥 Vérifier si l'utilisateur a déjà un plan actif
+        const { data: quotas } = await supabase
+          .from('user_quotas')
+          .select('plan_type, is_first_login')
+          .eq('user_id', session.user.id)
+          .single();
 
-        // Let the onAuthStateChange handler manage the redirection
-        // It will check is_first_login and redirect accordingly
+        console.log('[AUTH LOGIN] Quotas check:', quotas);
+
+        // Si plan déjà actif → dashboard
+        if (quotas && quotas.is_first_login === false) {
+          console.log('[AUTH LOGIN] Plan actif trouvé, redirection vers /dashboard');
+          toast({
+            title: "🎉 Content de te revoir !",
+            description: "Bienvenue sur PULSE !",
+          });
+          navigate('/dashboard');
+          return;
+        }
+
+        // Pas de plan actif → activer selon URL ou PRO par défaut
+        if (selectedPlan === 'free' || isFree) {
+          // Activer FREE directement
+          console.log('[AUTH LOGIN] Activation plan FREE');
+          const { error: freeError } = await supabase.rpc('activate_free_plan', {
+            p_user_id: session.user.id
+          });
+
+          if (freeError) {
+            console.error('[AUTH LOGIN] Erreur activation FREE:', freeError);
+            toast({
+              variant: "destructive",
+              title: "❌ Erreur",
+              description: "Impossible d'activer le plan gratuit",
+            });
+            return;
+          }
+
+          toast({
+            title: "🎉 Bienvenue sur PULSE FREE !",
+            description: "Ton plan gratuit est activé",
+          });
+          navigate('/dashboard');
+        } else {
+          // PRO par défaut → rediriger vers Stripe
+          console.log('[AUTH LOGIN] Redirection vers Stripe pour PRO');
+          toast({
+            title: "🚀 Redirection vers Stripe",
+            description: "7 jours gratuits puis 29€/mois",
+            duration: 3000,
+          });
+          
+          // Rediriger vers Stripe Payment Link PRO
+          setTimeout(() => {
+            const stripeUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00g6oH0PR0CU6IH6pp'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(email)}`;
+            window.location.href = stripeUrl;
+          }, 1000);
+        }
       } else {
         // Signup with selected plan
         console.log("[AUTH] Attempting signup for:", email, "with plan:", selectedPlan);
@@ -281,12 +332,8 @@ const Auth = () => {
           email,
           password,
           options: {
-            // Redirect based on plan:
-            // - FREE (explicit) → Dashboard directly
-            // - No plan specified → Plan selection page
-            emailRedirectTo: selectedPlan === 'free' 
-              ? `${window.location.origin}/dashboard`
-              : `${window.location.origin}/plan-selection`,
+            // Redirect vers /auth après validation de l'email (évite les problèmes de Redirect URLs)
+            emailRedirectTo: `${window.location.origin}/auth`,
             data: {
               selected_plan: selectedPlan || 'unset', // Save the plan or 'unset'
             }
@@ -302,9 +349,7 @@ const Auth = () => {
 
         toast({
           title: "📧 Vérifiez votre boîte mail !",
-          description: isFree 
-            ? "Confirmez votre email pour accéder à votre dashboard gratuit !" 
-            : "Confirmez votre email pour choisir votre plan et commencer !",
+          description: "Confirmez votre email pour activer votre compte et choisir votre plan !",
           duration: 8000,
         });
         

@@ -32,8 +32,20 @@ export const NouveauxSitesListView = ({
   const [expandedCard, setExpandedCard] = useState<{ siteId: string; name: string; relatedIds: string[] } | null>(null);
   
   // User plan & unlock logic
-  const { userPlan, isProspectUnlocked } = useUserPlan(userId || '');
-  const isPro = userPlan?.plan_type === 'pro';
+  const { userPlan, isProspectUnlocked, isLoading: planLoading, unlockedProspectIds } = useUserPlan(userId || '');
+  const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
+  const isFree = userPlan?.plan_type === 'free';
+  
+  // DEBUG - À retirer après
+  console.log('🔍 [NouveauxSitesListView] User Plan:', {
+    userId,
+    plan_type: userPlan?.plan_type,
+    isPro,
+    isFree,
+    planLoading,
+    unlockedCount: unlockedProspectIds.size,
+    firstFewUnlocked: Array.from(unlockedProspectIds).slice(0, 3)
+  });
   const { 
     data, 
     isLoading,
@@ -104,8 +116,21 @@ export const NouveauxSitesListView = ({
               const prospectStatus = statusMap[site.id] as ProspectStatus | undefined;
               
               // Check if user can see details
+              // CRITICAL: Default to LOCKED unless explicitly PRO or unlocked
               const isUnlocked = isProspectUnlocked(site.id);
               const canSeeDetails = isPro || isUnlocked;
+              
+              // DEBUG - Première carte seulement
+              if (allSites.indexOf(site) === 0) {
+                console.log('🎴 [Première carte]', {
+                  nom: site.nom,
+                  id: site.id.substring(0, 8),
+                  isPro,
+                  isUnlocked,
+                  canSeeDetails,
+                  plan: userPlan?.plan_type
+                });
+              }
               
               // Format address
               const addressParts = [
@@ -209,7 +234,7 @@ export const NouveauxSitesListView = ({
                       </div>
                     )}
 
-                    {/* SIREN - Hidden for FREE users */}
+                    {/* SIREN - Hidden for FREE users unless unlocked */}
                     {site.siret && (
                       canSeeDetails ? (
                         <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
@@ -219,16 +244,17 @@ export const NouveauxSitesListView = ({
                           </span>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                          <Lock className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-[10px] sm:text-xs text-muted-foreground blur-sm select-none">
+                        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm relative">
+                          <Lock className="w-3 h-3 text-orange-500/80 flex-shrink-0" />
+                          <span className="text-[10px] sm:text-xs text-muted-foreground blur-[3px] select-none pointer-events-none">
                             990 470 197
                           </span>
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/40 to-transparent pointer-events-none" />
                         </div>
                       )
                     )}
                     
-                    {/* Adresse - Hidden for FREE users */}
+                    {/* Adresse - Hidden for FREE users unless unlocked */}
                     {fullAddress && (
                       canSeeDetails ? (
                         <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
@@ -236,11 +262,12 @@ export const NouveauxSitesListView = ({
                           <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-2">{fullAddress}</span>
                         </div>
                       ) : (
-                        <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                          <Lock className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-[10px] sm:text-xs text-muted-foreground blur-sm select-none line-clamp-2">
+                        <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm relative">
+                          <Lock className="w-3 h-3 text-orange-500/80 flex-shrink-0 mt-0.5" />
+                          <span className="text-[10px] sm:text-xs text-muted-foreground blur-[3px] select-none line-clamp-2 pointer-events-none">
                             RUE DE COBLENCE, 58000 NEVERS
                           </span>
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/40 to-transparent pointer-events-none" />
                         </div>
                       )
                     )}

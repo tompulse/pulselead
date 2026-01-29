@@ -139,6 +139,22 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non authentifié");
 
+      // Check tournee quota for FREE users
+      const { data: quotaCheck, error: quotaError } = await supabase.rpc('check_tournee_quota', {
+        _user_id: user.id
+      });
+
+      if (quotaCheck && !quotaCheck.allowed) {
+        toast({
+          title: "⚠️ Limite atteinte",
+          description: `Vous avez atteint la limite de ${quotaCheck.limit} tournées par mois. Passez à PRO pour des tournées illimitées.`,
+          variant: "destructive",
+          duration: 6000
+        });
+        setIsSaving(false);
+        return;
+      }
+
       const { error } = await supabase.from('tournees').insert({
         user_id: user.id,
         nom: parsedResult.tourneeName,
@@ -151,6 +167,11 @@ export const TourneeAssistantChat = ({ onApplyFilters, userId }: TourneeAssistan
       });
 
       if (error) throw error;
+
+      // Increment tournee quota
+      await supabase.rpc('increment_tournee_quota', {
+        _user_id: user.id
+      });
 
       toast({
         title: "✅ Tournée créée avec succès !",
