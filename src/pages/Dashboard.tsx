@@ -118,27 +118,49 @@ const DashboardContent = () => {
 
       console.log('[DASHBOARD] Quotas result:', quotas, quotasError);
 
-      // 🔥 BLOCAGE : Si pas de quotas valides → retour à l'auth
+      // 🔥 BLOCAGE : Si pas de quotas valides → Stripe
       if (!quotas || quotasError?.code === 'PGRST116') {
-        console.log('[DASHBOARD] ❌ No quotas found, redirecting to /auth');
+        console.log('[DASHBOARD] ❌ No quotas found, redirecting to Stripe');
         toast({
           variant: "destructive",
-          title: "⚠️ Aucun plan actif",
-          description: "Connecte-toi pour accéder au dashboard",
+          title: "🔒 Abonnement requis",
+          description: "Démarrez votre essai gratuit de 7 jours pour accéder au dashboard",
+          duration: 5000,
         });
-        navigate('/auth');
+        
+        // Redirection vers Stripe Payment Link
+        const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
+        window.location.href = paymentUrl;
         return;
       }
 
-      // Si is_first_login = true → pas encore validé
+      // Si is_first_login = true → pas encore validé → Stripe
       if (quotas.is_first_login === true) {
-        console.log('[DASHBOARD] ❌ First login not completed, redirecting to /auth');
+        console.log('[DASHBOARD] ❌ First login not completed, redirecting to Stripe');
         toast({
           variant: "destructive",
-          title: "⚠️ Configuration incomplète",
-          description: "Finalise ton inscription",
+          title: "🔒 Abonnement requis",
+          description: "Finalisez votre inscription pour accéder au dashboard",
+          duration: 5000,
         });
-        navigate('/auth');
+        
+        const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
+        window.location.href = paymentUrl;
+        return;
+      }
+      
+      // 🔥 BLOCAGE SUPPLÉMENTAIRE : Vérifier que le plan n'est pas null
+      if (!quotas.plan_type || quotas.plan_type === null) {
+        console.log('[DASHBOARD] ❌ No plan_type, redirecting to Stripe');
+        toast({
+          variant: "destructive",
+          title: "🔒 Abonnement requis",
+          description: "Choisissez un plan pour accéder au dashboard",
+          duration: 5000,
+        });
+        
+        const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
+        window.location.href = paymentUrl;
         return;
       }
 
