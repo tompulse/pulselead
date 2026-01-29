@@ -157,20 +157,26 @@ serve(async (req) => {
           } else {
             logStep("Subscription saved", subscriptionData);
             
-            // Also update user_quotas to 'pro' plan_type
+            // Also update user_quotas to 'pro' plan_type AND activate account
             const { error: quotaError } = await supabaseAdmin
               .from('user_quotas')
               .upsert({ 
                 user_id: userId, 
-                plan_type: 'pro' 
+                plan_type: 'pro',
+                is_first_login: false, // ✅ ACTIVATION DU COMPTE
+                stripe_customer_id: session.customer as string,
+                stripe_subscription_id: subscriptionId,
+                subscription_status: subscription.status,
+                prospects_limit: 999999, // Illimité pour PRO
+                tournees_limit: 999999, // Illimité pour PRO
               }, { 
                 onConflict: 'user_id' 
               });
             
             if (quotaError) {
-              logStep("Error updating user_quotas plan_type", { error: quotaError.message });
+              logStep("Error updating user_quotas", { error: quotaError.message });
             } else {
-              logStep("User quotas updated to 'pro'", { userId });
+              logStep("User quotas updated to 'pro' and account activated", { userId });
             }
           }
 
