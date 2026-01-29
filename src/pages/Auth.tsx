@@ -312,8 +312,9 @@ const Auth = () => {
           email,
           password,
           options: {
-            // Redirect vers /auth après validation de l'email
-            emailRedirectTo: `${window.location.origin}/auth`,
+            // Redirect vers /email-confirmed après validation de l'email
+            // Cette page vérifiera le plan et redirigera automatiquement vers Stripe
+            emailRedirectTo: `${window.location.origin}/email-confirmed`,
           },
         });
 
