@@ -52,24 +52,48 @@ export const UnifiedEntreprisePanel = ({
   const entrepriseId = entreprise?.id;
   const needsFetch = entreprise && entrepriseId && !entreprise.siret && !entreprise.nom;
 
-  const { data: fetchedEntreprise, isLoading: isFetchingEntreprise } = useQuery({
+  const { data: fetchedEntreprise, isLoading: isFetchingEntreprise, error: fetchError } = useQuery({
     queryKey: ['entreprise-detail', entrepriseId],
     queryFn: async () => {
-      if (!entrepriseId) return null;
-      const { data, error } = await supabase
-        .from('nouveaux_sites')
-        .select('*')
-        .eq('id', entrepriseId)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching entreprise:', error);
+      if (!entrepriseId) {
+        console.warn('[UnifiedEntreprisePanel] No entrepriseId provided');
         return null;
       }
-      return data;
+      
+      console.log('[UnifiedEntreprisePanel] Fetching entreprise:', entrepriseId);
+      
+      try {
+        const { data, error } = await supabase
+          .from('nouveaux_sites')
+          .select('*')
+          .eq('id', entrepriseId)
+          .single();
+        
+        if (error) {
+          console.error('[UnifiedEntreprisePanel] Supabase error:', error);
+          throw error;
+        }
+        
+        if (!data) {
+          console.error('[UnifiedEntreprisePanel] No data returned for ID:', entrepriseId);
+          return null;
+        }
+        
+        console.log('[UnifiedEntreprisePanel] Successfully fetched:', data);
+        return data;
+      } catch (error) {
+        console.error('[UnifiedEntreprisePanel] Fetch error:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les données de l'entreprise",
+          variant: "destructive"
+        });
+        return null;
+      }
     },
     enabled: open && !!entrepriseId,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
   // Use fetched data if available, otherwise use passed data
@@ -88,6 +112,33 @@ export const UnifiedEntreprisePanel = ({
   }, [open]);
 
   if (!open) return null;
+
+  // Show error state if fetch failed
+  if (fetchError && !displayEntreprise) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent 
+          side={isMobile ? "bottom" : "right"} 
+          className={`${isMobile ? 'h-[90vh]' : 'w-[420px]'} p-0 flex flex-col`}
+        >
+          <div className="p-6 text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto">
+              <span className="text-3xl">⚠️</span>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-red-400 mb-2">Erreur de chargement</h3>
+              <p className="text-sm text-muted-foreground">
+                Impossible de charger les données de cette entreprise
+              </p>
+            </div>
+            <Button onClick={() => onOpenChange(false)} variant="outline">
+              Fermer
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   // Show loading state while fetching
   if (isFetchingEntreprise || !displayEntreprise) {
@@ -111,31 +162,58 @@ export const UnifiedEntreprisePanel = ({
     );
   }
 
-  // Format address from real data
+  // Vérification de sécurité : s'assurer que displayEntreprise est valide
+  if (!displayEntreprise || typeof displayEntreprise !== 'object') {
+    console.error('[UnifiedEntreprisePanel] Invalid entreprise data:', displayEntreprise);
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent 
+          side={isMobile ? "bottom" : "right"} 
+          className={`${isMobile ? 'h-[90vh]' : 'w-[420px]'} p-0 flex flex-col`}
+        >
+          <div className="p-6 text-center">
+            <p className="text-red-400">Erreur : Données entreprise invalides</p>
+            <Button onClick={() => onOpenChange(false)} className="mt-4">
+              Fermer
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Format address from real data - avec vérifications
   const addressParts = [
-    displayEntreprise.numero_voie,
-    displayEntreprise.type_voie,
-    displayEntreprise.libelle_voie,
-    displayEntreprise.complement_adresse
+    displayEntreprise?.numero_voie,
+    displayEntreprise?.type_voie,
+    displayEntreprise?.libelle_voie,
+    displayEntreprise?.complement_adresse
   ].filter(Boolean).join(' ');
   
-  const formattedAddress = addressParts || displayEntreprise.adresse || '';
-  const cityLine = [displayEntreprise.code_postal, displayEntreprise.ville].filter(Boolean).join(' ');
+  const formattedAddress = addressParts || displayEntreprise?.adresse || '';
+  const cityLine = [displayEntreprise?.code_postal, displayEntreprise?.ville].filter(Boolean).join(' ');
 
-  // Get NAF info
-  const nafSectionInfo = displayEntreprise.naf_section ? NAF_SECTIONS[displayEntreprise.naf_section] : null;
-  const nafDivisionInfo = displayEntreprise.naf_division ? NAF_DIVISIONS[displayEntreprise.naf_division] : null;
+  // Get NAF info - avec vérifications
+  const nafSectionInfo = displayEntreprise?.naf_section && NAF_SECTIONS ? NAF_SECTIONS[displayEntreprise.naf_section] : null;
+  const nafDivisionInfo = displayEntreprise?.naf_division && NAF_DIVISIONS ? NAF_DIVISIONS[displayEntreprise.naf_division] : null;
 
-  // Format date
-  const formattedDate = displayEntreprise.date_creation 
-    ? new Date(displayEntreprise.date_creation).toLocaleDateString('fr-FR', { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-      })
+  // Format date - avec vérifications
+  const formattedDate = displayEntreprise?.date_creation 
+    ? (() => {
+        try {
+          return new Date(displayEntreprise.date_creation).toLocaleDateString('fr-FR', { 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric' 
+          });
+        } catch (e) {
+          console.error('Error formatting date:', e);
+          return null;
+        }
+      })()
     : null;
 
-  const hasCoordinates = displayEntreprise.latitude && displayEntreprise.longitude;
+  const hasCoordinates = displayEntreprise?.latitude && displayEntreprise?.longitude;
   
   // Handle unlock
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
@@ -174,7 +252,9 @@ export const UnifiedEntreprisePanel = ({
         <div className="shrink-0 p-4 pr-12 border-b border-accent/20 bg-gradient-to-r from-accent/5 to-transparent">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
-              <h2 className="text-lg font-bold leading-tight">{displayEntreprise.nom || 'Entreprise'}</h2>
+              <h2 className="text-lg font-bold leading-tight">
+                {displayEntreprise?.nom || displayEntreprise?.denomination_unite_legale || 'Entreprise'}
+              </h2>
               {cityLine && (
                 <p className="text-sm text-muted-foreground mt-0.5">{cityLine}</p>
               )}
