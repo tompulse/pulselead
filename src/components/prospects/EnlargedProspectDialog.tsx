@@ -1,4 +1,5 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Unlock, MapPin, Building2, Calendar, Mail, Phone } from "lucide-react";
@@ -6,6 +7,7 @@ import { useState } from "react";
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { UpgradeDialog } from "../upgrade/UpgradeDialog";
+import { cn } from "@/lib/utils";
 
 interface EnlargedProspectDialogProps {
   site: any;
@@ -65,8 +67,19 @@ export const EnlargedProspectDialog = ({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[95vw] sm:max-w-[500px] max-h-[85vh] overflow-y-auto p-0">
+      <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+        <DialogPrimitive.Portal>
+          {/* Overlay SANS backdrop-blur */}
+          <DialogPrimitive.Overlay
+            className="fixed inset-0 z-[9999] bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+          />
+          
+          {/* Content du Dialog */}
+          <DialogPrimitive.Content
+            className={cn(
+              "fixed left-[50%] top-[50%] z-[10000] grid w-full max-w-[95vw] sm:max-w-[500px] max-h-[85vh] translate-x-[-50%] translate-y-[-50%] overflow-y-auto border border-accent/30 bg-background shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg p-0"
+            )}
+          >
           <div className="relative">
             {/* Card Content */}
             <div className="p-6 space-y-4">
@@ -223,8 +236,15 @@ export const EnlargedProspectDialog = ({
               </div>
             )}
           </div>
-        </DialogContent>
-      </Dialog>
+          
+          {/* Close button */}
+          <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-50">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
 
       <UpgradeDialog
         open={showUpgradeDialog}
