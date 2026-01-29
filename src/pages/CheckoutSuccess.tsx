@@ -1,226 +1,211 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2, CheckCircle2, Sparkles } from "lucide-react";
-import { z } from "zod";
+import { CheckCircle2, Sparkles, Loader2 } from "lucide-react";
 
 const CheckoutSuccess = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [sessionId] = useState(searchParams.get('session_id') || '');
-  
-  const signupSchema = z.object({
-    email: z.string().trim().email('Email invalide'),
-    password: z.string()
-      .min(8, 'Minimum 8 caractères')
-      .regex(/[A-Z]/, 'Au moins une majuscule')
-      .regex(/[0-9]/, 'Au moins un chiffre')
-  });
+  const [status, setStatus] = useState<'checking' | 'activating' | 'ready' | 'error'>('checking');
+  const [countdown, setCountdown] = useState(30); // 30 secondes max d'attente
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const handleCreateAccount = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    const checkAndActivate = async () => {
+      try {
+        // 1. Vérifier la session utilisateur
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError || !session) {
+          console.error('[CHECKOUT SUCCESS] No session found');
+          setStatus('error');
+          return;
+        }
 
-    // Validation
-    const validation = signupSchema.safeParse({ email, password });
-    if (!validation.success) {
-      toast({
-        variant: "destructive",
-        title: "⚠️ Informations incorrectes",
-        description: validation.error.errors.map(e => e.message).join(', '),
-      });
-      return;
-    }
+        console.log('[CHECKOUT SUCCESS] User session found:', session.user.id);
+        setUserId(session.user.id);
+        setStatus('activating');
 
-    setLoading(true);
+        // 2. Poll la base de données pour vérifier l'activation
+        const pollInterval = setInterval(async () => {
+          try {
+            const { data: quotas, error } = await supabase
+              .from('user_quotas')
+              .select('plan_type, is_first_login, subscription_status')
+              .eq('user_id', session.user.id)
+              .single();
 
-    try {
-      console.log('[CHECKOUT SUCCESS] Creating account for:', email);
+            console.log('[CHECKOUT SUCCESS] Poll quotas:', quotas, error);
 
-      // Create Supabase account with auto-confirmation
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            selected_plan: 'pro',
-            stripe_session_id: sessionId,
-          },
-          // Skip email confirmation for Stripe customers (they already paid)
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-        },
-      });
+            // Si le compte est activé par le webhook
+            if (quotas && quotas.is_first_login === false && quotas.plan_type) {
+              console.log('[CHECKOUT SUCCESS] ✅ Account activated! Redirecting to dashboard...');
+              clearInterval(pollInterval);
+              setStatus('ready');
+              
+              // Redirection après 2 secondes
+              setTimeout(() => {
+                navigate('/dashboard');
+              }, 2000);
+            }
+          } catch (pollError) {
+            console.error('[CHECKOUT SUCCESS] Poll error:', pollError);
+          }
+        }, 2000); // Poll toutes les 2 secondes
 
-      if (error) throw error;
+        // Timeout après 30 secondes
+        const timeout = setTimeout(() => {
+          clearInterval(pollInterval);
+          console.log('[CHECKOUT SUCCESS] ⏱️ Timeout reached, redirecting anyway...');
+          setStatus('ready');
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1000);
+        }, 30000);
 
-      console.log('[CHECKOUT SUCCESS] Account created, logging in...');
-
-      // Auto-login after signup (since they already paid)
-      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (loginError) {
-        console.error('[CHECKOUT SUCCESS] Auto-login failed:', loginError);
-        toast({
-          title: "✅ Compte créé !",
-          description: "Plus qu'une étape : connectez-vous pour accéder à votre dashboard PRO !",
-        });
-        navigate('/auth?mode=login');
-        return;
+        // Cleanup
+        return () => {
+          clearInterval(pollInterval);
+          clearTimeout(timeout);
+        };
+      } catch (error) {
+        console.error('[CHECKOUT SUCCESS] Error:', error);
+        setStatus('error');
       }
+    };
 
-      console.log('[CHECKOUT SUCCESS] Logged in successfully, redirecting to dashboard...');
+    checkAndActivate();
+  }, [navigate]);
 
-      toast({
-        title: "🚀 Bienvenue sur PULSE PRO !",
-        description: "Votre essai gratuit de 7 jours commence maintenant. Let's go !",
-        duration: 3000,
-      });
-
-      // Redirect to dashboard directly
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1000);
-
-    } catch (error: any) {
-      console.error('[CHECKOUT SUCCESS] Error:', error);
-      
-      if (error.message?.includes('already registered')) {
-        toast({
-          title: "👋 Compte déjà existant !",
-          description: "Cet email est déjà enregistré. Connectez-vous pour accéder à votre dashboard PRO.",
-        });
-        setTimeout(() => {
-          navigate('/auth?mode=login');
-        }, 2000);
-      } else {
-        toast({
-          title: "❌ Oups !",
-          description: error.message || "Quelque chose s'est mal passé... Réessayez !",
-          variant: "destructive",
-        });
-      }
-    } finally {
-      setLoading(false);
+  // Countdown timer
+  useEffect(() => {
+    if (status === 'activating' && countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [countdown, status]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-navy-deep to-black-deep flex items-center justify-center p-6">
       <div className="w-full max-w-md">
+        
         {/* Success Icon */}
         <div className="text-center mb-8 animate-fade-in">
-          <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-            <CheckCircle2 className="w-10 h-10 text-green-500" />
+          <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+            <CheckCircle2 className="w-12 h-12 text-green-500" />
           </div>
-          <h1 className="text-3xl font-bold gradient-text mb-2">
+          <h1 className="text-4xl font-bold gradient-text mb-3">
             🎉 Paiement réussi !
           </h1>
-          <p className="text-muted-foreground text-base">
+          <p className="text-muted-foreground text-lg mb-4">
             Votre essai gratuit de <span className="text-green-500 font-bold">7 jours</span> a commencé
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
-            <Sparkles className="w-4 h-4 text-green-500" />
-            <span className="text-sm text-green-500 font-semibold">
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-green-500/10 border-2 border-green-500/30 shadow-lg">
+            <Sparkles className="w-5 h-5 text-green-500" />
+            <span className="text-base text-green-500 font-bold">
               Plan PRO activé
             </span>
           </div>
         </div>
 
-        {/* Account Creation Form */}
+        {/* Status Card */}
         <div className="glass-card p-8 space-y-6 animate-slide-up">
-          <div className="text-center space-y-2 mb-6">
-            <h2 className="text-xl font-bold text-foreground">
-              Créez votre compte
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              Pour accéder à votre dashboard PRO illimité
-            </p>
-          </div>
-
-          <form onSubmit={handleCreateAccount} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="contact@exemple.fr"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-background/50 border-border focus:border-accent"
-                disabled={loading}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Utilisez l'email de votre paiement Stripe
+          
+          {/* Checking Status */}
+          {status === 'checking' && (
+            <div className="text-center space-y-4">
+              <Loader2 className="w-12 h-12 animate-spin text-accent mx-auto" />
+              <h3 className="text-xl font-bold text-foreground">
+                Vérification du paiement...
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                Connexion à votre compte
               </p>
             </div>
+          )}
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-background/50 border-border focus:border-accent"
-                disabled={loading}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Min. 8 caractères, 1 majuscule, 1 chiffre
+          {/* Activating Status */}
+          {status === 'activating' && (
+            <div className="text-center space-y-4">
+              <div className="relative w-20 h-20 mx-auto">
+                <div className="absolute inset-0 rounded-full border-4 border-accent/20"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-accent border-t-transparent animate-spin"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-accent animate-pulse" />
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-foreground">
+                Activation de votre compte PRO...
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                Notre système prépare votre dashboard avec 4,5M+ entreprises
               </p>
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+                <span>Encore quelques secondes...</span>
+              </div>
             </div>
+          )}
 
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Création...
-                </>
-              ) : (
-                '🚀 Créer mon compte PRO'
-              )}
-            </Button>
-          </form>
+          {/* Ready Status */}
+          {status === 'ready' && (
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-8 h-8 text-green-500" />
+              </div>
+              <h3 className="text-xl font-bold text-green-500">
+                ✅ Compte activé !
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                Redirection vers votre dashboard...
+              </p>
+              <Loader2 className="w-6 h-6 animate-spin text-accent mx-auto" />
+            </div>
+          )}
 
-          <div className="text-center space-y-2 pt-4 border-t border-border">
-            <p className="text-sm text-muted-foreground">
-              Déjà un compte ?
-            </p>
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/auth?mode=login')}
-              className="text-accent hover:text-accent/80"
-              disabled={loading}
-            >
-              Se connecter
-            </Button>
-          </div>
+          {/* Error Status */}
+          {status === 'error' && (
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto">
+                <span className="text-3xl">⚠️</span>
+              </div>
+              <h3 className="text-xl font-bold text-red-400">
+                Oups, un problème est survenu
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                Connectez-vous pour accéder à votre dashboard
+              </p>
+              <button
+                onClick={() => navigate('/auth')}
+                className="w-full bg-gradient-to-r from-accent to-cyan-500 hover:from-accent/90 hover:to-cyan-500/90 text-black font-bold py-3 rounded-lg"
+              >
+                Se connecter
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Benefits Reminder */}
-        <div className="mt-6 p-4 bg-green-500/5 border border-green-500/20 rounded-lg">
-          <p className="text-sm text-center text-muted-foreground">
-            ✅ Accès illimité · 🗺️ Tournées IA · 📊 CRM complet<br />
-            <span className="text-green-500 font-semibold">7 jours gratuits</span> · Annulez à tout moment
+        <div className="mt-6 p-6 bg-gradient-to-r from-green-500/5 via-green-500/10 to-green-500/5 border border-green-500/30 rounded-xl">
+          <p className="text-sm text-center text-foreground space-y-2">
+            <span className="block font-semibold text-base mb-3">✨ Votre plan PRO inclut :</span>
+            <span className="block">🗺️ 4,5M+ entreprises illimitées</span>
+            <span className="block">🚀 Tournées GPS optimisées (-40% km)</span>
+            <span className="block">📊 CRM complet + Analytics</span>
+            <span className="block">💬 Support prioritaire 7j/7</span>
+            <span className="block mt-3 text-green-500 font-bold text-base">
+              7 jours gratuits • Sans engagement
+            </span>
           </p>
         </div>
+
+        {/* Debug Info (only in dev) */}
+        {import.meta.env.DEV && (
+          <div className="mt-4 p-4 bg-muted/20 border border-border rounded-lg text-xs font-mono">
+            <p>Status: {status}</p>
+            <p>User ID: {userId || 'N/A'}</p>
+            <p>Countdown: {countdown}s</p>
+          </div>
+        )}
       </div>
     </div>
   );
