@@ -220,7 +220,7 @@ const Onboarding = () => {
           ═══════════════════════════════════════════════════════════════════ */}
 
           {/* Plan PRO - Seule option disponible */}
-          <Card className="relative glass-card border-accent/50 p-8 shadow-2xl shadow-accent/30 hover:border-accent/70 hover:shadow-accent/40 transition-all duration-300 animate-slide-up w-full max-w-md"
+          <Card className="relative glass-card border-accent/50 p-8 shadow-2xl shadow-accent/30 hover:border-accent/70 hover:shadow-accent/40 transition-all duration-300 animate-slide-up w-full max-w-md">
             {/* Badge Popular */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-xl flex items-center gap-2 animate-pulse">
