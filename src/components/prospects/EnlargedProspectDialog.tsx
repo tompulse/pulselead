@@ -68,11 +68,6 @@ export const EnlargedProspectDialog = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-[95vw] sm:max-w-[500px] max-h-[85vh] overflow-y-auto p-0">
           <div className="relative">
-            {/* Locked overlay for FREE users */}
-            {!canSeeDetails && (
-              <div className="absolute inset-0 bg-gradient-to-br from-black/70 to-black/50 backdrop-blur-sm z-10 rounded-t-lg" />
-            )}
-
             {/* Card Content */}
             <div className="p-6 space-y-4">
               {/* Header */}
@@ -86,10 +81,15 @@ export const EnlargedProspectDialog = ({
                   </p>
                 </div>
                 
-                {canSeeDetails && (
+                {canSeeDetails ? (
                   <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/30 text-emerald-400 flex-shrink-0">
                     <Unlock className="w-3 h-3 mr-1" />
                     {isPro ? 'PRO' : 'Débloqué'}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="bg-orange-500/10 border-orange-500/30 text-orange-400 flex-shrink-0">
+                    <Lock className="w-3 h-3 mr-1" />
+                    Verrouillé
                   </Badge>
                 )}
               </div>
