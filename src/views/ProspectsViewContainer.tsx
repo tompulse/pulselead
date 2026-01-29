@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NouveauxSitesListView } from '@/components/dashboard/NouveauxSitesListView';
 import { NafFilters } from '@/components/dashboard/NafFilters';
 import { MobileFiltersBar } from '@/components/dashboard/MobileFiltersBar';
-import { FreemiumBanner } from '@/components/FreemiumBanner';
+import { SimplePlanBanner } from '@/components/upgrade/SimplePlanBanner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { nouveauxSitesService } from '@/services/nouveauxSitesService';
@@ -227,17 +227,10 @@ export const ProspectsViewContainer = ({
         />
       </div>
 
-      {/* Freemium Banner - Only for FREE plan */}
-      {isFree && userPlan && (
+      {/* Plan Banner - Affichage du plan actuel */}
+      {userPlan && (
         <div className="shrink-0 px-4 pt-4">
-          <FreemiumBanner 
-            quotas={{
-              prospects_unlocked: userPlan.prospects_unlocked_count || 0,
-              prospects_limit: 30,
-              tournees_created: userPlan.tournees_created_count || 0,
-              tournees_limit: 2
-            }}
-          />
+          <SimplePlanBanner userPlan={userPlan} />
         </div>
       )}
       

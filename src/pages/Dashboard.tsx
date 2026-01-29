@@ -197,92 +197,9 @@ const DashboardContent = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // Vérifier l'accès à l'abonnement après le chargement (attendre que le statut admin soit vérifié)
-  useEffect(() => {
-    const checkAccessAndRedirect = async () => {
-      if (!loading && !adminLoading && userId) {
-        // Bypass pour admins et utilisateur démo
-        if (isAdmin || isDemoUser) {
-          return;
-        }
-
-        // Check if user has PRO plan without active subscription
-        const { data: quotas } = await supabase
-          .from('user_quotas')
-          .select('plan_type')
-          .eq('user_id', userId)
-          .single();
-
-        const { data: subscription } = await supabase
-          .from('user_subscriptions')
-          .select('stripe_subscription_status')
-          .eq('user_id', userId)
-          .single();
-
-        console.log('[DASHBOARD] Plan type:', quotas?.plan_type, 'Subscription status:', subscription?.stripe_subscription_status);
-
-        // If PRO plan but no active subscription → Redirect to Stripe checkout
-        if (quotas?.plan_type === 'pro' && (!subscription || !['active', 'trialing'].includes(subscription.stripe_subscription_status))) {
-          console.log('[DASHBOARD] PRO plan without active subscription, redirecting to Stripe checkout');
-          
-          // Show loading message
-          toast({
-            title: "⏳ Redirection automatique...",
-            description: "Finalisation de votre inscription PRO (7j gratuits)",
-            duration: 15000,
-          });
-
-          // Delay to let user see the message
-          await new Promise(resolve => setTimeout(resolve, 1000));
-
-          try {
-            const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
-              body: { 
-                priceId: 'price_1SqxKmHjyidZ5i9L8tCztpFU',
-                trialDays: 7
-              },
-            });
-
-            console.log('[DASHBOARD] Checkout response:', { checkoutData, checkoutError });
-
-            if (checkoutError || !checkoutData?.url) {
-              console.error('[DASHBOARD] Checkout error:', checkoutError);
-              toast({
-                title: "⚠️ Checkout Stripe",
-                description: "Redirection manuelle requise. Cliquez sur 'Accéder au checkout' dans votre dashboard.",
-                variant: "default",
-                duration: 10000,
-              });
-              // Don't navigate away, let user see the dashboard with manual button
-              return;
-            }
-
-            // Redirect to Stripe checkout
-            console.log('[DASHBOARD] Redirecting to Stripe:', checkoutData.url);
-            window.location.href = checkoutData.url;
-          } catch (error) {
-            console.error('[DASHBOARD] Error creating checkout:', error);
-            toast({
-              title: "⚠️ Checkout Stripe",
-              description: "Redirection manuelle requise. Cliquez sur 'Accéder au checkout' dans votre dashboard.",
-              variant: "default",
-              duration: 10000,
-            });
-            // Don't navigate away, let user see the dashboard with manual button
-          }
-          return;
-        }
-
-        // FREE plan or PRO with active subscription
-        if (quotas?.plan_type !== 'free' && (!subscription || !['active', 'trialing'].includes(subscription.stripe_subscription_status))) {
-          console.log('[DASHBOARD] No access and not FREE plan, redirecting to landing');
-          navigate("/");
-        }
-      }
-    };
-
-    checkAccessAndRedirect();
-  }, [loading, adminLoading, userId, isAdmin, isDemoUser, userPlan, navigate, toast]);
+  // 🔥 SUPPRIMÉ : Plus de redirection automatique vers Stripe
+  // L'utilisateur choisit son plan dans /onboarding
+  // L'upgrade se fait via modal in-app depuis le dashboard
 
 
   const handleLogout = async () => {
@@ -309,7 +226,7 @@ const DashboardContent = () => {
   };
 
   // Loading state amélioré
-  if (loading || adminLoading || subscriptionLoading) {
+  if (loading || adminLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -334,10 +251,6 @@ const DashboardContent = () => {
         onLogout={handleLogout}
         userId={userId || ''}
         userEmail={userEmail}
-        subscriptionStatus={subscriptionStatus}
-        subscriptionPlan={subscriptionPlan}
-        daysRemaining={daysRemaining}
-        endDate={endDate}
         onSelectEntreprise={(id) => {
           handleEntrepriseSelect({ id });
         }}

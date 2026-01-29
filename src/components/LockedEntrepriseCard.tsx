@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Lock, Unlock, MapPin, Building2, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { UpgradeModal } from "./UpgradeModal";
+import { UpgradeDialog } from "./upgrade/UpgradeDialog";
 
 interface LockedEntrepriseCardProps {
   entreprise: any;
@@ -170,12 +170,11 @@ export const LockedEntrepriseCard = ({
         </div>
       </Card>
 
-      <UpgradeModal
+      <UpgradeDialog
         open={showUpgrade}
         onOpenChange={setShowUpgrade}
         feature="Déblocage de prospects"
-        currentQuota="Vous avez atteint la limite de 30 prospects débloqués"
-        proFeature="Accès illimité à 4,5M+ entreprises en France"
+        reason="Vous avez atteint la limite de 30 prospects débloqués. Passez à PRO pour un accès illimité à 4,5M+ entreprises."
       />
     </>
   );

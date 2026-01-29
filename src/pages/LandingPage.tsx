@@ -1,25 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles, LogOut, LayoutDashboard } from "lucide-react";
-import { useSubscription } from "@/hooks/useSubscription";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ContactSection from "@/components/landing/ContactSection";
-import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { DemoModeButton } from "@/components/landing/DemoModeButton";
 import { SocialProof } from "@/components/landing/SocialProof";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { initiateCheckout, isLoading: checkoutLoading } = useStripeCheckout();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const { hasAccess, isLoading: subscriptionLoading } = useSubscription(userId || undefined);
 
   // Check auth state
   useEffect(() => {
@@ -45,65 +40,19 @@ const LandingPage = () => {
   // Handle dashboard button click - redirect to auth if not logged in, dashboard otherwise
   const handleDashboardClick = () => {
     if (!isLoggedIn) {
-      // Not logged in - go to auth/signup pour PRO par défaut
       navigate('/auth');
     } else {
-      // Logged in - go to dashboard
       navigate('/dashboard');
     }
   };
 
-  // Handle CTA "Commencer maintenant" click - always PRO by default
+  // Handle CTA - Tous les CTA principaux vont vers /auth
   const handleCTAClick = () => {
-    // Toujours vers auth (PRO par défaut)
     navigate('/auth');
   };
 
-  // Check if user just logged in and should go to checkout
-  // BUT first verify they don't already have access (admin or active subscription)
-  useEffect(() => {
-    const checkAccessAndRedirect = async () => {
-      if (searchParams.get('checkout') !== 'pending' || !userId) return;
-
-      // Clean URL immediately
-      window.history.replaceState(null, '', '/');
-
-      try {
-        // Check if user is admin
-        const { data: isAdmin } = await supabase.rpc('has_role', {
-          _user_id: userId,
-          _role: 'admin'
-        });
-
-        if (isAdmin) {
-          // Admin users go directly to dashboard
-          navigate('/dashboard');
-          return;
-        }
-
-        // Check subscription access
-        const { data: accessData } = await supabase.rpc('check_subscription_access', {
-          _user_id: userId
-        });
-
-        const access = accessData as { has_access?: boolean } | null;
-        if (access?.has_access) {
-          // User already has access, go to dashboard
-          navigate('/dashboard');
-          return;
-        }
-
-        // No access, proceed to checkout
-        initiateCheckout();
-      } catch (error) {
-        console.error('Error checking access:', error);
-        // On error, still try checkout
-        initiateCheckout();
-      }
-    };
-
-    checkAccessAndRedirect();
-  }, [searchParams, userId, navigate, initiateCheckout]);
+  // 🔥 SUPPRIMÉ : Plus de redirection automatique vers checkout
+  // L'utilisateur choisit son plan dans /onboarding après connexion
 
   const heroAnimation = useScrollAnimation({ threshold: 0.2 });
   const problemsAnimation = useScrollAnimation({ threshold: 0.2 });
@@ -457,7 +406,7 @@ const LandingPage = () => {
                     </ul>
                     <Button 
                       className="w-full bg-white/10 text-white hover:bg-white/20 py-4 font-bold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all mt-auto border border-white/20" 
-                      onClick={() => navigate('/auth?plan=free')}
+                      onClick={handleCTAClick}
                     >
                       Commencer gratuitement
                       <ArrowRight className="ml-2 w-4 h-4" />
@@ -503,7 +452,7 @@ const LandingPage = () => {
                     </ul>
                     <Button 
                       className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 py-5 text-base font-black shadow-2xl hover:shadow-green-500/60 hover:scale-[1.03] transition-all mt-auto border-2 border-green-400/30" 
-                      onClick={() => navigate('/auth')}
+                      onClick={handleCTAClick}
                     >
                       🚀 Essayer 7 jours GRATUIT
                       <ArrowRight className="ml-2 w-4 h-4" />

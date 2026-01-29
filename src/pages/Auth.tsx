@@ -13,11 +13,6 @@ type AuthMode = 'login' | 'signup' | 'forgot' | 'reset';
 const Auth = () => {
   const [searchParams] = useSearchParams();
   
-  // Get selected plan from URL params (null if not specified)
-  const selectedPlan = searchParams.get('plan'); // null if no plan specified
-  const isPro = selectedPlan === 'pro';
-  const isFree = selectedPlan === 'free';
-  
   // Check for reset mode from URL params OR hash fragment (Supabase recovery links)
   const getInitialMode = (): AuthMode => {
     // Check URL params first
@@ -266,7 +261,7 @@ const Auth = () => {
 
         console.log("[AUTH] Login successful, user:", session.user.id);
 
-        // 🔥 Vérifier si l'utilisateur a déjà un plan actif
+        // 🔥 Vérifier si l'utilisateur a déjà complété l'onboarding (= a un plan actif)
         const { data: quotas } = await supabase
           .from('user_quotas')
           .select('plan_type, is_first_login')
@@ -275,7 +270,7 @@ const Auth = () => {
 
         console.log('[AUTH LOGIN] Quotas check:', quotas);
 
-        // Si plan déjà actif → dashboard
+        // Si plan déjà actif (onboarding complété) → dashboard
         if (quotas && quotas.is_first_login === false) {
           console.log('[AUTH LOGIN] Plan actif trouvé, redirection vers /dashboard');
           toast({
@@ -286,57 +281,23 @@ const Auth = () => {
           return;
         }
 
-        // Pas de plan actif → activer selon URL ou PRO par défaut
-        if (selectedPlan === 'free' || isFree) {
-          // Activer FREE directement
-          console.log('[AUTH LOGIN] Activation plan FREE');
-          const { error: freeError } = await supabase.rpc('activate_free_plan', {
-            p_user_id: session.user.id
-          });
-
-          if (freeError) {
-            console.error('[AUTH LOGIN] Erreur activation FREE:', freeError);
-            toast({
-              variant: "destructive",
-              title: "❌ Erreur",
-              description: "Impossible d'activer le plan gratuit",
-            });
-            return;
-          }
-
-          toast({
-            title: "🎉 Bienvenue sur PULSE FREE !",
-            description: "Ton plan gratuit est activé",
-          });
-          navigate('/dashboard');
-        } else {
-          // PRO par défaut → rediriger vers Stripe
-          console.log('[AUTH LOGIN] Redirection vers Stripe pour PRO');
-          toast({
-            title: "🚀 Redirection vers Stripe",
-            description: "7 jours gratuits puis 29€/mois",
-            duration: 3000,
-          });
-          
-          // Rediriger vers Stripe Payment Link PRO
-          setTimeout(() => {
-            const stripeUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00g6oH0PR0CU6IH6pp'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(email)}`;
-            window.location.href = stripeUrl;
-          }, 1000);
-        }
+        // Pas de plan actif → rediriger vers onboarding pour choisir
+        console.log('[AUTH LOGIN] Pas de plan actif, redirection vers /onboarding');
+        toast({
+          title: "✨ Bienvenue !",
+          description: "Choisissez votre plan pour commencer",
+        });
+        navigate('/onboarding');
       } else {
-        // Signup with selected plan
-        console.log("[AUTH] Attempting signup for:", email, "with plan:", selectedPlan);
+        // Signup
+        console.log("[AUTH] Attempting signup for:", email);
         
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            // Redirect vers /auth après validation de l'email (évite les problèmes de Redirect URLs)
+            // Redirect vers /auth après validation de l'email
             emailRedirectTo: `${window.location.origin}/auth`,
-            data: {
-              selected_plan: selectedPlan || 'unset', // Save the plan or 'unset'
-            }
           },
         });
 
@@ -345,11 +306,11 @@ const Auth = () => {
           throw error;
         }
 
-        console.log("[AUTH] Signup successful with plan:", selectedPlan, data);
+        console.log("[AUTH] Signup successful", data);
 
         toast({
           title: "📧 Vérifiez votre boîte mail !",
-          description: "Confirmez votre email pour activer votre compte et choisir votre plan !",
+          description: "Confirmez votre email puis reconnectez-vous pour commencer !",
           duration: 8000,
         });
         

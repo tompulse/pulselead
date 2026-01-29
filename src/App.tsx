@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 // Lazy load heavy pages for better performance
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
 const TourneeDetail = lazy(() => import("./pages/TourneeDetail"));
 const SecuritySettings = lazy(() => import("./pages/SecuritySettings"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
@@ -64,7 +65,14 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/email-confirmed" element={<EmailConfirmed />} />
-            <Route path="/subscribe" element={<Navigate to="/" replace />} />
+            
+            {/* Onboarding - Choix du plan après première connexion */}
+            <Route path="/onboarding" element={
+              <ProtectedRoute>
+                <Onboarding />
+              </ProtectedRoute>
+            } />
+            
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
@@ -76,16 +84,20 @@ const App = () => (
                 <TourneeDetail />
               </ProtectedRoute>
             } />
+            
+            {/* Legal pages */}
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/confidentialite" element={<PolitiqueConfidentialite />} />
             <Route path="/cgv" element={<CGV />} />
             <Route path="/cgu" element={<CGU />} />
+            
             <Route path="/security" element={
               <ProtectedRoute>
                 <SecuritySettings />
               </ProtectedRoute>
             } />
             <Route path="/error" element={<Error500 />} />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<Error404 />} />
           </Routes>

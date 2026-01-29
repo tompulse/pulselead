@@ -11,7 +11,7 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { UpgradeModal } from "@/components/UpgradeModal";
+import { UpgradeDialog } from "@/components/upgrade/UpgradeDialog";
 import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User, Sparkles, Lock, Unlock } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -138,7 +138,7 @@ export const UnifiedEntreprisePanel = ({
   const hasCoordinates = displayEntreprise.latitude && displayEntreprise.longitude;
   
   // Handle unlock
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
 
   const handleUnlock = async () => {
     if (!displayEntreprise?.id) return;
@@ -153,7 +153,7 @@ export const UnifiedEntreprisePanel = ({
       queryClient.invalidateQueries({ queryKey: ['entreprise-detail', entrepriseId] });
     } else if (result.limit_reached) {
       // Show upgrade modal
-      setShowUpgradeModal(true);
+      setShowUpgradeDialog(true);
     } else {
       toast({
         title: "❌ Erreur",
@@ -468,13 +468,12 @@ export const UnifiedEntreprisePanel = ({
         </div>
       </SheetContent>
 
-      {/* Upgrade Modal */}
-      <UpgradeModal
-        open={showUpgradeModal}
-        onOpenChange={setShowUpgradeModal}
+      {/* Upgrade Dialog */}
+      <UpgradeDialog
+        open={showUpgradeDialog}
+        onOpenChange={setShowUpgradeDialog}
         feature="Déblocage de prospects"
-        currentQuota={`${userPlan?.prospects_unlocked_count || 0}/${userPlan?.prospects_limit || 30} prospects débloqués`}
-        proFeature="Accès illimité à 4,5M+ entreprises en France"
+        reason={`Vous avez atteint votre limite (${userPlan?.prospects_unlocked_count || 0}/${userPlan?.prospects_limit || 30} prospects). Passez à PRO pour un accès illimité.`}
       />
     </Sheet>
   );
