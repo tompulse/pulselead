@@ -261,17 +261,28 @@ const Auth = () => {
 
         console.log("[AUTH] Login successful, user:", session.user.id);
 
-        // 🔥 Vérifier si l'utilisateur a déjà complété l'onboarding (= a un plan actif)
-        const { data: quotas } = await supabase
+        // 🔥 Vérifier si l'utilisateur a déjà un plan réellement activé
+        const { data: quotas, error: quotasError } = await supabase
           .from('user_quotas')
           .select('plan_type, is_first_login')
           .eq('user_id', session.user.id)
           .single();
 
-        console.log('[AUTH LOGIN] Quotas check:', quotas);
+        console.log('[AUTH LOGIN] Quotas check:', quotas, 'Error:', quotasError);
 
-        // Si plan déjà actif (onboarding complété) → dashboard
-        if (quotas && quotas.is_first_login === false) {
+        // Si AUCUN quotas (nouvel utilisateur) → onboarding
+        if (!quotas || quotasError) {
+          console.log('[AUTH LOGIN] Nouvel utilisateur, redirection vers /onboarding');
+          toast({
+            title: "✨ Bienvenue !",
+            description: "Choisissez votre plan pour commencer",
+          });
+          navigate('/onboarding');
+          return;
+        }
+
+        // Si plan existe ET is_first_login = false (vraiment actif) → dashboard
+        if (quotas.is_first_login === false && quotas.plan_type) {
           console.log('[AUTH LOGIN] Plan actif trouvé, redirection vers /dashboard');
           toast({
             title: "🎉 Content de te revoir !",
@@ -281,8 +292,8 @@ const Auth = () => {
           return;
         }
 
-        // Pas de plan actif → rediriger vers onboarding pour choisir
-        console.log('[AUTH LOGIN] Pas de plan actif, redirection vers /onboarding');
+        // Sinon (plan existe mais pas encore activé) → onboarding
+        console.log('[AUTH LOGIN] Plan non finalisé, redirection vers /onboarding');
         toast({
           title: "✨ Bienvenue !",
           description: "Choisissez votre plan pour commencer",

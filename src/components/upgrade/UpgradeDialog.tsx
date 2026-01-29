@@ -69,102 +69,89 @@ export const UpgradeDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-card/95 backdrop-blur-xl border-accent/30 shadow-2xl shadow-accent/20">
+      <DialogContent className="max-w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-card/95 backdrop-blur-xl border-accent/30 shadow-2xl shadow-accent/20">
         <DialogHeader>
-          <DialogTitle className="text-3xl font-bold gradient-text flex items-center gap-2 justify-center">
-            <Sparkles className="w-7 h-7" />
-            Passez à PULSE PRO !
+          <DialogTitle className="text-2xl sm:text-3xl font-bold gradient-text flex items-center gap-2 justify-center">
+            <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+            Passez à PRO !
           </DialogTitle>
-          <DialogDescription className="text-white/70 text-center text-base mt-2">
-            {reason}
-          </DialogDescription>
+          {reason && (
+            <DialogDescription className="text-white/70 text-center text-sm mt-2">
+              {reason}
+            </DialogDescription>
+          )}
         </DialogHeader>
         
-        <div className="py-6 space-y-6">
-          {feature && (
-            <div className="text-center">
-              <p className="text-lg font-semibold text-white mb-1">
-                Fonctionnalité : <span className="text-accent">{feature}</span>
-              </p>
-              <p className="text-sm text-white/50">
-                Disponible uniquement avec le plan PRO
-              </p>
-            </div>
-          )}
-          
+        <div className="py-4 space-y-4">
           {/* Prix */}
-          <div className="bg-gradient-to-br from-accent/20 via-accent/10 to-transparent border-2 border-accent/40 rounded-2xl p-6 text-center shadow-xl">
-            <div className="flex items-baseline justify-center gap-2 mb-2">
-              <span className="text-5xl font-bold gradient-text">49€</span>
-              <span className="text-xl text-white/60">/mois</span>
+          <div className="bg-gradient-to-br from-accent/20 via-accent/10 to-transparent border-2 border-accent/40 rounded-xl p-4 text-center">
+            <div className="flex items-baseline justify-center gap-2 mb-1">
+              <span className="text-4xl sm:text-5xl font-bold gradient-text">49€</span>
+              <span className="text-lg text-white/60">/mois</span>
             </div>
             <div className="flex items-center justify-center gap-2 mb-1">
-              <Zap className="w-5 h-5 text-green-400" />
-              <p className="text-green-400 font-bold text-lg">7 jours d'essai GRATUIT</p>
+              <Zap className="w-4 h-4 text-green-400" />
+              <p className="text-green-400 font-bold text-sm sm:text-base">7 jours GRATUITS</p>
             </div>
             <p className="text-xs text-white/50">
-              Sans engagement • Annulez quand vous voulez
+              Sans engagement
             </p>
           </div>
 
-          {/* Fonctionnalités */}
-          <div className="space-y-3">
-            <h4 className="font-bold text-white text-center mb-4">✨ Tout ce que vous débloquez :</h4>
+          {/* Fonctionnalités - Version compacte */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10">
+              <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+              <span className="text-white text-sm font-medium">🎯 4,5M+ entreprises illimitées</span>
+            </div>
             
-            <div className="grid gap-3">
-              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-accent/30 transition-colors">
-                <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span className="text-white font-medium">🎯 4,5M+ entreprises illimitées</span>
-              </div>
-              
-              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-accent/30 transition-colors">
-                <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span className="text-white font-medium">🔥 Tournées GPS illimitées</span>
-              </div>
-              
-              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-accent/30 transition-colors">
-                <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span className="text-white">CRM complet avec rappels automatiques</span>
-              </div>
-              
-              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-accent/30 transition-colors">
-                <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span className="text-white">Export CSV de vos données</span>
-              </div>
-              
-              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-accent/30 transition-colors">
-                <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span className="text-white">Support prioritaire 7j/7</span>
-              </div>
+            <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10">
+              <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+              <span className="text-white text-sm font-medium">🔥 Tournées GPS illimitées</span>
+            </div>
+            
+            <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10">
+              <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+              <span className="text-white text-sm">CRM complet</span>
+            </div>
+            
+            <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10">
+              <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+              <span className="text-white text-sm">Export CSV</span>
+            </div>
+            
+            <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10">
+              <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+              <span className="text-white text-sm">Support prioritaire</span>
             </div>
           </div>
 
-          {/* ROI */}
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 text-center">
-            <p className="text-green-400 font-bold">
-              💰 ROI moyen de 380% sur le premier mois
+          {/* ROI - Version compacte */}
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-center">
+            <p className="text-green-400 font-bold text-sm">
+              💰 ROI moyen +380%
             </p>
-            <p className="text-white/60 text-sm mt-1">
-              Nos utilisateurs PRO génèrent en moyenne +4 500€ de CA mensuel
+            <p className="text-white/60 text-xs mt-1">
+              +4 500€ de CA/mois en moyenne
             </p>
           </div>
         </div>
         
         {/* Actions */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Button 
             onClick={handleUpgrade}
             disabled={loading}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-6 text-lg shadow-2xl hover:shadow-green-500/50 transition-all"
+            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-5 sm:py-6 text-base sm:text-lg shadow-2xl hover:shadow-green-500/50 transition-all"
           >
             {loading ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                 Redirection...
               </>
             ) : (
               <>
-                🚀 Essayer 7 jours GRATUITEMENT
+                🚀 Essayer 7j GRATUIT
               </>
             )}
           </Button>
@@ -173,15 +160,15 @@ export const UpgradeDialog = ({
             onClick={() => onOpenChange(false)}
             disabled={loading}
             variant="ghost" 
-            className="w-full text-white/70 hover:text-white hover:bg-white/5"
+            className="w-full text-white/70 hover:text-white hover:bg-white/5 py-2"
           >
             Plus tard
           </Button>
         </div>
 
-        <p className="text-center text-xs text-white/40 mt-2">
+        <p className="text-center text-xs text-white/40">
           <Lock className="w-3 h-3 inline mr-1" />
-          Paiement 100% sécurisé par Stripe
+          Paiement sécurisé Stripe
         </p>
       </DialogContent>
     </Dialog>

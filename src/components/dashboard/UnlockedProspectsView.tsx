@@ -5,10 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Unlock, Loader2, Sparkles, ArrowRight, Plus, MapPin, Factory, Calendar } from "lucide-react";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { getNafCategory } from "@/utils/nafCategories";
+import { useDashboard } from "@/contexts/DashboardContext";
 
 interface UnlockedProspectsViewProps {
   userId: string;
@@ -17,9 +17,9 @@ interface UnlockedProspectsViewProps {
 
 export const UnlockedProspectsView = ({ userId, onEntrepriseSelect }: UnlockedProspectsViewProps) => {
   const { getUnlockedProspects, userPlan } = useUserPlan(userId);
+  const { setView } = useDashboard();
   const [prospects, setProspects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     loadUnlockedProspects();
@@ -84,7 +84,7 @@ export const UnlockedProspectsView = ({ userId, onEntrepriseSelect }: UnlockedPr
               ajouter jusqu'à <strong className="text-accent">30 prospects</strong> à votre liste personnelle.
             </p>
             <Button 
-              onClick={() => navigate('/dashboard')}
+              onClick={() => setView('prospects')}
               className="bg-accent hover:bg-accent/90 text-black font-bold"
             >
               <Plus className="w-4 h-4 mr-2" />
