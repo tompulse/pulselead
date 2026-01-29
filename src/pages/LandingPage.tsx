@@ -46,9 +46,41 @@ const LandingPage = () => {
     }
   };
 
-  // Handle CTA - Tous les CTA principaux vont vers /auth
-  const handleCTAClick = () => {
-    navigate('/auth');
+  // Handle CTA - Si connecté → Stripe, sinon → Auth
+  const handleCTAClick = async () => {
+    if (!isLoggedIn) {
+      // Pas connecté → Inscription
+      navigate('/auth');
+      return;
+    }
+
+    // Connecté → Vérifier si a un abonnement actif
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/auth');
+        return;
+      }
+
+      const { data: quotas } = await supabase
+        .from('user_quotas')
+        .select('plan_type, is_first_login')
+        .eq('user_id', session.user.id)
+        .single();
+
+      // Si plan actif → Dashboard
+      if (quotas && quotas.is_first_login === false && quotas.plan_type) {
+        navigate('/dashboard');
+        return;
+      }
+
+      // Pas de plan actif → Stripe
+      const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
+      window.location.href = paymentUrl;
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      navigate('/auth');
+    }
   };
 
   // 🔥 SUPPRIMÉ : Plus de redirection automatique vers checkout
@@ -199,7 +231,7 @@ const LandingPage = () => {
               {/* CTA */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button 
-                  onClick={() => navigate('/auth')}
+                  onClick={handleCTAClick}
                   className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 w-full sm:w-auto"
                 >
                   🚀 Essayer 7 jours GRATUIT
@@ -622,7 +654,7 @@ const LandingPage = () => {
         {/* Sticky CTA Mobile */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
           <Button 
-            onClick={() => navigate('/auth')}
+            onClick={handleCTAClick}
             className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 rounded-full shadow-lg shadow-green-500/40"
           >
             🚀 Essayer 7j GRATUIT

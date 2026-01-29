@@ -270,14 +270,17 @@ const Auth = () => {
 
         console.log('[AUTH LOGIN] Quotas check:', quotas, 'Error:', quotasError);
 
-        // Si AUCUN quotas (nouvel utilisateur) → onboarding
+        // Si AUCUN quotas (nouvel utilisateur) → Stripe directement
         if (!quotas || quotasError) {
-          console.log('[AUTH LOGIN] Nouvel utilisateur, redirection vers /onboarding');
+          console.log('[AUTH LOGIN] Nouvel utilisateur, redirection vers Stripe');
           toast({
-            title: "✨ Bienvenue !",
-            description: "Choisissez votre plan pour commencer",
+            title: "✨ Bienvenue sur PULSE !",
+            description: "Démarrez votre essai gratuit de 7 jours",
           });
-          navigate('/onboarding');
+          
+          // Redirection vers Stripe Payment Link PRO
+          const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
+          window.location.href = paymentUrl;
           return;
         }
 
@@ -292,13 +295,15 @@ const Auth = () => {
           return;
         }
 
-        // Sinon (plan existe mais pas encore activé) → onboarding
-        console.log('[AUTH LOGIN] Plan non finalisé, redirection vers /onboarding');
+        // Sinon (plan existe mais pas encore activé) → Stripe
+        console.log('[AUTH LOGIN] Plan non finalisé, redirection vers Stripe');
         toast({
-          title: "✨ Bienvenue !",
-          description: "Choisissez votre plan pour commencer",
+          title: "✨ Finalisez votre inscription",
+          description: "Démarrez votre essai gratuit de 7 jours",
         });
-        navigate('/onboarding');
+        
+        const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
+        window.location.href = paymentUrl;
       } else {
         // Signup
         console.log("[AUTH] Attempting signup for:", email);
