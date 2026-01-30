@@ -12,6 +12,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [hasValidSubscription, setHasValidSubscription] = useState(false);
   const [userId, setUserId] = useState<string>('');
   const [userEmail, setUserEmail] = useState<string>('');
+  const [isWaitingActivation, setIsWaitingActivation] = useState(false);
+  const [pollAttempts, setPollAttempts] = useState(0);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -45,13 +47,62 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
         console.log('[PROTECTED ROUTE] Quotas check:', quotas, error);
 
-        // Vérifier qu'il y a un plan ET que is_first_login = false
-        const isValid = quotas && 
-                       !error && 
-                       quotas.plan_type && 
-                       quotas.is_first_login === false;
+        // Si compte activé (is_first_login = false) → OK
+        if (quotas && quotas.plan_type && quotas.is_first_login === false) {
+          console.log('[PROTECTED ROUTE] ✅ Account activated, access granted');
+          setHasValidSubscription(true);
+          localStorage.removeItem('stripe_payment_completed'); // Nettoyer le flag
+          setLoading(false);
+          return;
+        }
 
-        setHasValidSubscription(isValid);
+        // 🔥 DÉTECTION PAIEMENT RÉCENT : Si flag localStorage présent et récent
+        const stripePaymentCompleted = localStorage.getItem('stripe_payment_completed');
+        const stripePaymentTime = localStorage.getItem('stripe_payment_time');
+        const paymentAge = stripePaymentTime ? Date.now() - parseInt(stripePaymentTime) : Infinity;
+        const isRecentPayment = stripePaymentCompleted === 'true' && paymentAge < 120000; // 2 minutes
+
+        if (isRecentPayment && pollAttempts < 30) {
+          console.log('[PROTECTED ROUTE] 🕒 Recent payment detected, waiting for activation...', { pollAttempts });
+          setIsWaitingActivation(true);
+          setLoading(false);
+
+          // 🔥 POLLING : Attendre l'activation du compte par le webhook
+          setTimeout(async () => {
+            setPollAttempts(prev => prev + 1);
+            
+            const { data: updatedQuotas } = await supabase
+              .from('user_quotas')
+              .select('plan_type, is_first_login')
+              .eq('user_id', session.user.id)
+              .single();
+
+            console.log('[PROTECTED ROUTE] Poll result:', updatedQuotas);
+
+            if (updatedQuotas && updatedQuotas.is_first_login === false) {
+              console.log('[PROTECTED ROUTE] ✅ Account activated during polling!');
+              setHasValidSubscription(true);
+              setIsWaitingActivation(false);
+              localStorage.removeItem('stripe_payment_completed');
+              localStorage.removeItem('stripe_payment_time');
+            } else {
+              // Retry check
+              setLoading(true);
+            }
+          }, 2000); // Poll toutes les 2 secondes
+
+          return;
+        }
+
+        // Si timeout (30 tentatives = 60 secondes) → Rediriger vers Stripe
+        if (pollAttempts >= 30) {
+          console.log('[PROTECTED ROUTE] ⏱️ Activation timeout, redirecting to Stripe');
+          localStorage.removeItem('stripe_payment_completed');
+          localStorage.removeItem('stripe_payment_time');
+        }
+
+        // Pas d'abonnement valide → Bloquer
+        setHasValidSubscription(false);
       } catch (error) {
         console.error('[PROTECTED ROUTE] Error checking subscription:', error);
         setHasValidSubscription(false);
@@ -120,6 +171,34 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   // Pas connecté → /auth
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // 🔥 Attente d'activation après paiement Stripe (polling en cours)
+  if (isWaitingActivation) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-6">
+          <h1 className="text-4xl font-bold text-accent">PULSE</h1>
+          <div className="space-y-4">
+            <div className="relative w-20 h-20 mx-auto">
+              <div className="absolute inset-0 rounded-full border-4 border-accent/20"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-accent border-t-transparent animate-spin"></div>
+            </div>
+            <div className="space-y-2">
+              <p className="text-lg font-semibold text-foreground">
+                ✨ Activation de votre compte PRO...
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Notre système prépare votre dashboard
+              </p>
+              <p className="text-xs text-muted-foreground/70">
+                Tentative {pollAttempts + 1}/30
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Connecté mais pas d'abonnement → Stripe
