@@ -40,18 +40,9 @@ export const NouveauxSitesListView = ({
   // User plan & unlock logic
   const { userPlan, isProspectUnlocked, isLoading: planLoading, unlockedProspectIds, unlockProspect } = useUserPlan(userId || '');
   const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
-  const isFree = userPlan?.plan_type === 'free';
   
-  // DEBUG - À retirer après
-  console.log('🔍 [NouveauxSitesListView] User Plan:', {
-    userId,
-    plan_type: userPlan?.plan_type,
-    isPro,
-    isFree,
-    planLoading,
-    unlockedCount: unlockedProspectIds.size,
-    firstFewUnlocked: Array.from(unlockedProspectIds).slice(0, 3)
-  });
+  // 🔥 PRO USERS : Accès illimité, pas de limites
+  console.log('[NouveauxSitesListView] User Plan:', userPlan?.plan_type, isPro ? 'PRO - Accès illimité' : 'FREE - Limité');
   const { 
     data, 
     isLoading,

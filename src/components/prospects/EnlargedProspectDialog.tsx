@@ -46,23 +46,11 @@ export const EnlargedProspectDialog = ({
     : `${site?.code_postal || ''} ${site?.ville || ''}`.trim();
 
   const handleUnlock = async () => {
-    if (!site?.id) return;
+    // 🔥 PRO : Pas besoin de déblocage, accès direct
+    if (isPro) return;
     
-    setUnlocking(true);
-    try {
-      const result = await onUnlock(site.id);
-      
-      if (result.success) {
-        setLocalCanSeeDetails(true);
-        onUnlockSuccess?.();
-      } else if (result.limit_reached) {
-        setShowUpgradeDialog(true);
-      }
-    } catch (error) {
-      console.error('Erreur déblocage:', error);
-    } finally {
-      setUnlocking(false);
-    }
+    // FREE : Redirect vers upgrade
+    setShowUpgradeDialog(true);
   };
 
   return (

@@ -32,7 +32,9 @@ export const ProspectsViewContainer = ({
   
   // User plan & quotas
   const { userPlan } = useUserPlan(userId);
-  const isFree = userPlan?.plan_type === 'free';
+  const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
+  
+  // 🔥 Simplification : Plus de logique FREE complexe
   
   // État pour le mode tournée
   const [tourneeActive, setTourneeActive] = useState(false);
@@ -106,8 +108,8 @@ export const ProspectsViewContainer = ({
       return;
     }
 
-    // Check tournee quota for FREE users
-    if (isFree && userPlan) {
+    // 🔥 PRO USERS : Pas de limite de tournées
+    if (!isPro && userPlan) {
       const tourneeQuota = await supabase.rpc('check_tournee_quota', {
         _user_id: userId
       });
@@ -171,8 +173,8 @@ export const ProspectsViewContainer = ({
 
       if (saveError) throw saveError;
 
-      // Increment tournee quota for FREE users
-      if (isFree && userPlan) {
+      // 🔥 PRO USERS : Pas de comptage de tournées
+      if (!isPro && userPlan) {
         await supabase.rpc('increment_tournee_quota', {
           _user_id: userId
         });

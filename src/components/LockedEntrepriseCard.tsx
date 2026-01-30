@@ -27,32 +27,14 @@ export const LockedEntrepriseCard = ({
   const handleUnlock = async (e: React.MouseEvent) => {
     e.stopPropagation();
     
+    // 🔥 PRO USERS : Accès direct sans restrictions
     if (isPro) {
-      // PRO users can access directly
       if (onClick) onClick();
       return;
     }
 
-    if (localUnlocked) {
-      // Already unlocked, open details
-      if (onClick) onClick();
-      return;
-    }
-
-    setUnlocking(true);
-    const result = await onUnlock();
-    
-    if (result.success) {
-      setLocalUnlocked(true);
-      // Auto-open after unlock
-      setTimeout(() => {
-        if (onClick) onClick();
-      }, 500);
-    } else if (result.limit_reached) {
-      setShowUpgrade(true);
-    }
-    
-    setUnlocking(false);
+    // Les utilisateurs FREE n'ont plus accès - redirection vers upgrade
+    setShowUpgrade(true);
   };
 
   const formatAddress = () => {
@@ -76,16 +58,11 @@ export const LockedEntrepriseCard = ({
   return (
     <>
       <Card 
-        className={`relative group cursor-pointer transition-all duration-300 overflow-hidden
-          ${localUnlocked || isPro
-            ? 'glass-card border-accent/30 hover:border-accent/60 hover:shadow-xl hover:shadow-accent/20'
-            : 'bg-card/40 backdrop-blur-sm border-white/20 hover:border-accent/40'
-          }
-        `}
+        className="relative group cursor-pointer transition-all duration-300 overflow-hidden glass-card border-accent/30 hover:border-accent/60 hover:shadow-xl hover:shadow-accent/20"
         onClick={handleUnlock}
       >
-        {/* Locked overlay for free users */}
-        {!localUnlocked && !isPro && (
+        {/* 🔥 SUPPRIMÉ : Plus d'overlay de verrouillage pour PRO */}
+        {!isPro && (
           <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-[2px] z-10 flex items-center justify-center">
             <div className="text-center space-y-3 p-4">
               <div className="w-16 h-16 mx-auto rounded-full bg-accent/20 backdrop-blur-sm flex items-center justify-center">
@@ -93,23 +70,15 @@ export const LockedEntrepriseCard = ({
               </div>
               <Button 
                 onClick={handleUnlock}
-                disabled={unlocking}
                 className="bg-gradient-to-r from-accent to-cyan-500 hover:from-accent/90 hover:to-cyan-500/90 text-black font-bold shadow-lg"
               >
-                {unlocking ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    Déblocage...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <Unlock className="w-4 h-4" />
-                    Débloquer ce prospect
-                  </span>
-                )}
+                <span className="flex items-center gap-2">
+                  <Unlock className="w-4 h-4" />
+                  Passer à PRO
+                </span>
               </Button>
               <p className="text-xs text-white/70">
-                Cliquez pour ajouter à vos prospects
+                Accès illimité avec PRO
               </p>
             </div>
           </div>
@@ -117,16 +86,16 @@ export const LockedEntrepriseCard = ({
 
         {/* Card content */}
         <div className="p-4 space-y-3">
-          {/* Header with unlock indicator */}
+          {/* Header with PRO indicator */}
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-bold text-base line-clamp-2 flex-1">
               {entreprise.nom || entreprise.denomination_unite_legale || 'Entreprise'}
             </h3>
-            {(localUnlocked || isPro) && (
+            {isPro && (
               <div className="flex-shrink-0">
                 <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/30 text-emerald-400">
                   <Unlock className="w-3 h-3 mr-1" />
-                  {isPro ? 'PRO' : 'Débloqué'}
+                  PRO
                 </Badge>
               </div>
             )}
