@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as CalendarIcon, Layers, Scale, MapPin, BarChart3, Building, Sparkles } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
@@ -777,7 +778,7 @@ export const NafFilters = ({
           onClick={() => setFilters(prev => ({ ...prev, showUnlockedOnly: !prev.showUnlockedOnly }))}
           className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
         >
-          <CustomCheckbox selected={filters.showUnlockedOnly || false} size="sm" />
+          <Checkbox checked={filters.showUnlockedOnly || false} className="pointer-events-none" />
           <div className="flex-1">
             <span className="text-sm font-medium">Prospects débloqués</span>
           </div>
