@@ -196,35 +196,32 @@ const DashboardContent = () => {
         return;
       }
 
-      // 🔥 Si plan PRO, vérifier que la subscription est active
-      // SAUF si on vient juste de payer (on attend le webhook)
-      const justPaid = localStorage.getItem('stripe_payment_completed');
-      
-      if (quotas.plan_type === 'pro' && !justPaid) {
-        console.log('[DASHBOARD] PRO plan detected, checking subscription status...');
-        const { data: subscription } = await supabase
-          .from('user_subscriptions')
-          .select('subscription_status')
-          .eq('user_id', session.user.id)
-          .single();
-
-        console.log('[DASHBOARD] Subscription status:', subscription?.subscription_status);
-
-        // Si PRO mais pas de subscription active/trialing → bloquer l'accès
-        if (!subscription || !['active', 'trialing'].includes(subscription.subscription_status)) {
-          console.log('[DASHBOARD] ❌ PRO plan without active subscription, redirecting to Stripe');
-          toast({
-            variant: "destructive",
-            title: "⚠️ Paiement requis",
-            description: "Finalise ton inscription PRO pour accéder au dashboard",
-          });
-          // Rediriger vers Stripe pour finaliser le paiement
-          const stripeUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00g6oH0PR0CU6IH6pp'}?client_reference_id=${session.user.id}`;
-          window.location.href = stripeUrl;
-          return;
+      // 🔥 Si plan PRO ET is_first_login = false, c'est OK (activation manuelle ou webhook)
+      // On ne vérifie PAS la subscription si le compte est déjà activé
+      if (quotas.plan_type === 'pro') {
+        console.log('[DASHBOARD] PRO plan detected, is_first_login:', quotas.is_first_login);
+        
+        // Si compte activé (is_first_login = false), on laisse passer
+        // Que ce soit une activation manuelle ou webhook, peu importe
+        if (quotas.is_first_login === false) {
+          console.log('[DASHBOARD] ✅ Account already activated, granting access');
+        } else {
+          // Si is_first_login = true, vérifier le flag de paiement
+          const justPaid = localStorage.getItem('stripe_payment_completed');
+          
+          if (!justPaid) {
+            // Pas de flag de paiement ET pas activé → Stripe
+            console.log('[DASHBOARD] ❌ Account not activated and no payment flag, redirecting to Stripe');
+            toast({
+              variant: "destructive",
+              title: "⚠️ Paiement requis",
+              description: "Finalise ton inscription PRO pour accéder au dashboard",
+            });
+            const stripeUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00g6oH0PR0CU6IH6pp'}?client_reference_id=${session.user.id}`;
+            window.location.href = stripeUrl;
+            return;
+          }
         }
-      } else if (quotas.plan_type === 'pro' && justPaid) {
-        console.log('[DASHBOARD] PRO plan + payment flag detected, skipping subscription check (waiting for webhook)');
       }
 
       // ✅ Plan trouvé et actif
