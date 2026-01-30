@@ -244,7 +244,6 @@ const LandingPage = () => {
                 <div className="text-center">
                   <div className="text-2xl sm:text-4xl font-bold gradient-text mb-2">Nouvelles entreprises</div>
                   <p className="text-sm text-white/70">Chaque semaine</p>
-                  <p className="text-white/60 text-xs sm:text-sm">entreprises</p>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl sm:text-5xl font-bold gradient-text mb-2">-40%</div>
