@@ -197,7 +197,10 @@ const DashboardContent = () => {
       }
 
       // 🔥 Si plan PRO, vérifier que la subscription est active
-      if (quotas.plan_type === 'pro') {
+      // SAUF si on vient juste de payer (on attend le webhook)
+      const justPaid = localStorage.getItem('stripe_payment_completed');
+      
+      if (quotas.plan_type === 'pro' && !justPaid) {
         console.log('[DASHBOARD] PRO plan detected, checking subscription status...');
         const { data: subscription } = await supabase
           .from('user_subscriptions')
@@ -220,6 +223,8 @@ const DashboardContent = () => {
           window.location.href = stripeUrl;
           return;
         }
+      } else if (quotas.plan_type === 'pro' && justPaid) {
+        console.log('[DASHBOARD] PRO plan + payment flag detected, skipping subscription check (waiting for webhook)');
       }
 
       // ✅ Plan trouvé et actif
