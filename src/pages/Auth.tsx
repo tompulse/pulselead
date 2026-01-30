@@ -261,6 +261,17 @@ const Auth = () => {
 
         console.log("[AUTH] Login successful, user:", session.user.id);
 
+        // 🔥 BYPASS ADMIN : tomiolovpro@gmail.com
+        if (session.user.email === 'tomiolovpro@gmail.com') {
+          console.log('[AUTH LOGIN] ✅ Admin bypass, accès direct dashboard');
+          toast({
+            title: "🎉 Content de te revoir !",
+            description: "Bienvenue sur PULSE !",
+          });
+          navigate('/dashboard');
+          return;
+        }
+
         // 🔥 Vérifier si l'utilisateur a déjà un plan réellement activé
         const { data: quotas, error: quotasError } = await supabase
           .from('user_quotas')

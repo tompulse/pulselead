@@ -112,6 +112,14 @@ const DashboardContent = () => {
         }
       }
       
+      // 🔥 BYPASS ADMIN : tomiolovpro@gmail.com
+      if (session.user.email === 'tomiolovpro@gmail.com') {
+        console.log('[DASHBOARD] ✅ Admin bypass, accès total');
+        setUserPlan('pro'); // Simule un plan PRO
+        setLoading(false);
+        return; // Skip toutes les vérifications
+      }
+      
       // 🔥 VÉRIFICATION : Est-ce que user_quotas existe ?
       console.log('[DASHBOARD] Checking user quotas...');
       const { data: quotas, error: quotasError } = await supabase
