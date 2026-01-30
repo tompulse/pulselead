@@ -41,7 +41,7 @@ const handler = async (req: Request): Promise<Response> => {
     const formattedDate = formatDate(trialEndDate);
     const displayName = firstName || "cher ami";
     const manageUrl = portalUrl || "https://pulse-lead.com/security";
-    const displayAmount = amountAfterTrial ?? 79;
+    const displayAmount = amountAfterTrial ?? 49;
 
     const emailResponse = await resend.emails.send({
       from: "PULSE <noreply@mail.pulse-lead.com>",

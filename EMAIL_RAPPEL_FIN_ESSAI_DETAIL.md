@@ -63,7 +63,7 @@ Répondre à: tomiolovpro@gmail.com
 │  │                                 │   │
 │  │ Ta carte bancaire sera          │   │
 │  │ automatiquement débitée de      │   │
-│  │ 79€/mois pour continuer à       │   │
+│  │ 49€/mois pour continuer à       │   │
 │  │ profiter de PULSE sans          │   │
 │  │ interruption.                   │   │
 │  └─────────────────────────────────┘   │
@@ -129,7 +129,7 @@ L'email respecte **100%** les obligations légales :
 #### **1. INFORMATION CLAIRE SUR LE PRÉLÈVEMENT** :
 ```
 "Ta carte bancaire sera automatiquement débitée 
-de 79€/mois pour continuer à profiter de PULSE 
+de 49€/mois pour continuer à profiter de PULSE 
 sans interruption."
 ```
 ✅ **Montant exact**
@@ -191,7 +191,7 @@ Jour 0 (Inscription) : User démarre essai gratuit 7 jours
   ├─ Jour 5, 6 : Rien (plus d'emails)
   │
   │
-  └─ Jour 7 (Fin essai) : 💳 Prélèvement automatique 79€
+  └─ Jour 7 (Fin essai) : 💳 Prélèvement automatique 49€
                           📧 Email de confirmation paiement
 ```
 
@@ -251,7 +251,7 @@ await resend.emails.send({
   "email": "tomiolovpro@gmail.com",
   "firstName": "Tom",
   "trialEndDate": "2026-02-05T00:00:00Z",
-  "amountAfterTrial": 79
+  "amountAfterTrial": 49
 }
 ```
 4. Vérifie ta boîte mail !
@@ -276,7 +276,7 @@ VALUES (
 
 ### ✅ **CE QUI EST OBLIGATOIRE** (et que tu as) :
 1. **Préavis de 3 jours minimum** ✅ (tu fais J-3)
-2. **Montant exact du prélèvement** ✅ (79€/mois)
+2. **Montant exact du prélèvement** ✅ (49€/mois)
 3. **Date précise du prélèvement** ✅ (date formatée)
 4. **Moyen d'annuler facilement** ✅ (lien + contact)
 5. **Identification de l'entreprise** ✅ (SIRET + adresse)
@@ -316,7 +316,7 @@ ORDER BY created_at DESC;
 | **Légal B2C** | ✅ | Conforme directive UE |
 | **Expéditeur** | ✅ | `PULSE <noreply@mail.pulse-lead.com>` |
 | **Délai préavis** | ✅ | 3 jours avant prélèvement |
-| **Montant affiché** | ✅ | 79€/mois |
+| **Montant affiché** | ✅ | 49€/mois |
 | **Annulation facile** | ✅ | 1 clic + contact direct |
 | **Design** | ✅ | Professionnel, fond noir, accent cyan |
 | **Automatique** | ✅ | Cron quotidien à 10h UTC |

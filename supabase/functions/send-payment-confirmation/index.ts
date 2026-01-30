@@ -57,7 +57,7 @@ serve(async (req) => {
     const formattedNextPayment = formatDate(nextPaymentDate);
     
     // Formatage du prix (avec gestion des réductions via codes promo)
-    const displayAmount = amountPaid ?? 79;
+    const displayAmount = amountPaid ?? 49;
     const displayCurrency = currency === 'EUR' ? '€' : (currency || '€');
 
     const { data, error } = await resend.emails.send({

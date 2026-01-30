@@ -138,7 +138,7 @@ Gamification : "Tu as enrichi 15 entreprises, merci !"
 - Enrichissement manuel illimité
 - Accès aux données communautaires
 
-### Plan Pro (79€/mois)
+### Plan Pro (49€/mois)
 - 200 enrichissements Pappers inclus/mois
 - Au-delà : 0.08€/enrichissement (marge de 300%)
 - Tout le reste
@@ -301,7 +301,7 @@ R: Rate limiting + possibilité de valider les contributions manuellement
 **Impact business :**
 - 🚀 Argument de vente #1 : "Téléphone direct pour 90% des prospects"
 - 🚀 Temps de prospection divisé par 3
-- 🚀 Pricing justifié à 79€/mois au lieu de 49€
+- 🚀 Pricing compétitif à 49€/mois
 
 ---
 

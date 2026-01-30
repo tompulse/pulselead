@@ -161,7 +161,7 @@ SELECT net.http_post(
 
 ### **Contenu** :
 - 🎯 Date exacte de fin d'essai
-- 💳 Montant qui sera prélevé (79€)
+- 💳 Montant qui sera prélevé (49€)
 - ✨ Bouton "Continuer avec PULSE"
 - 🔗 Lien "Gérer ou annuler mon abonnement"
 - 🎁 Liste des fonctionnalités qu'ils gardent
@@ -182,7 +182,7 @@ SELECT net.http_post(
 📅 Jour 7 (J-3) : 10h → 📧 EMAIL ENVOYÉ ! "Plus que 3 jours"
 📅 Jour 8 (J-2) : 10h → Cron tourne, mais email déjà envoyé (skip)
 📅 Jour 9 (J-1) : 10h → Cron tourne, rien
-📅 Jour 10 (FIN ESSAI) : Prélèvement automatique 79€
+📅 Jour 10 (FIN ESSAI) : Prélèvement automatique 49€
 ```
 
 **Un seul email** est envoyé : **3 jours avant la fin**.

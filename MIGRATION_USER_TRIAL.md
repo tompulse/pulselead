@@ -170,7 +170,7 @@ Une fois connecté, le user peut tester la nouvelle feature :
 
 Le user peut :
 - **Mettre sa carte** via le portail Stripe (bouton dans le dashboard)
-- **Continuer avec l'abonnement mensuel à 79€/mois**
+- **Continuer avec l'abonnement mensuel à 49€/mois**
 
 ---
 

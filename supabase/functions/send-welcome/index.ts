@@ -49,8 +49,8 @@ serve(async (req) => {
     // Utiliser le prénom si disponible, sinon fallback sur l'email
     const displayName = firstName || email.split('@')[0].replace(/[._]/g, ' ');
     
-    // Montant après la période d'essai (par défaut 79€, mais peut être réduit avec un code promo)
-    const displayAmount = amountAfterTrial ?? 79;
+    // Montant après la période d'essai (par défaut 49€, mais peut être réduit avec un code promo)
+    const displayAmount = amountAfterTrial ?? 49;
 
     const { data, error } = await resend.emails.send({
       from: "PULSE <noreply@mail.pulse-lead.com>",
