@@ -294,17 +294,13 @@ serve(async (req) => {
               });
             }
 
-            // 🔥 TEMPORAIREMENT DÉSACTIVÉ : L'appel à send-welcome cause "No API key"
-            // On enverra l'email de bienvenue plus tard via une autre méthode
+            // 🔥 RÉACTIVÉ : Envoi du mail de bienvenue
             try {
-              logStep("📨 Skipping send-welcome (temporarily disabled)", { 
+              logStep("📨 Attempting to send welcome email", { 
                 userId, 
-                email: session.customer_email || session.customer_details?.email,
-                reason: "API key issue - will fix later"
+                email: session.customer_email || session.customer_details?.email
               });
               
-              // TODO: Réactiver l'envoi d'email avec fetch() direct ou fix invoke()
-              /*
               const { data: emailData, error: emailInvokeError } = await supabaseAdmin.functions.invoke('send-welcome', {
                 body: {
                   userId,
@@ -321,11 +317,10 @@ serve(async (req) => {
                   context: emailInvokeError 
                 });
               } else {
-                logStep("✅ Welcome email function invoked successfully", { 
+                logStep("✅ Welcome email sent successfully", { 
                   result: emailData 
                 });
               }
-              */
             } catch (emailError: any) {
               logStep("❌ EXCEPTION with email", { 
                 error: emailError?.message ?? String(emailError),
