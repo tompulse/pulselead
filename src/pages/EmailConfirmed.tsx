@@ -21,17 +21,6 @@ const EmailConfirmed = () => {
       try {
         console.log('[EMAIL CONFIRMED] Session found:', session.user.id);
 
-        // 🔥 BYPASS ADMIN : tomiolovpro@gmail.com
-        if (session.user.email === 'tomiolovpro@gmail.com') {
-          console.log('[EMAIL CONFIRMED] ✅ Admin bypass, redirection dashboard');
-          toast({
-            title: "🎉 Content de te revoir !",
-            description: "Accès direct à ton dashboard PRO",
-          });
-          navigate('/dashboard');
-          return;
-        }
-
         // Vérifier les quotas (plan actif ou non)
         // ⚠️ IMPORTANT : Ne pas sélectionner subscription_status (n'existe pas dans user_quotas)
         const { data: quotas, error: quotasError } = await supabase
