@@ -20,6 +20,7 @@ const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 // Eagerly load light pages
 import Auth from "./pages/Auth";
 import EmailConfirmed from "./pages/EmailConfirmed";
+import StripeReturn from "./pages/StripeReturn";
 import Error404 from "./pages/Error404";
 import Error500 from "./pages/Error500";
 import MentionsLegales from "./pages/MentionsLegales";
@@ -73,6 +74,8 @@ const App = () => (
               </ProtectedRoute>
             } />
             
+            {/* Pages de retour après paiement Stripe */}
+            <Route path="/stripe-return" element={<StripeReturn />} />
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>

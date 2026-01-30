@@ -35,6 +35,10 @@ const DashboardContent = () => {
     searchQuery: "",
     showUnlockedOnly: false,
   });
+  
+  // 🆕 Nouveaux états pour gérer l'activation post-paiement
+  const [isActivating, setIsActivating] = useState(false);
+  const [activationAttempts, setActivationAttempts] = useState(0);
 
   const { view, setView, selectedEntreprise, setSelectedEntreprise, crmPanelOpen, setCrmPanelOpen } = useDashboard();
   const navigate = useNavigate();
@@ -134,9 +138,31 @@ const DashboardContent = () => {
         return;
       }
 
-      // Si is_first_login = true → pas encore validé → Stripe
+      // Si is_first_login = true → vérifier si paiement en cours
       if (quotas.is_first_login === true) {
-        console.log('[DASHBOARD] ❌ First login not completed, redirecting to Stripe');
+        console.log('[DASHBOARD] ⏳ Account not activated yet, checking if payment was made...');
+        
+        // Vérifier si l'utilisateur vient de payer (localStorage ou tentative < 20)
+        const justPaid = localStorage.getItem('stripe_payment_completed');
+        const withinActivationWindow = activationAttempts < 20; // Max 40 secondes d'attente
+        
+        if ((justPaid || withinActivationWindow) && !isActivating) {
+          console.log('[DASHBOARD] 🔄 Payment detected, waiting for webhook activation...');
+          setIsActivating(true);
+          setActivationAttempts(prev => prev + 1);
+          
+          // Poll toutes les 2 secondes
+          setTimeout(() => {
+            console.log('[DASHBOARD] Retrying activation check...');
+            checkAuthAndRole();
+          }, 2000);
+          
+          return;
+        }
+        
+        // Si toujours pas activé après 40 secondes → rediriger Stripe
+        console.log('[DASHBOARD] ❌ Activation timeout, redirecting to Stripe');
+        localStorage.removeItem('stripe_payment_completed');
         toast({
           variant: "destructive",
           title: "🔒 Abonnement requis",
@@ -147,6 +173,12 @@ const DashboardContent = () => {
         const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
         window.location.href = paymentUrl;
         return;
+      }
+      
+      // ✅ Compte activé ! Nettoyer le flag
+      if (quotas.is_first_login === false) {
+        localStorage.removeItem('stripe_payment_completed');
+        setIsActivating(false);
       }
       
       // 🔥 BLOCAGE SUPPLÉMENTAIRE : Vérifier que le plan n'est pas null
@@ -248,13 +280,51 @@ const DashboardContent = () => {
   };
 
   // Loading state amélioré
-  if (loading || adminLoading) {
+  if (loading || adminLoading || isActivating) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-accent">PULSE</h1>
-          <p className="text-muted-foreground text-base">Chargement...</p>
-          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
+      <div className="min-h-screen bg-gradient-to-br from-background via-navy-deep to-black-deep flex items-center justify-center p-6">
+        <div className="w-full max-w-md text-center space-y-6">
+          {isActivating ? (
+            <>
+              {/* Activation en cours */}
+              <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="text-3xl font-bold gradient-text mb-3">
+                🎉 Paiement réussi !
+              </h1>
+              <p className="text-muted-foreground text-lg mb-6">
+                Activation de votre compte PRO en cours...
+              </p>
+              <div className="relative w-20 h-20 mx-auto">
+                <div className="absolute inset-0 rounded-full border-4 border-accent/20"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-accent border-t-transparent animate-spin"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-accent animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mt-4">
+                Quelques secondes... ({activationAttempts * 2}s / 40s)
+              </p>
+              <div className="mt-6 p-6 glass-card">
+                <p className="text-xs text-muted-foreground">
+                  💡 Votre compte est en cours d'activation automatique par notre système.
+                  <br />Cette étape prend généralement 2-10 secondes.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Chargement normal */}
+              <h1 className="text-4xl font-bold text-accent">PULSE</h1>
+              <p className="text-muted-foreground text-base">Chargement...</p>
+              <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
+            </>
+          )}
         </div>
       </div>
     );
