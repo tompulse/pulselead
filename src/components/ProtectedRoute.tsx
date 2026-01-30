@@ -27,6 +27,14 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       setUserId(session.user.id);
       setUserEmail(session.user.email || '');
 
+      // 🔥 BYPASS ADMIN : tomiolovpro@gmail.com
+      if (session.user.email === 'tomiolovpro@gmail.com') {
+        console.log('[PROTECTED ROUTE] ✅ Admin bypass detected');
+        setHasValidSubscription(true); // Force l'accès
+        setLoading(false);
+        return;
+      }
+
       // 🔥 VÉRIFICATION ABONNEMENT : Bloquer l'accès si pas de plan actif
       try {
         const { data: quotas, error } = await supabase
@@ -65,6 +73,14 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       setIsAuthenticated(true);
       setUserId(session.user.id);
       setUserEmail(session.user.email || '');
+
+      // 🔥 BYPASS ADMIN : tomiolovpro@gmail.com
+      if (session.user.email === 'tomiolovpro@gmail.com') {
+        console.log('[PROTECTED ROUTE] ✅ Admin bypass on auth change');
+        setHasValidSubscription(true);
+        setLoading(false);
+        return;
+      }
 
       // Re-check subscription on auth change
       try {
