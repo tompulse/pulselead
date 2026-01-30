@@ -149,7 +149,7 @@ const Onboarding = () => {
             Démarrez votre essai gratuit de 7 jours maintenant
           </p>
           <p className="text-white/50 text-sm">
-            ✨ <strong>Accès illimité à 4,5M+ entreprises</strong> • Tournées GPS optimisées • CRM complet
+            ✨ <strong>New entreprises 3 derniers mois</strong> • Tournées GPS optimisées • CRM complet
           </p>
         </div>
 
@@ -199,7 +199,7 @@ const Onboarding = () => {
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-white/50 mt-0.5 flex-shrink-0" />
-                <span className="text-white/70 text-sm">Entreprises illimitées par tournée</span>
+                <span className="text-white/70 text-sm">Nouveaux prospects par tournée</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-white/50 mt-0.5 flex-shrink-0" />
@@ -265,7 +265,7 @@ const Onboarding = () => {
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white font-bold text-base">🎯 <strong>4,5M+ entreprises</strong> illimitées</span>
+                <span className="text-white font-bold text-base">🎯 <strong>New entreprises 3 derniers mois</strong> · MAJ hebdo</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 text-green-400 mt-0.5 flex-shrink-0" />
@@ -273,7 +273,7 @@ const Onboarding = () => {
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white/90 text-sm">Entreprises illimitées par tournée</span>
+                <span className="text-white/90 text-sm">Nouveaux prospects par tournée</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />

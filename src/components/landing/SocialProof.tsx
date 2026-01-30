@@ -15,7 +15,7 @@ const testimonials = [
     name: 'Sophie L.',
     role: 'Responsable développement',
     company: 'Services B2B',
-    content: "Accès à 4,5M d'entreprises avec filtres par département, NAF, effectif... Plus besoin de chercher pendant des heures, tout est là. Le GPS intégré est un énorme plus.",
+    content: "Accès aux nouvelles entreprises avec filtres par département, NAF, effectif... Plus besoin de chercher pendant des heures, tout est là. Le GPS intégré est un énorme plus.",
     rating: 5,
     avatar: 'SL'
   },

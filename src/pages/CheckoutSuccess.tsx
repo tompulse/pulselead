@@ -137,7 +137,7 @@ const CheckoutSuccess = () => {
                 Activation de votre compte PRO...
               </h3>
               <p className="text-muted-foreground text-sm">
-                Notre système prépare votre dashboard avec 4,5M+ entreprises
+                Notre système prépare votre dashboard avec les nouvelles entreprises
               </p>
               <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                 <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
@@ -188,7 +188,7 @@ const CheckoutSuccess = () => {
         <div className="mt-6 p-6 bg-gradient-to-r from-green-500/5 via-green-500/10 to-green-500/5 border border-green-500/30 rounded-xl">
           <p className="text-sm text-center text-foreground space-y-2">
             <span className="block font-semibold text-base mb-3">✨ Votre plan PRO inclut :</span>
-            <span className="block">🗺️ 4,5M+ entreprises illimitées</span>
+            <span className="block">🗺️ New entreprises 3 derniers mois · Mise à jour hebdo</span>
             <span className="block">🚀 Tournées GPS optimisées (-40% km)</span>
             <span className="block">📊 CRM complet + Analytics</span>
             <span className="block">💬 Support prioritaire 7j/7</span>

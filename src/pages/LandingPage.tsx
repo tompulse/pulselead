@@ -225,7 +225,7 @@ const LandingPage = () => {
 
               {/* Subheadline */}
               <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-8">
-                4,5M d'entreprises • Tournées GPS optimisées • CRM terrain
+                New entreprises 3 derniers mois • Tournées GPS optimisées • CRM terrain
               </p>
 
               {/* CTA */}
@@ -242,7 +242,7 @@ const LandingPage = () => {
               {/* Stats KPIs - Épurés */}
               <div className="mt-10 grid grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
                 <div className="text-center">
-                  <div className="text-3xl sm:text-5xl font-bold gradient-text mb-2">4,5M+</div>
+                  <div className="text-2xl sm:text-4xl font-bold gradient-text mb-2">Nouvelles entreprises</div>
                   <p className="text-white/60 text-xs sm:text-sm">entreprises</p>
                 </div>
                 <div className="text-center">
@@ -287,7 +287,7 @@ const LandingPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <Card className="glass-card p-8 border-accent/20 hover:border-accent/50 transition-all duration-300">
                   <Database className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-xl font-bold mb-3">Base 4,5M entreprises</h3>
+                  <h3 className="text-xl font-bold mb-3">New entreprises 3 derniers mois</h3>
                   <p className="text-white/70 text-sm leading-relaxed">
                     Filtrez par NAF, département, taille. Données SIRENE mises à jour chaque semaine.
                   </p>
@@ -476,7 +476,7 @@ const LandingPage = () => {
                     </div>
                     <ul className="space-y-1.5 mb-4 flex-1">
                       {[
-                        "🗺️ 4,5M+ entreprises illimitées",
+                        "🗺️ New entreprises 3 derniers mois · Mise à jour hebdo",
                         "🚀 Tournées GPS optimisées (-40% km)",
                         "📊 CRM complet + Rappels auto",
                         "🎯 Filtres avancés (NAF, dép., taille)",

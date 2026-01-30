@@ -174,7 +174,7 @@ export const LockedEntrepriseCard = ({
         open={showUpgrade}
         onOpenChange={setShowUpgrade}
         feature="Déblocage de prospects"
-        reason="Vous avez atteint la limite de 30 prospects débloqués. Passez à PRO pour un accès illimité à 4,5M+ entreprises."
+        reason="Vous avez atteint la limite de 30 prospects débloqués. Passez à PRO pour accéder aux nouvelles entreprises."
       />
     </>
   );

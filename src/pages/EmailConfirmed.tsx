@@ -11,9 +11,13 @@ const EmailConfirmed = () => {
 
   useEffect(() => {
     let redirectTimeout: NodeJS.Timeout;
+    let hasRedirected = false;
 
     // Fonction pour gérer la redirection après confirmation email
     const handleRedirection = async (session: any) => {
+      if (hasRedirected) return; // Éviter les redirections multiples
+      hasRedirected = true;
+
       try {
         console.log('[EMAIL CONFIRMED] Session found:', session.user.id);
 
@@ -66,6 +70,20 @@ const EmailConfirmed = () => {
       }
     };
 
+    // 🔥 TIMEOUT DE SÉCURITÉ : Forcer la vérification après 3 secondes
+    const fallbackCheck = setTimeout(async () => {
+      if (hasRedirected) return;
+      console.log('[EMAIL CONFIRMED] Fallback check triggered');
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await handleRedirection(session);
+      } else {
+        console.log('[EMAIL CONFIRMED] No session in fallback, redirecting to auth');
+        navigate('/auth?mode=login');
+      }
+    }, 3000);
+
     // Écouter les événements d'authentification (CRITIQUE pour les liens email)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('[EMAIL CONFIRMED] Auth event:', event, 'Session:', !!session);
@@ -100,6 +118,7 @@ const EmailConfirmed = () => {
     return () => {
       subscription.unsubscribe();
       if (redirectTimeout) clearTimeout(redirectTimeout);
+      clearTimeout(fallbackCheck);
     };
   }, [navigate, toast]);
 
@@ -164,7 +183,7 @@ const EmailConfirmed = () => {
         <div className="mt-6 p-6 bg-gradient-to-r from-green-500/5 via-green-500/10 to-green-500/5 border border-green-500/30 rounded-xl">
           <p className="text-sm text-center text-foreground space-y-2">
             <span className="block font-semibold text-base mb-3">✨ Ce qui vous attend :</span>
-            <span className="block">🗺️ 4,5M+ entreprises illimitées</span>
+            <span className="block">🗺️ New entreprises 3 derniers mois · Mise à jour hebdo</span>
             <span className="block">🚀 Tournées GPS optimisées</span>
             <span className="block">📊 CRM complet + Analytics</span>
             <span className="block mt-3 text-green-500 font-bold text-base">

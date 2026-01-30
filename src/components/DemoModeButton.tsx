@@ -63,7 +63,7 @@ export const DemoModeButton = ({ variant = "outline", className = "", size = "de
                     🗺️ Filtrez vos prospects par zone
                   </h3>
                   <p className="text-white/70 text-sm mb-3">
-                    Accédez à <strong className="text-accent">4,5M+ entreprises</strong> en France. 
+                    Accédez aux <strong className="text-accent">nouvelles entreprises</strong> en France. 
                     Filtrez par département, code postal, secteur d'activité (NAF), effectif, date de création.
                   </p>
                   <div className="bg-black/30 p-3 rounded-lg border border-white/10">
