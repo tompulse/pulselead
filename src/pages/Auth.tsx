@@ -575,6 +575,25 @@ const Auth = () => {
         </div>
 
         <div className="text-center mt-6 flex flex-col gap-2">
+          {/* 🆕 Bouton "J'ai déjà payé" pour accès direct après paiement Stripe */}
+          {!hasExistingSession && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Marquer que le paiement est fait et aller au dashboard
+                localStorage.setItem('stripe_payment_completed', 'true');
+                toast({
+                  title: "✨ Connexion en cours...",
+                  description: "Vérifie que tu as bien confirmé ton email avant de continuer",
+                });
+                navigate('/auth?mode=login');
+              }}
+              className="w-full border-green-500/30 text-green-400 hover:bg-green-500/10 hover:text-green-300"
+            >
+              💳 J'ai déjà payé sur Stripe
+            </Button>
+          )}
+          
           {hasExistingSession && (
             <Button
               variant="outline"
