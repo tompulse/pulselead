@@ -270,23 +270,9 @@ const Auth = () => {
 
         console.log('[AUTH LOGIN] Quotas check:', quotas, 'Error:', quotasError);
 
-        // Si AUCUN quotas (nouvel utilisateur) → Stripe directement
-        if (!quotas || quotasError) {
-          console.log('[AUTH LOGIN] Nouvel utilisateur, redirection vers Stripe');
-          toast({
-            title: "✨ Bienvenue sur PULSE !",
-            description: "Démarrez votre essai gratuit de 7 jours",
-          });
-          
-          // Redirection vers Stripe Payment Link PRO
-          const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
-          window.location.href = paymentUrl;
-          return;
-        }
-
-        // Si plan existe ET is_first_login = false (vraiment actif) → dashboard
-        if (quotas.is_first_login === false && quotas.plan_type) {
-          console.log('[AUTH LOGIN] Plan actif trouvé, redirection vers /dashboard');
+        // 🔥 PRIORITÉ 1 : Si is_first_login = false ET plan_type existe → Dashboard directement
+        if (quotas && quotas.is_first_login === false && quotas.plan_type) {
+          console.log('[AUTH LOGIN] ✅ Compte activé détecté, redirection dashboard');
           toast({
             title: "🎉 Content de te revoir !",
             description: "Bienvenue sur PULSE !",
@@ -295,8 +281,21 @@ const Auth = () => {
           return;
         }
 
-        // Sinon (plan existe mais pas encore activé) → Stripe
-        console.log('[AUTH LOGIN] Plan non finalisé, redirection vers Stripe');
+        // Si AUCUN quotas (vraiment nouvel utilisateur) → Stripe
+        if (!quotas) {
+          console.log('[AUTH LOGIN] Nouvel utilisateur (no quotas), redirection Stripe');
+          toast({
+            title: "✨ Bienvenue sur PULSE !",
+            description: "Démarrez votre essai gratuit de 7 jours",
+          });
+          
+          const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
+          window.location.href = paymentUrl;
+          return;
+        }
+
+        // Sinon (plan existe mais is_first_login = true) → Stripe
+        console.log('[AUTH LOGIN] Plan non activé, redirection Stripe');
         toast({
           title: "✨ Finalisez votre inscription",
           description: "Démarrez votre essai gratuit de 7 jours",
