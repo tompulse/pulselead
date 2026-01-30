@@ -23,22 +23,8 @@ export const SimplePlanBanner = ({ userPlan }: SimplePlanBannerProps) => {
   const isFree = userPlan.plan_type === 'free';
   
   if (!isFree) {
-    // PRO user - Simple badge banner
-    return (
-      <Card className="bg-gradient-to-r from-accent/10 via-accent/5 to-transparent border-accent/30 p-4 mb-4">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <PlanBadge plan="pro" showIcon={true} />
-            <div>
-              <h3 className="font-bold text-white">Accès PRO illimité</h3>
-              <p className="text-sm text-white/60">
-                Profitez de toutes les fonctionnalités sans limite
-              </p>
-            </div>
-          </div>
-        </div>
-      </Card>
-    );
+    // PRO user - Masqué (prend trop de place)
+    return null;
   }
 
   // FREE user - Show upgrade CTA

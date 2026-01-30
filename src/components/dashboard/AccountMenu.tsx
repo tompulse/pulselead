@@ -223,7 +223,10 @@ export const AccountMenu = ({
         <DropdownMenuSeparator />
         
         <DropdownMenuItem 
-          onClick={onLogout}
+          onSelect={(e) => {
+            e.preventDefault();
+            onLogout();
+          }}
           className="cursor-pointer text-red-400 focus:text-red-400 focus:bg-red-500/10"
         >
           <LogOut className="w-4 h-4 mr-2" />
