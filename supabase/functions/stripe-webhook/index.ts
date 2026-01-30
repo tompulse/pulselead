@@ -96,34 +96,58 @@ serve(async (req) => {
           customerId: session.customer,
           customerEmail: session.customer_email || session.customer_details?.email,
           paymentStatus: session.payment_status,
-          mode: session.mode
+          mode: session.mode,
+          clientReferenceId: session.client_reference_id
         });
 
-        // Get user_id from metadata OR find by email
-        let userId = session.metadata?.user_id;
+        // 🔥 PRIORITÉ 1 : Utiliser client_reference_id (user_id passé dans Payment Link URL)
+        let userId = session.client_reference_id || session.metadata?.user_id;
         const customerEmail = session.customer_email || session.customer_details?.email;
         
         logStep("🔍 Looking for user", { 
-          userIdInMetadata: userId, 
-          customerEmail 
+          clientReferenceId: session.client_reference_id,
+          userIdInMetadata: session.metadata?.user_id, 
+          customerEmail,
+          finalUserId: userId
         });
         
+        // Si pas de user_id dans client_reference_id, chercher par email (fallback)
         if (!userId && customerEmail) {
-          // Try to find user by email (for Payment Link flow)
-          logStep("📧 No user_id in metadata, searching by email", { email: customerEmail });
+          logStep("📧 No user_id in client_reference_id, searching by email", { email: customerEmail });
           
-          const { data: userData, error: userError } = await supabaseAdmin.auth.admin.listUsers();
+          // Méthode plus robuste : chercher directement dans la table user_quotas
+          const { data: quotasData, error: quotasError } = await supabaseAdmin
+            .from('user_quotas')
+            .select('user_id')
+            .limit(1000);
           
-          if (userError) {
-            logStep("❌ Error listing users", { error: userError.message });
-          } else if (userData?.users) {
-            logStep("👥 Found users in DB", { count: userData.users.length });
-            const user = userData.users.find(u => u.email === customerEmail);
-            if (user) {
-              userId = user.id;
-              logStep("✅ Found existing user by email", { userId, email: user.email });
-            } else {
-              logStep("⚠️ No user found with email", { email: customerEmail });
+          if (!quotasError && quotasData) {
+            logStep("📊 Found quotas records", { count: quotasData.length });
+            
+            // Récupérer tous les users et chercher par email
+            const { data: userData, error: userError } = await supabaseAdmin.auth.admin.listUsers();
+            
+            if (!userError && userData?.users) {
+              logStep("👥 Found users in auth", { count: userData.users.length });
+              
+              // Comparaison case-insensitive
+              const user = userData.users.find(u => 
+                u.email?.toLowerCase() === customerEmail?.toLowerCase()
+              );
+              
+              if (user) {
+                userId = user.id;
+                logStep("✅ Found existing user by email (case-insensitive)", { 
+                  userId, 
+                  email: user.email,
+                  emailConfirmed: user.email_confirmed_at
+                });
+              } else {
+                logStep("⚠️ No user found with email", { 
+                  email: customerEmail,
+                  availableEmails: userData.users.slice(0, 5).map(u => u.email)
+                });
+              }
             }
           }
         }
@@ -131,7 +155,8 @@ serve(async (req) => {
         if (!userId) {
           logStep("❌ CRITICAL: No user found, cannot process payment", { 
             email: customerEmail,
-            sessionId: session.id 
+            sessionId: session.id,
+            clientReferenceId: session.client_reference_id
           });
           // Store session info for later linking (when user creates account)
           // We'll match via email when the user signs up
