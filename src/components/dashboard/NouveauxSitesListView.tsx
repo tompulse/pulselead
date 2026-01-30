@@ -122,9 +122,9 @@ export const NouveauxSitesListView = ({
               const prospectStatus = statusMap[site.id] as ProspectStatus | undefined;
               
               // Check if user can see details
-              // CRITICAL: Default to LOCKED unless explicitly PRO or unlocked
+              // 🔥 FIX FLASH : Pendant le chargement, on assume PRO (évite le flash de blur)
               const isUnlocked = isProspectUnlocked(site.id);
-              const canSeeDetails = isPro || isUnlocked;
+              const canSeeDetails = planLoading ? true : (isPro || isUnlocked);
               
               // DEBUG - Première carte seulement
               if (filteredSites.indexOf(site) === 0) {

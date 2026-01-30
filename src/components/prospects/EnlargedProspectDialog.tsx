@@ -32,7 +32,8 @@ export const EnlargedProspectDialog = ({
   const [localCanSeeDetails, setLocalCanSeeDetails] = useState(initialCanSeeDetails);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
 
-  const canSeeDetails = isPro || localCanSeeDetails;
+  // 🔥 PRO USERS : Toujours accès complet sans restrictions
+  const canSeeDetails = isPro || localCanSeeDetails || initialCanSeeDetails;
 
   // Format address
   const addressParts = [

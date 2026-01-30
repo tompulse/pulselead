@@ -43,8 +43,9 @@ export const UnifiedEntreprisePanel = ({
   const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
   const isUnlocked = entreprise?.id ? isProspectUnlocked(entreprise.id) : false;
   
-  // 🔥 PRO USERS : Toujours accès complet, pas de restrictions
-  const canSeeDetails = isPro || isUnlocked;
+  // 🔥 FIX FLASH : Pendant le chargement, on assume PRO (évite le flash de blur)
+  // Une fois chargé, on vérifie vraiment
+  const canSeeDetails = planLoading ? true : (isPro || isUnlocked);
 
   // If we only have an ID, fetch full data from nouveaux_sites
   const entrepriseId = entreprise?.id;
