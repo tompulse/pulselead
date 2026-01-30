@@ -48,6 +48,8 @@ const DashboardContent = () => {
   
   // 🔥 SUPPRIMÉ useSubscription - on vérifie juste les quotas directement
   const [userPlan, setUserPlan] = useState<string | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | undefined>(undefined);
+  const [subscriptionEndDate, setSubscriptionEndDate] = useState<string | undefined>(undefined);
 
   const activeFiltersCount = 
     (filters.nafSections?.length || 0) + 
@@ -236,6 +238,23 @@ const DashboardContent = () => {
       console.log('[DASHBOARD] ✅ Plan active:', quotas.plan_type);
       setUserPlan(quotas.plan_type);
 
+      // 🔥 Récupérer les infos de subscription pour l'affichage
+      try {
+        const { data: subscription, error: subError } = await supabase
+          .from('user_subscriptions')
+          .select('subscription_status, subscription_end_date')
+          .eq('user_id', session.user.id)
+          .single();
+
+        if (!subError && subscription) {
+          console.log('[DASHBOARD] Subscription info:', subscription);
+          setSubscriptionStatus(subscription.subscription_status);
+          setSubscriptionEndDate(subscription.subscription_end_date);
+        }
+      } catch (subErr) {
+        console.log('[DASHBOARD] Could not fetch subscription details:', subErr);
+      }
+
       // Filtres vides par défaut (pas de chargement automatique)
       
         setLoading(false);
@@ -353,6 +372,10 @@ const DashboardContent = () => {
         onLogout={handleLogout}
         userId={userId || ''}
         userEmail={userEmail}
+        subscriptionStatus={subscriptionStatus}
+        subscriptionPlan={userPlan || undefined}
+        endDate={subscriptionEndDate}
+        daysRemaining={subscriptionEndDate ? Math.max(0, Math.ceil((new Date(subscriptionEndDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : undefined}
         onSelectEntreprise={(id) => {
           handleEntrepriseSelect({ id });
         }}
