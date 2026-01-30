@@ -57,3 +57,6 @@ verify_jwt = false
 [functions.check-trial-reminders]
 verify_jwt = false
 # schedule = "0 9 * * *"  # Commented out - use Supabase Dashboard to configure cron schedules
+
+[functions.stripe-webhook]
+verify_jwt = false
