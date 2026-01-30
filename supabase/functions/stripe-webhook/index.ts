@@ -40,7 +40,13 @@ serve(async (req) => {
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
     );
 
     const signature = req.headers.get("stripe-signature");
@@ -291,15 +297,17 @@ serve(async (req) => {
               });
             }
 
+            // 🔥 TEMPORAIREMENT DÉSACTIVÉ : L'appel à send-welcome cause "No API key"
+            // On enverra l'email de bienvenue plus tard via une autre méthode
             try {
-              logStep("📨 Invoking send-welcome function", { 
+              logStep("📨 Skipping send-welcome (temporarily disabled)", { 
                 userId, 
                 email: session.customer_email || session.customer_details?.email,
-                trialEnd: trialEndIso,
-                firstName,
-                amountAfterTrial 
+                reason: "API key issue - will fix later"
               });
               
+              // TODO: Réactiver l'envoi d'email avec fetch() direct ou fix invoke()
+              /*
               const { data: emailData, error: emailInvokeError } = await supabaseAdmin.functions.invoke('send-welcome', {
                 body: {
                   userId,
@@ -320,8 +328,9 @@ serve(async (req) => {
                   result: emailData 
                 });
               }
+              */
             } catch (emailError: any) {
-              logStep("❌ EXCEPTION sending welcome email", { 
+              logStep("❌ EXCEPTION with email", { 
                 error: emailError?.message ?? String(emailError),
                 stack: emailError?.stack 
               });
