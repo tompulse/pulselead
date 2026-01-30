@@ -175,17 +175,15 @@ SELECT net.http_post(
 
 ### **Exemple Timeline** :
 ```
-📅 Jour 0 (aujourd'hui) : User s'inscrit, essai gratuit commence
-📅 Jour 4 (dans 4 jours) : 10h → Cron tourne, rien (pas encore J-3)
-📅 Jour 5 (dans 5 jours) : 10h → Cron tourne, rien (pas encore J-3)
-📅 Jour 6 (dans 6 jours) : 10h → Cron tourne, rien (pas encore J-3)
-📅 Jour 7 (J-3) : 10h → 📧 EMAIL ENVOYÉ ! "Plus que 3 jours"
-📅 Jour 8 (J-2) : 10h → Cron tourne, mais email déjà envoyé (skip)
-📅 Jour 9 (J-1) : 10h → Cron tourne, rien
-📅 Jour 10 (FIN ESSAI) : Prélèvement automatique 49€
+📅 Jour 0 (aujourd'hui) : User s'inscrit, essai gratuit 7 jours commence
+📅 Jour 1, 2, 3 : 10h → Cron tourne, rien (pas encore J-3)
+📅 Jour 4 (J-3) : 10h → 📧 EMAIL ENVOYÉ ! "Plus que 3 jours"
+📅 Jour 5 (J-2) : 10h → Cron tourne, mais email déjà envoyé (skip)
+📅 Jour 6 (J-1) : 10h → Cron tourne, rien
+📅 Jour 7 (FIN ESSAI) : Prélèvement automatique 49€
 ```
 
-**Un seul email** est envoyé : **3 jours avant la fin**.
+**Un seul email** est envoyé : **3 jours avant la fin** (Jour 4).
 
 ---
 

@@ -14,7 +14,6 @@ Tous les prix ont été mis à jour de **79€ → 49€/mois** dans :
 - ✅ `CRON_JOB_VISUAL.md`
 - ✅ `test-email-rappel.html`
 - ✅ `MIGRATION_USER_TRIAL.md`
-- ✅ `PAPPERS_INTEGRATION.md`
 
 ---
 

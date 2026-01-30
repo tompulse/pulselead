@@ -221,7 +221,7 @@ Le script normalise automatiquement.
 ### 1. Unifier les tables `entreprises` et `nouveaux_sites`
 
 Actuellement :
-- `entreprises` : Données historiques + enrichissement
+- `entreprises` : Données historiques
 - `nouveaux_sites` : Import CSV récent
 
 **Solution** : Créer vues SQL ou modifier RPC functions pour interroger les 2 tables.

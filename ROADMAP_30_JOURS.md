@@ -35,42 +35,6 @@
 
 ---
 
-## SEMAINE 2 : Feature #1 - Enrichissement Pappers (15h)
-
-### Lundi 27/01 (4h)
-- [ ] Setup compte Pappers (récupérer clé API)
-- [ ] Edge Function `enrich-contact`
-- [ ] Intégration API Pappers
-- [ ] Tests basiques
-
-### Mardi 28/01 (4h)
-- [ ] UI : Bouton "Enrichir" dans fiches entreprises
-- [ ] Loading states + animations
-- [ ] Gestion erreurs (API down, quota, etc.)
-- [ ] Affichage résultats enrichis
-
-### Mercredi 29/01 (3h)
-- [ ] Modal saisie manuelle (si Pappers n'a rien)
-- [ ] Système de cache (1 seul appel par entreprise)
-- [ ] Tests avec vraies données
-
-### Jeudi 30/01 (2h)
-- [ ] Contribution collaborative (BONUS)
-- [ ] Gamification ("Tu as enrichi X entreprises")
-- [ ] Analytics enrichissement (tracking usage)
-
-### Vendredi 31/01 (2h)
-- [ ] Tests end-to-end complets
-- [ ] Déploiement production
-- [ ] Tom teste en live avec ses prospects
-
-**Output attendu :**
-- Feature enrichissement opérationnelle
-- 90% des entreprises enrichissables
-- Argument de vente #1 validé
-
----
-
 ## SEMAINE 3 : Engagement & Rétention (15h)
 
 ### Lundi 03/02 (6h) - Notifications Push
@@ -227,7 +191,6 @@ Si à la fin de chaque semaine :
 - ❌ Feedback négatif sur UX → Itérer immédiatement
 
 ### Semaine 2
-- ❌ Taux d'utilisation enrichissement <50% → Feature pas assez visible
 - ❌ Pas de conversion trial → Revoir pricing/onboarding
 
 ### Semaine 3
