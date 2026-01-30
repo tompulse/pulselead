@@ -68,7 +68,16 @@ const DashboardContent = () => {
   };
 
   useEffect(() => {
+    let hasRun = false; // 🚀 PROTECTION : Empêche les double-vérifications
+    
     const checkAuthAndRole = async () => {
+      // 🔥 PROTECTION : Si déjà exécuté dans ce cycle, ne pas réexécuter
+      if (hasRun) {
+        console.log('[DASHBOARD] Already checking, skipping duplicate call');
+        return;
+      }
+      hasRun = true;
+
       try {
         const { data: { session } } = await supabase.auth.getSession();
       
@@ -81,13 +90,13 @@ const DashboardContent = () => {
       setUserId(session.user.id);
       setUserEmail(session.user.email || undefined);
       const userEmail = session.user.email;
-      console.log('Checking admin for:', userEmail, session.user.id);
+      console.log('[DASHBOARD] Checking admin for:', userEmail, session.user.id);
 
       // Check for demo user
       const demoEmail = 'demo@pulse.com';
       
       if (userEmail === demoEmail) {
-        console.log('Demo user detected, granting visitor access');
+        console.log('[DASHBOARD] Demo user detected, granting visitor access');
         setIsDemoUser(true);
         setAdminLoading(false);
       } else {
@@ -98,16 +107,16 @@ const DashboardContent = () => {
             _role: 'admin'
           });
           
-          console.log('Admin check result:', adminCheck, 'Error:', error);
+          console.log('[DASHBOARD] Admin check result:', adminCheck, 'Error:', error);
           
           if (error) {
-            console.error('Error checking admin status:', error);
+            console.error('[DASHBOARD] Error checking admin status:', error);
             setIsAdmin(false);
           } else {
             setIsAdmin(adminCheck === true);
           }
         } catch (error) {
-          console.error('Error checking admin status:', error);
+          console.error('[DASHBOARD] Error checking admin status:', error);
           setIsAdmin(false);
         } finally {
           setAdminLoading(false);
@@ -161,10 +170,22 @@ const DashboardContent = () => {
           setIsActivating(true);
           setActivationAttempts(prev => prev + 1);
           
-          // Poll toutes les 2 secondes
-          setTimeout(() => {
+          // 🔥 POLLING : Recheck quotas directement sans passer par checkAuthAndRole
+          setTimeout(async () => {
             console.log('[DASHBOARD] Retrying activation check...');
-            checkAuthAndRole();
+            const { data: updatedQuotas } = await supabase
+              .from('user_quotas')
+              .select('plan_type, is_first_login')
+              .eq('user_id', session.user.id)
+              .single();
+            
+            if (updatedQuotas && updatedQuotas.is_first_login === false) {
+              console.log('[DASHBOARD] ✅ Account activated! Reloading...');
+              window.location.reload(); // Refresh pour réinitialiser tout
+            } else {
+              // Retry
+              setActivationAttempts(prev => prev + 1);
+            }
           }, 2000);
           
           return;
