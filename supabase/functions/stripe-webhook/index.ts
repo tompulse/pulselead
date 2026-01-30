@@ -236,11 +236,8 @@ serve(async (req) => {
                 user_id: userId, 
                 plan_type: 'pro',
                 is_first_login: false, // ✅ ACTIVATION DU COMPTE
-                stripe_customer_id: session.customer as string,
-                stripe_subscription_id: subscriptionId,
-                subscription_status: subscription.status,
-                prospects_limit: 999999, // Illimité pour PRO
-                tournees_limit: 999999, // Illimité pour PRO
+                prospects_unlocked_count: 0, // Réinitialisé pour PRO
+                tournees_created_count: 0, // Réinitialisé pour PRO
               }, { 
                 onConflict: 'user_id' 
               });
