@@ -281,14 +281,26 @@ const Auth = () => {
 
         console.log('[AUTH LOGIN] Quotas check:', quotas, 'Error:', quotasError);
 
-        // 🔥 PRIORITÉ 1 : Si is_first_login = false ET plan_type existe → Dashboard directement
-        if (quotas && quotas.is_first_login === false && quotas.plan_type) {
-          console.log('[AUTH LOGIN] ✅ Compte activé détecté, redirection dashboard');
+        // 🔥 PRIORITÉ 1 : Si is_first_login = false ET plan_type = PRO → Dashboard directement
+        if (quotas && quotas.is_first_login === false && quotas.plan_type === 'pro') {
+          console.log('[AUTH LOGIN] ✅ Compte PRO activé détecté, redirection dashboard');
           toast({
             title: "🎉 Content de te revoir !",
             description: "Bienvenue sur PULSE !",
           });
           navigate('/dashboard');
+          return;
+        }
+
+        // Si plan FREE (peu importe is_first_login) → Stripe pour upgrade
+        if (quotas && quotas.plan_type === 'free') {
+          console.log('[AUTH LOGIN] Plan FREE détecté, redirection Stripe');
+          toast({
+            title: "✨ Démarrez votre essai gratuit",
+            description: "Accédez à toutes les fonctionnalités PRO",
+          });
+          const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${session.user.id}&prefilled_email=${encodeURIComponent(session.user.email || '')}`;
+          window.location.href = paymentUrl;
           return;
         }
 

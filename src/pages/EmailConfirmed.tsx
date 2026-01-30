@@ -31,9 +31,9 @@ const EmailConfirmed = () => {
 
         console.log('[EMAIL CONFIRMED] Quotas:', quotas, 'Error:', quotasError);
 
-        // Si plan actif (is_first_login = false et plan_type existe) → Dashboard
-        if (quotas && quotas.is_first_login === false && quotas.plan_type) {
-          console.log('[EMAIL CONFIRMED] Active plan found, redirecting to dashboard');
+        // Si plan PRO activé (is_first_login = false et plan_type = pro) → Dashboard
+        if (quotas && quotas.is_first_login === false && quotas.plan_type === 'pro') {
+          console.log('[EMAIL CONFIRMED] Active PRO plan found, redirecting to dashboard');
           toast({
             title: "🎉 Bienvenue !",
             description: "Accédez à votre dashboard PRO",
