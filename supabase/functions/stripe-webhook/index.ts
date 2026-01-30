@@ -91,38 +91,75 @@ serve(async (req) => {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        logStep("Checkout completed", { sessionId: session.id, customerId: session.customer });
+        logStep("🎉 Checkout completed", { 
+          sessionId: session.id, 
+          customerId: session.customer,
+          customerEmail: session.customer_email || session.customer_details?.email,
+          paymentStatus: session.payment_status,
+          mode: session.mode
+        });
 
         // Get user_id from metadata OR find by email
         let userId = session.metadata?.user_id;
         const customerEmail = session.customer_email || session.customer_details?.email;
         
+        logStep("🔍 Looking for user", { 
+          userIdInMetadata: userId, 
+          customerEmail 
+        });
+        
         if (!userId && customerEmail) {
           // Try to find user by email (for Payment Link flow)
-          logStep("No user_id in metadata, searching by email", { email: customerEmail });
+          logStep("📧 No user_id in metadata, searching by email", { email: customerEmail });
           
           const { data: userData, error: userError } = await supabaseAdmin.auth.admin.listUsers();
-          if (!userError && userData?.users) {
+          
+          if (userError) {
+            logStep("❌ Error listing users", { error: userError.message });
+          } else if (userData?.users) {
+            logStep("👥 Found users in DB", { count: userData.users.length });
             const user = userData.users.find(u => u.email === customerEmail);
             if (user) {
               userId = user.id;
-              logStep("Found existing user by email", { userId });
+              logStep("✅ Found existing user by email", { userId, email: user.email });
+            } else {
+              logStep("⚠️ No user found with email", { email: customerEmail });
             }
           }
         }
         
         if (!userId) {
-          logStep("No user found, will be linked when account is created", { email: customerEmail });
+          logStep("❌ CRITICAL: No user found, cannot process payment", { 
+            email: customerEmail,
+            sessionId: session.id 
+          });
           // Store session info for later linking (when user creates account)
           // We'll match via email when the user signs up
           break;
         }
+        
+        logStep("✅ User identified", { userId });
 
         // Get subscription details
         const subscriptionId = session.subscription as string;
+        
+        if (!subscriptionId) {
+          logStep("⚠️ No subscription ID in session", { sessionId: session.id });
+          break;
+        }
+        
+        logStep("📦 Retrieving subscription from Stripe", { subscriptionId });
+        
         if (subscriptionId) {
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           const priceId = subscription.items.data[0]?.price.id;
+          
+          logStep("💳 Subscription retrieved", { 
+            subscriptionId, 
+            status: subscription.status,
+            trialEnd: subscription.trial_end,
+            currentPeriodEnd: subscription.current_period_end
+          });
           
           // Plan unique mensuel
           const plan = 'monthly';
@@ -148,16 +185,20 @@ serve(async (req) => {
             updated_at: new Date().toISOString(),
           };
 
+          logStep("💾 Upserting user_subscriptions", subscriptionData);
+
           const { error: upsertError } = await supabaseAdmin
             .from('user_subscriptions')
             .upsert(subscriptionData, { onConflict: 'user_id' });
 
           if (upsertError) {
-            logStep("Error upserting subscription", { error: upsertError.message });
+            logStep("❌ ERROR upserting subscription", { error: upsertError.message, code: upsertError.code });
           } else {
-            logStep("Subscription saved", subscriptionData);
+            logStep("✅ Subscription saved successfully", { userId });
             
             // Also update user_quotas to 'pro' plan_type AND activate account
+            logStep("🔄 Updating user_quotas to activate account", { userId });
+            
             const { error: quotaError } = await supabaseAdmin
               .from('user_quotas')
               .upsert({ 
@@ -174,23 +215,37 @@ serve(async (req) => {
               });
             
             if (quotaError) {
-              logStep("Error updating user_quotas", { error: quotaError.message });
+              logStep("❌ ERROR updating user_quotas", { error: quotaError.message, code: quotaError.code });
             } else {
-              logStep("User quotas updated to 'pro' and account activated", { userId });
+              logStep("✅ User quotas updated to 'pro' and account ACTIVATED", { 
+                userId, 
+                is_first_login: false,
+                plan_type: 'pro'
+              });
             }
           }
 
           // Send welcome email for trial start
+          logStep("📧 Checking if welcome email should be sent", { 
+            subscriptionStatus: subscription.status,
+            userId 
+          });
+          
           if (subscription.status === 'trialing') {
             const trialEndIso = unixToISOString(subscription.trial_end ?? null);
+
+            logStep("🎯 Trial detected, preparing welcome email", { 
+              trialEnd: trialEndIso 
+            });
 
             // Récupérer le prénom depuis les métadonnées utilisateur
             let firstName: string | undefined;
             try {
               const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
               firstName = userData?.user?.user_metadata?.first_name;
+              logStep("👤 User metadata retrieved", { firstName, email: userData?.user?.email });
             } catch (e) {
-              logStep("Could not retrieve user metadata for welcome email");
+              logStep("⚠️ Could not retrieve user metadata for welcome email", { error: String(e) });
             }
 
             // Récupérer le montant prévu après essai (en tenant compte des codes promo)
@@ -203,13 +258,24 @@ serve(async (req) => {
               if (upcomingInvoice.amount_due) {
                 amountAfterTrial = upcomingInvoice.amount_due / 100; // Stripe stocke en centimes
               }
-              logStep("Retrieved upcoming invoice amount", { amountAfterTrial });
+              logStep("💰 Retrieved upcoming invoice amount", { amountAfterTrial });
             } catch (invoiceError: any) {
-              logStep("Could not retrieve upcoming invoice, using default amount", { error: invoiceError?.message });
+              logStep("⚠️ Could not retrieve upcoming invoice, using default amount", { 
+                error: invoiceError?.message,
+                defaultAmount: 79 
+              });
             }
 
             try {
-              await supabaseAdmin.functions.invoke('send-welcome', {
+              logStep("📨 Invoking send-welcome function", { 
+                userId, 
+                email: session.customer_email || session.customer_details?.email,
+                trialEnd: trialEndIso,
+                firstName,
+                amountAfterTrial 
+              });
+              
+              const { data: emailData, error: emailInvokeError } = await supabaseAdmin.functions.invoke('send-welcome', {
                 body: {
                   userId,
                   email: session.customer_email || session.customer_details?.email,
@@ -218,10 +284,27 @@ serve(async (req) => {
                   amountAfterTrial,
                 },
               });
-              logStep("Welcome email triggered", { trialEnd: trialEndIso, firstName, amountAfterTrial });
+              
+              if (emailInvokeError) {
+                logStep("❌ ERROR invoking send-welcome", { 
+                  error: emailInvokeError.message,
+                  context: emailInvokeError 
+                });
+              } else {
+                logStep("✅ Welcome email function invoked successfully", { 
+                  result: emailData 
+                });
+              }
             } catch (emailError: any) {
-              logStep("Error sending welcome email", { error: emailError?.message ?? String(emailError) });
+              logStep("❌ EXCEPTION sending welcome email", { 
+                error: emailError?.message ?? String(emailError),
+                stack: emailError?.stack 
+              });
             }
+          } else {
+            logStep("⏭️ Subscription not trialing, skipping welcome email", { 
+              status: subscription.status 
+            });
           }
         }
         break;
