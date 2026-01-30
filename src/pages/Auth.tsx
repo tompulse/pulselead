@@ -337,11 +337,33 @@ const Auth = () => {
       }
     } catch (error: any) {
       console.error("[AUTH] Error:", error);
-      toast({
-        title: "❌ Erreur de connexion",
-        description: error.message || "Impossible de se connecter. Réessayez dans quelques secondes !",
-        variant: "destructive",
-      });
+      
+      // 🔥 Détection email déjà utilisé lors de l'inscription
+      if (!isLogin && (
+        error.message?.toLowerCase().includes('already') || 
+        error.message?.toLowerCase().includes('déjà') ||
+        error.code === 'user_already_exists'
+      )) {
+        toast({
+          title: "👋 Compte déjà existant !",
+          description: "Un compte existe déjà avec cet email. Connecte-toi pour accéder à ton dashboard.",
+          variant: "default",
+          duration: 6000,
+        });
+        
+        // Basculer automatiquement vers le mode connexion
+        setTimeout(() => {
+          setMode('login');
+          setPassword('');
+        }, 1500);
+      } else {
+        // Erreur générique
+        toast({
+          title: "❌ Erreur de connexion",
+          description: error.message || "Impossible de se connecter. Réessayez dans quelques secondes !",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
