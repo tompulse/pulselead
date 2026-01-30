@@ -141,23 +141,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Connecté mais pas d'abonnement (ET pas de paiement récent) → Stripe
-  if (!hasValidSubscription) {
-    console.log('[PROTECTED ROUTE] No valid subscription, redirecting to Stripe');
-    const paymentUrl = `${import.meta.env.VITE_STRIPE_PAYMENT_LINK_PRO || 'https://buy.stripe.com/00w6oH0PRckQ6IHcro2ZO00'}?client_reference_id=${userId}&prefilled_email=${encodeURIComponent(userEmail)}`;
-    window.location.href = paymentUrl;
-    
-    // Afficher un loader pendant la redirection
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-accent">PULSE</h1>
-          <p className="text-muted-foreground text-base">Redirection vers le paiement...</p>
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
-
+  // 🔥 LAISSER PASSER ! Le Dashboard gérera la redirection vers Stripe si besoin
+  // Ne PAS bloquer ici pour éviter les boucles de redirection
   return <>{children}</>;
 };
