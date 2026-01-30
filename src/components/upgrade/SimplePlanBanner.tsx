@@ -64,7 +64,7 @@ export const SimplePlanBanner = ({ userPlan }: SimplePlanBannerProps) => {
                 </span>
               </div>
               <p className="text-sm text-white/60">
-                Passez à PRO pour accéder aux nouvelles entreprises · Mise à jour hebdo
+                Passez à PRO pour accéder aux nouvelles entreprises, chaque semaine
               </p>
             </div>
           </div>

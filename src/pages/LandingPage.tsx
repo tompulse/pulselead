@@ -225,7 +225,7 @@ const LandingPage = () => {
 
               {/* Subheadline */}
               <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-8">
-                New entreprises 3 derniers mois • Tournées GPS optimisées • CRM terrain
+                Nouvelles entreprises, chaque semaine • Tournées GPS optimisées • CRM terrain
               </p>
 
               {/* CTA */}
@@ -243,6 +243,7 @@ const LandingPage = () => {
               <div className="mt-10 grid grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
                 <div className="text-center">
                   <div className="text-2xl sm:text-4xl font-bold gradient-text mb-2">Nouvelles entreprises</div>
+                  <p className="text-sm text-white/70">Chaque semaine</p>
                   <p className="text-white/60 text-xs sm:text-sm">entreprises</p>
                 </div>
                 <div className="text-center">
@@ -287,7 +288,7 @@ const LandingPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <Card className="glass-card p-8 border-accent/20 hover:border-accent/50 transition-all duration-300">
                   <Database className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-xl font-bold mb-3">New entreprises 3 derniers mois</h3>
+                  <h3 className="text-xl font-bold mb-3">Nouvelles entreprises, chaque semaine</h3>
                   <p className="text-white/70 text-sm leading-relaxed">
                     Filtrez par NAF, département, taille. Données SIRENE mises à jour chaque semaine.
                   </p>
@@ -476,7 +477,7 @@ const LandingPage = () => {
                     </div>
                     <ul className="space-y-1.5 mb-4 flex-1">
                       {[
-                        "🗺️ New entreprises 3 derniers mois · Mise à jour hebdo",
+                        "🗺️ Nouvelles entreprises, chaque semaine",
                         "🚀 Tournées GPS optimisées (-40% km)",
                         "📊 CRM complet + Rappels auto",
                         "🎯 Filtres avancés (NAF, dép., taille)",

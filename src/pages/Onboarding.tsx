@@ -149,7 +149,7 @@ const Onboarding = () => {
             Démarrez votre essai gratuit de 7 jours maintenant
           </p>
           <p className="text-white/50 text-sm">
-            ✨ <strong>New entreprises 3 derniers mois</strong> • Tournées GPS optimisées • CRM complet
+            ✨ <strong>Nouvelles entreprises, chaque semaine</strong> • Tournées GPS optimisées • CRM complet
           </p>
         </div>
 
@@ -265,7 +265,7 @@ const Onboarding = () => {
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white font-bold text-base">🎯 <strong>New entreprises 3 derniers mois</strong> · MAJ hebdo</span>
+                <span className="text-white font-bold text-base">🎯 <strong>Nouvelles entreprises, chaque semaine</strong></span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 text-green-400 mt-0.5 flex-shrink-0" />

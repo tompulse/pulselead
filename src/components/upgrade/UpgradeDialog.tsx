@@ -102,7 +102,7 @@ export const UpgradeDialog = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10">
               <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
-              <span className="text-white text-sm font-medium">🎯 New entreprises 3 derniers mois · MAJ hebdo</span>
+              <span className="text-white text-sm font-medium">🎯 Nouvelles entreprises, chaque semaine</span>
             </div>
             
             <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10">
