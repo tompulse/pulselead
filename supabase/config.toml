@@ -60,3 +60,15 @@ verify_jwt = false
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.get-mapbox-token]
+verify_jwt = false
+
+[functions.geocode-entreprise]
+verify_jwt = true
+
+[functions.calculate-routes]
+verify_jwt = true
+
+[functions.optimize-tournee]
+verify_jwt = false  # Temporaire pour debug

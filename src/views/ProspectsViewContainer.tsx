@@ -126,6 +126,12 @@ export const ProspectsViewContainer = ({
     setIsOptimizing(true);
     
     try {
+      // Vérifier l'authentification avant d'appeler la fonction
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      }
+
       // Appel à l'edge function d'optimisation
       const { data: optimizeData, error: optimizeError } = await supabase.functions.invoke('optimize-tournee', {
         body: { 

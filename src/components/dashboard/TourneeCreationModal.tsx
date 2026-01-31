@@ -68,6 +68,12 @@ export const TourneeCreationModal = ({
         throw new Error('Au moins 2 sites avec coordonnées GPS sont nécessaires');
       }
 
+      // Vérifier l'authentification avant d'appeler la fonction
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      }
+
       // Appeler l'edge function d'optimisation
       const { data: optimData, error: optimError } = await supabase.functions.invoke('optimize-tournee', {
         body: { entreprises }
@@ -93,6 +99,9 @@ export const TourneeCreationModal = ({
 
       console.log('[TourneeCreation] Saving tournee with:', { ordreOptimise, distanceKm, tempsMin });
 
+      // Utiliser les IDs originaux des sites sélectionnés (pas ceux retournés par optimize)
+      const entreprisesIds = selectedSites.map(s => s.id);
+
       // Créer la tournée avec les KPIs
       const { data: tournee, error: insertError } = await supabase
         .from('tournees')
@@ -100,7 +109,7 @@ export const TourneeCreationModal = ({
           user_id: userId,
           nom: nom.trim(),
           date_planifiee: format(date, 'yyyy-MM-dd'),
-          entreprises_ids: ordreOptimise,
+          entreprises_ids: entreprisesIds,
           ordre_optimise: ordreOptimise,
           distance_totale_km: distanceKm,
           temps_estime_minutes: tempsMin,
