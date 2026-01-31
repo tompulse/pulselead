@@ -212,7 +212,6 @@ const TourneeDetail = () => {
               .update({
                 distance_totale_km: newDistance,
                 temps_estime_minutes: newTemps,
-                updated_at: new Date().toISOString(),
               })
               .eq('id', tourneeId);
           }
@@ -233,9 +232,8 @@ const TourneeDetail = () => {
       const { error } = await supabase
         .from('tournees')
         .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
+        ...updates,
+      })
         .eq('id', tourneeId);
 
       if (error) throw error;
@@ -575,9 +573,12 @@ const TourneeDetail = () => {
           .update({
             distance_totale_km: newDistance,
             temps_estime_minutes: newTemps,
-            updated_at: new Date().toISOString(),
           })
           .eq('id', tourneeId);
+        
+        toast.success('KPI mis à jour', {
+          description: `${newDistance?.toFixed(1)} km • ${Math.round(newTemps || 0)} min`
+        });
       } catch (error) {
         console.error('Error recalculating route after removal:', error);
       } finally {
@@ -591,9 +592,12 @@ const TourneeDetail = () => {
         .update({
           distance_totale_km: null,
           temps_estime_minutes: null,
-          updated_at: new Date().toISOString(),
         })
         .eq('id', tourneeId);
+      
+      toast.info('KPI réinitialisés', {
+        description: 'Pas assez de points pour calculer un itinéraire'
+      });
     }
 
     // Refresh the sites query to update the map
