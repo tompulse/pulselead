@@ -1134,199 +1134,35 @@ export const NafFilters = ({
       <Collapsible open={taillesEntrepriseOpen} onOpenChange={setTaillesEntrepriseOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
           <div className="flex items-center gap-2">
-            <Scale className="w-4 h-4 text-accent" />
-            <span className="font-medium text-sm">Catégorie juridique</span>
+            <BarChart3 className="w-4 h-4 text-accent" />
+            <span className="font-medium text-sm">Taille d'entreprise</span>
           </div>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesJuridiquesOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${taillesEntrepriseOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <ScrollArea className="h-[500px]">
-            <div className="px-4 pb-4 space-y-0.5">
+          <ScrollArea className={`${availableTailles.length <= 4 ? '' : 'max-h-[200px]'}`}>
+            <div className="px-4 pb-4 space-y-1">
               {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="h-12 w-full" />
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
                 ))
-              ) : categoriesJuridiquesHierarchy.length === 0 ? (
+              ) : availableTailles.length === 0 ? (
                 <div className="text-sm text-muted-foreground text-center py-4">
-                  Aucune catégorie juridique disponible
+                  Aucune taille disponible
                 </div>
               ) : (
-                categoriesJuridiquesHierarchy.map((groupe) => {
-                  const isExpanded = expandedCategoriesJuridiques.includes(groupe.niveauII);
-                  const allSelected = groupe.codes.every(code => 
-                    filters.categoriesJuridiques?.includes(code)
-                  );
-                  const someSelected = groupe.codes.some(code => 
-                    filters.categoriesJuridiques?.includes(code)
-                  ) && !allSelected;
-                  const hasSubCategories = groupe.subCategories && groupe.subCategories.length > 1;
-                  
+                availableTailles.map(({ taille, label, count, globalCount }) => {
+                  const selected = filters.taillesEntreprise?.includes(taille);
                   return (
-                    <div key={groupe.niveauII} className="space-y-0.5">
-                      {/* Niveau II - En-tête du groupe */}
-                      <div className="flex items-center gap-2">
-                        {/* Bouton d'expansion si sous-catégories */}
-                        {hasSubCategories ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleCategorieJuridiqueExpand(groupe.niveauII);
-                            }}
-                            className="p-1 hover:bg-accent/10 rounded transition-colors shrink-0"
-                          >
-                            {isExpanded ? (
-                              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-                            ) : (
-                              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-                            )}
-                          </button>
-                        ) : (
-                          <div className="w-5" />
-                        )}
-                        
-                        <div
-                          onClick={() => handleCategorieJuridiqueGroupeToggle(groupe.codes)}
-                          className="flex-1 flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.99]"
-                        >
-                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all shrink-0 ${
-                            allSelected 
-                              ? 'bg-accent border-accent' 
-                              : someSelected 
-                                ? 'border-accent bg-accent/30' 
-                                : 'border-muted-foreground/40'
-                          }`}>
-                            {allSelected && <div className="w-2 h-2 rounded-sm bg-white" />}
-                            {someSelected && <div className="w-1.5 h-0.5 bg-accent" />}
-                          </div>
-                          <span className="text-sm flex-1 leading-tight">{groupe.label}</span>
-                          {formatDualCount(groupe.count, groupe.globalCount, hasActiveFilters)}
-                        </div>
-                      </div>
-                      
-                      {/* Sous-catégories (niveau III) */}
-                      {hasSubCategories && isExpanded && (
-                        <div className="ml-6 space-y-0.5 border-l-2 border-accent/10 pl-2">
-                          {groupe.subCategories.map((subCat) => {
-                            const isSubSelected = filters.categoriesJuridiques?.includes(subCat.code);
-                            return (
-                              <div
-                                key={subCat.code}
-                                onClick={() => handleCategorieJuridiqueToggle(subCat.code)}
-                                className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.99]"
-                              >
-                                <Checkbox selected={isSubSelected} size="sm" />
-                                <span className="text-xs flex-1 text-muted-foreground leading-tight">
-                                  {subCat.label}
-                                </span>
-                                {formatDualCount(subCat.count, subCat.globalCount, hasActiveFilters)}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </ScrollArea>
-        </CollapsibleContent>
-      </Collapsible>
-
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <div className="flex items-center gap-2">
-            <Scale className="w-4 h-4 text-accent" />
-            <span className="font-medium text-sm">Catégorie juridique</span>
-          </div>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${categoriesJuridiquesOpen ? 'rotate-180' : ''}`} />
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent>
-          <ScrollArea className="h-[500px]">
-            <div className="px-4 pb-4 space-y-0.5">
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="h-12 w-full" />
-                ))
-              ) : categoriesJuridiquesHierarchy.length === 0 ? (
-                <div className="text-sm text-muted-foreground text-center py-4">
-                  Aucune catégorie juridique disponible
-                </div>
-              ) : (
-                categoriesJuridiquesHierarchy.map((groupe) => {
-                  const isExpanded = expandedCategoriesJuridiques.includes(groupe.niveauII);
-                  const allSelected = groupe.codes.every(code => 
-                    filters.categoriesJuridiques?.includes(code)
-                  );
-                  const someSelected = groupe.codes.some(code => 
-                    filters.categoriesJuridiques?.includes(code)
-                  ) && !allSelected;
-                  const hasSubCategories = groupe.subCategories && groupe.subCategories.length > 1;
-                  
-                  return (
-                    <div key={groupe.niveauII} className="space-y-0.5">
-                      {/* Niveau II - En-tête du groupe */}
-                      <div className="flex items-center gap-2">
-                        {/* Bouton d'expansion si sous-catégories */}
-                        {hasSubCategories ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleCategorieJuridiqueExpand(groupe.niveauII);
-                            }}
-                            className="p-1 hover:bg-accent/10 rounded transition-colors shrink-0"
-                          >
-                            {isExpanded ? (
-                              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-                            ) : (
-                              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-                            )}
-                          </button>
-                        ) : (
-                          <div className="w-5" />
-                        )}
-                        
-                        <div
-                          onClick={() => handleCategorieJuridiqueGroupeToggle(groupe.codes)}
-                          className="flex-1 flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.99]"
-                        >
-                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all shrink-0 ${
-                            allSelected 
-                              ? 'bg-accent border-accent' 
-                              : someSelected 
-                                ? 'border-accent bg-accent/30' 
-                                : 'border-muted-foreground/40'
-                          }`}>
-                            {allSelected && <div className="w-2 h-2 rounded-sm bg-white" />}
-                            {someSelected && <div className="w-1.5 h-0.5 bg-accent" />}
-                          </div>
-                          <span className="text-sm flex-1 leading-tight">{groupe.label}</span>
-                          {formatDualCount(groupe.count, groupe.globalCount, hasActiveFilters)}
-                        </div>
-                      </div>
-                      
-                      {/* Sous-catégories (niveau III) */}
-                      {hasSubCategories && isExpanded && (
-                        <div className="ml-6 space-y-0.5 border-l-2 border-accent/10 pl-2">
-                          {groupe.subCategories.map((subCat) => {
-                            const isSubSelected = filters.categoriesJuridiques?.includes(subCat.code);
-                            return (
-                              <div
-                                key={subCat.code}
-                                onClick={() => handleCategorieJuridiqueToggle(subCat.code)}
-                                className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.99]"
-                              >
-                                <Checkbox selected={isSubSelected} size="sm" />
-                                <span className="text-xs flex-1 text-muted-foreground leading-tight">
-                                  {subCat.label}
-                                </span>
-                                {formatDualCount(subCat.count, subCat.globalCount, hasActiveFilters)}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                    <div
+                      key={taille}
+                      onClick={() => handleTailleEntrepriseToggle(taille)}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
+                    >
+                      <Checkbox selected={selected} />
+                      <span className="text-sm flex-1">{label}</span>
+                      {formatDualCount(count, globalCount, hasActiveFilters)}
                     </div>
                   );
                 })
