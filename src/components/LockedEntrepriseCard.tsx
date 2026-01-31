@@ -58,8 +58,7 @@ export const LockedEntrepriseCard = ({
   return (
     <>
       <Card 
-        className="relative group cursor-pointer transition-all duration-300 overflow-hidden glass-card border-accent/30 hover:border-accent/60 hover:shadow-xl hover:shadow-accent/20"
-        onClick={handleUnlock}
+        className="relative group transition-all duration-300 overflow-hidden glass-card border-accent/30 hover:border-accent/60 hover:shadow-xl hover:shadow-accent/20"
       >
         {/* 🔥 SUPPRIMÉ : Plus d'overlay de verrouillage pour PRO */}
         {!isPro && (
@@ -118,11 +117,11 @@ export const LockedEntrepriseCard = ({
           {/* NAF Code */}
           {entreprise.code_naf && (
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs whitespace-nowrap">
                 {entreprise.code_naf}
               </Badge>
               {entreprise.libelle_activite_principale && (
-                <span className="text-xs text-muted-foreground line-clamp-1">
+                <span className="text-xs text-muted-foreground">
                   {entreprise.libelle_activite_principale}
                 </span>
               )}
