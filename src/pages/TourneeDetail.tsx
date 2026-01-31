@@ -18,7 +18,6 @@ import {
   Pencil,
   Check,
   X,
-  Trash2,
   ExternalLink,
   StickyNote,
   Phone,
@@ -738,7 +737,7 @@ const TourneeDetail = () => {
               </Button>
             </div>
 
-            {/* Actions: Note, GPS, Delete */}
+            {/* Actions: Note, GPS */}
             <div className="flex items-center gap-1">
               <Button
                 size="sm"
@@ -757,14 +756,6 @@ const TourneeDetail = () => {
               >
                 <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                 GPS
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => handleRemoveSite(siteId)}
-                className="h-6 w-6 sm:h-7 sm:w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 className="w-3 h-3" />
               </Button>
             </div>
           </div>
