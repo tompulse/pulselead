@@ -246,6 +246,7 @@ export const TourneeMap = ({
           startEl.style.boxShadow = '0 4px 12px rgba(255,107,0,0.8), 0 0 20px rgba(255,107,0,0.4)';
           startEl.style.cursor = 'pointer';
           startEl.style.transition = 'transform 0.2s';
+          startEl.style.zIndex = '10';
           startEl.textContent = '🏁';
           startEl.title = 'Point de départ';
           
@@ -289,6 +290,7 @@ export const TourneeMap = ({
             : '0 2px 8px rgba(0,255,240,0.6)';
           el.style.cursor = 'pointer';
           el.style.transition = 'transform 0.2s';
+          el.style.zIndex = '10';
           el.textContent = isLastStop ? '🏁' : String(idx + 1);
           el.title = isLastStop ? `Arrivée: ${e.nom}` : `Arrêt ${idx + 1}: ${e.nom}`;
           
