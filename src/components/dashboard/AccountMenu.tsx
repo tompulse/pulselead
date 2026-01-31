@@ -169,32 +169,6 @@ export const AccountMenu = ({
         
         <DropdownMenuSeparator />
         
-        {/* Statut abonnement */}
-        <div className="px-2 py-2">
-          <div className={`flex items-center justify-between p-2 rounded-md ${statusConfig.bgColor} border ${statusConfig.borderColor}`}>
-            <div className="flex items-center gap-2">
-              <StatusIcon className={`w-4 h-4 ${statusConfig.color}`} />
-              <div>
-                <Badge variant="outline" className={`${statusConfig.borderColor} ${statusConfig.color} ${statusConfig.bgColor} text-xs`}>
-                  {statusConfig.label}
-                </Badge>
-                {subscriptionStatus === 'trialing' && daysRemaining !== undefined && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {daysRemaining > 0 ? `${daysRemaining}j restants` : "Expire aujourd'hui"}
-                  </p>
-                )}
-                {subscriptionStatus === 'active' && formattedEndDate && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Renouvellement le {formattedEndDate}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <DropdownMenuSeparator />
-        
         {/* Actions */}
         <DropdownMenuItem 
           onSelect={(e) => {
