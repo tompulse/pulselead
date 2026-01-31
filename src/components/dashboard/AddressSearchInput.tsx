@@ -38,12 +38,31 @@ export const AddressSearchInput = ({
   useEffect(() => {
     const fetchToken = async () => {
       try {
+        console.log('[AddressSearch] Fetching Mapbox token...');
         const { data, error } = await supabase.functions.invoke('get-mapbox-token');
-        if (!error && data?.token) {
-          setMapboxToken(data.token);
+        console.log('[AddressSearch] Token response:', { data, error });
+        
+        if (error) {
+          console.error('[AddressSearch] Error fetching token:', error);
+          toast.error("Erreur de configuration Mapbox", {
+            description: "Impossible de récupérer le token d'accès"
+          });
+          return;
         }
+        
+        if (!data?.token) {
+          console.error('[AddressSearch] No token in response:', data);
+          toast.error("Token Mapbox manquant", {
+            description: "Veuillez configurer MAPBOX_PUBLIC_TOKEN dans Supabase"
+          });
+          return;
+        }
+        
+        console.log('[AddressSearch] ✅ Mapbox token loaded successfully');
+        setMapboxToken(data.token);
       } catch (err) {
-        console.error("Error fetching Mapbox token:", err);
+        console.error("[AddressSearch] Exception fetching Mapbox token:", err);
+        toast.error("Erreur lors du chargement du service de recherche");
       }
     };
     fetchToken();
@@ -62,37 +81,52 @@ export const AddressSearchInput = ({
 
   // Search addresses with Mapbox Geocoding API
   const searchAddresses = async (query: string) => {
+    console.log('[AddressSearch] Search triggered:', { query, queryLength: query.length, hasToken: !!mapboxToken });
+    
     if (!query.trim() || query.length < 3) {
+      console.log('[AddressSearch] Query too short, clearing suggestions');
       setSuggestions([]);
       return;
     }
 
     if (!mapboxToken) {
-      console.warn('[AddressSearch] Mapbox token not available');
+      console.error('[AddressSearch] ❌ Mapbox token not available');
       toast.error("Service de recherche d'adresse indisponible", {
-        description: "Veuillez vérifier la configuration Mapbox"
+        description: "Token Mapbox non configuré"
       });
       return;
     }
 
     setIsLoading(true);
+    console.log('[AddressSearch] Calling Mapbox API...');
+    
     try {
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
-        `access_token=${mapboxToken}&country=fr&language=fr&limit=5&types=address,place,locality`
-      );
+      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
+        `access_token=${mapboxToken}&country=fr&language=fr&limit=5&types=address,place,locality`;
+      
+      console.log('[AddressSearch] Mapbox URL:', url.replace(mapboxToken, 'TOKEN_HIDDEN'));
+      
+      const response = await fetch(url);
+      
+      console.log('[AddressSearch] Mapbox response status:', response.status);
       
       if (response.ok) {
         const data = await response.json();
+        console.log('[AddressSearch] ✅ Got', data.features?.length || 0, 'suggestions');
         setSuggestions(data.features || []);
         setShowSuggestions(true);
       } else {
-        console.error('[AddressSearch] Mapbox API error:', response.status);
-        toast.error("Erreur lors de la recherche d'adresse");
+        const errorText = await response.text();
+        console.error('[AddressSearch] Mapbox API error:', response.status, errorText);
+        toast.error("Erreur lors de la recherche d'adresse", {
+          description: `Code: ${response.status}`
+        });
       }
     } catch (error) {
-      console.error("Error searching addresses:", error);
-      toast.error("Impossible de rechercher l'adresse");
+      console.error("[AddressSearch] Exception:", error);
+      toast.error("Impossible de rechercher l'adresse", {
+        description: error instanceof Error ? error.message : "Erreur réseau"
+      });
     } finally {
       setIsLoading(false);
     }
