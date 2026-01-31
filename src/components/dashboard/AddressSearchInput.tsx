@@ -62,8 +62,16 @@ export const AddressSearchInput = ({
 
   // Search addresses with Mapbox Geocoding API
   const searchAddresses = async (query: string) => {
-    if (!query.trim() || query.length < 3 || !mapboxToken) {
+    if (!query.trim() || query.length < 3) {
       setSuggestions([]);
+      return;
+    }
+
+    if (!mapboxToken) {
+      console.warn('[AddressSearch] Mapbox token not available');
+      toast.error("Service de recherche d'adresse indisponible", {
+        description: "Veuillez vérifier la configuration Mapbox"
+      });
       return;
     }
 
@@ -78,9 +86,13 @@ export const AddressSearchInput = ({
         const data = await response.json();
         setSuggestions(data.features || []);
         setShowSuggestions(true);
+      } else {
+        console.error('[AddressSearch] Mapbox API error:', response.status);
+        toast.error("Erreur lors de la recherche d'adresse");
       }
     } catch (error) {
       console.error("Error searching addresses:", error);
+      toast.error("Impossible de rechercher l'adresse");
     } finally {
       setIsLoading(false);
     }
