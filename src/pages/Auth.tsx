@@ -34,6 +34,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [isRecoveryHandled, setIsRecoveryHandled] = useState(false);
@@ -72,7 +74,9 @@ const Auth = () => {
     password: z.string()
       .min(8, 'Minimum 8 caractères requis')
       .regex(/[A-Z]/, 'Doit contenir au moins une majuscule')
-      .regex(/[0-9]/, 'Doit contenir au moins un chiffre')
+      .regex(/[0-9]/, 'Doit contenir au moins un chiffre'),
+    firstName: z.string().trim().min(1, 'Prénom requis').max(100, 'Prénom trop long'),
+    lastName: z.string().trim().min(1, 'Nom requis').max(100, 'Nom trop long')
   });
 
   // Get redirect destination from URL params
@@ -224,7 +228,9 @@ const Auth = () => {
     
     // Validation simple : email + password pour login et signup
     const schema = isLogin ? loginSchema : signupSchema;
-    const data = { email, password };
+    const data = isLogin 
+      ? { email, password } 
+      : { email, password, firstName, lastName };
     
     const validation = schema.safeParse(data);
     
@@ -334,6 +340,10 @@ const Auth = () => {
           email,
           password,
           options: {
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+            },
             // Redirect vers /email-confirmed après validation de l'email
             // Cette page vérifiera le plan et redirigera automatiquement vers Stripe
             emailRedirectTo: `${window.location.origin}/email-confirmed`,
@@ -356,6 +366,8 @@ const Auth = () => {
         // Switch to login mode after signup
         setMode('login');
         setPassword('');
+        setFirstName('');
+        setLastName('');
       }
     } catch (error: any) {
       console.error("[AUTH] Error:", error);
@@ -503,6 +515,38 @@ const Auth = () => {
                   disabled={loading}
                 />
               </div>
+
+              {!isLogin && !isForgot && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">Prénom</Label>
+                    <Input
+                      id="firstName"
+                      type="text"
+                      placeholder="Jean"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="bg-background/50 border-border focus:border-accent"
+                      disabled={loading}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Nom</Label>
+                    <Input
+                      id="lastName"
+                      type="text"
+                      placeholder="Dupont"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="bg-background/50 border-border focus:border-accent"
+                      disabled={loading}
+                      required
+                    />
+                  </div>
+                </>
+              )}
 
               {!isForgot && (
                 <div className="space-y-2">
