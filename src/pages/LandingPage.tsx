@@ -279,8 +279,11 @@ const LandingPage = () => {
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/40">
                     <video
                       className="w-full h-auto"
-                      controls
+                      autoPlay
+                      muted
+                      loop
                       playsInline
+                      controls
                       poster="/videos/demo-pulse-poster.jpg"
                     >
                       <source src="/videos/demo-pulse.mp4" type="video/mp4" />
