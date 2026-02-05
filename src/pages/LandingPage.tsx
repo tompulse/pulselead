@@ -207,26 +207,26 @@ const LandingPage = () => {
           <div className="container mx-auto max-w-7xl">
             <div ref={heroAnimation.ref} className={`scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''}`}>
               
-              {/* Layout 2 colonnes : Texte à gauche (40%), Vidéo à droite (60%) */}
-              <div className="grid lg:grid-cols-[40%_60%] gap-8 lg:gap-10 items-center">
+              {/* Layout responsive : Texte en haut/gauche, Vidéo en bas/droite */}
+              <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] gap-10 lg:gap-10 items-center">
                 
                 {/* COLONNE GAUCHE - Contenu texte */}
-                <div className="text-center lg:text-left">
+                <div className="text-center lg:text-left order-1">
 
-                  {/* Headline - Taille réduite */}
+                  {/* Headline */}
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] mb-6">
                     <span className="text-white">Vendez plus.</span>
                     <br />
                     <span className="gradient-text">Roulez moins.</span>
                   </h1>
 
-                  {/* Subheadline - Taille réduite */}
+                  {/* Subheadline */}
                   <p className="text-base sm:text-lg lg:text-xl text-white/80 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
                     La prospection terrain qui génère des résultats.<br />
                     <span className="text-accent font-semibold">Sans perdre de temps sur la route.</span>
                   </p>
 
-                  {/* CTA - Taille réduite */}
+                  {/* CTA */}
                   <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 mb-10">
                     <Button 
                       onClick={handleCTAClick}
@@ -237,19 +237,19 @@ const LandingPage = () => {
                     </Button>
                   </div>
 
-                  {/* Stats KPIs - Taille réduite */}
-                  <div className="grid grid-cols-3 gap-4 lg:gap-6 max-w-lg mx-auto lg:mx-0 mb-6">
+                  {/* Stats KPIs - Optimisées */}
+                  <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6 max-w-lg mx-auto lg:mx-0 mb-6">
                     <div className="text-center lg:text-left">
                       <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">+30%</div>
-                      <p className="text-xs sm:text-sm text-white/70 font-medium">de RDV<br />supplémentaires</p>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">de RDV<br />supplémentaires</p>
                     </div>
                     <div className="text-center lg:text-left">
                       <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">-40%</div>
-                      <p className="text-xs sm:text-sm text-white/70 font-medium">de temps<br />gagné</p>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">de temps<br />gagné</p>
                     </div>
                     <div className="text-center lg:text-left">
-                      <div className="text-xl sm:text-2xl lg:text-3xl font-bold gradient-text mb-1">Nouvelles<br />entreprises</div>
-                      <p className="text-xs sm:text-sm text-white/70 font-medium">Chaque semaine</p>
+                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">+1900</div>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">nouvelles<br />entreprises<br />chaque semaine</p>
                     </div>
                   </div>
 
@@ -266,8 +266,8 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* COLONNE DROITE - Vidéo optimisée */}
-                <div className="relative">
+                {/* COLONNE DROITE - Vidéo optimisée (en dessous sur mobile) */}
+                <div className="relative order-2">
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/40">
                     <video
                       className="w-full h-auto"
