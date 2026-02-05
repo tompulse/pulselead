@@ -11,7 +11,7 @@ import { DemoModeButton } from "@/components/landing/DemoModeButton";
 
 // Lazy load des composants non-critiques pour améliorer les performances
 const ContactSection = lazy(() => import("@/components/landing/ContactSection"));
-const SocialProof = lazy(() => import("@/components/landing/SocialProof"));
+const SocialProof = lazy(() => import("@/components/landing/SocialProof").then(m => ({ default: m.SocialProof })));
 
 const LandingPage = () => {
   const navigate = useNavigate();
