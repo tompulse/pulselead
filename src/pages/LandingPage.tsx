@@ -274,7 +274,7 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* COLONNE DROITE - Vidéo */}
+                {/* COLONNE DROITE - Vidéo optimisée */}
                 <div className="relative">
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/40">
                     <video
@@ -284,7 +284,9 @@ const LandingPage = () => {
                       loop
                       playsInline
                       controls
-                      poster="/videos/demo-pulse-poster.jpg"
+                      preload="metadata"
+                      disablePictureInPicture
+                      controlsList="nodownload"
                     >
                       <source src="/videos/demo-pulse.mp4" type="video/mp4" />
                       Votre navigateur ne supporte pas la lecture de vidéos.
