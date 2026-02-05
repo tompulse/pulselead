@@ -1,20 +1,55 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense, useRef } from "react";
 import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles, LogOut, LayoutDashboard } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import ContactSection from "@/components/landing/ContactSection";
 import { supabase } from "@/integrations/supabase/client";
 import { DemoModeButton } from "@/components/landing/DemoModeButton";
-import { SocialProof } from "@/components/landing/SocialProof";
+
+// Lazy load des composants non-critiques pour améliorer les performances
+const ContactSection = lazy(() => import("@/components/landing/ContactSection"));
+const SocialProof = lazy(() => import("@/components/landing/SocialProof"));
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const videoRef = useRef<HTMLDivElement>(null);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Lazy load video with Intersection Observer
+  useEffect(() => {
+    if (!videoRef.current) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoadVideo(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    observer.observe(videoRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Check auth state
   useEffect(() => {
@@ -266,23 +301,34 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* COLONNE DROITE - Vidéo optimisée (en dessous sur mobile) */}
-                <div className="relative order-2">
+                {/* COLONNE DROITE - Vidéo optimisée (lazy loading + mobile) */}
+                <div ref={videoRef} className="relative order-2">
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/40">
-                    <video
-                      className="w-full h-auto"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      controls
-                      preload="metadata"
-                      disablePictureInPicture
-                      controlsList="nodownload"
-                    >
-                      <source src="/videos/demo-pulse.mp4" type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
+                    {shouldLoadVideo ? (
+                      <video
+                        className="w-full h-auto"
+                        autoPlay={!isMobile}
+                        muted
+                        loop
+                        playsInline
+                        controls
+                        preload={isMobile ? "none" : "metadata"}
+                        disablePictureInPicture
+                        controlsList="nodownload"
+                        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%230a1929' width='800' height='450'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-size='24' fill='%2300FFF0'%3EPULSE%3C/text%3E%3C/svg%3E"
+                      >
+                        <source src="/videos/demo-pulse.mp4" type="video/mp4" />
+                        Votre navigateur ne supporte pas la lecture de vidéos.
+                      </video>
+                    ) : (
+                      // Placeholder SVG pendant le chargement
+                      <div className="w-full aspect-video bg-gradient-to-br from-blue-deep via-navy-deep to-black-deep flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="text-4xl font-bold gradient-text mb-2">PULSE</div>
+                          <div className="text-sm text-white/50">Chargement...</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   {/* Glow effect derrière la vidéo */}
                   <div className="absolute -inset-4 bg-accent/20 blur-3xl -z-10 rounded-3xl"></div>
@@ -411,9 +457,11 @@ const LandingPage = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SOCIAL PROOF SECTION - Témoignages
+            SOCIAL PROOF SECTION - Témoignages (lazy loaded)
         ═══════════════════════════════════════════════════════════════════ */}
-        <SocialProof />
+        <Suspense fallback={<div className="py-20" />}>
+          <SocialProof />
+        </Suspense>
 
         {/* ═══════════════════════════════════════════════════════════════════
             PRICING SECTION - Tarification
@@ -620,7 +668,9 @@ const LandingPage = () => {
           </div>
         </section>
 
-        <ContactSection />
+        <Suspense fallback={<div className="py-20" />}>
+          <ContactSection />
+        </Suspense>
 
         {/* ═══════════════════════════════════════════════════════════════════
             FOOTER
