@@ -212,52 +212,44 @@ const LandingPage = () => {
                 
                 {/* COLONNE GAUCHE - Contenu texte */}
                 <div className="text-center lg:text-left">
-                  
-                  {/* Badge */}
-                  <div className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm px-4 py-2 rounded-full border border-accent/30 mb-6">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-                    </span>
-                    <span className="text-sm text-white/90">Essai gratuit 7 jours</span>
-                  </div>
 
-                  {/* Headline */}
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] mb-6">
+                  {/* Headline - Plus grand et plus impactant */}
+                  <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[1.05] mb-8">
                     <span className="text-white">Vendez plus.</span>
                     <br />
                     <span className="gradient-text">Roulez moins.</span>
                   </h1>
 
-                  {/* Subheadline */}
-                  <p className="text-base sm:text-lg lg:text-xl text-white/70 mb-8 max-w-lg mx-auto lg:mx-0">
-                    Nouvelles entreprises, chaque semaine • Tournées GPS optimisées • CRM terrain
+                  {/* Subheadline - Plus percutant */}
+                  <p className="text-lg sm:text-xl lg:text-2xl text-white/80 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    La prospection terrain qui génère des résultats.<br />
+                    <span className="text-accent font-semibold">Sans perdre de temps sur la route.</span>
                   </p>
 
-                  {/* CTA */}
-                  <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 mb-10">
+                  {/* CTA - Plus gros et plus visible */}
+                  <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 mb-12">
                     <Button 
                       onClick={handleCTAClick}
-                      className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 w-full sm:w-auto"
+                      className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg sm:text-xl px-8 sm:px-12 py-6 sm:py-7 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 w-full sm:w-auto"
                     >
                       🚀 Essayer 7 jours GRATUIT
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <ArrowRight className="ml-2 w-6 h-6" />
                     </Button>
                   </div>
 
-                  {/* Stats KPIs */}
-                  <div className="grid grid-cols-3 gap-4 lg:gap-6 max-w-lg mx-auto lg:mx-0">
+                  {/* Stats KPIs - Avec les bons chiffres */}
+                  <div className="grid grid-cols-3 gap-6 lg:gap-8 max-w-xl mx-auto lg:mx-0 mb-8">
                     <div className="text-center lg:text-left">
-                      <div className="text-xl sm:text-2xl lg:text-3xl font-bold gradient-text mb-1">Nouvelles entreprises</div>
-                      <p className="text-xs sm:text-sm text-white/70">Chaque semaine</p>
+                      <div className="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-2">+30%</div>
+                      <p className="text-sm sm:text-base text-white/70 font-medium">de RDV<br />supplémentaires</p>
                     </div>
                     <div className="text-center lg:text-left">
-                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">-40%</div>
-                      <p className="text-xs sm:text-sm text-white/60">de km</p>
+                      <div className="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-2">-40%</div>
+                      <p className="text-sm sm:text-base text-white/70 font-medium">de temps<br />gagné</p>
                     </div>
                     <div className="text-center lg:text-left">
-                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">+35%</div>
-                      <p className="text-xs sm:text-sm text-white/60">de visites</p>
+                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-2">Nouvelles<br />entreprises</div>
+                      <p className="text-sm sm:text-base text-white/70 font-medium">Chaque semaine</p>
                     </div>
                   </div>
 
