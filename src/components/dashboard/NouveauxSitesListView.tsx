@@ -168,7 +168,7 @@ export const NouveauxSitesListView = ({
                       )}
                       {/* Siège ou Site secondaire */}
                       <Badge variant="secondary" className="text-[10px] sm:text-xs bg-accent/20 text-accent border-accent/30">
-                        {!site.est_siege ? 'Siège' : 'Site secondaire'}
+                        {site.est_siege ? 'Siège' : 'Site secondaire'}
                       </Badge>
                       {/* Taille entreprise - N'afficher que PME, ETI, GE */}
                       {site.categorie_entreprise && 
