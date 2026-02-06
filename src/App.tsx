@@ -16,6 +16,7 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const TourneeDetail = lazy(() => import("./pages/TourneeDetail"));
 const SecuritySettings = lazy(() => import("./pages/SecuritySettings"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
+const AdminImport = lazy(() => import("./pages/AdminImport"));
 
 // Eagerly load light pages
 import Auth from "./pages/Auth";
@@ -99,6 +100,14 @@ const App = () => (
                 <SecuritySettings />
               </ProtectedRoute>
             } />
+            
+            {/* Admin route */}
+            <Route path="/admin/import" element={
+              <ProtectedRoute>
+                <AdminImport />
+              </ProtectedRoute>
+            } />
+            
             <Route path="/error" element={<Error500 />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
