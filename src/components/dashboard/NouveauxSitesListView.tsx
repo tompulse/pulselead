@@ -122,7 +122,14 @@ export const NouveauxSitesListView = ({
               return (
                 <div
                   key={site.id}
-                  className="group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden border-accent/30 from-card/95 to-card/80"
+                  onClick={() => {
+                    if (selectionMode && onToggleSelection) {
+                      onToggleSelection(site);
+                    }
+                  }}
+                  className={`group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden border-accent/30 from-card/95 to-card/80 ${
+                    selectionMode ? 'cursor-pointer' : ''
+                  }`}
                 >
                   {/* Gradient overlay on hover */}
                   <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
