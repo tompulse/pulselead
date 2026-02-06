@@ -1226,10 +1226,10 @@ export const NafFilters = ({
                   const siteData = availableTypesEvenement.find(t => t.type === 'site');
                   const nonSiegeCount = siteData?.count || 0;
                   const nonSiegeGlobalCount = siteData?.globalCount || 0;
-                  const selected = filters.typesEtablissement?.includes('etablissement');
+                  const selected = filters.typesEtablissement?.includes('site');
                   return (
                     <button
-                      onClick={() => handleTypeEtablissementToggle('etablissement')}
+                      onClick={() => handleTypeEtablissementToggle('site')}
                       className={`relative flex items-center gap-2 px-3 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-[0.98] ${
                         selected
                           ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/25 ring-1 ring-blue-400/50'
