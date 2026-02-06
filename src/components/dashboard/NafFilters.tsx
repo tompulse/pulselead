@@ -29,7 +29,6 @@ const TAILLE_LABELS: Record<string, string> = {
   'GE': 'Grande Entreprise (GE)',
   'ETI': 'Entreprise Taille Intermédiaire (ETI)',
   'PME': 'Petite/Moyenne Entreprise (PME)',
-  'Non spécifié': 'Taille inconnue, nouvelle entité',
   'Taille inconnue, nouvelle entité': 'Taille inconnue, nouvelle entité'
 };
 
@@ -286,7 +285,7 @@ export const NafFilters = ({
   }, [availableFilters, allDepartments]);
 
   // Tailles : on affiche GE/ETI/PME + Taille inconnue pour permettre la multi-sélection.
-  const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Non spécifié', 'Taille inconnue, nouvelle entité'];
+  const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Taille inconnue, nouvelle entité'];
   const selectedTailles = filters.taillesEntreprise || [];
   const availableTailles = useMemo(() => {
     const contextualCounts = (availableFilters?.contextual?.taillesEntreprise || {}) as Record<string, number>;
