@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { NouveauxSitesListView } from '@/components/dashboard/NouveauxSitesListView';
 import { NafFilters } from '@/components/dashboard/NafFilters';
 import { MobileFiltersBar } from '@/components/dashboard/MobileFiltersBar';
-import { SimplePlanBanner } from '@/components/upgrade/SimplePlanBanner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { nouveauxSitesService } from '@/services/nouveauxSitesService';
@@ -104,20 +103,7 @@ export const ProspectsViewContainer = ({
       return;
     }
 
-    // 🔥 PRO USERS : Pas de limite de tournées
-    if (!isPro && userPlan) {
-      const tourneeQuota = await supabase.rpc('check_tournee_quota', {
-        _user_id: userId
-      });
-
-      if (tourneeQuota.data && !tourneeQuota.data.allowed) {
-        toast.error(`Limite atteinte: ${tourneeQuota.data.tournees_created}/${tourneeQuota.data.limit} tournées ce mois`, {
-          description: "Passez à PRO pour des tournées illimitées",
-          duration: 5000,
-        });
-        return;
-      }
-    }
+    // Plus de limite de tournées - accès illimité pour tous
 
     setIsOptimizing(true);
     
@@ -175,12 +161,7 @@ export const ProspectsViewContainer = ({
 
       if (saveError) throw saveError;
 
-      // 🔥 PRO USERS : Pas de comptage de tournées
-      if (!isPro && userPlan) {
-        await supabase.rpc('increment_tournee_quota', {
-          _user_id: userId
-        });
-      }
+      // Plus de comptage de tournées - accès illimité pour tous
 
       toast.success('Tournée créée avec succès !');
       queryClient.invalidateQueries({ queryKey: ['tournees'] });
@@ -231,13 +212,6 @@ export const ProspectsViewContainer = ({
         />
       </div>
 
-      {/* Plan Banner - Affichage du plan actuel */}
-      {userPlan && (
-        <div className="shrink-0 px-4 pt-4">
-          <SimplePlanBanner userPlan={userPlan} />
-        </div>
-      )}
-      
       <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden p-4 pt-2">
         {/* Sidebar Filtres NAF - Desktop only - Fixed */}
         <div className="w-64 lg:w-80 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden lg:flex lg:flex-col">
