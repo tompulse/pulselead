@@ -132,16 +132,11 @@ export const RelatedEstablishmentsCard = ({
                     )}
                   </div>
                   
-                  {/* Badges */}
+                  {/* Badges - Taille d'entreprise retirée pour plus d'espace */}
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     {site.est_siege && (
                       <Badge className="text-[9px] px-1.5 py-0.5 bg-emerald-500/20 text-emerald-500 border-emerald-500/30">
                         Siège
-                      </Badge>
-                    )}
-                    {site.categorie_entreprise && (
-                      <Badge variant="outline" className="text-[9px] px-1.5 py-0.5">
-                        {site.categorie_entreprise}
                       </Badge>
                     )}
                   </div>
