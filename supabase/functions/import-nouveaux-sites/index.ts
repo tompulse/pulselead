@@ -228,10 +228,13 @@ serve(async (req) => {
       // Get NAF hierarchy
       const nafHierarchy = getNafHierarchy(codeNaf);
 
-      // Company size
-      const categorieEntreprise = row.categorieEntreprise 
-        ? String(row.categorieEntreprise).toUpperCase().trim() 
-        : 'Non spécifié';
+      // Company size - chercher dans plusieurs formats de colonnes possibles
+      const categorieEntreprise = (
+        row.categorieEntreprise || 
+        row.categorie_entreprise || 
+        row['catégorie entreprise'] ||
+        ''
+      ).toString().trim() || 'Taille inconnue, nouvelle entité';
 
       // Legal form
       const categorieJuridique = row.categorieJuridiqueUniteLegale 
