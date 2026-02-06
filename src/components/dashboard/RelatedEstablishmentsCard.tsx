@@ -106,17 +106,17 @@ export const RelatedEstablishmentsCard = ({
                     {/* Address */}
                     <div className="flex items-start gap-1.5">
                       <MapPin className="w-3 h-3 text-muted-foreground mt-0.5 shrink-0" />
-                      <span className="text-[10px] sm:text-xs text-foreground/80 line-clamp-2">
+                      <span className="text-[10px] sm:text-xs text-foreground/80 break-words">
                         {fullAddress || 'Adresse non spécifiée'}
                       </span>
                     </div>
                     
-                    {/* SIREN */}
+                    {/* SIRET */}
                     {site.siret && (
                       <div className="flex items-center gap-1.5">
                         <Building className="w-3 h-3 text-muted-foreground shrink-0" />
                         <span className="text-[10px] text-muted-foreground font-mono">
-                          {site.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}
+                          {site.siret.replace(/(\d{3})(\d{3})(\d{3})(\d{5})/, '$1 $2 $3 $4')}
                         </span>
                       </div>
                     )}
