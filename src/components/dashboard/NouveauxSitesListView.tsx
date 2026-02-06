@@ -108,13 +108,16 @@ export const NouveauxSitesListView = ({
               // Tous les prospects sont accessibles - pas de vérification
               const canSeeDetails = true;
               
-              // Utiliser la colonne adresse pré-formatée ou reconstruire si absente
-              const fullAddress = site.adresse 
-                ? `${site.adresse}, ${site.code_postal || ''} ${site.ville || ''}`.trim()
-                : [site.numero_voie, site.type_voie, site.libelle_voie, site.code_postal, site.ville]
-                    .filter(Boolean)
-                    .join(' ')
-                    .trim();
+              // Construire l'adresse complète
+              const addressParts = [
+                site.numero_voie,
+                site.type_voie,
+                site.libelle_voie
+              ].filter(Boolean).join(' ');
+              
+              const fullAddress = addressParts 
+                ? `${addressParts}, ${site.code_postal || ''} ${site.ville || ''}`.trim()
+                : `${site.code_postal || ''} ${site.ville || ''}`.trim();
               
               return (
                 <div
