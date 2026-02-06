@@ -13,6 +13,7 @@ import { ProspectsViewContainer } from "@/views/ProspectsViewContainer";
 import { TourneesViewContainer } from "@/views/TourneesViewContainer";
 import { CRMViewContainer } from "@/views/CRMViewContainer";
 import { AnalyticsViewContainer } from "@/views/AnalyticsViewContainer";
+import { AdminViewContainer } from "@/views/AdminViewContainer";
 import { INPIScrapingPanel } from "@/components/dashboard/INPIScrapingPanel";
 import { trackEntrepriseView } from "@/utils/analytics";
 
@@ -427,6 +428,10 @@ const DashboardContent = () => {
           {view === 'analytics' && isAdmin && (
             <AnalyticsViewContainer />
           )}
+          {view === 'admin' && userEmail === 'tomiolovpro@gmail.com' && userId && (
+            <AdminViewContainer userId={userId} />
+          )}
+
           {view === 'scraping' && isAdmin && (
             <div className="h-full overflow-y-auto p-4">
               <INPIScrapingPanel />

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle, Lightbulb, BarChart3, Database, Unlock } from "lucide-react";
+import { MapIcon, Navigation, TrendingUp, Upload, CheckCircle2, AlertCircle, Lightbulb, BarChart3, Database, Unlock, Shield } from "lucide-react";
 import { trackViewChange } from "@/utils/analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -202,6 +202,12 @@ export const DashboardHeader = ({
         { key: 'scraping' as DashboardView, label: 'Scraping', icon: Database }
       ]
     : baseViewConfig;
+  
+  // Add super-admin view (only for tomiolovpro@gmail.com)
+  const isSuperAdmin = userEmail === 'tomiolovpro@gmail.com';
+  const finalViewConfig = isSuperAdmin 
+    ? [...viewConfig, { key: 'admin' as DashboardView, label: 'Admin', icon: Shield }]
+    : viewConfig;
 
   return (
     <header className="glass-card border-b border-accent/20 px-4 py-3 z-10 backdrop-blur-xl shrink-0 shadow-md">
@@ -210,7 +216,7 @@ export const DashboardHeader = ({
         {isMobile ? (
           <>
             <div className="text-base font-bold gradient-text">
-              {viewConfig.find(v => v.key === view)?.label}
+              {finalViewConfig.find(v => v.key === view)?.label}
             </div>
             
             <div className="flex items-center gap-2">
@@ -229,7 +235,7 @@ export const DashboardHeader = ({
           <>
             {/* Desktop View Toggle */}
             <div className="flex gap-1 p-0.5 bg-card/50 rounded-lg border border-accent/20 shadow-sm">
-              {viewConfig.map((v) => {
+              {finalViewConfig.map((v) => {
                 const Icon = v.icon;
                 return (
                   <Button
