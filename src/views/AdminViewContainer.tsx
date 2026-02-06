@@ -39,7 +39,10 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
     try {
       // Parse CSV
       const text = await file.text();
+      console.log('📄 CSV loaded, size:', text.length, 'bytes');
+      
       const lines = text.split('\n').filter(line => line.trim());
+      console.log('📊 Lines found:', lines.length);
       
       if (lines.length < 2) {
         throw new Error('Le fichier CSV est vide ou ne contient pas de données');
@@ -47,7 +50,10 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
 
       const firstLine = lines[0];
       const delimiter = firstLine.includes(';') ? ';' : ',';
+      console.log('🔍 Delimiter detected:', delimiter);
+      
       const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
+      console.log('📋 Headers:', headers);
       
       const jsonData = lines.slice(1).map(line => {
         const values = line.split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ''));
@@ -58,6 +64,9 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
         return row;
       }).filter(row => row.siret);
 
+      console.log('✅ Valid records with SIRET:', jsonData.length);
+      console.log('🔬 First record:', jsonData[0]);
+      
       setProgress(20);
       setProgressText(`${jsonData.length} lignes détectées...`);
 
@@ -69,7 +78,9 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
       for (let i = 0; i < jsonData.length; i += BATCH_SIZE) {
         const batch = jsonData.slice(i, i + BATCH_SIZE);
         const currentLine = Math.min(i + BATCH_SIZE, jsonData.length);
+        const batchNum = Math.floor(i / BATCH_SIZE) + 1;
         
+        console.log(`📦 Batch ${batchNum}: Sending ${batch.length} records...`);
         setProgressText(`Import ${currentLine}/${jsonData.length} lignes...`);
         
         const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
@@ -77,9 +88,11 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
         });
 
         if (error) {
-          console.error(`❌ Erreur batch:`, error);
+          console.error(`❌ Batch ${batchNum} error:`, error);
+          console.error('Error details:', JSON.stringify(error, null, 2));
           totalErrors += batch.length;
         } else {
+          console.log(`✅ Batch ${batchNum} response:`, responseData);
           totalInserted += responseData?.inserted || 0;
           totalErrors += responseData?.errors || 0;
         }
