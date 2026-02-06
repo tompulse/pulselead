@@ -351,18 +351,20 @@ export const UnifiedEntreprisePanel = ({
                     </p>
                   </div>
 
-                  {/* Taille entreprise */}
-                  <div className="space-y-1 pt-3 border-t border-accent/10">
-                    <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
-                      <Building2 className="w-3.5 h-3.5" />
-                      Taille
+                  {/* Taille entreprise - N'afficher que si PME, ETI ou GE */}
+                  {displayEntreprise.categorie_entreprise && 
+                   displayEntreprise.categorie_entreprise !== 'Non spécifié' && 
+                   displayEntreprise.categorie_entreprise.trim() !== '' && (
+                    <div className="space-y-1 pt-3 border-t border-accent/10">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
+                        <Building2 className="w-3.5 h-3.5" />
+                        Taille
+                      </div>
+                      <p className="text-sm">
+                        {displayEntreprise.categorie_entreprise}
+                      </p>
                     </div>
-                    <p className="text-sm">
-                      {displayEntreprise.categorie_entreprise && displayEntreprise.categorie_entreprise !== 'Non spécifié' 
-                        ? displayEntreprise.categorie_entreprise 
-                        : <span className="text-muted-foreground italic">Non renseignée</span>}
-                    </p>
-                  </div>
+                  )}
 
                   {/* Type d'établissement */}
                   {displayEntreprise.est_siege !== null && displayEntreprise.est_siege !== undefined && (

@@ -29,7 +29,7 @@ const TAILLE_LABELS: Record<string, string> = {
   'GE': 'Grande Entreprise (GE)',
   'ETI': 'Entreprise Taille Intermédiaire (ETI)',
   'PME': 'Petite/Moyenne Entreprise (PME)',
-  'Non spécifié': 'Non spécifié'
+  'Non spécifié': 'Taille inconnue, nouvelle entreprise'
 };
 
 // Labels pour les types d'évènement
@@ -284,13 +284,13 @@ export const NafFilters = ({
     }));
   }, [availableFilters, allDepartments]);
 
-  // Tailles : on affiche toujours GE/ETI/PME pour permettre la multi-sélection.
-  const VALID_TAILLES = ['GE', 'ETI', 'PME'];
+  // Tailles : on affiche GE/ETI/PME + Non spécifié pour permettre la multi-sélection.
+  const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Non spécifié'];
   const selectedTailles = filters.taillesEntreprise || [];
   const availableTailles = useMemo(() => {
     const contextualCounts = (availableFilters?.contextual?.taillesEntreprise || {}) as Record<string, number>;
     const globalCounts = (availableFilters?.global?.taillesEntreprise || {}) as Record<string, number>;
-    // Keep fixed order: GE, ETI, PME, Non spécifié - no sorting by count or selection
+    // Keep fixed order: GE, ETI, PME, Non spécifié
     return VALID_TAILLES.map((taille) => ({
       taille,
       label: TAILLE_LABELS[taille] || taille,
