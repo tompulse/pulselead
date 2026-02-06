@@ -58,46 +58,16 @@ export const LockedEntrepriseCard = ({
   return (
     <>
       <Card 
-        className="relative group transition-all duration-300 overflow-hidden glass-card border-accent/30 hover:border-accent/60 hover:shadow-xl hover:shadow-accent/20"
+        className="relative transition-all duration-300 overflow-hidden glass-card border-accent/30"
       >
-        {/* 🔥 SUPPRIMÉ : Plus d'overlay de verrouillage pour PRO */}
-        {!isPro && (
-          <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-[2px] z-10 flex items-center justify-center">
-            <div className="text-center space-y-3 p-4">
-              <div className="w-16 h-16 mx-auto rounded-full bg-accent/20 backdrop-blur-sm flex items-center justify-center">
-                <Lock className="w-8 h-8 text-accent" />
-              </div>
-              <Button 
-                onClick={handleUnlock}
-                className="bg-gradient-to-r from-accent to-cyan-500 hover:from-accent/90 hover:to-cyan-500/90 text-black font-bold shadow-lg"
-              >
-                <span className="flex items-center gap-2">
-                  <Unlock className="w-4 h-4" />
-                  Passer à PRO
-                </span>
-              </Button>
-              <p className="text-xs text-white/70">
-                Accès illimité avec PRO
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Card content */}
         <div className="p-4 space-y-3">
-          {/* Header with PRO indicator */}
+          {/* Header */}
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-bold text-base line-clamp-2 flex-1">
               {entreprise.nom || entreprise.denomination_unite_legale || 'Entreprise'}
             </h3>
-            {isPro && (
-              <div className="flex-shrink-0">
-                <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/30 text-emerald-400">
-                  <Unlock className="w-3 h-3 mr-1" />
-                  PRO
-                </Badge>
-              </div>
-            )}
           </div>
 
           {/* SIRET */}

@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Factory, Lock } from "lucide-react";
+import { Loader2, Factory } from "lucide-react";
 import { nouveauxSitesService, NouveauxSitesFilters } from "@/services/nouveauxSitesService";
 import { getNafCategory } from "@/utils/nafCategories";
 import { format } from "date-fns";
@@ -11,8 +11,6 @@ import { ProspectStatusBadge, ProspectStatus } from "./ProspectStatusBadge";
 import { useProspectStatuses } from "@/hooks/useProspectStatuses";
 import { RelatedEstablishmentsCard } from "./RelatedEstablishmentsCard";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import { EnlargedProspectDialog } from "@/components/prospects/EnlargedProspectDialog";
-import { toast } from "sonner";
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
   onSiteSelect?: (site: any) => void;
@@ -32,10 +30,6 @@ export const NouveauxSitesListView = ({
 }: NouveauxSitesListViewProps) => {
   // State for flip card - shows related establishments
   const [expandedCard, setExpandedCard] = useState<{ siteId: string; name: string; relatedIds: string[] } | null>(null);
-  
-  // State for enlarged prospect dialog
-  const [selectedProspect, setSelectedProspect] = useState<any | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
   
   // User plan & unlock logic
   const { userPlan, isProspectUnlocked, isLoading: planLoading, unlockedProspectIds, unlockProspect } = useUserPlan(userId || '');
@@ -149,37 +143,10 @@ export const NouveauxSitesListView = ({
                 ? `${addressParts}, ${site.code_postal} ${site.ville || ''}`
                 : `${site.code_postal || ''} ${site.ville || ''}`.trim();
               
-              // Déterminer si ce prospect est cliquable
-              // Les prospects débloqués ne sont cliquables QUE en mode sélection (tournée)
-              const isAlreadyUnlocked = !isPro && isUnlocked;
-              const isClickable = selectionMode || !isAlreadyUnlocked;
-
               return (
                 <div
                   key={site.id}
-                  onClick={() => {
-                    if (!isClickable) {
-                      // Prospect débloqué, pas cliquable en dehors du mode tournée
-                      return;
-                    }
-                    
-                    if (selectionMode && onToggleSelection) {
-                      onToggleSelection(site);
-                    } else if (!selectionMode && !isAlreadyUnlocked) {
-                      // Ouvrir le Dialog agrandit au lieu du panneau latéral
-                      setSelectedProspect(site);
-                      setDialogOpen(true);
-                    }
-                  }}
-                  className={`group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden ${
-                    !isClickable 
-                      ? 'opacity-60 cursor-not-allowed border-accent/20 from-card/80 to-card/60'
-                      : selectionMode 
-                        ? isSelected
-                          ? 'border-accent bg-accent/10 cursor-pointer hover:bg-accent/15 active:scale-[0.99]'
-                          : 'border-accent/30 from-card/95 to-card/80 cursor-pointer hover:border-accent/50 hover:bg-accent/5 active:scale-[0.99]'
-                        : 'border-accent/30 from-card/95 to-card/80 hover:border-accent/50 cursor-pointer hover:shadow-xl active:scale-[0.99]'
-                  }`}
+                  className="group relative rounded-xl p-3 sm:p-4 shadow-lg border transition-colors bg-gradient-to-br backdrop-blur w-full flex flex-col min-h-[180px] sm:min-h-[200px] md:min-h-[220px] overflow-hidden border-accent/30 from-card/95 to-card/80"
                 >
                   {/* Gradient overlay on hover */}
                   <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
@@ -334,37 +301,6 @@ export const NouveauxSitesListView = ({
         )}
       </div>
 
-      {/* Enlarged Prospect Dialog */}
-      {selectedProspect && (
-        <EnlargedProspectDialog
-          site={selectedProspect}
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-          canSeeDetails={isPro || isProspectUnlocked(selectedProspect.id)}
-          isPro={isPro}
-          onUnlock={async (siteId: string) => {
-            const result = await unlockProspect(siteId);
-            
-            if (result.success) {
-              toast.success('Prospect débloqué !', {
-                description: `${result.remaining}/${result.limit} prospects restants`,
-              });
-              return { success: true, limit_reached: false, remaining: result.remaining, limit: result.limit };
-            } else if (result.limit_reached) {
-              return { success: false, limit_reached: true };
-            } else {
-              toast.error('Erreur', {
-                description: result.message || 'Impossible de débloquer ce prospect',
-              });
-              return { success: false, limit_reached: false };
-            }
-          }}
-          onUnlockSuccess={() => {
-            // Refresh data after unlock
-            // The unlockedProspectIds will be updated by useUserPlan hook
-          }}
-        />
-      )}
     </div>
   );
 };
