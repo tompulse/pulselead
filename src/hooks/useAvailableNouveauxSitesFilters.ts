@@ -120,7 +120,7 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
 
       return { contextual, global };
     },
-    staleTime: 30000,
-    gcTime: 60000,
+    staleTime: 0, // Force refresh immediately
+    gcTime: 0,
   });
 }
