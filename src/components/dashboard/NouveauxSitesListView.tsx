@@ -170,8 +170,11 @@ export const NouveauxSitesListView = ({
                       <Badge variant="secondary" className="text-[10px] sm:text-xs bg-accent/20 text-accent border-accent/30">
                         {site.est_siege ? 'Siège' : 'Site secondaire'}
                       </Badge>
-                      {/* Taille entreprise - même style que Siège */}
-                      {site.categorie_entreprise && (
+                      {/* Taille entreprise - N'afficher que PME, ETI, GE */}
+                      {site.categorie_entreprise && 
+                       site.categorie_entreprise !== 'Non spécifié' &&
+                       site.categorie_entreprise !== 'Taille inconnue, nouvelle entité' &&
+                       site.categorie_entreprise.trim() !== '' && (
                         <Badge variant="secondary" className="text-[10px] sm:text-xs bg-accent/20 text-accent border-accent/30">
                           {site.categorie_entreprise}
                         </Badge>
