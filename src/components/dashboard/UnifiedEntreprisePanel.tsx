@@ -7,12 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useCRMActions } from "@/hooks/useCRMActions";
-import { useUserPlan } from "@/hooks/useUserPlan";
 import { UnifiedCRMActions } from "./UnifiedCRMActions";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { LeadStatusBadge } from "./LeadStatusBadge";
-import { UpgradeDialog } from "@/components/upgrade/UpgradeDialog";
-import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User, Sparkles, Lock, Unlock } from "lucide-react";
+import { Building2, MapPin, Calendar, Navigation, Hash, Factory, Scale, User, Sparkles } from "lucide-react";
 import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafNomenclatureComplete";
@@ -38,14 +36,10 @@ export const UnifiedEntreprisePanel = ({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  // User plan & unlock logic
-  const { userPlan, unlockProspect, isProspectUnlocked, isLoading: planLoading } = useUserPlan(userId);
-  const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
-  const isUnlocked = entreprise?.id ? isProspectUnlocked(entreprise.id) : false;
-  
-  // 🔥 FIX FLASH : Pendant le chargement, on assume PRO (évite le flash de blur)
-  // Une fois chargé, on vérifie vraiment
-  const canSeeDetails = planLoading ? true : (isPro || isUnlocked);
+  // 🔥 PLUS DE SYSTÈME FREE/PRO - Accès total pour tous
+  const isPro = true; // Toujours true = accès illimité
+  const canSeeDetails = true; // Toujours visible
+  const isUnlocked = true; // Toujours débloqué
 
   // If we only have an ID, fetch full data from nouveaux_sites
   const entrepriseId = entreprise?.id;
@@ -215,30 +209,7 @@ export const UnifiedEntreprisePanel = ({
   const hasCoordinates = displayEntreprise?.latitude && displayEntreprise?.longitude;
   
   // Handle unlock
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-
-  const handleUnlock = async () => {
-    if (!displayEntreprise?.id) return;
-    
-    const result = await unlockProspect(displayEntreprise.id);
-    if (result.success) {
-      toast({
-        title: "✅ Prospect débloqué !",
-        description: `${result.remaining}/${result.limit} prospects restants`,
-      });
-      // Reload the component to reflect the change
-      queryClient.invalidateQueries({ queryKey: ['entreprise-detail', entrepriseId] });
-    } else if (result.limit_reached) {
-      // Show upgrade modal
-      setShowUpgradeDialog(true);
-    } else {
-      toast({
-        title: "❌ Erreur",
-        description: result.message,
-        variant: "destructive"
-      });
-    }
-  };
+  // Plus de système d'unlock - tous les prospects sont accessibles
 
 
   return (
@@ -256,17 +227,6 @@ export const UnifiedEntreprisePanel = ({
               </h2>
               {cityLine && (
                 <p className="text-sm text-muted-foreground mt-0.5">{cityLine}</p>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Badge variant={isPro ? "default" : "secondary"} className="text-xs">
-                {isPro ? "PRO" : "FREE"}
-              </Badge>
-              {canSeeDetails && !isPro && (
-                <Badge variant="outline" className="gap-1 text-xs bg-emerald-500/10 border-emerald-500/30">
-                  <Unlock className="w-3 h-3" />
-                  Débloqué
-                </Badge>
               )}
             </div>
           </div>
@@ -291,81 +251,39 @@ export const UnifiedEntreprisePanel = ({
             <TabsContent value="info" className="h-full m-0 data-[state=active]:flex data-[state=active]:flex-col">
               <ScrollArea className="flex-1">
                 <div className="p-4 space-y-4">
-                  {/* Unlock CTA for FREE users */}
-                  {!canSeeDetails && (
-                    <div className="p-4 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent border-2 border-accent/30 rounded-lg text-center space-y-3 shadow-lg">
-                      <div className="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-accent/30 to-orange-500/20 flex items-center justify-center">
-                        <Lock className="w-7 h-7 text-accent" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-base">Prospect Verrouillé</p>
-                        <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                          Débloquez pour voir <strong className="text-foreground">SIRET, adresse complète, date de création</strong> et toutes les infos détaillées
-                        </p>
-                      </div>
-                      <Button onClick={handleUnlock} className="w-full bg-gradient-to-r from-accent to-cyan-500 hover:from-accent/90 hover:to-cyan-500/90 text-black font-bold shadow-lg" size="default">
-                        <Unlock className="w-4 h-4 mr-2" />
-                        Débloquer ce prospect
-                      </Button>
-                      <div className="flex items-center justify-center gap-2 text-xs">
-                        <span className="text-muted-foreground">
-                          {userPlan?.prospects_unlocked_count || 0}/30 prospects débloqués
-                        </span>
-                        {userPlan && userPlan.prospects_unlocked_count >= 25 && (
-                          <span className="text-orange-400 font-semibold">⚠️ Bientôt la limite</span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Adresse - Bloquée pour FREE */}
+                  {/* Adresse */}
                   <div className="space-y-2 relative">
                     <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
-                      {canSeeDetails ? (
-                        <MapPin className="w-3.5 h-3.5" />
-                      ) : (
-                        <Lock className="w-3.5 h-3.5 text-orange-500/80" />
-                      )}
-                      Adresse {!canSeeDetails && <span className="text-orange-500/80 text-[10px] font-normal normal-case">(Verrouillée)</span>}
+                      <MapPin className="w-3.5 h-3.5" />
+                      Adresse
                     </div>
-                    {canSeeDetails ? (
-                      <>
-                        <div className="text-sm">
-                          {formattedAddress && <p>{formattedAddress}</p>}
-                          {cityLine && <p className="font-medium">{cityLine}</p>}
-                          {!formattedAddress && !cityLine && (
-                            <p className="text-muted-foreground italic">Non renseignée</p>
-                          )}
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => openGoogleMaps(displayEntreprise.latitude, displayEntreprise.longitude)}
-                            className="h-8 text-xs border-accent/30 hover:bg-accent/10"
-                            disabled={!hasCoordinates}
-                          >
-                            Google Maps
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => openWaze(displayEntreprise.latitude, displayEntreprise.longitude)}
-                            className="h-8 text-xs border-accent/30 hover:bg-accent/10"
-                            disabled={!hasCoordinates}
-                          >
-                            Waze
-                          </Button>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="relative">
-                        <div className="text-sm blur-[4px] select-none text-muted-foreground pointer-events-none">
-                          RUE DE COBLENCE, 58000 NEVERS
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/50 to-transparent pointer-events-none" />
-                      </div>
-                    )}
+                    <div className="text-sm">
+                      {formattedAddress && <p>{formattedAddress}</p>}
+                      {cityLine && <p className="font-medium">{cityLine}</p>}
+                      {!formattedAddress && !cityLine && (
+                        <p className="text-muted-foreground italic">Non renseignée</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openGoogleMaps(displayEntreprise.latitude, displayEntreprise.longitude)}
+                        className="h-8 text-xs border-accent/30 hover:bg-accent/10"
+                        disabled={!hasCoordinates}
+                      >
+                        Google Maps
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openWaze(displayEntreprise.latitude, displayEntreprise.longitude)}
+                        className="h-8 text-xs border-accent/30 hover:bg-accent/10"
+                        disabled={!hasCoordinates}
+                      >
+                        Waze
+                      </Button>
+                    </div>
                   </div>
 
                   {/* Activité NAF */}
@@ -399,24 +317,15 @@ export const UnifiedEntreprisePanel = ({
                       )}
                       SIREN {!canSeeDetails && <span className="text-orange-500/80 text-[10px] font-normal normal-case">(Verrouillé)</span>}
                     </div>
-                    {canSeeDetails ? (
-                      <p className="text-sm font-mono">
-                        {displayEntreprise.siret 
-                          ? displayEntreprise.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')
-                          : <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
-                      </p>
-                    ) : (
-                      <div className="relative">
-                        <p className="text-sm font-mono blur-[4px] select-none text-muted-foreground pointer-events-none">
-                          990 470 197
-                        </p>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/50 to-transparent pointer-events-none" />
-                      </div>
-                    )}
+                    <p className="text-sm font-mono">
+                      {displayEntreprise.siret 
+                        ? displayEntreprise.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')
+                        : <span className="text-muted-foreground italic font-sans">Non renseigné</span>}
+                    </p>
                   </div>
 
                   {/* Catégorie juridique */}
-                  {canSeeDetails && displayEntreprise.categorie_juridique && (
+                  {displayEntreprise.categorie_juridique && (
                     <div className="space-y-1 pt-3 border-t border-accent/10">
                       <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
                         <Scale className="w-3.5 h-3.5" />
@@ -431,28 +340,15 @@ export const UnifiedEntreprisePanel = ({
                     </div>
                   )}
 
-                  {/* Date de création - Bloqué pour FREE */}
-                  <div className="space-y-1 pt-3 border-t border-accent/10 relative">
+                  {/* Date de création */}
+                  <div className="space-y-1 pt-3 border-t border-accent/10">
                     <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
-                      {canSeeDetails ? (
-                        <Calendar className="w-3.5 h-3.5" />
-                      ) : (
-                        <Lock className="w-3.5 h-3.5 text-orange-500/80" />
-                      )}
-                      Date de création {!canSeeDetails && <span className="text-orange-500/80 text-[10px] font-normal normal-case">(Verrouillée)</span>}
+                      <Calendar className="w-3.5 h-3.5" />
+                      Date de création
                     </div>
-                    {canSeeDetails ? (
-                      <p className="text-sm">
-                        {formattedDate || <span className="text-muted-foreground italic">Non renseignée</span>}
-                      </p>
-                    ) : (
-                      <div className="relative">
-                        <p className="text-sm blur-[4px] select-none text-muted-foreground pointer-events-none">
-                          15 janvier 2024
-                        </p>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/50 to-transparent pointer-events-none" />
-                      </div>
-                    )}
+                    <p className="text-sm">
+                      {formattedDate || <span className="text-muted-foreground italic">Non renseignée</span>}
+                    </p>
                   </div>
 
                   {/* Taille entreprise */}
@@ -548,12 +444,6 @@ export const UnifiedEntreprisePanel = ({
       </SheetContent>
 
       {/* Upgrade Dialog */}
-      <UpgradeDialog
-        open={showUpgradeDialog}
-        onOpenChange={setShowUpgradeDialog}
-        feature="Déblocage de prospects"
-        reason={`Vous avez atteint votre limite (${userPlan?.prospects_unlocked_count || 0}/${userPlan?.prospects_limit || 30} prospects). Passez à PRO pour un accès illimité.`}
-      />
     </Sheet>
   );
 };

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démo Vidéo Embed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0a1929;
+            color: white;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .video-section {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        video, iframe {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        iframe {
+            aspect-ratio: 16 / 9;
+        }
+        h2 {
+            color: #06b6d4;
+            margin-bottom: 15px;
+        }
+        .note {
+            background: rgba(6, 182, 212, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #06b6d4;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 Démo : Intégrations Vidéo</h1>
+
+        <!-- VIDÉO LOCALE -->
+        <div class="video-section">
+            <h2>1. Vidéo hébergée localement (votre fichier MP4)</h2>
+            <div class="video-wrapper">
+                <video 
+                    controls 
+                    autoplay 
+                    muted 
+                    loop 
+                    playsinline
+                    poster="/videos/demo-pulse-poster.jpg"
+                >
+                    <source src="/videos/demo-pulse.mp4" type="video/mp4">
+                    Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
+            </div>
+            <div class="note">
+                ✅ La vidéo est sur votre serveur<br>
+                ❌ Problème : Fichier trop gros pour GitHub (44 MB)
+            </div>
+        </div>
+
+        <!-- VIDÉO YOUTUBE -->
+        <div class="video-section">
+            <h2>2. Vidéo YouTube embed (exemple)</h2>
+            <div class="video-wrapper">
+                <iframe 
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&playlist=dQw4w9WgXcQ&controls=1&modestbranding=1&rel=0" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen
+                ></iframe>
+            </div>
+            <div class="note">
+                ✅ La vidéo s'affiche DIRECTEMENT sur votre page<br>
+                ✅ Le visiteur ne voit jamais YouTube.com<br>
+                ✅ Autoplay, mute, loop - tout fonctionne<br>
+                ✅ Chargement ultra-rapide, bande passante illimitée
+            </div>
+        </div>
+
+        <!-- VIDÉO CLOUDINARY -->
+        <div class="video-section">
+            <h2>3. Vidéo Cloudinary (recommandé)</h2>
+            <div class="video-wrapper">
+                <video 
+                    controls 
+                    autoplay 
+                    muted 
+                    loop 
+                    playsinline
+                >
+                    <source src="https://res.cloudinary.com/demo/video/upload/v1/sample.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="note">
+                ✅ Vidéo hébergée gratuitement sur CDN rapide<br>
+                ✅ S'affiche comme si elle était sur votre serveur<br>
+                ✅ Pas de logo YouTube<br>
+                ✅ Contrôle total sur le player
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px; opacity: 0.6;">
+            <p>Ouvrez ce fichier dans votre navigateur pour voir les 3 options</p>
+        </div>
+    </div>
+</body>
+</html>

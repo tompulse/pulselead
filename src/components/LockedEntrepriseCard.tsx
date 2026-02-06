@@ -1,41 +1,14 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Lock, Unlock, MapPin, Building2, Calendar } from "lucide-react";
+import { MapPin, Building2, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import { UpgradeDialog } from "./upgrade/UpgradeDialog";
 
 interface LockedEntrepriseCardProps {
   entreprise: any;
-  isUnlocked: boolean;
-  onUnlock: () => Promise<{ success: boolean; limit_reached: boolean; message?: string }>;
-  onClick?: () => void;
-  isPro: boolean;
 }
 
 export const LockedEntrepriseCard = ({ 
-  entreprise, 
-  isUnlocked, 
-  onUnlock, 
-  onClick,
-  isPro 
+  entreprise
 }: LockedEntrepriseCardProps) => {
-  const [unlocking, setUnlocking] = useState(false);
-  const [showUpgrade, setShowUpgrade] = useState(false);
-  const [localUnlocked, setLocalUnlocked] = useState(isUnlocked);
-
-  const handleUnlock = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    // 🔥 PRO USERS : Accès direct sans restrictions
-    if (isPro) {
-      if (onClick) onClick();
-      return;
-    }
-
-    // Les utilisateurs FREE n'ont plus accès - redirection vers upgrade
-    setShowUpgrade(true);
-  };
 
   const formatAddress = () => {
     const parts = [
@@ -107,13 +80,6 @@ export const LockedEntrepriseCard = ({
           )}
         </div>
       </Card>
-
-      <UpgradeDialog
-        open={showUpgrade}
-        onOpenChange={setShowUpgrade}
-        feature="Déblocage de prospects"
-        reason="Vous avez atteint la limite de 30 prospects débloqués. Passez à PRO pour accéder aux nouvelles entreprises."
-      />
     </>
   );
 };

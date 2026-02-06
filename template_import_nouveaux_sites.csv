@@ -1,0 +1,4 @@
+siret,Entreprise,categorieJuridiqueUniteLegale,activitePrincipaleEtablissement,codePostalEtablissement,libelleCommuneEtablissement,numeroVoieEtablissement,typeVoieEtablissement,libelleVoieEtablissement,complementAdresseEtablissement,dateCreationEtablissement,etablissementSiege,categorieEntreprise,coordonneeLambertAbscisseEtablissement,coordonneeLambertOrdonneeEtablissement
+12345678900012,ACME SARL,5499,62.01Z,75001,PARIS,10,RUE,DE PARIS,,15/01/2024,VRAI,PME,652432.5,6862432.1
+98765432100023,PULSE SAS,5710,62.02Z,69001,LYON,20,AVE,VICTOR HUGO,,20/01/2024,VRAI,PME,842123.4,6518765.2
+11122233344455,CABINET XYZ SELARL,5485,69.20Z,75005,PARIS,5,BD,SAINT GERMAIN,Batiment A,25/01/2024,VRAI,PME,652890.3,6862123.7

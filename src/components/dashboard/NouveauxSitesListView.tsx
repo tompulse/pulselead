@@ -10,7 +10,6 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { ProspectStatusBadge, ProspectStatus } from "./ProspectStatusBadge";
 import { useProspectStatuses } from "@/hooks/useProspectStatuses";
 import { RelatedEstablishmentsCard } from "./RelatedEstablishmentsCard";
-import { useUserPlan } from "@/hooks/useUserPlan";
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
   onSiteSelect?: (site: any) => void;
@@ -31,12 +30,9 @@ export const NouveauxSitesListView = ({
   // State for flip card - shows related establishments
   const [expandedCard, setExpandedCard] = useState<{ siteId: string; name: string; relatedIds: string[] } | null>(null);
   
-  // User plan & unlock logic
-  const { userPlan, isProspectUnlocked, isLoading: planLoading, unlockedProspectIds, unlockProspect } = useUserPlan(userId || '');
-  const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
-  
-  // 🔥 PRO USERS : Accès illimité, pas de limites
-  console.log('[NouveauxSitesListView] User Plan:', userPlan?.plan_type, isPro ? 'PRO - Accès illimité' : 'FREE - Limité');
+  // 🔥 PLUS DE SYSTÈME FREE/PRO - Accès total pour tous
+  const isPro = true; // Toujours true = accès illimité
+  const isProspectUnlocked = () => true; // Tous les prospects sont débloqués
   const { 
     data, 
     isLoading,
@@ -56,14 +52,8 @@ export const NouveauxSitesListView = ({
   const allSites = data?.pages.flatMap(page => page.data) || [];
   const totalCount = data?.pages[0]?.total || 0;
 
-  // Filtrer les prospects débloqués si le filtre est activé
-  const filteredSites = useMemo(() => {
-    if (!filters.showUnlockedOnly) {
-      return allSites;
-    }
-    // Afficher uniquement les prospects débloqués
-    return allSites.filter(site => isPro || isProspectUnlocked(site.id));
-  }, [allSites, filters.showUnlockedOnly, isPro, isProspectUnlocked]);
+  // Plus de filtrage par unlock - tous les sites sont affichés
+  const filteredSites = allSites;
 
   // Get all entreprise IDs for status lookup
   const entrepriseIds = useMemo(() => allSites.map(site => site.id), [allSites]);
@@ -115,22 +105,8 @@ export const NouveauxSitesListView = ({
               const isSelected = selectedSites.some(s => s.id === site.id);
               const prospectStatus = statusMap[site.id] as ProspectStatus | undefined;
               
-              // Check if user can see details
-              // 🔥 FIX FLASH : Pendant le chargement, on assume PRO (évite le flash de blur)
-              const isUnlocked = isProspectUnlocked(site.id);
-              const canSeeDetails = planLoading ? true : (isPro || isUnlocked);
-              
-              // DEBUG - Première carte seulement
-              if (filteredSites.indexOf(site) === 0) {
-                console.log('🎴 [Première carte]', {
-                  nom: site.nom,
-                  id: site.id.substring(0, 8),
-                  isPro,
-                  isUnlocked,
-                  canSeeDetails,
-                  plan: userPlan?.plan_type
-                });
-              }
+              // Tous les prospects sont accessibles - pas de vérification
+              const canSeeDetails = true;
               
               // Format address
               const addressParts = [

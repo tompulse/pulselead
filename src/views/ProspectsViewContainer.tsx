@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { LoadingState, SkeletonTable } from '@/components/ui/loading-state';
 import { ErrorMessage } from '@/components/ui/error-message';
-import { useUserPlan } from '@/hooks/useUserPlan';
 
 interface ProspectsViewContainerProps {
   filters: any;
@@ -30,11 +29,8 @@ export const ProspectsViewContainer = ({
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   
-  // User plan & quotas
-  const { userPlan } = useUserPlan(userId);
-  const isPro = userPlan?.plan_type === 'pro' || userPlan?.plan_type === 'teams';
-  
-  // 🔥 Simplification : Plus de logique FREE complexe
+  // 🔥 PLUS DE SYSTÈME FREE/PRO - Accès total pour tous
+  const isPro = true; // Toujours true = accès illimité pour tous
   
   // État pour le mode tournée
   const [tourneeActive, setTourneeActive] = useState(false);
