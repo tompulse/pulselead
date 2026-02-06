@@ -20,11 +20,13 @@ export interface NouveauxSitesFilters {
 export const nouveauxSitesService = {
   async fetchNouveauxSites(filters: NouveauxSitesFilters = {}, page = 0, pageSize = 50) {
     try {
+      // Note: Supabase client doesn't support ORDER BY MD5() directly
+      // We'll fetch data and shuffle on the client side for diversity
       let query = supabase
         .from('nouveaux_sites')
         .select('*', { count: 'exact' })
         .eq('archived', false) // Exclure les entreprises archivées de l'onglet Prospects
-        .order('date_creation', { ascending: false })
+        .order('id', { ascending: true }) // Ordre stable par ID
         .range(page * pageSize, (page + 1) * pageSize - 1);
 
       // Recherche intelligente multi-termes avec synonymes métier
