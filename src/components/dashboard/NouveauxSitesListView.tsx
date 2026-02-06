@@ -166,10 +166,7 @@ export const NouveauxSitesListView = ({
                       {prospectStatus && (
                         <ProspectStatusBadge status={prospectStatus} />
                       )}
-                      {/* Siège ou Site secondaire */}
-                      <Badge variant="secondary" className="text-[10px] sm:text-xs bg-accent/20 text-accent border-accent/30">
-                        {site.est_siege ? 'Siège' : 'Site secondaire'}
-                      </Badge>
+                      {/* Siège ou Site secondaire - DÉSACTIVÉ */}
                       {/* Taille entreprise - N'afficher que PME, ETI, GE */}
                       {site.categorie_entreprise && 
                        site.categorie_entreprise !== 'Non spécifié' &&

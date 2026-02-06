@@ -1172,8 +1172,8 @@ export const NafFilters = ({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Siège social - Collapsible avec Oui/Non */}
-      <Collapsible open={typesEvenementOpen} onOpenChange={setTypesEvenementOpen} className="border-b border-accent/20">
+      {/* Siège social - DÉSACTIVÉ par l'utilisateur */}
+      {false && <Collapsible open={typesEvenementOpen} onOpenChange={setTypesEvenementOpen} className="border-b border-accent/20">
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
           <div className="flex items-center gap-2">
             <Building className="w-4 h-4 text-accent" />
@@ -1255,7 +1255,7 @@ export const NafFilters = ({
             )}
           </div>
         </CollapsibleContent>
-      </Collapsible>
+      </Collapsible>}
 
       {/* Filtre par date de création - Collapsible */}
       <Collapsible open={dateCreationOpen} onOpenChange={setDateCreationOpen} className="border-b border-accent/20">
