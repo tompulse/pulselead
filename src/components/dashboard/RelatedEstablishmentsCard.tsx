@@ -79,15 +79,14 @@ export const RelatedEstablishmentsCard = ({
         ) : (
           establishments.map((site, index) => {
             const nafInfo = getNafCategory(site.code_naf);
-            const addressParts = [
-              site.numero_voie,
-              site.type_voie,
-              site.libelle_voie
-            ].filter(Boolean).join(' ');
             
-            const fullAddress = addressParts 
-              ? `${addressParts}, ${site.code_postal} ${site.ville || ''}`
-              : `${site.code_postal || ''} ${site.ville || ''}`.trim();
+            // Utiliser la colonne adresse pré-formatée
+            const fullAddress = site.adresse 
+              ? `${site.adresse}, ${site.code_postal || ''} ${site.ville || ''}`.trim()
+              : [site.numero_voie, site.type_voie, site.libelle_voie, site.code_postal, site.ville]
+                  .filter(Boolean)
+                  .join(' ')
+                  .trim();
 
             return (
               <div
