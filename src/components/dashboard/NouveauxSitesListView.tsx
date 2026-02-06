@@ -197,42 +197,22 @@ export const NouveauxSitesListView = ({
                       </div>
                     )}
 
-                    {/* SIREN - Hidden for FREE users unless unlocked */}
+                    {/* SIREN */}
                     {site.siret && (
-                      canSeeDetails ? (
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                          <span className="text-[10px] sm:text-xs flex-shrink-0">🏛️</span>
-                          <span className="text-[10px] sm:text-xs text-foreground/60 font-mono truncate">
-                            {site.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm relative">
-                          <Lock className="w-3 h-3 text-orange-500/80 flex-shrink-0" />
-                          <span className="text-[10px] sm:text-xs text-muted-foreground blur-[3px] select-none pointer-events-none">
-                            990 470 197
-                          </span>
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/40 to-transparent pointer-events-none" />
-                        </div>
-                      )
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <span className="text-[10px] sm:text-xs flex-shrink-0">🏛️</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/60 font-mono truncate">
+                          {site.siret.substring(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}
+                        </span>
+                      </div>
                     )}
                     
-                    {/* Adresse - Hidden for FREE users unless unlocked */}
+                    {/* Adresse */}
                     {fullAddress && (
-                      canSeeDetails ? (
-                        <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                          <span className="text-[10px] sm:text-xs flex-shrink-0">📍</span>
-                          <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-2">{fullAddress}</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm relative">
-                          <Lock className="w-3 h-3 text-orange-500/80 flex-shrink-0 mt-0.5" />
-                          <span className="text-[10px] sm:text-xs text-muted-foreground blur-[3px] select-none line-clamp-2 pointer-events-none">
-                            RUE DE COBLENCE, 58000 NEVERS
-                          </span>
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/40 to-transparent pointer-events-none" />
-                        </div>
-                      )
+                      <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <span className="text-[10px] sm:text-xs flex-shrink-0">📍</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-2">{fullAddress}</span>
+                      </div>
                     )}
 
                     {/* Date de création - Always visible */}
