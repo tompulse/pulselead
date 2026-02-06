@@ -290,7 +290,8 @@ export const TourneeMap = ({
             : '0 2px 8px rgba(0,255,240,0.6)';
           el.style.cursor = 'pointer';
           el.style.transition = 'transform 0.2s';
-          el.style.zIndex = '10';
+          el.style.zIndex = String(100 + idx); // Z-index croissant pour éviter chevauchement
+          el.style.position = 'relative'; // Nécessaire pour z-index
           el.textContent = isLastStop ? '🏁' : String(idx + 1);
           el.title = isLastStop ? `Arrivée: ${e.nom}` : `Arrêt ${idx + 1}: ${e.nom}`;
           
