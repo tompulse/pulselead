@@ -241,13 +241,22 @@ serve(async (req) => {
         ? String(row.categorieJuridiqueUniteLegale).trim()
         : null;
 
-      // Is headquarters (handle VRAI/FAUX format)
+      // Is headquarters (handle VRAI/FAUX, true/false, 1/0 formats)
+      const siegeValue = (
+        row.siege || 
+        row.siège || 
+        row.est_siege || 
+        row.etablissementSiege ||
+        ''
+      ).toString().trim().toUpperCase();
+      
       const estSiege = 
-        row.etablissementSiege === 'VRAI' || 
-        row.etablissementSiege === true || 
-        row.siège === 'true' || 
-        row.siège === true ||
-        row.est_siege === true;
+        siegeValue === 'VRAI' || 
+        siegeValue === 'TRUE' || 
+        siegeValue === '1' || 
+        siegeValue === 'OUI' ||
+        siegeValue === 'V' ||
+        siegeValue === 'T';
 
       return {
         siret,
