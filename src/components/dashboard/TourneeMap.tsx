@@ -314,11 +314,12 @@ export const TourneeMap = ({
 
         console.log('[TourneeMap] Markers added:', markersRef.current.length);
 
-        // Fit bounds - more zoom out on mobile only
+        // Fit bounds to show ALL markers (not just route)
         setTimeout(() => {
-          if (routeCoords.length > 0 && map.current) {
+          if (waypoints.length > 0 && map.current) {
             const bounds = new mapboxgl.LngLatBounds();
-            routeCoords.forEach((coord: any) => bounds.extend(coord));
+            // Utiliser waypoints au lieu de routeCoords pour inclure TOUS les markers
+            waypoints.forEach((coord: any) => bounds.extend(coord));
             
             const isMobile = window.innerWidth < 640;
             map.current.fitBounds(bounds, { 
