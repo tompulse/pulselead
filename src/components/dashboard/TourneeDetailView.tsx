@@ -425,7 +425,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
       // Pour "à rappeler", on met le statut a_rappeler
       const statut = field === 'aRappeler' ? 'a_rappeler' : 'en_cours';
 
-      const { data: insertedData, error: insertError } = await supabase
+      const { data: insertedData, error: insertError } =       await supabase
         .from('lead_interactions')
         .insert({
           entreprise_id: siteId,
@@ -433,7 +433,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
           type,
           statut,
           date_relance: dateRelance ?? null,
-          notes: `Depuis tournée`,
+          notes: null, // Pas de notes automatiques
         })
         .select();
 
