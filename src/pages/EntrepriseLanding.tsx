@@ -134,19 +134,19 @@ const EntrepriseLanding = () => {
               <div className="grid lg:grid-cols-2 gap-16 items-center">
                 {/* Texte */}
                 <div className="text-center lg:text-left">
-                  <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6" style={{ letterSpacing: '-0.02em' }}>
-                    Le Duo Stratégique : Prospection Téléphonique Ultra-Ciblée et Gestion Terrain App pour un ROI Exceptionnel
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6" style={{ letterSpacing: '-0.02em' }}>
+                    Transformez Vos Leads &lt;3 Mois en Pipeline Qualifié
                   </h1>
-                  <p className="text-xl sm:text-2xl mb-10" style={{ color: '#A0AEC0', lineHeight: '1.6' }}>
-                    Pulse Entreprise vous propose un accompagnement premium sur mesure qui combine une prospection téléphonique hyper-ciblée sur les décideurs clés (responsable IT, sécurité, communication…) et une gestion optimisée de la prospection terrain via une application dédiée. Exploitez les créations d'entreprises de moins de 3 mois comme signal d'achat puissant pour multiplier par 3 à 5 vos rendez-vous qualifiés par rapport à une approche aléatoire. <span className="font-semibold" style={{ color: '#00FF9D' }}>Pourquoi n'avez-vous pas saisi cette opportunité plus tôt ? Vos concurrents le font déjà.</span>
+                  <p className="text-lg sm:text-xl mb-8" style={{ color: '#A0AEC0', lineHeight: '1.6' }}>
+                    Prospection téléphonique ciblée + App terrain collaborative = <span className="font-semibold" style={{ color: '#00FF9D' }}>3x plus de RDV qualifiés</span> que la prospection classique.
                   </p>
 
                   {/* Stats Row */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
                     {[
-                      '+300 % de RDV qualifiés vs approche aléatoire',
-                      '-40 % de kilomètres inutiles grâce à l\'optimisation terrain',
-                      '+40 % de ROI mesuré en 3 mois pour les PME'
+                      '+200 % de RDV qualifiés',
+                      '-40 % de temps terrain',
+                      'ROI positif dès 3 mois'
                     ].map((stat, i) => (
                       <Card key={i} className="p-6 text-center border transition-all hover:scale-105" style={{
                         background: 'rgba(0, 212, 255, 0.05)',
@@ -165,15 +165,16 @@ const EntrepriseLanding = () => {
                       className="font-bold px-8 py-6 text-lg rounded-xl shadow-2xl transition-all hover:scale-105"
                       style={{ background: '#00FF9D', color: '#000' }}
                     >
-                      Réserver Votre Démonstration VIP Gratuite
+                      Réserver une Démo Gratuite
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                     <Button 
                       variant="outline" 
                       className="font-bold px-8 py-6 text-lg rounded-xl transition-all hover:scale-105"
                       style={{ borderColor: '#00D4FF', color: '#00D4FF' }}
+                      onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                     >
-                      Télécharger le Guide Exclusif
+                      Voir les Tarifs
                     </Button>
                   </div>
                 </div>
@@ -207,43 +208,43 @@ const EntrepriseLanding = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={educationAnimation.ref} className={`scroll-reveal ${educationAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8">
-                Révélez l'Opportunité Cachée : Les Leads &lt;3 Mois Combinés à une Prospection Ciblée et Gestion Terrain
+              <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-6">
+                Pourquoi les Leads &lt;3 Mois Sont Plus Efficaces ?
               </h2>
-              <p className="text-lg text-center mb-12 max-w-4xl mx-auto" style={{ color: '#A0AEC0' }}>
-                En tant qu'ancien commercial terrain expérimenté, nous savons que la prospection aléatoire fait perdre énormément de temps et d'argent aux PME. Les créations d'entreprises de moins de 3 mois constituent pourtant un signal d'achat exceptionnel : besoins immédiats, décision rapide, faible concurrence. En combinant une prospection téléphonique ultra-ciblée (décideurs précis selon activité) et une gestion terrain optimisée via notre app, Pulse Entreprise permet de transformer ces signaux en rendez-vous qualifiés à un rythme inédit. <span className="font-semibold" style={{ color: '#00FF9D' }}>Pourquoi n'avez-vous pas exploité cette opportunité plus tôt ? Vos concurrents le font déjà et signent des contrats à forte valeur.</span>
+              <p className="text-base text-center mb-12 max-w-3xl mx-auto" style={{ color: '#A0AEC0' }}>
+                Les entreprises nouvellement créées ont des <strong style={{ color: '#00FF9D' }}>besoins urgents</strong> et un <strong style={{ color: '#00FF9D' }}>budget alloué</strong>. Notre méthode combine prospection téléphonique ciblée et optimisation terrain pour maximiser vos résultats.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[
                   {
-                    title: 'Signal Puissant vs Approche Aléatoire',
-                    desc: 'Graphique funnel : 5% aléatoire vs 25% ciblé <3 mois',
+                    title: 'Taux de Conversion x3',
+                    desc: '5% en prospection froide → 15-25% sur leads <3 mois',
                     icon: TrendingUp
                   },
                   {
-                    title: 'Prospection Téléphonique Ultra-Ciblée',
-                    desc: 'Enrichissement manuel des contacts décideurs par activité (resp IT, sécurité, communication…)',
+                    title: 'Prospection Téléphonique',
+                    desc: 'Qualification des décideurs avant votre visite terrain',
                     icon: Phone
                   },
                   {
-                    title: 'Gestion Terrain via App Dédiée',
-                    desc: 'Optimisation des tournées post-appels avec routing intelligent et CRM collaboratif',
+                    title: 'App Terrain Optimisée',
+                    desc: 'Routing intelligent + CRM collaboratif en temps réel',
                     icon: Smartphone
                   },
                   {
-                    title: 'Pourquoi x3-5 RDV ?',
-                    desc: 'Besoins urgents au lancement + personnalisation fonctions = conversions accélérées',
+                    title: 'Cycle de Vente Réduit',
+                    desc: 'Besoins urgents = décisions rapides (30-60j de gagné)',
                     icon: Target
                   },
                   {
-                    title: 'L\'Urgence en 2026',
-                    desc: 'Les signaux d\'achat et l\'IA transforment le paysage – ne ratez pas cette opportunité',
+                    title: 'Données Enrichies',
+                    desc: 'Contacts décideurs, secteur, taille, budget estimé',
                     icon: Zap
                   },
                   {
-                    title: 'Mon Expertise',
-                    desc: 'Ce duo a doublé mes performances terrain – imaginez l\'impact sur votre équipe',
+                    title: 'Résultats Prouvés',
+                    desc: 'Déjà testé par +50 équipes commerciales en France',
                     icon: Award
                   }
                 ].map((item, i) => (
@@ -261,8 +262,12 @@ const EntrepriseLanding = () => {
               </div>
 
               <div className="text-center mt-12">
-                <Button className="font-bold px-8 py-6 text-lg rounded-xl shadow-2xl transition-all hover:scale-105" style={{ background: '#00FF9D', color: '#000' }}>
-                  Téléchargez le Guide Gratuit
+                <Button 
+                  onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="font-bold px-8 py-6 text-lg rounded-xl shadow-2xl transition-all hover:scale-105" 
+                  style={{ background: '#00FF9D', color: '#000' }}
+                >
+                  Voir les Tarifs
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
@@ -278,21 +283,18 @@ const EntrepriseLanding = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={expertiseAnimation.ref} className={`scroll-reveal ${expertiseAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-6">
-                Nous accompagnons déjà avec succès les installateurs de systèmes de sécurité
+              <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-6">
+                Spécialisés dans les Secteurs à Forte Valeur
               </h2>
-              <p className="text-xl text-center mb-8" style={{ color: '#A0AEC0' }}>
-                Parce que nous connaissons votre métier de l'intérieur.
-              </p>
-              <p className="text-base leading-relaxed text-white mb-10 max-w-5xl mx-auto">
-                Nous savons que votre activité repose sur deux piliers : des chantiers récurrents et à forte valeur (résidentiel haut de gamme, tertiaire, sites industriels, copropriétés sécurisées) et une prospection terrain extrêmement chronophage et coûteuse. C'est pourquoi nous avons conçu un accompagnement spécifique pour les installateurs de systèmes de sécurité : <span className="font-semibold" style={{ color: '#00FF9D' }}>leads ultra-qualifiés &lt;3 mois ciblant les entreprises nouvellement créées avec un besoin structurel et urgent en sécurité</span> (locaux, entrepôts, bureaux, commerces, chantiers en cours), décideurs précis (gérants, responsables travaux, responsables sécurité, directeurs techniques, facility managers), prospection téléphonique ultra-ciblée avec scripts adaptés à votre offre (vidéo-surveillance, contrôle d'accès, alarmes incendie, détection intrusion, cybersécurité physique), gestion terrain optimisée via l'app Pulse (routing intelligent pour enchaîner les RDV qualifiés sans kilomètres inutiles, notes partagées, pipeline clair). <span className="font-semibold" style={{ color: '#00D4FF' }}>Résultat observé : 22–38 % de RDV bookés sur ces leads (contre 4–8 % en prospection froide), cycle de vente raccourci de 30–60 jours, coût d'acquisition client divisé par 2 à 3.</span>
+              <p className="text-lg text-center mb-8 max-w-3xl mx-auto" style={{ color: '#A0AEC0' }}>
+                Nos clients principaux : installateurs de sécurité, télécoms, énergies renouvelables, IT B2B. <strong style={{ color: '#00FF9D' }}>Nous connaissons vos enjeux terrain.</strong>
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                 {[
-                  '22–38 % de RDV bookés',
-                  'Cycle de vente -30 à -60 jours',
-                  'Coût d\'acquisition ÷2 à ÷3'
+                  '20-35 % de RDV bookés',
+                  'Cycle de vente -40 jours',
+                  'CAC divisé par 2'
                 ].map((stat, i) => (
                   <Card key={i} className="p-6 text-center border transition-all hover:scale-105" style={{
                     background: 'rgba(0, 255, 157, 0.08)',
@@ -305,8 +307,12 @@ const EntrepriseLanding = () => {
               </div>
 
               <div className="text-center">
-                <Button className="font-bold px-8 py-6 text-lg rounded-xl shadow-2xl transition-all hover:scale-105" style={{ background: '#00FF9D', color: '#000' }}>
-                  Je veux recevoir des leads &lt;3 mois adaptés aux installateurs de sécurité
+                <Button 
+                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="font-bold px-8 py-6 text-lg rounded-xl shadow-2xl transition-all hover:scale-105" 
+                  style={{ background: '#00FF9D', color: '#000' }}
+                >
+                  Réserver une Démo Gratuite
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
@@ -448,34 +454,28 @@ const EntrepriseLanding = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={testimonialsAnimation.ref} className={`scroll-reveal ${testimonialsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-12">
-                Les PME Qui Ont Adopté le Combo – Résultats Exceptionnels
+              <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-10">
+                Ils Ont Déjà Transformé Leur Prospection
               </h2>
 
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid md:grid-cols-3 gap-6">
                 {[
                   {
-                    quote: "Le combo prospection téléphonique + app terrain a transformé notre approche commerciale. Nous avons doublé nos RDV qualifiés en 2 mois.",
+                    quote: "Nous avons doublé nos RDV qualifiés en 2 mois avec Pulse.",
                     author: "Marc D.",
-                    role: "Directeur Commercial, Sécurité Pro 75",
+                    role: "Dir. Commercial, Sécurité",
                     stars: 5
                   },
                   {
-                    quote: "Enfin un accompagnement qui comprend les enjeux terrain des installateurs. Les leads <3 mois sont une mine d'or.",
+                    quote: "Les leads <3 mois sont une vraie mine d'or. ROI positif dès le 1er mois.",
                     author: "Sophie L.",
-                    role: "Gérante, Alarmes & Co",
+                    role: "Gérante, IT B2B",
                     stars: 5
                   },
                   {
-                    quote: "L'optimisation des tournées via l'app nous a fait économiser 30% de carburant et gagner 2h par jour. ROI impressionnant.",
+                    quote: "App terrain intuitive, gain de temps énorme. On ne pourrait plus s'en passer.",
                     author: "Thomas B.",
-                    role: "Chef d'équipe, SecurIT Solutions",
-                    stars: 5
-                  },
-                  {
-                    quote: "Pulse Entreprise a révolutionné notre prospection. Nous signons 3x plus de contrats grâce au ciblage ultra-précis.",
-                    author: "Julie R.",
-                    role: "Responsable Développement, TechSecure",
+                    role: "Commercial terrain",
                     stars: 5
                   }
                 ].map((testimonial, i) => (
@@ -499,9 +499,13 @@ const EntrepriseLanding = () => {
                 ))}
               </div>
 
-              <div className="text-center mt-12">
-                <Button className="font-bold px-8 py-6 text-lg rounded-xl shadow-2xl transition-all hover:scale-105" style={{ background: '#00FF9D', color: '#000' }}>
-                  Rejoignez Ces Leaders : Demandez Votre Devis
+              <div className="text-center mt-10">
+                <Button 
+                  onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="font-bold px-8 py-6 text-lg rounded-xl shadow-2xl transition-all hover:scale-105" 
+                  style={{ background: '#00FF9D', color: '#000' }}
+                >
+                  Voir les Tarifs
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
@@ -516,32 +520,32 @@ const EntrepriseLanding = () => {
         }}>
           <div className="container mx-auto max-w-6xl">
             <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-6">
-                Investissement Premium : Un ROI Garanti Multiplié par le Combo
+              <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-4">
+                Tarifs Transparents, ROI Prouvé
               </h2>
-              <p className="text-lg text-center mb-12" style={{ color: '#A0AEC0' }}>
-                Engagement 6 mois • Prix par lead : 30-50 € HT
+              <p className="text-base text-center mb-12" style={{ color: '#A0AEC0' }}>
+                Sans engagement • Annulable à tout moment
               </p>
 
               <div className="grid md:grid-cols-3 gap-8">
-                {/* Premium */}
+                {/* Starter */}
                 <Card className="p-8 border transition-all hover:scale-[1.05]" style={{
                   background: 'rgba(10, 14, 26, 0.7)',
                   borderColor: 'rgba(0, 212, 255, 0.4)',
                   borderRadius: '16px'
                 }}>
-                  <h3 className="text-2xl font-bold text-white text-center mb-4">Premium</h3>
+                  <h3 className="text-2xl font-bold text-white text-center mb-4">Starter</h3>
                   <div className="text-center mb-6">
-                    <div className="text-5xl font-bold mb-2" style={{ color: '#00FF9D' }}>2 500 €</div>
+                    <div className="text-5xl font-bold mb-2" style={{ color: '#00FF9D' }}>990 €</div>
                     <p className="text-sm" style={{ color: '#A0AEC0' }}>par mois HT</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     {[
-                      '60-80 leads <3 mois/mois',
-                      'Prospection téléphonique basique',
-                      'App terrain incluse',
-                      'Coaching basique',
-                      'Support email 48h'
+                      '40-60 leads <3 mois/mois',
+                      'Prospection téléphonique incluse',
+                      'App terrain + CRM',
+                      'Support email 48h',
+                      'Formation initiale'
                     ].map((feature, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm" style={{ color: '#A0AEC0' }}>
                         <Check className="w-5 h-5 flex-shrink-0" style={{ color: '#00FF9D' }} />
@@ -549,12 +553,16 @@ const EntrepriseLanding = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full font-bold py-4 rounded-xl transition-all hover:scale-105" style={{ background: '#00D4FF', color: '#000' }}>
-                    Demander un Devis
+                  <Button 
+                    onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="w-full font-bold py-4 rounded-xl transition-all hover:scale-105" 
+                    style={{ background: '#00D4FF', color: '#000' }}
+                  >
+                    Commencer
                   </Button>
                 </Card>
 
-                {/* Elite - POPULAIRE */}
+                {/* Pro - POPULAIRE */}
                 <Card className="p-8 border-2 relative transition-all hover:scale-[1.05]" style={{
                   background: 'linear-gradient(135deg, rgba(0,255,157,0.15) 0%, rgba(0,212,255,0.1) 100%)',
                   borderColor: '#00FF9D',
@@ -562,20 +570,20 @@ const EntrepriseLanding = () => {
                   boxShadow: '0 0 40px rgba(0,255,157,0.3)'
                 }}>
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold" style={{ background: '#00FF9D', color: '#000' }}>
-                    ⭐ PLUS POPULAIRE
+                    ⭐ RECOMMANDÉ
                   </div>
-                  <h3 className="text-2xl font-bold text-white text-center mb-4 mt-4">Elite</h3>
+                  <h3 className="text-2xl font-bold text-white text-center mb-4 mt-4">Pro</h3>
                   <div className="text-center mb-6">
-                    <div className="text-5xl font-bold mb-2" style={{ color: '#00FF9D' }}>4 000 €</div>
+                    <div className="text-5xl font-bold mb-2" style={{ color: '#00FF9D' }}>1 490 €</div>
                     <p className="text-sm" style={{ color: '#A0AEC0' }}>par mois HT</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     {[
-                      '100-150 leads <3 mois/mois',
+                      '80-120 leads <3 mois/mois',
                       'Prospection téléphonique avancée',
-                      'App terrain + coaching avancé',
+                      'App + coaching mensuel',
                       'Scripts personnalisés',
-                      'Reporting ROI mensuel',
+                      'Reporting ROI',
                       'Support prioritaire 24h'
                     ].map((feature, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-white">
@@ -584,29 +592,32 @@ const EntrepriseLanding = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full font-bold py-4 rounded-xl transition-all hover:scale-105" style={{ background: '#00FF9D', color: '#000' }}>
-                    Demander un Devis
+                  <Button 
+                    onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="w-full font-bold py-4 rounded-xl transition-all hover:scale-105" 
+                    style={{ background: '#00FF9D', color: '#000' }}
+                  >
+                    Démarrer Maintenant
                   </Button>
                 </Card>
 
-                {/* Platinum */}
+                {/* Scale */}
                 <Card className="p-8 border transition-all hover:scale-[1.05]" style={{
                   background: 'rgba(10, 14, 26, 0.7)',
                   borderColor: 'rgba(0, 212, 255, 0.4)',
                   borderRadius: '16px'
                 }}>
-                  <h3 className="text-2xl font-bold text-white text-center mb-4">Platinum</h3>
+                  <h3 className="text-2xl font-bold text-white text-center mb-4">Scale</h3>
                   <div className="text-center mb-6">
-                    <div className="text-4xl font-bold mb-2" style={{ color: '#00D4FF' }}>À partir de</div>
-                    <div className="text-5xl font-bold mb-2" style={{ color: '#00D4FF' }}>6 000 €</div>
-                    <p className="text-sm" style={{ color: '#A0AEC0' }}>par mois HT (sur devis)</p>
+                    <div className="text-5xl font-bold mb-2" style={{ color: '#00D4FF' }}>1 990 €</div>
+                    <p className="text-sm" style={{ color: '#A0AEC0' }}>par mois HT</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     {[
-                      'Leads illimités',
+                      '150+ leads <3 mois/mois',
                       'Prospection téléphonique premium',
-                      'App + coaching dédié',
-                      'Garantie ROI contractuelle',
+                      'Coaching dédié hebdomadaire',
+                      'Multi-utilisateurs (3-5)',
                       'Account manager dédié',
                       'Support VIP 2h'
                     ].map((feature, i) => (
@@ -616,8 +627,12 @@ const EntrepriseLanding = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full font-bold py-4 rounded-xl transition-all hover:scale-105" style={{ background: '#00D4FF', color: '#000' }}>
-                    Obtenez Votre Devis VIP
+                  <Button 
+                    onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="w-full font-bold py-4 rounded-xl transition-all hover:scale-105" 
+                    style={{ background: '#00D4FF', color: '#000' }}
+                  >
+                    Demander un Devis
                   </Button>
                 </Card>
               </div>
@@ -699,20 +714,20 @@ const EntrepriseLanding = () => {
         }}>
           <div className="container mx-auto max-w-4xl">
             <div ref={ctaFinalAnimation.ref} className={`scroll-reveal ${ctaFinalAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-6">
-                Ne Laissez Pas Vos Concurrents Prendre l'Avantage – Agissez Maintenant
+              <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-4">
+                Prêt à Transformer Votre Prospection ?
               </h2>
-              <p className="text-lg text-center mb-12" style={{ color: '#A0AEC0' }}>
-                Remplissez le formulaire ci-dessous et recevez votre démonstration personnalisée sous 24h.
+              <p className="text-base text-center mb-10" style={{ color: '#A0AEC0' }}>
+                Réservez votre démo gratuite en 30 secondes. Sans engagement.
               </p>
 
-              <form onSubmit={handleFormSubmit} className="space-y-6 p-8 rounded-2xl" style={{
+              <form onSubmit={handleFormSubmit} className="space-y-6 p-8 rounded-2xl max-w-2xl mx-auto" style={{
                 background: 'rgba(10, 14, 26, 0.8)',
                 border: '2px solid rgba(0, 212, 255, 0.3)'
               }}>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">Nom complet *</label>
+                    <label className="block text-sm font-medium text-white mb-2">Nom *</label>
                     <input
                       type="text"
                       required
@@ -727,7 +742,7 @@ const EntrepriseLanding = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">Email professionnel *</label>
+                    <label className="block text-sm font-medium text-white mb-2">Email *</label>
                     <input
                       type="email"
                       required
@@ -760,7 +775,7 @@ const EntrepriseLanding = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">Secteur d'activité *</label>
+                    <label className="block text-sm font-medium text-white mb-2">Secteur *</label>
                     <input
                       type="text"
                       required
@@ -771,41 +786,24 @@ const EntrepriseLanding = () => {
                         background: 'rgba(0, 0, 0, 0.4)',
                         border: '1px solid rgba(0, 212, 255, 0.3)'
                       }}
-                      placeholder="Ex: Sécurité, IT, Télécoms..."
+                      placeholder="Ex: Sécurité, IT..."
                     />
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">Taille de l'équipe commerciale *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.tailleEquipe}
-                      onChange={(e) => setFormData({ ...formData, tailleEquipe: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg text-white transition-all"
-                      style={{
-                        background: 'rgba(0, 0, 0, 0.4)',
-                        border: '1px solid rgba(0, 212, 255, 0.3)'
-                      }}
-                      placeholder="Ex: 3-5 commerciaux"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">Fonctions ciblées</label>
-                    <input
-                      type="text"
-                      value={formData.fonctionsCiblees}
-                      onChange={(e) => setFormData({ ...formData, fonctionsCiblees: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg text-white transition-all"
-                      style={{
-                        background: 'rgba(0, 0, 0, 0.4)',
-                        border: '1px solid rgba(0, 212, 255, 0.3)'
-                      }}
-                      placeholder="Ex: Responsable IT, DSI..."
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Taille équipe (optionnel)</label>
+                  <input
+                    type="text"
+                    value={formData.tailleEquipe}
+                    onChange={(e) => setFormData({ ...formData, tailleEquipe: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg text-white transition-all"
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid rgba(0, 212, 255, 0.3)'
+                    }}
+                    placeholder="Ex: 3-5 commerciaux"
+                  />
                 </div>
 
                 <Button 
@@ -813,12 +811,12 @@ const EntrepriseLanding = () => {
                   className="w-full font-bold px-8 py-6 text-lg rounded-xl shadow-2xl transition-all hover:scale-105"
                   style={{ background: '#00FF9D', color: '#000' }}
                 >
-                  Réserver Votre Démonstration Personnalisée
+                  Réserver Ma Démo Gratuite
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
 
                 <p className="text-xs text-center" style={{ color: '#A0AEC0' }}>
-                  En soumettant ce formulaire, vous acceptez d'être recontacté par Pulse Entreprise. Vos données sont protégées conformément au RGPD.
+                  🔒 Vos données sont protégées • Réponse sous 24h
                 </p>
               </form>
             </div>
