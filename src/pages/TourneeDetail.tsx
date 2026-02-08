@@ -360,12 +360,13 @@ const TourneeDetail = () => {
         return;
       }
 
-      // 4. Si cochage, vérifier si une interaction existe déjà
+      // 4. Si cochage, vérifier si une interaction existe déjà pour ce type précis
       const { data: existingInteraction } = await supabase
         .from('lead_interactions')
         .select('id, type')
         .eq('entreprise_id', siteId)
         .eq('user_id', session.user.id)
+        .eq('type', type)
         .maybeSingle();
 
       const leadStatusMap: Record<string, string> = {
