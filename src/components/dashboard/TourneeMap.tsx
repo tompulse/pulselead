@@ -234,8 +234,17 @@ export const TourneeMap = ({
         // Add start marker
         if (pointDepartLat && pointDepartLng && map.current) {
           const startEl = document.createElement('div');
+          // ✅ Forcer les propriétés critiques pour éviter le glissement
+          startEl.style.position = 'absolute';
+          startEl.style.top = '0';
+          startEl.style.left = '0';
+          startEl.style.margin = '0';
+          startEl.style.padding = '0';
+          startEl.style.transform = 'none';
+          startEl.style.willChange = 'transform';
           startEl.style.width = '48px';
           startEl.style.height = '48px';
+          startEl.style.boxSizing = 'border-box';
           startEl.style.background = 'linear-gradient(135deg, #FF6B00 0%, #FF8533 100%)';
           startEl.style.border = '4px solid white';
           startEl.style.borderRadius = '50%';
@@ -245,19 +254,25 @@ export const TourneeMap = ({
           startEl.style.fontSize = '24px';
           startEl.style.boxShadow = '0 4px 12px rgba(255,107,0,0.8), 0 0 20px rgba(255,107,0,0.4)';
           startEl.style.cursor = 'pointer';
-          startEl.style.transition = 'transform 0.2s';
-          startEl.style.zIndex = '10';
+          startEl.style.transition = 'box-shadow 0.2s, filter 0.2s';
           startEl.textContent = '🏁';
           startEl.title = 'Point de départ';
           
+          // ✅ Utiliser filter au lieu de transform pour éviter le glissement
           startEl.onmouseover = () => {
-            startEl.style.transform = 'scale(1.15)';
+            startEl.style.filter = 'brightness(1.2)';
+            startEl.style.boxShadow = '0 6px 16px rgba(255,107,0,1), 0 0 30px rgba(255,107,0,0.6)';
           };
           startEl.onmouseout = () => {
-            startEl.style.transform = 'scale(1)';
+            startEl.style.filter = 'brightness(1)';
+            startEl.style.boxShadow = '0 4px 12px rgba(255,107,0,0.8), 0 0 20px rgba(255,107,0,0.4)';
           };
           
-          const startMarker = new mapboxgl.Marker({ element: startEl, anchor: 'center' })
+          const startMarker = new mapboxgl.Marker({ 
+            element: startEl, 
+            anchor: 'center',
+            offset: [0, 0] // Offset explicite pour debug
+          })
             .setLngLat([pointDepartLng, pointDepartLat])
             .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML('<strong>🏁 Départ</strong><br/>Votre position actuelle'))
             .addTo(map.current);
@@ -272,8 +287,17 @@ export const TourneeMap = ({
           const isLastStop = idx === validEntreprises.length - 1;
           
           const el = document.createElement('div');
+          // ✅ Forcer les propriétés critiques pour éviter le glissement
+          el.style.position = 'absolute';
+          el.style.top = '0';
+          el.style.left = '0';
+          el.style.margin = '0';
+          el.style.padding = '0';
+          el.style.transform = 'none';
+          el.style.willChange = 'transform';
           el.style.width = isLastStop ? '48px' : '40px';
           el.style.height = isLastStop ? '48px' : '40px';
+          el.style.boxSizing = 'border-box';
           el.style.background = isLastStop 
             ? 'linear-gradient(135deg, #10B981 0%, #34D399 100%)'
             : 'linear-gradient(135deg, #00FFF0 0%, #00D4C8 100%)';
@@ -285,28 +309,39 @@ export const TourneeMap = ({
           el.style.color = isLastStop ? 'white' : '#0A0F1E';
           el.style.fontWeight = 'bold';
           el.style.fontSize = isLastStop ? '24px' : '16px';
-          el.style.boxShadow = isLastStop 
+          const normalShadow = isLastStop 
             ? '0 4px 12px rgba(16,185,129,0.8), 0 0 20px rgba(16,185,129,0.4)'
             : '0 2px 8px rgba(0,255,240,0.6)';
+          const hoverShadow = isLastStop
+            ? '0 6px 16px rgba(16,185,129,1), 0 0 30px rgba(16,185,129,0.6)'
+            : '0 4px 12px rgba(0,255,240,0.8), 0 0 15px rgba(0,255,240,0.4)';
+          
+          el.style.boxShadow = normalShadow;
           el.style.cursor = 'pointer';
-          el.style.transition = 'transform 0.2s';
-          el.style.zIndex = String(100 + idx); // Z-index croissant pour éviter chevauchement
-          el.style.position = 'relative'; // Nécessaire pour z-index
+          el.style.transition = 'box-shadow 0.2s, filter 0.2s';
+          el.style.zIndex = String(100 + idx);
           el.textContent = isLastStop ? '🏁' : String(idx + 1);
           el.title = isLastStop ? `Arrivée: ${e.nom}` : `Arrêt ${idx + 1}: ${e.nom}`;
           
+          // ✅ Utiliser filter au lieu de transform pour éviter le glissement
           el.onmouseover = () => {
-            el.style.transform = 'scale(1.15)';
+            el.style.filter = 'brightness(1.2)';
+            el.style.boxShadow = hoverShadow;
           };
           el.onmouseout = () => {
-            el.style.transform = 'scale(1)';
+            el.style.filter = 'brightness(1)';
+            el.style.boxShadow = normalShadow;
           };
           
           const popupContent = isLastStop
             ? `<strong>🏁 Arrivée - Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.adresse || e.ville || ''}</small>`
             : `<strong>Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.adresse || e.ville || ''}</small>`;
           
-          const marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
+          const marker = new mapboxgl.Marker({ 
+            element: el, 
+            anchor: 'center',
+            offset: [0, 0] // Offset explicite pour debug
+          })
             .setLngLat([e.longitude, e.latitude])
             .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent))
             .addTo(map.current);

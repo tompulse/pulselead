@@ -114,9 +114,10 @@ export const ActivityDetailSheet = ({
     enabled: isOpen && !!activityType,
   });
 
-  const handleDelete = async (interactionId: string) => {
+  const handleDelete = async (interactionId: string, entrepriseId: string, interactionType: string) => {
     setDeletingId(interactionId);
     try {
+      // 1. Supprimer l'interaction
       const { error } = await supabase
         .from('lead_interactions')
         .delete()
@@ -124,15 +125,56 @@ export const ActivityDetailSheet = ({
 
       if (error) throw error;
 
+      // 2. ✅ Mettre à jour les tournées qui contiennent cette entreprise
+      const { data: tournees } = await supabase
+        .from('tournees')
+        .select('id, visites_effectuees, entreprises_ids')
+        .contains('entreprises_ids', [entrepriseId]);
+
+      if (tournees && tournees.length > 0) {
+        const typeToFieldMap: Record<string, string> = {
+          visite: 'visite',
+          rdv: 'rdv',
+          a_revoir: 'aRevoir',
+          a_rappeler: 'aRappeler',
+        };
+
+        const fieldToUpdate = typeToFieldMap[interactionType];
+
+        for (const tournee of tournees) {
+          if (tournee.visites_effectuees && typeof tournee.visites_effectuees === 'object') {
+            const visites = tournee.visites_effectuees as Record<string, any>;
+            if (visites[entrepriseId]?.[fieldToUpdate]) {
+              // Décocher le statut dans la tournée
+              const updatedVisites = {
+                ...visites,
+                [entrepriseId]: {
+                  ...visites[entrepriseId],
+                  [fieldToUpdate]: false,
+                },
+              };
+
+              await supabase
+                .from('tournees')
+                .update({ visites_effectuees: updatedVisites })
+                .eq('id', tournee.id);
+
+              console.log('[ActivityDetailSheet] Tournée mise à jour:', tournee.id);
+            }
+          }
+        }
+      }
+
       toast({
         title: 'Interaction supprimée',
-        description: "L'interaction a été retirée",
+        description: "L'interaction a été retirée du CRM et des tournées",
       });
 
       // Refresh data - invalidate all related queries for bidirectional sync
       queryClient.invalidateQueries({ queryKey: ['activity-interactions', userId, activityType] });
       queryClient.invalidateQueries({ queryKey: ['crm-interactions', userId] });
       queryClient.invalidateQueries({ queryKey: ['notification-reminders', userId] });
+      queryClient.invalidateQueries({ queryKey: ['tournee'] }); // ✅ Invalider les tournées
     } catch {
       toast({
         title: 'Erreur',
@@ -232,7 +274,7 @@ export const ActivityDetailSheet = ({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => handleDelete(interaction.id)}
+                        onClick={() => handleDelete(interaction.id, interaction.entreprise_id, interaction.type)}
                         disabled={deletingId === interaction.id}
                       >
                         {deletingId === interaction.id ? (

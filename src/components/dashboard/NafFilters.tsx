@@ -963,24 +963,11 @@ export const NafFilters = ({
               ) : (
                 filteredHierarchy.map((division) => {
                   const divisionSelected = filters.nafDivisions?.includes(division.code);
-                  const divisionExpanded = expanded.divisions.includes(division.code);
                   
                   return (
                     <div key={division.code} className="space-y-0.5">
-                      {/* Niveau 1: Division (point d'entrée) */}
+                      {/* ✅ Niveau 1: Division uniquement (grandes catégories) */}
                       <div className="flex items-start gap-1">
-                        {division.groupes.length > 0 && (
-                          <button
-                            onClick={() => toggleExpand('divisions', division.code)}
-                            className="p-1 hover:bg-accent/10 rounded mt-1"
-                          >
-                            {divisionExpanded ? (
-                              <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                            ) : (
-                              <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                            )}
-                          </button>
-                        )}
                         <div
                           onClick={() => handleDivisionToggle(division.code)}
                           className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98] flex-1"
@@ -993,70 +980,8 @@ export const NafFilters = ({
                         </div>
                       </div>
                       
-                      {/* Niveau 2: Groupes */}
-                      {divisionExpanded && division.groupes.map((groupe) => {
-                        const groupeSelected = filters.nafGroupes?.includes(groupe.code);
-                        const groupeExpanded = expanded.groupes.includes(groupe.code);
-                        
-                        return (
-                          <div key={groupe.code} className="ml-6 space-y-0.5">
-                            <div className="flex items-start gap-1 border-l-2 border-accent/20 pl-2">
-                              {groupe.classes.length > 0 && (
-                                <button
-                                  onClick={() => toggleExpand('groupes', groupe.code)}
-                                  className="p-0.5 hover:bg-accent/10 rounded mt-1"
-                                >
-                                  {groupeExpanded ? (
-                                    <ChevronDown className="w-2.5 h-2.5 text-muted-foreground" />
-                                  ) : (
-                                    <ChevronRight className="w-2.5 h-2.5 text-muted-foreground" />
-                                  )}
-                                </button>
-                              )}
-                              <div
-                                onClick={() => handleGroupeToggle(groupe.code)}
-                                className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-1.5 rounded transition-colors active:scale-[0.98] flex-1"
-                              >
-                                <Checkbox selected={groupeSelected} size="sm" />
-                                <span className="text-xs font-mono text-accent/80 shrink-0">{groupe.code}</span>
-                                <span className="text-xs leading-snug flex-1 break-words">{groupe.label}</span>
-                                {formatDualCount(groupe.count, groupe.globalCount, hasActiveFilters)}
-                              </div>
-                            </div>
-                            
-                            {/* Niveau 3: Classes */}
-                            {groupeExpanded && groupe.classes.map((classe) => {
-                              const classeSelected = filters.nafClasses?.includes(classe.code);
-                              const classeExpanded = expanded.classes.includes(classe.code);
-                              
-                              return (
-                                <div key={classe.code} className="ml-5 space-y-0.5">
-                                  <div className="flex items-start gap-1 border-l-2 border-accent/15 pl-2">
-                                    {classe.sousClasses.length > 0 && (
-                                      <button
-                                        onClick={() => toggleExpand('classes', classe.code)}
-                                        className="p-0.5 hover:bg-accent/10 rounded"
-                                      >
-                                        {classeExpanded ? (
-                                          <ChevronDown className="w-2 h-2 text-muted-foreground" />
-                                        ) : (
-                                          <ChevronRight className="w-2 h-2 text-muted-foreground" />
-                                        )}
-                                      </button>
-                                    )}
-                                    <div
-                                      onClick={() => handleClasseToggle(classe.code)}
-                                      className="flex items-start gap-1.5 cursor-pointer hover:bg-accent/10 p-1 rounded transition-colors active:scale-[0.98] flex-1"
-                                    >
-                                      <Checkbox selected={classeSelected} size="sm" />
-                                      <span className="text-[10px] font-mono text-muted-foreground shrink-0">{classe.code}</span>
-                                      <span className="text-[11px] leading-snug flex-1 break-words">{classe.label}</span>
-                                      {formatDualCount(classe.count, classe.globalCount, hasActiveFilters)}
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Niveau 4: Sous-classes - Masquer si unique et même count que parent */}
-                                  {classeExpanded && !(classe.sousClasses.length === 1 && classe.sousClasses[0].count === classe.count) && classe.sousClasses.map((sousClasse) => {
+                      {/* ❌ Sous-catégories supprimées (groupes, classes, sous-classes) */}
+                      {false && division.groupes.map((groupe) => {
                                     const sousClasseSelected = filters.nafSousClasses?.includes(sousClasse.code);
                                     
                                     return (

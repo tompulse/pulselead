@@ -86,12 +86,11 @@ export const nouveauxSitesService = {
         query = query.in('code_naf', filters.nafSousClasses);
       }
 
-      // Filtre par département
+      // Filtre par département - utilise la colonne departement si disponible
       if (filters.departments && filters.departments.length > 0) {
-        const deptConditions = filters.departments.map(dept => 
-          `code_postal.ilike.${dept}%`
-        ).join(',');
-        query = query.or(deptConditions);
+        // Utiliser la colonne departement pour un filtrage précis
+        // Fallback sur code_postal pour compatibilité
+        query = query.in('departement', filters.departments);
       }
 
       // Filtre par taille d'entreprise

@@ -177,31 +177,59 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
   // Update tournee mutation
   const updateTourneeMutation = useMutation({
     mutationFn: async (updates: Partial<Tournee>) => {
-      const { error } = await supabase
+      console.log('[TourneeDetailView] Saving updates:', updates);
+      const { data, error } = await supabase
         .from('tournees')
         .update({
           ...updates,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', tournee.id);
+        .eq('id', tournee.id)
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[TourneeDetailView] Update error:', error);
+        throw error;
+      }
+      
+      console.log('[TourneeDetailView] Update successful:', data);
+      return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tournees'] });
+    onSuccess: (data) => {
+      // ✅ Mettre à jour directement le cache au lieu de tout invalider
+      queryClient.setQueryData(['tournee', tournee.id], data);
+      queryClient.setQueryData(['tournees'], (old: any) => {
+        if (!old) return old;
+        return old.map((t: any) => t.id === tournee.id ? data : t);
+      });
+      console.log('[TourneeDetailView] Cache updated');
     },
+    onError: (error) => {
+      console.error('[TourneeDetailView] Mutation error:', error);
+      toast.error('Erreur lors de la sauvegarde');
+    }
   });
 
   // Sync interaction to CRM
   const syncToCRM = useMutation({
     mutationFn: async ({ entrepriseId, type, dateRelance }: { entrepriseId: string; type: string; dateRelance?: string }) => {
+      // Déterminer le statut du lead basé sur le type d'interaction
+      const leadStatusMap: Record<string, string> = {
+        visite: 'contacte',
+        rdv: 'proposition',
+        a_revoir: 'qualifie',
+        a_rappeler: 'contacte',
+      };
+
       const { error } = await supabase.functions.invoke('sync-interaction', {
         body: {
           entreprise_id: entrepriseId,
           type,
-          statut: type === 'a_revoir' ? 'a_rappeler' : 'en_cours',
+          statut: type === 'a_rappeler' ? 'a_rappeler' : 'en_cours',
           notes: `Depuis tournée: ${tournee.nom}`,
           date_relance: dateRelance || null,
+          nouveau_statut_lead: leadStatusMap[type] || 'contacte', // ✅ Ajout du statut de lead
         },
       });
 
@@ -342,47 +370,155 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
   };
 
   const handleVisiteChange = async (siteId: string, field: keyof VisiteStatus, value: boolean, dateRelance?: string) => {
-    const newStatus = {
-      ...visitesStatus,
-      [siteId]: {
-        ...(visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false, aRappeler: false }),
-        [field]: value,
-      },
-    };
-    
-    setVisitesStatus(newStatus);
+    try {
+      // 1. Mettre à jour l'état local
+      const newStatus = {
+        ...visitesStatus,
+        [siteId]: {
+          ...(visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false, aRappeler: false }),
+          [field]: value,
+        },
+      };
+      
+      setVisitesStatus(newStatus);
+      console.log('[TourneeDetailView] New status:', newStatus);
 
-    // Save to database
-    await updateTourneeMutation.mutateAsync({
-      visites_effectuees: newStatus,
-    });
+      // 2. Sauvegarder directement dans la BDD
+      const { data: savedData, error: saveError } = await supabase
+        .from('tournees')
+        .update({ visites_effectuees: newStatus })
+        .eq('id', tournee.id)
+        .select()
+        .single();
 
-    // Sync to CRM
-    if (value) {
+      if (saveError) {
+        console.error('[TourneeDetailView] Save error:', saveError);
+        toast.error('Erreur de sauvegarde');
+        return;
+      }
+
+      console.log('[TourneeDetailView] Saved successfully');
+
       const typeMap: Record<keyof VisiteStatus, string> = {
         visite: 'visite',
         rdv: 'rdv',
         aRevoir: 'a_revoir',
         aRappeler: 'a_rappeler',
       };
-      
-      try {
-        await syncToCRM.mutateAsync({
-          entrepriseId: siteId,
-          type: typeMap[field] || field,
-          dateRelance,
-        });
-        
-        const messages: Record<keyof VisiteStatus, string> = {
-          visite: `Visite du ${new Date().toLocaleDateString('fr-FR')} enregistrée`,
-          rdv: dateRelance ? `RDV planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'RDV enregistré',
-          aRevoir: dateRelance ? `Revisite planifiée le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'À revoir enregistré',
-          aRappeler: dateRelance ? `Rappel planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : 'À rappeler enregistré',
-        };
-        toast.success(messages[field] || 'Action enregistrée');
-      } catch (error) {
-        console.error('Error syncing to CRM:', error);
+
+      const type = typeMap[field];
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) return;
+
+      // 3. Si décochage, supprimer l'interaction CRM correspondante
+      if (!value) {
+        const { error: deleteError } = await supabase
+          .from('lead_interactions')
+          .delete()
+          .eq('entreprise_id', siteId)
+          .eq('user_id', session.user.id)
+          .eq('type', type);
+
+        if (deleteError) {
+          console.error('[TourneeDetailView] Delete error:', deleteError);
+        }
+
+        toast.success('Statut supprimé');
+        queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
+        queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
+        return;
       }
+
+      // 4. Si cochage, vérifier si une interaction existe déjà
+      const { data: existingInteraction } = await supabase
+        .from('lead_interactions')
+        .select('id, type')
+        .eq('entreprise_id', siteId)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      const leadStatusMap: Record<string, string> = {
+        visite: 'contacte',
+        rdv: 'proposition',
+        a_revoir: 'qualifie',
+        a_rappeler: 'contacte',
+      };
+
+      const statut = type === 'a_rappeler' ? 'a_rappeler' : 'en_cours';
+
+      if (existingInteraction) {
+        // Mettre à jour l'interaction existante au lieu de créer un doublon
+        const { error: updateError } = await supabase
+          .from('lead_interactions')
+          .update({
+            type,
+            statut,
+            date_relance: dateRelance ?? null,
+            notes: `Depuis tournée: ${tournee.nom} (modifié)`,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingInteraction.id);
+
+        if (updateError) {
+          console.error('[TourneeDetailView] Update error:', updateError);
+          toast.error('❌ Erreur de mise à jour CRM');
+          return;
+        }
+
+        // Mettre à jour le lead_statuts aussi
+        const { data: existingStatus } = await supabase
+          .from('lead_statuts')
+          .select('id')
+          .eq('entreprise_id', siteId)
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        if (existingStatus) {
+          await supabase
+            .from('lead_statuts')
+            .update({
+              statut: leadStatusMap[type] || 'contacte',
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', existingStatus.id);
+        }
+      } else {
+        // Créer une nouvelle interaction
+        const { error: crmError } = await supabase.functions.invoke('sync-interaction', {
+          body: {
+            entreprise_id: siteId,
+            type,
+            statut,
+            notes: `Depuis tournée: ${tournee.nom}`,
+            date_relance: dateRelance || null,
+            nouveau_statut_lead: leadStatusMap[type] || 'contacte',
+          },
+        });
+
+        if (crmError) {
+          console.error('[TourneeDetailView] CRM error:', crmError);
+          toast.error('❌ Erreur de synchronisation CRM');
+          return;
+        }
+      }
+
+      // 5. Messages de succès
+      const messages: Record<keyof VisiteStatus, string> = {
+        visite: '✅ Visite enregistrée',
+        rdv: dateRelance ? `📅 RDV planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : '📅 RDV enregistré',
+        aRevoir: dateRelance ? `👁️ Revisite planifiée le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : '👁️ À revoir enregistré',
+        aRappeler: dateRelance ? `📞 Rappel planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : '📞 À rappeler enregistré',
+      };
+      toast.success(messages[field] || 'Action enregistrée');
+
+      // 6. Invalider les caches pour synchronisation
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
+      
+    } catch (error) {
+      console.error('[TourneeDetailView] Unexpected error:', error);
+      toast.error('Erreur inattendue');
     }
   };
 

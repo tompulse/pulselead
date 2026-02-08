@@ -72,12 +72,62 @@ export const useNotifications = (userId: string | undefined) => {
   // Delete reminder mutation
   const deleteReminderMutation = useMutation({
     mutationFn: async (reminderId: string) => {
+      // 1. Récupérer l'interaction avant de la supprimer pour sync avec tournée
+      const { data: interaction } = await supabase
+        .from('lead_interactions')
+        .select('entreprise_id, type')
+        .eq('id', reminderId)
+        .single();
+
+      // 2. Supprimer l'interaction
       const { error } = await supabase
         .from('lead_interactions')
         .delete()
         .eq('id', reminderId);
 
       if (error) throw error;
+
+      // 3. Mettre à jour les tournées qui contiennent cette entreprise
+      if (interaction?.entreprise_id) {
+        const { data: tournees } = await supabase
+          .from('tournees')
+          .select('id, visites_effectuees, entreprises_ids')
+          .contains('entreprises_ids', [interaction.entreprise_id]);
+
+        if (tournees && tournees.length > 0) {
+          const typeToFieldMap: Record<string, keyof VisiteStatus> = {
+            visite: 'visite',
+            rdv: 'rdv',
+            a_revoir: 'aRevoir',
+            a_rappeler: 'aRappeler',
+          };
+
+          const fieldToUpdate = typeToFieldMap[interaction.type];
+
+          for (const tournee of tournees) {
+            if (tournee.visites_effectuees && typeof tournee.visites_effectuees === 'object') {
+              const visites = tournee.visites_effectuees as Record<string, VisiteStatus>;
+              if (visites[interaction.entreprise_id]?.[fieldToUpdate]) {
+                // Décocher le statut dans la tournée
+                const updatedVisites = {
+                  ...visites,
+                  [interaction.entreprise_id]: {
+                    ...visites[interaction.entreprise_id],
+                    [fieldToUpdate]: false,
+                  },
+                };
+
+                await supabase
+                  .from('tournees')
+                  .update({ visites_effectuees: updatedVisites })
+                  .eq('id', tournee.id);
+
+                console.log('[Notifications] Tournée mise à jour:', tournee.id);
+              }
+            }
+          }
+        }
+      }
     },
     onSuccess: () => {
       // Invalidate all related queries for bidirectional sync
@@ -85,10 +135,11 @@ export const useNotifications = (userId: string | undefined) => {
       queryClient.invalidateQueries({ queryKey: ['crm-interactions', userId] });
       queryClient.invalidateQueries({ queryKey: ['crm-notes', userId] });
       queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
+      queryClient.invalidateQueries({ queryKey: ['tournee'] }); // ✅ Invalider les tournées aussi
       
       toast({
         title: 'Relance supprimée',
-        description: 'La relance a été retirée de votre liste',
+        description: 'La relance a été retirée de votre liste et de vos tournées',
       });
     },
     onError: (error) => {
