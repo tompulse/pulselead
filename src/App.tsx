@@ -10,7 +10,8 @@ import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
 // Lazy load heavy pages for better performance
-const LandingPage = lazy(() => import("./pages/LandingPage"));
+const EntrepriseLanding = lazy(() => import("./pages/EntrepriseLanding"));
+const CommercialPage = lazy(() => import("./pages/CommercialPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const TourneeDetail = lazy(() => import("./pages/TourneeDetail"));
@@ -63,7 +64,8 @@ const App = () => (
         <CookieConsent />
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<EntrepriseLanding />} />
+            <Route path="/commercial" element={<CommercialPage />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/email-confirmed" element={<EmailConfirmed />} />
             
