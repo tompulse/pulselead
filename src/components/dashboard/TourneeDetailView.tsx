@@ -465,16 +465,41 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
           toast.error('❌ Erreur de mise à jour CRM');
           return;
         }
+      } else {
+        // Créer une nouvelle interaction directement
+        const { error: insertError } = await supabase
+          .from('lead_interactions')
+          .insert({
+            entreprise_id: siteId,
+            user_id: session.user.id,
+            type,
+            statut,
+            date_relance: dateRelance ?? null,
+            notes: `Depuis tournée: ${tournee.nom}`,
+          });
 
-        // Mettre à jour le lead_statuts aussi
-        const { data: existingStatus } = await supabase
-          .from('lead_statuts')
-          .select('id')
-          .eq('entreprise_id', siteId)
-          .eq('user_id', session.user.id)
-          .maybeSingle();
+        if (insertError) {
+          console.error('[TourneeDetailView] Insert error:', insertError);
+          toast.error('❌ Erreur de création CRM');
+          return;
+        }
+      }
 
-        if (existingStatus) {
+      // 5. Mettre à jour ou créer le statut du lead
+      const { data: existingStatus } = await supabase
+        .from('lead_statuts')
+        .select('id, statut')
+        .eq('entreprise_id', siteId)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (existingStatus) {
+        // Ne mettre à jour que si le nouveau statut est "plus avancé"
+        const statusOrder = ['nouveau', 'contacte', 'qualifie', 'proposition', 'negociation', 'gagne', 'perdu'];
+        const currentIndex = statusOrder.indexOf(existingStatus.statut);
+        const newIndex = statusOrder.indexOf(leadStatusMap[type] || 'contacte');
+        
+        if (newIndex > currentIndex) {
           await supabase
             .from('lead_statuts')
             .update({
@@ -484,33 +509,15 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
             .eq('id', existingStatus.id);
         }
       } else {
-        // Créer une nouvelle interaction
-        const { error: crmError } = await supabase.functions.invoke('sync-interaction', {
-          body: {
+        // Créer un nouveau statut
+        await supabase
+          .from('lead_statuts')
+          .insert({
             entreprise_id: siteId,
-            type,
-            statut,
-            notes: `Depuis tournée: ${tournee.nom}`,
-            date_relance: dateRelance || null,
-            nouveau_statut_lead: leadStatusMap[type] || 'contacte',
-          },
-        });
-
-        if (crmError) {
-          console.error('[TourneeDetailView] CRM error:', crmError);
-          toast.error('❌ Erreur de synchronisation CRM');
-          return;
-        }
+            user_id: session.user.id,
+            statut: leadStatusMap[type] || 'contacte',
+          });
       }
-
-      // 5. Messages de succès
-      const messages: Record<keyof VisiteStatus, string> = {
-        visite: '✅ Visite enregistrée',
-        rdv: dateRelance ? `📅 RDV planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : '📅 RDV enregistré',
-        aRevoir: dateRelance ? `👁️ Revisite planifiée le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : '👁️ À revoir enregistré',
-        aRappeler: dateRelance ? `📞 Rappel planifié le ${new Date(dateRelance).toLocaleDateString('fr-FR')}` : '📞 À rappeler enregistré',
-      };
-      toast.success(messages[field] || 'Action enregistrée');
 
       // 6. Invalider les caches pour synchronisation
       queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });

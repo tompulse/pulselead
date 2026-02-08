@@ -258,42 +258,6 @@ const TourneeDetail = () => {
     }
   });
 
-  // Sync interaction to CRM
-  const syncToCRM = useMutation({
-    mutationFn: async ({
-      entrepriseId,
-      type,
-      dateRelance,
-    }: {
-      entrepriseId: string;
-      type: string;
-      dateRelance?: string;
-    }) => {
-      // Déterminer le statut du lead basé sur le type d'interaction
-      const leadStatusMap: Record<string, string> = {
-        visite: 'contacte',
-        rdv: 'proposition',
-        a_revoir: 'qualifie',
-        a_rappeler: 'contacte',
-      };
-      
-      const statut = type === 'a_rappeler' ? 'a_rappeler' : 'en_cours';
-
-      const { error } = await supabase.functions.invoke('sync-interaction', {
-        body: {
-          entreprise_id: entrepriseId,
-          type,
-          statut,
-          notes: `Depuis tournée: ${tournee?.nom || 'Tournée'}`,
-          date_relance: dateRelance ?? null,
-          nouveau_statut_lead: leadStatusMap[type] || 'contacte', // ✅ Ajout du statut de lead
-        },
-      });
-
-      if (error) throw error;
-    },
-  });
-
   const handleVisiteChange = async (
     siteId: string,
     field: keyof VisiteStatus,
@@ -360,7 +324,7 @@ const TourneeDetail = () => {
         return;
       }
 
-      // 4. Si cochage, vérifier si une interaction existe déjà pour ce type précis
+      // 4. Si cochage, créer/mettre à jour directement l'interaction CRM
       const { data: existingInteraction } = await supabase
         .from('lead_interactions')
         .select('id, type')
@@ -377,6 +341,7 @@ const TourneeDetail = () => {
       };
 
       const statut = type === 'a_rappeler' ? 'a_rappeler' : 'en_cours';
+      const newLeadStatus = leadStatusMap[type] || 'contacte';
 
       if (existingInteraction) {
         // Mettre à jour l'interaction existante
@@ -396,36 +361,58 @@ const TourneeDetail = () => {
           toast.error('❌ Erreur de mise à jour CRM');
           return;
         }
-
-        // Mettre à jour le statut du lead aussi
-        await supabase.functions.invoke('sync-interaction', {
-          body: {
-            entreprise_id: siteId,
-            type,
-            statut,
-            notes: `Depuis tournée: ${tournee?.nom || 'Tournée'} (modifié)`,
-            date_relance: dateRelance ?? null,
-            nouveau_statut_lead: leadStatusMap[type] || 'contacte',
-          },
-        });
       } else {
-        // Créer une nouvelle interaction
-        const { error: crmError } = await supabase.functions.invoke('sync-interaction', {
-          body: {
+        // Créer une nouvelle interaction directement
+        const { error: insertError } = await supabase
+          .from('lead_interactions')
+          .insert({
             entreprise_id: siteId,
+            user_id: session.user.id,
             type,
             statut,
-            notes: `Depuis tournée: ${tournee?.nom || 'Tournée'}`,
             date_relance: dateRelance ?? null,
-            nouveau_statut_lead: leadStatusMap[type] || 'contacte',
-          },
-        });
+            notes: `Depuis tournée: ${tournee?.nom || 'Tournée'}`,
+          });
 
-        if (crmError) {
-          console.error('[TourneeDetail] CRM sync error:', crmError);
-          toast.error('❌ Erreur de synchronisation CRM');
+        if (insertError) {
+          console.error('[TourneeDetail] Insert error:', insertError);
+          toast.error('❌ Erreur de création CRM');
           return;
         }
+      }
+
+      // 5. Mettre à jour ou créer le statut du lead
+      const { data: existingStatus } = await supabase
+        .from('lead_statuts')
+        .select('id, statut')
+        .eq('entreprise_id', siteId)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (existingStatus) {
+        // Ne mettre à jour que si le nouveau statut est "plus avancé"
+        const statusOrder = ['nouveau', 'contacte', 'qualifie', 'proposition', 'negociation', 'gagne', 'perdu'];
+        const currentIndex = statusOrder.indexOf(existingStatus.statut);
+        const newIndex = statusOrder.indexOf(newLeadStatus);
+        
+        if (newIndex > currentIndex) {
+          await supabase
+            .from('lead_statuts')
+            .update({
+              statut: newLeadStatus,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', existingStatus.id);
+        }
+      } else {
+        // Créer un nouveau statut
+        await supabase
+          .from('lead_statuts')
+          .insert({
+            entreprise_id: siteId,
+            user_id: session.user.id,
+            statut: newLeadStatus,
+          });
       }
 
       // 5. Message de succès
