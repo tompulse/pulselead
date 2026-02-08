@@ -113,12 +113,38 @@ export const CRMViewContainer = ({
   });
 
   // Calculate activity stats from real data
-  const aRappelerCount = interactions.filter(i => i.type === 'appel' && i.statut === 'a_rappeler').length;
-  const rdvCount = interactions.filter(i => i.type === 'rdv').length;
-  const aRevoirCount = interactions.filter(i => i.type === 'a_revoir').length;
+  console.log('[CRM] Toutes les interactions:', interactions);
+  
+  const aRappelerList = interactions.filter(i => {
+    const match = i.type === 'appel' && i.statut === 'a_rappeler';
+    console.log('[CRM] Check aRappeler:', i.type, i.statut, '→', match);
+    return match;
+  });
+  const aRappelerCount = aRappelerList.length;
+  
+  const rdvList = interactions.filter(i => {
+    const match = i.type === 'rdv';
+    console.log('[CRM] Check rdv:', i.type, '→', match);
+    return match;
+  });
+  const rdvCount = rdvList.length;
+  
+  const aRevoirList = interactions.filter(i => {
+    const match = i.type === 'a_revoir';
+    console.log('[CRM] Check aRevoir:', i.type, '→', match);
+    return match;
+  });
+  const aRevoirCount = aRevoirList.length;
+  
   const notesCount = interactions.filter(i => i.notes && i.notes.trim() !== '').length;
 
-  console.log('[CRM] Stats:', { aRappelerCount, rdvCount, aRevoirCount, notesCount, totalInteractions: interactions.length });
+  console.log('[CRM] Stats finales:', { 
+    aRappelerCount, 
+    rdvCount, 
+    aRevoirCount, 
+    notesCount, 
+    totalInteractions: interactions.length 
+  });
 
   // Map stage keys to database statuts
   const stageToStatutMap: Record<string, string> = {
