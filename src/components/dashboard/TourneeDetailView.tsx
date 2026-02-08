@@ -371,7 +371,10 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
 
   const handleVisiteChange = async (siteId: string, field: keyof VisiteStatus, value: boolean, dateRelance?: string) => {
     try {
-      // 1. Mettre à jour l'état local
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) return;
+
+      // 1. MAJ état local
       const newStatus = {
         ...visitesStatus,
         [siteId]: {
@@ -379,25 +382,13 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
           [field]: value,
         },
       };
-      
       setVisitesStatus(newStatus);
-      console.log('[TourneeDetailView] New status:', newStatus);
 
-      // 2. Sauvegarder directement dans la BDD
-      const { data: savedData, error: saveError } = await supabase
+      // 2. Sauvegarder dans tournees
+      await supabase
         .from('tournees')
         .update({ visites_effectuees: newStatus })
-        .eq('id', tournee.id)
-        .select()
-        .single();
-
-      if (saveError) {
-        console.error('[TourneeDetailView] Save error:', saveError);
-        toast.error('Erreur de sauvegarde');
-        return;
-      }
-
-      console.log('[TourneeDetailView] Saved successfully');
+        .eq('id', tournee.id);
 
       const typeMap: Record<keyof VisiteStatus, string> = {
         visite: 'visite',
@@ -405,128 +396,49 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         aRevoir: 'a_revoir',
         aRappeler: 'a_rappeler',
       };
-
       const type = typeMap[field];
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user?.id) return;
 
-      // 3. Si décochage, supprimer l'interaction CRM correspondante
+      // 3. Sync CRM
       if (!value) {
-        const { error: deleteError } = await supabase
+        // DÉCOCHAGE
+        await supabase
           .from('lead_interactions')
           .delete()
           .eq('entreprise_id', siteId)
           .eq('user_id', session.user.id)
           .eq('type', type);
 
-        if (deleteError) {
-          console.error('[TourneeDetailView] Delete error:', deleteError);
-        }
-
-        toast.success('Statut supprimé');
-        queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
+        toast.success('Supprimé');
         queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
+        queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
         return;
       }
 
-      // 4. Si cochage, vérifier si une interaction existe déjà pour ce type précis
-      const { data: existingInteraction } = await supabase
+      // COCHAGE : Créer interaction
+      await supabase
         .from('lead_interactions')
-        .select('id, type')
+        .delete()
         .eq('entreprise_id', siteId)
         .eq('user_id', session.user.id)
-        .eq('type', type)
-        .maybeSingle();
+        .eq('type', type);
 
-      const leadStatusMap: Record<string, string> = {
-        visite: 'contacte',
-        rdv: 'proposition',
-        a_revoir: 'qualifie',
-        a_rappeler: 'contacte',
-      };
+      await supabase
+        .from('lead_interactions')
+        .insert({
+          entreprise_id: siteId,
+          user_id: session.user.id,
+          type,
+          statut: type === 'a_rappeler' ? 'a_rappeler' : 'en_cours',
+          date_relance: dateRelance ?? null,
+          notes: `Depuis tournée`,
+        });
 
-      const statut = type === 'a_rappeler' ? 'a_rappeler' : 'en_cours';
-
-      if (existingInteraction) {
-        // Mettre à jour l'interaction existante au lieu de créer un doublon
-        const { error: updateError } = await supabase
-          .from('lead_interactions')
-          .update({
-            type,
-            statut,
-            date_relance: dateRelance ?? null,
-            notes: `Depuis tournée: ${tournee.nom} (modifié)`,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', existingInteraction.id);
-
-        if (updateError) {
-          console.error('[TourneeDetailView] Update error:', updateError);
-          toast.error('❌ Erreur de mise à jour CRM');
-          return;
-        }
-      } else {
-        // Créer une nouvelle interaction directement
-        const { error: insertError } = await supabase
-          .from('lead_interactions')
-          .insert({
-            entreprise_id: siteId,
-            user_id: session.user.id,
-            type,
-            statut,
-            date_relance: dateRelance ?? null,
-            notes: `Depuis tournée: ${tournee.nom}`,
-          });
-
-        if (insertError) {
-          console.error('[TourneeDetailView] Insert error:', insertError);
-          toast.error('❌ Erreur de création CRM');
-          return;
-        }
-      }
-
-      // 5. Mettre à jour ou créer le statut du lead
-      const { data: existingStatus } = await supabase
-        .from('lead_statuts')
-        .select('id, statut')
-        .eq('entreprise_id', siteId)
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (existingStatus) {
-        // Ne mettre à jour que si le nouveau statut est "plus avancé"
-        const statusOrder = ['nouveau', 'contacte', 'qualifie', 'proposition', 'negociation', 'gagne', 'perdu'];
-        const currentIndex = statusOrder.indexOf(existingStatus.statut);
-        const newIndex = statusOrder.indexOf(leadStatusMap[type] || 'contacte');
-        
-        if (newIndex > currentIndex) {
-          await supabase
-            .from('lead_statuts')
-            .update({
-              statut: leadStatusMap[type] || 'contacte',
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', existingStatus.id);
-        }
-      } else {
-        // Créer un nouveau statut
-        await supabase
-          .from('lead_statuts')
-          .insert({
-            entreprise_id: siteId,
-            user_id: session.user.id,
-            statut: leadStatusMap[type] || 'contacte',
-          });
-      }
-
-      // 6. Invalider les caches pour synchronisation
-      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
+      toast.success('✅ Enregistré');
       queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
-      queryClient.invalidateQueries({ queryKey: ['activity-interactions'] });
-      
+      queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
     } catch (error) {
-      console.error('[TourneeDetailView] Unexpected error:', error);
-      toast.error('Erreur inattendue');
+      console.error(error);
+      toast.error('Erreur');
     }
   };
 
