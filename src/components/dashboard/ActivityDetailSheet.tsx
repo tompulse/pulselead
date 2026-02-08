@@ -83,13 +83,12 @@ export const ActivityDetailSheet = ({
         .from('lead_interactions')
         .select('*')
         .eq('user_id', userId)
-        .order('date_interaction', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (activityType === 'a_revoir') {
         query = query.eq('type', 'a_revoir');
       } else if (activityType === 'a_rappeler') {
-        // Include both 'a_rappeler' and legacy 'appel' types
-        query = query.in('type', ['a_rappeler', 'appel']);
+        query = query.eq('type', 'appel').eq('statut', 'a_rappeler');
       } else {
         query = query.eq('type', activityType);
       }
@@ -136,7 +135,7 @@ export const ActivityDetailSheet = ({
           visite: 'visite',
           rdv: 'rdv',
           a_revoir: 'aRevoir',
-          a_rappeler: 'aRappeler',
+          appel: 'aRappeler', // type='appel' avec statut='a_rappeler' → aRappeler
         };
 
         const fieldToUpdate = typeToFieldMap[interactionType];
@@ -252,7 +251,7 @@ export const ActivityDetailSheet = ({
                       )}
                       
                       <p className="text-xs text-muted-foreground mt-1">
-                        {hasScheduledDate ? 'Créé ' : ''}{formatInteractionDate(interaction.date_interaction)}
+                        {hasScheduledDate ? 'Créé ' : ''}{formatInteractionDate(interaction.created_at || interaction.date_interaction)}
                       </p>
                       
                       {interaction.notes && (
