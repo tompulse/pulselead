@@ -979,31 +979,6 @@ export const NafFilters = ({
                           {formatDualCount(division.count, division.globalCount, hasActiveFilters)}
                         </div>
                       </div>
-                      
-                      {/* ❌ Sous-catégories supprimées (groupes, classes, sous-classes) */}
-                      {false && division.groupes.map((groupe) => {
-                                    const sousClasseSelected = filters.nafSousClasses?.includes(sousClasse.code);
-                                    
-                                    return (
-                                      <div key={sousClasse.code} className="ml-4">
-                                        <div
-                                          onClick={() => handleSousClasseToggle(sousClasse.code)}
-                                          className="flex items-center gap-1.5 cursor-pointer hover:bg-accent/10 p-1 rounded transition-colors active:scale-[0.98] border-l border-accent/10 pl-2"
-                                        >
-                                          <Checkbox selected={sousClasseSelected} size="sm" />
-                                          <span className="text-[10px] font-mono text-accent/60 shrink-0">{sousClasse.code}</span>
-                                          <span className="text-[10px] leading-snug flex-1 break-words ml-1">{sousClasse.label}</span>
-                                          {formatDualCount(sousClasse.count, sousClasse.globalCount, hasActiveFilters)}
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
                     </div>
                   );
                 })
