@@ -288,7 +288,7 @@ const TourneeDetail = () => {
         visite: 'visite',
         rdv: 'rdv',
         aRevoir: 'a_revoir',
-        aRappeler: 'a_rappeler',
+        aRappeler: 'appel', // 'a_rappeler' n'est pas un type, on utilise 'appel'
       };
       const type = typeMap[field];
 
@@ -316,13 +316,16 @@ const TourneeDetail = () => {
         .eq('user_id', session.user.id)
         .eq('type', type);
 
+      // Pour "à rappeler", on met le statut a_rappeler
+      const statut = field === 'aRappeler' ? 'a_rappeler' : 'en_cours';
+
       await supabase
         .from('lead_interactions')
         .insert({
           entreprise_id: siteId,
           user_id: session.user.id,
           type,
-          statut: type === 'a_rappeler' ? 'a_rappeler' : 'en_cours',
+          statut,
           date_relance: dateRelance ?? null,
           notes: `Depuis tournée`,
         });

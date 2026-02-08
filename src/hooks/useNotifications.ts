@@ -25,8 +25,8 @@ export const useNotifications = (userId: string | undefined) => {
       const today = new Date();
       const todayStr = today.toISOString().split('T')[0];
       
-      // Fetch all interactions with types 'a_rappeler', 'a_revoir', 'rdv'
-      // Include those with future dates OR without dates (to not lose them)
+      // Fetch all interactions with types for reminders
+      // Types: 'visite', 'rdv', 'a_revoir', 'appel' (avec statut='a_rappeler')
       const { data, error } = await supabase
         .from('lead_interactions')
         .select(`
@@ -34,10 +34,11 @@ export const useNotifications = (userId: string | undefined) => {
           entreprise_id,
           date_relance,
           notes,
-          type
+          type,
+          statut
         `)
         .eq('user_id', userId)
-        .in('type', ['a_rappeler', 'a_revoir', 'rdv'])
+        .or('type.in.(rdv,a_revoir,appel),and(type.eq.appel,statut.eq.a_rappeler)')
         .order('date_relance', { ascending: true, nullsFirst: false });
 
       if (error) throw error;
@@ -99,7 +100,7 @@ export const useNotifications = (userId: string | undefined) => {
             visite: 'visite',
             rdv: 'rdv',
             a_revoir: 'aRevoir',
-            a_rappeler: 'aRappeler',
+            appel: 'aRappeler', // 'appel' avec statut 'a_rappeler' = aRappeler
           };
 
           const fieldToUpdate = typeToFieldMap[interaction.type];
