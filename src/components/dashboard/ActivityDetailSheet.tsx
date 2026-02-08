@@ -224,7 +224,9 @@ export const ActivityDetailSheet = ({
             ) : (
               interactions.map((interaction) => {
                 const isRdv = interaction.type === 'rdv';
-                const hasScheduledDate = isRdv && interaction.date_relance;
+                const isARevoir = interaction.type === 'a_revoir';
+                const isARappeler = interaction.type === 'appel' && interaction.statut === 'a_rappeler';
+                const hasScheduledDate = interaction.date_relance;
                 
                 return (
                 <div
@@ -240,12 +242,24 @@ export const ActivityDetailSheet = ({
                         {interaction.site?.ville || '—'}
                       </p>
                       
-                      {/* For RDV: Show scheduled date/time prominently */}
+                      {/* Show scheduled date for RDV, À revoir, À rappeler */}
                       {hasScheduledDate && (
-                        <div className="flex items-center gap-1.5 mt-2 px-2 py-1 rounded bg-green-500/10 border border-green-500/20 w-fit">
-                          <Calendar className="w-3.5 h-3.5 text-green-400" />
-                          <span className="text-xs font-medium text-green-400">
-                            {formatInteractionDate(interaction.date_relance!, true)}
+                        <div className={`flex items-center gap-1.5 mt-2 px-2 py-1 rounded w-fit ${
+                          isRdv ? 'bg-green-500/10 border border-green-500/20' :
+                          isARevoir ? 'bg-orange-500/10 border border-orange-500/20' :
+                          'bg-blue-500/10 border border-blue-500/20'
+                        }`}>
+                          <Calendar className={`w-3.5 h-3.5 ${
+                            isRdv ? 'text-green-400' :
+                            isARevoir ? 'text-orange-400' :
+                            'text-blue-400'
+                          }`} />
+                          <span className={`text-xs font-medium ${
+                            isRdv ? 'text-green-400' :
+                            isARevoir ? 'text-orange-400' :
+                            'text-blue-400'
+                          }`}>
+                            {formatInteractionDate(interaction.date_relance!, isRdv)}
                           </span>
                         </div>
                       )}
