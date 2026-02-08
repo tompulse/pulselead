@@ -55,6 +55,7 @@ export const CRMViewContainer = ({
         .order('date_interaction', { ascending: false });
       
       if (error) throw error;
+      console.log('[CRM] Interactions chargées:', data?.length, data);
       return data;
     },
   });
@@ -116,6 +117,8 @@ export const CRMViewContainer = ({
   const rdvCount = interactions.filter(i => i.type === 'rdv').length;
   const aRevoirCount = interactions.filter(i => i.type === 'a_revoir').length;
   const notesCount = interactions.filter(i => i.notes && i.notes.trim() !== '').length;
+
+  console.log('[CRM] Stats:', { aRappelerCount, rdvCount, aRevoirCount, notesCount, totalInteractions: interactions.length });
 
   // Map stage keys to database statuts
   const stageToStatutMap: Record<string, string> = {

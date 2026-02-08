@@ -25,8 +25,7 @@ export const useNotifications = (userId: string | undefined) => {
       const today = new Date();
       const todayStr = today.toISOString().split('T')[0];
       
-      // Fetch all interactions with types for reminders
-      // Types: 'visite', 'rdv', 'a_revoir', 'appel' (avec statut='a_rappeler')
+      // Fetch interactions avec date_relance (rappels/RDV/à revoir)
       const { data, error } = await supabase
         .from('lead_interactions')
         .select(`
@@ -38,7 +37,7 @@ export const useNotifications = (userId: string | undefined) => {
           statut
         `)
         .eq('user_id', userId)
-        .or('type.in.(rdv,a_revoir,appel),and(type.eq.appel,statut.eq.a_rappeler)')
+        .in('type', ['rdv', 'a_revoir', 'appel'])
         .order('date_relance', { ascending: true, nullsFirst: false });
 
       if (error) throw error;

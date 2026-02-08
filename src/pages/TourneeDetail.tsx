@@ -319,7 +319,7 @@ const TourneeDetail = () => {
       // Pour "à rappeler", on met le statut a_rappeler
       const statut = field === 'aRappeler' ? 'a_rappeler' : 'en_cours';
 
-      await supabase
+      const { data: insertedData, error: insertError } = await supabase
         .from('lead_interactions')
         .insert({
           entreprise_id: siteId,
@@ -328,8 +328,16 @@ const TourneeDetail = () => {
           statut,
           date_relance: dateRelance ?? null,
           notes: `Depuis tournée`,
-        });
+        })
+        .select();
 
+      if (insertError) {
+        console.error('[TourneeDetail] Insert error:', insertError);
+        toast.error('Erreur: ' + insertError.message);
+        return;
+      }
+
+      console.log('[TourneeDetail] Interaction créée:', insertedData);
       toast.success('✅ Enregistré');
       queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
       queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
