@@ -438,12 +438,10 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
         .select();
 
       if (insertError) {
-        console.error('[TourneeDetailView] Insert error:', insertError);
         toast.error('Erreur: ' + insertError.message);
         return;
       }
 
-      console.log('[TourneeDetailView] Interaction créée:', insertedData);
       toast.success('✅ Enregistré');
       queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
       queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });

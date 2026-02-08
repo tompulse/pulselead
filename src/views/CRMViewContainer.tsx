@@ -45,19 +45,24 @@ export const CRMViewContainer = ({
   const queryClient = useQueryClient();
 
   // Fetch interactions for activity stats
-  const { data: interactions = [] } = useQuery({
+  const { data: interactions = [], isLoading: interactionsLoading } = useQuery({
     queryKey: ['crm-interactions', userId],
     queryFn: async () => {
+      if (!userId) return [];
+      
       const { data, error } = await supabase
         .from('lead_interactions')
         .select('*')
         .eq('user_id', userId)
-        .order('date_interaction', { ascending: false });
+        .order('created_at', { ascending: false });
       
-      if (error) throw error;
-      console.log('[CRM] Interactions chargées:', data?.length, data);
-      return data;
+      if (error) {
+        console.error('[CRM] Error loading interactions:', error);
+        return [];
+      }
+      return data || [];
     },
+    enabled: !!userId,
   });
 
   // Fetch lead statuts with company names from nouveaux_sites
@@ -118,17 +123,6 @@ export const CRMViewContainer = ({
   const aRevoirCount = interactions.filter(i => i.type === 'a_revoir').length;
   const notesCount = interactions.filter(i => i.notes && i.notes.trim() !== '').length;
 
-  console.log('[CRM] userId:', userId);
-  console.log('[CRM] Interactions:', interactions);
-  console.log('[CRM] Stats:', { aRappelerCount, rdvCount, aRevoirCount, notesCount });
-  
-  // FORCE AFFICHAGE pour debug
-  const debugCounts = {
-    aRappeler: interactions.filter(i => i.type === 'appel' && i.statut === 'a_rappeler').length || 0,
-    rdv: interactions.filter(i => i.type === 'rdv').length || 0,
-    aRevoir: interactions.filter(i => i.type === 'a_revoir').length || 0,
-  };
-
   // Map stage keys to database statuts
   const stageToStatutMap: Record<string, string> = {
     'devis_a_faire': 'proposition',
@@ -174,7 +168,6 @@ export const CRMViewContainer = ({
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground mb-1 whitespace-nowrap">A rappeler</p>
               <p className="text-2xl sm:text-2xl md:text-3xl font-bold text-blue-400">{aRappelerCount}</p>
-              <p className="text-[8px] text-muted-foreground mt-1">Debug: {debugCounts.aRappeler}</p>
             </CardContent>
           </Card>
 
@@ -193,7 +186,6 @@ export const CRMViewContainer = ({
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground mb-1 whitespace-nowrap">À revoir</p>
               <p className="text-2xl sm:text-2xl md:text-3xl font-bold text-orange-400">{aRevoirCount}</p>
-              <p className="text-[8px] text-muted-foreground mt-1">Debug: {debugCounts.aRevoir}</p>
             </CardContent>
           </Card>
 
@@ -212,7 +204,6 @@ export const CRMViewContainer = ({
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground mb-1">RDV</p>
               <p className="text-2xl sm:text-2xl md:text-3xl font-bold text-green-400">{rdvCount}</p>
-              <p className="text-[8px] text-muted-foreground mt-1">Debug: {debugCounts.rdv}</p>
             </CardContent>
           </Card>
 

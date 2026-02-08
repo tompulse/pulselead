@@ -332,12 +332,10 @@ const TourneeDetail = () => {
         .select();
 
       if (insertError) {
-        console.error('[TourneeDetail] Insert error:', insertError);
         toast.error('Erreur: ' + insertError.message);
         return;
       }
 
-      console.log('[TourneeDetail] Interaction créée:', insertedData);
       toast.success('✅ Enregistré');
       queryClient.invalidateQueries({ queryKey: ['crm-interactions'] });
       queryClient.invalidateQueries({ queryKey: ['notification-reminders'] });
