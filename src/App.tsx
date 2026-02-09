@@ -18,6 +18,11 @@ const TourneeDetail = lazy(() => import("./pages/TourneeDetail"));
 const SecuritySettings = lazy(() => import("./pages/SecuritySettings"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 
+// Blog pages
+const BlogInstallateursSecurite = lazy(() => import("./pages/BlogInstallateursSecurite"));
+const BlogFournisseursRestauration = lazy(() => import("./pages/BlogFournisseursRestauration"));
+const BlogFournisseursIT = lazy(() => import("./pages/BlogFournisseursIT"));
+
 // Eagerly load light pages
 import Auth from "./pages/Auth";
 import EmailConfirmed from "./pages/EmailConfirmed";
@@ -26,6 +31,7 @@ import Error404 from "./pages/Error404";
 import Error500 from "./pages/Error500";
 import MentionsLegales from "./pages/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
+import PolitiqueCookies from "./pages/PolitiqueCookies";
 import CGV from "./pages/CGV";
 import CGU from "./pages/CGU";
 import { Navigate } from "react-router-dom";
@@ -90,9 +96,16 @@ const App = () => (
               </ProtectedRoute>
             } />
             
+            {/* Blog pages */}
+            <Route path="/blog/installateurs-securite" element={<BlogInstallateursSecurite />} />
+            <Route path="/blog/fournisseurs-restauration" element={<BlogFournisseursRestauration />} />
+            <Route path="/blog/fournisseurs-it" element={<BlogFournisseursIT />} />
+            
             {/* Legal pages */}
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/confidentialite" element={<PolitiqueConfidentialite />} />
+            <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+            <Route path="/politique-cookies" element={<PolitiqueCookies />} />
             <Route path="/cgv" element={<CGV />} />
             <Route path="/cgu" element={<CGU />} />
             
