@@ -200,7 +200,7 @@ const BlogFournisseursRestauration = () => {
                     {
                       step: '1',
                       title: 'RDV Calendly : définition cible',
-                      desc: 'Nous définissons votre profil client idéal (type d'établissement, taille, zones géo), et vos critères de qualification.',
+                        desc: 'Nous définissons votre profil client idéal (type d\'établissement, taille, zones géo), et vos critères de qualification.',
                       icon: Clock
                     },
                     {
