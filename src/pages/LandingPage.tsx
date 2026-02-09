@@ -285,6 +285,7 @@ const LandingPage = () => {
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                     <Button 
+                      onClick={() => navigate('/guide-leads-recents')}
                       variant="outline"
                       className="border-2 border-accent text-accent hover:bg-accent/10 font-semibold px-6 py-5 sm:py-6 w-full sm:w-auto"
                     >
@@ -365,6 +366,99 @@ const LandingPage = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
+            USE CASES SECTION - Cas d'usage par secteur
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section className="py-16 px-6 relative z-10" style={{
+          background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%)',
+          borderTop: '1px solid rgba(14, 165, 233, 0.15)'
+        }}>
+          <div className="container mx-auto max-w-6xl">
+            <div className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
+                Cas d'usage par secteur
+              </h2>
+              <p className="text-lg text-white/60 text-center mb-12 max-w-2xl mx-auto">
+                Découvrez comment nous transformons votre prospection selon votre activité
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Card 1 - Installateurs Sécurité */}
+                <Card 
+                  onClick={() => window.location.href = '/blog/installateurs-securite'}
+                  className="glass-card p-6 border-accent/20 hover:border-accent/50 transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <div className="w-full h-40 rounded-lg mb-4 flex items-center justify-center" style={{
+                    background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)'
+                  }}>
+                    <Shield className="w-16 h-16 text-red-400" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Installateurs systèmes de sécurité</h3>
+                  <p className="text-white/70 text-sm mb-4 leading-relaxed">
+                    Leads ciblés + app terrain = +40% CA. Signez les chantiers avant vos concurrents.
+                  </p>
+                  <Button 
+                    variant="outline"
+                    className="w-full border-accent text-accent hover:bg-accent/10"
+                  >
+                    Lire l'article détaillé
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Card>
+
+                {/* Card 2 - Fournisseurs Restauration */}
+                <Card 
+                  onClick={() => window.location.href = '/blog/fournisseurs-restauration'}
+                  className="glass-card p-6 border-accent/20 hover:border-accent/50 transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <div className="w-full h-40 rounded-lg mb-4 flex items-center justify-center" style={{
+                    background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(251, 146, 60, 0.1) 100%)',
+                    border: '1px solid rgba(251, 146, 60, 0.3)'
+                  }}>
+                    <Building2 className="w-16 h-16 text-orange-400" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Fournisseurs restauration</h3>
+                  <p className="text-white/70 text-sm mb-4 leading-relaxed">
+                    Contactez les nouveaux restaurants avant vos concurrents. +210% RDV, 38% conversion.
+                  </p>
+                  <Button 
+                    variant="outline"
+                    className="w-full border-accent text-accent hover:bg-accent/10"
+                  >
+                    Lire l'article détaillé
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Card>
+
+                {/* Card 3 - Fournisseurs IT */}
+                <Card 
+                  onClick={() => window.location.href = '/blog/fournisseurs-it'}
+                  className="glass-card p-6 border-accent/20 hover:border-accent/50 transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <div className="w-full h-40 rounded-lg mb-4 flex items-center justify-center" style={{
+                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)'
+                  }}>
+                    <Database className="w-16 h-16 text-blue-400" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Fournisseurs IT B2B</h3>
+                  <p className="text-white/70 text-sm mb-4 leading-relaxed">
+                    Ciblez les nouvelles entreprises avant qu'elles ne choisissent ailleurs. ROI 4,2x.
+                  </p>
+                  <Button 
+                    variant="outline"
+                    className="w-full border-accent text-accent hover:bg-accent/10"
+                  >
+                    Lire l'article détaillé
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════════
             SECTION ÉDUCATION - Le Secret Ignoré
         ═══════════════════════════════════════════════════════════════════ */}
         <section id="solution" className="py-20 px-6 scroll-mt-20 relative z-10" style={{
@@ -427,6 +521,7 @@ const LandingPage = () => {
               {/* CTA */}
               <div className="text-center mt-12">
                 <Button 
+                  onClick={() => navigate('/guide-leads-recents')}
                   variant="outline"
                   className="border-2 border-accent text-accent hover:bg-accent/10 font-semibold px-8 py-6 text-lg"
                 >

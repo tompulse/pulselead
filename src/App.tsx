@@ -23,6 +23,9 @@ const BlogInstallateursSecurite = lazy(() => import("./pages/BlogInstallateursSe
 const BlogFournisseursRestauration = lazy(() => import("./pages/BlogFournisseursRestauration"));
 const BlogFournisseursIT = lazy(() => import("./pages/BlogFournisseursIT"));
 
+// Lead magnet
+const GuideLeadsRecents = lazy(() => import("./pages/GuideLeadsRecents"));
+
 // Eagerly load light pages
 import Auth from "./pages/Auth";
 import EmailConfirmed from "./pages/EmailConfirmed";
@@ -100,6 +103,9 @@ const App = () => (
             <Route path="/blog/installateurs-securite" element={<BlogInstallateursSecurite />} />
             <Route path="/blog/fournisseurs-restauration" element={<BlogFournisseursRestauration />} />
             <Route path="/blog/fournisseurs-it" element={<BlogFournisseursIT />} />
+            
+            {/* Lead magnet */}
+            <Route path="/guide-leads-recents" element={<GuideLeadsRecents />} />
             
             {/* Legal pages */}
             <Route path="/mentions-legales" element={<MentionsLegales />} />
