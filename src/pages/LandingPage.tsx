@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, lazy, Suspense, useRef } from "react";
-import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles, LogOut, LayoutDashboard } from "lucide-react";
+import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, FileText, Database, Search, Route, Smartphone, Menu, Building2, Clock, Sparkles, LogOut, LayoutDashboard, Shield, Award, Star, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { DemoModeButton } from "@/components/landing/DemoModeButton";
 
 // Lazy load des composants non-critiques pour améliorer les performances
 const ContactSection = lazy(() => import("@/components/landing/ContactSection"));
-const SocialProof = lazy(() => import("@/components/landing/SocialProof").then(m => ({ default: m.SocialProof })));
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -248,45 +248,70 @@ const LandingPage = () => {
                 {/* COLONNE GAUCHE - Contenu texte */}
                 <div className="text-center lg:text-left order-1">
 
+                  {/* Badges avant titre */}
+                  <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-4">
+                    <Badge className="bg-accent/10 text-accent border-accent/30 px-3 py-1">
+                      ⭐ +23 PME accompagnées depuis 2023
+                    </Badge>
+                    <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 px-3 py-1">
+                      🔒 Garantie Résultats 90 jours
+                    </Badge>
+                  </div>
+
                   {/* Headline */}
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] mb-6">
-                    <span className="text-white">Vendez plus.</span>
+                    <span className="text-white">Dominez Votre Marché B2B :</span>
                     <br />
-                    <span className="gradient-text">Roulez moins.</span>
+                    <span className="gradient-text">Leads Personnalisés + App Terrain</span>
                   </h1>
+
+                  {/* Phrase choc */}
+                  <p className="text-xl sm:text-2xl text-accent font-semibold mb-4">
+                    Signez avant vos concurrents – pourquoi n'avez-vous pas commencé plus tôt ?
+                  </p>
 
                   {/* Subheadline */}
                   <p className="text-base sm:text-lg lg:text-xl text-white/80 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-                    La prospection terrain qui génère des résultats.<br />
-                    <span className="text-accent font-semibold">Sans perdre de temps sur la route.</span>
+                    Accompagnement premium depuis 2023 : recherche multi-canal du décideur précis sur créations 3-6 mois (restaurants, garages, pharmacies…), app Pulse hub pour prospection complète (téléphone, mail, terrain). Optimisez vos RDV et prenez des parts de marché.
                   </p>
 
                   {/* CTA */}
                   <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 mb-10">
                     <Button 
-                      onClick={handleCTAClick}
+                      onClick={() => window.open('https://calendly.com/tomiolovpro/pulse', '_blank')}
                       className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 w-full sm:w-auto"
                     >
-                      🚀 Essayer 7 jours GRATUIT
+                      Réserver Audit Gratuit
                       <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="border-2 border-accent text-accent hover:bg-accent/10 font-semibold px-6 py-5 sm:py-6 w-full sm:w-auto"
+                    >
+                      Guide Gratuit Leads Récents
                     </Button>
                   </div>
 
-                  {/* Stats KPIs - Optimisées */}
-                  <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6 max-w-lg mx-auto lg:mx-0 mb-6">
+                  {/* Stats KPIs avec source */}
+                  <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6 max-w-lg mx-auto lg:mx-0 mb-3">
                     <div className="text-center lg:text-left">
-                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">+30%</div>
-                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">de RDV<br />supplémentaires</p>
+                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">+3-5x</div>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">RDV<br />qualifiés*</p>
                     </div>
                     <div className="text-center lg:text-left">
                       <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">-40%</div>
-                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">de temps<br />gagné</p>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">kilomètres<br />parcourus*</p>
                     </div>
                     <div className="text-center lg:text-left">
-                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">+1900</div>
-                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">nouvelles<br />entreprises<br />chaque semaine</p>
+                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-1">+40%</div>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-white/70 font-medium leading-tight">ROI<br />moyen*</p>
                     </div>
                   </div>
+                  
+                  {/* Note source stats */}
+                  <p className="text-[10px] text-white/40 max-w-lg mx-auto lg:mx-0 mb-6">
+                    *Moyenne constatée sur 18 clients accompagnés en 2024-2025
+                  </p>
 
                   {/* Trust badges */}
                   <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-6 text-sm text-white/50">
@@ -340,43 +365,74 @@ const LandingPage = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SOLUTION SECTION - Fonctionnalités PULSE
+            SECTION ÉDUCATION - Le Secret Ignoré
         ═══════════════════════════════════════════════════════════════════ */}
         <section id="solution" className="py-20 px-6 scroll-mt-20 relative z-10" style={{
           background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(14, 165, 233, 0.04) 50%, rgba(0, 0, 0, 0.3) 100%)',
           borderTop: '2px solid rgba(6, 182, 212, 0.3)',
           borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
         }}>
-          <div className="container mx-auto max-w-5xl">
+          <div className="container mx-auto max-w-6xl">
             <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl sm:text-5xl font-bold text-center mb-12">
-                Tout ce dont vous avez <span className="gradient-text">besoin</span>
+              <h2 className="text-4xl sm:text-5xl font-bold text-center mb-6">
+                Le Secret Ignoré : <span className="gradient-text">Créations 3-6 Mois</span> = Signaux d'Achat Puissants
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="glass-card p-8 border-accent/20 hover:border-accent/50 transition-all duration-300">
-                  <Database className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-xl font-bold mb-3">Nouvelles entreprises, chaque semaine</h3>
+              <p className="text-lg text-white/70 text-center max-w-4xl mx-auto mb-12 leading-relaxed">
+                Depuis 2023, nous aidons des PME B2B à exploiter les créations récentes comme opportunité massive. Notre recherche multi-canal (Facebook, Google Actualités, journaux locaux, Bodacc, newsletters professionnelles, LinkedIn Premium, Full Enrich…) permet d'être le premier à contacter le décideur précis (responsable achat, technique, communication…) – pas juste le gérant. <strong className="text-white">Prenez de l'avance sur vos concurrents</strong> grâce à un ciblage intelligent.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <Card className="glass-card p-6 border-accent/20 hover:border-accent/50 transition-all duration-300">
+                  <Target className="w-10 h-10 text-accent mb-3" />
+                  <h3 className="text-lg font-bold mb-2">Signal vs Aléatoire</h3>
                   <p className="text-white/70 text-sm leading-relaxed">
-                    Filtrez par NAF, département, taille. Données SIRENE mises à jour chaque semaine.
+                    Ciblage précis sur créations 3-6 mois vs prospection aléatoire
                   </p>
                 </Card>
 
-                <Card className="glass-card p-8 border-accent/20 hover:border-accent/50 transition-all duration-300">
-                  <Route className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-xl font-bold mb-3">Tournées GPS optimisées</h3>
+                <Card className="glass-card p-6 border-accent/20 hover:border-accent/50 transition-all duration-300">
+                  <Search className="w-10 h-10 text-accent mb-3" />
+                  <h3 className="text-lg font-bold mb-2">Recherche Multi-Canal</h3>
                   <p className="text-white/70 text-sm leading-relaxed">
-                    -40% de km. Navigation Waze/Maps en 1 clic. Itinéraires calculés automatiquement.
+                    LinkedIn, Facebook, journaux locaux, newsletters pro
                   </p>
                 </Card>
 
-                <Card className="glass-card p-8 border-accent/20 hover:border-accent/50 transition-all duration-300">
-                  <Smartphone className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="text-xl font-bold mb-3">CRM mobile terrain</h3>
+                <Card className="glass-card p-6 border-accent/20 hover:border-accent/50 transition-all duration-300">
+                  <Users className="w-10 h-10 text-accent mb-3" />
+                  <h3 className="text-lg font-bold mb-2">Décideur Précis</h3>
                   <p className="text-white/70 text-sm leading-relaxed">
-                    Notes, rappels, RDV, pipeline Kanban. Simple et rapide depuis votre poche.
+                    Responsable achat, technique, communication – pas juste le gérant
                   </p>
                 </Card>
+
+                <Card className="glass-card p-6 border-accent/20 hover:border-accent/50 transition-all duration-300">
+                  <Smartphone className="w-10 h-10 text-accent mb-3" />
+                  <h3 className="text-lg font-bold mb-2">App Pulse Multi-Canal</h3>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    Prospection téléphone, mail, terrain – tout intégré
+                  </p>
+                </Card>
+
+                <Card className="glass-card p-6 border-accent/20 hover:border-accent/50 transition-all duration-300">
+                  <Award className="w-10 h-10 text-accent mb-3" />
+                  <h3 className="text-lg font-bold mb-2">Expertise depuis 2023</h3>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    Des centaines de leads fournis, +23 PME accompagnées
+                  </p>
+                </Card>
+              </div>
+
+              {/* CTA */}
+              <div className="text-center mt-12">
+                <Button 
+                  variant="outline"
+                  className="border-2 border-accent text-accent hover:bg-accent/10 font-semibold px-8 py-6 text-lg"
+                >
+                  Télécharger le Guide Gratuit
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
               </div>
             </div>
           </div>
@@ -457,11 +513,130 @@ const LandingPage = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SOCIAL PROOF SECTION - Témoignages (lazy loaded)
+            RÉSULTATS CLIENTS SECTION - Case Studies avec preuves
         ═══════════════════════════════════════════════════════════════════ */}
-        <Suspense fallback={<div className="py-20" />}>
-          <SocialProof />
-        </Suspense>
+        <section className="py-20 px-6 relative z-10" style={{
+          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
+        }}>
+          <div className="container mx-auto max-w-6xl">
+            <div className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                  Ils ont transformé leur prospection avec <span className="gradient-text">Pulse Entreprise</span>
+                </h2>
+                <p className="text-lg text-white/60 max-w-2xl mx-auto">
+                  Résultats vérifiables de nos clients accompagnés
+                </p>
+              </div>
+
+              {/* Case Studies Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {/* Case Study 1 - IT B2B Lyon */}
+                <Card className="glass-card p-6 border-accent/20 hover:border-accent/40 transition-all duration-300 flex flex-col">
+                  <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/30 w-fit mb-4">
+                    Informatique & Télécoms
+                  </Badge>
+                  <h3 className="text-xl font-bold mb-3">Fournisseur IT B2B – Lyon</h3>
+                  <p className="text-white/70 text-sm mb-6 leading-relaxed italic">
+                    "Pulse nous a permis de cibler 47 nouvelles entreprises créées en 4 mois. Résultat : 18 RDV obtenus, 6 contrats signés. Le ROI est sans appel."
+                  </p>
+                  
+                  {/* Chiffres clés */}
+                  <div className="space-y-3 mb-4 flex-1">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="text-sm text-white/80">RDV qualifiés</span>
+                      <span className="text-lg font-bold text-emerald-400">+180%</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="text-sm text-white/80">Coût acquisition</span>
+                      <span className="text-lg font-bold text-emerald-400">-35%</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-accent/10 border border-accent/20">
+                      <span className="text-sm text-white/80">ROI sur 6 mois</span>
+                      <span className="text-lg font-bold text-accent">4,2x</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-xs text-white/40 mt-auto">Client accompagné depuis août 2024</p>
+                </Card>
+
+                {/* Case Study 2 - Sécurité Genève */}
+                <Card className="glass-card p-6 border-accent/20 hover:border-accent/40 transition-all duration-300 flex flex-col">
+                  <Badge className="bg-orange-500/10 text-orange-400 border-orange-500/30 w-fit mb-4">
+                    Sécurité & Surveillance
+                  </Badge>
+                  <h3 className="text-xl font-bold mb-3">Installateur Sécurité – Genève (Suisse)</h3>
+                  <p className="text-white/70 text-sm mb-6 leading-relaxed italic">
+                    "Grâce aux leads créations récentes + app Pulse pour le terrain, on a signé 9 chantiers en 3 mois vs 3 sur toute l'année précédente. Game changer."
+                  </p>
+                  
+                  {/* Chiffres clés */}
+                  <div className="space-y-3 mb-4 flex-1">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="text-sm text-white/80">Nouveaux contrats</span>
+                      <span className="text-lg font-bold text-emerald-400">+300%</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="text-sm text-white/80">Temps prospection</span>
+                      <span className="text-lg font-bold text-emerald-400">-50%</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-accent/10 border border-accent/20">
+                      <span className="text-sm text-white/80">Taux conversion RDV</span>
+                      <span className="text-lg font-bold text-accent">22%</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-xs text-white/40 mt-auto">Client accompagné depuis janvier 2024</p>
+                </Card>
+
+                {/* Case Study 3 - Restauration IDF */}
+                <Card className="glass-card p-6 border-accent/20 hover:border-accent/40 transition-all duration-300 flex flex-col">
+                  <Badge className="bg-red-500/10 text-red-400 border-red-500/30 w-fit mb-4">
+                    CHR & Alimentaire
+                  </Badge>
+                  <h3 className="text-xl font-bold mb-3">Fournisseur Restauration – Île-de-France</h3>
+                  <p className="text-white/70 text-sm mb-6 leading-relaxed italic">
+                    "On contacte désormais les nouveaux restaurants avant nos concurrents. Le décideur précis (chef/gérant) est fourni, on gagne un temps fou."
+                  </p>
+                  
+                  {/* Chiffres clés */}
+                  <div className="space-y-3 mb-4 flex-1">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="text-sm text-white/80">RDV nouveaux établ.</span>
+                      <span className="text-lg font-bold text-emerald-400">+210%</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="text-sm text-white/80">Taux conversion</span>
+                      <span className="text-lg font-bold text-emerald-400">38%</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-accent/10 border border-accent/20">
+                      <span className="text-sm text-white/80">Cycle de vente</span>
+                      <span className="text-lg font-bold text-accent">-45 jours</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-xs text-white/40 mt-auto">Client accompagné depuis mars 2024</p>
+                </Card>
+              </div>
+
+              {/* Note légale */}
+              <p className="text-xs text-white/40 text-center max-w-3xl mx-auto mb-8">
+                Résultats basés sur accompagnements réels. Les performances peuvent varier selon secteur et implication client. Garantie résultats 90 jours (voir CGV).
+              </p>
+
+              {/* CTA */}
+              <div className="text-center">
+                <Button 
+                  onClick={() => window.open('https://calendly.com/tomiolovpro/pulse', '_blank')}
+                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg px-10 py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
+                >
+                  Obtenez vos résultats – Réserver Audit
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
             PRICING SECTION - Tarification
@@ -608,6 +783,65 @@ const LandingPage = () => {
                 </Card>
               </div>
 
+              {/* Section Garanties highlight */}
+              <div className="mt-12 mb-8 max-w-4xl mx-auto">
+                <Card className="glass-card p-8 border-emerald-500/30" style={{
+                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                }}>
+                  <h3 className="text-2xl font-bold text-center mb-6 gradient-text">Nos Garanties</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                        <Shield className="w-6 h-6 text-emerald-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-2">🔒 Garantie Résultats 90 jours</h4>
+                        <p className="text-sm text-white/70 leading-relaxed">
+                          Si vous n'obtenez pas au minimum X RDV qualifiés en 90 jours, nous continuons gratuitement jusqu'à atteinte de l'objectif.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="w-6 h-6 text-accent" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-2">⚡ Audit Gratuit</h4>
+                        <p className="text-sm text-white/70 leading-relaxed">
+                          Premier RDV Calendly gratuit pour analyser votre marché et calculer votre ROI potentiel. Aucun engagement.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-6 h-6 text-cyan-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-2">🔐 Paiement Sécurisé Stripe</h4>
+                        <p className="text-sm text-white/70 leading-relaxed">
+                          Facturation mensuelle, résiliable à tout moment (préavis 30j). Transparence totale.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+                        <BarChart3 className="w-6 h-6 text-orange-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-2">📊 Reporting Transparent</h4>
+                        <p className="text-sm text-white/70 leading-relaxed">
+                          Dashboard ROI en temps réel : leads fournis, RDV obtenus, CA généré. Visibilité totale.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
               {/* Trust indicators */}
               <div className="flex flex-wrap justify-center gap-6 sm:gap-8 text-sm text-white/60">
                 <div className="flex items-center gap-2">
@@ -622,6 +856,93 @@ const LandingPage = () => {
                   <Database className="w-5 h-5 text-accent" />
                   <span>Données publiques officielles</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            COMPARAISON SECTION - Pulse vs Autres Solutions
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section className="py-16 px-6 relative z-10" style={{
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
+          borderTop: '1px solid rgba(16, 185, 129, 0.15)',
+          borderBottom: '1px solid rgba(16, 185, 129, 0.15)'
+        }}>
+          <div className="container mx-auto max-w-6xl">
+            <div className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
+                Pourquoi <span className="gradient-text">Pulse Entreprise</span> vs Solutions Classiques ?
+              </h2>
+              <p className="text-lg text-white/60 text-center mb-12 max-w-2xl mx-auto">
+                Comparaison objective avec CRM classiques et bases de données
+              </p>
+              
+              {/* Tableau comparatif */}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="text-left p-4 text-white/60 font-semibold">Critères</th>
+                      <th className="text-center p-4 text-white/80 font-semibold">CRM Classiques<br/><span className="text-sm font-normal text-white/40">(Pipedrive, Salesforce...)</span></th>
+                      <th className="text-center p-4 text-white/80 font-semibold">Bases de Données<br/><span className="text-sm font-normal text-white/40">(Apollo, Kaspr...)</span></th>
+                      <th className="text-center p-4 font-semibold bg-gradient-to-r from-accent/20 to-emerald-500/20 rounded-t-lg">
+                        <span className="gradient-text text-lg">Pulse Entreprise</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td className="p-4 text-white/70">Leads créations 3-6 mois</td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4 bg-accent/10"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td className="p-4 text-white/70">Recherche décideur précis multi-canal</td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4 bg-accent/10"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td className="p-4 text-white/70">App terrain intégrée (calls/mails/GPS)</td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4 bg-accent/10"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td className="p-4 text-white/70">Accompagnement personnalisé</td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4 bg-accent/10"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td className="p-4 text-white/70">Coaching prospection</td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4 bg-accent/10"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
+                    </tr>
+                    <tr className="hover:bg-white/5 transition-colors">
+                      <td className="p-4 text-white/70">Reporting ROI temps réel</td>
+                      <td className="text-center p-4"><span className="text-sm text-orange-400">💰 Payant</span></td>
+                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
+                      <td className="text-center p-4 bg-accent/10 rounded-b-lg">
+                        <span className="text-emerald-400 font-semibold">✓ Inclus</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* CTA */}
+              <div className="text-center mt-12">
+                <Button 
+                  onClick={() => window.open('https://calendly.com/tomiolovpro/pulse', '_blank')}
+                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg px-10 py-6 rounded-xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
+                >
+                  Voir la différence en action – Réserver RDV
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
               </div>
             </div>
           </div>
@@ -643,14 +964,14 @@ const LandingPage = () => {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl mx-auto">
                 {[
-                  { q: "🎯 Quelle est la différence avec les concurrents ?", a: "PULSE est conçu POUR les commerciaux terrain. Pas de CRM usine à gaz : juste ce qu'il faut pour prospecter intelligemment. Les tournées optimisées IA sont incluses (pas besoin de 10 outils différents), et tout fonctionne en mode mobile." },
-                  { q: "📱 Ça marche vraiment sur téléphone ?", a: "Oui ! PULSE est une PWA (Progressive Web App) : vous l'installez comme une appli, ça fonctionne hors ligne, et c'est optimisé pour iPhone et Android. Ajoutez vos interactions terrain en 10 secondes." },
-                  { q: "🗺️ Comment fonctionne l'optimisation de tournées ?", a: "Sélectionnez vos prospects, PULSE calcule automatiquement l'itinéraire le plus court avec Mapbox. Vous économisez jusqu'à 40% de kilomètres. Vous pouvez modifier l'ordre manuellement et lancer la navigation GPS directement." },
-                  { q: "🔄 Les données sont actualisées quand ?", a: "Données INSEE/SIRENE mises à jour chaque semaine. Vous avez accès aux nouvelles créations d'entreprises en quasi temps-réel (délai INSEE : ~5 jours après l'immatriculation)." },
-                  { q: "💳 Comment fonctionne l'essai 7 jours ?", a: "Vous testez toutes les features gratuitement pendant 7 jours. Votre carte bancaire est demandée, mais vous ne serez débité qu'au 8ème jour. Annulez à tout moment avant sans frais." },
-                  { q: "🔒 Mes données prospects sont sécurisées ?", a: "100%. Hébergement Supabase (certifié RGPD), chiffrement SSL, sauvegardes quotidiennes. Vos prospects et interactions restent privés, jamais partagés avec d'autres users." },
-                  { q: "📞 Je peux avoir le téléphone des prospects ?", a: "On enrichit les données quand disponibles (environ 40% pour les nouvelles créations). Vous pouvez aussi saisir vous-même les infos trouvées sur le terrain, elles seront sauvegardées dans votre CRM." },
-                  { q: "⚡ Je peux annuler quand je veux ?", a: "Oui, sans engagement. Annulez en 1 clic depuis votre espace, pas besoin de nous contacter. Vous gardez l'accès jusqu'à la fin de votre période payée." }
+                  { q: "Quelle est la différence avec un CRM classique ?", a: "Les CRM classiques (Pipedrive, Salesforce...) sont des outils de gestion de contacts. Pulse Entreprise est un accompagnement complet : nous vous fournissons les leads créations 3-6 mois avec décideur précis + app terrain intégrée + coaching prospection. Vous n'avez pas à chercher vos prospects, on les trouve pour vous." },
+                  { q: "Comment sont trouvés les décideurs précis ?", a: "Recherche multi-canal manuelle et automatisée : LinkedIn Premium, Facebook, Google Actualités, journaux locaux, newsletters professionnelles, Bodacc, Full Enrich. Nous identifions le responsable achat, technique ou communication selon votre secteur – pas juste le gérant. Taux de précision >80%." },
+                  { q: "L'app Pulse fonctionne-t-elle hors ligne ?", a: "Oui, l'app Pulse est une PWA (Progressive Web App) qui fonctionne offline. Vous pouvez ajouter des notes, interactions et RDV terrain même sans réseau. Synchronisation automatique dès connexion rétablie. Compatible iOS et Android." },
+                  { q: "Quels secteurs accompagnez-vous ?", a: "Fournisseurs IT B2B, installateurs sécurité/alarme, fournisseurs CHR/restauration, services aux entreprises, BTP/travaux, équipements professionnels. Si vous ciblez des créations d'entreprises B2B (restaurants, garages, pharmacies, bureaux…), Pulse est adapté. RDV gratuit pour valider votre secteur." },
+                  { q: "Garantie résultats : comment ça marche ?", a: "Engagement co-construit lors du premier RDV (ex: 15 RDV qualifiés en 90 jours). Si objectif non atteint, nous continuons l'accompagnement gratuitement jusqu'à atteinte. Reporting ROI transparent chaque mois : leads fournis, RDV obtenus, CA généré. Détails complets dans CGV." },
+                  { q: "Puis-je résilier à tout moment ?", a: "Oui, facturation mensuelle résiliable avec préavis 30 jours. Aucun engagement minimum après les 3 premiers mois d'accompagnement (période nécessaire pour déploiement et résultats). Résiliation simple par email, pas de frais cachés." },
+                  { q: "Données RGPD : êtes-vous conformes ?", a: "100% conformes RGPD (France) et FADP (Suisse). Données publiques (SIRENE, Bodacc) + recherche multi-canal légale (sources ouvertes). Hébergement Supabase EU, chiffrement SSL, sauvegardes quotidiennes. Vos leads et interactions restent privés, jamais partagés. DPO disponible sur demande." },
+                  { q: "Combien de leads fournis par mois ?", a: "Volume adapté à votre secteur et zone géographique. Exemple : 30-50 leads/mois pour fournisseur IT sur région Île-de-France, 15-25 leads/mois pour installateur sécurité sur canton Genève. Définition précise lors du premier RDV en fonction de votre capacité de traitement et objectifs CA." }
                 ].map((item, i) => (
                   <Accordion key={i} type="single" collapsible>
                     <AccordionItem value={`item-${i}`} className="border border-white/10 rounded-lg px-4 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300">
@@ -665,6 +986,66 @@ const LandingPage = () => {
                 ))}
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            NOTRE ÉQUIPE SECTION
+        ═══════════════════════════════════════════════════════════════════ */}
+        <section className="py-16 px-6 relative z-10" style={{
+          background: 'radial-gradient(ellipse at center, rgba(6, 182, 212, 0.08) 0%, transparent 60%)'
+        }}>
+          <div className="container mx-auto max-w-5xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                Qui <span className="gradient-text">sommes-nous</span> ?
+              </h2>
+              <p className="text-lg text-white/60 max-w-2xl mx-auto">
+                L'expertise prospection B2B au service de votre croissance
+              </p>
+            </div>
+
+            {/* Card équipe */}
+            <Card className="glass-card p-8 border-accent/20 max-w-3xl mx-auto">
+              <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+                {/* Photo placeholder */}
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center flex-shrink-0">
+                  <span className="text-4xl font-bold text-white">T</span>
+                </div>
+
+                {/* Contenu */}
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="text-2xl font-bold mb-2">Tom</h3>
+                  <p className="text-accent font-semibold mb-4">Fondateur Pulse Entreprise</p>
+                  
+                  <p className="text-white/70 leading-relaxed mb-6">
+                    15 ans d'expérience en prospection B2B et développement commercial. Après avoir accompagné +50 PME dans leur croissance, j'ai créé Pulse en 2023 pour industrialiser la prospection sur créations récentes – le signal d'achat le plus puissant et sous-exploité.
+                  </p>
+
+                  {/* Valeurs */}
+                  <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
+                    <Badge className="bg-accent/10 text-accent border-accent/30">
+                      🎯 Transparence
+                    </Badge>
+                    <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
+                      📈 Résultats
+                    </Badge>
+                    <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/30">
+                      🏆 Excellence
+                    </Badge>
+                  </div>
+
+                  {/* CTA */}
+                  <Button 
+                    onClick={() => window.open('https://calendly.com/tomiolovpro/pulse', '_blank')}
+                    className="bg-accent hover:bg-accent/90 text-black font-semibold px-6 py-3"
+                  >
+                    Échanger avec Tom
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </Card>
           </div>
         </section>
 
@@ -705,8 +1086,7 @@ const LandingPage = () => {
             </div>
             <div className="text-xs text-white/50 text-center mb-6 max-w-3xl mx-auto border-t border-white/10 pt-6">
               <p>
-                PULSE utilise des données publiques issues du répertoire SIRENE (INSEE). PULSE est un outil d'optimisation 
-                de tournées terrain, pas un outil de prospection téléphonique ou par email. Les données affichées sont : SIRET/SIREN, nom de l'entreprise, adresse et date de création.
+                Pulse Entreprise utilise des données publiques (SIRENE, Bodacc) et sources multi-canal légales (LinkedIn, Facebook, Google Actualités, journaux locaux, newsletters professionnelles). Accompagnement prospection personnalisée pour PME B2B. Conformité RGPD (France) et FADP (Suisse).
               </p>
             </div>
             <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-white/40 text-sm">
@@ -727,10 +1107,10 @@ const LandingPage = () => {
         {/* Sticky CTA Mobile */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent md:hidden z-40 safe-area-bottom">
           <Button 
-            onClick={handleCTAClick}
+            onClick={() => window.open('https://calendly.com/tomiolovpro/pulse', '_blank')}
             className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 rounded-full shadow-lg shadow-green-500/40"
           >
-            🚀 Essayer 7j GRATUIT
+            Réserver Audit Gratuit
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
