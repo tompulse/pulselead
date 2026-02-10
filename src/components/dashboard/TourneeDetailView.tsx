@@ -247,9 +247,9 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
   const getFullAddress = (site: any) => {
     const parts = [site.numero_voie, site.type_voie, site.libelle_voie].filter(Boolean).join(' ');
     if (parts) {
-      return `${parts}, ${site.code_postal || ''} ${site.ville || ''}`.trim();
+      return `${parts}, ${site.code_postal || ''} ${site.commune || ''}`.trim();
     }
-    return site.adresse || `${site.code_postal || ''} ${site.ville || ''}`.trim();
+    return site.adresse || `${site.code_postal || ''} ${site.commune || ''}`.trim();
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -609,7 +609,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     id: site.id,
     nom: site.nom,
     adresse: getFullAddress(site),
-    ville: site.ville,
+    ville: site.commune,
     latitude: Number(site.latitude),
     longitude: Number(site.longitude)
   })).filter(e => Number.isFinite(e.latitude) && Number.isFinite(e.longitude));
@@ -779,7 +779,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
                               id: site.id,
                               nom: site.nom,
                               adresse: getFullAddress(site),
-                              ville: site.ville,
+                              ville: site.commune,
                               latitude: site.latitude,
                               longitude: site.longitude,
                             }}

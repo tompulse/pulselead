@@ -184,7 +184,7 @@ export const NotesDetailSheet = ({
                       {note.site?.ville && (
                         <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                           <MapPin className="w-3 h-3" />
-                          <span>{note.site.ville}</span>
+                          <span>{note.site.commune}</span>
                         </div>
                       )}
                     </div>

@@ -1,33 +1,33 @@
--- Script de diagnostic pour vérifier les villes dans nouveaux_sites
+-- Script de diagnostic pour vérifier les communes/villes dans nouveaux_sites
 
--- 1. Vérifier que la colonne ville existe
+-- 1. Vérifier que la colonne commune existe
 SELECT column_name, data_type, is_nullable
 FROM information_schema.columns 
 WHERE table_name = 'nouveaux_sites' 
-AND column_name = 'ville';
+AND column_name = 'commune';
 
--- 2. Compter combien de lignes ont une ville
+-- 2. Compter combien de lignes ont une commune
 SELECT 
   COUNT(*) as total_prospects,
-  COUNT(ville) as prospects_avec_ville,
-  COUNT(*) - COUNT(ville) as prospects_sans_ville,
-  ROUND((COUNT(ville)::numeric / COUNT(*)) * 100, 2) as pourcentage_avec_ville
+  COUNT(commune) as prospects_avec_commune,
+  COUNT(*) - COUNT(commune) as prospects_sans_commune,
+  ROUND((COUNT(commune)::numeric / COUNT(*)) * 100, 2) as pourcentage_avec_commune
 FROM nouveaux_sites;
 
--- 3. Montrer quelques exemples avec et sans ville
+-- 3. Montrer quelques exemples avec et sans commune
 SELECT 
   nom,
   code_postal,
-  ville,
+  commune,
   CASE 
-    WHEN ville IS NULL THEN '❌ VILLE MANQUANTE'
-    WHEN ville = '' THEN '❌ VILLE VIDE'
+    WHEN commune IS NULL THEN '❌ COMMUNE MANQUANTE'
+    WHEN commune = '' THEN '❌ COMMUNE VIDE'
     ELSE '✅ OK'
-  END as statut_ville
+  END as statut_commune
 FROM nouveaux_sites
 LIMIT 20;
 
--- 4. Vérifier si les villes sont dans un autre champ
+-- 4. Vérifier tous les champs liés à la localisation
 SELECT 
   column_name, 
   data_type
@@ -40,14 +40,13 @@ AND (
   OR column_name ILIKE '%localite%'
 );
 
--- 5. Si la ville est manquante, vérifier les données brutes
+-- 5. Vérifier les données complètes
 SELECT 
   nom,
   siret,
   code_postal,
-  ville,
+  commune,
   libelle_commune,
   adresse
 FROM nouveaux_sites
-WHERE ville IS NULL OR ville = ''
-LIMIT 10;
+LIMIT 20;

@@ -90,7 +90,7 @@ export const SortableEntrepriseItem = ({
           )}
         </div>
         <div className="text-xs text-muted-foreground truncate">
-          {entreprise.ville}
+          {entreprise.commune}
         </div>
       </div>
 

@@ -19,8 +19,8 @@ export const LockedEntrepriseCard = ({
       entreprise.libelle_voie
     ].filter(Boolean).join(' ');
     
-    // Construire la partie ville avec code postal et nom de ville
-    const cityPart = [entreprise.code_postal, entreprise.ville].filter(Boolean).join(' ');
+    // Construire la partie ville avec code postal et commune (pas ville!)
+    const cityPart = [entreprise.code_postal, entreprise.commune].filter(Boolean).join(' ');
     
     return parts 
       ? `${parts}, ${cityPart}`

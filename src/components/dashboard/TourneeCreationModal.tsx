@@ -58,7 +58,7 @@ export const TourneeCreationModal = ({
           latitude: Number(site.latitude),
           longitude: Number(site.longitude),
           adresse: site.adresse || '',
-          ville: site.ville || '',
+          ville: site.commune || '',
           code_postal: site.code_postal || ''
         }));
 

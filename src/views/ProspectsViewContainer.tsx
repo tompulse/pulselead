@@ -120,8 +120,8 @@ export const ProspectsViewContainer = ({
           entreprises: selectedSites.map(site => ({
             id: site.id,
             nom: site.nom,
-            adresse: `${site.numero_voie || ''} ${site.type_voie || ''} ${site.libelle_voie || ''}, ${site.code_postal || ''} ${site.ville || ''}`.trim(),
-            ville: site.ville,
+            adresse: `${site.numero_voie || ''} ${site.type_voie || ''} ${site.libelle_voie || ''}, ${site.code_postal || ''} ${site.commune || ''}`.trim(),
+            ville: site.commune,
             code_postal: site.code_postal,
             latitude: Number(site.latitude) || null,
             longitude: Number(site.longitude) || null

@@ -103,8 +103,8 @@ export const RelatedEstablishmentsCard = ({
             ].filter(Boolean).join(' ');
             
             const fullAddress = addressParts 
-              ? `${addressParts}, ${site.code_postal} ${site.ville || ''}`
-              : `${site.code_postal || ''} ${site.ville || ''}`.trim();
+              ? `${addressParts}, ${site.code_postal} ${site.commune || ''}`
+              : `${site.code_postal || ''} ${site.commune || ''}`.trim();
 
             return (
               <div

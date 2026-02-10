@@ -138,15 +138,6 @@ export const NouveauxSitesListView = ({
               // Tous les prospects sont accessibles - pas de vérification
               const canSeeDetails = true;
               
-              // Debug: Afficher les champs de l'adresse
-              console.log(`[DEBUG] ${site.nom}:`, {
-                ville: site.ville,
-                code_postal: site.code_postal,
-                numero_voie: site.numero_voie,
-                type_voie: site.type_voie,
-                libelle_voie: site.libelle_voie
-              });
-              
               // Construire l'adresse complète
               const addressParts = [
                 site.numero_voie,
@@ -154,18 +145,12 @@ export const NouveauxSitesListView = ({
                 site.libelle_voie
               ].filter(Boolean).join(' ');
               
-              // Construire l'adresse avec code postal et ville
-              // Forcer l'affichage de la ville même si undefined
-              const cityPart = `${site.code_postal || ''} ${site.ville || ''}`.trim();
+              // Construire l'adresse avec code postal et commune (pas ville!)
+              const cityPart = `${site.code_postal || ''} ${site.commune || ''}`.trim();
               
               const fullAddress = addressParts 
                 ? `${addressParts}, ${cityPart}`
                 : cityPart;
-              
-              // Warning si ville manquante
-              if (!site.ville) {
-                console.warn(`⚠️ [${site.nom}] VILLE MANQUANTE !`, { code_postal: site.code_postal, site });
-              }
               
               return (
                 <div

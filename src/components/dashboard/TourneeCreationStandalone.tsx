@@ -198,7 +198,7 @@ export const TourneeCreationStandalone = ({
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate">{site.nom}</p>
                           <p className="text-sm text-muted-foreground">
-                            {site.code_postal} {site.ville}
+                            {site.code_postal} {site.commune}
                           </p>
                         </div>
                         <MapPin className="w-4 h-4 text-accent/60" />
