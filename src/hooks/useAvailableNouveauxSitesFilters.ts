@@ -76,7 +76,6 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
               p_naf_sections: null,
               p_naf_divisions: null,
               p_departments: null,
-              p_tailles: null,
               p_categories_juridiques: null,
               p_types_etablissement: null,
               p_search_query: null
