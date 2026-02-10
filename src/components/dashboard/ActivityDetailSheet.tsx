@@ -101,7 +101,7 @@ export const ActivityDetailSheet = ({
       const entrepriseIds = [...new Set(interactionsData.map(i => i.entreprise_id))];
       const { data: sites } = await supabase
         .from('nouveaux_sites')
-        .select('id, nom, ville')
+        .select('id, nom, commune, siret')
         .in('id', entrepriseIds);
 
       // Merge data
@@ -239,7 +239,10 @@ export const ActivityDetailSheet = ({
                         {interaction.site?.nom || 'Entreprise inconnue'}
                       </p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {interaction.site?.ville || '—'}
+                        {interaction.site?.siret || '—'}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {interaction.site?.commune || '—'}
                       </p>
                       
                       {/* Show scheduled date for RDV, À revoir, À rappeler */}

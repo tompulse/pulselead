@@ -74,7 +74,7 @@ export const NotesDetailSheet = ({
 
       const { data: sites } = await supabase
         .from('nouveaux_sites')
-        .select('id, nom, ville')
+        .select('id, nom, commune, siret')
         .in('id', entrepriseIds);
 
       const notesWithSiteInfo: NoteWithSite[] = interactions.map(interaction => ({
@@ -181,7 +181,7 @@ export const NotesDetailSheet = ({
                           {note.site?.nom || 'Entreprise inconnue'}
                         </span>
                       </div>
-                      {note.site?.ville && (
+                      {note.site?.commune && (
                         <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                           <MapPin className="w-3 h-3" />
                           <span>{note.site.commune}</span>

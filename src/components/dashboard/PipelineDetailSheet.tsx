@@ -80,7 +80,7 @@ export const PipelineDetailSheet = ({
       const entrepriseIds = [...new Set(leadsData.map(l => l.entreprise_id))];
       const { data: sites } = await supabase
         .from('nouveaux_sites')
-        .select('id, nom, ville')
+        .select('id, nom, commune, siret')
         .in('id', entrepriseIds);
 
       // Merge data
@@ -169,7 +169,10 @@ export const PipelineDetailSheet = ({
                         {lead.site?.nom || 'Entreprise inconnue'}
                       </p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {lead.site?.ville || '—'}
+                        {lead.site?.siret || '—'}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {lead.site?.commune || '—'}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         Mis à jour: {formatLeadDate(lead.updated_at)}
