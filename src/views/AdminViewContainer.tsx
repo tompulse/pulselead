@@ -109,40 +109,55 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
         sampleRecord: jsonData[0]
       });
 
-      // Import en batches
-      const BATCH_SIZE = 500;
+      // Import en batches - Taille réduite pour gros fichiers
+      const BATCH_SIZE = jsonData.length > 10000 ? 200 : 500;
+      const totalBatches = Math.ceil(jsonData.length / BATCH_SIZE);
       let totalInserted = 0;
       let totalErrors = 0;
+
+      console.log(`📦 Starting import: ${jsonData.length} records in ${totalBatches} batches of ${BATCH_SIZE}`);
 
       for (let i = 0; i < jsonData.length; i += BATCH_SIZE) {
         const batch = jsonData.slice(i, i + BATCH_SIZE);
         const currentLine = Math.min(i + BATCH_SIZE, jsonData.length);
         const batchNum = Math.floor(i / BATCH_SIZE) + 1;
         
-        console.log(`📦 Batch ${batchNum}: Sending ${batch.length} records...`);
-        setProgressText(`Import ${currentLine}/${jsonData.length} lignes...`);
+        console.log(`📦 Batch ${batchNum}/${totalBatches}: Sending ${batch.length} records (${i + 1} to ${currentLine})...`);
+        setProgressText(`Import batch ${batchNum}/${totalBatches} (${currentLine}/${jsonData.length} lignes)...`);
         
-        console.log(`📤 Sending batch ${batchNum} with ${batch.length} records...`);
-        console.log(`📤 Sample of batch data:`, batch[0]);
-        
-        const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
-          body: { entreprises: batch }
-        });
+        try {
+          const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
+            body: { entreprises: batch }
+          });
 
-        if (error) {
-          console.error(`❌ Batch ${batchNum} error:`, error);
-          console.error('❌ Error message:', error.message);
-          console.error('❌ Error details:', JSON.stringify(error, null, 2));
-          console.error('❌ Batch sample that failed:', batch.slice(0, 2));
+          if (error) {
+            console.error(`❌ Batch ${batchNum}/${totalBatches} error:`, error);
+            console.error('❌ Error message:', error.message);
+            console.error('❌ Error context:', error.context);
+            console.error('❌ Batch sample that failed (first 2 records):`, batch.slice(0, 2));
+            totalErrors += batch.length;
+            
+            // Continue avec les autres batches malgré l'erreur
+            console.log(`⚠️ Continuing with next batch...`);
+          } else {
+            console.log(`✅ Batch ${batchNum}/${totalBatches} success:`, responseData);
+            totalInserted += responseData?.inserted || 0;
+            totalErrors += responseData?.errors || 0;
+          }
+        } catch (err) {
+          console.error(`❌ Exception in batch ${batchNum}/${totalBatches}:`, err);
+          console.error('❌ Stack:', err instanceof Error ? err.stack : 'No stack');
           totalErrors += batch.length;
-        } else {
-          console.log(`✅ Batch ${batchNum} response:`, responseData);
-          totalInserted += responseData?.inserted || 0;
-          totalErrors += responseData?.errors || 0;
         }
 
         const progressPercent = 20 + Math.floor((currentLine / jsonData.length) * 80);
         setProgress(progressPercent);
+        
+        // Small delay to avoid overwhelming the server
+        if (batchNum % 10 === 0) {
+          console.log(`⏸️ Pausing 500ms after 10 batches...`);
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
 
       setProgress(100);

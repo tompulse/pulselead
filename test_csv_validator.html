@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validateur CSV PulseLead</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        .container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #00ff9d;
+            margin-top: 0;
+        }
+        .upload-area {
+            border: 2px dashed #00ff9d;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            background: rgba(0, 255, 157, 0.05);
+            border-color: #00d4ff;
+        }
+        .upload-area.dragover {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: #00d4ff;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .btn {
+            background: #00ff9d;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #00d4ff;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #334155;
+        }
+        .success {
+            border-left: 4px solid #00ff9d;
+        }
+        .error {
+            border-left: 4px solid #ef4444;
+        }
+        .warning {
+            border-left: 4px solid #f59e0b;
+        }
+        .log-item {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 4px;
+            background: #1e293b;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .log-success { color: #00ff9d; }
+        .log-error { color: #ef4444; }
+        .log-warning { color: #f59e0b; }
+        .log-info { color: #00d4ff; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+        th {
+            background: #334155;
+            color: #00ff9d;
+            font-weight: 600;
+        }
+        pre {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Validateur CSV PulseLead</h1>
+        <p>Glissez votre fichier CSV ici ou cliquez pour le sélectionner</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" accept=".csv">
+            <p style="margin: 0; font-size: 18px;">📄 Cliquez ou glissez un fichier CSV</p>
+            <p style="margin: 10px 0 0 0; color: #94a3b8; font-size: 14px;">Format attendu: CSV avec colonne "siret"</p>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const resultsDiv = document.getElementById('results');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.csv')) {
+                processFile(file);
+            } else {
+                showError('Veuillez sélectionner un fichier CSV');
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) processFile(file);
+        });
+
+        async function processFile(file) {
+            resultsDiv.innerHTML = '<div class="result"><p>🔄 Analyse en cours...</p></div>';
+            
+            try {
+                let text = await file.text();
+                const logs = [];
+                
+                logs.push({ type: 'info', msg: `📄 Fichier: ${file.name}` });
+                logs.push({ type: 'info', msg: `📊 Taille: ${(file.size / 1024).toFixed(2)} KB` });
+                
+                // Remove BOM
+                if (text.charCodeAt(0) === 0xFEFF) {
+                    text = text.slice(1);
+                    logs.push({ type: 'warning', msg: '🔧 BOM UTF-8 détecté et supprimé' });
+                }
+                
+                // Normalize line endings
+                const lines = text
+                    .replace(/\r\n/g, '\n')
+                    .replace(/\r/g, '\n')
+                    .split('\n')
+                    .filter(line => line.trim());
+                
+                logs.push({ type: 'success', msg: `📊 Lignes trouvées: ${lines.length}` });
+                
+                if (lines.length < 2) {
+                    throw new Error('Le fichier CSV est vide ou ne contient pas de données');
+                }
+                
+                // Detect delimiter
+                const firstLine = lines[0];
+                const delimiter = firstLine.includes(';') ? ';' : ',';
+                logs.push({ type: 'info', msg: `🔍 Séparateur détecté: "${delimiter}"` });
+                
+                // Parse headers
+                const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
+                logs.push({ type: 'success', msg: `📋 Nombre de colonnes: ${headers.length}` });
+                logs.push({ type: 'info', msg: `📋 Colonnes: ${headers.join(', ')}` });
+                
+                // Check for SIRET column
+                const siretHeader = headers.find(h => h.toLowerCase() === 'siret');
+                if (!siretHeader) {
+                    logs.push({ type: 'error', msg: `❌ ERREUR: Colonne "siret" introuvable!` });
+                    logs.push({ type: 'warning', msg: `⚠️ Colonnes disponibles: ${headers.join(', ')}` });
+                    throw new Error('Colonne SIRET manquante');
+                } else {
+                    logs.push({ type: 'success', msg: `✅ Colonne SIRET trouvée: "${siretHeader}"` });
+                }
+                
+                // Parse all lines
+                const jsonData = lines.slice(1).map((line, index) => {
+                    const values = line.split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ''));
+                    const row = {};
+                    headers.forEach((header, idx) => {
+                        row[header] = values[idx] || '';
+                    });
+                    return row;
+                });
+                
+                // Filter lines with SIRET
+                const validData = jsonData.filter(row => row[siretHeader] && row[siretHeader].length > 0);
+                
+                logs.push({ type: 'info', msg: `📊 Lignes de données: ${jsonData.length}` });
+                logs.push({ type: 'success', msg: `✅ Lignes avec SIRET valide: ${validData.length}` });
+                
+                if (validData.length === 0) {
+                    logs.push({ type: 'error', msg: `❌ ERREUR: Aucune ligne avec SIRET valide!` });
+                    throw new Error('Aucune ligne valide');
+                }
+                
+                const filtered = jsonData.length - validData.length;
+                if (filtered > 0) {
+                    logs.push({ type: 'warning', msg: `⚠️ ${filtered} lignes filtrées (SIRET vide)` });
+                }
+                
+                // Show results
+                showResults(logs, headers, validData);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function showResults(logs, headers, data) {
+            let html = '<div class="result success">';
+            html += '<h2>✅ Validation réussie!</h2>';
+            
+            // Logs
+            html += '<h3>📋 Logs de validation</h3>';
+            logs.forEach(log => {
+                html += `<div class="log-item log-${log.type}">${log.msg}</div>`;
+            });
+            
+            // Sample data
+            html += '<h3>🔬 Aperçu des données (5 premières lignes)</h3>';
+            html += '<div style="overflow-x: auto;"><table>';
+            html += '<thead><tr>';
+            headers.forEach(h => html += `<th>${h}</th>`);
+            html += '</tr></thead><tbody>';
+            
+            data.slice(0, 5).forEach(row => {
+                html += '<tr>';
+                headers.forEach(h => html += `<td>${row[h]}</td>`);
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table></div>';
+            
+            // Full JSON
+            html += '<h3>📦 Données JSON (premier enregistrement)</h3>';
+            html += `<pre>${JSON.stringify(data[0], null, 2)}</pre>`;
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+
+        function showError(message) {
+            resultsDiv.innerHTML = `
+                <div class="result error">
+                    <h2>❌ Erreur de validation</h2>
+                    <p style="font-weight: 600; color: #ef4444;">${message}</p>
+                    <p style="margin-top: 20px; color: #94a3b8;">Vérifiez que votre fichier CSV:</p>
+                    <ul style="color: #94a3b8;">
+                        <li>Contient une colonne "siret" (majuscules ou minuscules)</li>
+                        <li>Contient au moins 1 ligne de données après l'en-tête</li>
+                        <li>Les lignes ont des valeurs SIRET non vides</li>
+                        <li>Utilise ; ou , comme séparateur</li>
+                    </ul>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
