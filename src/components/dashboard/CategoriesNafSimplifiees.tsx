@@ -1,39 +1,52 @@
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Layers } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { CATEGORIES_NAF_SIMPLIFIEES, getDivisionsForCategorie } from '@/utils/nafCategoriesSimplifiees';
+import { CATEGORIES_NAF_SIMPLIFIEES, getDivisionsForCategorie, getSectionsForCategorie } from '@/utils/nafCategoriesSimplifiees';
 
 interface CategoriesNafSimplifiedProps {
   selectedDivisions: string[];
+  selectedSections: string[];
   onDivisionsChange: (divisions: string[]) => void;
+  onSectionsChange: (sections: string[]) => void;
 }
 
 export const CategoriesNafSimplifiees = ({
   selectedDivisions,
-  onDivisionsChange
+  selectedSections,
+  onDivisionsChange,
+  onSectionsChange
 }: CategoriesNafSimplifiedProps) => {
   const [open, setOpen] = useState(false);
 
   const handleCategorieToggle = (categorieId: string) => {
     const categorieDivisions = getDivisionsForCategorie(categorieId);
+    const categorieSections = getSectionsForCategorie(categorieId);
     
     // Vérifier si toutes les divisions de cette catégorie sont déjà sélectionnées
-    const allSelected = categorieDivisions.every(div => selectedDivisions.includes(div));
+    const allDivisionsSelected = categorieDivisions.every(div => selectedDivisions.includes(div));
+    const allSectionsSelected = categorieSections.every(sec => selectedSections.includes(sec));
+    const allSelected = allDivisionsSelected && allSectionsSelected;
     
     if (allSelected) {
-      // Désélectionner toutes les divisions de cette catégorie
+      // Désélectionner toutes les divisions et sections de cette catégorie
       const newDivisions = selectedDivisions.filter(div => !categorieDivisions.includes(div));
+      const newSections = selectedSections.filter(sec => !categorieSections.includes(sec));
       onDivisionsChange(newDivisions);
+      onSectionsChange(newSections);
     } else {
-      // Sélectionner toutes les divisions de cette catégorie
+      // Sélectionner toutes les divisions et sections de cette catégorie
       const newDivisions = [...new Set([...selectedDivisions, ...categorieDivisions])];
+      const newSections = [...new Set([...selectedSections, ...categorieSections])];
       onDivisionsChange(newDivisions);
+      onSectionsChange(newSections);
     }
   };
 
   const isCategorieSelected = (categorieId: string) => {
     const categorieDivisions = getDivisionsForCategorie(categorieId);
-    return categorieDivisions.some(div => selectedDivisions.includes(div));
+    const categorieSections = getSectionsForCategorie(categorieId);
+    return categorieDivisions.some(div => selectedDivisions.includes(div)) ||
+           categorieSections.some(sec => selectedSections.includes(sec));
   };
 
   const selectedCategoriesCount = CATEGORIES_NAF_SIMPLIFIEES.filter(cat => 
@@ -44,7 +57,7 @@ export const CategoriesNafSimplifiees = ({
     <Collapsible open={open} onOpenChange={setOpen} className="border-b border-accent/20">
       <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🏢</span>
+          <Layers className="w-4 h-4 text-accent" />
           <div className="flex flex-col items-start">
             <span className="font-medium text-sm">Secteur d'activité</span>
             {selectedCategoriesCount > 0 && (

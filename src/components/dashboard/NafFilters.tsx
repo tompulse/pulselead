@@ -861,7 +861,9 @@ export const NafFilters = ({
       {/* Catégories NAF Simplifiées - Beau, clair et fonctionnel */}
       <CategoriesNafSimplifiees
         selectedDivisions={filters.nafDivisions || []}
+        selectedSections={filters.nafSections || []}
         onDivisionsChange={(divisions) => setFilters((prev: any) => ({ ...prev, nafDivisions: divisions }))}
+        onSectionsChange={(sections) => setFilters((prev: any) => ({ ...prev, nafSections: sections }))}
       />
 
       {/* Départements */}
