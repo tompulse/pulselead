@@ -867,7 +867,7 @@ export const NafFilters = ({
         <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-accent" />
-            <span className="font-medium text-sm">Secteur d'activité (NAF)</span>
+            <span className="font-medium text-sm">Secteur d'activité</span>
           </div>
           <ChevronDown className={`h-4 w-4 text-accent transition-transform ${sectionsOpen ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
