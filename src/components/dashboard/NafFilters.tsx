@@ -858,12 +858,20 @@ export const NafFilters = ({
         )}
       </div>
 
-      {/* Catégories NAF Simplifiées - Beau, clair et fonctionnel */}
+      {/* Catégories d'activité détaillées - Remplace les anciens secteurs */}
       <CategoriesNafSimplifiees
-        selectedDivisions={filters.nafDivisions || []}
-        selectedSections={filters.nafSections || []}
-        onDivisionsChange={(divisions) => setFilters((prev: any) => ({ ...prev, nafDivisions: divisions }))}
-        onSectionsChange={(sections) => setFilters((prev: any) => ({ ...prev, nafSections: sections }))}
+        selectedCategories={filters.categories || []}
+        onCategoriesChange={(categories) => setFilters((prev: any) => ({
+          ...prev,
+          categories: categories.length > 0 ? categories : undefined,
+          // Réinitialiser les filtres NAF quand on utilise les catégories
+          nafSections: undefined,
+          nafDivisions: undefined,
+          nafGroupes: undefined,
+          nafClasses: undefined,
+          nafSousClasses: undefined
+        }))}
+        categoryCounts={availableFilters?.contextual?.categories || {}}
       />
 
       {/* Départements */}

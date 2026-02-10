@@ -1,57 +1,110 @@
-import { useState } from 'react';
-import { ChevronDown, Layers } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ChevronDown, Layers, Search, X } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { CATEGORIES_NAF_SIMPLIFIEES, getDivisionsForCategorie, getSectionsForCategorie } from '@/utils/nafCategoriesSimplifiees';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DETAILED_CATEGORIES } from '@/utils/detailedCategories';
 
 interface CategoriesNafSimplifiedProps {
-  selectedDivisions: string[];
-  selectedSections: string[];
-  onDivisionsChange: (divisions: string[]) => void;
-  onSectionsChange: (sections: string[]) => void;
+  selectedCategories: string[];
+  onCategoriesChange: (categories: string[]) => void;
+  categoryCounts?: Record<string, number>;
 }
 
 export const CategoriesNafSimplifiees = ({
-  selectedDivisions,
-  selectedSections,
-  onDivisionsChange,
-  onSectionsChange
+  selectedCategories,
+  onCategoriesChange,
+  categoryCounts = {}
 }: CategoriesNafSimplifiedProps) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleCategorieToggle = (categorieId: string) => {
-    const categorieDivisions = getDivisionsForCategorie(categorieId);
-    const categorieSections = getSectionsForCategorie(categorieId);
-    
-    // Vérifier si toutes les divisions de cette catégorie sont déjà sélectionnées
-    const allDivisionsSelected = categorieDivisions.every(div => selectedDivisions.includes(div));
-    const allSectionsSelected = categorieSections.every(sec => selectedSections.includes(sec));
-    const allSelected = allDivisionsSelected && allSectionsSelected;
-    
-    if (allSelected) {
-      // Désélectionner toutes les divisions et sections de cette catégorie
-      const newDivisions = selectedDivisions.filter(div => !categorieDivisions.includes(div));
-      const newSections = selectedSections.filter(sec => !categorieSections.includes(sec));
-      onDivisionsChange(newDivisions);
-      onSectionsChange(newSections);
+  // Grouper les catégories par secteur
+  const groupedCategories = useMemo(() => {
+    const groups: Record<string, typeof DETAILED_CATEGORIES> = {
+      'Agriculture': [],
+      'Alimentaire': [],
+      'BTP & Construction': [],
+      'Commerce & Distribution': [],
+      'Hôtellerie & Restauration': [],
+      'Transport & Logistique': [],
+      'Informatique & Digital': [],
+      'Services aux Entreprises': [],
+      'Santé & Médical': [],
+      'Industrie & Production': [],
+      'Autres': []
+    };
+
+    DETAILED_CATEGORIES.forEach(cat => {
+      if (cat.key.startsWith('agriculture-')) groups['Agriculture'].push(cat);
+      else if (cat.key.startsWith('alimentaire-')) groups['Alimentaire'].push(cat);
+      else if (cat.key.startsWith('btp-')) groups['BTP & Construction'].push(cat);
+      else if (cat.key.startsWith('commerce-') || cat.key.startsWith('gros-')) groups['Commerce & Distribution'].push(cat);
+      else if (cat.key.startsWith('resto-') || cat.key.startsWith('hotellerie-')) groups['Hôtellerie & Restauration'].push(cat);
+      else if (cat.key.startsWith('transport-')) groups['Transport & Logistique'].push(cat);
+      else if (cat.key.startsWith('info-')) groups['Informatique & Digital'].push(cat);
+      else if (cat.key === 'service-interim' || cat.key === 'service-nettoyage' || cat.key === 'service-securite' || cat.key === 'service-publicite') {
+        groups['Services aux Entreprises'].push(cat);
+      }
+      else if (cat.key.startsWith('sante-')) groups['Santé & Médical'].push(cat);
+      else if (cat.key.startsWith('industrie-')) groups['Industrie & Production'].push(cat);
+      else groups['Autres'].push(cat);
+    });
+
+    // Supprimer les groupes vides
+    Object.keys(groups).forEach(key => {
+      if (groups[key].length === 0) delete groups[key];
+    });
+
+    return groups;
+  }, []);
+
+  // Filtrer par recherche
+  const filteredGroups = useMemo(() => {
+    if (!searchQuery.trim()) return groupedCategories;
+
+    const query = searchQuery.toLowerCase();
+    const filtered: typeof groupedCategories = {};
+
+    Object.entries(groupedCategories).forEach(([groupName, categories]) => {
+      const matchingCategories = categories.filter(cat => 
+        cat.label.toLowerCase().includes(query) ||
+        cat.keywords.some(keyword => keyword.toLowerCase().includes(query)) ||
+        groupName.toLowerCase().includes(query)
+      );
+
+      if (matchingCategories.length > 0) {
+        filtered[groupName] = matchingCategories;
+      }
+    });
+
+    return filtered;
+  }, [groupedCategories, searchQuery]);
+
+  const handleToggleCategory = (categoryKey: string) => {
+    if (selectedCategories.includes(categoryKey)) {
+      onCategoriesChange(selectedCategories.filter(c => c !== categoryKey));
     } else {
-      // Sélectionner toutes les divisions et sections de cette catégorie
-      const newDivisions = [...new Set([...selectedDivisions, ...categorieDivisions])];
-      const newSections = [...new Set([...selectedSections, ...categorieSections])];
-      onDivisionsChange(newDivisions);
-      onSectionsChange(newSections);
+      onCategoriesChange([...selectedCategories, categoryKey]);
     }
   };
 
-  const isCategorieSelected = (categorieId: string) => {
-    const categorieDivisions = getDivisionsForCategorie(categorieId);
-    const categorieSections = getSectionsForCategorie(categorieId);
-    return categorieDivisions.some(div => selectedDivisions.includes(div)) ||
-           categorieSections.some(sec => selectedSections.includes(sec));
-  };
+  const handleSelectAllInGroup = (categories: typeof DETAILED_CATEGORIES) => {
+    const categoryKeys = categories.map(c => c.key);
+    const allSelected = categoryKeys.every(key => selectedCategories.includes(key));
 
-  const selectedCategoriesCount = CATEGORIES_NAF_SIMPLIFIEES.filter(cat => 
-    isCategorieSelected(cat.id)
-  ).length;
+    if (allSelected) {
+      onCategoriesChange(selectedCategories.filter(c => !categoryKeys.includes(c)));
+    } else {
+      const newSelected = [...selectedCategories];
+      categoryKeys.forEach(key => {
+        if (!newSelected.includes(key)) {
+          newSelected.push(key);
+        }
+      });
+      onCategoriesChange(newSelected);
+    }
+  };
 
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="border-b border-accent/20">
@@ -60,9 +113,9 @@ export const CategoriesNafSimplifiees = ({
           <Layers className="w-4 h-4 text-accent" />
           <div className="flex flex-col items-start">
             <span className="font-medium text-sm">Secteur d'activité</span>
-            {selectedCategoriesCount > 0 && (
+            {selectedCategories.length > 0 && (
               <span className="text-xs text-accent">
-                {selectedCategoriesCount} {selectedCategoriesCount > 1 ? 'sélectionnés' : 'sélectionné'}
+                {selectedCategories.length} {selectedCategories.length > 1 ? 'sélectionnées' : 'sélectionnée'}
               </span>
             )}
           </div>
@@ -71,74 +124,100 @@ export const CategoriesNafSimplifiees = ({
       </CollapsibleTrigger>
       
       <CollapsibleContent>
-        <div className="px-4 pb-4 pt-2">
-          <div className="grid grid-cols-1 gap-2">
-            {CATEGORIES_NAF_SIMPLIFIEES.map((categorie) => {
-              const isSelected = isCategorieSelected(categorie.id);
-              const categorieDivisions = getDivisionsForCategorie(categorie.id);
-              const selectedCount = categorieDivisions.filter(div => 
-                selectedDivisions.includes(div)
-              ).length;
-              const isPartiallySelected = selectedCount > 0 && selectedCount < categorieDivisions.length;
-              
+        <div className="px-4 pb-4 pt-2 space-y-3">
+          {/* Recherche */}
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Rechercher..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 h-9 text-sm"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Groupes de catégories */}
+          <div className="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
+            {Object.entries(filteredGroups).map(([groupName, categories]) => {
+              const groupCount = categories.reduce((sum, cat) => sum + (categoryCounts[cat.key] || 0), 0);
+              const allSelected = categories.every(cat => selectedCategories.includes(cat.key));
+              const someSelected = categories.some(cat => selectedCategories.includes(cat.key));
+
               return (
-                <div
-                  key={categorie.id}
-                  onClick={() => handleCategorieToggle(categorie.id)}
-                  className={`
-                    group relative cursor-pointer rounded-lg p-3 transition-all duration-200
-                    ${isSelected 
-                      ? 'bg-gradient-to-r from-accent/20 to-accent/10 border-2 border-accent/50 shadow-sm' 
-                      : 'bg-muted/30 hover:bg-accent/10 border-2 border-transparent hover:border-accent/30'
-                    }
-                  `}
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Emoji */}
-                    <div className={`
-                      text-2xl transition-transform group-hover:scale-110
-                      ${isSelected ? 'animate-pulse' : ''}
-                    `}>
-                      {categorie.emoji}
+                <div key={groupName} className="space-y-2">
+                  {/* En-tête du groupe */}
+                  <button
+                    onClick={() => handleSelectAllInGroup(categories)}
+                    className="flex items-center justify-between w-full text-left hover:bg-accent/5 p-2 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3.5 h-3.5 rounded border-2 transition-all ${
+                        allSelected 
+                          ? 'bg-accent border-accent' 
+                          : someSelected
+                          ? 'bg-accent/50 border-accent'
+                          : 'border-accent/50'
+                      } flex items-center justify-center`}>
+                        {allSelected && <span className="text-primary text-[8px] font-bold">✓</span>}
+                        {someSelected && !allSelected && <span className="text-primary text-[8px] font-bold">-</span>}
+                      </div>
+                      <span className="text-xs font-semibold text-accent uppercase tracking-wide">{groupName}</span>
                     </div>
-                    
-                    {/* Contenu */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <h4 className={`
-                          font-semibold text-sm leading-tight
-                          ${isSelected ? 'text-accent' : 'text-foreground'}
-                        `}>
-                          {categorie.label}
-                        </h4>
-                        
-                        {/* Checkbox visuel */}
-                        <div className={`
-                          w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all
-                          ${isSelected 
-                            ? 'bg-accent border-accent' 
-                            : isPartiallySelected
-                            ? 'bg-accent/30 border-accent'
-                            : 'border-muted-foreground/30 group-hover:border-accent/50'
-                          }
-                        `}>
-                          {isSelected && (
-                            <div className="w-2.5 h-2.5 bg-white rounded-sm" />
-                          )}
-                          {isPartiallySelected && !isSelected && (
-                            <div className="w-2.5 h-0.5 bg-accent rounded-sm" />
+                    {groupCount > 0 && (
+                      <span className="text-xs text-muted-foreground font-mono">{groupCount}</span>
+                    )}
+                  </button>
+
+                  {/* Catégories du groupe */}
+                  <div className="space-y-1.5 pl-5">
+                    {categories.map(category => {
+                      const count = categoryCounts[category.key] || 0;
+                      const isSelected = selectedCategories.includes(category.key);
+
+                      return (
+                        <div
+                          key={category.key}
+                          className={`flex items-center justify-between gap-2 p-2 rounded-lg transition-colors cursor-pointer ${
+                            isSelected 
+                              ? 'bg-accent/10 border border-accent/20' 
+                              : 'hover:bg-accent/5 border border-transparent'
+                          }`}
+                          onClick={() => handleToggleCategory(category.key)}
+                        >
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={() => handleToggleCategory(category.key)}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <span className="text-sm shrink-0">{category.emoji}</span>
+                            <span className="text-sm truncate">{category.label}</span>
+                          </div>
+                          {count > 0 && (
+                            <span className="text-xs text-muted-foreground font-mono shrink-0">{count}</span>
                           )}
                         </div>
-                      </div>
-                      
-                      <p className="text-xs text-muted-foreground mt-1 leading-tight">
-                        {categorie.description}
-                      </p>
-                    </div>
+                      );
+                    })}
                   </div>
                 </div>
               );
             })}
+
+            {Object.keys(filteredGroups).length === 0 && (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                Aucune catégorie trouvée
+              </div>
+            )}
           </div>
         </div>
       </CollapsibleContent>
