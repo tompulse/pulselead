@@ -38,14 +38,27 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
 
     try {
       // Parse CSV
-      const text = await file.text();
+      let text = await file.text();
       console.log('📄 CSV loaded, size:', text.length, 'bytes');
       
-      const lines = text.split('\n').filter(line => line.trim());
+      // Remove UTF-8 BOM if present
+      if (text.charCodeAt(0) === 0xFEFF) {
+        text = text.slice(1);
+        console.log('🔧 UTF-8 BOM removed');
+      }
+      
+      // Handle different line endings (Windows \r\n, Unix \n, Mac \r)
+      const lines = text
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .split('\n')
+        .filter(line => line.trim());
+      
       console.log('📊 Lines found:', lines.length);
+      console.log('🔍 First 3 lines:', lines.slice(0, 3));
       
       if (lines.length < 2) {
-        throw new Error('Le fichier CSV est vide ou ne contient pas de données');
+        throw new Error('Le fichier CSV est vide ou ne contient pas de données. Vérifiez que le fichier contient au moins une ligne d\'en-tête et une ligne de données.');
       }
 
       const firstLine = lines[0];
@@ -53,19 +66,37 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
       console.log('🔍 Delimiter detected:', delimiter);
       
       const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
-      console.log('📋 Headers:', headers);
+      console.log('📋 Headers found:', headers);
+      console.log('📋 Number of headers:', headers.length);
       
-      const jsonData = lines.slice(1).map(line => {
+      // Check if SIRET column exists (case-insensitive)
+      const siretHeader = headers.find(h => h.toLowerCase() === 'siret');
+      if (!siretHeader) {
+        throw new Error(`Colonne "siret" introuvable dans le CSV. Colonnes trouvées: ${headers.join(', ')}`);
+      }
+      console.log('✅ SIRET column found:', siretHeader);
+      
+      const jsonData = lines.slice(1).map((line, index) => {
         const values = line.split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ''));
         const row: any = {};
-        headers.forEach((header, index) => {
-          row[header] = values[index] || '';
+        headers.forEach((header, idx) => {
+          row[header] = values[idx] || '';
         });
         return row;
-      }).filter(row => row.siret);
+      }).filter((row, index) => {
+        const hasSiret = row[siretHeader] && row[siretHeader].length > 0;
+        if (!hasSiret && index < 3) {
+          console.log(`⚠️ Row ${index + 1} filtered (no SIRET):`, row);
+        }
+        return hasSiret;
+      });
 
       console.log('✅ Valid records with SIRET:', jsonData.length);
       console.log('🔬 First record:', jsonData[0]);
+      
+      if (jsonData.length === 0) {
+        throw new Error(`Aucune ligne valide trouvée. Le fichier contient ${lines.length - 1} lignes de données mais aucune n'a de SIRET valide.`);
+      }
       
       setProgress(20);
       setProgressText(`${jsonData.length} lignes détectées...`);
