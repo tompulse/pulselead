@@ -241,7 +241,7 @@ export const DashboardHeader = ({
             </div>
 
             <div className="flex items-center gap-2">
-              {isAdmin && view !== 'admin' && (
+              {isAdmin && (
                 <Dialog open={importOpen} onOpenChange={setImportOpen}>
                   <DialogTrigger asChild>
                     <Button
