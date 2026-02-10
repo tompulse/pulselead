@@ -8,7 +8,6 @@ export interface NouveauxSitesFilters {
   nafClasses?: string[];
   nafSousClasses?: string[];
   departments?: string[];
-  taillesEntreprise?: string[];
   categoriesJuridiques?: string[];
   typesEtablissement?: string[];
   dateCreationFrom?: string;
@@ -62,10 +61,6 @@ export const nouveauxSitesService = {
       }
       if (filters.departments?.length) {
         data = data.filter((row: any) => filters.departments!.includes(row?.departement ?? row?.code_postal));
-        count = data.length;
-      }
-      if (filters.taillesEntreprise?.length) {
-        data = data.filter((row: any) => filters.taillesEntreprise!.includes(row?.categorie_entreprise));
         count = data.length;
       }
       if (filters.dateCreationFrom) {

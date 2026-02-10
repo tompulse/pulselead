@@ -61,7 +61,6 @@ export const MobileFiltersBar = ({
     (filters.nafClasses?.length || 0) +
     (filters.nafSousClasses?.length || 0) +
     (filters.departments?.length || 0) +
-    (filters.taillesEntreprise?.length || 0) +
     (filters.categoriesJuridiques?.length || 0) +
     (filters.typesEtablissement?.length || 0) +
     (filters.dateCreationFrom ? 1 : 0) +

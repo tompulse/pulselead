@@ -24,13 +24,6 @@ import { CATEGORIES_JURIDIQUES_NIVEAU_I, CATEGORIES_JURIDIQUES_NIVEAU_II, CATEGO
 import { B2B_LEGAL_CATEGORY_WHITELIST } from "@/utils/b2bLegalCategoryWhitelist";
 import { DEPARTMENT_NAMES } from "@/utils/regionsData";
 
-// Labels pour les tailles d'entreprise
-const TAILLE_LABELS: Record<string, string> = {
-  'GE': 'Grande Entreprise (GE)',
-  'ETI': 'Entreprise Taille Intermédiaire (ETI)',
-  'PME': 'Petite/Moyenne Entreprise (PME)',
-  'Taille inconnue, nouvelle entité': 'Taille inconnue, nouvelle entité'
-};
 
 // Labels pour les types d'évènement
 const TYPE_EVENEMENT_LABELS: Record<string, string> = {
@@ -40,16 +33,7 @@ const TYPE_EVENEMENT_LABELS: Record<string, string> = {
 
 // Helper pour formater le double compteur
 const formatDualCount = (contextual: number, global: number, hasFilters: boolean) => {
-  if (!hasFilters || contextual === global) {
-    return <span className="text-muted-foreground text-xs tabular-nums">{contextual.toLocaleString('fr-FR')}</span>;
-  }
-  return (
-    <span className="text-xs tabular-nums">
-      <span className="text-accent font-medium">{contextual.toLocaleString('fr-FR')}</span>
-      <span className="text-muted-foreground/50 mx-0.5">/</span>
-      <span className="text-muted-foreground/70">{global.toLocaleString('fr-FR')}</span>
-    </span>
-  );
+  return null; // Compteurs masqués pour l'utilisateur
 };
 
 interface NafFiltersProps {
@@ -61,7 +45,6 @@ interface NafFiltersProps {
     nafClasses?: string[];
     nafSousClasses?: string[];
     departments?: string[];
-    taillesEntreprise?: string[];
     categoriesJuridiques?: string[];
     typesEtablissement?: string[];
     dateCreationFrom?: string;
@@ -114,7 +97,6 @@ export const NafFilters = ({
 }: NafFiltersProps) => {
   const [sectionsOpen, setSectionsOpen] = useState(false);
   const [departmentsOpen, setDepartmentsOpen] = useState(false);
-  const [taillesEntrepriseOpen, setTaillesEntrepriseOpen] = useState(false);
   const [categoriesJuridiquesOpen, setCategoriesJuridiquesOpen] = useState(false);
   const [typesEvenementOpen, setTypesEvenementOpen] = useState(false);
   const [dateCreationOpen, setDateCreationOpen] = useState(false);
@@ -132,7 +114,6 @@ export const NafFilters = ({
     nafSections: filters.nafSections,
     nafDivisions: filters.nafDivisions,
     departments: filters.departments,
-    taillesEntreprise: filters.taillesEntreprise,
     categoriesJuridiques: filters.categoriesJuridiques,
     typesEtablissement: filters.typesEtablissement,
     searchQuery: filters.searchQuery
@@ -143,7 +124,6 @@ export const NafFilters = ({
     (filters.nafSections?.length || 0) > 0 ||
     (filters.nafDivisions?.length || 0) > 0 ||
     (filters.departments?.length || 0) > 0 ||
-    (filters.taillesEntreprise?.length || 0) > 0 ||
     (filters.categoriesJuridiques?.length || 0) > 0 ||
     (filters.typesEtablissement?.length || 0) > 0 ||
     (filters.searchQuery?.trim() || '').length > 0;
@@ -284,20 +264,6 @@ export const NafFilters = ({
     }));
   }, [availableFilters, allDepartments]);
 
-  // Tailles : on affiche GE/ETI/PME + Taille inconnue pour permettre la multi-sélection.
-  const VALID_TAILLES = ['GE', 'ETI', 'PME', 'Taille inconnue, nouvelle entité'];
-  const selectedTailles = filters.taillesEntreprise || [];
-  const availableTailles = useMemo(() => {
-    const contextualCounts = (availableFilters?.contextual?.taillesEntreprise || {}) as Record<string, number>;
-    const globalCounts = (availableFilters?.global?.taillesEntreprise || {}) as Record<string, number>;
-    // Keep fixed order: GE, ETI, PME, Non spécifié
-    return VALID_TAILLES.map((taille) => ({
-      taille,
-      label: TAILLE_LABELS[taille] || taille,
-      count: Number(contextualCounts[taille] ?? 0),
-      globalCount: Number(globalCounts[taille] ?? 0),
-    }));
-  }, [availableFilters]);
 
   // Structure les catégories juridiques par niveau II (ex: 51, 52, 53, 54, 55, 56, 57, 58)
   // Keep selected items visible even if their count becomes 0
@@ -570,19 +536,6 @@ export const NafFilters = ({
     });
   };
 
-  const handleTailleEntrepriseToggle = (taille: string) => {
-    setFilters((prev: any) => {
-      const current = prev.taillesEntreprise || [];
-      const isSelected = current.includes(taille);
-      
-      return {
-        ...prev,
-        taillesEntreprise: isSelected
-          ? current.filter((t: string) => t !== taille)
-          : [...current, taille]
-      };
-    });
-  };
 
   const handleCategorieJuridiqueToggle = (code: string) => {
     setFilters((prev: any) => {
@@ -656,7 +609,6 @@ export const NafFilters = ({
     nafClasses: [],
     nafSousClasses: [],
     departments: [],
-    taillesEntreprise: [],
     categoriesJuridiques: [],
     typesEtablissement: [],
     dateCreationFrom: undefined,
@@ -670,7 +622,6 @@ export const NafFilters = ({
     (filters.nafClasses?.length || 0) +
     (filters.nafSousClasses?.length || 0) +
     (filters.departments?.length || 0) +
-    (filters.taillesEntreprise?.length || 0) +
     (filters.categoriesJuridiques?.length || 0) +
     (filters.typesEtablissement?.length || 0) +
     (filters.dateCreationFrom ? 1 : 0) +
@@ -843,20 +794,6 @@ export const NafFilters = ({
                 </button>
               </span>
             ))}
-            {filters.taillesEntreprise?.map((taille: string) => (
-              <span
-                key={`taille-${taille}`}
-                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-purple-500/15 text-purple-600 dark:text-purple-400 rounded-full border border-purple-500/30"
-              >
-                <span>{taille}</span>
-                <button
-                  onClick={() => handleTailleEntrepriseToggle(taille)}
-                  className="hover:bg-purple-500/20 rounded-full p-0.5 transition-colors"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            ))}
             {filters.categoriesJuridiques?.map((code: string) => (
               <span
                 key={`catjur-${code}`}
@@ -1020,48 +957,6 @@ export const NafFilters = ({
                     >
                       <Checkbox selected={selected} />
                       <span className="text-sm flex-1">{dept} - {DEPARTMENT_NAMES[dept] || dept}</span>
-                      {formatDualCount(count, globalCount, hasActiveFilters)}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </ScrollArea>
-        </CollapsibleContent>
-      </Collapsible>
-
-      {/* Taille d'entreprise */}
-      <Collapsible open={taillesEntrepriseOpen} onOpenChange={setTaillesEntrepriseOpen} className="border-b border-accent/20">
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-accent" />
-            <span className="font-medium text-sm">Taille d'entreprise</span>
-          </div>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${taillesEntrepriseOpen ? 'rotate-180' : ''}`} />
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent>
-          <ScrollArea className={`${availableTailles.length <= 4 ? '' : 'max-h-[200px]'}`}>
-            <div className="px-4 pb-4 space-y-1">
-              {isLoading ? (
-                Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="h-10 w-full" />
-                ))
-              ) : availableTailles.length === 0 ? (
-                <div className="text-sm text-muted-foreground text-center py-4">
-                  Aucune taille disponible
-                </div>
-              ) : (
-                availableTailles.map(({ taille, label, count, globalCount }) => {
-                  const selected = filters.taillesEntreprise?.includes(taille);
-                  return (
-                    <div
-                      key={taille}
-                      onClick={() => handleTailleEntrepriseToggle(taille)}
-                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/10 p-2.5 rounded transition-colors active:scale-[0.98]"
-                    >
-                      <Checkbox selected={selected} />
-                      <span className="text-sm flex-1">{label}</span>
                       {formatDualCount(count, globalCount, hasActiveFilters)}
                     </div>
                   );

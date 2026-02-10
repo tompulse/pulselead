@@ -8,7 +8,6 @@ interface FilterCounts {
   nafClasses: Record<string, number>;
   nafSousClasses: Record<string, number>;
   departments: Record<string, number>;
-  taillesEntreprise: Record<string, number>;
   categoriesJuridiques: Record<string, number>;
   typesEtablissement: Record<string, number>;
 }
@@ -22,7 +21,6 @@ interface FiltersInput {
   nafSections?: string[];
   nafDivisions?: string[];
   departments?: string[];
-  taillesEntreprise?: string[];
   categoriesJuridiques?: string[];
   typesEtablissement?: string[];
   searchQuery?: string;
@@ -35,7 +33,6 @@ const emptyFilterCounts: FilterCounts = {
   nafClasses: {},
   nafSousClasses: {},
   departments: {},
-  taillesEntreprise: {},
   categoriesJuridiques: {},
   typesEtablissement: {},
 };
@@ -47,7 +44,6 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       filters.nafSections || [],
       filters.nafDivisions || [],
       filters.departments || [],
-      filters.taillesEntreprise || [],
       filters.categoriesJuridiques || [],
       filters.typesEtablissement || [],
       filters.searchQuery || ''
@@ -60,7 +56,6 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
         (filters.nafSections?.length || 0) > 0 ||
         (filters.nafDivisions?.length || 0) > 0 ||
         (filters.departments?.length || 0) > 0 ||
-        (filters.taillesEntreprise?.length || 0) > 0 ||
         (filters.categoriesJuridiques?.length || 0) > 0 ||
         (filters.typesEtablissement?.length || 0) > 0 ||
         (filters.searchQuery?.trim() || '').length > 0;
@@ -71,7 +66,6 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
           p_naf_sections: filters.nafSections?.length ? filters.nafSections : null,
           p_naf_divisions: filters.nafDivisions?.length ? filters.nafDivisions : null,
           p_departments: filters.departments?.length ? filters.departments : null,
-          p_tailles: filters.taillesEntreprise?.length ? filters.taillesEntreprise : null,
           p_categories_juridiques: filters.categoriesJuridiques?.length ? filters.categoriesJuridiques : null,
           p_types_etablissement: filters.typesEtablissement?.length ? filters.typesEtablissement : null,
           p_search_query: filters.searchQuery?.trim() || null
@@ -102,7 +96,6 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
         nafClasses: (contextualResult.data as any)?.nafClasses || {},
         nafSousClasses: (contextualResult.data as any)?.nafSousClasses || {},
         departments: (contextualResult.data as any)?.departments || {},
-        taillesEntreprise: (contextualResult.data as any)?.taillesEntreprise || {},
         categoriesJuridiques: (contextualResult.data as any)?.categoriesJuridiques || {},
         typesEtablissement: (contextualResult.data as any)?.typesEtablissement || {},
       };
@@ -115,7 +108,6 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
         nafClasses: (globalResult.data as any)?.nafClasses || {},
         nafSousClasses: (globalResult.data as any)?.nafSousClasses || {},
         departments: (globalResult.data as any)?.departments || {},
-        taillesEntreprise: (globalResult.data as any)?.taillesEntreprise || {},
         categoriesJuridiques: (globalResult.data as any)?.categoriesJuridiques || {},
         typesEtablissement: (globalResult.data as any)?.typesEtablissement || {},
       } : contextual;
