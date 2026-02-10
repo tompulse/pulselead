@@ -37,23 +37,42 @@ export const nouveauxSitesService = {
       // Sinon: pagination normale (50 par page)
       const effectivePageSize = hasFilters ? 10000 : pageSize;
 
-      // STRATÉGIE HYBRIDE: Filtres SQL simples + filtres complexes côté client
+      // TOUS LES FILTRES EN SQL - Plus de filtrage côté client!
       let query = supabase
         .from('nouveaux_sites')
         .select('*', { count: 'exact' });
 
-      // Filtres SQL simples (pas de OR complexes)
+      // Exclure les archivés
+      query = query.or('archived.is.null,archived.eq.false');
+
+      // Filtres NAF
       if (filters.nafSections?.length) {
         query = query.in('naf_section', filters.nafSections);
       }
       if (filters.nafDivisions?.length) {
         query = query.in('naf_division', filters.nafDivisions);
       }
+
+      // Filtre départements EN SQL (plus besoin de filtrer côté client!)
+      if (filters.departments?.length) {
+        query = query.in('departement', filters.departments);
+      }
+
+      // Filtres dates
       if (filters.dateCreationFrom) {
         query = query.gte('date_creation', filters.dateCreationFrom);
       }
       if (filters.dateCreationTo) {
         query = query.lte('date_creation', filters.dateCreationTo);
+      }
+
+      // Filtre types établissement
+      if (filters.typesEtablissement?.length) {
+        if (filters.typesEtablissement.includes('siege') && !filters.typesEtablissement.includes('site')) {
+          query = query.eq('est_siege', true);
+        } else if (filters.typesEtablissement.includes('site') && !filters.typesEtablissement.includes('siege')) {
+          query = query.eq('est_siege', false);
+        }
       }
 
       // Pagination (avec effectivePageSize adaptatif)
@@ -72,12 +91,9 @@ export const nouveauxSitesService = {
       let count = result.count ?? 0;
       const originalPageLength = data.length;
 
-      // FILTRES CÔTÉ CLIENT pour recherche, départements, catégories juridiques
+      // FILTRES CÔTÉ CLIENT (seulement recherche multi-colonnes et catégories juridiques)
       
-      // Filtrer les archivés
-      data = data.filter((row: any) => row?.archived !== true);
-
-      // Recherche (nom, ville, siret, code_naf, adresse, CODE POSTAL)
+      // Recherche multi-colonnes (nom, ville, siret, code_naf, adresse, code postal)
       const search = filters.searchQuery?.trim().toLowerCase();
       if (search) {
         data = data.filter((row: any) => {
@@ -93,38 +109,7 @@ export const nouveauxSitesService = {
         });
       }
 
-      // Filtre départements (gère codes postaux avec/sans zéro initial)
-      if (filters.departments?.length) {
-        data = data.filter((row: any) => {
-          const codePostal = String(row?.code_postal || '');
-          const departement = row?.departement;
-          
-          return filters.departments!.some(dept => {
-            // Check colonne departement directe
-            if (departement === dept) return true;
-            
-            // Normaliser le code postal (ajouter 0 si manquant)
-            const normalized = codePostal.length === 4 ? '0' + codePostal : codePostal;
-            
-            // Extraire les 2 premiers chiffres
-            const cpDept = normalized.substring(0, 2);
-            
-            return cpDept === dept;
-          });
-        });
-      }
-
-      // Filtre types établissement (siège/site)
-      if (filters.typesEtablissement?.length) {
-        data = data.filter((row: any) => {
-          const siege = row?.est_siege === true;
-          if (filters.typesEtablissement!.includes('siege') && siege) return true;
-          if (filters.typesEtablissement!.includes('site') && !siege) return true;
-          return false;
-        });
-      }
-
-      // Filtre catégories juridiques (commence par)
+      // Filtre catégories juridiques (commence par) - côté client car logique "startsWith"
       if (filters.categoriesJuridiques?.length) {
         data = data.filter((row: any) =>
           filters.categoriesJuridiques!.some(c => 
