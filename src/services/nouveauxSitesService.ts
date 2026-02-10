@@ -22,6 +22,21 @@ function getNom(row: any): string {
 export const nouveauxSitesService = {
   async fetchNouveauxSites(filters: NouveauxSitesFilters = {}, page = 0, pageSize = 50) {
     try {
+      // Détecter si des filtres sont appliqués
+      const hasFilters = 
+        (filters.nafSections?.length || 0) > 0 ||
+        (filters.nafDivisions?.length || 0) > 0 ||
+        (filters.departments?.length || 0) > 0 ||
+        (filters.categoriesJuridiques?.length || 0) > 0 ||
+        (filters.typesEtablissement?.length || 0) > 0 ||
+        (filters.searchQuery?.trim() || '').length > 0 ||
+        filters.dateCreationFrom ||
+        filters.dateCreationTo;
+
+      // Si filtres actifs: charger TOUT d'un coup (jusqu'à 10000 résultats)
+      // Sinon: pagination normale (50 par page)
+      const effectivePageSize = hasFilters ? 10000 : pageSize;
+
       // STRATÉGIE HYBRIDE: Filtres SQL simples + filtres complexes côté client
       let query = supabase
         .from('nouveaux_sites')
@@ -41,8 +56,8 @@ export const nouveauxSitesService = {
         query = query.lte('date_creation', filters.dateCreationTo);
       }
 
-      // Pagination
-      query = query.range(page * pageSize, (page + 1) * pageSize - 1);
+      // Pagination (avec effectivePageSize adaptatif)
+      query = query.range(page * effectivePageSize, (page + 1) * effectivePageSize - 1);
 
       const result = await query;
 
@@ -141,7 +156,7 @@ export const nouveauxSitesService = {
       return {
         data: groupedData,
         total: count, // Le total global (avant filtres client)
-        hasMore: originalPageLength === pageSize,
+        hasMore: originalPageLength === effectivePageSize,
         error: null,
       };
     } catch (err) {

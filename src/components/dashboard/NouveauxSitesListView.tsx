@@ -33,6 +33,17 @@ export const NouveauxSitesListView = ({
   // 🔥 PLUS DE SYSTÈME FREE/PRO - Accès total pour tous
   const isPro = true; // Toujours true = accès illimité
   const isProspectUnlocked = () => true; // Tous les prospects sont débloqués
+  // Détecter si des filtres sont actifs
+  const hasFilters = 
+    (filters.nafSections?.length || 0) > 0 ||
+    (filters.nafDivisions?.length || 0) > 0 ||
+    (filters.departments?.length || 0) > 0 ||
+    (filters.categoriesJuridiques?.length || 0) > 0 ||
+    (filters.typesEtablissement?.length || 0) > 0 ||
+    (filters.searchQuery?.trim() || '').length > 0 ||
+    filters.dateCreationFrom ||
+    filters.dateCreationTo;
+
   const { 
     data, 
     isLoading,
@@ -45,7 +56,8 @@ export const NouveauxSitesListView = ({
     queryKey: ['nouveaux-sites', filters],
     queryFn: ({ pageParam = 0 }) => nouveauxSitesService.fetchNouveauxSites(filters, pageParam),
     getNextPageParam: (lastPage, allPages) => {
-      return lastPage.hasMore ? allPages.length : undefined;
+      // Si filtres actifs, ne pas paginer (tout est chargé d'un coup)
+      return hasFilters ? undefined : (lastPage.hasMore ? allPages.length : undefined);
     },
     initialPageParam: 0,
     staleTime: 5 * 60 * 1000,
