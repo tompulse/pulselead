@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCategoryFromNaf } from '@/utils/nafToCategory';
+import { getSecteurNafSections } from '@/utils/simpleCategories';
 
 export interface NouveauxSitesFilters {
   searchQuery?: string;
@@ -48,13 +49,29 @@ export const nouveauxSitesService = {
       // Exclure les archivés (archived est TEXT, pas boolean)
       query = query.or('archived.is.null,archived.neq.true');
 
-      // Filtres NAF - UTILISER LES VRAIES COLONNES
-      // Les colonnes naf_section et naf_division N'EXISTENT PAS
-      // On doit filtrer côté client après récupération
+      // Filtres NAF - FILTRER DIRECTEMENT EN SQL PAR SECTIONS
+      if (filters.nafSections?.length) {
+        // Filtrer par les 2 premiers caractères du code_naf
+        const conditions = filters.nafSections.map(section => `code_naf.like.${section}%`).join(',');
+        query = query.or(conditions);
+      }
       
-      // Filtre départements - UTILISER departement OU extraire depuis code_postal
+      // Filtre catégories simplifiées → convertir en sections NAF
+      if (filters.categories?.length) {
+        const allSections = new Set<string>();
+        filters.categories.forEach(secteur => {
+          const sections = getSecteurNafSections(secteur);
+          sections.forEach(s => allSections.add(s));
+        });
+        
+        if (allSections.size > 0) {
+          const conditions = Array.from(allSections).map(section => `code_naf.like.${section}%`).join(',');
+          query = query.or(conditions);
+        }
+      }
+      
+      // Filtre départements
       if (filters.departments?.length) {
-        // Si la colonne departement existe, l'utiliser
         query = query.in('departement', filters.departments);
       }
 
@@ -96,16 +113,7 @@ export const nouveauxSitesService = {
       let count = result.count ?? 0;
       const originalPageLength = data.length;
 
-      // FILTRES CÔTÉ CLIENT
-      
-      // Filtre NAF Sections (extrait depuis code_naf car colonnes naf_section n'existe pas)
-      if (filters.nafSections?.length) {
-        data = data.filter((row: any) => {
-          const codeNaf = row?.code_naf ?? '';
-          const section = codeNaf.substring(0, 2);
-          return filters.nafSections!.includes(section);
-        });
-      }
+      // FILTRES CÔTÉ CLIENT (seulement pour NAF divisions et recherche)
       
       // Filtre NAF Divisions (extrait depuis code_naf)
       if (filters.nafDivisions?.length) {
@@ -139,14 +147,6 @@ export const nouveauxSitesService = {
             String(row?.categorie_juridique ?? '').startsWith(c)
           )
         );
-      }
-
-      // Filtre catégories détaillées (basé sur le code NAF)
-      if (filters.categories?.length) {
-        data = data.filter((row: any) => {
-          const category = getCategoryFromNaf(row?.code_naf);
-          return filters.categories!.includes(category);
-        });
       }
 
       // Grouper par nom d'entreprise
