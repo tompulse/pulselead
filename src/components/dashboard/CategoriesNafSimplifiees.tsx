@@ -2,8 +2,32 @@ import { useState, useMemo } from 'react';
 import { ChevronDown, Layers, Search, X } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { DETAILED_CATEGORIES } from '@/utils/detailedCategories';
+
+// Emojis pour les grands secteurs
+const SECTOR_EMOJIS: Record<string, string> = {
+  'Agriculture': '🌾',
+  'Alimentaire': '🍞',
+  'Textile & Mode': '👕',
+  'BTP & Construction': '🏗️',
+  'Automobile': '🚗',
+  'Commerce & Distribution': '🛒',
+  'Hôtellerie & Restauration': '🍽️',
+  'Transport & Logistique': '🚚',
+  'Informatique & Digital': '💻',
+  'Finance & Immobilier': '💰',
+  'Juridique & Conseil': '⚖️',
+  'Architecture & Ingénierie': '📐',
+  'Enseignement & Formation': '🎓',
+  'Santé & Médical': '🏥',
+  'Services personnels': '💇',
+  'Sport & Loisirs': '🏋️',
+  'Culture & Spectacle': '🎭',
+  'Énergie': '⚡',
+  'Services aux Entreprises': '💼',
+  'Industrie & Production': '🏭',
+  'Autres': '🔄'
+};
 
 interface CategoriesNafSimplifiedProps {
   selectedCategories: string[];
@@ -24,13 +48,23 @@ export const CategoriesNafSimplifiees = ({
     const groups: Record<string, typeof DETAILED_CATEGORIES> = {
       'Agriculture': [],
       'Alimentaire': [],
+      'Textile & Mode': [],
       'BTP & Construction': [],
+      'Automobile': [],
       'Commerce & Distribution': [],
       'Hôtellerie & Restauration': [],
       'Transport & Logistique': [],
       'Informatique & Digital': [],
-      'Services aux Entreprises': [],
+      'Finance & Immobilier': [],
+      'Juridique & Conseil': [],
+      'Architecture & Ingénierie': [],
+      'Enseignement & Formation': [],
       'Santé & Médical': [],
+      'Services personnels': [],
+      'Sport & Loisirs': [],
+      'Culture & Spectacle': [],
+      'Énergie': [],
+      'Services aux Entreprises': [],
       'Industrie & Production': [],
       'Autres': []
     };
@@ -38,15 +72,27 @@ export const CategoriesNafSimplifiees = ({
     DETAILED_CATEGORIES.forEach(cat => {
       if (cat.key.startsWith('agriculture-')) groups['Agriculture'].push(cat);
       else if (cat.key.startsWith('alimentaire-')) groups['Alimentaire'].push(cat);
+      else if (cat.key.startsWith('textile-')) groups['Textile & Mode'].push(cat);
       else if (cat.key.startsWith('btp-')) groups['BTP & Construction'].push(cat);
+      else if (cat.key.startsWith('auto-')) groups['Automobile'].push(cat);
       else if (cat.key.startsWith('commerce-') || cat.key.startsWith('gros-')) groups['Commerce & Distribution'].push(cat);
       else if (cat.key.startsWith('resto-') || cat.key.startsWith('hotellerie-')) groups['Hôtellerie & Restauration'].push(cat);
       else if (cat.key.startsWith('transport-')) groups['Transport & Logistique'].push(cat);
       else if (cat.key.startsWith('info-')) groups['Informatique & Digital'].push(cat);
+      else if (cat.key.startsWith('finance-') || cat.key.startsWith('immo-')) groups['Finance & Immobilier'].push(cat);
+      else if (cat.key.startsWith('juridique-') || cat.key.startsWith('conseil-')) groups['Juridique & Conseil'].push(cat);
+      else if (cat.key.startsWith('archi-')) groups['Architecture & Ingénierie'].push(cat);
+      else if (cat.key.startsWith('formation-')) groups['Enseignement & Formation'].push(cat);
+      else if (cat.key.startsWith('sante-')) groups['Santé & Médical'].push(cat);
+      else if (cat.key.startsWith('service-coiffeur') || cat.key.startsWith('service-esthetique') || cat.key.startsWith('service-pressing') || cat.key.startsWith('service-reparation')) {
+        groups['Services personnels'].push(cat);
+      }
+      else if (cat.key.startsWith('sport-') || cat.key.startsWith('loisirs-')) groups['Sport & Loisirs'].push(cat);
+      else if (cat.key.startsWith('culture-')) groups['Culture & Spectacle'].push(cat);
+      else if (cat.key.startsWith('energie-')) groups['Énergie'].push(cat);
       else if (cat.key === 'service-interim' || cat.key === 'service-nettoyage' || cat.key === 'service-securite' || cat.key === 'service-publicite') {
         groups['Services aux Entreprises'].push(cat);
       }
-      else if (cat.key.startsWith('sante-')) groups['Santé & Médical'].push(cat);
       else if (cat.key.startsWith('industrie-')) groups['Industrie & Production'].push(cat);
       else groups['Autres'].push(cat);
     });
@@ -67,35 +113,24 @@ export const CategoriesNafSimplifiees = ({
     const filtered: typeof groupedCategories = {};
 
     Object.entries(groupedCategories).forEach(([groupName, categories]) => {
-      const matchingCategories = categories.filter(cat => 
-        cat.label.toLowerCase().includes(query) ||
-        cat.keywords.some(keyword => keyword.toLowerCase().includes(query)) ||
-        groupName.toLowerCase().includes(query)
-      );
-
-      if (matchingCategories.length > 0) {
-        filtered[groupName] = matchingCategories;
+      if (groupName.toLowerCase().includes(query)) {
+        filtered[groupName] = categories;
       }
     });
 
     return filtered;
   }, [groupedCategories, searchQuery]);
 
-  const handleToggleCategory = (categoryKey: string) => {
-    if (selectedCategories.includes(categoryKey)) {
-      onCategoriesChange(selectedCategories.filter(c => c !== categoryKey));
-    } else {
-      onCategoriesChange([...selectedCategories, categoryKey]);
-    }
-  };
-
-  const handleSelectAllInGroup = (categories: typeof DETAILED_CATEGORIES) => {
+  // Toggle tout un secteur (toutes les sous-catégories)
+  const handleToggleSector = (categories: typeof DETAILED_CATEGORIES) => {
     const categoryKeys = categories.map(c => c.key);
     const allSelected = categoryKeys.every(key => selectedCategories.includes(key));
 
     if (allSelected) {
+      // Désélectionner toutes les catégories de ce secteur
       onCategoriesChange(selectedCategories.filter(c => !categoryKeys.includes(c)));
     } else {
+      // Sélectionner toutes les catégories de ce secteur
       const newSelected = [...selectedCategories];
       categoryKeys.forEach(key => {
         if (!newSelected.includes(key)) {
@@ -106,6 +141,12 @@ export const CategoriesNafSimplifiees = ({
     }
   };
 
+  // Compter combien de secteurs sont sélectionnés
+  const selectedSectorsCount = Object.entries(groupedCategories).filter(([_, categories]) => {
+    const categoryKeys = categories.map(c => c.key);
+    return categoryKeys.some(key => selectedCategories.includes(key));
+  }).length;
+
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="border-b border-accent/20">
       <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
@@ -113,9 +154,9 @@ export const CategoriesNafSimplifiees = ({
           <Layers className="w-4 h-4 text-accent" />
           <div className="flex flex-col items-start">
             <span className="font-medium text-sm">Secteur d'activité</span>
-            {selectedCategories.length > 0 && (
+            {selectedSectorsCount > 0 && (
               <span className="text-xs text-accent">
-                {selectedCategories.length} {selectedCategories.length > 1 ? 'sélectionnées' : 'sélectionnée'}
+                {selectedSectorsCount} secteur{selectedSectorsCount > 1 ? 's' : ''} sélectionné{selectedSectorsCount > 1 ? 's' : ''}
               </span>
             )}
           </div>
@@ -130,7 +171,7 @@ export const CategoriesNafSimplifiees = ({
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Rechercher..."
+              placeholder="Rechercher un secteur..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8 h-9 text-sm"
@@ -145,69 +186,74 @@ export const CategoriesNafSimplifiees = ({
             )}
           </div>
 
-          {/* Groupes de catégories */}
-          <div className="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
+          {/* Grands secteurs UNIQUEMENT */}
+          <div className="grid grid-cols-1 gap-2">
             {Object.entries(filteredGroups).map(([groupName, categories]) => {
               const groupCount = categories.reduce((sum, cat) => sum + (categoryCounts[cat.key] || 0), 0);
-              const allSelected = categories.every(cat => selectedCategories.includes(cat.key));
-              const someSelected = categories.some(cat => selectedCategories.includes(cat.key));
+              const categoryKeys = categories.map(c => c.key);
+              const allSelected = categoryKeys.every(key => selectedCategories.includes(key));
+              const someSelected = categoryKeys.some(key => selectedCategories.includes(key));
+              const isSelected = someSelected;
 
               return (
-                <div key={groupName} className="space-y-2">
-                  {/* En-tête du groupe */}
-                  <button
-                    onClick={() => handleSelectAllInGroup(categories)}
-                    className="flex items-center justify-between w-full text-left hover:bg-accent/5 p-2 rounded-lg transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className={`w-3.5 h-3.5 rounded border-2 transition-all ${
-                        allSelected 
-                          ? 'bg-accent border-accent' 
-                          : someSelected
-                          ? 'bg-accent/50 border-accent'
-                          : 'border-accent/50'
-                      } flex items-center justify-center`}>
-                        {allSelected && <span className="text-primary text-[8px] font-bold">✓</span>}
-                        {someSelected && !allSelected && <span className="text-primary text-[8px] font-bold">-</span>}
-                      </div>
-                      <span className="text-xs font-semibold text-accent uppercase tracking-wide">{groupName}</span>
+                <div
+                  key={groupName}
+                  onClick={() => handleToggleSector(categories)}
+                  className={`
+                    group relative cursor-pointer rounded-lg p-3 transition-all duration-200
+                    ${isSelected 
+                      ? 'bg-gradient-to-r from-accent/20 to-accent/10 border-2 border-accent/50 shadow-sm' 
+                      : 'bg-muted/30 hover:bg-accent/10 border-2 border-transparent hover:border-accent/30'
+                    }
+                  `}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    {/* Emoji */}
+                    <div className={`
+                      text-2xl transition-transform group-hover:scale-110 shrink-0
+                      ${isSelected ? 'animate-pulse' : ''}
+                    `}>
+                      {SECTOR_EMOJIS[groupName] || '📊'}
                     </div>
-                    {groupCount > 0 && (
-                      <span className="text-xs text-muted-foreground font-mono">{groupCount}</span>
-                    )}
-                  </button>
+                    
+                    {/* Contenu */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <h4 className={`
+                          font-semibold text-sm leading-tight
+                          ${isSelected ? 'text-accent' : 'text-foreground'}
+                        `}>
+                          {groupName}
+                        </h4>
+                        
+                        {/* Compteur */}
+                        {groupCount > 0 && (
+                          <span className="text-xs text-muted-foreground font-mono shrink-0">
+                            {groupCount}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <p className="text-xs text-muted-foreground mt-1 leading-tight">
+                        {categories.length} catégorie{categories.length > 1 ? 's' : ''}
+                      </p>
+                    </div>
 
-                  {/* Catégories du groupe */}
-                  <div className="space-y-1.5 pl-5">
-                    {categories.map(category => {
-                      const count = categoryCounts[category.key] || 0;
-                      const isSelected = selectedCategories.includes(category.key);
-
-                      return (
-                        <div
-                          key={category.key}
-                          className={`flex items-center justify-between gap-2 p-2 rounded-lg transition-colors cursor-pointer ${
-                            isSelected 
-                              ? 'bg-accent/10 border border-accent/20' 
-                              : 'hover:bg-accent/5 border border-transparent'
-                          }`}
-                          onClick={() => handleToggleCategory(category.key)}
-                        >
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <Checkbox
-                              checked={isSelected}
-                              onCheckedChange={() => handleToggleCategory(category.key)}
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                            <span className="text-sm shrink-0">{category.emoji}</span>
-                            <span className="text-sm truncate">{category.label}</span>
-                          </div>
-                          {count > 0 && (
-                            <span className="text-xs text-muted-foreground font-mono shrink-0">{count}</span>
-                          )}
-                        </div>
-                      );
-                    })}
+                    {/* Checkbox visuel */}
+                    <div className={`
+                      w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all
+                      ${isSelected 
+                        ? 'bg-accent border-accent' 
+                        : 'border-muted-foreground/30 group-hover:border-accent/50'
+                      }
+                    `}>
+                      {allSelected && (
+                        <div className="w-2.5 h-2.5 bg-white rounded-sm" />
+                      )}
+                      {someSelected && !allSelected && (
+                        <div className="w-2.5 h-0.5 bg-white rounded-sm" />
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -215,7 +261,7 @@ export const CategoriesNafSimplifiees = ({
 
             {Object.keys(filteredGroups).length === 0 && (
               <div className="text-center py-8 text-sm text-muted-foreground">
-                Aucune catégorie trouvée
+                Aucun secteur trouvé
               </div>
             )}
           </div>
