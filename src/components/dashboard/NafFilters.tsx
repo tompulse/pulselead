@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddressSearchInput } from "./AddressSearchInput";
+import { CategoriesNafSimplifiees } from "./CategoriesNafSimplifiees";
 import { 
   NAF_DIVISIONS, 
   NAF_GROUPES, 
@@ -857,68 +858,11 @@ export const NafFilters = ({
         )}
       </div>
 
-      {/* Nomenclature NAF hiérarchique - Point d'entrée: DIVISIONS */}
-      <Collapsible open={sectionsOpen} onOpenChange={setSectionsOpen} className="border-b border-accent/20">
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-accent/5 transition-colors">
-          <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-accent" />
-            <span className="font-medium text-sm">Secteur d'activité</span>
-          </div>
-          <ChevronDown className={`h-4 w-4 text-accent transition-transform ${sectionsOpen ? 'rotate-180' : ''}`} />
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent>
-          {/* Recherche dans la nomenclature */}
-          <div className="px-4 pb-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Rechercher (ex: 43, construction)..."
-                value={nafSearchQuery}
-                onChange={(e) => setNafSearchQuery(e.target.value)}
-                className="pl-7 h-7 text-xs bg-background/50 border-accent/20"
-              />
-            </div>
-          </div>
-          
-          <ScrollArea className="h-[450px]">
-            <div className="px-4 pb-4 space-y-0.5">
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="h-10 w-full" />
-                ))
-              ) : filteredHierarchy.length === 0 ? (
-                <div className="text-sm text-muted-foreground text-center py-4">
-                  Aucun secteur trouvé
-                </div>
-              ) : (
-                filteredHierarchy.map((division) => {
-                  const divisionSelected = filters.nafDivisions?.includes(division.code);
-                  
-                  return (
-                    <div key={division.code} className="space-y-0.5">
-                      {/* ✅ Niveau 1: Division uniquement (grandes catégories) */}
-                      <div className="flex items-start gap-1">
-                        <div
-                          onClick={() => handleDivisionToggle(division.code)}
-                          className="flex items-start gap-2 cursor-pointer hover:bg-accent/10 p-2 rounded transition-colors active:scale-[0.98] flex-1"
-                        >
-                          <Checkbox selected={divisionSelected} />
-                          <span className="text-base shrink-0">{division.emoji}</span>
-                          <span className="text-xs font-medium text-accent shrink-0 font-mono">{division.code}</span>
-                          <span className="text-sm leading-snug flex-1 break-words">{division.label}</span>
-                          {formatDualCount(division.count, division.globalCount, hasActiveFilters)}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </ScrollArea>
-        </CollapsibleContent>
-      </Collapsible>
+      {/* Catégories NAF Simplifiées - Beau, clair et fonctionnel */}
+      <CategoriesNafSimplifiees
+        selectedDivisions={filters.nafDivisions || []}
+        onDivisionsChange={(divisions) => setFilters((prev: any) => ({ ...prev, nafDivisions: divisions }))}
+      />
 
       {/* Départements */}
       <Collapsible open={departmentsOpen} onOpenChange={setDepartmentsOpen} className="border-b border-accent/20">
