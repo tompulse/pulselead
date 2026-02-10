@@ -190,11 +190,8 @@ export const DashboardHeader = ({
       ]
     : baseViewConfig;
   
-  // Add super-admin view (only for tomiolovpro@gmail.com)
-  const isSuperAdmin = userEmail === 'tomiolovpro@gmail.com';
-  const finalViewConfig = isSuperAdmin 
-    ? [...viewConfig, { key: 'admin' as DashboardView, label: 'Admin', icon: Shield }]
-    : viewConfig;
+  // Admin tab removed permanently
+  const finalViewConfig = viewConfig;
 
   return (
     <header className="glass-card border-b border-accent/20 px-4 py-3 z-10 backdrop-blur-xl shrink-0 shadow-md">
