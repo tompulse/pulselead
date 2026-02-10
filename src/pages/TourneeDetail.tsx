@@ -123,7 +123,7 @@ const TourneeDetail = () => {
 
       const { data, error } = await supabase
         .from('nouveaux_sites')
-        .select('id, nom, adresse, commune, code_postal, latitude, longitude, numero_voie, type_voie, libelle_voie')
+        .select('id, nom, commune, code_postal, latitude, longitude, numero_voie, type_voie, libelle_voie')
         .in('id', orderedSiteIds);
 
       if (error) throw error;
@@ -432,7 +432,7 @@ const TourneeDetail = () => {
     if (parts) {
       return `${parts}, ${site.code_postal || ''} ${site.commune || ''}`.trim();
     }
-    return site.adresse || `${site.code_postal || ''} ${site.commune || ''}`.trim();
+    return `${site.code_postal || ''} ${site.commune || ''}`.trim();
   };
 
   const getDialogTitle = () => {
@@ -523,11 +523,11 @@ const TourneeDetail = () => {
     setNoteDialogSiteId(null);
   };
 
-  const handleNavigate = (site: { latitude?: number | null; longitude?: number | null; adresse: string }) => {
+  const handleNavigate = (site: { latitude?: number | null; longitude?: number | null; address: string }) => {
     setNavTarget({
       latitude: site.latitude,
       longitude: site.longitude,
-      address: site.adresse,
+      address: site.address,
     });
     setNavDialogOpen(true);
   };
@@ -679,7 +679,7 @@ const TourneeDetail = () => {
   const entreprisesForMap = sites.map((site: any) => ({
     id: site.id,
     nom: site.nom,
-    adresse: getFullAddress(site),
+    address: getFullAddress(site),
     ville: site.commune,
     latitude: site.latitude,
     longitude: site.longitude
@@ -771,7 +771,7 @@ const TourneeDetail = () => {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleNavigate({ latitude: site.latitude, longitude: site.longitude, adresse: getFullAddress(site) })}
+                onClick={() => handleNavigate({ latitude: site.latitude, longitude: site.longitude, address: getFullAddress(site) })}
                 className="h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 border-accent/30"
               >
                 <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />

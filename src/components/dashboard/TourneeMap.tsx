@@ -9,7 +9,7 @@ import { toast } from "sonner";
 interface Entreprise {
   id: string;
   nom: string;
-  adresse: string;
+  address?: string;
   ville?: string;
   latitude: number;
   longitude: number;
@@ -334,8 +334,8 @@ export const TourneeMap = ({
           };
           
           const popupContent = isLastStop
-            ? `<strong>🏁 Arrivée - Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.adresse || e.commune || ''}</small>`
-            : `<strong>Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.adresse || e.commune || ''}</small>`;
+            ? `<strong>🏁 Arrivée - Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.address || e.ville || ''}</small>`
+            : `<strong>Arrêt ${idx + 1}</strong><br/>${e.nom}<br/><small>${e.address || e.ville || ''}</small>`;
           
           const marker = new mapboxgl.Marker({ 
             element: el, 

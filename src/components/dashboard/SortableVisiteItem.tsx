@@ -28,7 +28,7 @@ interface SortableVisiteItemProps {
   site: {
     id: string;
     nom: string;
-    adresse: string;
+    address?: string;
     ville?: string;
     latitude?: number;
     longitude?: number;
@@ -36,7 +36,7 @@ interface SortableVisiteItemProps {
   visiteStatus: VisiteStatus;
   currentNote?: string;
   onVisiteChange: (siteId: string, field: keyof VisiteStatus, value: boolean, dateRelance?: string) => void;
-  onNavigate: (site: { latitude?: number; longitude?: number; adresse: string }) => void;
+  onNavigate: (site: { latitude?: number; longitude?: number; address: string }) => void;
   onRemove?: (siteId: string) => void;
   onNoteChange?: (siteId: string, note: string) => void;
 }
@@ -195,7 +195,7 @@ export const SortableVisiteItem = ({
           {/* Site info */}
           <div className="flex-1 min-w-0">
             <div className="font-semibold text-sm sm:text-base leading-tight">{site.nom}</div>
-            <div className="text-xs sm:text-sm text-muted-foreground leading-tight mt-0.5 line-clamp-1">{site.adresse}</div>
+            <div className="text-xs sm:text-sm text-muted-foreground leading-tight mt-0.5 line-clamp-1">{site.address}</div>
             
             {/* Action buttons - Row 1: Status (Visité, RDV, À revoir, À rappeler) */}
             <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">

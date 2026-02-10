@@ -156,7 +156,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
 
       const { data, error } = await supabase
         .from('nouveaux_sites')
-        .select('id, nom, adresse, commune, code_postal, latitude, longitude, numero_voie, type_voie, libelle_voie')
+        .select('id, nom, commune, code_postal, latitude, longitude, numero_voie, type_voie, libelle_voie')
         .in('id', orderedSiteIds);
 
       if (error) {
@@ -249,7 +249,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     if (parts) {
       return `${parts}, ${site.code_postal || ''} ${site.commune || ''}`.trim();
     }
-    return site.adresse || `${site.code_postal || ''} ${site.commune || ''}`.trim();
+    return `${site.code_postal || ''} ${site.commune || ''}`.trim();
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -451,11 +451,11 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
     }
   };
 
-  const handleNavigate = (site: { latitude?: number; longitude?: number; adresse: string }) => {
+  const handleNavigate = (site: { latitude?: number; longitude?: number; address: string }) => {
     setNavTarget({
       latitude: site.latitude,
       longitude: site.longitude,
-      address: site.adresse,
+      address: site.address,
     });
     setNavDialogOpen(true);
   };
@@ -608,7 +608,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
   const entreprisesForMap = sites.map((site: any) => ({
     id: site.id,
     nom: site.nom,
-    adresse: getFullAddress(site),
+    address: getFullAddress(site),
     ville: site.commune,
     latitude: Number(site.latitude),
     longitude: Number(site.longitude)
@@ -778,7 +778,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
                             site={{
                               id: site.id,
                               nom: site.nom,
-                              adresse: getFullAddress(site),
+                              address: getFullAddress(site),
                               ville: site.commune,
                               latitude: site.latitude,
                               longitude: site.longitude,
