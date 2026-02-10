@@ -36,9 +36,9 @@ export const nouveauxSitesService = {
         filters.dateCreationFrom ||
         filters.dateCreationTo;
 
-      // Si filtres actifs: charger TOUT d'un coup (jusqu'à 10000 résultats)
+      // Si filtres actifs: charger TOUT d'un coup (jusqu'à 100000 résultats pour catégories)
       // Sinon: pagination normale (50 par page)
-      const effectivePageSize = hasFilters ? 10000 : pageSize;
+      const effectivePageSize = hasFilters ? 100000 : pageSize;
 
       // TOUS LES FILTRES EN SQL - Plus de filtrage côté client!
       let query = supabase
@@ -78,7 +78,10 @@ export const nouveauxSitesService = {
       }
 
       // Pagination (avec effectivePageSize adaptatif)
-      query = query.range(page * effectivePageSize, (page + 1) * effectivePageSize - 1);
+      // Si categories est utilisé, ne PAS paginer pour récupérer TOUS les résultats
+      if (!filters.categories?.length) {
+        query = query.range(page * effectivePageSize, (page + 1) * effectivePageSize - 1);
+      }
 
       const result = await query;
 
