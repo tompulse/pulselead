@@ -18,6 +18,7 @@ import { getCategorieJuridiqueFullLabel } from "@/utils/categoriesJuridiques";
 import { formatDateCreation } from "@/utils/formatDateSafe";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getCategoryLabel } from "@/utils/nafToCategory";
 
 interface UnifiedEntreprisePanelProps {
   entreprise: any | null;
@@ -276,25 +277,18 @@ export const UnifiedEntreprisePanel = ({
                     </div>
                   </div>
 
-                  {/* Activité NAF */}
+                  {/* Catégorie d'activité */}
                   <div className="space-y-2 pt-3 border-t border-accent/10">
                     <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wide">
                       <Factory className="w-3.5 h-3.5" />
                       Activité
                     </div>
-                    {nafSectionInfo ? (
-                      <p className="text-sm">
-                        {nafSectionInfo.emoji} {nafSectionInfo.label}
-                      </p>
-                    ) : null}
-                    {nafDivisionInfo ? (
-                      <p className="text-xs text-muted-foreground">{nafDivisionInfo.label}</p>
-                    ) : null}
-                    {displayEntreprise.code_naf ? (
+                    <p className="text-sm font-medium">
+                      {getCategoryLabel(displayEntreprise.code_naf)}
+                    </p>
+                    {displayEntreprise.code_naf && (
                       <p className="text-xs text-muted-foreground font-mono">Code NAF: {displayEntreprise.code_naf}</p>
-                    ) : !nafSectionInfo && !nafDivisionInfo ? (
-                      <p className="text-sm text-muted-foreground italic">Non renseignée</p>
-                    ) : null}
+                    )}
                   </div>
 
                   {/* SIREN - Bloqué pour FREE */}

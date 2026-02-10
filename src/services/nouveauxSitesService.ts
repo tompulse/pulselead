@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { getCategoryFromNaf } from '@/utils/nafToCategory';
 
 export interface NouveauxSitesFilters {
   searchQuery?: string;
@@ -13,6 +14,7 @@ export interface NouveauxSitesFilters {
   dateCreationFrom?: string;
   dateCreationTo?: string;
   showUnlockedOnly?: boolean;
+  categories?: string[]; // Nouvelles catégories détaillées
 }
 
 function getNom(row: any): string {
@@ -30,6 +32,7 @@ export const nouveauxSitesService = {
         (filters.categoriesJuridiques?.length || 0) > 0 ||
         (filters.typesEtablissement?.length || 0) > 0 ||
         (filters.searchQuery?.trim() || '').length > 0 ||
+        (filters.categories?.length || 0) > 0 ||
         filters.dateCreationFrom ||
         filters.dateCreationTo;
 
@@ -116,6 +119,14 @@ export const nouveauxSitesService = {
             String(row?.categorie_juridique ?? '').startsWith(c)
           )
         );
+      }
+
+      // Filtre catégories détaillées (basé sur le code NAF)
+      if (filters.categories?.length) {
+        data = data.filter((row: any) => {
+          const category = getCategoryFromNaf(row?.code_naf);
+          return filters.categories!.includes(category);
+        });
       }
 
       // Grouper par nom d'entreprise

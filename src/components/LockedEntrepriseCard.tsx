@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { MapPin, Building2, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDateCreation } from "@/utils/formatDateSafe";
+import { getCategoryLabel } from "@/utils/nafToCategory";
 
 interface LockedEntrepriseCardProps {
   entreprise: any;
@@ -53,17 +54,19 @@ export const LockedEntrepriseCard = ({
             <span className="line-clamp-2">{formatAddress()}</span>
           </div>
 
-          {/* NAF Code */}
+          {/* Catégorie d'activité */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">
+              {getCategoryLabel(entreprise.code_naf)}
+            </span>
+          </div>
+          
+          {/* Code NAF (optionnel, en plus petit) */}
           {entreprise.code_naf && (
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs whitespace-nowrap">
-                {entreprise.code_naf}
+              <Badge variant="secondary" className="text-[10px] whitespace-nowrap font-mono">
+                NAF {entreprise.code_naf}
               </Badge>
-              {entreprise.libelle_activite_principale && (
-                <span className="text-xs text-muted-foreground">
-                  {entreprise.libelle_activite_principale}
-                </span>
-              )}
             </div>
           )}
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NouveauxSitesListView } from '@/components/dashboard/NouveauxSitesListView';
-import { NafFilters } from '@/components/dashboard/NafFilters';
+import { UnifiedFilters } from '@/components/dashboard/UnifiedFilters';
 import { MobileFiltersBar } from '@/components/dashboard/MobileFiltersBar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -213,10 +213,10 @@ export const ProspectsViewContainer = ({
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden p-4 pt-2">
-        {/* Sidebar Filtres NAF - Desktop only - Fixed */}
+        {/* Sidebar Filtres - Desktop only - Fixed */}
         <div className="w-64 lg:w-80 shrink-0 glass-card rounded-xl border border-accent/20 overflow-hidden hidden lg:flex lg:flex-col">
           <ScrollArea className="flex-1">
-            <NafFilters
+            <UnifiedFilters
               filters={filters}
               setFilters={setFilters}
               resultsCount={resultsCount}

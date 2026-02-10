@@ -151,6 +151,9 @@ export const DETAILED_CATEGORIES: DetailedCategory[] = [
   { key: 'industrie-plastique', label: 'Plasturgie', emoji: '♻️', nafCodes: ['22'], keywords: ['plastique', 'plasturgie', 'injection'] },
   { key: 'industrie-chimie', label: 'Chimie', emoji: '🧪', nafCodes: ['20'], keywords: ['chimie', 'chimique', 'produit'] },
   { key: 'industrie-electronique', label: 'Électronique', emoji: '🔌', nafCodes: ['26', '27'], keywords: ['électronique', 'composant', 'circuit'] },
+
+  // 🔄 AUTRES (Catégorie par défaut pour couvrir 100% des cas)
+  { key: 'autre', label: 'Autres activités', emoji: '🔄', nafCodes: [], keywords: ['autre', 'divers', 'non classé'] },
 ];
 
 // Mapping des catégories qualifiées (Créations) → catégories détaillées

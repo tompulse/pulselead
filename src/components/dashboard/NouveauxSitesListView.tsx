@@ -10,6 +10,7 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { ProspectStatusBadge, ProspectStatus } from "./ProspectStatusBadge";
 import { useProspectStatuses } from "@/hooks/useProspectStatuses";
 import { RelatedEstablishmentsCard } from "./RelatedEstablishmentsCard";
+import { getCategoryLabel } from "@/utils/nafToCategory";
 interface NouveauxSitesListViewProps {
   filters: NouveauxSitesFilters;
   onSiteSelect?: (site: any) => void;
@@ -217,19 +218,18 @@ export const NouveauxSitesListView = ({
 
                   {/* Content */}
                   <div className="relative space-y-1.5 sm:space-y-2 flex-1 overflow-y-auto custom-scrollbar pr-1">
-                    {/* Secteur NAF */}
-                    {nafInfo && (
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                        <span className="text-[10px] sm:text-xs">{nafInfo.category.emoji}</span>
-                        <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-1">{nafInfo.category.label}</span>
-                      </div>
-                    )}
+                    {/* Catégorie d'activité */}
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                      <span className="text-xs sm:text-sm font-medium text-accent line-clamp-1">
+                        {getCategoryLabel(site.code_naf)}
+                      </span>
+                    </div>
 
-                    {/* Code NAF */}
+                    {/* Code NAF (optionnel, plus discret) */}
                     {site.code_naf && (
                       <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <span className="text-[10px] sm:text-xs flex-shrink-0">🏷️</span>
-                        <span className="text-[10px] sm:text-xs text-foreground/60">NAF: {site.code_naf}</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/40 font-mono">NAF: {site.code_naf}</span>
                       </div>
                     )}
 
