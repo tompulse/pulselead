@@ -5,8 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Unlock, Loader2, Sparkles, ArrowRight, Plus, MapPin, Factory, Calendar } from "lucide-react";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { formatDateCreation } from "@/utils/formatDateSafe";
 import { getNafCategory } from "@/utils/nafCategories";
 import { useDashboard } from "@/contexts/DashboardContext";
 
@@ -212,11 +211,11 @@ export const UnlockedProspectsView = ({ userId, onEntrepriseSelect }: UnlockedPr
                 )}
 
                 {/* Date de création */}
-                {prospect.date_creation && (
+                {prospect.date_creation && formatDateCreation(prospect.date_creation) && (
                   <div className="flex items-center gap-2 text-xs">
                     <Calendar className="w-3 h-3 text-muted-foreground" />
                     <span className="text-muted-foreground">
-                      Créé le {format(new Date(prospect.date_creation), 'dd MMM yyyy', { locale: fr })}
+                      Créé le {formatDateCreation(prospect.date_creation)}
                     </span>
                   </div>
                 )}

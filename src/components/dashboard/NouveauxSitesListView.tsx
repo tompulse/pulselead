@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Factory } from "lucide-react";
 import { nouveauxSitesService, NouveauxSitesFilters } from "@/services/nouveauxSitesService";
 import { getNafCategory } from "@/utils/nafCategories";
-import { format } from "date-fns";
+import { formatDateCreation } from "@/utils/formatDateSafe";
 import { fr } from "date-fns/locale";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { ProspectStatusBadge, ProspectStatus } from "./ProspectStatusBadge";
@@ -223,11 +223,11 @@ export const NouveauxSitesListView = ({
                     )}
 
                     {/* Date de création - Always visible */}
-                    {site.date_creation && (
+                    {site.date_creation && formatDateCreation(site.date_creation) && (
                       <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <span className="text-[10px] sm:text-xs flex-shrink-0">📅</span>
                         <span className="text-[10px] sm:text-xs text-foreground/60">
-                          Créé le {format(new Date(site.date_creation), 'dd MMM yyyy', { locale: fr })}
+                          Créé le {formatDateCreation(site.date_creation)}
                         </span>
                       </div>
                     )}

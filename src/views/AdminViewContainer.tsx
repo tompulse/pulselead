@@ -5,6 +5,7 @@ import { Upload, Database, Settings, FileText, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
+import { csvRowToNouveauxSitesRecord } from '@/utils/csvImportHelpers';
 
 interface AdminViewContainerProps {
   userId: string;
@@ -20,15 +21,8 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
 
   const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log('🔥 handleImportCSV triggered!', file ? file.name : 'no file');
-    
-    if (!file) {
-      console.log('❌ No file selected');
-      return;
-    }
-
+    if (!file) return;
     if (!file.name.endsWith('.csv')) {
-      console.log('❌ Invalid file format:', file.name);
       toast({
         title: "Format invalide",
         description: "Veuillez sélectionner un fichier CSV",
@@ -36,9 +30,6 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
       });
       return;
     }
-    
-    console.log('✅ Starting CSV import for:', file.name);
-    alert(`🚀 Import démarré pour ${file.name}\nOuvre la console (F12) pour voir la progression`);
 
     setLoading(true);
     setProgress(5);
@@ -46,170 +37,93 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
     setResult(null);
 
     try {
-      // Parse CSV
       let text = await file.text();
-      console.log('📄 CSV loaded, size:', text.length, 'bytes');
-      
-      // Remove UTF-8 BOM if present
-      if (text.charCodeAt(0) === 0xFEFF) {
-        text = text.slice(1);
-        console.log('🔧 UTF-8 BOM removed');
+      console.log('[Import Admin] Fichier:', file.name, 'Taille:', text?.length ?? 0, 'octets');
+      if (!text || text.length === 0) {
+        throw new Error('Fichier vide (0 octet).');
       }
-      
-      // Handle different line endings (Windows \r\n, Unix \n, Mac \r)
-      const lines = text
-        .replace(/\r\n/g, '\n')
-        .replace(/\r/g, '\n')
-        .split('\n')
-        .filter(line => line.trim());
-      
-      console.log('📊 Lines found:', lines.length);
-      console.log('🔍 First 3 lines:', lines.slice(0, 3));
-      
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+      text = text.replace(/\0/g, '');
+      const rawLines = text.split(/\r\n|\r|\n/);
+      const lines = rawLines.map(l => l.trim()).filter(Boolean);
+      console.log('[Import Admin] Lignes brutes:', rawLines.length, 'Lignes non vides:', lines.length);
+      if (lines.length === 0) {
+        throw new Error(`Fichier vide après lecture (${rawLines.length} lignes brutes). Enregistrez le CSV en UTF-8 ou "CSV (séparateur : point-virgule)".`);
+      }
       if (lines.length < 2) {
-        throw new Error('Le fichier CSV est vide ou ne contient pas de données. Vérifiez que le fichier contient au moins une ligne d\'en-tête et une ligne de données.');
+        throw new Error(`Une seule ligne détectée. Ajoutez des données sous l'en-tête. Ré-enregistrez en "CSV UTF-8" ou "CSV (;)". Lignes brutes : ${rawLines.length}.`);
       }
 
       const firstLine = lines[0];
       const delimiter = firstLine.includes(';') ? ';' : ',';
-      console.log('🔍 Delimiter detected:', delimiter);
-      
       const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
-      console.log('📋 Headers found:', headers);
-      console.log('📋 Number of headers:', headers.length);
-      
-      // Check if SIRET column exists (case-insensitive)
-      const siretHeader = headers.find(h => h.toLowerCase() === 'siret');
-      if (!siretHeader) {
-        throw new Error(`Colonne "siret" introuvable dans le CSV. Colonnes trouvées: ${headers.join(', ')}`);
+      const col: Record<string, string> = {};
+      headers.forEach(h => { col[h.toLowerCase()] = h; });
+      if (!col['siret']) {
+        throw new Error(`Colonne "siret" introuvable. Colonnes: ${headers.join(', ')}`);
       }
-      console.log('✅ SIRET column found:', siretHeader);
-      
-      const jsonData = lines.slice(1).map((line, index) => {
+
+      const rows: Record<string, string>[] = lines.slice(1).map(line => {
         const values = line.split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ''));
-        const row: any = {};
-        headers.forEach((header, idx) => {
-          row[header] = values[idx] || '';
-        });
+        const row: Record<string, string> = {};
+        headers.forEach((header, idx) => { row[header] = values[idx] ?? ''; });
         return row;
-      }).filter((row, index) => {
-        const hasSiret = row[siretHeader] && row[siretHeader].length > 0;
-        if (!hasSiret && index < 3) {
-          console.log(`⚠️ Row ${index + 1} filtered (no SIRET):`, row);
-        }
-        return hasSiret;
       });
 
-      console.log('✅ Valid records with SIRET:', jsonData.length);
-      console.log('🔬 First record:', jsonData[0]);
-      console.log('🔬 First 3 records:', jsonData.slice(0, 3));
-      
-      if (jsonData.length === 0) {
-        throw new Error(`Aucune ligne valide trouvée. Le fichier contient ${lines.length - 1} lignes de données mais aucune n'a de SIRET valide.`);
+      const dataToInsert: Record<string, unknown>[] = [];
+      for (const row of rows) {
+        const rec = csvRowToNouveauxSitesRecord(row, col);
+        if (rec) dataToInsert.push(rec);
       }
-      
-      setProgress(20);
-      setProgressText(`${jsonData.length} lignes détectées...`);
-      
-      // Log what will be sent to the Edge Function
-      console.log('📤 About to send to Edge Function:', {
-        numberOfRecords: jsonData.length,
-        firstRecordKeys: Object.keys(jsonData[0] || {}),
-        sampleRecord: jsonData[0]
-      });
+      if (dataToInsert.length === 0) {
+        throw new Error('Aucune ligne valide (chaque ligne doit avoir un SIRET).');
+      }
 
-      // Import en batches - Taille réduite pour gros fichiers
-      const BATCH_SIZE = jsonData.length > 10000 ? 200 : 500;
-      const totalBatches = Math.ceil(jsonData.length / BATCH_SIZE);
+      setProgress(15);
+      setProgressText(`${dataToInsert.length} lignes à importer...`);
+
+      const BATCH_SIZE = 100;
+      const totalBatches = Math.ceil(dataToInsert.length / BATCH_SIZE);
       let totalInserted = 0;
       let totalErrors = 0;
 
-      console.log(`📦 Starting import: ${jsonData.length} records in ${totalBatches} batches of ${BATCH_SIZE}`);
-
-      for (let i = 0; i < jsonData.length; i += BATCH_SIZE) {
-        const batch = jsonData.slice(i, i + BATCH_SIZE);
-        const currentLine = Math.min(i + BATCH_SIZE, jsonData.length);
+      for (let i = 0; i < dataToInsert.length; i += BATCH_SIZE) {
+        const batch = dataToInsert.slice(i, i + BATCH_SIZE);
         const batchNum = Math.floor(i / BATCH_SIZE) + 1;
-        
-        console.log(`📦 Batch ${batchNum}/${totalBatches}: Sending ${batch.length} records (${i + 1} to ${currentLine})...`);
-        setProgressText(`Import batch ${batchNum}/${totalBatches} (${currentLine}/${jsonData.length} lignes)...`);
-        
-        try {
-          const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
-            body: { entreprises: batch }
-          });
+        const currentLine = Math.min(i + BATCH_SIZE, dataToInsert.length);
+        setProgressText(`Import ${batchNum}/${totalBatches} (${currentLine}/${dataToInsert.length})...`);
+        setProgress(15 + Math.floor((currentLine / dataToInsert.length) * 80));
 
-          if (error) {
-            console.error(`❌ Batch ${batchNum}/${totalBatches} error:`, error);
-            console.error('❌ Error message:', error.message);
-            console.error('❌ Error context:', error.context);
-            console.error('❌ Batch sample that failed (first 2 records):`, batch.slice(0, 2));
-            totalErrors += batch.length;
-            
-            // Continue avec les autres batches malgré l'erreur
-            console.log(`⚠️ Continuing with next batch...`);
-          } else {
-            console.log(`✅ Batch ${batchNum}/${totalBatches} success:`, responseData);
-            totalInserted += responseData?.inserted || 0;
-            totalErrors += responseData?.errors || 0;
-          }
-        } catch (err) {
-          console.error(`❌ Exception in batch ${batchNum}/${totalBatches}:`, err);
-          console.error('❌ Stack:', err instanceof Error ? err.stack : 'No stack');
+        const { error } = await supabase
+          .from('nouveaux_sites')
+          .upsert(batch, { onConflict: 'siret' });
+
+        if (error) {
           totalErrors += batch.length;
-        }
-
-        const progressPercent = 20 + Math.floor((currentLine / jsonData.length) * 80);
-        setProgress(progressPercent);
-        
-        // Small delay to avoid overwhelming the server
-        if (batchNum % 10 === 0) {
-          console.log(`⏸️ Pausing 500ms after 10 batches...`);
-          await new Promise(resolve => setTimeout(resolve, 500));
+        } else {
+          totalInserted += batch.length;
         }
       }
 
       setProgress(100);
-      setProgressText("Import terminé !");
-
+      setProgressText("Import terminé.");
       const successMessage = `${totalInserted} établissements importés${totalErrors > 0 ? ` (${totalErrors} erreurs)` : ''}`;
-      
-      setResult({
-        success: totalInserted > 0,
-        message: successMessage
-      });
-
+      setResult({ success: totalInserted > 0, message: successMessage });
       toast({
-        title: totalInserted > 0 ? "✅ Import réussi" : "⚠️ Import partiel",
+        title: totalInserted > 0 ? "Import réussi" : "Import partiel",
         description: successMessage,
       });
-
-      // Reload after success
       if (totalInserted > 0) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 2500);
+        setTimeout(() => window.location.reload(), 2000);
       }
-
     } catch (error) {
-      console.error('Import error:', error);
       const message = error instanceof Error ? error.message : "Erreur lors de l'import";
-      
-      setResult({
-        success: false,
-        message
-      });
-
-      toast({
-        title: "❌ Erreur d'import",
-        description: message,
-        variant: "destructive",
-      });
+      console.error('[Import Admin] Erreur:', message, error);
+      setResult({ success: false, message });
+      toast({ title: "Erreur d'import", description: message, variant: "destructive" });
     } finally {
       setLoading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -271,9 +185,9 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
             )}
 
             <div className="text-xs text-muted-foreground space-y-1">
-              <p><strong>Format attendu :</strong></p>
-              <p>siret;Entreprise;date_creation;siege;categorie_juridique;categorie_entreprise;complement_adresse;numero_voie;type_voie;libelle_voie;code_postal;ville;coordonnee_lambert_x;coordonnee_lambert_y;code_naf</p>
-              <p className="mt-2"><strong>Séparateur :</strong> point-virgule (;)</p>
+              <p><strong>Colonnes acceptées (ordre libre, casse ignorée) :</strong></p>
+              <p>siret, Entreprise, date_creation, siege, categorie_juridique, categorieEntreprise, complement_adresse, numero_voie, type_voie, libelle_voie, code_postal, ville, coordonnee_lambert_x/y, activitePrincipaleEtablissement (ou code_naf), etc.</p>
+              <p className="mt-2"><strong>Séparateur :</strong> point-virgule (;) ou virgule (,)</p>
             </div>
           </div>
         </div>

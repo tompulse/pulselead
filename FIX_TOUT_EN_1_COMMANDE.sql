@@ -242,11 +242,10 @@ SELECT
   COUNT(*) as total_prospects,
   COUNT(CASE WHEN archived = false THEN 1 END) as prospects_actifs,
   COUNT(id) as avec_id_uuid,
-  pg_typeof(siret) as type_siret,
+  (SELECT pg_typeof(siret)::text FROM nouveaux_sites LIMIT 1) as type_siret,
   (SELECT COUNT(*) FROM pg_policies WHERE tablename = 'nouveaux_sites') as nb_policies,
   (SELECT COUNT(*) FROM pg_indexes WHERE tablename = 'nouveaux_sites') as nb_indexes
-FROM nouveaux_sites
-LIMIT 1;
+FROM nouveaux_sites;
 
 -- Échantillon de données
 SELECT 

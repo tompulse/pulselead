@@ -20,11 +20,12 @@ export interface NouveauxSitesFilters {
 export const nouveauxSitesService = {
   async fetchNouveauxSites(filters: NouveauxSitesFilters = {}, page = 0, pageSize = 50) {
     try {
+      // Inclure archived = false OU null (données importées sans cette colonne ou null = afficher)
       let query = supabase
         .from('nouveaux_sites')
         .select('*', { count: 'exact' })
-        .eq('archived', false) // Exclure les entreprises archivées de l'onglet Prospects
-        .order('random_order', { ascending: true }) // Ordre mélangé mais stable pour diversité
+        .or('archived.eq.false,archived.is.null')
+        .order('random_order', { ascending: true, nullsFirst: true })
         .range(page * pageSize, (page + 1) * pageSize - 1);
 
       // Recherche intelligente multi-termes avec synonymes métier
@@ -129,7 +130,6 @@ export const nouveauxSitesService = {
       }
 
       const { data, error, count } = await query;
-
       if (error) throw error;
 
       // Grouper par nom pour éviter les doublons d'affichage

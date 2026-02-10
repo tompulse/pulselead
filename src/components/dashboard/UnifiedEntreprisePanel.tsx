@@ -15,6 +15,7 @@ import { openGoogleMaps, openWaze } from "@/utils/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NAF_SECTIONS, NAF_DIVISIONS } from "@/utils/nafNomenclatureComplete";
 import { getCategorieJuridiqueFullLabel } from "@/utils/categoriesJuridiques";
+import { formatDateCreation } from "@/utils/formatDateSafe";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -190,20 +191,9 @@ export const UnifiedEntreprisePanel = ({
   const nafSectionInfo = displayEntreprise?.naf_section && NAF_SECTIONS ? NAF_SECTIONS[displayEntreprise.naf_section] : null;
   const nafDivisionInfo = displayEntreprise?.naf_division && NAF_DIVISIONS ? NAF_DIVISIONS[displayEntreprise.naf_division] : null;
 
-  // Format date - avec vérifications
+  // Format date - avec vérifications (évite "Invalid time value")
   const formattedDate = displayEntreprise?.date_creation 
-    ? (() => {
-        try {
-          return new Date(displayEntreprise.date_creation).toLocaleDateString('fr-FR', { 
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric' 
-          });
-        } catch (e) {
-          console.error('Error formatting date:', e);
-          return null;
-        }
-      })()
+    ? (formatDateCreation(displayEntreprise.date_creation) || null)
     : null;
 
   const hasCoordinates = displayEntreprise?.latitude && displayEntreprise?.longitude;

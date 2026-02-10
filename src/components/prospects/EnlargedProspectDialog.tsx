@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Unlock, MapPin, Building2, Calendar, Mail, Phone } from "lucide-react";
 import { useState } from "react";
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { formatDateSafe } from '@/utils/formatDateSafe';
 import { UpgradeDialog } from "../upgrade/UpgradeDialog";
 import { cn } from "@/lib/utils";
 
@@ -186,13 +185,13 @@ export const EnlargedProspectDialog = ({
               )}
 
               {/* Creation date */}
-              {site?.date_creation && (
+              {site?.date_creation && formatDateSafe(site.date_creation, 'dd MMMM yyyy') && (
                 <div className="flex items-center gap-3">
                   <Calendar className="w-4 h-4 text-accent flex-shrink-0" />
                   <div className="flex-1">
                     <p className="text-xs text-muted-foreground">Date de création</p>
                     <p className="text-sm">
-                      {format(new Date(site.date_creation), 'dd MMMM yyyy', { locale: fr })}
+                      {formatDateSafe(site.date_creation, 'dd MMMM yyyy')}
                     </p>
                   </div>
                 </div>

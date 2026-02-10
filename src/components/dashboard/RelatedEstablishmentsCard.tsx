@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, MapPin, Building, Calendar } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getNafCategory } from "@/utils/nafCategories";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { formatDateCreation } from "@/utils/formatDateSafe";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface RelatedEstablishmentsCardProps {
@@ -122,11 +121,11 @@ export const RelatedEstablishmentsCard = ({
                     )}
                     
                     {/* Date */}
-                    {site.date_creation && (
+                    {site.date_creation && formatDateCreation(site.date_creation) && (
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
                         <span className="text-[10px] text-muted-foreground">
-                          {format(new Date(site.date_creation), 'dd MMM yyyy', { locale: fr })}
+                          {formatDateCreation(site.date_creation)}
                         </span>
                       </div>
                     )}

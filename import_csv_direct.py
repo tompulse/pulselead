@@ -7,11 +7,87 @@ Usage: python3 import_csv_direct.py database.csv
 import csv
 import sys
 import os
+import math
+import json
+import ssl
+import urllib.request
 from datetime import datetime
-from supabase import create_client, Client
+
+# Contexte SSL (évite CERTIFICATE_VERIFY_FAILED sur Mac)
+_SSL_CTX = ssl._create_unverified_context() if getattr(ssl, '_create_unverified_context', None) else ssl.create_default_context()
+
+
+def _to_serializable(val):
+    """Une seule valeur -> type JSON sûr (str, int, float, bool, None)."""
+    if val is None:
+        return None
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, int):
+        return int(val)
+    if isinstance(val, float):
+        if math.isnan(val) or math.isinf(val):
+            return None
+        return float(val)
+    if isinstance(val, (bytes, bytearray)):
+        val = val.decode('utf-8', errors='replace')
+    if isinstance(val, str):
+        # Caractères de contrôle / non-UTF-8 peuvent casser le JSON côté API
+        val = ''.join(c for c in val if ord(c) >= 32 or c in '\n\r\t')
+        return val
+    if isinstance(val, datetime):
+        return val.isoformat()
+    return str(val)
+
+
+def sanitize_for_json(obj):
+    """Rend un dict 100% sérialisable JSON (évite erreur 405)."""
+    if obj is None:
+        return None
+    if isinstance(obj, dict):
+        return {str(k): _to_serializable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_to_serializable(x) for x in obj]
+    return _to_serializable(obj)
+
+
+def safe_float(val):
+    """Convertit en float ou None (évite NaN)."""
+    if val is None or val == '':
+        return None
+    try:
+        f = float(val)
+        return None if math.isnan(f) or math.isinf(f) else f
+    except (ValueError, TypeError):
+        return None
+
+
+def upsert_batch_rest(url: str, key: str, batch: list) -> None:
+    """Insert/upsert via REST PostgREST (évite bug 405 du client Python)."""
+    if not url or url.startswith('YOUR_'):
+        raise ValueError('SUPABASE_URL non configuré')
+    if not key or key.startswith('YOUR_'):
+        raise ValueError('SUPABASE_SERVICE_ROLE_KEY non configuré')
+    endpoint = f"{url.rstrip('/')}/rest/v1/nouveaux_sites"
+    body = json.dumps(batch).encode('utf-8')
+    req = urllib.request.Request(
+        endpoint,
+        data=body,
+        method='POST',
+        headers={
+            'Content-Type': 'application/json',
+            'apikey': key,
+            'Authorization': f'Bearer {key}',
+            'Prefer': 'resolution=merge-duplicates, on_conflict=siret',
+        },
+    )
+    with urllib.request.urlopen(req, timeout=60, context=_SSL_CTX) as resp:
+        if resp.status not in (200, 201):
+            raise Exception(f"HTTP {resp.status}: {resp.read()}")
+
 
 # Configuration Supabase
-SUPABASE_URL = os.environ.get('SUPABASE_URL', 'YOUR_SUPABASE_URL')
+SUPABASE_URL = os.environ.get('SUPABASE_URL', 'YOUR_SUPABASE_URL').rstrip('/')
 SUPABASE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', 'YOUR_SERVICE_ROLE_KEY')
 
 # ⚠️ REMPLACE CES VALEURS ou utilise des variables d'environnement:
@@ -122,91 +198,120 @@ def get_naf_hierarchy(code_naf):
 
 def main():
     if len(sys.argv) < 2:
-        print("❌ Usage: python3 import_csv_direct.py database.csv")
+        print("Usage: python3 import_csv_direct.py <ton_fichier.csv>")
+        print("")
+        print("Mettre à jour la base (même fichier, mêmes colonnes):")
+        print("  1. Exporte ton CSV avec les mêmes colonnes qu’avant")
+        print("  2. Dans le terminal: cd vers le dossier du projet")
+        print("  3. export SUPABASE_URL='...'  et  export SUPABASE_SERVICE_ROLE_KEY='...'")
+        print("  4. python3 import_csv_direct.py database.csv")
+        print("")
+        print("Les lignes sont fusionnées par SIRET (même SIRET = mise à jour, nouveau SIRET = ajout).")
         sys.exit(1)
     
     csv_file = sys.argv[1]
     
+    # Si le chemin n'existe pas, essayer dans le dossier du script (où est souvent database.csv)
     if not os.path.exists(csv_file):
-        print(f"❌ Fichier introuvable: {csv_file}")
-        sys.exit(1)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        fallback = os.path.join(script_dir, os.path.basename(csv_file))
+        if os.path.exists(fallback):
+            csv_file = fallback
+            print(f"📂 Fichier trouvé dans le dossier du projet: {csv_file}")
+        else:
+            print(f"❌ Fichier introuvable: {sys.argv[1]}")
+            print(f"   Cherché aussi ici: {fallback}")
+            print("\n💡 Astuce: va dans le dossier du projet puis relance:")
+            print(f"   cd {script_dir}")
+            print(f"   python3 import_csv_direct.py database.csv")
+            sys.exit(1)
     
     print("🚀 Import CSV vers Supabase PulseLead")
     print("=" * 50)
     
-    # Initialize Supabase client
-    try:
-        supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("✅ Connexion Supabase établie")
-    except Exception as e:
-        print(f"❌ Erreur connexion Supabase: {e}")
-        print("\n⚠️ Configure les variables d'environnement:")
-        print("export SUPABASE_URL='https://xxxxx.supabase.co'")
-        print("export SUPABASE_SERVICE_ROLE_KEY='eyJhbGc...'")
+    if not SUPABASE_URL or SUPABASE_URL.startswith('YOUR_') or not SUPABASE_KEY or SUPABASE_KEY.startswith('YOUR_'):
+        print("❌ Configure d'abord les variables d'environnement:")
+        print("  export SUPABASE_URL='https://xxxxx.supabase.co'")
+        print("  export SUPABASE_SERVICE_ROLE_KEY='eyJhbGc...'")
+        sys.exit(1)
+    print("✅ Config Supabase OK")
+    
+    # Read CSV (plusieurs encodages au cas où)
+    print(f"📄 Lecture du fichier: {csv_file}")
+    data_to_insert = []
+    encodings = ('utf-8-sig', 'utf-8', 'latin-1', 'cp1252', 'iso-8859-1')
+    f = None
+    for enc in encodings:
+        try:
+            f = open(csv_file, 'r', encoding=enc)
+            first_line = f.readline()
+            f.seek(0)
+            break
+        except (UnicodeDecodeError, UnicodeError):
+            if f:
+                f.close()
+                f = None
+            continue
+    if f is None:
+        print("❌ Impossible de lire le fichier (encodage non reconnu). Essaye UTF-8 ou Latin-1.")
         sys.exit(1)
     
-    # Read CSV
-    print(f"📄 Lecture du fichier: {csv_file}")
-    
-    data_to_insert = []
-    
-    with open(csv_file, 'r', encoding='utf-8-sig') as f:
-        # Detect delimiter
-        first_line = f.readline()
+    with f:
         delimiter = ';' if ';' in first_line else ','
         f.seek(0)
-        
         reader = csv.DictReader(f, delimiter=delimiter)
+        fieldnames = reader.fieldnames or []
+        # Colonnes insensibles à la casse: nom normalisé (minuscule) -> nom réel dans le CSV
+        col = {str(h).strip().lower(): str(h).strip() for h in fieldnames}
+        def get(row, *candidates):
+            for c in candidates:
+                r = col.get(c.lower(), c)
+                if r and r in row:
+                    v = row.get(r, '')
+                    return v if v is not None else ''
+            return ''
         
-        print(f"🔍 Séparateur détecté: '{delimiter}'")
-        print(f"📋 Colonnes: {', '.join(reader.fieldnames or [])}")
+        print(f"🔍 Séparateur: '{delimiter}'")
+        print(f"📋 Colonnes ({len(fieldnames)}): {', '.join(fieldnames[:15])}{'...' if len(fieldnames) > 15 else ''}")
         
         for i, row in enumerate(reader, 1):
-            if i % 1000 == 0:
+            if i % 10000 == 0:
                 print(f"  📊 Lecture ligne {i}...")
             
-            siret = row.get('siret', '').strip()
+            siret = (get(row, 'siret', 'SIRET') or '').strip()
             if not siret:
                 continue
+            siret = str(siret).replace('.0', '').split('.')[0]  # au cas où nombre
             
-            # Parse coordinates
-            lambert_x = row.get('coordonneeLambertAbscisseEtablissement', '').strip()
-            lambert_y = row.get('coordonneeLambertOrdonneeEtablissement', '').strip()
-            
+            lambert_x = (get(row, 'coordonneeLambertAbscisseEtablissement', 'coordonnee_lambert_x') or '').strip()
+            lambert_y = (get(row, 'coordonneeLambertOrdonneeEtablissement', 'coordonnee_lambert_y') or '').strip()
             lat, lng = None, None
-            if lambert_x and lambert_y:
-                try:
-                    lat, lng = lambert93_to_wgs84(float(lambert_x), float(lambert_y))
-                except:
-                    pass
+            lx, ly = safe_float(lambert_x), safe_float(lambert_y)
+            if lx is not None and ly is not None:
+                lat, lng = lambert93_to_wgs84(lx, ly)
             
-            # Parse date
-            date_creation = parse_date(row.get('date_creation', '').strip())
+            date_creation = parse_date((get(row, 'date_creation', 'dateCreation') or '').strip())
+            siege_val = (get(row, 'siege', 'Siege') or '').strip().upper()
+            est_siege = siege_val in ('VRAI', 'TRUE', '1', 'V', 'T', 'OUI')
             
-            # Parse siege
-            siege_val = row.get('siege', '').strip().upper()
-            est_siege = siege_val in ['VRAI', 'TRUE', '1', 'V', 'T', 'OUI']
-            
-            # NAF hierarchy
-            code_naf = row.get('activitePrincipaleEtablissement', '').strip() or None
+            code_naf = (get(row, 'activitePrincipaleEtablissement', 'activite_principale', 'code_naf') or '').strip() or None
             naf_section, naf_division, naf_groupe, naf_classe = get_naf_hierarchy(code_naf)
             
-            # Build record
             record = {
                 'siret': siret,
-                'nom': row.get('entreprise', '').strip() or 'Entreprise sans nom',
+                'nom': (get(row, 'entreprise', 'Entreprise', 'nom', 'nom_entreprise') or '').strip() or 'Entreprise sans nom',
                 'date_creation': date_creation,
                 'est_siege': est_siege,
-                'categorie_juridique': row.get('categorie_juridique', '').strip() or None,
-                'categorie_entreprise': row.get('categorieEntreprise', '').strip() or 'PME',
-                'complement_adresse': row.get('complementAdresseEtablissement', '').strip() or None,
-                'numero_voie': row.get('numeroVoieEtablissement', '').strip() or None,
-                'type_voie': row.get('typeVoieEtablissement', '').strip() or None,
-                'libelle_voie': row.get('libelleVoieEtablissement', '').strip() or None,
-                'code_postal': row.get('codePostalEtablissement', '').strip() or None,
-                'ville': row.get('libelleCommuneEtablissement', '').strip() or None,
-                'coordonnee_lambert_x': float(lambert_x) if lambert_x else None,
-                'coordonnee_lambert_y': float(lambert_y) if lambert_y else None,
+                'categorie_juridique': (get(row, 'categorie_juridique', 'categorieJuridique') or '').strip() or None,
+                'categorie_entreprise': (get(row, 'categorieEntreprise', 'categorie_entreprise') or '').strip() or 'PME',
+                'complement_adresse': (get(row, 'complementAdresseEtablissement', 'complement_adresse') or '').strip() or None,
+                'numero_voie': (get(row, 'numeroVoieEtablissement', 'numero_voie') or '').strip() or None,
+                'type_voie': (get(row, 'typeVoieEtablissement', 'type_voie') or '').strip() or None,
+                'libelle_voie': (get(row, 'libelleVoieEtablissement', 'libelle_voie') or '').strip() or None,
+                'code_postal': (get(row, 'codePostalEtablissement', 'code_postal') or '').strip() or None,
+                'ville': (get(row, 'libelleCommuneEtablissement', 'ville', 'commune') or '').strip() or None,
+                'coordonnee_lambert_x': safe_float(lambert_x),
+                'coordonnee_lambert_y': safe_float(lambert_y),
                 'latitude': lat,
                 'longitude': lng,
                 'code_naf': code_naf,
@@ -215,18 +320,21 @@ def main():
                 'naf_groupe': naf_groupe,
                 'naf_classe': naf_classe,
                 'adresse': ' '.join(filter(None, [
-                    row.get('numeroVoieEtablissement', '').strip(),
-                    row.get('typeVoieEtablissement', '').strip(),
-                    row.get('libelleVoieEtablissement', '').strip()
+                    (get(row, 'numeroVoieEtablissement', 'numero_voie') or '').strip(),
+                    (get(row, 'typeVoieEtablissement', 'type_voie') or '').strip(),
+                    (get(row, 'libelleVoieEtablissement', 'libelle_voie') or '').strip()
                 ])) or None
             }
-            
             data_to_insert.append(record)
     
+    if not data_to_insert:
+        print("❌ Aucune ligne valide (il faut au moins une colonne 'siret' ou 'SIRET' avec des valeurs).")
+        print("   Vérifie que ton CSV a un séparateur ; ou , et des en-têtes corrects.")
+        sys.exit(1)
     print(f"✅ {len(data_to_insert)} lignes valides à importer")
     
-    # Insert in batches
-    BATCH_SIZE = 200
+    # Insert in batches (100 pour limiter la taille du payload et éviter 405)
+    BATCH_SIZE = 100
     total_inserted = 0
     total_errors = 0
     
@@ -239,13 +347,20 @@ def main():
         
         print(f"  📤 Batch {batch_num}/{total_batches} ({len(batch)} records)...", end='')
         
+        # Nettoyer pour JSON strict (évite erreur 405 côté Supabase)
+        batch_clean = [sanitize_for_json(r) for r in batch]
+        
+        # Vérifier que le batch est bien sérialisable avant envoi
         try:
-            response = supabase.table('nouveaux_sites').upsert(
-                batch,
-                on_conflict='siret',
-                ignore_duplicates=False
-            ).execute()
-            
+            json.dumps(batch_clean)
+        except (TypeError, ValueError) as je:
+            print(f" ❌ JSON invalide: {je}")
+            total_errors += len(batch)
+            continue
+        
+        try:
+            # Envoi via REST PostgREST pour éviter erreur 405 "JSON could not be generated"
+            upsert_batch_rest(SUPABASE_URL, SUPABASE_KEY, batch_clean)
             print(f" ✅")
             total_inserted += len(batch)
         except Exception as e:

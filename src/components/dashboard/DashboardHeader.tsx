@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { DashboardView } from "@/contexts/DashboardContext";
+import { csvRowToNouveauxSitesRecord } from "@/utils/csvImportHelpers";
 
 interface DashboardHeaderProps {
   view: DashboardView;
@@ -76,13 +77,8 @@ export const DashboardHeader = ({
   const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     if (!file.name.endsWith('.csv')) {
-      toast({
-        title: "Format invalide",
-        description: "Veuillez sélectionner un fichier CSV",
-        variant: "destructive",
-      });
+      toast({ title: "Format invalide", description: "Veuillez sélectionner un fichier CSV", variant: "destructive" });
       return;
     }
 
@@ -92,98 +88,89 @@ export const DashboardHeader = ({
     setResult(null);
 
     try {
-      // Parse CSV
-      const text = await file.text();
-      const lines = text.split('\n').filter(line => line.trim());
-      
+      let text = await file.text();
+      console.log("[Import CSV] Fichier:", file.name, "Taille:", text?.length ?? 0, "octets");
+      if (!text || text.length === 0) {
+        throw new Error("Fichier vide (0 octet).");
+      }
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+      text = text.replace(/\0/g, "");
+      const rawLines = text.split(/\r\n|\r|\n/);
+      const lines = rawLines.map((l) => l.trim()).filter(Boolean);
+      console.log("[Import CSV] Lignes brutes:", rawLines.length, "Lignes non vides:", lines.length);
+
+      if (lines.length === 0) {
+        throw new Error(`Fichier vide après lecture (${rawLines.length} lignes brutes). Enregistrez le CSV en UTF-8 ou "CSV (séparateur : point-virgule)".`);
+      }
       if (lines.length < 2) {
-        throw new Error('Le fichier CSV est vide ou ne contient pas de données');
+        throw new Error(`Une seule ligne détectée. Ajoutez des données sous l'en-tête. Ré-enregistrez en "CSV UTF-8" ou "CSV (;)". Lignes brutes : ${rawLines.length}.`);
       }
 
       const firstLine = lines[0];
-      const delimiter = firstLine.includes(';') ? ';' : ',';
-      const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
-      
-      const jsonData = lines.slice(1).map(line => {
-        const values = line.split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ''));
-        const row: any = {};
-        headers.forEach((header, index) => {
-          row[header] = values[index] || '';
+      const delimiter = firstLine.includes(";") ? ";" : ",";
+      const headers = firstLine.split(delimiter).map((h) => h.trim().replace(/^["']|["']$/g, ""));
+      const col: Record<string, string> = {};
+      headers.forEach((h) => {
+        col[h.toLowerCase()] = h;
+      });
+      if (!col["siret"]) {
+        throw new Error(`Colonne "siret" introuvable. Colonnes : ${headers.join(", ")}`);
+      }
+
+      const rows: Record<string, string>[] = lines.slice(1).map((line) => {
+        const values = line.split(delimiter).map((v) => v.trim().replace(/^["']|["']$/g, ""));
+        const row: Record<string, string> = {};
+        headers.forEach((header, idx) => {
+          row[header] = values[idx] ?? "";
         });
         return row;
-      }).filter(row => row.siret);
+      });
+
+      const dataToInsert: Record<string, unknown>[] = [];
+      for (const row of rows) {
+        const rec = csvRowToNouveauxSitesRecord(row, col);
+        if (rec) dataToInsert.push(rec);
+      }
+      if (dataToInsert.length === 0) {
+        throw new Error(`Aucune ligne avec SIRET valide (${rows.length} lignes lues). Vérifiez la colonne siret/SIRET.`);
+      }
 
       setProgress(20);
-      setProgressText(`${jsonData.length} lignes détectées...`);
-
-      // Import en batches
-      const BATCH_SIZE = 500;
+      setProgressText(`${dataToInsert.length} lignes à importer...`);
+      const BATCH_SIZE = 100;
       let totalInserted = 0;
       let totalErrors = 0;
 
-      for (let i = 0; i < jsonData.length; i += BATCH_SIZE) {
-        const batch = jsonData.slice(i, i + BATCH_SIZE);
-        const currentLine = Math.min(i + BATCH_SIZE, jsonData.length);
-        
-        setProgressText(`Import ${currentLine}/${jsonData.length} lignes...`);
-        
-        const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
-          body: { entreprises: batch }
-        });
+      for (let i = 0; i < dataToInsert.length; i += BATCH_SIZE) {
+        const batch = dataToInsert.slice(i, i + BATCH_SIZE);
+        const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+        const currentLine = Math.min(i + BATCH_SIZE, dataToInsert.length);
+        setProgressText(`Import ${batchNum}/${Math.ceil(dataToInsert.length / BATCH_SIZE)} (${currentLine}/${dataToInsert.length})...`);
+        setProgress(20 + Math.floor((currentLine / dataToInsert.length) * 75));
 
+        const { error } = await supabase.from("nouveaux_sites").upsert(batch, { onConflict: "siret" });
         if (error) {
-          console.error(`❌ Erreur batch:`, error);
+          console.error("[Import CSV] Erreur batch:", error);
           totalErrors += batch.length;
         } else {
-          totalInserted += responseData?.inserted || 0;
-          totalErrors += responseData?.errors || 0;
+          totalInserted += batch.length;
         }
-
-        const progressPercent = 20 + Math.floor((currentLine / jsonData.length) * 80);
-        setProgress(progressPercent);
       }
 
       setProgress(100);
-      setProgressText("Import terminé !");
-
-      const successMessage = `${totalInserted} établissements importés${totalErrors > 0 ? ` (${totalErrors} erreurs)` : ''}`;
-      
-      setResult({
-        success: totalInserted > 0,
-        message: successMessage
-      });
-
-      toast({
-        title: totalInserted > 0 ? "✅ Import réussi" : "⚠️ Import partiel",
-        description: successMessage,
-      });
-
-      // Reload after success
-      if (totalInserted > 0) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 2500);
-      }
-
+      setProgressText("Import terminé.");
+      const successMessage = `${totalInserted} établissements importés${totalErrors > 0 ? ` (${totalErrors} erreurs)` : ""}`;
+      setResult({ success: totalInserted > 0, message: successMessage });
+      toast({ title: totalInserted > 0 ? "Import réussi" : "Import partiel", description: successMessage });
+      if (totalInserted > 0) setTimeout(() => window.location.reload(), 2000);
     } catch (error) {
-      console.error('Import error:', error);
       const message = error instanceof Error ? error.message : "Erreur lors de l'import";
-      
-      setResult({
-        success: false,
-        message
-      });
-
-      toast({
-        title: "❌ Erreur d'import",
-        description: message,
-        variant: "destructive",
-      });
+      console.error("[Import CSV] Erreur:", message, error);
+      setResult({ success: false, message });
+      toast({ title: "Erreur d'import", description: message, variant: "destructive" });
     } finally {
       setLoading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 

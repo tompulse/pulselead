@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { MapPin, Building2, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { formatDateCreation } from "@/utils/formatDateSafe";
 
 interface LockedEntrepriseCardProps {
   entreprise: any;
@@ -22,11 +23,6 @@ export const LockedEntrepriseCard = ({
       : `${entreprise.code_postal || ''} ${entreprise.ville || ''}`.trim();
   };
 
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-  };
 
   return (
     <>
@@ -72,10 +68,10 @@ export const LockedEntrepriseCard = ({
           )}
 
           {/* Creation date */}
-          {entreprise.date_creation && (
+          {entreprise.date_creation && formatDateCreation(entreprise.date_creation) && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Calendar className="w-3 h-3" />
-              <span>Créée le {formatDate(entreprise.date_creation)}</span>
+              <span>Créée le {formatDateCreation(entreprise.date_creation)}</span>
             </div>
           )}
         </div>
