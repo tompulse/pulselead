@@ -18,12 +18,19 @@ export const DETAILED_CATEGORIES: DetailedCategory[] = [
   { key: 'agriculture-peche', label: 'Pêche & Aquaculture', emoji: '🐟', nafCodes: ['03'], keywords: ['pêche', 'aquaculture', 'poisson'] },
 
   // 🍞 ALIMENTAIRE
-  { key: 'alimentaire-boulangerie', label: 'Boulangeries & Pâtisseries', emoji: '🥖', nafCodes: ['10.71'], keywords: ['boulangerie', 'pâtisserie', 'pain', 'viennoiserie'] },
-  { key: 'alimentaire-boucherie', label: 'Boucheries & Charcuteries', emoji: '🥩', nafCodes: ['10.11', '10.13'], keywords: ['boucherie', 'charcuterie', 'viande'] },
-  { key: 'alimentaire-laiterie', label: 'Produits laitiers', emoji: '🧀', nafCodes: ['10.51'], keywords: ['laiterie', 'fromage', 'yaourt', 'crème'] },
-  { key: 'alimentaire-boissons', label: 'Boissons', emoji: '🥤', nafCodes: ['11'], keywords: ['boisson', 'jus', 'eau', 'soda'] },
-  { key: 'alimentaire-conserves', label: 'Conserves & Plats préparés', emoji: '🥫', nafCodes: ['10.39', '10.85'], keywords: ['conserve', 'plat', 'préparé'] },
+  { key: 'alimentaire-boulangerie', label: 'Boulangeries & Pâtisseries', emoji: '🥖', nafCodes: ['10.71', '10.72', '10.73'], keywords: ['boulangerie', 'pâtisserie', 'pain', 'viennoiserie', 'biscuit'] },
+  { key: 'alimentaire-boucherie', label: 'Boucheries & Charcuteries', emoji: '🥩', nafCodes: ['10.11', '10.12', '10.13'], keywords: ['boucherie', 'charcuterie', 'viande', 'volaille'] },
+  { key: 'alimentaire-poisson', label: 'Poisson & Produits de la mer', emoji: '🐟', nafCodes: ['10.20'], keywords: ['poisson', 'fruits de mer', 'conserves marines'] },
+  { key: 'alimentaire-fruits-legumes', label: 'Fruits & Légumes', emoji: '🍎', nafCodes: ['10.31', '10.32', '10.39'], keywords: ['fruits', 'légumes', 'jus', 'conserve'] },
+  { key: 'alimentaire-huiles', label: 'Huiles & Matières grasses', emoji: '🫒', nafCodes: ['10.4'], keywords: ['huile', 'margarine', 'matière grasse'] },
+  { key: 'alimentaire-laiterie', label: 'Produits laitiers & Glaces', emoji: '🧀', nafCodes: ['10.51', '10.52'], keywords: ['laiterie', 'fromage', 'yaourt', 'crème', 'glace'] },
+  { key: 'alimentaire-meunerie', label: 'Meunerie & Amidonnerie', emoji: '🌾', nafCodes: ['10.6'], keywords: ['farine', 'meunerie', 'amidon'] },
   { key: 'alimentaire-confiserie', label: 'Confiserie & Chocolaterie', emoji: '🍫', nafCodes: ['10.82'], keywords: ['chocolat', 'confiserie', 'bonbon'] },
+  { key: 'alimentaire-cafe-the', label: 'Café & Thé', emoji: '☕', nafCodes: ['10.83'], keywords: ['café', 'thé', 'torréfaction'] },
+  { key: 'alimentaire-condiments', label: 'Condiments & Assaisonnements', emoji: '🧂', nafCodes: ['10.84'], keywords: ['condiment', 'sauce', 'épice', 'vinaigre'] },
+  { key: 'alimentaire-plats-prepares', label: 'Plats préparés', emoji: '🥘', nafCodes: ['10.85'], keywords: ['plat', 'préparé', 'traiteur'] },
+  { key: 'alimentaire-autres', label: 'Autres produits alimentaires', emoji: '🍽️', nafCodes: ['10.81', '10.86', '10.89', '10.9'], keywords: ['alimentaire', 'nutrition', 'complément'] },
+  { key: 'alimentaire-boissons', label: 'Boissons', emoji: '🥤', nafCodes: ['11'], keywords: ['boisson', 'jus', 'eau', 'soda', 'bière', 'vin'] },
 
   // 👕 TEXTILE & MODE
   { key: 'textile-confection', label: 'Confection & Vêtements', emoji: '👔', nafCodes: ['13', '14'], keywords: ['textile', 'vêtement', 'confection', 'habit'] },
