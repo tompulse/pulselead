@@ -20,9 +20,15 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
 
   const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    console.log('🔥 handleImportCSV triggered!', file ? file.name : 'no file');
+    
+    if (!file) {
+      console.log('❌ No file selected');
+      return;
+    }
 
     if (!file.name.endsWith('.csv')) {
+      console.log('❌ Invalid file format:', file.name);
       toast({
         title: "Format invalide",
         description: "Veuillez sélectionner un fichier CSV",
@@ -30,6 +36,9 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
       });
       return;
     }
+    
+    console.log('✅ Starting CSV import for:', file.name);
+    alert(`🚀 Import démarré pour ${file.name}\nOuvre la console (F12) pour voir la progression`);
 
     setLoading(true);
     setProgress(5);
