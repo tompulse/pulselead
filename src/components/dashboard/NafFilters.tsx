@@ -742,12 +742,7 @@ export const NafFilters = ({
         </div>
         
         {/* Compteur de résultats */}
-        <div className="flex items-center gap-2 text-sm">
-          <Building2 className="w-4 h-4 text-accent" />
-          <span className="font-semibold text-foreground">{resultsCount.toLocaleString('fr-FR')}</span>
-          <span className="text-muted-foreground">établissement{resultsCount > 1 ? 's' : ''} trouvé{resultsCount > 1 ? 's' : ''}</span>
-          {isFetching && <span className="text-xs text-muted-foreground">(mise à jour...)</span>}
-        </div>
+        {/* Compteur supprimé */}
 
         {/* Chips des filtres actifs */}
         {activeFiltersCount > 0 && (
