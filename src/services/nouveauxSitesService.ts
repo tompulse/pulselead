@@ -45,19 +45,16 @@ export const nouveauxSitesService = {
         .from('nouveaux_sites')
         .select('*', { count: 'exact' });
 
-      // Exclure les archivés
-      query = query.or('archived.is.null,archived.eq.false');
+      // Exclure les archivés (archived est TEXT, pas boolean)
+      query = query.or('archived.is.null,archived.neq.true');
 
-      // Filtres NAF
-      if (filters.nafSections?.length) {
-        query = query.in('naf_section', filters.nafSections);
-      }
-      if (filters.nafDivisions?.length) {
-        query = query.in('naf_division', filters.nafDivisions);
-      }
-
-      // Filtre départements EN SQL (plus besoin de filtrer côté client!)
+      // Filtres NAF - UTILISER LES VRAIES COLONNES
+      // Les colonnes naf_section et naf_division N'EXISTENT PAS
+      // On doit filtrer côté client après récupération
+      
+      // Filtre départements - UTILISER departement OU extraire depuis code_postal
       if (filters.departments?.length) {
+        // Si la colonne departement existe, l'utiliser
         query = query.in('departement', filters.departments);
       }
 
@@ -69,12 +66,14 @@ export const nouveauxSitesService = {
         query = query.lte('date_creation', filters.dateCreationTo);
       }
 
-      // Filtre types établissement
+      // Filtre types établissement - UTILISER siege (TEXT), pas est_siege (boolean)
       if (filters.typesEtablissement?.length) {
         if (filters.typesEtablissement.includes('siege') && !filters.typesEtablissement.includes('site')) {
-          query = query.eq('est_siege', true);
+          // Filtrer les sièges (siege TEXT = 'VRAI', 'TRUE', etc.)
+          query = query.or('siege.ilike.VRAI,siege.ilike.TRUE,siege.eq.V,siege.eq.1');
         } else if (filters.typesEtablissement.includes('site') && !filters.typesEtablissement.includes('siege')) {
-          query = query.eq('est_siege', false);
+          // Filtrer les sites (siege TEXT = 'FAUX', 'FALSE', etc.)
+          query = query.or('siege.ilike.FAUX,siege.ilike.FALSE,siege.eq.F,siege.eq.0,siege.is.null');
         }
       }
 
@@ -94,19 +93,37 @@ export const nouveauxSitesService = {
       let count = result.count ?? 0;
       const originalPageLength = data.length;
 
-      // FILTRES CÔTÉ CLIENT (seulement recherche multi-colonnes et catégories juridiques)
+      // FILTRES CÔTÉ CLIENT
       
-      // Recherche multi-colonnes (nom, ville, siret, code_naf, adresse, code postal)
+      // Filtre NAF Sections (extrait depuis code_naf car colonnes naf_section n'existe pas)
+      if (filters.nafSections?.length) {
+        data = data.filter((row: any) => {
+          const codeNaf = row?.code_naf ?? '';
+          const section = codeNaf.substring(0, 2);
+          return filters.nafSections!.includes(section);
+        });
+      }
+      
+      // Filtre NAF Divisions (extrait depuis code_naf)
+      if (filters.nafDivisions?.length) {
+        data = data.filter((row: any) => {
+          const codeNaf = row?.code_naf ?? '';
+          const division = codeNaf.substring(0, 4);
+          return filters.nafDivisions!.includes(division);
+        });
+      }
+      
+      // Recherche multi-colonnes (nom, COMMUNE, siret, code_naf, adresse, code postal)
       const search = filters.searchQuery?.trim().toLowerCase();
       if (search) {
         data = data.filter((row: any) => {
           const nom = getNom(row);
-          const ville = row?.ville ?? '';
+          const commune = row?.commune ?? ''; // UTILISER commune, PAS ville
           const siret = row?.siret ?? '';
           const codeNaf = row?.code_naf ?? '';
           const adresse = row?.adresse ?? '';
           const codePostal = row?.code_postal ?? '';
-          return [nom, ville, siret, codeNaf, adresse, codePostal].some(s => 
+          return [nom, commune, siret, codeNaf, adresse, codePostal].some(s => 
             String(s).toLowerCase().includes(search)
           );
         });
