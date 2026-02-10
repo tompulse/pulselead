@@ -8,6 +8,7 @@ import { Search, Building2, ChevronDown, ChevronRight, X, Route, Calendar as Cal
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useAvailableNouveauxSitesFilters } from "@/hooks/useAvailableNouveauxSitesFilters";
+import { useAvailableCategoriesCount } from "@/hooks/useAvailableCategoriesCount";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
@@ -110,10 +111,19 @@ export const NafFilters = ({
   const [nafSearchQuery, setNafSearchQuery] = useState("");
   
   const { isAdmin } = useAdminStatus();
+  
   // Pass current filters to get contextual/dynamic counts
   const { data: availableFilters, isLoading, isFetching } = useAvailableNouveauxSitesFilters({
     nafSections: filters.nafSections,
     nafDivisions: filters.nafDivisions,
+    departments: filters.departments,
+    categoriesJuridiques: filters.categoriesJuridiques,
+    typesEtablissement: filters.typesEtablissement,
+    searchQuery: filters.searchQuery
+  });
+
+  // Compteurs par catégories détaillées (tous les 57k prospects)
+  const { data: categoryCounts = {} } = useAvailableCategoriesCount({
     departments: filters.departments,
     categoriesJuridiques: filters.categoriesJuridiques,
     typesEtablissement: filters.typesEtablissement,
@@ -871,7 +881,7 @@ export const NafFilters = ({
           nafClasses: undefined,
           nafSousClasses: undefined
         }))}
-        categoryCounts={availableFilters?.contextual?.categories || {}}
+        categoryCounts={categoryCounts}
       />
 
       {/* Départements */}
