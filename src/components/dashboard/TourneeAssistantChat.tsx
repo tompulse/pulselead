@@ -424,7 +424,7 @@ const TourneeResult = ({
                   </Badge>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate text-xs">{e.nom}</p>
-                    <p className="text-xs text-muted-foreground truncate">{e.ville}</p>
+                    <p className="text-xs text-muted-foreground truncate">{e.commune}</p>
                   </div>
                 </div>
               ))}

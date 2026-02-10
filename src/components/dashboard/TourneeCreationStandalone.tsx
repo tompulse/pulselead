@@ -30,7 +30,7 @@ interface TourneeCreationStandaloneProps {
 interface NouveauSite {
   id: string;
   nom: string;
-  ville: string | null;
+  commune: string | null;
   code_postal: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -53,13 +53,13 @@ export const TourneeCreationStandalone = ({
     queryFn: async () => {
       let query = supabase
         .from('nouveaux_sites')
-        .select('id, nom, ville, code_postal, latitude, longitude')
+        .select('id, nom, commune, code_postal, latitude, longitude')
         .not('latitude', 'is', null)
         .not('longitude', 'is', null)
         .limit(100);
       
       if (searchQuery) {
-        query = query.or(`nom.ilike.%${searchQuery}%,ville.ilike.%${searchQuery}%`);
+        query = query.or(`nom.ilike.%${searchQuery}%,commune.ilike.%${searchQuery}%`);
       }
       
       const { data, error } = await query;

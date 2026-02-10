@@ -123,7 +123,7 @@ const TourneeDetail = () => {
 
       const { data, error } = await supabase
         .from('nouveaux_sites')
-        .select('id, nom, adresse, ville, code_postal, latitude, longitude, numero_voie, type_voie, libelle_voie')
+        .select('id, nom, adresse, commune, code_postal, latitude, longitude, numero_voie, type_voie, libelle_voie')
         .in('id', orderedSiteIds);
 
       if (error) throw error;
