@@ -53,10 +53,10 @@ export const TourneeCreationStandalone = ({
     queryFn: async () => {
       let query = supabase
         .from('nouveaux_sites')
-        .select('id, nom, commune, code_postal, latitude, longitude')
+        .select('id, nom, commune, code_postal, latitude, longitude, siret')
         .not('latitude', 'is', null)
         .not('longitude', 'is', null)
-        .limit(100);
+        .limit(1000);
       
       if (searchQuery) {
         query = query.or(`nom.ilike.%${searchQuery}%,commune.ilike.%${searchQuery}%`);
