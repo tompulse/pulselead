@@ -71,18 +71,18 @@ SELECT
     ELSE '⚠️ MANQUANTE - À ajouter'
   END;
 
--- 5. Échantillon de données (avec siret seulement)
-SELECT 
-  siret,
-  COALESCE(nom, entreprise, 'Sans nom') as nom,
-  ville,
-  code_postal
-FROM nouveaux_sites
-LIMIT 5;
+-- 5. Échantillon de données (premières colonnes seulement)
+SELECT * FROM nouveaux_sites LIMIT 3;
 
 -- 6. Statistiques
 SELECT 
   COUNT(*) as total_lignes,
   COUNT(DISTINCT siret) as siret_uniques,
-  COUNT(latitude) as lignes_avec_gps
+  CASE 
+    WHEN EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_name = 'nouveaux_sites' AND column_name = 'latitude'
+    ) THEN (SELECT COUNT(latitude) FROM nouveaux_sites)
+    ELSE 0
+  END as lignes_avec_gps
 FROM nouveaux_sites;
