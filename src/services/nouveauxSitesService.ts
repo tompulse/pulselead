@@ -22,54 +22,18 @@ function getNom(row: any): string {
 export const nouveauxSitesService = {
   async fetchNouveauxSites(filters: NouveauxSitesFilters = {}, page = 0, pageSize = 50) {
     try {
-      // Construire la requête Supabase avec filtres SQL
+      // STRATÉGIE HYBRIDE: Filtres SQL simples + filtres complexes côté client
       let query = supabase
         .from('nouveaux_sites')
         .select('*', { count: 'exact' });
 
-      // Filtrer les archivés en SQL - accepter null et false
-      query = query.or('archived.is.null,archived.eq.false');
-
-      // Filtre de recherche (nom, ville, siret, code_naf, adresse, CODE POSTAL)
-      const search = filters.searchQuery?.trim();
-      if (search) {
-        // Recherche multi-colonnes avec OR
-        query = query.or(
-          `nom.ilike.%${search}%,` +
-          `entreprise.ilike.%${search}%,` +
-          `ville.ilike.%${search}%,` +
-          `siret.ilike.%${search}%,` +
-          `code_naf.ilike.%${search}%,` +
-          `adresse.ilike.%${search}%,` +
-          `code_postal.ilike.%${search}%`
-        );
-      }
-
-      // Filtres NAF
+      // Filtres SQL simples (pas de OR complexes)
       if (filters.nafSections?.length) {
         query = query.in('naf_section', filters.nafSections);
       }
       if (filters.nafDivisions?.length) {
         query = query.in('naf_division', filters.nafDivisions);
       }
-
-      // Filtre départements - gérer les codes postaux avec zéro initial (01-09)
-      if (filters.departments?.length) {
-        // Créer des conditions OR pour chaque département
-        const deptConditions = filters.departments.map(dept => {
-          // Pour départements 01-09, chercher codes postaux commençant par 0X ou X
-          if (dept.match(/^0[1-9]$/)) {
-            const deptNum = dept.substring(1); // "01" -> "1"
-            return `code_postal.like.${dept}*,code_postal.like.${deptNum}*,departement.eq.${dept}`;
-          }
-          // Pour les autres départements (10-95)
-          return `code_postal.like.${dept}*,departement.eq.${dept}`;
-        }).join(',');
-        
-        query = query.or(deptConditions);
-      }
-
-      // Filtre dates de création
       if (filters.dateCreationFrom) {
         query = query.gte('date_creation', filters.dateCreationFrom);
       }
@@ -77,26 +41,7 @@ export const nouveauxSitesService = {
         query = query.lte('date_creation', filters.dateCreationTo);
       }
 
-      // Filtre types établissement (siège/site)
-      if (filters.typesEtablissement?.length) {
-        if (filters.typesEtablissement.includes('siege') && !filters.typesEtablissement.includes('site')) {
-          query = query.eq('est_siege', true);
-        } else if (filters.typesEtablissement.includes('site') && !filters.typesEtablissement.includes('siege')) {
-          query = query.eq('est_siege', false);
-        }
-        // Si les deux sont sélectionnés, pas de filtre
-      }
-
-      // Filtre catégories juridiques
-      if (filters.categoriesJuridiques?.length) {
-        // Utiliser OR pour chaque catégorie (commence par)
-        const catConditions = filters.categoriesJuridiques
-          .map(cat => `categorie_juridique.like.${cat}*`)
-          .join(',');
-        query = query.or(catConditions);
-      }
-
-      // Appliquer la pagination APRÈS tous les filtres
+      // Pagination
       query = query.range(page * pageSize, (page + 1) * pageSize - 1);
 
       const result = await query;
@@ -108,11 +53,72 @@ export const nouveauxSitesService = {
         throw new Error(errMsg);
       }
 
-      const data = result.data ?? [];
-      const count = result.count ?? 0;
+      let data = result.data ?? [];
+      let count = result.count ?? 0;
       const originalPageLength = data.length;
 
-      // Grouper par nom d'entreprise (côté client, car c'est logique métier)
+      // FILTRES CÔTÉ CLIENT pour recherche, départements, catégories juridiques
+      
+      // Filtrer les archivés
+      data = data.filter((row: any) => row?.archived !== true);
+
+      // Recherche (nom, ville, siret, code_naf, adresse, CODE POSTAL)
+      const search = filters.searchQuery?.trim().toLowerCase();
+      if (search) {
+        data = data.filter((row: any) => {
+          const nom = getNom(row);
+          const ville = row?.ville ?? '';
+          const siret = row?.siret ?? '';
+          const codeNaf = row?.code_naf ?? '';
+          const adresse = row?.adresse ?? '';
+          const codePostal = row?.code_postal ?? '';
+          return [nom, ville, siret, codeNaf, adresse, codePostal].some(s => 
+            String(s).toLowerCase().includes(search)
+          );
+        });
+      }
+
+      // Filtre départements (gère codes postaux avec/sans zéro initial)
+      if (filters.departments?.length) {
+        data = data.filter((row: any) => {
+          const codePostal = String(row?.code_postal || '');
+          const departement = row?.departement;
+          
+          return filters.departments!.some(dept => {
+            // Check colonne departement directe
+            if (departement === dept) return true;
+            
+            // Normaliser le code postal (ajouter 0 si manquant)
+            const normalized = codePostal.length === 4 ? '0' + codePostal : codePostal;
+            
+            // Extraire les 2 premiers chiffres
+            const cpDept = normalized.substring(0, 2);
+            
+            return cpDept === dept;
+          });
+        });
+      }
+
+      // Filtre types établissement (siège/site)
+      if (filters.typesEtablissement?.length) {
+        data = data.filter((row: any) => {
+          const siege = row?.est_siege === true;
+          if (filters.typesEtablissement!.includes('siege') && siege) return true;
+          if (filters.typesEtablissement!.includes('site') && !siege) return true;
+          return false;
+        });
+      }
+
+      // Filtre catégories juridiques (commence par)
+      if (filters.categoriesJuridiques?.length) {
+        data = data.filter((row: any) =>
+          filters.categoriesJuridiques!.some(c => 
+            String(row?.categorie_juridique ?? '').startsWith(c)
+          )
+        );
+      }
+
+      // Grouper par nom d'entreprise
       const nameGroups = new Map<string, any[]>();
       data.forEach((site: any) => {
         const key = getNom(site).toLowerCase().trim() || site?.siret || site?.id || '';
@@ -134,7 +140,7 @@ export const nouveauxSitesService = {
 
       return {
         data: groupedData,
-        total: count,
+        total: count, // Le total global (avant filtres client)
         hasMore: originalPageLength === pageSize,
         error: null,
       };
