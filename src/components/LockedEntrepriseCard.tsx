@@ -19,9 +19,12 @@ export const LockedEntrepriseCard = ({
       entreprise.libelle_voie
     ].filter(Boolean).join(' ');
     
+    // Construire la partie ville avec code postal et nom de ville
+    const cityPart = [entreprise.code_postal, entreprise.ville].filter(Boolean).join(' ');
+    
     return parts 
-      ? `${parts}, ${entreprise.code_postal} ${entreprise.ville || ''}`
-      : `${entreprise.code_postal || ''} ${entreprise.ville || ''}`.trim();
+      ? `${parts}, ${cityPart}`
+      : cityPart;
   };
 
 
@@ -51,7 +54,7 @@ export const LockedEntrepriseCard = ({
           {/* Address */}
           <div className="flex items-start gap-2 text-xs text-muted-foreground">
             <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
-            <span className="line-clamp-2">{formatAddress()}</span>
+            <span className="line-clamp-2 break-words">{formatAddress()}</span>
           </div>
 
           {/* Catégorie d'activité */}

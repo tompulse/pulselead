@@ -145,9 +145,17 @@ export const NouveauxSitesListView = ({
                 site.libelle_voie
               ].filter(Boolean).join(' ');
               
+              // Construire l'adresse avec code postal et ville
+              const cityPart = [site.code_postal, site.ville].filter(Boolean).join(' ');
+              
               const fullAddress = addressParts 
-                ? `${addressParts}, ${site.code_postal || ''} ${site.ville || ''}`.trim()
-                : `${site.code_postal || ''} ${site.ville || ''}`.trim();
+                ? `${addressParts}, ${cityPart}`.trim()
+                : cityPart;
+              
+              // Debug: Log si la ville est manquante
+              if (!site.ville && site.code_postal) {
+                console.warn(`[${site.nom}] Ville manquante pour code postal ${site.code_postal}`, site);
+              }
               
               return (
                 <div
@@ -247,7 +255,7 @@ export const NouveauxSitesListView = ({
                     {fullAddress && (
                       <div className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <span className="text-[10px] sm:text-xs flex-shrink-0">📍</span>
-                        <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-2">{fullAddress}</span>
+                        <span className="text-[10px] sm:text-xs text-foreground/80 line-clamp-2 break-words">{fullAddress}</span>
                       </div>
                     )}
 
