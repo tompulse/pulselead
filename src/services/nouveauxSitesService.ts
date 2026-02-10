@@ -46,9 +46,8 @@ export const nouveauxSitesService = {
         .from('nouveaux_sites')
         .select('*', { count: 'exact' });
 
-      // Exclure les archivés (archived != 'true' OU archived IS NULL)
-      // NOT (archived = 'true') capte automatiquement les null
-      query = query.not('archived', 'eq', 'true');
+      // Exclure les archivés (archived est TEXT, pas boolean)
+      query = query.or('archived.is.null,archived.neq.true');
 
       // Filtres NAF - FILTRER DIRECTEMENT EN SQL PAR SECTIONS
       if (filters.nafSections?.length) {
@@ -88,10 +87,10 @@ export const nouveauxSitesService = {
       if (filters.typesEtablissement?.length) {
         if (filters.typesEtablissement.includes('siege') && !filters.typesEtablissement.includes('site')) {
           // Filtrer les sièges (siege TEXT = 'VRAI', 'TRUE', etc.)
-          query = query.in('siege', ['VRAI', 'TRUE', 'V', '1', 'vrai', 'true']);
+          query = query.or('siege.ilike.VRAI,siege.ilike.TRUE,siege.eq.V,siege.eq.1');
         } else if (filters.typesEtablissement.includes('site') && !filters.typesEtablissement.includes('siege')) {
-          // Filtrer les sites : NOT siege OU siege est null/faux
-          query = query.not('siege', 'in', ['VRAI', 'TRUE', 'V', '1', 'vrai', 'true']);
+          // Filtrer les sites (siege TEXT = 'FAUX', 'FALSE', etc.)
+          query = query.or('siege.ilike.FAUX,siege.ilike.FALSE,siege.eq.F,siege.eq.0,siege.is.null');
         }
       }
 
