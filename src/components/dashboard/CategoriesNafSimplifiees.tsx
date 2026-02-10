@@ -40,7 +40,7 @@ export const CategoriesNafSimplifiees = ({
   onCategoriesChange,
   categoryCounts = {}
 }: CategoriesNafSimplifiedProps) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false); // FERMÉ par défaut
   const [searchQuery, setSearchQuery] = useState("");
 
   // Grouper les catégories par secteur
@@ -226,12 +226,7 @@ export const CategoriesNafSimplifiees = ({
                           {groupName}
                         </h4>
                         
-                        {/* Compteur */}
-                        {groupCount > 0 && (
-                          <span className="text-xs text-muted-foreground font-mono shrink-0">
-                            {groupCount}
-                          </span>
-                        )}
+                        {/* Compteur masqué */}
                       </div>
                       
                       <p className="text-xs text-muted-foreground mt-1 leading-tight">

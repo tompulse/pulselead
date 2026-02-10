@@ -30,35 +30,57 @@ export function getCategoryFromNaf(codeNaf: string | null | undefined): string {
     return NAF_TO_CATEGORY_MAP.get(normalized)!;
   }
 
-  // 2. Chercher par préfixe (du plus spécifique au plus général)
-  // Essayer avec les 5 premiers caractères (ex: "47.73")
-  if (normalized.length >= 5) {
-    const prefix5 = normalized.substring(0, 5);
-    for (const [nafCode, category] of NAF_TO_CATEGORY_MAP.entries()) {
-      if (normalized.startsWith(nafCode) || prefix5.startsWith(nafCode)) {
-        return category;
-      }
+  // 2. Chercher par préfixe - du plus long au plus court
+  // Cela permet de matcher "47.73Z" avec "47.73" ou "47.7" ou "47"
+  for (const [nafCode, category] of NAF_TO_CATEGORY_MAP.entries()) {
+    if (normalized.startsWith(nafCode)) {
+      return category;
     }
   }
 
-  // 3. Essayer avec les 4 premiers caractères (ex: "47.7")
-  if (normalized.length >= 4) {
-    const prefix4 = normalized.substring(0, 4);
-    for (const [nafCode, category] of NAF_TO_CATEGORY_MAP.entries()) {
-      if (normalized.startsWith(nafCode) || prefix4.startsWith(nafCode)) {
-        return category;
-      }
-    }
-  }
-
-  // 4. Essayer avec les 2 premiers caractères (ex: "47")
+  // 3. Essayer avec les 2 premiers chiffres uniquement (division NAF)
+  // Ex: "47.73Z" → "47"
   if (normalized.length >= 2) {
-    const prefix2 = normalized.substring(0, 2);
+    const division = normalized.substring(0, 2);
     for (const [nafCode, category] of NAF_TO_CATEGORY_MAP.entries()) {
-      if (nafCode.startsWith(prefix2)) {
+      // Chercher un code NAF qui commence par cette division
+      if (nafCode.startsWith(division)) {
         return category;
       }
     }
+  }
+
+  // 4. Si toujours rien, mapper par division NAF sur les grands secteurs
+  const division = normalized.substring(0, 2);
+  
+  // Mapping direct des divisions NAF vers secteurs
+  const divisionToSector: Record<string, string> = {
+    '01': 'agriculture-cultures', '02': 'agriculture-forestier', '03': 'agriculture-peche',
+    '10': 'alimentaire-conserves', '11': 'alimentaire-boissons',
+    '13': 'textile-confection', '14': 'textile-confection', '15': 'textile-cuir',
+    '16': 'btp-menuiserie', '17': 'industrie-plastique', '18': 'industrie-electronique',
+    '20': 'industrie-chimie', '21': 'industrie-chimie', '22': 'industrie-plastique',
+    '23': 'industrie-metallurgie', '24': 'industrie-metallurgie', '25': 'industrie-metallurgie',
+    '26': 'industrie-electronique', '27': 'industrie-electronique', '28': 'industrie-metallurgie',
+    '41': 'btp-gros-oeuvre', '42': 'btp-terrassement', '43': 'btp-gros-oeuvre',
+    '45': 'auto-garage', '46': 'gros-produits', '47': 'commerce-alimentation',
+    '49': 'transport-routier', '50': 'transport-logistique', '52': 'transport-logistique', '53': 'transport-routier',
+    '55': 'hotellerie-hotel', '56': 'resto-restaurant',
+    '58': 'info-developpement', '59': 'loisirs-cinema', '60': 'info-developpement',
+    '62': 'info-developpement', '63': 'info-hebergement',
+    '64': 'finance-banque', '65': 'finance-assurance', '66': 'finance-assurance',
+    '68': 'immo-agence', '69': 'finance-comptable', '70': 'conseil-management',
+    '71': 'archi-architecture', '72': 'info-conseil', '73': 'service-publicite',
+    '77': 'transport-logistique', '78': 'service-interim', '79': 'transport-routier',
+    '80': 'service-securite', '81': 'service-nettoyage', '82': 'service-publicite',
+    '84': 'service-publicite', '85': 'formation-professionnelle',
+    '86': 'sante-medecin', '87': 'sante-ehpad', '88': 'sante-ehpad',
+    '90': 'culture-spectacle', '91': 'culture-musee', '93': 'sport-salle',
+    '95': 'service-reparation', '96': 'service-coiffeur'
+  };
+  
+  if (divisionToSector[division]) {
+    return divisionToSector[division];
   }
 
   // 5. Si aucune correspondance, retourner "autre"
