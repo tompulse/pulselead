@@ -93,6 +93,7 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
 
       console.log('✅ Valid records with SIRET:', jsonData.length);
       console.log('🔬 First record:', jsonData[0]);
+      console.log('🔬 First 3 records:', jsonData.slice(0, 3));
       
       if (jsonData.length === 0) {
         throw new Error(`Aucune ligne valide trouvée. Le fichier contient ${lines.length - 1} lignes de données mais aucune n'a de SIRET valide.`);
@@ -100,6 +101,13 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
       
       setProgress(20);
       setProgressText(`${jsonData.length} lignes détectées...`);
+      
+      // Log what will be sent to the Edge Function
+      console.log('📤 About to send to Edge Function:', {
+        numberOfRecords: jsonData.length,
+        firstRecordKeys: Object.keys(jsonData[0] || {}),
+        sampleRecord: jsonData[0]
+      });
 
       // Import en batches
       const BATCH_SIZE = 500;
@@ -114,13 +122,18 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
         console.log(`📦 Batch ${batchNum}: Sending ${batch.length} records...`);
         setProgressText(`Import ${currentLine}/${jsonData.length} lignes...`);
         
+        console.log(`📤 Sending batch ${batchNum} with ${batch.length} records...`);
+        console.log(`📤 Sample of batch data:`, batch[0]);
+        
         const { data: responseData, error } = await supabase.functions.invoke('import-nouveaux-sites', {
           body: { entreprises: batch }
         });
 
         if (error) {
           console.error(`❌ Batch ${batchNum} error:`, error);
-          console.error('Error details:', JSON.stringify(error, null, 2));
+          console.error('❌ Error message:', error.message);
+          console.error('❌ Error details:', JSON.stringify(error, null, 2));
+          console.error('❌ Batch sample that failed:', batch.slice(0, 2));
           totalErrors += batch.length;
         } else {
           console.log(`✅ Batch ${batchNum} response:`, responseData);
