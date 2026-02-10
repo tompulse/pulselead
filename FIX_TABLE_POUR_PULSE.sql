@@ -1,86 +1,12 @@
 -- ═══════════════════════════════════════════════════════════════════
--- SCRIPT DE CORRECTION TABLE nouveaux_sites pour PULSE SaaS
--- Exécute ce script si VERIFY_TABLE_NOUVEAUX_SITES.sql détecte des problèmes
+-- CONFIGURATION RLS ET INDEXES pour PULSE SaaS
+-- ⚠️ Exécute d'abord AJOUTER_COLONNES_MANQUANTES.sql si colonnes manquent
 -- ═══════════════════════════════════════════════════════════════════
 
--- 1. AJOUTER COLONNE archived SI MANQUANTE (OBLIGATOIRE)
-DO $$ 
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_schema = 'public' 
-      AND table_name = 'nouveaux_sites' 
-      AND column_name = 'archived'
-  ) THEN
-    ALTER TABLE nouveaux_sites ADD COLUMN archived BOOLEAN DEFAULT false;
-    UPDATE nouveaux_sites SET archived = false WHERE archived IS NULL;
-    RAISE NOTICE '✅ Colonne archived ajoutée';
-  ELSE
-    RAISE NOTICE '✓ Colonne archived déjà présente';
-  END IF;
-END $$;
-
--- 2. AJOUTER COLONNE random_order SI MANQUANTE (Recommandé)
-DO $$ 
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_schema = 'public' 
-      AND table_name = 'nouveaux_sites' 
-      AND column_name = 'random_order'
-  ) THEN
-    ALTER TABLE nouveaux_sites ADD COLUMN random_order FLOAT DEFAULT random();
-    UPDATE nouveaux_sites SET random_order = random() WHERE random_order IS NULL;
-    RAISE NOTICE '✅ Colonne random_order ajoutée';
-  ELSE
-    RAISE NOTICE '✓ Colonne random_order déjà présente';
-  END IF;
-END $$;
-
--- 3. AJOUTER COLONNES NAF HIÉRARCHIE SI MANQUANTES
-DO $$ 
-BEGIN
-  -- naf_section
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_name = 'nouveaux_sites' AND column_name = 'naf_section'
-  ) THEN
-    ALTER TABLE nouveaux_sites ADD COLUMN naf_section TEXT;
-    RAISE NOTICE '✅ Colonne naf_section ajoutée';
-  END IF;
-  
-  -- naf_division
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_name = 'nouveaux_sites' AND column_name = 'naf_division'
-  ) THEN
-    ALTER TABLE nouveaux_sites ADD COLUMN naf_division TEXT;
-    RAISE NOTICE '✅ Colonne naf_division ajoutée';
-  END IF;
-  
-  -- naf_groupe
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_name = 'nouveaux_sites' AND column_name = 'naf_groupe'
-  ) THEN
-    ALTER TABLE nouveaux_sites ADD COLUMN naf_groupe TEXT;
-    RAISE NOTICE '✅ Colonne naf_groupe ajoutée';
-  END IF;
-  
-  -- naf_classe
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_name = 'nouveaux_sites' AND column_name = 'naf_classe'
-  ) THEN
-    ALTER TABLE nouveaux_sites ADD COLUMN naf_classe TEXT;
-    RAISE NOTICE '✅ Colonne naf_classe ajoutée';
-  END IF;
-END $$;
-
--- 4. ACTIVER RLS SI PAS DÉJÀ ACTIVÉ
+-- 1. ACTIVER RLS (Row Level Security)
 ALTER TABLE nouveaux_sites ENABLE ROW LEVEL SECURITY;
 
--- 5. CRÉER POLICY POUR AUTHENTICATED USERS
+-- 2. CRÉER POLICY POUR AUTHENTICATED USERS
 DROP POLICY IF EXISTS "Authenticated users can view nouveaux sites" ON nouveaux_sites;
 CREATE POLICY "Authenticated users can view nouveaux sites"
   ON nouveaux_sites
@@ -88,7 +14,7 @@ CREATE POLICY "Authenticated users can view nouveaux sites"
   TO authenticated
   USING (true);
 
--- 6. CRÉER INDEX SUR archived (PERFORMANCE CRITIQUE)
+-- 3. CRÉER INDEX SUR archived (PERFORMANCE CRITIQUE)
 CREATE INDEX IF NOT EXISTS idx_nouveaux_sites_archived 
   ON nouveaux_sites(archived) 
   WHERE archived = false;
