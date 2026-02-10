@@ -188,6 +188,9 @@ export const AdminViewContainer = ({ userId }: AdminViewContainerProps) => {
               <p><strong>Colonnes acceptées (ordre libre, casse ignorée) :</strong></p>
               <p>siret, Entreprise, date_creation, siege, categorie_juridique, categorieEntreprise, complement_adresse, numero_voie, type_voie, libelle_voie, code_postal, ville, coordonnee_lambert_x/y, activitePrincipaleEtablissement (ou code_naf), etc.</p>
               <p className="mt-2"><strong>Séparateur :</strong> point-virgule (;) ou virgule (,)</p>
+              <p className="mt-3 p-2 rounded bg-amber-500/10 text-amber-800 dark:text-amber-200 border border-amber-500/20">
+                <strong>Si l’import ne marche pas ici</strong> : utilise en local le script <code className="bg-black/10 px-1 rounded">./importer.sh ton_fichier.csv</code> (dossier du projet, voir <code>MISE_A_JOUR_BASE.md</code>).
+              </p>
             </div>
           </div>
         </div>

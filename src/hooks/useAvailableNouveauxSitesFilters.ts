@@ -53,6 +53,8 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       filters.searchQuery || ''
     ],
     queryFn: async (): Promise<DualFilterCounts> => {
+      const emptyDual: DualFilterCounts = { contextual: emptyFilterCounts, global: emptyFilterCounts };
+      try {
       // Fetch both contextual (with filters) and global (without filters) counts in parallel
       const hasActiveFilters = 
         (filters.nafSections?.length || 0) > 0 ||
@@ -89,8 +91,8 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       ]);
       
       if (contextualResult.error) {
-        console.error('Error fetching contextual filter counts:', contextualResult.error);
-        throw contextualResult.error;
+        console.warn('RPC get_nouveaux_sites_filter_counts_dynamic non disponible:', contextualResult.error.message);
+        return { contextual: emptyFilterCounts, global: emptyFilterCounts };
       }
 
       const contextual: FilterCounts = {
@@ -106,7 +108,7 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       };
 
       // If no active filters, global = contextual
-      const global: FilterCounts = hasActiveFilters && globalResult.data ? {
+      const global: FilterCounts = hasActiveFilters && globalResult?.data ? {
         nafSections: (globalResult.data as any)?.nafSections || {},
         nafDivisions: (globalResult.data as any)?.nafDivisions || {},
         nafGroupes: (globalResult.data as any)?.nafGroupes || {},
@@ -119,6 +121,9 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       } : contextual;
 
       return { contextual, global };
+      } catch {
+        return emptyDual;
+      }
     },
     staleTime: 0, // Force refresh immediately
     gcTime: 0,

@@ -50,14 +50,18 @@ export const useNotifications = (userId: string | undefined) => {
         return r.date_relance >= todayStr; // Show future dates
       });
 
-      const entrepriseIds = [...new Set(filteredData.map(r => r.entreprise_id))];
-      const { data: entreprises } = await supabase
-        .from('nouveaux_sites')
-        .select('id, nom')
-        .in('id', entrepriseIds);
-
-      const entrepriseMap = new Map(entreprises?.map(e => [e.id, e.nom]) || []);
-      
+      const entrepriseIds = [...new Set(filteredData.map(r => r.entreprise_id).filter(Boolean))];
+      let entrepriseMap = new Map<string, string>();
+      if (entrepriseIds.length > 0) {
+        let res = await supabase.from('nouveaux_sites').select('id, nom, siret').in('id', entrepriseIds);
+        if (res.error) res = await supabase.from('nouveaux_sites').select('id, nom, siret').in('siret', entrepriseIds);
+        if (res.data?.length) {
+          res.data.forEach((e: any) => {
+            if (e?.id) entrepriseMap.set(e.id, e.nom ?? e.entreprise ?? '');
+            if (e?.siret) entrepriseMap.set(e.siret, e.nom ?? e.entreprise ?? '');
+          });
+        }
+      }
       const remindersWithNames: Reminder[] = filteredData.map(r => ({
         ...r,
         entreprise_nom: entrepriseMap.get(r.entreprise_id) || 'Entreprise inconnue',

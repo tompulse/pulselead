@@ -1,5 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-import { findNafCodesForKeyword, normalizeSearchTerm, generateNafFilterConditions } from '@/utils/searchKeywordMapping';
 
 export interface NouveauxSitesFilters {
   searchQuery?: string;
@@ -17,166 +16,126 @@ export interface NouveauxSitesFilters {
   showUnlockedOnly?: boolean;
 }
 
+function getNom(row: any): string {
+  return row?.nom ?? row?.entreprise ?? row?.nom_entreprise ?? row?.name ?? '';
+}
+
 export const nouveauxSitesService = {
   async fetchNouveauxSites(filters: NouveauxSitesFilters = {}, page = 0, pageSize = 50) {
     try {
-      // Inclure archived = false OU null (données importées sans cette colonne ou null = afficher)
-      let query = supabase
+      // Une seule requête : SELECT * sur nouveaux_sites. Aucun filtre SQL pour ne jamais planter.
+      const result = await supabase
         .from('nouveaux_sites')
         .select('*', { count: 'exact' })
-        .or('archived.eq.false,archived.is.null')
-        .order('random_order', { ascending: true, nullsFirst: true })
         .range(page * pageSize, (page + 1) * pageSize - 1);
 
-      // Recherche intelligente multi-termes avec synonymes métier
-      if (filters.searchQuery && filters.searchQuery.trim()) {
-        const rawQuery = filters.searchQuery.trim();
-        const terms = rawQuery.split(/\s+/).filter(t => t.length > 0);
-        
-        // Pour chaque terme, on construit une recherche étendue
-        for (const term of terms) {
-          const like = `%${term}%`;
-          
-          // Trouver les codes NAF associés à ce terme (synonymes métier)
-          const relatedNafCodes = findNafCodesForKeyword(term);
-          
-          // Construire les conditions de recherche
-          // Champs étendus : nom, ville, adresse, siret, code_naf, categorie_detaillee
-          let searchConditions = [
-            `nom.ilike.${like}`,
-            `ville.ilike.${like}`,
-            `adresse.ilike.${like}`,
-            `siret.eq.${term}`,
-            `code_naf.ilike.${like}`
-          ];
-          
-          // Ajouter les conditions NAF issues des synonymes métier
-          if (relatedNafCodes.length > 0) {
-            const nafConditions = generateNafFilterConditions(relatedNafCodes);
-            if (nafConditions) {
-              searchConditions.push(nafConditions);
-            }
-          }
-          
-          query = query.or(searchConditions.join(','));
-        }
+      const error = result.error;
+      if (error) {
+        const errMsg = (error as { message?: string }).message ?? JSON.stringify(error);
+        console.error('[nouveaux_sites]', errMsg);
+        throw new Error(errMsg);
       }
 
-      // Filtre par section NAF
-      if (filters.nafSections && filters.nafSections.length > 0) {
-        query = query.in('naf_section', filters.nafSections);
-      }
+      let data = result.data ?? [];
+      let count = result.count ?? 0;
+      const originalPageLength = data.length;
 
-      // Filtre par division NAF
-      if (filters.nafDivisions && filters.nafDivisions.length > 0) {
-        query = query.in('naf_division', filters.nafDivisions);
+      const search = filters.searchQuery?.trim().toLowerCase();
+      if (search) {
+        data = data.filter((row: any) => {
+          const nom = getNom(row);
+          const ville = row?.ville ?? '';
+          const siret = row?.siret ?? '';
+          const codeNaf = row?.code_naf ?? '';
+          const adresse = row?.adresse ?? '';
+          return [nom, ville, siret, codeNaf, adresse].some(s => String(s).toLowerCase().includes(search));
+        });
+        count = data.length;
       }
-
-      // Filtre par groupe NAF
-      if (filters.nafGroupes && filters.nafGroupes.length > 0) {
-        query = query.in('naf_groupe', filters.nafGroupes);
+      if (filters.nafSections?.length) {
+        data = data.filter((row: any) => filters.nafSections!.includes(row?.naf_section));
+        count = data.length;
       }
-
-      // Filtre par classe NAF
-      if (filters.nafClasses && filters.nafClasses.length > 0) {
-        query = query.in('naf_classe', filters.nafClasses);
+      if (filters.nafDivisions?.length) {
+        data = data.filter((row: any) => filters.nafDivisions!.includes(row?.naf_division));
+        count = data.length;
       }
-
-      // Filtre par sous-classe NAF
-      if (filters.nafSousClasses && filters.nafSousClasses.length > 0) {
-        query = query.in('code_naf', filters.nafSousClasses);
+      if (filters.departments?.length) {
+        data = data.filter((row: any) => filters.departments!.includes(row?.departement ?? row?.code_postal));
+        count = data.length;
       }
-
-      // Filtre par département - utilise la colonne departement si disponible
-      if (filters.departments && filters.departments.length > 0) {
-        // Utiliser la colonne departement pour un filtrage précis
-        // Fallback sur code_postal pour compatibilité
-        query = query.in('departement', filters.departments);
+      if (filters.taillesEntreprise?.length) {
+        data = data.filter((row: any) => filters.taillesEntreprise!.includes(row?.categorie_entreprise));
+        count = data.length;
       }
-
-      // Filtre par taille d'entreprise
-      if (filters.taillesEntreprise && filters.taillesEntreprise.length > 0) {
-        query = query.in('categorie_entreprise', filters.taillesEntreprise);
-      }
-
-      // Filtre par catégorie juridique (premier chiffre du code)
-      if (filters.categoriesJuridiques && filters.categoriesJuridiques.length > 0) {
-        const catConditions = filters.categoriesJuridiques.map(cat => 
-          `categorie_juridique.like.${cat}%`
-        ).join(',');
-        query = query.or(catConditions);
-      }
-
-      // Filtre par type d'établissement (siège vs site)
-      if (filters.typesEtablissement && filters.typesEtablissement.length > 0) {
-        const typeConditions: string[] = [];
-        if (filters.typesEtablissement.includes('siege')) {
-          typeConditions.push('est_siege.eq.true');
-        }
-        if (filters.typesEtablissement.includes('site')) {
-          typeConditions.push('est_siege.eq.false');
-        }
-        if (typeConditions.length > 0) {
-          query = query.or(typeConditions.join(','));
-        }
-      }
-
-      // Filtre par date de création
       if (filters.dateCreationFrom) {
-        query = query.gte('date_creation', filters.dateCreationFrom);
+        data = data.filter((row: any) => (row?.date_creation ?? '') >= filters.dateCreationFrom!);
+        count = data.length;
       }
       if (filters.dateCreationTo) {
-        query = query.lte('date_creation', filters.dateCreationTo);
+        data = data.filter((row: any) => (row?.date_creation ?? '') <= filters.dateCreationTo!);
+        count = data.length;
+      }
+      if (filters.typesEtablissement?.length) {
+        data = data.filter((row: any) => {
+          const siege = row?.est_siege === true;
+          if (filters.typesEtablissement!.includes('siege') && siege) return true;
+          if (filters.typesEtablissement!.includes('site') && !siege) return true;
+          return false;
+        });
+        count = data.length;
+      }
+      if (filters.categoriesJuridiques?.length) {
+        data = data.filter((row: any) =>
+          filters.categoriesJuridiques!.some(c => String(row?.categorie_juridique ?? '').startsWith(c))
+        );
+        count = data.length;
       }
 
-      const { data, error, count } = await query;
-      if (error) throw error;
-
-      // Grouper par nom pour éviter les doublons d'affichage
+      const raw = (data ?? []).filter((row: any) => row?.archived !== true);
       const nameGroups = new Map<string, any[]>();
-      (data || []).forEach(site => {
-        const normalizedName = site.nom?.toLowerCase().trim() || '';
-        if (!nameGroups.has(normalizedName)) {
-          nameGroups.set(normalizedName, []);
-        }
-        nameGroups.get(normalizedName)!.push(site);
+      raw.forEach((site: any) => {
+        const key = getNom(site).toLowerCase().trim() || site?.siret || site?.id || '';
+        if (!nameGroups.has(key)) nameGroups.set(key, []);
+        nameGroups.get(key)!.push(site);
       });
 
-      // Garder uniquement le premier site de chaque groupe avec un compteur
       const groupedData = Array.from(nameGroups.values()).map(group => {
         const main = group[0];
+        const id = main?.id ?? main?.siret ?? '';
         return {
           ...main,
+          id,
+          nom: getNom(main) || 'Sans nom',
           multipleCreations: group.length > 1 ? group.length : undefined,
-          relatedIds: group.map(s => s.id)
+          relatedIds: group.map((s: any) => s?.id ?? s?.siret).filter(Boolean),
         };
       });
 
       return {
         data: groupedData,
-        total: count || 0,
-        hasMore: data && data.length === pageSize,
-        error: null
+        total: count ?? 0,
+        hasMore: originalPageLength === pageSize,
+        error: null,
       };
-    } catch (error) {
-      console.error('Error fetching nouveaux sites:', error);
+    } catch (err) {
+      console.error('Error fetching nouveaux sites:', err);
       return {
         data: [],
         total: 0,
         filteredCount: 0,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: err instanceof Error ? err.message : 'Unknown error',
       };
     }
   },
 
   async fetchNouveauSiteById(id: string) {
-    const { data, error } = await supabase
-      .from('nouveaux_sites')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
+    const byId = supabase.from('nouveaux_sites').select('*').eq('id', id).single();
+    const bySiret = supabase.from('nouveaux_sites').select('*').eq('siret', id).single();
+    const { data: d1, error: e1 } = await byId;
+    if (!e1 && d1) return d1;
+    const { data: d2, error: e2 } = await bySiret;
+    if (e2) throw e2;
+    return d2;
+  },
 };

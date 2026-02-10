@@ -23,18 +23,36 @@ export const RelatedEstablishmentsCard = ({
 
   useEffect(() => {
     const fetchEstablishments = async () => {
+      if (!relatedIds?.length) {
+        setEstablishments([]);
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(true);
       try {
-        const { data, error } = await supabase
+        const ids = relatedIds.filter(Boolean).map(String);
+        let result = await supabase
           .from('nouveaux_sites')
           .select('*')
-          .in('id', relatedIds)
-          .order('est_siege', { ascending: false }); // Siège first
-        
-        if (error) throw error;
-        setEstablishments(data || []);
+          .in('id', ids);
+
+        if (result.error && (result.error as { code?: string }).code === '22P02') {
+          result = await supabase
+            .from('nouveaux_sites')
+            .select('*')
+            .in('siret', ids);
+        }
+        if (result.error) throw result.error;
+        let data = result.data || [];
+        try {
+          data = [...data].sort((a, b) => (a?.est_siege === b?.est_siege ? 0 : a?.est_siege ? -1 : 1));
+        } catch {
+          // ignore sort if column missing
+        }
+        setEstablishments(data);
       } catch (error) {
         console.error('Error fetching related establishments:', error);
+        setEstablishments([]);
       } finally {
         setIsLoading(false);
       }

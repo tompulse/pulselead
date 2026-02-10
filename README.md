@@ -64,6 +64,8 @@ This project is built with:
 
 Simply open [Lovable](https://lovable.dev/projects/02898bbe-ed3e-4e29-8817-c0dc393d111f) and click on Share -> Publish.
 
+**Push Git et déploiement Render :** voir **[PUSH_ET_DEPLOY.md](./PUSH_ET_DEPLOY.md)** (commandes exactes pour `git push`, SSH/token si ça bloque, et config Render).
+
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!

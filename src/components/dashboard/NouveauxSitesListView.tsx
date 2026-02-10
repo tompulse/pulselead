@@ -36,6 +36,8 @@ export const NouveauxSitesListView = ({
   const { 
     data, 
     isLoading,
+    isError,
+    error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage
@@ -51,6 +53,7 @@ export const NouveauxSitesListView = ({
 
   const allSites = data?.pages.flatMap(page => page.data) || [];
   const totalCount = data?.pages[0]?.total || 0;
+  const errorMessage = error instanceof Error ? error.message : (error as string) || '';
 
   // Plus de filtrage par unlock - tous les sites sont affichés
   const filteredSites = allSites;
@@ -73,6 +76,20 @@ export const NouveauxSitesListView = ({
         <div className="text-center space-y-4">
           <div className="animate-spin w-12 h-12 border-4 border-accent border-t-transparent rounded-full mx-auto" />
           <p className="text-muted-foreground font-medium">Chargement des sites...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError && errorMessage) {
+    return (
+      <div className="glass-card rounded-2xl p-8 sm:p-12 flex items-center justify-center shadow-2xl border border-red-500/20 bg-red-500/5">
+        <div className="text-center space-y-4 max-w-lg">
+          <h3 className="text-xl font-bold text-red-600 dark:text-red-400">Impossible de charger les prospects</h3>
+          <p className="text-sm text-muted-foreground font-mono break-all">{errorMessage}</p>
+          <p className="text-sm text-muted-foreground">
+            Vérifie que la table <strong>nouveaux_sites</strong> existe dans ton projet Supabase (même nom que l’URL de l’app) et que tu as exécuté le script <strong>ACTIVER_NOUVEAUX_SITES_POUR_PULSE.sql</strong> dans Supabase → SQL Editor.
+          </p>
         </div>
       </div>
     );

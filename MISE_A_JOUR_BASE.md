@@ -28,13 +28,17 @@ Avec un autre fichier : `./importer.sh mon_export.csv`
 
 ## 3. Une fois les données en base : exécuter le SQL (une seule fois)
 
-Pour que PULSE affiche correctement les lignes, la table doit avoir les colonnes attendues (id, archived, random_order, nom, etc.). Après ton premier import (ou si tu as importé le CSV directement dans Supabase) :
+Pour que **tous tes users PULSE** voient les prospects dans l’onglet Prospects, il faut exécuter un script SQL dans Supabase.
 
-1. Ouvre **Supabase** → **SQL Editor**.
-2. Copie-colle le contenu du fichier **`FIX_TOUT_EN_1_COMMANDE.sql`** (à la racine du projet).
-3. Exécute le script.
+**Guide détaillé (débutant) :** ouvre ** [GUIDE_SQL_SUPABASE.md](./GUIDE_SQL_SUPABASE.md) ** — tout y est expliqué étape par étape.
 
-Ensuite : rafraîchis l’app PULSE et va dans **Prospects** : les lignes de `nouveaux_sites` s’affichent.
+**Résumé rapide :**
+1. Va sur **Supabase** → ton projet → menu gauche **SQL Editor**.
+2. Ouvre le fichier **`ACTIVER_NOUVEAUX_SITES_POUR_PULSE.sql`** (à la racine du projet), copie tout son contenu.
+3. Colle dans l’éditeur SQL sur Supabase, puis clique sur **Run** (Exécuter).
+4. Vérifie « Success » en bas, puis rafraîchis PULSE : les prospects s’affichent dans l’onglet **Prospects**.
+
+**Option complète** (renommages, types, etc.) : utilise **`FIX_TOUT_EN_1_COMMANDE.sql`** à la place.
 
 ## 4. Résumé
 
