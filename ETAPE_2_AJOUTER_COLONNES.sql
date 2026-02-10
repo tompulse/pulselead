@@ -138,7 +138,44 @@ BEGIN
   END IF;
 END $$;
 
--- 8️⃣ VÉRIFICATION FINALE
+-- 8️⃣ CONVERTIR siret EN TEXT (CRITIQUE pour PULSE)
+DO $$ 
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'nouveaux_sites' 
+      AND column_name = 'siret'
+      AND data_type NOT IN ('text', 'character varying')
+  ) THEN
+    ALTER TABLE nouveaux_sites ALTER COLUMN siret TYPE TEXT USING siret::TEXT;
+    RAISE NOTICE '✅ siret converti en TEXT (fix e.siret.replace error)';
+  ELSE
+    RAISE NOTICE '✓ siret déjà TEXT';
+  END IF;
+END $$;
+
+-- 9️⃣ CONVERTIR code_postal EN TEXT
+DO $$ 
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'nouveaux_sites' 
+      AND column_name IN ('code_postal', 'codePostalEtablissement')
+      AND data_type NOT IN ('text', 'character varying')
+  ) THEN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nouveaux_sites' AND column_name = 'code_postal') THEN
+      ALTER TABLE nouveaux_sites ALTER COLUMN code_postal TYPE TEXT USING code_postal::TEXT;
+      RAISE NOTICE '✅ code_postal converti en TEXT';
+    ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nouveaux_sites' AND column_name = 'codePostalEtablissement') THEN
+      ALTER TABLE nouveaux_sites ALTER COLUMN "codePostalEtablissement" TYPE TEXT USING "codePostalEtablissement"::TEXT;
+      RAISE NOTICE '✅ codePostalEtablissement converti en TEXT';
+    END IF;
+  ELSE
+    RAISE NOTICE '✓ code_postal déjà TEXT';
+  END IF;
+END $$;
+
+-- 🔟 VÉRIFICATION FINALE
 SELECT '✅ COLONNES AJOUTÉES - Vérification:' as status;
 SELECT 
   COUNT(*) as total_lignes,
