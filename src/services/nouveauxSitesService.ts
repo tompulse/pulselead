@@ -27,8 +27,8 @@ export const nouveauxSitesService = {
         .from('nouveaux_sites')
         .select('*', { count: 'exact' });
 
-      // Filtrer les archivés en SQL
-      query = query.neq('archived', true);
+      // Filtrer les archivés en SQL - accepter null et false
+      query = query.or('archived.is.null,archived.eq.false');
 
       // Filtre de recherche (nom, ville, siret, code_naf, adresse, CODE POSTAL)
       const search = filters.searchQuery?.trim();
