@@ -1,1430 +1,589 @@
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { ArrowRight, Target, TrendingUp, TrendingDown, Check, MapPin, BarChart3, Users, Phone, Mail, Database, Smartphone, Menu, Building2, Clock, Sparkles, Shield, Award, X } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
+import { useEffect } from "react";
 
-const EntrepriseLanding = () => {
-  const navigate = useNavigate();
+// ─── Styles injectés directement dans le composant ───────────────────────────
+// On injecte le CSS via une balise <style> dans le rendu React.
+// Cela évite d'avoir à configurer Tailwind pour cette page spécifique.
+const styles = `
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
 
-  const heroAnimation = useScrollAnimation({ threshold: 0.2 });
-  const problemsAnimation = useScrollAnimation({ threshold: 0.2 });
-  const solutionAnimation = useScrollAnimation({ threshold: 0.2 });
-  const beforeAfterAnimation = useScrollAnimation({ threshold: 0.2 });
-  const pricingAnimation = useScrollAnimation({ threshold: 0.2 });
-  const faqAnimation = useScrollAnimation({ threshold: 0.2 });
+.pe-root *, .pe-root *::before, .pe-root *::after { box-sizing: border-box; }
+.pe-root {
+  --bg:#060d1a;--bg2:#091224;
+  --cyan:#2dd9ff;--cyan2:#00ffcc;
+  --cdim:rgba(45,217,255,0.1);
+  --bdr:rgba(45,217,255,0.18);--bdr2:rgba(255,255,255,0.07);
+  --w:#eef4ff;--w2:rgba(238,244,255,0.78);--w3:rgba(238,244,255,0.44);
+  --syne:'Syne',sans-serif;--inter:'Inter',sans-serif;
+  font-family: var(--inter);
+  background: var(--bg);
+  color: var(--w);
+  overflow-x: hidden;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* SCROLL ANIM */
+.pe-root .rv{opacity:0;transform:translateY(34px);transition:opacity .72s cubic-bezier(.22,1,.36,1),transform .72s cubic-bezier(.22,1,.36,1)}
+.pe-root .rvr{opacity:0;transform:translateX(34px);transition:opacity .72s cubic-bezier(.22,1,.36,1),transform .72s cubic-bezier(.22,1,.36,1)}
+.pe-root .rv.on,.pe-root .rvr.on{opacity:1;transform:none}
+.pe-root .d1{transition-delay:.08s}.pe-root .d2{transition-delay:.16s}.pe-root .d3{transition-delay:.24s}
+.pe-root .d4{transition-delay:.32s}.pe-root .d5{transition-delay:.4s}
+
+/* NAV */
+.pe-nav{position:fixed;top:0;width:100%;z-index:200;padding:16px 64px;display:flex;justify-content:space-between;align-items:center;background:rgba(6,13,26,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr2);transition:background .3s}
+.pe-nl{font-family:var(--syne);font-size:1.2rem;font-weight:700;color:var(--w);letter-spacing:0;text-decoration:none;display:flex;align-items:center;gap:10px}
+.pe-nl span{color:var(--cyan)}
+.pe-nr{display:flex;gap:24px;align-items:center}
+.pe-nr a{font-size:.84rem;color:var(--w3);text-decoration:none;transition:color .2s}
+.pe-nr a:hover{color:var(--w)}
+.pe-nc{background:var(--cyan)!important;color:var(--bg)!important;padding:10px 22px!important;border-radius:6px;font-weight:700!important;font-family:var(--syne);font-size:.8rem!important;transition:opacity .2s!important}
+.pe-nc:hover{opacity:.85!important}
+.pe-solo-nav{font-size:.72rem!important;color:rgba(238,244,255,0.28)!important;border:1px solid rgba(255,255,255,.07);padding:6px 12px;border-radius:20px;transition:all .2s!important;white-space:nowrap}
+.pe-solo-nav:hover{color:var(--w3)!important;border-color:var(--bdr)!important}
+
+/* HERO */
+.pe-hero{min-height:100vh;display:flex;align-items:center;padding:140px 64px 100px;position:relative;overflow:hidden}
+.pe-orb1{position:absolute;right:-180px;top:-80px;width:680px;height:680px;background:radial-gradient(ellipse,rgba(45,217,255,.11) 0%,transparent 65%);pointer-events:none;animation:pe-flt 9s ease-in-out infinite}
+.pe-orb2{position:absolute;left:-150px;bottom:-80px;width:500px;height:500px;background:radial-gradient(ellipse,rgba(0,255,204,.07) 0%,transparent 65%);pointer-events:none;animation:pe-flt 13s ease-in-out infinite reverse}
+@keyframes pe-flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-26px)}}
+.pe-gbg{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(45,217,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(45,217,255,.04) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)}
+.pe-hi{max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;position:relative;z-index:1}
+.pe-chip{display:inline-flex;align-items:center;gap:8px;background:var(--cdim);border:1px solid var(--bdr);color:var(--cyan);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;padding:6px 14px;border-radius:20px;margin-bottom:28px;font-family:var(--syne)}
+.pe-chip::before{content:'';width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:pe-pdot 2s infinite}
+@keyframes pe-pdot{0%,100%{opacity:1}50%{opacity:.3}}
+.pe-hh{font-family:var(--syne);font-size:clamp(1.9rem,2.8vw,2.6rem);font-weight:700;line-height:1.22;letter-spacing:-.01em;color:var(--w);margin-bottom:22px}
+.pe-hh .ac{color:var(--cyan);text-shadow:0 0 40px rgba(45,217,255,.35)}
+.pe-hs{font-size:1.05rem;color:var(--w2);line-height:1.8;font-weight:300;margin-bottom:38px;max-width:490px}
+.pe-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.pe-bp{background:var(--cyan);color:var(--bg);padding:16px 30px;border-radius:8px;font-weight:700;font-size:.95rem;text-decoration:none;font-family:var(--syne);display:inline-block;transition:all .2s;box-shadow:0 0 28px rgba(45,217,255,.22);white-space:nowrap}
+.pe-bp:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 6px 40px rgba(45,217,255,.35)}
+.pe-bo{border:1.5px solid rgba(45,217,255,.3);color:var(--w2);padding:15px 26px;border-radius:8px;font-size:.92rem;text-decoration:none;display:inline-block;transition:all .2s}
+.pe-bo:hover{border-color:var(--cyan);color:var(--w)}
+.pe-badges{display:flex;gap:22px;margin-top:34px;flex-wrap:wrap}
+.pe-badge{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--w3)}
+.pe-bd{width:6px;height:6px;background:var(--cyan2);border-radius:50%;flex-shrink:0}
+
+/* Hero panel */
+.pe-hpanel{background:rgba(9,18,36,.75);border:1px solid var(--bdr);border-radius:16px;padding:36px;backdrop-filter:blur(16px);position:relative;overflow:hidden}
+.pe-hpanel::before{content:'';position:absolute;top:0;left:30px;right:30px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+.pe-hpl{font-family:var(--syne);font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--cyan);margin-bottom:26px;font-weight:600}
+.pe-hps{display:flex;flex-direction:column}
+.pe-hpstep{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--bdr2)}
+.pe-hpstep:last-child{border-bottom:none}
+.pe-hpn{width:30px;height:30px;background:var(--cdim);border:1px solid var(--bdr);color:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;font-family:var(--syne);flex-shrink:0;margin-top:2px}
+.pe-hpstep h4{font-family:var(--syne);font-size:.9rem;font-weight:700;color:var(--w);margin-bottom:4px}
+.pe-hpstep p{font-size:.82rem;color:var(--w3);line-height:1.6;margin:0}
+.pe-hpf{margin-top:26px;padding-top:22px;border-top:1px solid var(--bdr2);display:flex;justify-content:space-between;align-items:center}
+.pe-prh .from{font-size:.7rem;color:var(--w3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;font-family:var(--syne)}
+.pe-prh .amt{font-family:var(--syne);font-size:2.2rem;font-weight:800;color:var(--w);line-height:1}
+.pe-prh .ht{font-size:.76rem;color:var(--w3);margin-left:4px}
+.pe-dpill{background:var(--cdim);border:1px solid var(--bdr);color:var(--cyan);padding:8px 16px;border-radius:20px;font-size:.76rem;font-weight:700;font-family:var(--syne)}
+
+/* STATS BANNER */
+.pe-expbanner{background:var(--bg2);padding:48px 64px}
+.pe-expinner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.pe-eitem{background:rgba(45,217,255,.04);border:1px solid var(--bdr2);padding:28px 24px;text-align:center;transition:background .3s,border-color .3s}
+.pe-eitem:first-child{border-radius:12px 0 0 12px}
+.pe-eitem:last-child{border-radius:0 12px 12px 0}
+.pe-eitem:hover{background:rgba(45,217,255,.08);border-color:var(--bdr)}
+.pe-enum{font-family:var(--syne);font-size:2.2rem;font-weight:700;color:var(--cyan);line-height:1;margin-bottom:8px;text-shadow:0 0 30px rgba(45,217,255,.3)}
+.pe-elabel{font-size:.84rem;color:var(--w2);line-height:1.5}
+
+/* SECTIONS */
+.pe-section{padding:100px 64px;position:relative}
+.pe-wrap{max-width:1200px;margin:0 auto}
+.pe-sl{font-family:var(--syne);font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--cyan);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.pe-sl::before{content:'';display:block;width:22px;height:1px;background:var(--cyan)}
+.pe-st{font-family:var(--syne);font-size:clamp(1.55rem,2.4vw,2.2rem);font-weight:700;line-height:1.22;letter-spacing:-.01em;color:var(--w);margin-bottom:18px}
+.pe-st .ac{color:var(--cyan)}
+.pe-ss{font-size:1rem;color:var(--w2);max-width:560px;line-height:1.8;font-weight:300}
+.pe-sh{margin-bottom:56px}
+
+/* PROBLÈME */
+.pe-problem{background:var(--bg2)}
+.pe-problem::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 100%,rgba(45,217,255,.04) 0%,transparent 70%);pointer-events:none}
+.pe-pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pe-pcard{background:rgba(255,255,255,.025);border:1px solid var(--bdr2);border-radius:14px;padding:34px 28px;transition:border-color .3s,background .3s,transform .3s;position:relative;overflow:hidden}
+.pe-pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(45,217,255,.4),transparent);opacity:0;transition:opacity .3s}
+.pe-pcard:hover{border-color:var(--bdr);background:rgba(45,217,255,.05);transform:translateY(-4px)}
+.pe-pcard:hover::before{opacity:1}
+.pe-pico{width:46px;height:46px;background:var(--cdim);border:1px solid var(--bdr);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.pe-pcard h3{font-family:var(--syne);font-size:1.02rem;font-weight:700;color:var(--w);margin-bottom:10px}
+.pe-pcard p{font-size:.88rem;color:var(--w2);line-height:1.72;margin:0}
+
+/* SOLUTION 3 STEPS */
+.pe-solution{background:var(--bg);overflow:hidden}
+.pe-solution::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(45,217,255,.04) 0%,transparent 65%);pointer-events:none}
+.pe-steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;position:relative;z-index:1}
+.pe-steps-grid::before{content:'';position:absolute;top:76px;left:calc(33.33% - 1px);right:calc(33.33% - 1px);height:1px;background:linear-gradient(90deg,var(--bdr),rgba(45,217,255,.4),var(--bdr));pointer-events:none;z-index:0}
+.pe-step-card{background:rgba(9,18,36,.6);border:1px solid var(--bdr2);padding:40px 32px 36px;position:relative;overflow:hidden;transition:border-color .3s,background .3s,transform .3s;z-index:1}
+.pe-step-card:first-child{border-radius:16px 0 0 16px}
+.pe-step-card:last-child{border-radius:0 16px 16px 0}
+.pe-step-card:hover{background:rgba(45,217,255,.05);border-color:var(--bdr);transform:translateY(-5px)}
+.pe-step-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity .3s}
+.pe-step-card:hover::after{opacity:1}
+.pe-step-num{font-family:var(--syne);font-size:4.5rem;font-weight:800;line-height:1;background:linear-gradient(135deg,rgba(45,217,255,.18),rgba(45,217,255,.04));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:24px;display:block}
+.pe-step-icon{width:52px;height:52px;background:var(--cdim);border:1px solid var(--bdr);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.pe-step-card h3{font-family:var(--syne);font-size:1.1rem;font-weight:700;color:var(--w);margin-bottom:10px;line-height:1.3}
+.pe-step-sub{font-size:.78rem;color:var(--cyan);font-family:var(--syne);font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.pe-step-sub::before{content:'';display:block;width:14px;height:1px;background:var(--cyan)}
+.pe-step-card p{font-size:.88rem;color:var(--w2);line-height:1.78;margin-bottom:18px}
+.pe-step-tags{display:flex;flex-direction:column;gap:7px}
+.pe-step-tag{display:flex;align-items:center;gap:9px;font-size:.8rem;color:var(--w3);line-height:1.4}
+.pe-step-tag::before{content:'';width:5px;height:5px;background:var(--cyan2);border-radius:50%;flex-shrink:0}
+.pe-app-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.pe-ap{display:inline-flex;align-items:center;gap:6px;background:rgba(45,217,255,.07);border:1px solid var(--bdr);color:var(--w2);padding:6px 12px;border-radius:8px;font-size:.76rem;font-weight:500;font-family:var(--syne)}
+
+/* PRICING */
+.pe-pricing{background:var(--bg2)}
+.pe-pricing::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 50% at 50% 0%,rgba(45,217,255,.06) 0%,transparent 65%);pointer-events:none}
+.pe-pgr{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+.pe-pc{background:rgba(255,255,255,.025);border:1.5px solid var(--bdr2);border-radius:16px;padding:36px 28px;position:relative;transition:transform .3s,box-shadow .3s,border-color .3s}
+.pe-pc:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.35);border-color:var(--bdr)}
+.pe-pc.rec{background:linear-gradient(155deg,rgba(45,217,255,.1),rgba(0,255,204,.04));border-color:rgba(45,217,255,.4);box-shadow:0 0 60px rgba(45,217,255,.1)}
+.pe-rbdg{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,var(--cyan),var(--cyan2));color:var(--bg);font-size:.68rem;font-weight:700;padding:5px 18px;border-radius:12px;white-space:nowrap;font-family:var(--syne)}
+.pe-pn{font-family:var(--syne);font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--w3);font-weight:600;margin-bottom:10px}
+.pe-pc.rec .pe-pn{color:var(--cyan)}
+.pe-pp{font-family:var(--syne);font-size:2.8rem;font-weight:700;color:var(--w);line-height:1;margin-bottom:4px}
+.pe-pc.rec .pe-pp{color:var(--cyan);text-shadow:0 0 30px rgba(45,217,255,.3)}
+.pe-pp sup{font-size:1.3rem;vertical-align:super}
+.pe-pper{font-size:.81rem;color:var(--w3);margin-bottom:24px}
+.pe-pdesc{font-size:.88rem;color:var(--w2);line-height:1.68;padding-bottom:20px;border-bottom:1px solid var(--bdr2);margin-bottom:20px}
+.pe-pfs{display:flex;flex-direction:column;gap:11px;margin-bottom:28px}
+.pe-pf{display:flex;gap:10px;font-size:.875rem;color:var(--w2);align-items:flex-start;line-height:1.5}
+.pe-pfc{color:var(--cyan);flex-shrink:0;font-size:.82rem;margin-top:2px;font-weight:700}
+.pe-pc.rec .pe-pfc{color:var(--cyan2)}
+.pe-btp{display:block;text-align:center;padding:14px 20px;border-radius:8px;font-weight:700;font-size:.88rem;text-decoration:none;transition:all .2s;font-family:var(--syne)}
+.pe-bto{border:1.5px solid var(--bdr);color:var(--w2)}
+.pe-bto:hover{border-color:var(--cyan);color:var(--cyan)}
+.pe-btf{background:linear-gradient(90deg,var(--cyan),var(--cyan2));color:var(--bg)}
+.pe-btf:hover{opacity:.9;box-shadow:0 4px 30px rgba(45,217,255,.3)}
+
+/* GUARANTEES */
+.pe-guarantees{background:var(--bg)}
+.pe-ggr{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.pe-gc{background:rgba(255,255,255,.025);border:1px solid var(--bdr2);border-radius:14px;padding:32px 24px;text-align:center;transition:border-color .3s,background .3s}
+.pe-gc:hover{border-color:var(--bdr);background:rgba(45,217,255,.04)}
+.pe-gico{width:52px;height:52px;background:var(--cdim);border:1px solid var(--bdr);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.pe-gc h4{font-family:var(--syne);font-size:.95rem;font-weight:700;color:var(--w);margin-bottom:8px}
+.pe-gc p{font-size:.86rem;color:var(--w2);line-height:1.68;margin:0}
+
+/* FAQ */
+.pe-faq{background:var(--bg2)}
+.pe-fqgr{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px}
+.pe-fi{background:rgba(255,255,255,.025);border:1px solid var(--bdr2);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.pe-fi:hover{border-color:var(--bdr)}
+.pe-fq{padding:20px 22px;font-family:var(--syne);font-size:.895rem;font-weight:600;color:var(--w);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;gap:14px}
+.pe-fqi{width:24px;height:24px;background:var(--cdim);border:1px solid var(--bdr);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:.88rem;flex-shrink:0;transition:transform .3s}
+.pe-fa{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.22,1,.36,1),padding .3s;padding:0 22px}
+.pe-fa.open{max-height:300px;padding:0 22px 18px}
+.pe-fa p{font-size:.875rem;color:var(--w2);line-height:1.75;margin:0}
+.pe-fi.active .pe-fqi{transform:rotate(45deg)}
+
+/* CTA FINAL */
+.pe-ctafin{background:var(--bg);text-align:center;position:relative;overflow:hidden;padding:100px 64px}
+.pe-ctafin::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(45,217,255,.1) 0%,transparent 65%);pointer-events:none}
+.pe-cr{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none}
+.pe-cr1{width:600px;height:600px;border:1px solid rgba(45,217,255,.05);animation:pe-rp 4s ease-in-out infinite}
+.pe-cr2{width:900px;height:900px;border:1px solid rgba(45,217,255,.03);animation:pe-rp 4s ease-in-out infinite .5s}
+@keyframes pe-rp{0%,100%{opacity:.5}50%{opacity:1}}
+.pe-cin{position:relative;z-index:1}
+.pe-cdesc{font-size:1rem;color:var(--w2);max-width:500px;margin:0 auto 40px;line-height:1.8;font-weight:300}
+.pe-ctabtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.pe-cnote{margin-top:22px;font-size:.8rem;color:var(--w3);display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+.pe-cnote span{display:flex;align-items:center;gap:6px}
+.pe-cnote span::before{content:'';width:5px;height:5px;background:var(--cyan2);border-radius:50%;display:block}
+
+/* FOOTER */
+.pe-footer{background:var(--bg2);padding:40px 64px;border-top:1px solid var(--bdr2)}
+.pe-footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+.pe-flogo{font-family:var(--syne);font-size:1.1rem;font-weight:800;color:var(--w)}
+.pe-flogo span{color:var(--cyan)}
+.pe-flinks{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.pe-flinks a{font-size:.79rem;color:var(--w3);text-decoration:none;transition:color .2s}
+.pe-flinks a:hover{color:var(--w)}
+.pe-footer-solo{display:flex;align-items:center;gap:7px;font-size:.75rem;color:rgba(238,244,255,.25);text-decoration:none;transition:color .2s;border:1px solid rgba(255,255,255,.06);padding:6px 12px;border-radius:16px}
+.pe-footer-solo:hover{color:var(--w3);border-color:var(--bdr2)}
+.pe-footer-solo::before{content:'→';font-size:.68rem;color:var(--cyan)}
+.pe-fcopy{font-size:.75rem;color:rgba(238,244,255,.18)}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .pe-nav{padding:14px 20px}
+  .pe-nr .pe-solo-nav{display:none}
+  .pe-nr a:not(.pe-nc):not(.pe-solo-nav){display:none}
+  .pe-hero,.pe-section{padding:60px 20px}
+  .pe-hero{padding-top:110px}
+  .pe-hi{grid-template-columns:1fr;gap:40px}
+  .pe-hpanel{display:none}
+  .pe-steps-grid,.pe-pgrid,.pe-pgr,.pe-ggr,.pe-fqgr{grid-template-columns:1fr}
+  .pe-steps-grid::before{display:none}
+  .pe-step-card:first-child{border-radius:12px 12px 0 0}
+  .pe-step-card:last-child{border-radius:0 0 12px 12px}
+  .pe-expbanner{padding:40px 20px}
+  .pe-expinner{grid-template-columns:1fr 1fr;gap:10px}
+  .pe-eitem:first-child,.pe-eitem:last-child{border-radius:10px}
+  .pe-ctafin{padding:60px 20px}
+  .pe-footer{padding:32px 20px}
+  .pe-footer-inner{flex-direction:column;text-align:center}
+  .pe-flinks{justify-content:center}
+  .pe-cr1,.pe-cr2{display:none}
+}
+`;
+
+export default function EntrepriseLanding() {
+  // ─── Inject styles & run JS effects ────────────────────────────────────────
+  useEffect(() => {
+    // Injection du CSS dans le <head>
+    const styleTag = document.createElement("style");
+    styleTag.id = "pe-landing-styles";
+    styleTag.textContent = styles;
+    document.head.appendChild(styleTag);
+
+    // Scroll reveal — anime les éléments quand ils entrent dans le viewport
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((x) => {
+          if (x.isIntersecting) {
+            x.target.classList.add("on");
+            io.unobserve(x.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    document.querySelectorAll(".pe-root .rv, .pe-root .rvr").forEach((el) =>
+      io.observe(el)
+    );
+
+    // FAQ accordion
+    const fqItems = document.querySelectorAll(".pe-fq");
+    fqItems.forEach((q) => {
+      q.addEventListener("click", () => {
+        const item = q.parentElement as HTMLElement;
+        const ans = item?.querySelector(".pe-fa") as HTMLElement;
+        const open = item?.classList.contains("active");
+        document.querySelectorAll(".pe-fi").forEach((i) => {
+          i.classList.remove("active");
+          (i.querySelector(".pe-fa") as HTMLElement)?.classList.remove("open");
+        });
+        if (!open) {
+          item?.classList.add("active");
+          ans?.classList.add("open");
+        }
+      });
+    });
+
+    // Nav scroll effect
+    const nav = document.querySelector(".pe-nav") as HTMLElement;
+    const handleScroll = () => {
+      if (nav)
+        nav.style.background =
+          window.scrollY > 50
+            ? "rgba(6,13,26,.97)"
+            : "rgba(6,13,26,.88)";
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Cleanup au démontage du composant
+    return () => {
+      document.getElementById("pe-landing-styles")?.remove();
+      window.removeEventListener("scroll", handleScroll);
+      io.disconnect();
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{
-      background: 'linear-gradient(180deg, #0A0E1A 0%, #001F3F 50%, #0A0E1A 100%)'
-    }}>
-      {/* Background elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full blur-[120px]" style={{
-          background: 'radial-gradient(circle, rgba(0,255,157,0.12) 0%, transparent 70%)'
-        }}></div>
-        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full blur-[100px]" style={{
-          background: 'radial-gradient(circle, rgba(0,212,255,0.1) 0%, transparent 70%)'
-        }}></div>
+    <div className="pe-root">
+
+      {/* ── NAV ── */}
+      <nav className="pe-nav">
+        <a href="/" className="pe-nl">Pulse <span>Entreprise</span></a>
+        <div className="pe-nr">
+          <a href="#methode">Méthode</a>
+          <a href="#pricing">Tarifs</a>
+          <a href="#faq">FAQ</a>
+          <a href="https://pulse-lead.com/commercial" target="_blank" rel="noreferrer" className="pe-solo-nav">↗ Version Solo</a>
+          <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noreferrer" className="pe-nc">Réserver un appel</a>
+        </div>
+      </nav>
+
+      {/* ── HERO ── */}
+      <section className="pe-hero">
+        <div className="pe-orb1" /><div className="pe-orb2" /><div className="pe-gbg" />
+        <div className="pe-hi">
+          <div>
+            <div className="pe-chip rv">Pour les directeurs et managers commerciaux B2B</div>
+            <h1 className="pe-hh rv d1">Vos commerciaux terrain visitent plus de <span className="ac">clients qualifiés</span> — dès cette semaine</h1>
+            <p className="pe-hs rv d2">Base de prospects sur mesure, tournées optimisées et tableau de bord manager. Livré clé en main en 72h, configuré selon votre brief.</p>
+            <div className="pe-ctas rv d3">
+              <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noreferrer" className="pe-bp">Réserver un appel de brief (1h gratuite)</a>
+              <a href="#pricing" className="pe-bo">Voir les formules</a>
+            </div>
+            <div className="pe-badges rv d4">
+              <div className="pe-badge"><div className="pe-bd" />Livraison 72h</div>
+              <div className="pe-badge"><div className="pe-bd" />Sans engagement</div>
+              <div className="pe-badge"><div className="pe-bd" />Prospects remplacés si insatisfait</div>
+            </div>
+          </div>
+          <div className="pe-hpanel rvr d2">
+            <div className="pe-hpl">Comment ça fonctionne</div>
+            <div className="pe-hps">
+              <div className="pe-hpstep">
+                <div className="pe-hpn">1</div>
+                <div><h4>Votre brief — 1h</h4><p>Secteur cible, zones géographiques, taille d'équipe, critères de qualification. Nous écoutons, vous décidez.</p></div>
+              </div>
+              <div className="pe-hpstep">
+                <div className="pe-hpn">2</div>
+                <div><h4>Livraison sur mesure — 72h</h4><p>Base prospects enrichie, tournées optimisées, tableau de bord manager activé. Rien n'est générique.</p></div>
+              </div>
+              <div className="pe-hpstep">
+                <div className="pe-hpn">3</div>
+                <div><h4>Formation de votre équipe — 1h</h4><p>Vos commerciaux et vous maîtrisez l'app (mobile + PC) dès la première session.</p></div>
+              </div>
+            </div>
+            <div className="pe-hpf">
+              <div className="pe-prh">
+                <div className="from">À partir de</div>
+                <div className="amt">490€ <span className="ht">HT</span></div>
+              </div>
+              <div className="pe-dpill">72h chrono</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS BANNER ── */}
+      <div className="pe-expbanner">
+        <div className="pe-expinner">
+          <div className="pe-eitem rv d1"><div className="pe-enum">+40<sup>%</sup></div><div className="pe-elabel">de visites qualifiées par journée terrain</div></div>
+          <div className="pe-eitem rv d2"><div className="pe-enum">72h</div><div className="pe-elabel">délai de livraison garanti, brief inclus</div></div>
+          <div className="pe-eitem rv d3"><div className="pe-enum">100<sup>%</sup></div><div className="pe-elabel">sur mesure — zéro template générique</div></div>
+          <div className="pe-eitem rv d4"><div className="pe-enum">🇫🇷 🇨🇭</div><div className="pe-elabel">France & Suisse — IDF, PACA, Suisse romande</div></div>
+        </div>
       </div>
 
-      {/* Header Simplifié */}
-      <header className="sticky top-0 left-0 right-0 z-50" style={{
-        background: 'rgba(10, 14, 26, 0.8)',
-        backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(0, 212, 255, 0.15)'
-      }}>
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">
-              <span style={{ 
-                background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                fontFamily: 'Inter, sans-serif',
-                fontWeight: 700
-              }}>PULSE</span>
-              <span className="text-white ml-1" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700 }}>Entreprise</span>
+      {/* ── PROBLÈME ── */}
+      <section className="pe-section pe-problem">
+        <div className="pe-wrap">
+          <div className="pe-sh">
+            <div className="pe-sl rv">Le constat</div>
+            <h2 className="pe-st rv d1">Ce qui freine votre équipe<br />en ce moment même</h2>
+          </div>
+          <div className="pe-pgrid">
+            <div className="pe-pcard rv d1">
+              <div className="pe-pico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+              <h3>Trop de temps à chercher à qui parler</h3>
+              <p>Sans base ciblée, vos commerciaux prospectent au hasard — là où ils devraient être en face d'un décideur qualifié.</p>
             </div>
-
-            {/* Desktop nav - Simplifié */}
-            <nav className="hidden lg:flex items-center gap-8">
-              <a href="#rdv" className="text-sm hover:text-[#00FF9D] transition-colors" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>Comment ça marche</a>
-              <a href="#resultats" className="text-sm hover:text-[#00FF9D] transition-colors" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>Résultats</a>
-              <a href="#pricing" className="text-sm hover:text-[#00FF9D] transition-colors" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>Tarifs</a>
-            </nav>
-
-            {/* Desktop buttons - Simplifié */}
-            <div className="hidden lg:flex items-center gap-3">
-              <a 
-                href="/commercial" 
-                className="text-sm font-medium hover:text-white transition-colors" 
-                style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}
-              >
-                Version Solo (49€)
-              </a>
-              <Button 
-                onClick={() => document.getElementById('calendly')?.scrollIntoView({ behavior: 'smooth' })}
-                className="font-bold px-6 py-3 rounded-lg transition-all duration-300"
-                style={{ 
-                  background: '#00FF9D', 
-                  color: '#000',
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: 700
-                }}
-              >
-                Réserver un Audit Gratuit
-              </Button>
+            <div className="pe-pcard rv d2">
+              <div className="pe-pico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <h3>Des tournées inefficaces qui épuisent</h3>
+              <p>Kilomètres inutiles, visites mal séquencées. Vos commerciaux travaillent fort pour un pipeline qui devrait être plus plein.</p>
             </div>
-
-            {/* Mobile menu */}
-            <div className="lg:hidden">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-white">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-72 bg-card/95 backdrop-blur-xl border-accent/20">
-                  <nav className="flex flex-col gap-4 mt-8">
-                    <a href="#rdv" className="text-lg text-white/80 hover:text-white py-2">Comment ça marche</a>
-                    <a href="#resultats" className="text-lg text-white/80 hover:text-white py-2">Résultats</a>
-                    <a href="#pricing" className="text-lg text-white/80 hover:text-white py-2">Tarifs</a>
-                    <div className="border-t border-white/10 pt-4 mt-4 space-y-3">
-                      <a 
-                        href="/commercial" 
-                        className="block w-full text-center px-4 py-3 rounded-lg border text-white/70"
-                        style={{ borderColor: 'rgba(0, 212, 255, 0.4)' }}
-                      >
-                        Version Solo (49€)
-                      </a>
-                      <Button 
-                        onClick={() => document.getElementById('calendly')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="w-full font-bold py-3 rounded-lg"
-                        style={{ background: '#00FF9D', color: '#000' }}
-                      >
-                        Réserver un Audit
-                      </Button>
-                    </div>
-                  </nav>
-                </SheetContent>
-              </Sheet>
+            <div className="pe-pcard rv d3">
+              <div className="pe-pico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+              <h3>Aucune visibilité sur l'activité réelle</h3>
+              <p>Qui a visité quoi ? Quelles opportunités en attente ? Sans outil de pilotage, vous gérez à vue et les relances tombent dans l'oubli.</p>
             </div>
           </div>
         </div>
-      </header>
+      </section>
 
-      <main className="relative z-10">
-        {/* ═══════════════════════════════════════════════════════════════════
-            HERO SECTION - Simplifié et Centré pour PME B2B
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section className="pt-32 pb-20 px-6">
-          <div className="container mx-auto max-w-4xl">
-            <div ref={heroAnimation.ref} className={`scroll-reveal ${heroAnimation.isVisible ? 'visible' : ''} text-center`}>
-              
-              {/* Badges avant titre */}
-              <div className="flex flex-wrap justify-center gap-3 mb-6">
-                <div className="px-4 py-1.5 rounded-full" style={{
-                  background: 'rgba(0, 255, 157, 0.1)',
-                  border: '1px solid rgba(0, 255, 157, 0.3)',
-                  color: '#00FF9D',
-                  fontSize: '14px',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  ⭐ +23 PME accompagnées depuis 2023
-                </div>
-                <div className="px-4 py-1.5 rounded-full" style={{
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                  color: '#10B981',
-                  fontSize: '14px',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  🔒 Garantie Résultats 90 jours
-                </div>
-              </div>
-
-              {/* Headline Principal - Simplifié */}
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6" style={{ 
-                letterSpacing: '-0.02em',
-                fontFamily: 'Inter, sans-serif',
-                fontWeight: 700
-              }}>
-                Générez Plus de RDV B2B
-                <br />
-                <span style={{
-                  background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>Sans Perdre de Temps</span>
-              </h1>
-
-              {/* Subheadline Simple et Claire */}
-              <p className="text-xl sm:text-2xl mb-12 max-w-3xl mx-auto leading-relaxed" style={{
-                color: '#A0AEC0',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Nous trouvons les entreprises créées récemment dans votre secteur, identifions le bon décideur, et vous accompagnons pour signer plus rapidement.
-              </p>
-
-              {/* CTA Principal Unique */}
-              <div className="mb-16">
-                <Button 
-                  onClick={() => document.getElementById('calendly')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="font-bold text-lg px-12 py-7 rounded-xl shadow-2xl transition-all duration-300 hover:scale-105"
-                  style={{ 
-                    background: 'linear-gradient(to right, #10B981, #059669)',
-                    color: '#fff',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}
-                >
-                  Réserver Mon Audit Gratuit
-                  <ArrowRight className="ml-3 w-6 h-6" />
-                </Button>
-                <p className="text-sm mt-4" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}>
-                  ✓ Audit gratuit de 30min · ✓ Sans engagement · ✓ Résultats garantis sous 90 jours
-                </p>
-              </div>
-
-              {/* Stats KPIs Simplifiées */}
-              <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mb-4">
-                <div className="text-center">
-                  <div className="text-4xl sm:text-5xl font-bold mb-2" style={{
-                    background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}>+180%</div>
-                  <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>RDV qualifiés</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl sm:text-5xl font-bold mb-2" style={{
-                    background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}>-40%</div>
-                  <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>Temps prospection</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl sm:text-5xl font-bold mb-2" style={{
-                    background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}>ROI 4x</div>
-                  <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>En 6 mois</p>
-                </div>
-              </div>
-              
-              {/* Note source stats */}
-              <p className="text-xs mb-12" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Inter, sans-serif' }}>
-                *Moyenne constatée sur 18 clients PME accompagnés en 2024-2025
-              </p>
-
-              {/* Trust badges */}
-              <div className="flex flex-wrap justify-center gap-8 text-sm" style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Inter, sans-serif' }}>
-                <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-500" />
-                  <span>Conforme RGPD France & Suisse</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5" style={{ color: '#00D4FF' }} />
-                  <span>Données publiques officielles</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5" style={{ color: '#00D4FF' }} />
-                  <span>Depuis 2023</span>
-                </div>
-              </div>
-
-            </div>
+      {/* ── SOLUTION 3 STEPS ── */}
+      <section className="pe-section pe-solution" id="methode">
+        <div className="pe-wrap">
+          <div className="pe-sh" style={{textAlign:"center",maxWidth:"600px",margin:"0 auto 64px"}}>
+            <div className="pe-sl rv" style={{justifyContent:"center"}}>Notre méthode</div>
+            <h2 className="pe-st rv d1">Trois étapes, livré<br /><span className="ac">clé en main en 72h</span></h2>
+            <p className="pe-ss rv d2" style={{margin:"0 auto"}}>Tout part de votre brief. Chaque livraison est construite depuis zéro — pour votre secteur, vos zones, votre équipe.</p>
           </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            USE CASES SECTION - Cas d'usage par secteur
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-16 px-6 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%)',
-          borderTop: '1px solid rgba(14, 165, 233, 0.15)'
-        }}>
-          <div className="container mx-auto max-w-6xl">
-            <div className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Cas d'usage par secteur
-              </h2>
-              <p className="text-lg text-center mb-12 max-w-2xl mx-auto" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                Découvrez comment nous transformons votre prospection selon votre activité
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Card 1 - Installateurs Sécurité */}
-                <Card 
-                  onClick={() => window.location.href = '/blog/installateurs-securite'}
-                  className="p-6 border transition-all duration-300 cursor-pointer hover:scale-105"
-                  style={{
-                    background: 'rgba(10, 14, 26, 0.6)',
-                    borderColor: 'rgba(0, 212, 255, 0.2)',
-                    backdropFilter: 'blur(8px)',
-                    borderRadius: '16px'
-                  }}
-                >
-                  <div className="w-full h-40 rounded-lg mb-4 flex items-center justify-center" style={{
-                    background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    borderRadius: '12px'
-                  }}>
-                    <Shield className="w-16 h-16 text-red-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Installateurs systèmes de sécurité</h3>
-                  <p className="text-sm mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    Leads ciblés + app terrain = +40% CA. Signez les chantiers avant vos concurrents.
-                  </p>
-                  <Button 
-                    variant="outline"
-                    className="w-full"
-                    style={{
-                      borderColor: '#00D4FF',
-                      color: '#00D4FF',
-                      fontFamily: 'Inter, sans-serif'
-                    }}
-                  >
-                    Lire l'article détaillé
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </Card>
-
-                {/* Card 2 - Fournisseurs Restauration */}
-                <Card 
-                  onClick={() => window.location.href = '/blog/fournisseurs-restauration'}
-                  className="p-6 border transition-all duration-300 cursor-pointer hover:scale-105"
-                  style={{
-                    background: 'rgba(10, 14, 26, 0.6)',
-                    borderColor: 'rgba(0, 212, 255, 0.2)',
-                    backdropFilter: 'blur(8px)',
-                    borderRadius: '16px'
-                  }}
-                >
-                  <div className="w-full h-40 rounded-lg mb-4 flex items-center justify-center" style={{
-                    background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(251, 146, 60, 0.1) 100%)',
-                    border: '1px solid rgba(251, 146, 60, 0.3)',
-                    borderRadius: '12px'
-                  }}>
-                    <Building2 className="w-16 h-16 text-orange-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Fournisseurs restauration</h3>
-                  <p className="text-sm mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    Contactez les nouveaux restaurants avant vos concurrents. +210% RDV, 38% conversion.
-                  </p>
-                  <Button 
-                    variant="outline"
-                    className="w-full"
-                    style={{
-                      borderColor: '#00D4FF',
-                      color: '#00D4FF',
-                      fontFamily: 'Inter, sans-serif'
-                    }}
-                  >
-                    Lire l'article détaillé
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </Card>
-
-                {/* Card 3 - Fournisseurs IT */}
-                <Card 
-                  onClick={() => window.location.href = '/blog/fournisseurs-it'}
-                  className="p-6 border transition-all duration-300 cursor-pointer hover:scale-105"
-                  style={{
-                    background: 'rgba(10, 14, 26, 0.6)',
-                    borderColor: 'rgba(0, 212, 255, 0.2)',
-                    backdropFilter: 'blur(8px)',
-                    borderRadius: '16px'
-                  }}
-                >
-                  <div className="w-full h-40 rounded-lg mb-4 flex items-center justify-center" style={{
-                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%)',
-                    border: '1px solid rgba(59, 130, 246, 0.3)',
-                    borderRadius: '12px'
-                  }}>
-                    <Database className="w-16 h-16 text-blue-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Fournisseurs IT B2B</h3>
-                  <p className="text-sm mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    Ciblez les nouvelles entreprises avant qu'elles ne choisissent ailleurs. ROI 4,2x.
-                  </p>
-                  <Button 
-                    variant="outline"
-                    className="w-full"
-                    style={{
-                      borderColor: '#00D4FF',
-                      color: '#00D4FF',
-                      fontFamily: 'Inter, sans-serif'
-                    }}
-                  >
-                    Lire l'article détaillé
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </Card>
+          <div className="pe-steps-grid">
+            <div className="pe-step-card rv d1">
+              <span className="pe-step-num">01</span>
+              <div className="pe-step-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+              <div className="pe-step-sub">Appel de brief · 1h</div>
+              <h3>On apprend à connaître votre terrain</h3>
+              <p>Vous décrivez votre activité, votre cible, vos zones et votre organisation actuelle. Nous posons les bonnes questions — vous n'avez rien à préparer.</p>
+              <div className="pe-step-tags">
+                <div className="pe-step-tag">Secteur, typologies de clients, décideurs visés</div>
+                <div className="pe-step-tag">Zones géographiques prioritaires</div>
+                <div className="pe-step-tag">Taille d'équipe et critères de qualification</div>
+              </div>
+            </div>
+            <div className="pe-step-card rv d2">
+              <span className="pe-step-num">02</span>
+              <div className="pe-step-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+              <div className="pe-step-sub">Livraison · 72h chrono</div>
+              <h3>Votre espace est prêt à l'emploi</h3>
+              <p>Prospects enrichis selon vos critères exacts, tournées calculées, dashboard manager activé et paramétré. Zéro travail de votre côté.</p>
+              <div className="pe-step-tags">
+                <div className="pe-step-tag">Prospects filtrés et enrichis (téléphone, adresse, contact nominatif)</div>
+                <div className="pe-step-tag">Itinéraires multi-zones optimisés par commercial</div>
+                <div className="pe-step-tag">Dashboard manager activé avec vos KPIs</div>
+              </div>
+            </div>
+            <div className="pe-step-card rv d3">
+              <span className="pe-step-num">03</span>
+              <div className="pe-step-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="3" strokeLinecap="round"/></svg></div>
+              <div className="pe-step-sub">Formation · 1h visio</div>
+              <h3>Opérationnel dès la première journée</h3>
+              <p>Une session visio pour que tout le monde maîtrise l'outil — commerciaux sur le terrain comme manager au bureau.</p>
+              <div className="pe-step-tags">
+                <div className="pe-step-tag">Commerciaux : app mobile — tournée en 2 clics, GPS, notes, rappels</div>
+                <div className="pe-step-tag">Manager : app PC — dashboard, KPIs, suivi en temps réel</div>
+              </div>
+              <div className="pe-app-pills">
+                <div className="pe-ap"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="3" strokeLinecap="round"/></svg>App mobile</div>
+                <div className="pe-ap"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>App PC</div>
+                <div className="pe-ap"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Dashboard manager</div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ═══════════════════════════════════════════════════════════════════
-            COMMENT ÇA MARCHE - Processus Simple en 3 Étapes
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section id="rdv" className="py-20 px-6 scroll-mt-20 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(14, 165, 233, 0.04) 50%, rgba(0, 0, 0, 0.3) 100%)',
-          borderTop: '2px solid rgba(6, 182, 212, 0.3)',
-          borderBottom: '1px solid rgba(6, 182, 212, 0.15)'
-        }}>
-          <div className="container mx-auto max-w-5xl">
-            <div ref={solutionAnimation.ref} className={`scroll-reveal ${solutionAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Comment Nous Vous Aidons à <span style={{
-                  background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>Générer Plus de RDV</span>
-              </h2>
-              
-              <p className="text-lg text-center max-w-2xl mx-auto mb-16 leading-relaxed" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                Un processus simple et éprouvé qui a déjà aidé +23 PME à multiplier leurs RDV B2B
-              </p>
-              
-              {/* 3 Étapes Claires */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <Card className="p-8 border transition-all duration-300 text-center" style={{
-                  background: 'rgba(10, 14, 26, 0.6)',
-                  borderColor: 'rgba(0, 212, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
-                    background: 'rgba(0, 212, 255, 0.2)'
-                  }}>
-                    <span className="text-3xl font-bold" style={{ color: '#00D4FF', fontFamily: 'Inter, sans-serif' }}>1</span>
-                  </div>
-                  <Target className="w-12 h-12 mb-4 mx-auto" style={{ color: '#00D4FF' }} />
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Nous Trouvons Vos Prospects</h3>
-                  <p className="leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    Identification des entreprises créées récemment (3-6 mois) dans votre secteur et zone géographique. Recherche multi-canal du décideur précis.
-                  </p>
-                </Card>
-
-                <Card className="p-8 border transition-all duration-300 text-center" style={{
-                  background: 'rgba(10, 14, 26, 0.6)',
-                  borderColor: 'rgba(0, 212, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
-                    background: 'rgba(0, 212, 255, 0.2)'
-                  }}>
-                    <span className="text-3xl font-bold" style={{ color: '#00D4FF', fontFamily: 'Inter, sans-serif' }}>2</span>
-                  </div>
-                  <Smartphone className="w-12 h-12 mb-4 mx-auto" style={{ color: '#00D4FF' }} />
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Vous Prospectez Efficacement</h3>
-                  <p className="leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    App Pulse Hub pour gérer vos campagnes téléphone, email et visites terrain. Scripts personnalisés fournis. Tournées GPS optimisées.
-                  </p>
-                </Card>
-
-                <Card className="p-8 border transition-all duration-300 text-center" style={{
-                  background: 'rgba(10, 14, 26, 0.6)',
-                  borderColor: 'rgba(0, 212, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
-                    background: 'rgba(0, 212, 255, 0.2)'
-                  }}>
-                    <span className="text-3xl font-bold" style={{ color: '#00D4FF', fontFamily: 'Inter, sans-serif' }}>3</span>
-                  </div>
-                  <TrendingUp className="w-12 h-12 mb-4 mx-auto" style={{ color: '#00D4FF' }} />
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Vous Signez Plus Vite</h3>
-                  <p className="leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    Suivi personnalisé, coaching mensuel et reporting ROI en temps réel. Garantie résultats sous 90 jours.
-                  </p>
-                </Card>
-              </div>
-
-              {/* Différenciateur Clé */}
-              <Card className="p-8 border" style={{
-                background: 'linear-gradient(135deg, rgba(0,212,255,0.1) 0%, transparent 100%)',
-                borderColor: 'rgba(0, 212, 255, 0.3)',
-                borderRadius: '16px'
-              }}>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{
-                    background: 'rgba(0, 212, 255, 0.2)'
-                  }}>
-                    <Award className="w-6 h-6" style={{ color: '#00D4FF' }} />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Pourquoi les créations récentes sont la clé ?</h3>
-                    <p className="text-lg leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>
-                      Les entreprises créées il y a 3-6 mois sont dans une <strong style={{ color: '#00D4FF' }}>fenêtre d'opportunité unique</strong> : elles ont passé la phase critique de lancement, ont des besoins réels et un budget, mais n'ont pas encore choisi tous leurs fournisseurs.
-                    </p>
-                    <p className="leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                      <Check className="w-5 h-5 text-emerald-400 inline mr-2" />
-                      Timing parfait pour signer avant vos concurrents
-                      <br />
-                      <Check className="w-5 h-5 text-emerald-400 inline mr-2" />
-                      Taux de conversion 3-5x supérieur à la prospection classique
-                      <br />
-                      <Check className="w-5 h-5 text-emerald-400 inline mr-2" />
-                      Cycle de vente réduit de -40% en moyenne
-                    </p>
-                  </div>
-                </div>
-              </Card>
-
-            </div>
+      {/* ── PRICING ── */}
+      <section className="pe-section pe-pricing" id="pricing">
+        <div className="pe-wrap">
+          <div className="pe-sh">
+            <div className="pe-sl rv">Formules</div>
+            <h2 className="pe-st rv d1">Adapté à la taille de votre<br /><span className="ac">équipe terrain</span></h2>
+            <p className="pe-ss rv d2">Paiement unique, sans engagement. Vous choisissez, nous livrons sous 72h.</p>
           </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            BEFORE/AFTER SECTION - Transformation
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section id="avantages" className="py-16 px-6 scroll-mt-20 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%)',
-          borderTop: '1px solid rgba(16, 185, 129, 0.15)',
-          borderBottom: '1px solid rgba(16, 185, 129, 0.15)'
-        }}>
-          <div className="container mx-auto max-w-5xl">
-            <div ref={beforeAfterAnimation.ref} className={`scroll-reveal ${beforeAfterAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center mb-8" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Avant / Après <span style={{
-                  background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>PULSE</span>
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Before */}
-                <Card className="p-8 border transition-all duration-300 hover:scale-[1.02]" style={{
-                  background: 'rgba(30, 30, 30, 0.6)',
-                  borderColor: 'rgba(239, 68, 68, 0.5)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                      <TrendingDown className="w-6 h-6 text-red-500" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Sans PULSE</h3>
-                  </div>
-                  <ul className="space-y-4 text-base" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    <li className="flex items-start gap-3">
-                      <span className="text-red-500 mt-1 text-lg">✗</span>
-                      <span>RDV manqués et opportunités perdues faute de suivi</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-red-500 mt-1 text-lg">✗</span>
-                      <span>Journées à tourner en rond sans stratégie terrain</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-red-500 mt-1 text-lg">✗</span>
-                      <span>Relances oubliées, prospects jamais recontactés</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-red-500 mt-1 text-lg">✗</span>
-                      <span>Fin de mois stressante sans visibilité pipeline</span>
-                    </li>
-                  </ul>
-                </Card>
-
-                {/* After */}
-                <Card className="p-8 border transition-all duration-300 hover:scale-[1.02]" style={{
-                  background: 'linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,182,212,0.05) 100%)',
-                  borderColor: 'rgba(16, 185, 129, 0.5)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-emerald-500" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Avec PULSE</h3>
-                  </div>
-                  <ul className="space-y-4 text-base" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    <li className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                      <span><strong className="text-emerald-400">+180%</strong> de RDV qualifiés grâce au ciblage</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                      <span>Tournées optimisées : plus de visites, moins de km</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                      <span>Relances programmées, aucun prospect oublié</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                      <span>Pipeline clair : vous savez où vous en êtes</span>
-                    </li>
-                  </ul>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            RÉSULTATS CLIENTS SECTION - Case Studies avec preuves
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section id="resultats" className="py-20 px-6 relative z-10 scroll-mt-20" style={{
-          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
-        }}>
-          <div className="container mx-auto max-w-6xl">
-            <div className={`scroll-reveal ${problemsAnimation.isVisible ? 'visible' : ''}`}>
-              <div className="text-center mb-12">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>
-                  Ils ont transformé leur prospection avec <span style={{
-                    background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                  }}>Pulse Entreprise</span>
-                </h2>
-                <p className="text-lg max-w-2xl mx-auto" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                  Résultats vérifiables de nos clients accompagnés
-                </p>
-              </div>
-
-              {/* Case Studies Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {/* Case Study 1 - IT B2B Lyon */}
-                <Card className="p-6 border transition-all duration-300 flex flex-col" style={{
-                  background: 'rgba(10, 14, 26, 0.6)',
-                  borderColor: 'rgba(0, 212, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="px-3 py-1 rounded-full w-fit mb-4" style={{
-                    background: 'rgba(6, 182, 212, 0.1)',
-                    border: '1px solid rgba(6, 182, 212, 0.3)',
-                    color: '#06B6D4',
-                    fontSize: '12px',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Informatique & Télécoms
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Fournisseur IT B2B – Lyon</h3>
-                  <p className="text-sm mb-6 leading-relaxed italic" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    "Pulse nous a permis de cibler 47 nouvelles entreprises créées en 4 mois. Résultat : 18 RDV obtenus, 6 contrats signés. Le ROI est sans appel."
-                  </p>
-                  
-                  {/* Chiffres clés */}
-                  <div className="space-y-3 mb-4 flex-1">
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>RDV qualifiés</span>
-                      <span className="text-lg font-bold text-emerald-400" style={{ fontFamily: 'Inter, sans-serif' }}>+180%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>Coût acquisition</span>
-                      <span className="text-lg font-bold text-emerald-400" style={{ fontFamily: 'Inter, sans-serif' }}>-35%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(0, 212, 255, 0.1)',
-                      border: '1px solid rgba(0, 212, 255, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>ROI sur 6 mois</span>
-                      <span className="text-lg font-bold" style={{ color: '#00D4FF', fontFamily: 'Inter, sans-serif' }}>4,2x</span>
-                    </div>
-                  </div>
-                  
-                  <p className="text-xs mt-auto" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Inter, sans-serif' }}>Client accompagné depuis août 2024</p>
-                </Card>
-
-                {/* Case Study 2 - Sécurité Genève */}
-                <Card className="p-6 border transition-all duration-300 flex flex-col" style={{
-                  background: 'rgba(10, 14, 26, 0.6)',
-                  borderColor: 'rgba(0, 212, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="px-3 py-1 rounded-full w-fit mb-4" style={{
-                    background: 'rgba(251, 146, 60, 0.1)',
-                    border: '1px solid rgba(251, 146, 60, 0.3)',
-                    color: '#FB923C',
-                    fontSize: '12px',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Sécurité & Surveillance
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Installateur Sécurité – Genève (Suisse)</h3>
-                  <p className="text-sm mb-6 leading-relaxed italic" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    "Grâce aux leads créations récentes + app Pulse pour le terrain, on a signé 9 chantiers en 3 mois vs 3 sur toute l'année précédente. Game changer."
-                  </p>
-                  
-                  {/* Chiffres clés */}
-                  <div className="space-y-3 mb-4 flex-1">
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>Nouveaux contrats</span>
-                      <span className="text-lg font-bold text-emerald-400" style={{ fontFamily: 'Inter, sans-serif' }}>+300%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>Temps prospection</span>
-                      <span className="text-lg font-bold text-emerald-400" style={{ fontFamily: 'Inter, sans-serif' }}>-50%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(0, 212, 255, 0.1)',
-                      border: '1px solid rgba(0, 212, 255, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>Taux conversion RDV</span>
-                      <span className="text-lg font-bold" style={{ color: '#00D4FF', fontFamily: 'Inter, sans-serif' }}>22%</span>
-                    </div>
-                  </div>
-                  
-                  <p className="text-xs mt-auto" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Inter, sans-serif' }}>Client accompagné depuis janvier 2024</p>
-                </Card>
-
-                {/* Case Study 3 - Restauration IDF */}
-                <Card className="p-6 border transition-all duration-300 flex flex-col" style={{
-                  background: 'rgba(10, 14, 26, 0.6)',
-                  borderColor: 'rgba(0, 212, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="px-3 py-1 rounded-full w-fit mb-4" style={{
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    color: '#EF4444',
-                    fontSize: '12px',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    CHR & Alimentaire
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Fournisseur Restauration – Île-de-France</h3>
-                  <p className="text-sm mb-6 leading-relaxed italic" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    "On contacte désormais les nouveaux restaurants avant nos concurrents. Le décideur précis (chef/gérant) est fourni, on gagne un temps fou."
-                  </p>
-                  
-                  {/* Chiffres clés */}
-                  <div className="space-y-3 mb-4 flex-1">
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>RDV nouveaux établ.</span>
-                      <span className="text-lg font-bold text-emerald-400" style={{ fontFamily: 'Inter, sans-serif' }}>+210%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>Taux conversion</span>
-                      <span className="text-lg font-bold text-emerald-400" style={{ fontFamily: 'Inter, sans-serif' }}>38%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{
-                      background: 'rgba(0, 212, 255, 0.1)',
-                      border: '1px solid rgba(0, 212, 255, 0.2)'
-                    }}>
-                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>Cycle de vente</span>
-                      <span className="text-lg font-bold" style={{ color: '#00D4FF', fontFamily: 'Inter, sans-serif' }}>-45 jours</span>
-                    </div>
-                  </div>
-                  
-                  <p className="text-xs mt-auto" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Inter, sans-serif' }}>Client accompagné depuis mars 2024</p>
-                </Card>
-              </div>
-
-              {/* Note légale */}
-              <p className="text-xs text-center max-w-3xl mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Inter, sans-serif' }}>
-                Résultats basés sur accompagnements réels. Les performances peuvent varier selon secteur et implication client. Garantie résultats 90 jours (voir CGV).
-              </p>
-
-              {/* CTA */}
-              <div className="text-center">
-                <Button 
-                  onClick={() => document.getElementById('calendly')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="font-bold text-lg px-10 py-6 rounded-xl shadow-2xl transition-all hover:scale-105"
-                  style={{
-                    background: 'linear-gradient(to right, #10B981, #059669)',
-                    color: '#fff',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}
-                >
-                  Obtenez vos résultats – Réserver Audit
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            PRICING SECTION - Tarification
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section id="pricing" className="py-16 px-6 scroll-mt-20 relative z-10" style={{
-          background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%)',
-          borderTop: '2px solid rgba(6, 182, 212, 0.2)'
-        }}>
-          <div className="container mx-auto max-w-6xl">
-            <div ref={pricingAnimation.ref} className={`scroll-reveal ${pricingAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Choisissez votre formule <span style={{
-                  background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>PULSE</span>
-              </h2>
-              <p className="text-lg text-center mb-8 max-w-2xl mx-auto" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                Accompagnement premium ou version autonome : vous choisissez
-              </p>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
-                {/* Plan Entreprise (High Ticket) */}
-                <Card className="relative overflow-visible flex flex-col transition-all duration-300 hover:scale-[1.02]" style={{
-                  background: 'linear-gradient(135deg, rgba(0,255,157,0.15) 0%, rgba(0,212,255,0.1) 100%)',
-                  border: '3px solid rgba(0, 255, 157, 0.5)',
-                  boxShadow: '0 30px 80px -15px rgba(0, 255, 157, 0.4)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-black tracking-wide z-10 whitespace-nowrap" style={{
-                    background: 'linear-gradient(to right, #F59E0B, #EF4444)',
-                    color: '#fff',
-                    boxShadow: '0 8px 32px rgba(251, 146, 60, 0.5)',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    ⭐ RECOMMANDÉ PME
-                  </div>
-                  <div className="p-6 pt-8 flex flex-col flex-1">
-                    <h3 className="text-2xl font-bold mb-2 text-center" style={{ 
-                      background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      fontFamily: 'Inter, sans-serif',
-                      fontWeight: 700
-                    }}>Accompagnement Pulse Entreprise</h3>
-                    <div className="mb-4 text-center py-3 px-3 rounded-xl" style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(0,255,157,0.4)' }}>
-                      <div className="mb-1">
-                        <span className="text-4xl font-bold" style={{ 
-                          background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          fontFamily: 'Inter, sans-serif',
-                          fontWeight: 700
-                        }}>Sur Devis</span>
-                      </div>
-                      <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}>À partir de 800€/mois</p>
-                    </div>
-                    <ul className="space-y-2 mb-4 flex-1">
-                      {[
-                        "Leads 3-6 mois personnalisés",
-                        "Décideur précis multi-canal",
-                        "App Pulse complète",
-                        "Coaching prospection",
-                        "Reporting ROI temps réel",
-                        "Support prioritaire"
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-center gap-2">
-                          <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                          <span className="text-white text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      onClick={() => document.getElementById('calendly')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full py-5 text-base font-black shadow-2xl transition-all mt-auto hover:scale-[1.03]" 
-                      style={{
-                        background: 'linear-gradient(to right, #10B981, #059669)',
-                        color: '#fff',
-                        borderRadius: '12px',
-                        fontFamily: 'Inter, sans-serif',
-                        fontWeight: 700
-                      }}
-                    >
-                      Demander un Devis Personnalisé
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
-                  </div>
-                </Card>
-
-                {/* Plan Solo */}
-                <Card className="relative overflow-visible flex flex-col transition-all duration-300 hover:scale-[1.02]" style={{
-                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                  border: '2px solid rgba(14, 165, 233, 0.3)',
-                  boxShadow: '0 20px 60px -10px rgba(14, 165, 233, 0.3)',
-                  borderRadius: '16px'
-                }}>
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-2xl font-bold mb-2 text-center" style={{ 
-                      background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      fontFamily: 'Inter, sans-serif',
-                      fontWeight: 700
-                    }}>Version Solo</h3>
-                    <div className="mb-4 text-center py-3 px-3 rounded-xl" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(14,165,233,0.2)' }}>
-                      <div className="mb-1">
-                        <span className="text-5xl font-bold" style={{ 
-                          background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          fontFamily: 'Inter, sans-serif',
-                          fontWeight: 700
-                        }}>49€</span>
-                        <span className="text-sm" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>/mois</span>
-                      </div>
-                      <p className="text-xs font-bold text-emerald-400" style={{ fontFamily: 'Inter, sans-serif' }}>🎁 7 jours GRATUIT</p>
-                      <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}>Pour indépendants</p>
-                    </div>
-                    <ul className="space-y-2 mb-4 flex-1">
-                      {[
-                        "App Pulse basique",
-                        "Leads standards (sans personnalisation)",
-                        "GPS optimisé",
-                        "CRM terrain",
-                        "Support email"
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-center gap-2">
-                          <Check className="w-4 h-4 flex-shrink-0" style={{ color: '#00D4FF' }} />
-                          <span className="text-white text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      onClick={() => window.location.href = '/commercial'}
-                      className="w-full py-4 font-bold shadow-xl transition-all mt-auto hover:scale-[1.02]"
-                      style={{
-                        background: '#00D4FF',
-                        color: '#000',
-                        borderRadius: '12px',
-                        fontFamily: 'Inter, sans-serif',
-                        fontWeight: 700
-                      }}
-                    >
-                      Découvrir Version Solo
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
-                  </div>
-                </Card>
-              </div>
-
-              {/* Section Garanties highlight */}
-              <div className="mt-12 mb-8 max-w-4xl mx-auto">
-                <Card className="p-8 border" style={{
-                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                  borderColor: 'rgba(16, 185, 129, 0.3)',
-                  borderRadius: '16px'
-                }}>
-                  <h3 className="text-2xl font-bold text-center mb-6" style={{
-                    background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}>Nos Garanties</h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex gap-4">
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{
-                        background: 'rgba(16, 185, 129, 0.2)'
-                      }}>
-                        <Shield className="w-6 h-6 text-emerald-400" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-white mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>🔒 Garantie Résultats 90 jours</h4>
-                        <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                          Si vous n'obtenez pas au minimum X RDV qualifiés en 90 jours, nous continuons gratuitement jusqu'à atteinte de l'objectif.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{
-                        background: 'rgba(0, 212, 255, 0.2)'
-                      }}>
-                        <Sparkles className="w-6 h-6" style={{ color: '#00D4FF' }} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-white mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>⚡ Audit Gratuit</h4>
-                        <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                          Premier RDV Calendly gratuit pour analyser votre marché et calculer votre ROI potentiel. Aucun engagement.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{
-                        background: 'rgba(6, 182, 212, 0.2)'
-                      }}>
-                        <Check className="w-6 h-6" style={{ color: '#06B6D4' }} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-white mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>🔐 Paiement Sécurisé Stripe</h4>
-                        <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                          Facturation mensuelle, résiliable à tout moment (préavis 30j). Transparence totale.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{
-                        background: 'rgba(251, 146, 60, 0.2)'
-                      }}>
-                        <BarChart3 className="w-6 h-6 text-orange-400" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-white mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>📊 Reporting Transparent</h4>
-                        <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                          Dashboard ROI en temps réel : leads fournis, RDV obtenus, CA généré. Visibilité totale.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="flex flex-wrap justify-center gap-8 text-sm" style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Inter, sans-serif' }}>
-                <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-500" />
-                  <span>Conforme RGPD</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🔒</span>
-                  <span>Paiement 100% sécurisé</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Database className="w-5 h-5" style={{ color: '#00D4FF' }} />
-                  <span>Données publiques officielles</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            COMPARAISON SECTION - Pulse vs Autres Solutions
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-16 px-6 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
-          borderTop: '1px solid rgba(16, 185, 129, 0.15)',
-          borderBottom: '1px solid rgba(16, 185, 129, 0.15)'
-        }}>
-          <div className="container mx-auto max-w-6xl">
-            <div className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Pourquoi <span style={{
-                  background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>Pulse Entreprise</span> vs Solutions Classiques ?
-              </h2>
-              <p className="text-lg text-center mb-12 max-w-2xl mx-auto" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                Comparaison objective avec CRM classiques et bases de données
-              </p>
-              
-              {/* Tableau comparatif */}
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th className="text-left p-4 font-semibold" style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Inter, sans-serif' }}>Critères</th>
-                      <th className="text-center p-4 font-semibold" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>
-                        CRM Classiques<br/>
-                        <span className="text-sm font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>(Pipedrive, Salesforce...)</span>
-                      </th>
-                      <th className="text-center p-4 font-semibold" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif' }}>
-                        Bases de Données<br/>
-                        <span className="text-sm font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>(Apollo, Kaspr...)</span>
-                      </th>
-                      <th className="text-center p-4 font-semibold rounded-t-lg" style={{
-                        background: 'linear-gradient(to right, rgba(0,255,157,0.2), rgba(16,185,129,0.2))',
-                        fontFamily: 'Inter, sans-serif'
-                      }}>
-                        <span style={{
-                          background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          fontSize: '18px'
-                        }}>Pulse Entreprise</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }} className="hover:bg-white/5 transition-colors">
-                      <td className="p-4" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>Leads créations 3-6 mois</td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4" style={{ background: 'rgba(0,255,157,0.1)' }}><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }} className="hover:bg-white/5 transition-colors">
-                      <td className="p-4" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>Recherche décideur précis multi-canal</td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4" style={{ background: 'rgba(0,255,157,0.1)' }}><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }} className="hover:bg-white/5 transition-colors">
-                      <td className="p-4" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>App terrain intégrée (calls/mails/GPS)</td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4" style={{ background: 'rgba(0,255,157,0.1)' }}><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }} className="hover:bg-white/5 transition-colors">
-                      <td className="p-4" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>Accompagnement personnalisé</td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4" style={{ background: 'rgba(0,255,157,0.1)' }}><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }} className="hover:bg-white/5 transition-colors">
-                      <td className="p-4" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>Coaching prospection</td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4" style={{ background: 'rgba(0,255,157,0.1)' }}><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                    </tr>
-                    <tr className="hover:bg-white/5 transition-colors">
-                      <td className="p-4" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>Reporting ROI temps réel</td>
-                      <td className="text-center p-4"><span className="text-sm text-orange-400" style={{ fontFamily: 'Inter, sans-serif' }}>💰 Payant</span></td>
-                      <td className="text-center p-4"><X className="w-5 h-5 text-red-500 mx-auto" /></td>
-                      <td className="text-center p-4 rounded-b-lg" style={{ background: 'rgba(0,255,157,0.1)' }}>
-                        <span className="text-emerald-400 font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>✓ Inclus</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              {/* CTA */}
-              <div className="text-center mt-12">
-                <Button 
-                  onClick={() => document.getElementById('calendly')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="font-bold text-lg px-10 py-6 rounded-xl shadow-2xl transition-all hover:scale-105"
-                  style={{
-                    background: 'linear-gradient(to right, #10B981, #059669)',
-                    color: '#fff',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}
-                >
-                  Voir la différence en action – Réserver RDV
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            FAQ SECTION
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-12 px-6 relative z-10" style={{
-          background: 'radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.06) 0%, transparent 60%)'
-        }}>
-          <div className="container mx-auto max-w-5xl">
-            <div ref={faqAnimation.ref} className={`scroll-reveal ${faqAnimation.isVisible ? 'visible' : ''}`}>
-              <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Questions <span style={{ color: '#00D4FF' }}>fréquentes</span>
-              </h2>
-              <p className="text-center mb-8 max-w-2xl mx-auto" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                Tout ce que vous devez savoir sur PULSE
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl mx-auto">
-                {[
-                  { q: "Quelle est la différence avec un CRM classique ?", a: "Les CRM classiques (Pipedrive, Salesforce...) sont des outils de gestion de contacts. Pulse Entreprise est un accompagnement complet : nous vous fournissons les leads créations 3-6 mois avec décideur précis + app terrain intégrée + coaching prospection. Vous n'avez pas à chercher vos prospects, on les trouve pour vous." },
-                  { q: "Comment sont trouvés les décideurs précis ?", a: "Recherche multi-canal manuelle et automatisée : LinkedIn Premium, Facebook, Google Actualités, journaux locaux, newsletters professionnelles, Bodacc, Full Enrich. Nous identifions le responsable achat, technique ou communication selon votre secteur – pas juste le gérant. Taux de précision >80%." },
-                  { q: "L'app Pulse fonctionne-t-elle hors ligne ?", a: "Oui, l'app Pulse est une PWA (Progressive Web App) qui fonctionne offline. Vous pouvez ajouter des notes, interactions et RDV terrain même sans réseau. Synchronisation automatique dès connexion rétablie. Compatible iOS et Android." },
-                  { q: "Quels secteurs accompagnez-vous ?", a: "Fournisseurs IT B2B, installateurs sécurité/alarme, fournisseurs CHR/restauration, services aux entreprises, BTP/travaux, équipements professionnels. Si vous ciblez des créations d'entreprises B2B (restaurants, garages, pharmacies, bureaux…), Pulse est adapté. RDV gratuit pour valider votre secteur." },
-                  { q: "Garantie résultats : comment ça marche ?", a: "Engagement co-construit lors du premier RDV (ex: 15 RDV qualifiés en 90 jours). Si objectif non atteint, nous continuons l'accompagnement gratuitement jusqu'à atteinte. Reporting ROI transparent chaque mois : leads fournis, RDV obtenus, CA généré. Détails complets dans CGV." },
-                  { q: "Puis-je résilier à tout moment ?", a: "Oui, facturation mensuelle résiliable avec préavis 30 jours. Aucun engagement minimum après les 3 premiers mois d'accompagnement (période nécessaire pour déploiement et résultats). Résiliation simple par email, pas de frais cachés." },
-                  { q: "Données RGPD : êtes-vous conformes ?", a: "100% conformes RGPD (France) et FADP (Suisse). Données publiques (SIRENE, Bodacc) + recherche multi-canal légale (sources ouvertes). Hébergement Supabase EU, chiffrement SSL, sauvegardes quotidiennes. Vos leads et interactions restent privés, jamais partagés. DPO disponible sur demande." },
-                  { q: "Combien de leads fournis par mois ?", a: "Volume adapté à votre secteur et zone géographique. Exemple : 30-50 leads/mois pour fournisseur IT sur région Île-de-France, 15-25 leads/mois pour installateur sécurité sur canton Genève. Définition précise lors du premier RDV en fonction de votre capacité de traitement et objectifs CA." }
-                ].map((item, i) => (
-                  <Accordion key={i} type="single" collapsible>
-                    <AccordionItem value={`item-${i}`} className="border rounded-lg px-4 transition-all duration-300" style={{
-                      borderColor: 'rgba(255,255,255,0.1)',
-                      borderRadius: '8px'
-                    }}>
-                      <AccordionTrigger className="text-sm sm:text-base font-semibold py-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        {item.q}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-sm pb-3" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                        {item.a}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+          <div className="pe-pgr">
+            {/* STARTER */}
+            <div className="pe-pc rv d1">
+              <div className="pe-pn">Starter</div>
+              <div className="pe-pp"><sup>€</sup>490</div>
+              <div className="pe-pper">HT · paiement unique</div>
+              <p className="pe-pdesc">1 à 2 commerciaux terrain. Pour structurer une première zone et valider la méthode.</p>
+              <div className="pe-pfs">
+                {["300 prospects qualifiés et enrichis","1 à 2 commerciaux terrain","Tournées multi-zones optimisées","Accès à l'app (mobile + PC)","Dashboard manager avancé","Formation 1h visio","Support WhatsApp inclus"].map(f => (
+                  <div className="pe-pf" key={f}><span className="pe-pfc">✓</span>{f}</div>
                 ))}
               </div>
+              <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noreferrer" className="pe-btp pe-bto">Réserver un appel</a>
+            </div>
+            {/* PRO */}
+            <div className="pe-pc rec rv d2">
+              <div className="pe-rbdg">Le plus choisi</div>
+              <div className="pe-pn">Pro</div>
+              <div className="pe-pp"><sup>€</sup>890</div>
+              <div className="pe-pper">HT · paiement unique</div>
+              <p className="pe-pdesc">3 à 5 commerciaux avec plusieurs zones actives à couvrir simultanément.</p>
+              <div className="pe-pfs">
+                {["600 prospects qualifiés et enrichis","3 à 5 commerciaux terrain","Tournées multi-zones optimisées","Accès à l'app (mobile + PC)","Dashboard manager avancé","Formation 1h visio","Support WhatsApp inclus"].map(f => (
+                  <div className="pe-pf" key={f}><span className="pe-pfc">✓</span>{f}</div>
+                ))}
+              </div>
+              <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noreferrer" className="pe-btp pe-btf">Réserver un appel</a>
+            </div>
+            {/* SCALE */}
+            <div className="pe-pc rv d3">
+              <div className="pe-pn">Scale</div>
+              <div className="pe-pp"><sup>€</sup>1490</div>
+              <div className="pe-pper">HT · paiement unique</div>
+              <p className="pe-pdesc">6 à 10 commerciaux avec couverture régionale étendue ou multi-zones.</p>
+              <div className="pe-pfs">
+                {["1000+ prospects qualifiés et enrichis","6 à 10 commerciaux terrain","Tournées multi-zones optimisées","Accès à l'app (mobile + PC)","Dashboard manager avancé","Formation 1h visio","Support WhatsApp inclus"].map(f => (
+                  <div className="pe-pf" key={f}><span className="pe-pfc">✓</span>{f}</div>
+                ))}
+              </div>
+              <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noreferrer" className="pe-btp pe-bto">Réserver un appel</a>
             </div>
           </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            NOTRE ÉQUIPE SECTION
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section className="py-16 px-6 relative z-10" style={{
-          background: 'radial-gradient(ellipse at center, rgba(6, 182, 212, 0.08) 0%, transparent 60%)'
-        }}>
-          <div className="container mx-auto max-w-5xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Qui <span style={{
-                  background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>sommes-nous</span> ?
-              </h2>
-              <p className="text-lg max-w-2xl mx-auto" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                L'expertise prospection B2B au service de votre croissance
-              </p>
-            </div>
-
-            {/* Card équipe */}
-            <Card className="p-8 border max-w-3xl mx-auto" style={{
-              background: 'rgba(10, 14, 26, 0.6)',
-              borderColor: 'rgba(0, 212, 255, 0.2)',
-              backdropFilter: 'blur(8px)',
-              borderRadius: '16px'
-            }}>
-              <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-                {/* Photo placeholder */}
-                <div className="w-32 h-32 rounded-full flex items-center justify-center flex-shrink-0" style={{
-                  background: 'linear-gradient(135deg, #00FF9D 0%, #10B981 100%)'
-                }}>
-                  <span className="text-4xl font-bold text-white" style={{ fontFamily: 'Inter, sans-serif' }}>T</span>
-                </div>
-
-                {/* Contenu */}
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-2xl font-bold mb-2 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Tom</h3>
-                  <p className="font-semibold mb-4" style={{ color: '#00FF9D', fontFamily: 'Inter, sans-serif' }}>Fondateur Pulse Entreprise</p>
-                  
-                  <p className="leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter, sans-serif' }}>
-                    15 ans d'expérience en prospection B2B et développement commercial. Après avoir accompagné +50 PME dans leur croissance, j'ai créé Pulse en 2023 pour industrialiser la prospection sur créations récentes – le signal d'achat le plus puissant et sous-exploité.
-                  </p>
-
-                  {/* Valeurs */}
-                  <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
-                    <div className="px-3 py-1 rounded-full" style={{
-                      background: 'rgba(0, 212, 255, 0.1)',
-                      border: '1px solid rgba(0, 212, 255, 0.3)',
-                      color: '#00D4FF',
-                      fontSize: '14px',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      🎯 Transparence
-                    </div>
-                    <div className="px-3 py-1 rounded-full" style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.3)',
-                      color: '#10B981',
-                      fontSize: '14px',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      📈 Résultats
-                    </div>
-                    <div className="px-3 py-1 rounded-full" style={{
-                      background: 'rgba(6, 182, 212, 0.1)',
-                      border: '1px solid rgba(6, 182, 212, 0.3)',
-                      color: '#06B6D4',
-                      fontSize: '14px',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      🏆 Excellence
-                    </div>
-                  </div>
-
-                  {/* CTA */}
-                  <Button 
-                    onClick={() => document.getElementById('calendly')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="font-semibold px-6 py-3"
-                    style={{
-                      background: '#00D4FF',
-                      color: '#000',
-                      fontFamily: 'Inter, sans-serif',
-                      fontWeight: 600
-                    }}
-                  >
-                    Échanger avec Tom
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            CALENDLY INTÉGRÉ - Réservation Audit Gratuit
-        ═══════════════════════════════════════════════════════════════════ */}
-        <section id="calendly" className="py-20 px-6 relative z-10" style={{
-          background: 'linear-gradient(135deg, rgba(0, 255, 157, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%)',
-          borderTop: '2px solid rgba(0, 255, 157, 0.3)'
-        }}>
-          <div className="container mx-auto max-w-5xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Réservez Votre <span style={{
-                  background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>Audit Gratuit</span>
-              </h2>
-              <p className="text-lg max-w-2xl mx-auto mb-8" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                30 minutes pour analyser votre marché, calculer votre ROI potentiel et définir une stratégie personnalisée. Sans engagement.
-              </p>
-              
-              {/* Trust badges avant calendrier */}
-              <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm" style={{ color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
-                <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-emerald-500" />
-                  <span>✓ 100% Gratuit</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-emerald-500" />
-                  <span>✓ Sans Engagement</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-emerald-500" />
-                  <span>✓ Résultats Garantis 90j</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Calendly Embed */}
-            <Card className="p-4 border max-w-4xl mx-auto" style={{
-              background: 'rgba(10, 14, 26, 0.6)',
-              borderColor: 'rgba(0, 212, 255, 0.3)',
-              backdropFilter: 'blur(8px)',
-              borderRadius: '16px'
-            }}>
-              <div 
-                className="calendly-inline-widget" 
-                data-url="https://calendly.com/tomiolovpro/pulse?hide_event_type_details=1&hide_gdpr_banner=1&primary_color=00fff0"
-                style={{ 
-                  minWidth: '320px', 
-                  height: '700px',
-                  borderRadius: '12px',
-                  overflow: 'hidden'
-                }}
-              ></div>
-            </Card>
-
-            {/* Note rassurante */}
-            <p className="text-center text-sm mt-8 max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}>
-              🔒 Vos données sont protégées. Nous respectons votre vie privée et ne partagerons jamais vos informations.
-            </p>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            FOOTER SIMPLIFIÉ
-        ═══════════════════════════════════════════════════════════════════ */}
-        <footer className="py-12 px-6" style={{
-          background: '#0A0E1A',
-          borderTop: '1px solid rgba(0, 212, 255, 0.2)'
-        }}>
-          <div className="container mx-auto max-w-6xl">
-            {/* Contenu principal footer */}
-            <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-8 mb-8">
-              {/* Logo + Tagline */}
-              <div className="text-center md:text-left">
-                <div className="text-2xl font-bold mb-2">
-                  <span style={{ 
-                    background: 'linear-gradient(135deg, #00FF9D 0%, #00D4FF 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}>PULSE</span>
-                  <span className="text-white ml-1" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700 }}>Entreprise</span>
-                </div>
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Inter, sans-serif' }}>Génération de RDV B2B pour PME</p>
-                <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Inter, sans-serif' }}>Depuis 2023</p>
-              </div>
-
-              {/* Contact */}
-              <div className="text-center md:text-right">
-                <h4 className="font-bold mb-3 text-white" style={{ fontFamily: 'Inter, sans-serif' }}>Contact</h4>
-                <a 
-                  href="mailto:tomiolovpro@gmail.com" 
-                  className="flex items-center gap-2 justify-center md:justify-end transition-colors hover:text-[#00D4FF]"
-                  style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Inter, sans-serif' }}
-                >
-                  <Mail className="w-4 h-4" />
-                  tomiolovpro@gmail.com
-                </a>
-                <a 
-                  href="#calendly" 
-                  className="text-sm mt-2 inline-block transition-colors"
-                  style={{ color: '#00D4FF', fontFamily: 'Inter, sans-serif' }}
-                >
-                  Réserver un audit gratuit →
-                </a>
-              </div>
-            </div>
-
-            {/* Disclaimer RGPD simplifié */}
-            <div className="text-xs text-center max-w-2xl mx-auto pt-6 mb-6" style={{ 
-              color: 'rgba(255,255,255,0.4)',
-              fontFamily: 'Inter, sans-serif',
-              borderTop: '1px solid rgba(255,255,255,0.1)'
-            }}>
-              <p>
-                Données publiques officielles (SIRENE, Bodacc). Conformité RGPD France & FADP Suisse.
-              </p>
-            </div>
-
-            {/* Copyright + Liens légaux */}
-            <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm" style={{ 
-              borderTop: '1px solid rgba(255,255,255,0.1)',
-              color: 'rgba(255,255,255,0.4)',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              <p>© 2026 Pulse Entreprise. Tous droits réservés.</p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <a href="/mentions-legales" className="transition-colors hover:text-[#00D4FF]">Mentions Légales</a>
-                <a href="/cgv" className="transition-colors hover:text-[#00D4FF]">CGV</a>
-                <a href="/confidentialite" className="transition-colors hover:text-[#00D4FF]">Confidentialité</a>
-                <a href="/commercial" className="transition-colors hover:text-[#00D4FF]">Version Solo 49€</a>
-              </div>
-            </div>
-          </div>
-        </footer>
-
-        {/* Sticky CTA Mobile */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent lg:hidden z-40">
-          <Button 
-            onClick={() => document.getElementById('calendly')?.scrollIntoView({ behavior: 'smooth' })}
-            className="w-full font-bold py-4 rounded-full shadow-lg"
-            style={{
-              background: 'linear-gradient(to right, #10B981, #059669)',
-              color: '#fff',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 700
-            }}
-          >
-            Réserver Audit Gratuit
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Button>
+          <p className="rv" style={{textAlign:"center",color:"var(--w3)",fontSize:".86rem",marginTop:"26px"}}>
+            Volume plus important ? <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noreferrer" style={{color:"var(--cyan)",textDecoration:"none",fontWeight:600}}>Contactez-nous.</a>
+          </p>
         </div>
-      </main>
+      </section>
+
+      {/* ── GUARANTEES ── */}
+      <section className="pe-section pe-guarantees">
+        <div className="pe-wrap">
+          <div className="pe-sh">
+            <div className="pe-sl rv">Nos engagements</div>
+            <h2 className="pe-st rv d1">Trois garanties<br /><span className="ac">sans condition</span></h2>
+          </div>
+          <div className="pe-ggr">
+            <div className="pe-gc rv d1">
+              <div className="pe-gico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <h4>Livraison garantie en 72h</h4>
+              <p>Votre base et votre accès à l'app sont livrés dans les 72 heures ouvrées suivant la validation du brief.</p>
+            </div>
+            <div className="pe-gc rv d2">
+              <div className="pe-gico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <h4>Paiement sécurisé Stripe</h4>
+              <p>Toutes les transactions sont traitées via Stripe. Vos données bancaires protégées à chaque étape.</p>
+            </div>
+            <div className="pe-gc rv d3">
+              <div className="pe-gico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd9ff" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <h4>Remplacement des prospects — 30 jours</h4>
+              <p>Si les prospects livrés ne correspondent pas au brief validé, nous les remplaçons intégralement dans les 30 jours.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="pe-section pe-faq" id="faq">
+        <div className="pe-wrap">
+          <div className="pe-sh">
+            <div className="pe-sl rv">Questions fréquentes</div>
+            <h2 className="pe-st rv d1">Ce qu'on nous pose<br /><span className="ac">le plus souvent</span></h2>
+          </div>
+          <div className="pe-fqgr">
+            {[
+              {q:"Comment sont sélectionnés les prospects ?", a:"À partir de votre brief, nous extrayons les données depuis des bases professionnelles légales (Pappers, Infogreffe, LinkedIn) enrichies via APIs spécialisées. Chaque prospect est filtré selon vos critères exacts — secteur, zone, taille d'entreprise, type de décideur. La base est conforme au RGPD."},
+              {q:"Que se passe-t-il si les prospects ne correspondent pas ?", a:"Nous remplaçons les prospects non conformes au brief validé, dans les 30 jours suivant la livraison. Pas de remboursement — nous corrigeons jusqu'à ce que vous ayez exactement ce qui a été convenu."},
+              {q:"Comment fonctionne l'app pour mes commerciaux ?", a:"Vos commerciaux accèdent à leur liste depuis l'app mobile. En 2 clics, ils génèrent leur tournée du jour optimisée géographiquement. Depuis chaque fiche : appel direct, navigation GPS, prise de notes, programmation d'un rappel. La formation d'1h suffit."},
+              {q:"Je pilote comment mon équipe depuis le dashboard ?", a:"Depuis l'app PC, vous voyez en temps réel l'activité de chaque commercial : prospects visités, en attente de relance, à planifier. KPIs hebdomadaires et suivi par zone. Vous savez exactement où en est chaque commercial sans avoir à lui demander."},
+              {q:"Quelle différence avec un CRM ?", a:"Nous ne remplaçons pas votre CRM. Pulse est un outil dédié à l'organisation de la prospection terrain : ciblage, tournées, pilotage. Si vous avez un CRM, les données peuvent y être importées."},
+              {q:"Vous intervenez en France et en Suisse ?", a:"Oui — principalement en Île-de-France, PACA et Suisse romande. Pour d'autres zones, contactez-nous pour valider la faisabilité avant tout engagement."},
+            ].map(({q, a}, i) => (
+              <div className={`pe-fi rv ${i % 2 === 0 ? "d1" : "d2"}`} key={q}>
+                <div className="pe-fq">{q}<div className="pe-fqi">+</div></div>
+                <div className="pe-fa"><p>{a}</p></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA FINAL ── */}
+      <div className="pe-ctafin">
+        <div className="pe-cr pe-cr1" /><div className="pe-cr pe-cr2" />
+        <div className="pe-wrap pe-cin">
+          <div className="pe-sl rv" style={{justifyContent:"center"}}>Passer à l'action</div>
+          <h2 className="pe-st rv d1" style={{textAlign:"center"}}>Prêt à structurer la prospection<br /><span className="ac">de votre équipe terrain ?</span></h2>
+          <p className="pe-cdesc rv d2">Réservez votre appel d'une heure. Vous décrivez votre équipe, votre cible, vos zones. Nous construisons la configuration adaptée. Sans engagement.</p>
+          <div className="pe-ctabtns rv d3">
+            <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noreferrer" className="pe-bp">Réserver mon appel de brief (1h gratuite)</a>
+          </div>
+          <div className="pe-cnote rv d4">
+            <span>Aucun engagement</span>
+            <span>Livraison 72h</span>
+            <span>Prospects remplacés si insatisfait</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── FOOTER ── */}
+      <footer className="pe-footer">
+        <div className="pe-footer-inner">
+          <div className="pe-flogo">Pulse <span>Entreprise</span></div>
+          <div className="pe-flinks">
+            <a href="/mentions-legales">Mentions légales</a>
+            <a href="/cgv">CGV</a>
+            <a href="/confidentialite">Confidentialité</a>
+            <a href="https://calendly.com/tomiolovpro/pulse" target="_blank" rel="noreferrer">Contact</a>
+          </div>
+          <a href="https://pulse-lead.com/commercial" target="_blank" rel="noreferrer" className="pe-footer-solo">Vous êtes commercial solo ? Pulse Solo</a>
+          <div className="pe-fcopy">© 2025 Pulse Entreprise · Tous droits réservés</div>
+        </div>
+      </footer>
+
     </div>
   );
-};
-
-export default EntrepriseLanding;
+}
