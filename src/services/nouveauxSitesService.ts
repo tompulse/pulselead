@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCategoryFromNaf } from '@/utils/nafToCategory';
 import { getSecteurNafSections } from '@/utils/simpleCategories';
+import { DETAILED_CATEGORIES } from '@/utils/detailedCategories';
 
 export interface NouveauxSitesFilters {
   searchQuery?: string;
@@ -56,16 +57,20 @@ export const nouveauxSitesService = {
         query = query.or(conditions);
       }
       
-      // Filtre catégories simplifiées → convertir en sections NAF
+      // Filtre catégories détaillées → convertir en codes NAF
       if (filters.categories?.length) {
-        const allSections = new Set<string>();
-        filters.categories.forEach(secteur => {
-          const sections = getSecteurNafSections(secteur);
-          sections.forEach(s => allSections.add(s));
+        const allNafCodes = new Set<string>();
+        filters.categories.forEach(categoryKey => {
+          const cat = DETAILED_CATEGORIES.find(c => c.key === categoryKey);
+          if (cat) {
+            cat.nafCodes.forEach(code => allNafCodes.add(code));
+          }
         });
-        
-        if (allSections.size > 0) {
-          const conditions = Array.from(allSections).map(section => `code_naf.like.${section}%`).join(',');
+
+        if (allNafCodes.size > 0) {
+          const conditions = Array.from(allNafCodes)
+            .map(code => `code_naf.like.${code}%`)
+            .join(',');
           query = query.or(conditions);
         }
       }
