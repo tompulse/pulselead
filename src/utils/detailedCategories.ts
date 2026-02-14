@@ -159,6 +159,130 @@ export const DETAILED_CATEGORIES: DetailedCategory[] = [
   { key: 'industrie-chimie', label: 'Chimie', emoji: '🧪', nafCodes: ['20'], keywords: ['chimie', 'chimique', 'produit'] },
   { key: 'industrie-electronique', label: 'Électronique', emoji: '🔌', nafCodes: ['26', '27'], keywords: ['électronique', 'composant', 'circuit'] },
 
+  // 🏭 INDUSTRIE (sections manquantes)
+  {
+    key: 'industrie-reparation-machines',
+    label: 'Réparation & Maintenance machines',
+    emoji: '🔧',
+    nafCodes: ['33'],
+    keywords: ['réparation', 'maintenance', 'machines', 'équipements']
+  },
+  {
+    key: 'industrie-manufacturiere',
+    label: 'Industries manufacturières diverses',
+    emoji: '🏭',
+    nafCodes: ['32'],
+    keywords: ['fabrication', 'manufacture', 'production']
+  },
+  {
+    key: 'industrie-materiaux',
+    label: 'Verre, Ciment & Céramique',
+    emoji: '🪟',
+    nafCodes: ['23'],
+    keywords: ['verre', 'ciment', 'céramique', 'béton', 'tuile']
+  },
+  {
+    key: 'industrie-meubles',
+    label: 'Fabrication de meubles',
+    emoji: '🪑',
+    nafCodes: ['31'],
+    keywords: ['meuble', 'ébénisterie', 'literie', 'siège']
+  },
+  {
+    key: 'industrie-machines',
+    label: 'Fabrication de machines & équipements',
+    emoji: '⚙️',
+    nafCodes: ['28'],
+    keywords: ['machines', 'équipements', 'mécanique industrielle']
+  },
+
+  // ♻️ ENVIRONNEMENT & RECYCLAGE
+  {
+    key: 'environnement-dechets',
+    label: 'Collecte & Traitement des déchets',
+    emoji: '♻️',
+    nafCodes: ['38'],
+    keywords: ['déchets', 'recyclage', 'collecte', 'ordures']
+  },
+  {
+    key: 'environnement-eaux-usees',
+    label: 'Traitement des eaux usées',
+    emoji: '💧',
+    nafCodes: ['37'],
+    keywords: ['eaux usées', 'assainissement', 'épuration']
+  },
+  {
+    key: 'environnement-depollution',
+    label: 'Dépollution & Gestion des déchets',
+    emoji: '🌿',
+    nafCodes: ['39'],
+    keywords: ['dépollution', 'environnement', 'décontamination']
+  },
+
+  // 🖨️ IMPRIMERIE & COMMUNICATION
+  {
+    key: 'imprimerie-impression',
+    label: 'Imprimerie & Impression',
+    emoji: '🖨️',
+    nafCodes: ['18'],
+    keywords: ['imprimerie', 'impression', 'sérigraphie', 'reprographie']
+  },
+  {
+    key: 'imprimerie-papier',
+    label: 'Industrie du papier & carton',
+    emoji: '📦',
+    nafCodes: ['17'],
+    keywords: ['papier', 'carton', 'emballage', 'cartonnage']
+  },
+
+  // 🚢 TRANSPORT COMPLÉMENTS
+  {
+    key: 'transport-maritime',
+    label: 'Transport maritime & fluvial',
+    emoji: '🚢',
+    nafCodes: ['50'],
+    keywords: ['maritime', 'fluvial', 'bateau', 'navire']
+  },
+  {
+    key: 'transport-aerien',
+    label: 'Transport aérien',
+    emoji: '✈️',
+    nafCodes: ['51'],
+    keywords: ['aérien', 'aviation', 'fret aérien']
+  },
+  {
+    key: 'transport-courrier',
+    label: 'Courrier & Livraison',
+    emoji: '📬',
+    nafCodes: ['53'],
+    keywords: ['courrier', 'colis', 'livraison', 'poste']
+  },
+  {
+    key: 'transport-materiel',
+    label: 'Fabrication matériels de transport',
+    emoji: '🚂',
+    nafCodes: ['30'],
+    keywords: ['train', 'bateau', 'avion', 'vélo', 'matériel transport']
+  },
+
+  // 💊 SANTÉ COMPLÉMENT
+  {
+    key: 'sante-pharmacie-industrie',
+    label: 'Industrie pharmaceutique',
+    emoji: '💊',
+    nafCodes: ['21'],
+    keywords: ['pharmaceutique', 'médicament', 'laboratoire', 'biotech']
+  },
+
+  // 🚗 AUTOMOBILE COMPLÉMENT
+  {
+    key: 'auto-fabrication',
+    label: 'Fabrication automobile',
+    emoji: '🏎️',
+    nafCodes: ['29'],
+    keywords: ['fabrication', 'automobile', 'constructeur', 'équipementier']
+  },
+
   // 🔄 AUTRES (Catégorie par défaut pour couvrir 100% des cas)
   { key: 'autre', label: 'Autres activités', emoji: '🔄', nafCodes: [], keywords: ['autre', 'divers', 'non classé'] },
 ];

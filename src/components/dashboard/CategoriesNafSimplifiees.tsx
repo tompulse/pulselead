@@ -26,6 +26,8 @@ const SECTOR_EMOJIS: Record<string, string> = {
   'Énergie': '⚡',
   'Services aux Entreprises': '💼',
   'Industrie & Production': '🏭',
+  'Environnement & Recyclage': '♻️',
+  'Imprimerie & Communication': '🖨️',
   'Autres': '🔄'
 };
 
@@ -66,6 +68,8 @@ export const CategoriesNafSimplifiees = ({
       'Énergie': [],
       'Services aux Entreprises': [],
       'Industrie & Production': [],
+      'Environnement & Recyclage': [],
+      'Imprimerie & Communication': [],
       'Autres': []
     };
 
@@ -93,6 +97,11 @@ export const CategoriesNafSimplifiees = ({
       else if (cat.key === 'service-interim' || cat.key === 'service-nettoyage' || cat.key === 'service-securite' || cat.key === 'service-publicite') {
         groups['Services aux Entreprises'].push(cat);
       }
+      else if (cat.key.startsWith('environnement-')) groups['Environnement & Recyclage'].push(cat);
+      else if (cat.key.startsWith('imprimerie-')) groups['Imprimerie & Communication'].push(cat);
+      else if (cat.key === 'transport-maritime' || cat.key === 'transport-aerien' || cat.key === 'transport-courrier' || cat.key === 'transport-materiel') groups['Transport & Logistique'].push(cat);
+      else if (cat.key === 'sante-pharmacie-industrie') groups['Santé & Médical'].push(cat);
+      else if (cat.key === 'auto-fabrication') groups['Automobile'].push(cat);
       else if (cat.key.startsWith('industrie-')) groups['Industrie & Production'].push(cat);
       else groups['Autres'].push(cat);
     });

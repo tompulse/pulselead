@@ -103,6 +103,9 @@ export const nouveauxSitesService = {
       // Si categories est utilisé, ne PAS paginer pour récupérer TOUS les résultats
       if (!filters.categories?.length) {
         query = query.range(page * effectivePageSize, (page + 1) * effectivePageSize - 1);
+      } else {
+        // Forcer Supabase à retourner tous les résultats (pas de limite par défaut)
+        query = query.limit(100000);
       }
 
       const result = await query;
