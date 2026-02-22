@@ -119,7 +119,9 @@ export const NafFilters = ({
     departments: filters.departments,
     categoriesJuridiques: filters.categoriesJuridiques,
     typesEtablissement: filters.typesEtablissement,
-    searchQuery: filters.searchQuery
+    searchQuery: filters.searchQuery,
+    dateCreationFrom: filters.dateCreationFrom,
+    dateCreationTo: filters.dateCreationTo
   });
 
   // Compteurs par catégories détaillées (tous les 57k prospects)

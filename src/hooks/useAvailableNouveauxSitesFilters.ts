@@ -24,6 +24,8 @@ interface FiltersInput {
   categoriesJuridiques?: string[];
   typesEtablissement?: string[];
   searchQuery?: string;
+  dateCreationFrom?: string;
+  dateCreationTo?: string;
 }
 
 const emptyFilterCounts: FilterCounts = {
@@ -46,7 +48,9 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
       filters.departments || [],
       filters.categoriesJuridiques || [],
       filters.typesEtablissement || [],
-      filters.searchQuery || ''
+      filters.searchQuery || '',
+      filters.dateCreationFrom || '',
+      filters.dateCreationTo || ''
     ],
     queryFn: async (): Promise<DualFilterCounts> => {
       const emptyDual: DualFilterCounts = { contextual: emptyFilterCounts, global: emptyFilterCounts };
@@ -58,7 +62,9 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
         (filters.departments?.length || 0) > 0 ||
         (filters.categoriesJuridiques?.length || 0) > 0 ||
         (filters.typesEtablissement?.length || 0) > 0 ||
-        (filters.searchQuery?.trim() || '').length > 0;
+        (filters.searchQuery?.trim() || '').length > 0 ||
+        !!filters.dateCreationFrom ||
+        !!filters.dateCreationTo;
 
       const [contextualResult, globalResult] = await Promise.all([
         // Contextual counts (with all filters applied)
@@ -68,7 +74,9 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
           p_departments: filters.departments?.length ? filters.departments : null,
           p_categories_juridiques: filters.categoriesJuridiques?.length ? filters.categoriesJuridiques : null,
           p_types_etablissement: filters.typesEtablissement?.length ? filters.typesEtablissement : null,
-          p_search_query: filters.searchQuery?.trim() || null
+          p_search_query: filters.searchQuery?.trim() || null,
+          p_date_from: filters.dateCreationFrom || null,
+          p_date_to: filters.dateCreationTo || null
         }),
         // Global counts (no filters) - only fetch if we have active filters
         hasActiveFilters 
@@ -78,7 +86,9 @@ export function useAvailableNouveauxSitesFilters(filters: FiltersInput = {}) {
               p_departments: null,
               p_categories_juridiques: null,
               p_types_etablissement: null,
-              p_search_query: null
+              p_search_query: null,
+              p_date_from: null,
+              p_date_to: null
             })
           : Promise.resolve({ data: null, error: null })
       ]);

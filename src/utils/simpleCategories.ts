@@ -36,7 +36,12 @@ export const SECTEUR_TO_NAF_SECTIONS: Record<string, string[]> = {
 export function getSecteurFromNaf(codeNaf: string | null | undefined): string {
   if (!codeNaf || codeNaf === '' || codeNaf === 'null') return 'Autres';
   
-  const section = codeNaf.substring(0, 2);
+  // Nettoyer le code NAF (supprimer points, espaces, etc.)
+  const cleanedNaf = codeNaf.replace(/[.\s]/g, '').trim();
+  if (!cleanedNaf) return 'Autres';
+  
+  // Extraire les 2 premiers chiffres (section NAF)
+  const section = cleanedNaf.substring(0, 2);
   
   for (const [secteur, sections] of Object.entries(SECTEUR_TO_NAF_SECTIONS)) {
     if (sections.includes(section)) {

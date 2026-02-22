@@ -80,12 +80,12 @@ export const nouveauxSitesService = {
         query = query.in('departement', filters.departments);
       }
 
-      // Filtres dates
+      // Filtres dates - Utiliser date_creation_iso (type DATE)
       if (filters.dateCreationFrom) {
-        query = query.gte('date_creation', filters.dateCreationFrom);
+        query = query.gte('date_creation_iso', filters.dateCreationFrom);
       }
       if (filters.dateCreationTo) {
-        query = query.lte('date_creation', filters.dateCreationTo);
+        query = query.lte('date_creation_iso', filters.dateCreationTo);
       }
 
       // Filtre types établissement - UTILISER siege (TEXT), pas est_siege (boolean)
@@ -121,7 +121,7 @@ export const nouveauxSitesService = {
       let count = result.count ?? 0;
       const originalPageLength = data.length;
 
-      // FILTRES CÔTÉ CLIENT (seulement pour NAF divisions et recherche)
+      // FILTRES CÔTÉ CLIENT (NAF divisions et recherche uniquement)
       
       // Filtre NAF Divisions (extrait depuis code_naf)
       if (filters.nafDivisions?.length) {
