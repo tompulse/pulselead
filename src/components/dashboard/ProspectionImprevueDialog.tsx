@@ -115,51 +115,26 @@ export const ProspectionImprevueDialog = ({
 
     setIsSubmitting(true);
     try {
-      // 1. Créer le prospect dans nouveaux_sites avec un siret placeholder unique
-      const siretPlaceholder = generateSiretPlaceholder();
-
-      const { data: newSite, error: siteError } = await supabase
-        .from('nouveaux_sites')
-        .insert({
-          nom: entreprise.trim(),
-          siret: siretPlaceholder,
-        })
-        .select('id')
-        .single();
-
-      if (siteError) throw siteError;
-
-      const entrepriseId = newSite.id;
-
-      // 2. Créer le lead_statut
-      const { error: statutError } = await supabase.from('lead_statuts').insert({
-        entreprise_id: entrepriseId,
-        user_id: userId,
-        statut: LEAD_STATUT_MAP[statut],
-        notes: notes.trim() || null,
-      });
-
-      if (statutError) throw statutError;
-
-      // 3. Construire les notes structurées
+      // Construire les notes structurées
       const noteLines: string[] = ['📋 Prospection imprévue'];
       if (interlocuteur.trim()) noteLines.push(`👤 ${interlocuteur.trim()}`);
       if (telephone.trim()) noteLines.push(`📞 ${telephone.trim()}`);
       if (mail.trim()) noteLines.push(`📧 ${mail.trim()}`);
       if (notes.trim()) noteLines.push(`💬 ${notes.trim()}`);
 
-      // 4. Créer l'interaction avec la date de relance
-      const { error: interactionError } = await supabase.from('lead_interactions').insert({
-        entreprise_id: entrepriseId,
-        user_id: userId,
-        type: INTERACTION_TYPE_MAP[statut],
-        statut: INTERACTION_STATUT_MAP[statut],
-        notes: noteLines.join('\n'),
-        date_interaction: new Date().toISOString(),
-        date_relance: dateRelance ? new Date(dateRelance).toISOString() : null,
+      // Appel RPC unique (SECURITY DEFINER → bypass RLS nouveaux_sites)
+      const { error } = await supabase.rpc('create_prospection_imprevue', {
+        p_nom: entreprise.trim(),
+        p_siret: generateSiretPlaceholder(),
+        p_user_id: userId,
+        p_statut_lead: LEAD_STATUT_MAP[statut],
+        p_interaction_type: INTERACTION_TYPE_MAP[statut],
+        p_interaction_statut: INTERACTION_STATUT_MAP[statut],
+        p_notes: noteLines.join('\n'),
+        p_date_relance: dateRelance ? new Date(dateRelance).toISOString() : null,
       });
 
-      if (interactionError) throw interactionError;
+      if (error) throw error;
 
       toast.success(`Prospection enregistrée — "${entreprise.trim()}"`);
       onSuccess();
