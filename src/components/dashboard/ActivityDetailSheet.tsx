@@ -208,7 +208,7 @@ export const ActivityDetailSheet = ({
 
                           {/* Date création */}
                           <p className="text-[10px] text-muted-foreground/60 mt-1">
-                            Créé {formatDate(interaction.created_at || interaction.date_interaction)}
+                            Créé {formatDate(interaction.created_at)}
                           </p>
                         </div>
 

@@ -139,10 +139,10 @@ export const CRMProspectFicheDialog = ({
       if (!entrepriseId) return [];
       const { data, error } = await supabase
         .from('lead_interactions')
-        .select('id, type, statut, notes, date_interaction, date_relance')
+        .select('id, type, statut, notes, date_relance, created_at')
         .eq('entreprise_id', entrepriseId)
         .eq('user_id', userId)
-        .order('date_interaction', { ascending: false });
+        .order('created_at', { ascending: false });
       if (error) return [];
       return data || [];
     },
@@ -366,7 +366,7 @@ export const CRMProspectFicheDialog = ({
                             )}
                           </div>
                           <span className="text-muted-foreground/60 shrink-0">
-                            {format(new Date(h.date_interaction), 'dd/MM', { locale: fr })}
+                            {format(new Date(h.created_at), 'dd/MM', { locale: fr })}
                           </span>
                         </div>
                       ))}

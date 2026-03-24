@@ -30,14 +30,13 @@ BEGIN
   VALUES (p_nom, p_siret)
   RETURNING id INTO v_entreprise_id;
 
-  -- 2. Créer l'interaction avec date de relance
+  -- 2. Créer l'interaction (created_at a une DEFAULT now(), pas besoin de date_interaction)
   INSERT INTO lead_interactions (
     entreprise_id,
     user_id,
     type,
     statut,
     notes,
-    date_interaction,
     date_relance
   )
   VALUES (
@@ -46,7 +45,6 @@ BEGIN
     p_interaction_type,
     p_interaction_statut,
     p_notes,
-    NOW(),
     p_date_relance
   );
 
