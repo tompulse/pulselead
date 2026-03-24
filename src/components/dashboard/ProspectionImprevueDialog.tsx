@@ -127,7 +127,7 @@ export const ProspectionImprevueDialog = ({
         p_nom: entreprise.trim(),
         p_siret: generateSiretPlaceholder(),
         p_user_id: userId,
-        p_statut_lead: LEAD_STATUT_MAP[statut],
+        p_statut_lead: LEAD_STATUT_MAP[statut],   // conservé dans la signature RPC
         p_interaction_type: INTERACTION_TYPE_MAP[statut],
         p_interaction_statut: INTERACTION_STATUT_MAP[statut],
         p_notes: noteLines.join('\n'),
