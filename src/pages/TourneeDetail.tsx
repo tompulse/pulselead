@@ -21,6 +21,7 @@ import {
   ExternalLink,
   StickyNote,
   Phone,
+  Copy,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
@@ -523,6 +524,22 @@ const TourneeDetail = () => {
     setNoteDialogSiteId(null);
   };
 
+  const handleCopySiret = async (siret: string) => {
+    try {
+      await navigator.clipboard.writeText(siret);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = siret;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    }
+    toast.success('SIRET copié !');
+  };
+
   const handleNavigate = (site: { latitude?: number | null; longitude?: number | null; address: string }) => {
     setNavTarget({
       latitude: site.latitude,
@@ -714,6 +731,18 @@ const TourneeDetail = () => {
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-xs sm:text-sm truncate">{site.nom}</div>
                 <div className="text-[10px] sm:text-xs text-muted-foreground truncate">{getFullAddress(site)}</div>
+                {site.siret && (
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <span className="text-[10px] sm:text-xs text-muted-foreground/70 font-mono tracking-wide">{site.siret}</span>
+                    <button
+                      onClick={() => handleCopySiret(site.siret)}
+                      className="inline-flex items-center justify-center w-4 h-4 rounded hover:bg-accent/20 transition-colors shrink-0"
+                      title="Copier le SIRET"
+                    >
+                      <Copy className="w-2.5 h-2.5 text-muted-foreground/50 hover:text-accent" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -757,8 +786,8 @@ const TourneeDetail = () => {
               </Button>
             </div>
 
-            {/* Actions: Note, GPS */}
-            <div className="flex items-center gap-1">
+            {/* Actions: Note, GPS, Infolegale */}
+            <div className="flex items-center gap-1 flex-wrap">
               <Button
                 size="sm"
                 variant="outline"
@@ -776,6 +805,16 @@ const TourneeDetail = () => {
               >
                 <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
                 GPS
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={!site.siret}
+                onClick={() => site.siret && window.open(`https://portail.infolegale.fr/identity/fr/${String(site.siret).slice(0, 9)}`, '_blank')}
+                className={`h-6 sm:h-7 text-[10px] sm:text-xs px-1.5 sm:px-2 ${site.siret ? 'border-accent/30 hover:text-blue-400 hover:border-blue-500/50' : 'border-accent/20 opacity-40'}`}
+              >
+                <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5" />
+                Infolegale
               </Button>
             </div>
           </div>

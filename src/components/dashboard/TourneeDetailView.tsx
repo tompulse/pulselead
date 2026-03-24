@@ -782,6 +782,7 @@ export const TourneeDetailView = ({ tournee, onBack }: TourneeDetailViewProps) =
                               ville: site.commune,
                               latitude: site.latitude,
                               longitude: site.longitude,
+                              siret: site.siret,
                             }}
                             visiteStatus={visitesStatus[siteId] || { visite: false, rdv: false, aRevoir: false }}
                             onVisiteChange={handleVisiteChange}

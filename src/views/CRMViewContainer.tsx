@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar, RotateCcw, FileText, CheckCircle2, XCircle, Phone, MessageSquare } from 'lucide-react';
+import { Calendar, RotateCcw, FileText, CheckCircle2, XCircle, Phone, MessageSquare, Zap } from 'lucide-react';
 import { ActivityDetailSheet } from '@/components/dashboard/ActivityDetailSheet';
 import { PipelineDetailSheet } from '@/components/dashboard/PipelineDetailSheet';
 import { NotesDetailSheet } from '@/components/dashboard/NotesDetailSheet';
+import { ProspectionImprevueDialog } from '@/components/dashboard/ProspectionImprevueDialog';
 import { toast } from 'sonner';
 
 interface LeadWithSite {
@@ -42,6 +44,7 @@ export const CRMViewContainer = ({
   const [selectedActivity, setSelectedActivity] = useState<'rdv' | 'a_revoir' | 'a_rappeler' | null>(null);
   const [selectedPipelineStage, setSelectedPipelineStage] = useState<PipelineStageKey | null>(null);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [isProspectionOpen, setIsProspectionOpen] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch interactions for activity stats
@@ -149,6 +152,18 @@ export const CRMViewContainer = ({
 
   return (
     <div className="h-full flex flex-col p-3 sm:p-4 md:p-6 overflow-y-auto">
+      {/* Bouton Prospection imprévue */}
+      <div className="mb-4 md:mb-6">
+        <Button
+          onClick={() => setIsProspectionOpen(true)}
+          className="w-full gap-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 text-accent hover:text-accent font-medium"
+          variant="outline"
+        >
+          <Zap className="w-4 h-4" />
+          Prospection imprévue
+        </Button>
+      </div>
+
       {/* Activities Section */}
       <div className="flex-1 flex flex-col mb-4 md:mb-6">
         <h3 className="text-accent font-semibold mb-3 md:mb-4 text-sm md:text-base">Activités</h3>
@@ -242,6 +257,17 @@ export const CRMViewContainer = ({
         onClose={() => setIsNotesOpen(false)}
         userId={userId}
         onEntrepriseSelect={onEntrepriseSelect}
+      />
+
+      {/* Prospection Imprévue Dialog */}
+      <ProspectionImprevueDialog
+        isOpen={isProspectionOpen}
+        onClose={() => setIsProspectionOpen(false)}
+        userId={userId}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ['crm-interactions', userId] });
+          queryClient.invalidateQueries({ queryKey: ['crm-leads-with-sites', userId] });
+        }}
       />
 
       {/* Pipeline Section */}

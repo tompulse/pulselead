@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { GripVertical, MapPin, Navigation, Calendar, Eye, Phone, Trash2, FileText, X, Check } from 'lucide-react';
+import { GripVertical, MapPin, Navigation, Calendar, Eye, Phone, Trash2, FileText, X, Check, ExternalLink, Copy } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -32,6 +32,7 @@ interface SortableVisiteItemProps {
     ville?: string;
     latitude?: number;
     longitude?: number;
+    siret?: string;
   };
   visiteStatus: VisiteStatus;
   currentNote?: string;
@@ -58,6 +59,25 @@ export const SortableVisiteItem = ({
   const [noteText, setNoteText] = useState(currentNote);
   const [relanceDate, setRelanceDate] = useState('');
   const [pendingField, setPendingField] = useState<'aRevoir' | 'rdv' | 'aRappeler' | null>(null);
+  const [siretCopied, setSiretCopied] = useState(false);
+
+  const handleCopySiret = async () => {
+    if (!site.siret) return;
+    try {
+      await navigator.clipboard.writeText(site.siret);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = site.siret;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    }
+    setSiretCopied(true);
+    setTimeout(() => setSiretCopied(false), 1500);
+  };
 
   const {
     attributes,
@@ -196,7 +216,23 @@ export const SortableVisiteItem = ({
           <div className="flex-1 min-w-0">
             <div className="font-semibold text-sm sm:text-base leading-tight">{site.nom}</div>
             <div className="text-xs sm:text-sm text-muted-foreground leading-tight mt-0.5 line-clamp-1">{site.address}</div>
-            
+            {site.siret && (
+              <div className="flex items-center gap-1 mt-1">
+                <span className="text-[10px] sm:text-xs text-muted-foreground/70 font-mono tracking-wide">{site.siret}</span>
+                <button
+                  onClick={handleCopySiret}
+                  className="inline-flex items-center justify-center w-5 h-5 rounded hover:bg-accent/20 transition-colors shrink-0"
+                  title="Copier le SIRET"
+                >
+                  {siretCopied ? (
+                    <Check className="w-3 h-3 text-green-400" />
+                  ) : (
+                    <Copy className="w-3 h-3 text-muted-foreground/50 hover:text-accent" />
+                  )}
+                </button>
+              </div>
+            )}
+
             {/* Action buttons - Row 1: Status (Visité, RDV, À revoir, À rappeler) */}
             <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
               <Button
@@ -280,6 +316,17 @@ export const SortableVisiteItem = ({
               >
                 <Navigation className="w-3.5 h-3.5 mr-1.5" />
                 GPS
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!site.siret}
+                onClick={() => site.siret && window.open(`https://portail.infolegale.fr/identity/fr/${site.siret.slice(0, 9)}`, '_blank')}
+                className={`h-8 px-3 text-xs font-medium ${site.siret ? 'border-border text-muted-foreground hover:text-blue-400 hover:border-blue-500/50' : 'border-border opacity-40'}`}
+              >
+                <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+                Infolegale
               </Button>
 
               {onRemove && (
