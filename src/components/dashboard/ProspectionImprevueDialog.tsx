@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Building2, User, Phone, Mail, FileText, Zap } from 'lucide-react';
+import { Building2, User, Phone, Mail, FileText, Zap, CalendarClock } from 'lucide-react';
 
 type StatutType = 'a_rappeler' | 'a_revoir' | 'rdv';
 
@@ -62,6 +62,21 @@ const LEAD_STATUT_MAP: Record<StatutType, string> = {
   rdv: 'proposition',
 };
 
+const getDefaultDateRelance = (): string => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(9, 0, 0, 0);
+  // Format: "YYYY-MM-DDTHH:MM" (requis par datetime-local)
+  return d.toISOString().slice(0, 16);
+};
+
+/** Génère un SIRET placeholder unique à 14 chiffres pour les prospections imprévues */
+const generateSiretPlaceholder = (): string => {
+  const ts = Date.now().toString(); // 13 chiffres en 2026
+  const rand = Math.floor(Math.random() * 10).toString();
+  return (ts + rand).slice(-14);
+};
+
 export const ProspectionImprevueDialog = ({
   isOpen,
   onClose,
@@ -74,6 +89,7 @@ export const ProspectionImprevueDialog = ({
   const [mail, setMail] = useState('');
   const [notes, setNotes] = useState('');
   const [statut, setStatut] = useState<StatutType>('a_rappeler');
+  const [dateRelance, setDateRelance] = useState(getDefaultDateRelance);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleReset = () => {
@@ -83,6 +99,7 @@ export const ProspectionImprevueDialog = ({
     setMail('');
     setNotes('');
     setStatut('a_rappeler');
+    setDateRelance(getDefaultDateRelance());
   };
 
   const handleClose = () => {
@@ -92,16 +109,21 @@ export const ProspectionImprevueDialog = ({
 
   const handleSubmit = async () => {
     if (!entreprise.trim()) {
-      toast.error('Le nom de l\'entreprise est obligatoire');
+      toast.error("Le nom de l'entreprise est obligatoire");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // 1. Créer le prospect dans nouveaux_sites
+      // 1. Créer le prospect dans nouveaux_sites avec un siret placeholder unique
+      const siretPlaceholder = generateSiretPlaceholder();
+
       const { data: newSite, error: siteError } = await supabase
         .from('nouveaux_sites')
-        .insert({ nom: entreprise.trim() } as any)
+        .insert({
+          nom: entreprise.trim(),
+          siret: siretPlaceholder,
+        })
         .select('id')
         .single();
 
@@ -126,7 +148,7 @@ export const ProspectionImprevueDialog = ({
       if (mail.trim()) noteLines.push(`📧 ${mail.trim()}`);
       if (notes.trim()) noteLines.push(`💬 ${notes.trim()}`);
 
-      // 4. Créer l'interaction
+      // 4. Créer l'interaction avec la date de relance
       const { error: interactionError } = await supabase.from('lead_interactions').insert({
         entreprise_id: entrepriseId,
         user_id: userId,
@@ -134,6 +156,7 @@ export const ProspectionImprevueDialog = ({
         statut: INTERACTION_STATUT_MAP[statut],
         notes: noteLines.join('\n'),
         date_interaction: new Date().toISOString(),
+        date_relance: dateRelance ? new Date(dateRelance).toISOString() : null,
       });
 
       if (interactionError) throw interactionError;
@@ -143,7 +166,7 @@ export const ProspectionImprevueDialog = ({
       handleClose();
     } catch (error: any) {
       console.error('[ProspectionImprevue] Error:', error);
-      toast.error('Erreur lors de l\'enregistrement');
+      toast.error(`Erreur : ${error?.message || "Impossible d'enregistrer"}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -151,10 +174,10 @@ export const ProspectionImprevueDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base">
-            <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
               <Zap className="w-4 h-4 text-accent" />
             </div>
             Prospection imprévue
@@ -162,7 +185,7 @@ export const ProspectionImprevueDialog = ({
         </DialogHeader>
 
         <div className="space-y-4 py-1">
-          {/* Sélecteur de statut */}
+          {/* Sélecteur de suivi */}
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground uppercase tracking-wide">
               Type de suivi
@@ -181,6 +204,20 @@ export const ProspectionImprevueDialog = ({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Date & heure de l'action prévue */}
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-1.5 text-sm">
+              <CalendarClock className="w-3.5 h-3.5 text-muted-foreground" />
+              Date &amp; heure prévue
+            </Label>
+            <Input
+              type="datetime-local"
+              value={dateRelance}
+              onChange={(e) => setDateRelance(e.target.value)}
+              className="h-9 [color-scheme:dark]"
+            />
           </div>
 
           {/* Entreprise */}
